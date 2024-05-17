@@ -28,9 +28,13 @@ protocol ArchivedListViewModelDelegate: AnyObject {
 final class ArchivedListViewModel: NSObject {
 
     weak var delegate: ArchivedListViewModelDelegate?
-    var archivedConversationListObserverToken: NSObjectProtocol?
-    var archivedConversations = [ZMConversation]()
-    let userSession: UserSession
+    private(set) var archivedConversationListObserverToken: NSObjectProtocol?
+    private(set) var archivedConversations = [ZMConversation]()
+    private let userSession: UserSession
+
+    var isEmptyArchivePlaceholderVisible: Bool {
+        archivedConversations.isEmpty
+    }
 
     init(userSession: UserSession) {
         self.userSession = userSession

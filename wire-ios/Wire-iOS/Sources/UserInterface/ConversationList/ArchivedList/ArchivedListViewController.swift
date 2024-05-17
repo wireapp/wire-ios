@@ -30,7 +30,7 @@ final class ArchivedListViewController: UIViewController {
     private let layoutCell = ConversationListCell()
     private var actionController: ConversationActionController?
     private var startCallController: ConversationCallController?
-    let userSession: UserSession
+    private let userSession: UserSession
 
     weak var delegate: ArchivedListViewControllerDelegate?
 
@@ -39,8 +39,6 @@ final class ArchivedListViewController: UIViewController {
         viewModel = ArchivedListViewModel(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
         viewModel.delegate = self
-        createViews()
-        createConstraints()
     }
 
     @available(*, unavailable)
@@ -53,6 +51,9 @@ final class ArchivedListViewController: UIViewController {
 
         view.accessibilityViewIsModal = true
         setupNavigationItem()
+        setupCollectionView()
+        setupEmptyPlaceholder()
+        createConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -62,7 +63,7 @@ final class ArchivedListViewController: UIViewController {
         collectionView.collectionViewLayout.invalidateLayout()
     }
 
-    func setupNavigationItem() {
+    private func setupNavigationItem() {
 
         let titleLabel = UILabel()
         titleLabel.text = L10n.Localizable.ArchivedList.title.capitalized
@@ -83,7 +84,7 @@ final class ArchivedListViewController: UIViewController {
         navigationItem.rightBarButtonItem = .init(customView: dismissButton)
     }
 
-    func createViews() {
+    private func setupCollectionView() {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
@@ -99,6 +100,43 @@ final class ArchivedListViewController: UIViewController {
 
         view.addSubview(collectionView)
         view.backgroundColor = SemanticColors.View.backgroundConversationList
+    }
+
+    private func setupEmptyPlaceholder() {
+
+        let titleLabel = DynamicFontLabel(
+            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻",
+            style: .h3,
+            color: SemanticColors.Label.textDefault
+        )
+        titleLabel.textAlignment = .center
+
+        let descriptionLabel = DynamicFontLabel(
+            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.subheadline,
+            style: .body1,
+            color: SemanticColors.Label.baseSecondaryText
+        )
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
+
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 2
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+        NSLayoutConstraint.activate([
+
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            stackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+            stackView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1),
+
+            stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+        ])
+        stackView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
     }
 
     private func createConstraints() {
@@ -176,18 +214,20 @@ extension ArchivedListViewController: ArchivedListViewModelDelegate {
         collectionView.collectionViewLayout.invalidateLayout()
     }
 
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo) {
-
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateConversationWithChange change: ConversationChangeInfo
+    ) {
         // no-op, ConversationListCell extended ZMConversationObserver
     }
-
 }
 
 // MARK: - ConversationListCellDelegate
 
 extension ArchivedListViewController: ConversationListCellDelegate {
+
     func indexPath(for cell: ConversationListCell) -> IndexPath? {
-        return collectionView.indexPath(for: cell)
+        collectionView.indexPath(for: cell)
     }
 
     func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell) {
@@ -208,5 +248,4 @@ extension ArchivedListViewController: ConversationListCellDelegate {
         )
         actionController?.presentMenu(from: cell, context: .list)
     }
-
 }
