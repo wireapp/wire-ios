@@ -19,8 +19,6 @@
 import Foundation
 import UserNotifications
 
-// cannot un-comment this line since a few projects treat warnings as errors
-// @available(*, deprecated, message: "Use WireUtilities.MockUserNotificationCenterAbstraction")
 @objc(ZMUserNotificationCenterMock)
 public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
