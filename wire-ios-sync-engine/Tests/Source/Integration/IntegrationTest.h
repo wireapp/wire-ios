@@ -55,10 +55,7 @@
 @property (nonatomic, readonly) BOOL useInMemoryStore;
 @property (nonatomic, readonly) BOOL useRealKeychain;
 @property (nonatomic, nullable) SearchDirectory *sharedSearchDirectory;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
 @property (nonatomic, nullable) ZMUserNotificationCenterMock *notificationCenter;
-#pragma GCC diagnostic pop
 @property (nonatomic, nullable) MockJailbreakDetector *jailbreakDetector;
 @property (nonatomic, nullable) MockLoginDelegate *mockLoginDelegete;
 @property (nonatomic, nullable) MockPushTokenService *mockPushTokenService;
