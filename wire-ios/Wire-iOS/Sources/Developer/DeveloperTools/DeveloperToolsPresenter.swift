@@ -19,7 +19,7 @@
 import Foundation
 import SwiftUI
 
-class DeveloperToolsPresenter: NSObject {
+final class DeveloperToolsPresenter: NSObject {
     private var displayedDeveloperTools = false
 
     func presentIfNotDisplayed(on application: UIApplication) {
