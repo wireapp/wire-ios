@@ -1430,7 +1430,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         originalEvent: ZMUpdateEvent
     ) {
         syncMOC.performAndWait {
-            let team = Team.fetchOrCreate(with: .init(), create: true, in: syncMOC, created: .none)
+            let team = Team.fetchOrCreate(
+                with: .init(),
+                in: syncMOC
+            )
 
             let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
             users.forEach { user in

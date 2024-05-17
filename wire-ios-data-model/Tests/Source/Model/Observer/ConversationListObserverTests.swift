@@ -999,7 +999,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
             let otherTeamConversation = ZMConversation.insertNewObject(in: self.syncMOC)
             otherTeamConversation.conversationType = .group
-            otherTeamConversation.team = Team.fetchOrCreate(with: .create(), create: true, in: self.syncMOC, created: nil)
+            otherTeamConversation.team = Team.fetchOrCreate(with: .create(), in: self.syncMOC)
 
             self.syncMOC.saveOrRollback()
         }

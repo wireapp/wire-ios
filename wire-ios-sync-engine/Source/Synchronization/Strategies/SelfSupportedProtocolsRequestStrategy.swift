@@ -35,7 +35,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     private lazy var requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
 
-    private let userRepository: UserRepositoryInterface
+    private let userRepository: UserRepositoryProtocol
 
     // MARK: - Initializers
 
@@ -43,7 +43,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        userRepository: UserRepositoryInterface
+        userRepository: UserRepositoryProtocol
     ) {
         self.syncProgress = syncProgress
         self.userRepository = userRepository
@@ -117,7 +117,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         switch response.result {
         case .success:
-            let selfUser = userRepository.selfUser()
+            let selfUser = userRepository.fetchSelfUser()
             selfUser.supportedProtocols = service.calculateSupportedProtocols()
             finishSlowSync()
         default:

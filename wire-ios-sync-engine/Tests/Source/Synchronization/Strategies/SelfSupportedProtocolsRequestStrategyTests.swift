@@ -17,8 +17,9 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
+@testable import WireSyncEngine
+import WireSyncEngineSupport
 import XCTest
 
 final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
@@ -29,7 +30,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!
 
-    private var mockUserRepository: MockUserRepositoryInterface!
+    private var mockUserRepository: MockUserRepositoryProtocol!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -42,13 +43,13 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
         coreDataStackHelper = CoreDataStackHelper()
         mockCoreDataStack = try await coreDataStackHelper.createStack()
-        mockUserRepository = MockUserRepositoryInterface()
+        mockUserRepository = MockUserRepositoryProtocol()
 
         // set values
 
         let context = mockCoreDataStack.syncContext
         await context.perform {
-            self.mockUserRepository.selfUser_MockValue = self.createUser(in: context)
+            self.mockUserRepository.fetchSelfUser_MockValue = self.createUser(in: context)
         }
     }
 
@@ -104,7 +105,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
         // when
         let request = await syncContext.perform {
-            self.mockUserRepository.selfUser().supportedProtocols = [.proteus]
+            self.mockUserRepository.fetchSelfUser().supportedProtocols = [.proteus]
             return strategy.nextRequestIfAllowed(for: self.defaultAPIVersion)
         }
 
