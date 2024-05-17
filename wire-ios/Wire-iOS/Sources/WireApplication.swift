@@ -21,7 +21,7 @@ import WireSyncEngine
 
 final class WireApplication: UIApplication {
 
-    let presenter = DeveloperToolsPresenter()
+    private let presenter = DeveloperToolsPresenter()
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         guard Bundle.developerModeEnabled else {
