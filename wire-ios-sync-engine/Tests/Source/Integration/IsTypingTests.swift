@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+
+@testable import WireSyncEngine
 
 final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
@@ -52,6 +53,7 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
     // MARK: - Tests
 
+    // TODO [WPB-9200]: enable this test again
     func testThatItSendsTypingNotifications() throws {
         // Given
         XCTAssertTrue(login())
