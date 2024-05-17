@@ -25,10 +25,6 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
-        ),
-        .package(
-            url: "https://github.com/krzysztofzablocki/Sourcery.git",
-            from: "2.2.4"
         )
     ],
     targets: [
