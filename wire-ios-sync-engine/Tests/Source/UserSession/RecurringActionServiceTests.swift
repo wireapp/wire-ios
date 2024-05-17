@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystemSupport
 import WireTesting
 import XCTest
 
@@ -25,7 +26,7 @@ import XCTest
 final class RecurringActionServiceTests: XCTestCase {
 
     var userDefaults: UserDefaults!
-    var dateProvider: MockDateProvider!
+    var dateProvider: MockCurrentDateProviding!
     var sut: RecurringActionService!
 
     override func setUp() {
