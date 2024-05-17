@@ -38,7 +38,10 @@ let package = Package(
             name: "WireAPITests",
             dependencies: [
                 "WireAPI",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
             ],
             resources: [
                 .process("Resources")
