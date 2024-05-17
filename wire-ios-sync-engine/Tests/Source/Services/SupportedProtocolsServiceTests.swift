@@ -26,7 +26,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
 
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockUserRepository: MockUserRepositoryInterface!
+    private var mockUserRepository: MockUserRepositoryProtocol!
 
     private var sut: SupportedProtocolsService!
 
@@ -41,7 +41,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         mockCoreDataStack = try await coreDataStackHelper.createStack()
 
         mockFeatureRepository = MockFeatureRepositoryInterface()
-        mockUserRepository = MockUserRepositoryInterface()
+        mockUserRepository = MockUserRepositoryProtocol()
 
         sut = SupportedProtocolsService(
             featureRepository: mockFeatureRepository,

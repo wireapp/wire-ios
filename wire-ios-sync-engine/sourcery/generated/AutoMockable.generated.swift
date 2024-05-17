@@ -1071,7 +1071,7 @@ public class MockUserProfile: UserProfile {
 
 }
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
+public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - Life cycle
 

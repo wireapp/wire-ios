@@ -19,13 +19,13 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol UserRepositoryInterface {
+public protocol UserRepositoryProtocol {
 
     func selfUser() -> ZMUser
 
 }
 
-public final class UserRepository: UserRepositoryInterface {
+public final class UserRepository: UserRepositoryProtocol {
 
     // MARK: - Properties
 

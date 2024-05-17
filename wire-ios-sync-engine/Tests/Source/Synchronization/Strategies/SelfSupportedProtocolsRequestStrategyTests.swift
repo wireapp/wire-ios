@@ -29,7 +29,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!
 
-    private var mockUserRepository: MockUserRepositoryInterface!
+    private var mockUserRepository: MockUserRepositoryProtocol!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -42,7 +42,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
         coreDataStackHelper = CoreDataStackHelper()
         mockCoreDataStack = try await coreDataStackHelper.createStack()
-        mockUserRepository = MockUserRepositoryInterface()
+        mockUserRepository = MockUserRepositoryProtocol()
 
         // set values
 

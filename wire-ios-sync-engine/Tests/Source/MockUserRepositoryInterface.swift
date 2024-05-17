@@ -19,7 +19,7 @@
 @testable import WireSyncEngine
 import XCTest
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
+public class MockUserRepositoryInterface: UserRepositoryProtocol {
 
     // MARK: - Life cycle
 
