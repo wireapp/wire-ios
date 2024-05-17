@@ -25,13 +25,13 @@ final class UsersAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetUserRequest() async throws {
-        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { (sut, _: UsersAPIBuilder) in
+        try await RequestSnapshotHelper<UsersAPIBuilder>().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getUser(for: .mockID1)
         }
     }
 
     func testGetUsersRequest() async throws {
-        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { (sut, _: UsersAPIBuilder) in
+        try await RequestSnapshotHelper<UsersAPIBuilder>().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3])
         }
     }
