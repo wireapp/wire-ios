@@ -314,6 +314,7 @@
 		551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */; };
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
+		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
@@ -1038,7 +1039,6 @@
 		BF5127161CC9119400F23DEA /* ZMSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5127141CC9118F00F23DEA /* ZMSnapshotTestCase.swift */; };
 		BF515F941D9D1C1900C786FB /* EmojiSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF515F931D9D1C1900C786FB /* EmojiSectionViewController.swift */; };
 		BF52C1571CAEB9E10037331F /* ArchivedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF52C1561CAEB9E10037331F /* ArchivedListViewController.swift */; };
-		BF52C1591CAEBD8D0037331F /* ArchivedNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF52C1581CAEBD8D0037331F /* ArchivedNavigationBar.swift */; };
 		BF52C1601CB25FE70037331F /* ArchivedListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF52C15F1CB25FE70037331F /* ArchivedListViewModel.swift */; };
 		BF58ABED1D23F00000D5FF14 /* LocationSendViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF58ABEC1D23F00000D5FF14 /* LocationSendViewControllerTests.swift */; };
 		BF58ABEF1D23F3CD00D5FF14 /* ModalTopBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF58ABEE1D23F3CD00D5FF14 /* ModalTopBarTests.swift */; };
@@ -1797,7 +1797,6 @@
 		EFA820AE2019075400FED370 /* UIViewController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA820AD2019075400FED370 /* UIViewController+Convenience.swift */; };
 		EFABC922202085A6001F9866 /* UserDetailViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFABC921202085A6001F9866 /* UserDetailViewControllerFactory.swift */; };
 		EFABC92420208D80001F9866 /* UIViewController+removeUserConfirmationUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFABC92320208D80001F9866 /* UIViewController+removeUserConfirmationUI.swift */; };
-		EFAFCA822133FB59002B31A6 /* ArchivedNavigationBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAFCA812133FB59002B31A6 /* ArchivedNavigationBarTests.swift */; };
 		EFAFCA8D213433D7002B31A6 /* ConversationListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAFCA8C213433D6002B31A6 /* ConversationListViewControllerTests.swift */; };
 		EFB23D0A1FC852380055B866 /* TextFieldValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF61B3411FC8508400D8E631 /* TextFieldValidator.swift */; };
 		EFB23D0B1FC853CF0055B866 /* AccessoryTextFieldValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF61B33F1FC84B0100D8E631 /* AccessoryTextFieldValidationTests.swift */; };
@@ -2370,6 +2369,7 @@
 		551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDisclosureController.swift; sourceTree = "<group>"; };
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
+		5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerDelegate.swift; sourceTree = "<group>"; };
 		590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+addressBook.swift"; sourceTree = "<group>"; };
 		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
 		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -3206,8 +3206,7 @@
 		BF4D99CF1E79AF8100A7B08F /* StartedConversationCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartedConversationCellTests.swift; sourceTree = "<group>"; };
 		BF5127141CC9118F00F23DEA /* ZMSnapshotTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSnapshotTestCase.swift; sourceTree = "<group>"; };
 		BF515F931D9D1C1900C786FB /* EmojiSectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmojiSectionViewController.swift; path = Emoji/EmojiSectionViewController.swift; sourceTree = "<group>"; };
-		BF52C1561CAEB9E10037331F /* ArchivedListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchivedListViewController.swift; path = ../Conversation/ArchivedListViewController.swift; sourceTree = "<group>"; };
-		BF52C1581CAEBD8D0037331F /* ArchivedNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedNavigationBar.swift; sourceTree = "<group>"; };
+		BF52C1561CAEB9E10037331F /* ArchivedListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewController.swift; sourceTree = "<group>"; };
 		BF52C15F1CB25FE70037331F /* ArchivedListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewModel.swift; sourceTree = "<group>"; };
 		BF58ABEC1D23F00000D5FF14 /* LocationSendViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationSendViewControllerTests.swift; sourceTree = "<group>"; };
 		BF58ABEE1D23F3CD00D5FF14 /* ModalTopBarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalTopBarTests.swift; sourceTree = "<group>"; };
@@ -3899,7 +3898,6 @@
 		EFA820AD2019075400FED370 /* UIViewController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Convenience.swift"; sourceTree = "<group>"; };
 		EFABC921202085A6001F9866 /* UserDetailViewControllerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewControllerFactory.swift; sourceTree = "<group>"; };
 		EFABC92320208D80001F9866 /* UIViewController+removeUserConfirmationUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+removeUserConfirmationUI.swift"; sourceTree = "<group>"; };
-		EFAFCA812133FB59002B31A6 /* ArchivedNavigationBarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedNavigationBarTests.swift; sourceTree = "<group>"; };
 		EFAFCA8C213433D6002B31A6 /* ConversationListViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationListViewControllerTests.swift; sourceTree = "<group>"; };
 		EFB97F6F22EF45D50092A620 /* UIImage+ImageUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+ImageUtilities.swift"; sourceTree = "<group>"; };
 		EFBCC90E2152A93F006AAB70 /* AnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProvider.swift; sourceTree = "<group>"; };
@@ -4646,6 +4644,16 @@
 				5EB45760204EA75300BA217A /* CallQualityDismissalTransition.swift */,
 			);
 			path = CallQualityController;
+			sourceTree = "<group>";
+		};
+		5902F8D52BF78F8A00F1D392 /* ArchivedList */ = {
+			isa = PBXGroup;
+			children = (
+				BF52C1561CAEB9E10037331F /* ArchivedListViewController.swift */,
+				5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */,
+				BF52C15F1CB25FE70037331F /* ArchivedListViewModel.swift */,
+			);
+			path = ArchivedList;
 			sourceTree = "<group>";
 		};
 		590A5F052BF4CB06008E87D8 /* ShareContacts */ = {
@@ -6821,7 +6829,7 @@
 				EF6E9FE523193477000B7785 /* UIViewControllerTransitioningDelegate+Present.swift */,
 				06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */,
 				879325091E83BB5C00190067 /* ZMConversation+Status.swift */,
-				BF52C15A1CAEBDC00037331F /* ArchivedList */,
+				5902F8D52BF78F8A00F1D392 /* ArchivedList */,
 				EFEE97CC2322A0EC007A4702 /* Container */,
 				8F8913E91A9F287E0056AB0C /* ListContent */,
 				A93E6102233B870200CEA65F /* SectionHeader */,
@@ -7174,7 +7182,6 @@
 				EF883F8B215250B000B440CC /* AddParticipantsViewControllerSnapshotTests.swift */,
 				E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */,
 				EF6EB1CD20A5C296002F720D /* AppStateCalculatorTests.swift */,
-				EFAFCA812133FB59002B31A6 /* ArchivedNavigationBarTests.swift */,
 				1651F9BA1D352C5300A9FAE8 /* ArticleViewTests.swift */,
 				BF2A74741CEB595E002608BF /* AudioButtonOverlayTests.swift */,
 				87DE06B21D26632E0009411F /* AudioEffectsPickerViewControllerTests.swift */,
@@ -7380,16 +7387,6 @@
 				BF0BDF711DA7A9D8003C61DE /* RedactedScript-Regular.ttf */,
 			);
 			path = Fonts;
-			sourceTree = "<group>";
-		};
-		BF52C15A1CAEBDC00037331F /* ArchivedList */ = {
-			isa = PBXGroup;
-			children = (
-				BF52C1561CAEB9E10037331F /* ArchivedListViewController.swift */,
-				BF52C15F1CB25FE70037331F /* ArchivedListViewModel.swift */,
-				BF52C1581CAEBD8D0037331F /* ArchivedNavigationBar.swift */,
-			);
-			name = ArchivedList;
 			sourceTree = "<group>";
 		};
 		BF5DF5C820F4C1FB002BCB67 /* GroupParticipantsDetail */ = {
@@ -9557,6 +9554,7 @@
 				160D6920212C78E800096EAD /* CallQualityController.swift in Sources */,
 				BF989D081E896D210052BF8F /* ConversationCellBurstTimestampView.swift in Sources */,
 				A9A3B1FC24D9B1E2001AF38E /* WireLogoInfoView.swift in Sources */,
+				5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */,
 				5E8DA76F211B422D00360979 /* AuthenticationStartReauthenticateErrorHandler.swift in Sources */,
 				F15650F921DD20D900210504 /* Date+Format.swift in Sources */,
 				EEA1ED7325BF430B006D07D3 /* AppLockModule.View.LockView.swift in Sources */,
@@ -9797,7 +9795,6 @@
 				7C4789852021F40E00A38442 /* AddBotError+UIHandler.swift in Sources */,
 				EF6E9FE623193478000B7785 /* UIViewControllerTransitioningDelegate+Present.swift in Sources */,
 				5E65A79E21303F97008BFCC0 /* AuthenticationCoordinator+UserChange.swift in Sources */,
-				BF52C1591CAEBD8D0037331F /* ArchivedNavigationBar.swift in Sources */,
 				A93B528924FE98200061255E /* DebugActions.swift in Sources */,
 				EF71BFD620EBCC5F00894A7C /* UIView+IPadPopover.swift in Sources */,
 				EFBCC917215548EE006AAB70 /* AVAudioSessionType.swift in Sources */,
@@ -10526,7 +10523,6 @@
 				EE7F466925B1CD60001B3EE4 /* AppLockModule.MockSession.swift in Sources */,
 				D337012828996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift in Sources */,
 				F1C9E3601EAE008C006438D7 /* TestSetup.swift in Sources */,
-				EFAFCA822133FB59002B31A6 /* ArchivedNavigationBarTests.swift in Sources */,
 				EFE0439B2149D9CA00BC3079 /* ShareContactsViewControllerSnapshotTests.swift in Sources */,
 				BFC9149B1D181BE7001F068B /* LocationMessageCellTests.swift in Sources */,
 				E9398D332B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift in Sources */,

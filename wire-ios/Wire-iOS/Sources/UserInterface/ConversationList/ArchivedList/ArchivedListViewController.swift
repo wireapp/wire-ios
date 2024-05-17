@@ -17,22 +17,13 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-
-// MARK: ArchivedListViewControllerDelegate
-
-protocol ArchivedListViewControllerDelegate: AnyObject {
-    func archivedListViewControllerWantsToDismiss(_ controller: ArchivedListViewController)
-    func archivedListViewController(_ controller: ArchivedListViewController, didSelectConversation conversation: ZMConversation)
-}
-
-// MARK: - ArchivedListViewController
 
 final class ArchivedListViewController: UIViewController {
 
     private var collectionView: UICollectionView!
-    private let archivedNavigationBar = ArchivedNavigationBar(title: L10n.Localizable.ArchivedList.title.capitalized)
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
     private let swipeIdentifier = "ArchivedList"
     private let viewModel: ArchivedListViewModel
@@ -54,25 +45,48 @@ final class ArchivedListViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         view.accessibilityViewIsModal = true
+        setupNavigationItem()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
+    }
+
+    func setupNavigationItem() {
+
+        let titleLabel = UILabel()
+        titleLabel.text = L10n.Localizable.ArchivedList.title.capitalized
+        titleLabel.font = FontSpec(.normal, .semibold).font
+        titleLabel.textColor = SemanticColors.Label.textDefault
+        titleLabel.accessibilityTraits = .header
+        navigationItem.titleView = titleLabel
+
+        let dismissButton = IconButton()
+        dismissButton.setIcon(.cross, size: .tiny, for: [])
+        dismissButton.addAction(
+            .init { [weak self] _ in self?.delegate?.archivedListViewControllerWantsToDismiss(self!) },
+            for: .primaryActionTriggered
+        )
+        dismissButton.accessibilityIdentifier = "archiveCloseButton"
+        dismissButton.accessibilityLabel = L10n.Localizable.General.close
+        dismissButton.setIconColor(SemanticColors.Label.textDefault, for: .normal)
+        navigationItem.rightBarButtonItem = .init(customView: dismissButton)
     }
 
     func createViews() {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
-        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -81,24 +95,17 @@ final class ArchivedListViewController: UIViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = false
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 16 + UIScreen.safeArea.bottom, right: 0)
         collectionView.accessibilityIdentifier = "archived conversation list"
 
-        [archivedNavigationBar, collectionView].forEach(view.addSubview)
-        archivedNavigationBar.dismissButtonHandler = {
-            self.delegate?.archivedListViewControllerWantsToDismiss(self)
-        }
+        view.addSubview(collectionView)
         view.backgroundColor = SemanticColors.View.backgroundConversationList
     }
 
     private func createConstraints() {
-        [archivedNavigationBar, collectionView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            archivedNavigationBar.topAnchor.constraint(equalTo: view.topAnchor, constant: UIScreen.safeArea.top),
-            archivedNavigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),
-            archivedNavigationBar.rightAnchor.constraint(equalTo: view.rightAnchor),
-            archivedNavigationBar.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
@@ -110,12 +117,12 @@ final class ArchivedListViewController: UIViewController {
         self.delegate?.archivedListViewControllerWantsToDismiss(self)
         return true
     }
-
 }
 
 // MARK: - CollectionViewDelegate
 
 extension ArchivedListViewController: UICollectionViewDelegate {
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let conversation = viewModel[indexPath.row] else { return }
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
@@ -153,7 +160,6 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
     ) -> CGSize {
         return layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
     }
-
 }
 
 // MARK: - ArchivedListViewModelDelegate

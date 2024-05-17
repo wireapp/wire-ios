@@ -16,28 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import XCTest
+import WireDataModel
 
-final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
-
-    var sut: ArchivedNavigationBar!
-
-    override func setUp() {
-        super.setUp()
-        accentColor = .purple
-        sut = ArchivedNavigationBar(title: "Archive")
-    }
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    func testThatItRendersTheNavigationBarCorrectInitially() {
-        verifyInAllPhoneWidths(
-            matching: sut,
-            snapshotBackgroundColor: SemanticColors.View.backgroundDefault
-        )
-    }
+protocol ArchivedListViewControllerDelegate: AnyObject {
+    func archivedListViewControllerWantsToDismiss(_ controller: ArchivedListViewController)
+    func archivedListViewController(_ controller: ArchivedListViewController, didSelectConversation conversation: ZMConversation)
 }

@@ -50,7 +50,9 @@ extension ConversationListViewController {
             }
 
         case .archived:
-            show(createArchivedListViewController(), animated: animated, completion: completion)
+            let archiveViewController = createArchivedListViewController()
+            let navigationController = UINavigationController(rootViewController: archiveViewController)
+            show(navigationController, animated: animated, completion: completion)
         }
     }
 
