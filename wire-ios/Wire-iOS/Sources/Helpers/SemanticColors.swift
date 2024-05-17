@@ -39,6 +39,8 @@ enum SemanticColors {
         static let textDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textDefaultWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let textWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
+        static let baseSecondaryText = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
+
         static let textMessageDate = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let textSectionFooter = UIColor(light: Asset.Colors.gray90, dark: Asset.Colors.gray20)
         static let textSectionHeader = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray50)
