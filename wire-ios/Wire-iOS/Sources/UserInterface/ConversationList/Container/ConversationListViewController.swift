@@ -260,7 +260,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         }
 
         if animated {
-            UIView.animate(withDuration: 0.20, animations: closure)
+            UIView.animate(withDuration: 0.2, animations: closure)
         } else {
             closure()
         }

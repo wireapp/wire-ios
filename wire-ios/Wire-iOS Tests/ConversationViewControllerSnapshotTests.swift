@@ -17,8 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireSyncEngineSupport
 import XCTest
+
+@testable import Wire
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
@@ -56,13 +58,17 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
         let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
 
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
+
         sut = ConversationViewController(
             conversation: mockConversation,
             visibleMessage: nil,
             zClientViewController: zClientViewController,
-            userSession: userSession
+            userSession: userSession,
+            classificationProvider: mockClassificationProvider,
+            networkStatusObservable: MockNetworkStatusObservable()
         )
-
     }
 
     override func tearDown() {

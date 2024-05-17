@@ -17,7 +17,7 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
+@testable import WireSyncEngine
 import XCTest
 
 final class SupportedProtocolsServiceTests: XCTestCase {
