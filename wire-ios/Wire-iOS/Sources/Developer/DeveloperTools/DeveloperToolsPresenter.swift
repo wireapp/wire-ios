@@ -20,22 +20,19 @@ import Foundation
 import SwiftUI
 
 final class DeveloperToolsPresenter: NSObject {
+
     private var displayedDeveloperTools = false
 
-    func presentIfNotDisplayed(on application: UIApplication) {
+    func presentIfNotDisplayed(with router: AppRootRouter?, from topMostViewController: @escaping @autoclosure () -> UIViewController?) {
 
         guard !displayedDeveloperTools else { return }
 
         let developerTools = UIHostingController(
             rootView: NavigationView {
                 DeveloperToolsView(viewModel: DeveloperToolsViewModel(
-                    router: AppDelegate.shared.appRootRouter,
+                    router: router,
                     onDismiss: { [weak self] completion in
-                        if let topmostViewController = application.topmostViewController() {
-                            topmostViewController.dismissIfNeeded(completion: completion)
-                        } else {
-                            completion()
-                        }
+                        topMostViewController()?.dismissIfNeeded(completion: completion)
                         self?.displayedDeveloperTools = false
                     }
                 ))
@@ -43,7 +40,7 @@ final class DeveloperToolsPresenter: NSObject {
         )
         developerTools.presentationController?.delegate = self
 
-        application.topmostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
+        topMostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
             self?.displayedDeveloperTools = true
         })
     }

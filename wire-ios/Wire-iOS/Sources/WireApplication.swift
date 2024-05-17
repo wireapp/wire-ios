@@ -30,7 +30,7 @@ final class WireApplication: UIApplication {
 
         guard motion == .motionShake else { return }
 
-        presenter.presentIfNotDisplayed(on: self)
+        presenter.presentIfNotDisplayed(with: AppDelegate.shared.appRootRouter, from: self.topmostViewController())
     }
 }
 
