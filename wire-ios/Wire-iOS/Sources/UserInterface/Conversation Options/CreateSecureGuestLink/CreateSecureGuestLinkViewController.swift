@@ -120,6 +120,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.Textfield.placeholder
         textField.addDoneButtonOnKeyboard()
+        textField.delegate = self
         return textField
     }()
 
@@ -164,7 +165,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
         textField.addDoneButtonOnKeyboard()
         textField.returnKeyType = .done
-
+        textField.delegate = self
         return textField
     }()
 
@@ -399,6 +400,23 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
 
     @objc
     func textFieldDidChange(_ textField: UITextField) {
+        evaluateTextfieldsAndToggleCreateLinkButtonState()
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField === securedGuestLinkPasswordTextfield {
+            // Move focus to the password confirmation text field
+            securedGuestLinkPasswordValidatedTextField.becomeFirstResponder()
+        } else {
+            // Dismiss keyboard and finalize
+            textField.resignFirstResponder()
+            evaluateTextfieldsAndToggleCreateLinkButtonState()
+        }
+
+        return true
+    }
+
+    private func evaluateTextfieldsAndToggleCreateLinkButtonState() {
         if let text1 = securedGuestLinkPasswordTextfield.text,
            let text2 = securedGuestLinkPasswordValidatedTextField.text,
            !text1.isEmpty,
@@ -410,5 +428,4 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
             createSecuredLinkButton.isEnabled = false
         }
     }
-
 }
