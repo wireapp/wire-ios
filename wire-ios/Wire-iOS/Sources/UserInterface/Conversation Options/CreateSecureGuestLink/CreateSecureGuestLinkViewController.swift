@@ -404,9 +404,11 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == securedGuestLinkPasswordTextfield {
+        if textField === securedGuestLinkPasswordTextfield {
+            // Move focus to the password confirmation text field
             securedGuestLinkPasswordValidatedTextField.becomeFirstResponder()
         } else {
+            // Dismiss keyboard and finalize
             textField.resignFirstResponder()
             evaluateTextfieldsAndToggleCreateLinkButtonState()
         }
