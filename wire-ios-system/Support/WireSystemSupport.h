@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
+#import <Foundation/Foundation.h>
 
-extension DateProviding where Self == MockStaticDateProvider {
-    public static func mock(_ now: Date) -> Self { .init(now: now) }
-}
+//! Project version number for Support.
+FOUNDATION_EXPORT double SupportVersionNumber;
 
-public struct MockStaticDateProvider: DateProviding {
-    public var now = Date.now
-}
+//! Project version string for Support.
+FOUNDATION_EXPORT const unsigned char SupportVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <Support/PublicHeader.h>

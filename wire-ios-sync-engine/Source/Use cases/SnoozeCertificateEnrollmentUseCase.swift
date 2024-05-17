@@ -86,11 +86,11 @@ final class SnoozeTimeProvider {
 
     // MARK: - Properties
 
-    private let dateProvider: DateProviding
+    private let dateProvider: CurrentDateProviding
 
     // MARK: - Life cycle
 
-    init(dateProvider: DateProviding = .system) {
+    init(dateProvider: CurrentDateProviding = .system) {
         self.dateProvider = dateProvider
     }
 

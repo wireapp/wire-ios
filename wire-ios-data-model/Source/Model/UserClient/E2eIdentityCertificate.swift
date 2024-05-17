@@ -40,7 +40,7 @@ public enum E2eIdentityCertificateConstants {
     public var expiryDate: Date
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
-    public var comparedDate: DateProviding
+    public var comparedDate: CurrentDateProviding
     public var serverStoragePeriod: TimeInterval
     public var randomPeriod: TimeInterval
 
@@ -52,7 +52,7 @@ public enum E2eIdentityCertificateConstants {
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String,
-        comparedDate: DateProviding = SystemDateProvider(),
+        comparedDate: CurrentDateProviding = SystemDateProvider(),
         serverStoragePeriod: TimeInterval = E2eIdentityCertificateConstants.serverRetainedDays,
         randomPeriod: TimeInterval = E2eIdentityCertificateConstants.randomInterval
     ) {
@@ -68,14 +68,13 @@ public enum E2eIdentityCertificateConstants {
         self.randomPeriod = randomPeriod
     }
 
-    public struct DateProvider: DateProviding {
+    public struct DateProvider: CurrentDateProviding {
         public let now: Date
 
         public init(now: Date) {
             self.now = now
         }
     }
-
 }
 
 public extension E2eIdentityCertificate {

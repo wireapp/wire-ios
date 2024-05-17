@@ -864,6 +864,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		598E86BF2BF4D70500FC5438 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F9C9A4F31CAD5DF10039E10C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F9C9A4FB1CAD5DF10039E10C;
+			remoteInfo = WireDataModel;
+		};
 		59D1C3042B1DE6FF0016F6B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F9C9A4F31CAD5DF10039E10C /* Project object */;
@@ -3745,6 +3752,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				598E86C02BF4D70500FC5438 /* PBXTargetDependency */,
 			);
 			name = WireDataModelSupport;
 			productName = WireDataModelSupport;
@@ -4773,6 +4781,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		598E86C02BF4D70500FC5438 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F9C9A4FB1CAD5DF10039E10C /* WireDataModel */;
+			targetProxy = 598E86BF2BF4D70500FC5438 /* PBXContainerItemProxy */;
+		};
 		59D1C3052B1DE6FF0016F6B2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 59D1C2FF2B1DE6FF0016F6B2 /* WireDataModelSupport */;
@@ -4861,7 +4874,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4942,7 +4955,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -17,6 +17,7 @@
 //
 
 import UserNotifications
+import WireUtilitiesSupport
 
 @testable import WireSyncEngine
 

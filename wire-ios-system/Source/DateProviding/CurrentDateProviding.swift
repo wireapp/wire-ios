@@ -18,16 +18,8 @@
 
 import Foundation
 
-extension CurrentDateProviding where Self == SystemDateProvider {
-
-    /// Returns a new instance of `SystemDateProvider`.
-    public static var system: Self { .init() }
-}
-
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
-
-    public var now: Date { .now }
-
-    public init() {}
+// sourcery: AutoMockable
+/// Abstracts accessing the current system date in order to be mockable in unit tests.
+public protocol CurrentDateProviding {
+    var now: Date { get }
 }

@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireUtilitiesSupport
+
 @testable import WireSyncEngine
 
 class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
@@ -63,7 +65,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: self.syncMOC)
 
-            self.notificationCenter = UserNotificationCenterMock()
+            self.notificationCenter = .init()
             self.localNotificationDispatcher.notificationCenter = self.notificationCenter
         }
 

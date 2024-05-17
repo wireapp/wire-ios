@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
+
 @testable import Wire
 @testable import WireDataModel
-import XCTest
 
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
