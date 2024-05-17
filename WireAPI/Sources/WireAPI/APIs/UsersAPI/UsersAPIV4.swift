@@ -26,7 +26,7 @@ class UsersAPIV4: UsersAPIV3 {
 
     override func getUser(for userID: UserID) async throws -> User {
         let request = HTTPRequest(
-            path: "\(basePath)/users/\(userID.domain)/\(userID.uuid.transportString())",
+            path: "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())",
             method: .get
         )
 
@@ -41,7 +41,7 @@ class UsersAPIV4: UsersAPIV3 {
     override func getUsers(userIDs: [UserID]) async throws -> ListUsersResponse {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIds: userIDs))
         let request = HTTPRequest(
-            path: "\(basePath)/list-users",
+            path: "\(pathPrefix)/list-users",
             method: .post,
             body: body
         )

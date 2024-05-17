@@ -18,10 +18,21 @@
 
 import Foundation
 
-class TeamsAPIV6: TeamsAPIV5 {
+protocol VersionedAPI {
 
-    override var apiVersion: APIVersion {
-        .v6
+    var apiVersion: APIVersion { get }
+
+}
+
+extension VersionedAPI {
+
+    var pathPrefix: String {
+        switch apiVersion {
+        case .v0:
+            ""
+        default:
+            "/v\(apiVersion.rawValue)"
+        }
     }
 
 }

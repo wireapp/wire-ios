@@ -18,14 +18,6 @@
 
 import Foundation
 
-public protocol APIBuilder {
-    associatedtype API
-
-    init(httpClient: any HTTPClient)
-
-    func makeAPI(for version: APIVersion) -> API
-}
-
 /// An API access object for endpoints concerning teams.
 
 public protocol TeamsAPI {

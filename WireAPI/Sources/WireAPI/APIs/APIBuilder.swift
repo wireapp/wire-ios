@@ -18,10 +18,10 @@
 
 import Foundation
 
-class TeamsAPIV6: TeamsAPIV5 {
+public protocol APIBuilder {
+    associatedtype API
 
-    override var apiVersion: APIVersion {
-        .v6
-    }
+    init(httpClient: any HTTPClient)
 
+    func makeAPI(for version: APIVersion) -> API
 }
