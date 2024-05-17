@@ -26,39 +26,44 @@ class ConnectionsAPIV0: ConnectionsAPI {
         self.httpClient = httpClient
     }
 
-    let path = "/connections/\(userID)"
+    func basePath(for qualifiedId: QualifiedID) -> String {
+        "\(resourcePath)\(qualifiedId.uuid.transportString())"
+    }
+
+    let resourcePath = "/list-connections/"
     let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
-    func getConnections(for userId: UUID) async throws -> Connection {
+    func fetchConnections() async throws -> AsyncStream<[Connection]> {
+
+        PayloadPager(start: ...) {
+            // Create request using "start" index
+            // Execute request
+            // Parse response
+            return Page(
+                element: response.connections,
+                hasMore: response.hasMore,
+                nextStart: ...
+            )
+        }
+    }    func getConnections(qualifiedId: QualifiedID) async throws -> Connection {
+        let userId = qualifiedId.uuid
+
         let request = HTTPRequest(
-            path: path.append(userId.transportString()),
+            path: basePath(for: qualifiedId),
             method: .get
         )
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: ConnectionResponseV0.self
-            )
-
-            return payload.toParent()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            throw failure
-        }
+        return try ResponseParser()
+            .success(code: 200, type: ConnectionResponseV0.self)
+            .failure(code: 400, error: ConnectionsAPIError.invalidParameters)
+            .parse(response)
     }
 
 }
 
-struct ConnectionResponseV0: Decodable {
+struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
 
     enum CodingKeys: String, CodingKey {
         case from
@@ -69,11 +74,7 @@ struct ConnectionResponseV0: Decodable {
         case lastUpdate = "last_update"
         case status
     }
-
-    static var eventType: ZMUpdateEventType {
-        return .userConnection
-    }
-
+    
     let from: UUID?
     let to: UUID?
     let qualifiedTo: QualifiedID?
@@ -82,9 +83,14 @@ struct ConnectionResponseV0: Decodable {
     let lastUpdate: Date
     let status: ConnectionStatus
 
-    func toParent() -> Connection {
-        .ini
-        )
+    func toAPIModel() -> Connection {
+        Connection(senderId: from,
+                   receiverId: to,
+                   receiverQualifiedId: qualifiedTo,
+                   conversationId: conversationID,
+                   qualifiedConversationId: qualifiedConversationID,
+                   lastUpdate: lastUpdate,
+                   status: status)
     }
 }
 

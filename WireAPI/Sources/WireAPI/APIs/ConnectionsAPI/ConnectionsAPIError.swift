@@ -18,10 +18,12 @@
 
 import Foundation
 
-public protocol ConnectionsAPI {
+/// Errors originating from `ConnectionsAPI`.
 
-    /// Fetch all connections .
+public enum ConnectionsAPIError: Error {
 
-    func getConnections(userId: UUID, domain: String?) async throws -> Conn
+    /// Invalid size or start
+
+    case invalidParameters
 
 }
