@@ -16,31 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
-import XCTest
+import Foundation
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
+/// Errors originating from `TeamRepository`.
 
-    // MARK: - Life cycle
+enum TeamRepositoryError: Error {
 
-    public init() {}
+    /// Failed to fetch data from the server.
 
-    // MARK: - selfUser
+    case failedToFetchRemotely(Error)
 
-    public var selfUser_Invocations: [Void] = []
-    public var selfUser_MockMethod: (() -> ZMUser)?
-    public var selfUser_MockValue: ZMUser?
+    /// The local team instance was not found in the database.
 
-    public func selfUser() -> ZMUser {
-        selfUser_Invocations.append(())
-
-        if let mock = selfUser_MockMethod {
-            return mock()
-        } else if let mock = selfUser_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `selfUser`")
-        }
-    }
+    case teamNotFoundLocally
 
 }

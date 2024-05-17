@@ -18,8 +18,8 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// An API access object for endpoints concerning teams.
-
 public protocol TeamsAPI {
 
     /// Get the team metadata for a specific team.
