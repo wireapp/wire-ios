@@ -18,7 +18,13 @@
 
 import Foundation
 
-/// Abstracts accessing specific date/time values like `.now` in order to be mockable in unit tests.
-public protocol DateProviding {
-    var now: Date { get }
+extension UserDefaults {
+
+    public func value<KeyType: NativelySupportedUserDefaultsKey>(for key: KeyType) -> KeyType.ValueType? {
+        value(forKey: key.rawValue) as? KeyType.ValueType
+    }
+
+    public func setValue<KeyType: NativelySupportedUserDefaultsKey>(_ value: KeyType.ValueType, for key: KeyType) {
+        setValue(value, forKey: key.rawValue)
+    }
 }
