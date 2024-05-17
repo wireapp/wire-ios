@@ -49,15 +49,18 @@ protocol TeamRepositoryProtocol {
 final class TeamRepository: TeamRepositoryProtocol {
 
     private let selfTeamID: UUID
+    private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
     private let context: NSManagedObjectContext
 
     init(
         selfTeamID: UUID,
+        userRepository: any UserRepositoryProtocol,
         teamsAPI: any TeamsAPI,
         context: NSManagedObjectContext
     ) {
         self.selfTeamID = selfTeamID
+        self.userRepository = userRepository
         self.teamsAPI = teamsAPI
         self.context = context
     }
@@ -78,13 +81,13 @@ final class TeamRepository: TeamRepositoryProtocol {
     }
 
     private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
-        await context.perform { [context] in
+        await context.perform { [context, userRepository] in
             let team = WireDataModel.Team.fetchOrCreate(
                 with: teamAPIModel.id,
                 in: context
             )
 
-            let selfUser = ZMUser.selfUser(in: context)
+            let selfUser = userRepository.fetchSelfUser()
 
             _ = WireDataModel.Member.getOrUpdateMember(
                 for: selfUser,
@@ -221,8 +224,8 @@ final class TeamRepository: TeamRepositoryProtocol {
     // MARK: - Fetch self legalhold status
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
-        let selfUserID: UUID = await context.perform { [context] in
-            ZMUser.selfUser(in: context).remoteIdentifier
+        let selfUserID: UUID = await context.perform { [context, userRepository] in
+            userRepository.fetchSelfUser().remoteIdentifier
         }
 
         return try await teamsAPI.getLegalholdStatus(

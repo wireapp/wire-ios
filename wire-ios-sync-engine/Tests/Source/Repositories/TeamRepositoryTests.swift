@@ -20,11 +20,13 @@ import WireAPI
 import WireAPISupport
 import WireDataModelSupport
 @testable import WireSyncEngine
+import WireSyncEngineSupport
 import XCTest
 
 final class TeamRepositoryTests: XCTestCase {
 
     var sut: TeamRepository!
+    var userRespository: MockUserRepositoryProtocol!
     var teamsAPI: MockTeamsAPI!
 
     var stack: CoreDataStack!
@@ -38,16 +40,29 @@ final class TeamRepositoryTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
+        userRespository = MockUserRepositoryProtocol()
         teamsAPI = MockTeamsAPI()
         sut = TeamRepository(
             selfTeamID: Scaffolding.selfTeamID,
+            userRepository: userRespository,
             teamsAPI: teamsAPI,
             context: context
         )
+
+        let selfUser = await context.perform { [context, modelHelper] in
+            return modelHelper.createSelfUser(
+                id: Scaffolding.selfUserID,
+                in: context
+            )
+        }
+
+        userRespository.fetchSelfUser_MockValue = selfUser
+
     }
 
     override func tearDown() async throws {
         stack = nil
+        userRespository = nil
         teamsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -220,14 +235,6 @@ final class TeamRepositoryTests: XCTestCase {
     }
 
     func testFetchSelfLegalholdStatus() async throws {
-        // Given
-        _ = await context.perform { [context, modelHelper] in
-            modelHelper.createSelfUser(
-                id: Scaffolding.selfUserID,
-                in: context
-            )
-        }
-
         // Mock
         teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
 
