@@ -58,7 +58,6 @@
       "skippedTests" : [
         "AvailabilityTests",
         "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",
-        "IsTypingTests\/testThatItSendsTypingNotifications()",
         "SessionManagerTests\/testThatItMarksConversationsAsRead()",
         "UserRichProfileIntegrationTests\/testThatItHandlesErrorWhenUpdatingRichInfo()",
         "UserTests"

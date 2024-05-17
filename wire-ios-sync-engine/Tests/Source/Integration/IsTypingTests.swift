@@ -53,7 +53,6 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
     // MARK: - Tests
 
-    // TODO [WPB-9200]: enable this test again
     func testThatItSendsTypingNotifications() throws {
         // Given
         XCTAssertTrue(login())
