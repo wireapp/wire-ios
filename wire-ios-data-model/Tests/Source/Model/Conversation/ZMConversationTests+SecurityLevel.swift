@@ -520,7 +520,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
             let mainTeam = Team.fetchOrCreate(
-                with: UUID.create(),
+                with: UUID(),
                 in: self.syncMOC
             )
 
