@@ -446,6 +446,33 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
+public class MockSecurityClassificationProviding: SecurityClassificationProviding {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - classification
+
+    public var classificationUsersConversationDomain_Invocations: [(users: [UserType], conversationDomain: String?)] = []
+    public var classificationUsersConversationDomain_MockMethod: (([UserType], String?) -> SecurityClassification?)?
+    public var classificationUsersConversationDomain_MockValue: SecurityClassification??
+
+    public func classification(users: [UserType], conversationDomain: String?) -> SecurityClassification? {
+        classificationUsersConversationDomain_Invocations.append((users: users, conversationDomain: conversationDomain))
+
+        if let mock = classificationUsersConversationDomain_MockMethod {
+            return mock(users, conversationDomain)
+        } else if let mock = classificationUsersConversationDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `classificationUsersConversationDomain`")
+        }
+    }
+
+}
+
 public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
 
     // MARK: - Life cycle
@@ -825,6 +852,33 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
+public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - calculateSupportedProtocols
+
+    public var calculateSupportedProtocols_Invocations: [Void] = []
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
+
+    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+        calculateSupportedProtocols_Invocations.append(())
+
+        if let mock = calculateSupportedProtocols_MockMethod {
+            return mock()
+        } else if let mock = calculateSupportedProtocols_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `calculateSupportedProtocols`")
+        }
+    }
+
+}
+
 public class MockUserProfile: UserProfile {
 
     // MARK: - Life cycle
@@ -1012,6 +1066,33 @@ public class MockUserProfile: UserProfile {
             return mock
         } else {
             fatalError("no mock for `addObserver`")
+        }
+    }
+
+}
+
+public class MockUserRepositoryInterface: UserRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - selfUser
+
+    public var selfUser_Invocations: [Void] = []
+    public var selfUser_MockMethod: (() -> ZMUser)?
+    public var selfUser_MockValue: ZMUser?
+
+    public func selfUser() -> ZMUser {
+        selfUser_Invocations.append(())
+
+        if let mock = selfUser_MockMethod {
+            return mock()
+        } else if let mock = selfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUser`")
         }
     }
 
