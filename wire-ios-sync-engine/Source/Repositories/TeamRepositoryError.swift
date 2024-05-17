@@ -17,12 +17,17 @@
 //
 
 import Foundation
-import WireSystem
 
-extension DateProviding where Self == MockStaticDateProvider {
-    public static func mock(_ now: Date) -> Self { .init(now: now) }
-}
+/// Errors originating from `TeamRepository`.
 
-public struct MockStaticDateProvider: DateProviding {
-    public var now = Date.now
+enum TeamRepositoryError: Error {
+
+    /// Failed to fetch data from the server.
+
+    case failedToFetchRemotely(Error)
+
+    /// The local team instance was not found in the database.
+
+    case teamNotFoundLocally
+
 }

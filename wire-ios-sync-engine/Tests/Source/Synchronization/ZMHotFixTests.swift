@@ -138,7 +138,10 @@ final class ZMHotFixTests_Integration: MessagingTest {
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let team = Team.fetchOrCreate(with: UUID(), create: true, in: self.syncMOC, created: nil)!
+            let team = Team.fetchOrCreate(
+                with: UUID(),
+                in: self.syncMOC
+            )
             let member = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
             member.needsToBeUpdatedFromBackend = false
 

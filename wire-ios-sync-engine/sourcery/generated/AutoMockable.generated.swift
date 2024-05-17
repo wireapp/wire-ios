@@ -1119,28 +1119,28 @@ public class MockUserProfile: UserProfile {
 
 }
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
+public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - selfUser
+    // MARK: - fetchSelfUser
 
-    public var selfUser_Invocations: [Void] = []
-    public var selfUser_MockMethod: (() -> ZMUser)?
-    public var selfUser_MockValue: ZMUser?
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
 
-    public func selfUser() -> ZMUser {
-        selfUser_Invocations.append(())
+    public func fetchSelfUser() -> ZMUser {
+        fetchSelfUser_Invocations.append(())
 
-        if let mock = selfUser_MockMethod {
+        if let mock = fetchSelfUser_MockMethod {
             return mock()
-        } else if let mock = selfUser_MockValue {
+        } else if let mock = fetchSelfUser_MockValue {
             return mock
         } else {
-            fatalError("no mock for `selfUser`")
+            fatalError("no mock for `fetchSelfUser`")
         }
     }
 
