@@ -17,12 +17,30 @@
 //
 
 import Foundation
-import WireSystem
 
-extension DateProviding where Self == MockStaticDateProvider {
-    public static func mock(_ now: Date) -> Self { .init(now: now) }
+// sourcery: AutoMockable
+public protocol UserRepositoryProtocol {
+
+    func fetchSelfUser() -> ZMUser
+
 }
 
-public struct MockStaticDateProvider: DateProviding {
-    public var now = Date.now
+public final class UserRepository: UserRepositoryProtocol {
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: - Methods
+
+    public func fetchSelfUser() -> ZMUser {
+        return ZMUser.selfUser(in: context)
+    }
+
 }

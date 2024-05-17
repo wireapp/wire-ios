@@ -17,13 +17,17 @@
 //
 
 import Foundation
-import WireCommonComponents
-import WireSyncEngine
 
-extension AppDelegate {
+/// Errors originating from `TeamRepository`.
 
-    /// @return YES if network is offline
-    static var isOffline: Bool {
-        return .unreachable == NetworkStatus.shared.reachability
-    }
+enum TeamRepositoryError: Error {
+
+    /// Failed to fetch data from the server.
+
+    case failedToFetchRemotely(Error)
+
+    /// The local team instance was not found in the database.
+
+    case teamNotFoundLocally
+
 }
