@@ -66,10 +66,8 @@ extension PKPushRegistry: PushRegistry {}
     public func configureUserNotifications() {
         guard (application as? NotificationSettingsRegistrable)?.shouldRegisterUserNotificationSettings ?? true else { return }
         notificationCenter.setNotificationCategories(PushNotificationCategory.allCategories)
+        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, _ in })
         notificationCenter.delegate = self
-        Task {
-            try? await notificationCenter.requestAuthorization(options: [.alert, .badge, .sound])
-        }
     }
 
     func handleNotification(with userInfo: NotificationUserInfo, block: @escaping (ZMUserSession) -> Void) {
