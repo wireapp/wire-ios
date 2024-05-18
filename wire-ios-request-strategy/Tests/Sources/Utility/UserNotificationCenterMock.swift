@@ -40,6 +40,11 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstrac
         fatalError("not implemented yet")
     }
 
+    @available(*, noasync)
+    public func getNotificationSettings(completionHandler: @escaping (UNNotificationSettings) -> Void) {
+        fatalError("not implemented yet")
+    }
+
     public func setNotificationCategories(_ categories: Set<UNNotificationCategory>) {
         registeredNotificationCategories.formUnion(categories)
     }
@@ -49,7 +54,18 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstrac
         return true
     }
 
+    @available(*, noasync)
+    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        requestedAuthorizationOptions.insert(options)
+        completionHandler(true, nil)
+    }
+
     public func add(_ request: UNNotificationRequest) async throws {
+        scheduledRequests.append(request)
+    }
+
+    @available(*, noasync)
+    public func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?) {
         scheduledRequests.append(request)
     }
 
