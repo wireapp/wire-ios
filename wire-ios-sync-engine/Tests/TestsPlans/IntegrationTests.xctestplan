@@ -67,7 +67,6 @@
     {
       "skippedTests" : [
         "AvailabilityTests",
-        "IsTypingTests\/testThatItSendsTypingNotifications()",
         "SessionManagerTests\/testThatItMarksConversationsAsRead()",
         "UserRichProfileIntegrationTests"
       ],
