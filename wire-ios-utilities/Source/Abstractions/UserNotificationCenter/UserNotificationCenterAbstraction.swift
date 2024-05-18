@@ -18,7 +18,7 @@
 
 import UserNotifications
 
-// sourcery: AutoMockable
+// TODO [WPB-9200]: let Sourcery create the mock // sourcery: AutoMockable
 /// An abstraction of the `UNUserNotificationCenter` object to facilitate mocking for unit tests.
 public protocol UserNotificationCenterAbstraction {
 
@@ -26,6 +26,8 @@ public protocol UserNotificationCenterAbstraction {
     var delegate: UNUserNotificationCenterDelegate? { get set }
 
     func notificationSettings() async -> UNNotificationSettings
+    @available(*, noasync)
+    func getNotificationSettings(completionHandler: @escaping (UNNotificationSettings) -> Void)
 
     /// Registers the notification types and the custom actions they support.
     func setNotificationCategories(_ categories: Set<UNNotificationCategory>)
@@ -33,9 +35,17 @@ public protocol UserNotificationCenterAbstraction {
     /// Requests authorization to use notifications.
     func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool
     func requestAuthorization() async throws -> Bool
+    @available(*, noasync)
+    func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void)
+    @available(*, noasync)
+    func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void)
 
     /// Schedules the request to display a local notification.
     func add(_ request: UNNotificationRequest) async throws
+    @available(*, noasync)
+    func add(_ request: UNNotificationRequest)
+    @available(*, noasync)
+    func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?)
 
     /// Unschedules the specified notification requests.
     func removePendingNotificationRequests(withIdentifiers identifiers: [String])
@@ -48,5 +58,15 @@ extension UserNotificationCenterAbstraction {
 
     public func requestAuthorization() async throws -> Bool {
         try await requestAuthorization(options: [])
+    }
+
+    @available(*, noasync)
+    public func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        requestAuthorization(options: [], completionHandler: completionHandler)
+    }
+
+    @available(*, noasync)
+    public func add(_ request: UNNotificationRequest) {
+        add(request, withCompletionHandler: nil)
     }
 }

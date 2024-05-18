@@ -89,7 +89,7 @@ final class BackupRestoreController: NSObject {
         from url: URL
     ) {
         guard let sessionManager = SessionManager.shared,
-              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "restore backup") else {
+              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
             return
         }
         target.isLoadingViewVisible = true

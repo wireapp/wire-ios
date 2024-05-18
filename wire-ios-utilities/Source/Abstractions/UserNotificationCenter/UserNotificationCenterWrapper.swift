@@ -35,6 +35,11 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
         await userNotificationCenter.notificationSettings()
     }
 
+    @available(*, noasync)
+    public func getNotificationSettings(completionHandler: @escaping (UNNotificationSettings) -> Void) {
+        userNotificationCenter.getNotificationSettings(completionHandler: completionHandler)
+    }
+
     public func setNotificationCategories(_ categories: Set<UNNotificationCategory>) {
         userNotificationCenter.setNotificationCategories(categories)
     }
@@ -43,8 +48,18 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
         try await userNotificationCenter.requestAuthorization(options: options)
     }
 
+    @available(*, noasync)
+    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+        userNotificationCenter.requestAuthorization(options: options, completionHandler: completionHandler)
+    }
+
     public func add(_ request: UNNotificationRequest) async throws {
         try await userNotificationCenter.add(request)
+    }
+
+    @available(*, noasync)
+    public func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?) {
+        userNotificationCenter.add(request, withCompletionHandler: completionHandler)
     }
 
     public func removePendingNotificationRequests(withIdentifiers identifiers: [String]) {

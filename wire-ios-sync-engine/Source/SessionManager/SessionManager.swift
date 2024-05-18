@@ -246,7 +246,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
 
-    var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
+    var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
     var authenticatedSessionFactory: AuthenticatedSessionFactory
     let unauthenticatedSessionFactory: UnauthenticatedSessionFactory

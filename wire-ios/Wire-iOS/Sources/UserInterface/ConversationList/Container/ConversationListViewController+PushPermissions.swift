@@ -20,62 +20,32 @@ import UIKit
 import UserNotifications
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
-    func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+
+    func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController) {
+        closePushPermissionDeniedDialog()
+    }
+
+    func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()
     }
 }
 
 extension ConversationListViewController {
 
-    func closePushPermissionDialogIfNotNeeded() {
-        UNUserNotificationCenter.current().checkPushesDisabled({ pushesDisabled in
-            if !pushesDisabled,
-                self.pushPermissionDeniedViewController != nil {
-                DispatchQueue.main.async {
-                    self.closePushPermissionDeniedDialog()
-                }
-            }
-        })
-    }
+    private func closePushPermissionDeniedDialog() {
+        guard pushPermissionDeniedViewController === presentedViewController else {
+            return assertionFailure()
+        }
 
-    func closePushPermissionDeniedDialog() {
-        pushPermissionDeniedViewController?.willMove(toParent: nil)
-        pushPermissionDeniedViewController?.view.removeFromSuperview()
-        pushPermissionDeniedViewController?.removeFromParent()
-        pushPermissionDeniedViewController = nil
-
-        contentContainer.alpha = 1.0
+        dismiss(animated: true)
     }
 
     func showPermissionDeniedViewController() {
-        observeApplicationDidBecomeActive()
 
-        let permissions = PermissionDeniedViewController.pushDeniedViewController()
-
-        permissions.delegate = self
-
-        addToSelf(permissions)
-
-        permissions.view.translatesAutoresizingMaskIntoConstraints = false
-        permissions.view.fitIn(view: view)
-        pushPermissionDeniedViewController = permissions
-
-        concealContentContainer()
-    }
-
-    @objc func applicationDidBecomeActive(_ notif: Notification) {
-        closePushPermissionDialogIfNotNeeded()
-    }
-
-    private func observeApplicationDidBecomeActive() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecomeActive(_:)),
-                                               name: UIApplication.didBecomeActiveNotification,
-                                               object: nil)
-
-    }
-
-    private func concealContentContainer() {
-        contentContainer.alpha = 0
+        let viewController = PermissionDeniedViewController.pushDeniedViewController()
+        viewController.delegate = self
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true)
+        pushPermissionDeniedViewController = viewController
     }
 }

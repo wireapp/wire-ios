@@ -225,7 +225,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // when
-        let activity = factory.startBackgroundActivity(withName: "Activity 1")!
+        let activity = factory.startBackgroundActivity(name: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
         factory.endBackgroundActivity(activity)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -243,7 +243,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // when
-        let activity = factory.startBackgroundActivity(withName: "Activity 1")!
+        let activity = factory.startBackgroundActivity(name: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -263,7 +263,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // when
-        _ = factory.startBackgroundActivity(withName: "Activity 1")!
+        _ = factory.startBackgroundActivity(name: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
         XCTAssertNotNil(sut.managedObjectContext.databaseKey)
 

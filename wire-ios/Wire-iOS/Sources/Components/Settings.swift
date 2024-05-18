@@ -40,7 +40,6 @@ extension Notification.Name {
 enum SettingKey: String, CaseIterable {
     case disableMarkdown = "UserDefaultDisableMarkdown"
     case chatHeadsDisabled = "ZDevOptionChatHeadsDisabled"
-    case lastPushAlertDate = "LastPushAlertDate"
     case voIPNotificationsOnly = "VoIPNotificationsOnly"
     case lastViewedConversation = "LastViewedConversation"
     case colorScheme = "ColorScheme"
