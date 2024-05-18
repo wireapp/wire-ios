@@ -32,7 +32,8 @@ let package = Package(
             name: "WireAPI"
         ),
         .target(
-            name: "WireAPISupport"
+            name: "WireAPISupport",
+            dependencies: ["WireAPI"]
         ),
         .testTarget(
             name: "WireAPITests",

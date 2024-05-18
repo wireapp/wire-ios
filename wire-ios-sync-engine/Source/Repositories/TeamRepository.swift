@@ -224,7 +224,7 @@ final class TeamRepository: TeamRepositoryProtocol {
     // MARK: - Fetch self legalhold status
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
-        let selfUserID: UUID = await context.perform { [context, userRepository] in
+        let selfUserID: UUID = await context.perform { [userRepository] in
             userRepository.fetchSelfUser().remoteIdentifier
         }
 

@@ -52,13 +52,12 @@ import UserNotifications
     func scheduleLocalNotification(_ note: ZMLocalNotification) {
         Logging.push.safePublic("Scheduling local notification with id=\(note.id)")
 
-        Task {
-            do {
-                try await notificationCenter.add(note.request)
-                Logging.push.safePublic("Successfully scheduled local notification")
-            } catch {
+        notificationCenter.add(note.request) { error in
+            if let error {
                 Logging.push.safePublic("Error scheduling local notification")
                 Logging.push.error("Scheduling Error: \(error)")
+            } else {
+                Logging.push.safePublic("Successfully scheduled local notification")
             }
         }
     }
