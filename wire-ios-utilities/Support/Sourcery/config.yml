@@ -6,4 +6,4 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["WireUtilities"]
-  autoMockableImports: []
+  autoMockableImports: ["UserNotifications"]
