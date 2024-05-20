@@ -17,14 +17,16 @@
 //
 
 import Foundation
-@testable import Wire
+import WireCommonComponents
 import XCTest
 
-final class BackupViewControllerTests: ZMSnapshotTestCase {
+@testable import Wire
+
+final class BackupViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.snapshotBackgroundColor = SemanticColors.View.backgroundDefault
+        FontScheme.configure(with: .large)
     }
 
     func testInitialState() {
@@ -39,6 +41,8 @@ final class BackupViewControllerTests: ZMSnapshotTestCase {
 
     private func makeViewController() -> BackupViewController {
         let backupSource = MockBackupSource()
-        return BackupViewController(backupSource: backupSource)
+        let vc = BackupViewController(backupSource: backupSource)
+        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
+        return vc
     }
 }
