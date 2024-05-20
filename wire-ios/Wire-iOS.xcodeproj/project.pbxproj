@@ -1377,6 +1377,9 @@
 		E9B8EB792A0CEB690056E417 /* MessageReactionsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */; };
 		E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */; };
 		E9B8EB802A0CEE160056E417 /* ReactionToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */; };
+		E9C014EB2BFBCB11002574FC /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EA2BFBCB11002574FC /* PickerView.swift */; };
+		E9C014ED2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */; };
+		E9C014EF2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */; };
 		E9C0B3532B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */; };
 		E9C0B3552B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3542B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift */; };
 		E9C0B3572B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3562B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift */; };
@@ -3472,6 +3475,9 @@
 		E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCellDescription.swift; sourceTree = "<group>"; };
 		E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCell.swift; sourceTree = "<group>"; };
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggle.swift; sourceTree = "<group>"; };
+		E9C014EA2BFBCB11002574FC /* PickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerView.swift; sourceTree = "<group>"; };
+		E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EphemeralKeyboardViewController+UIAlertController.swift"; sourceTree = "<group>"; };
+		E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EphemeralKeyboardViewController+InputBarConversation.swift"; sourceTree = "<group>"; };
 		E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenamedSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3542B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationNewDeviceSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3562B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCell.swift; sourceTree = "<group>"; };
@@ -6821,7 +6827,7 @@
 				01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */,
 				BFBDDBC51DB0D51C00BEED02 /* ConversationInputBarButtonState.swift */,
 				EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */,
-				BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */,
+				E9C014E92BFBCAD1002574FC /* EphemeralKeyboardViewController */,
 				BF732A691D9C114D003077DB /* Emoji */,
 				A936A37E23D202F600136469 /* InvisibleInputAccessoryView.swift */,
 				870A8C6A1CF719C400874B16 /* RecordingDotView.swift */,
@@ -7955,6 +7961,17 @@
 				E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */,
 			);
 			path = Reactions;
+			sourceTree = "<group>";
+		};
+		E9C014E92BFBCAD1002574FC /* EphemeralKeyboardViewController */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */,
+				E9C014EA2BFBCB11002574FC /* PickerView.swift */,
+				E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */,
+				E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */,
+			);
+			path = EphemeralKeyboardViewController;
 			sourceTree = "<group>";
 		};
 		E9E6F09C2861E549004A4BD6 /* Styles */ = {
@@ -9267,6 +9284,7 @@
 				E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */,
 				D56A2D46207DFE8700DB59F5 /* UIAlertController+ImportWarning.swift in Sources */,
 				EECA90AC28744A060024B301 /* DeveloperFlagsViewModel.swift in Sources */,
+				E9C014EF2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift in Sources */,
 				EF3CB75321DD0F0C0030C3E8 /* ConversationViewController+ParticipantsPopover.swift in Sources */,
 				BF0BDF881DABEF3B003C61DE /* DestructionCountdownView.swift in Sources */,
 				87B8C33F1DF9788B0015EC89 /* BrowserOpening.swift in Sources */,
@@ -9542,6 +9560,7 @@
 				F15650DD21DD10DD00210504 /* ThreeDotsLoadingView.swift in Sources */,
 				871067401C0DC5570035603B /* SettingsPropertyTextValueCellDescriptor.swift in Sources */,
 				8784AE3E1FC2DE5300AAEAB8 /* MediaManagerLoader.swift in Sources */,
+				E9C014ED2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift in Sources */,
 				1695B9D82B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift in Sources */,
 				634497D924A492140000131D /* CallParticipantDetailView.swift in Sources */,
 				A95E561123FBF0C0005F8E8D /* UIViewControllerContextTransitioning+Helper.swift in Sources */,
@@ -10242,6 +10261,7 @@
 				5EF4A6E220F3C4A300A9EF22 /* GiphyCollectionViewCell.swift in Sources */,
 				6372AAA72492719100C5F307 /* GridCell.swift in Sources */,
 				EFB23D0A1FC852380055B866 /* TextFieldValidator.swift in Sources */,
+				E9C014EB2BFBCB11002574FC /* PickerView.swift in Sources */,
 				EEF28EEA1F1613DA007642E2 /* MarkdownBarView.swift in Sources */,
 				F12EAF73214FB6FF00B00AD9 /* MentionsHandler.swift in Sources */,
 				BF5DF5C320F4A51F002BCB67 /* GroupParticipantsDetailViewController.swift in Sources */,
