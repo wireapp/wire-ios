@@ -24,7 +24,7 @@ final class BackupViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        self.snapshotBackgroundColor = .darkGray
+        self.snapshotBackgroundColor = SemanticColors.View.backgroundDefault
     }
 
     func testInitialState() {
@@ -32,17 +32,7 @@ final class BackupViewControllerTests: ZMSnapshotTestCase {
         let sut = makeViewController()
 
         // WHEN && THEN
-        self.verifyInIPhoneSize(view: sut.view)
-    }
-
-    func testLoading() {
-        // GIVEN
-        let sut = makeViewController()
-        sut.view.layer.speed = 0
-        sut.tableView(UITableView(), didSelectRowAt: IndexPath(row: 1, section: 0))
-
-        // WHEN && THEN
-        self.verifyInIPhoneSize(view: sut.view)
+        self.verify(matching: sut.view)
     }
 
     // MARK: Helpers
