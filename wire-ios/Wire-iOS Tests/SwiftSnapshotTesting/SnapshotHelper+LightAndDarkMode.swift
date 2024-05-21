@@ -102,6 +102,15 @@ extension SnapshotHelper {
                line: line)
     }
 
+    /// Verifies the appearance of a view in dark mode.
+    ///
+    /// - Parameters:
+    ///   - createSut: A closure that creates and returns the view controller to be tested.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
+
     func verifyViewInDarkScheme(
         createSut: () -> UIView,
         name: String? = nil,
@@ -117,6 +126,15 @@ extension SnapshotHelper {
                testName: testName,
                line: line)
     }
+
+    /// Verifies the appearance of a view in light mode.
+    ///
+    /// - Parameters:
+    ///   - createSut: A closure that creates and returns the view controller to be tested.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
 
     func verifyViewInLightScheme(
         createSut: () -> UIView,
