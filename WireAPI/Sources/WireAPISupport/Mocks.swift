@@ -19,5 +19,7 @@
 import Foundation
 
 /// This is just a placeholder to give the compiler some food.
-/// To auto generate mocks via 'sourcery' we use only the plugin configured in `Package.swift`.
+/// To auto generate mocks via 'sourcery' it uses the plugin configured in `Package.swift`.
+/// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+/// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
 enum Mocks { }
