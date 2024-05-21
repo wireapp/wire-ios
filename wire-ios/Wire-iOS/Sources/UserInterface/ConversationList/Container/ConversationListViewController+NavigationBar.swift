@@ -68,6 +68,24 @@ extension ConversationListViewController {
         navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: filterConversationsAction)))
     }
 
+    /// Equally distributes the space on the left and on the right side of the filter bar button item.
+    func adjustRightBarButtonItemsSpace() {
+        guard
+            let rightBarButtonItems = navigationItem.rightBarButtonItems,
+            rightBarButtonItems.count == 3, // new conversation, spacer, filter
+            let newConversationButton = rightBarButtonItems[0].customView,
+            let filterConversationsButton = rightBarButtonItems[2].customView,
+            let titleViewLabel,
+            let window = viewIfLoaded?.window
+        else { return }
+
+        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
+        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
+        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
+        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
+        rightBarButtonItems[1].width = spacerWidth
+    }
+
     // MARK: - Account View
 
     func setupAccountAndLegalHoldBarButtonItems() {

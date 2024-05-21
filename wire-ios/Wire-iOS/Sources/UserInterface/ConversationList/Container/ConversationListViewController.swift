@@ -167,6 +167,11 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         }
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        adjustRightBarButtonItemsSpace()
+    }
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: { _ in
             // we reload on rotation to make sure that the list cells lay themselves out correctly for the new
