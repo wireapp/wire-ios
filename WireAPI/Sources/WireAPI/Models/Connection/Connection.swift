@@ -19,6 +19,7 @@
 import Foundation
 
 public struct Connection: Equatable {
+
     public let senderId: UUID?
     public let receiverId: UUID?
     public let receiverQualifiedId: QualifiedID?
@@ -26,8 +27,4 @@ public struct Connection: Equatable {
     public let qualifiedConversationId: QualifiedID?
     public let lastUpdate: Date
     public let status: ConnectionStatus
-}
-
-public struct ConnectionUpdate: Decodable {
-    let status: ConnectionStatus
 }

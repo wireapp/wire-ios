@@ -28,7 +28,7 @@ struct PaginationRequest: Codable {
     var size: Int?
 }
 
-class ConnectionsAPIV0: ConnectionsAPI {
+class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
     enum Constants {
         static let resourcePath = "/list-connections/"
@@ -40,6 +40,10 @@ class ConnectionsAPIV0: ConnectionsAPI {
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
+    }
+
+    var apiVersion: APIVersion {
+        .v0
     }
 
     func fetchConnections() async throws -> PayloadPager<Connection> {
@@ -130,7 +134,7 @@ struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     }
 }
 
-public enum ConnectionStatus: String, Decodable {
+public enum ConnectionStatus: String, Decodable, Equatable {
 
     case accepted = "accepted"
     case blocked = "blocked"
