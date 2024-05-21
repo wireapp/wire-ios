@@ -26,9 +26,20 @@ struct SourceryPlugin: BuildToolPlugin {
         target: PackagePlugin.Target
     ) async throws -> [PackagePlugin.Command] {
 
-        // TODO: pass config yml
-
         print("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
+
+        // Possible paths where there may be a config file (root of package, target dir.)
+        let configurations: [Path] = [context.package.directory, target.directory]
+            .map { $0.appending(".sourcery.yml") }
+            .filter { FileManager.default.fileExists(atPath: $0.string) }
+
+        // Validate paths list
+        guard
+            validate(configurations: configurations, targetName: target.name),
+            let configuration = configurations.first
+        else {
+            return []
+        }
 
         return [
             .prebuildCommand(
@@ -36,7 +47,7 @@ struct SourceryPlugin: BuildToolPlugin {
                 executable: try context.tool(named: "sourcery").path,
                 arguments: [
                     "--config",
-                    context.package.directory.appending(subpath: "Sourcery/config.yml").string,
+                    configuration.string,
                     "--cacheBasePath",
                     context.pluginWorkDirectory
                 ],
@@ -46,5 +57,20 @@ struct SourceryPlugin: BuildToolPlugin {
                 outputFilesDirectory: context.pluginWorkDirectory
             )
         ]
+    }
+
+    func validate(configurations: [Path], targetName: String) -> Bool {
+        guard !configurations.isEmpty else {
+            Diagnostics.error(
+"""
+No configurations found for target \(targetName). If you would like to generate sources for this \
+target include a `.sourcery.yml` in the target's source directory, or include a shared `.sourcery.yml` at the \
+package's root.
+"""
+            )
+            return false
+        }
+
+        return true
     }
 }
