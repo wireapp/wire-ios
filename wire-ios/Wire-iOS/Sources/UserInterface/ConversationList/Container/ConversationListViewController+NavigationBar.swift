@@ -24,11 +24,11 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-        setupAccountAndLegalHoldBarButtonItems()
+        setupLeftNavigationBarButtons()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        setupAccountAndLegalHoldBarButtonItems()
+        setupLeftNavigationBarButtons()
     }
 
     // MARK: - Title View
@@ -53,7 +53,6 @@ extension ConversationListViewController {
     func setupRightNavigationBarButtons() {
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
-        spacer.width = 29
 
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
@@ -88,7 +87,7 @@ extension ConversationListViewController {
 
     // MARK: - Account View
 
-    func setupAccountAndLegalHoldBarButtonItems() {
+    func setupLeftNavigationBarButtons() {
         let accountView = UIBarButtonItem(customView: createAccountView())
         var leftBarButtonItems = [accountView]
 

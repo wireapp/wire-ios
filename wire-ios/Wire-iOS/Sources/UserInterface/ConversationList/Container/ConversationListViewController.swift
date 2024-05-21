@@ -115,7 +115,7 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         setupTitleView()
-        setupAccountAndLegalHoldBarButtonItems()
+        setupLeftNavigationBarButtons()
         setupRightNavigationBarButtons()
 
         viewModel.viewController = self
@@ -317,13 +317,11 @@ final class ConversationListViewController: UIViewController {
 
 // MARK: - ViewModel Delegate
 
-extension ConversationListViewController {
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
-    /*
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         setupTitleView()
     }
-     */
 }
 
 // MARK: - UITabBarControllerDelegate
