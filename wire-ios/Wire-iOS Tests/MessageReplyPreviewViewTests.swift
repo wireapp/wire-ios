@@ -43,7 +43,7 @@ extension UIView {
 
 final class MessageReplyPreviewViewTests: XCTestCase {
 
-    let helper = SnapshotHelper()
+    private let helper = SnapshotHelper()
 
     // MARK: - setUp
 

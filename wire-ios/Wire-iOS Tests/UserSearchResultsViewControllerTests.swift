@@ -24,12 +24,12 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
-    var sut: UserSearchResultsViewController!
-    var serviceUser: MockServiceUserType!
-    var selfUser: MockUserType!
-    var otherUser: MockUserType!
+    private var sut: UserSearchResultsViewController!
+    private var serviceUser: MockServiceUserType!
+    private var selfUser: MockUserType!
+    private var otherUser: MockUserType!
 
-    let helper = SnapshotHelper()
+    private let helper = SnapshotHelper()
 
     // MARK: setUp
 

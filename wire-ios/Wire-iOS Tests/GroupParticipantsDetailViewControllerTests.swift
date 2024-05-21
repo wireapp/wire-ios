@@ -17,8 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
@@ -40,8 +41,8 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: BaseSnapshotTestCase {
 
-    var userSession: UserSessionMock!
-    let helper = SnapshotHelper()
+    private var userSession: UserSessionMock!
+    private let helper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()

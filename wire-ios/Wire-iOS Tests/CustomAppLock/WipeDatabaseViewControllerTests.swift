@@ -26,8 +26,8 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: WipeDatabaseViewController!
-    let helper = SnapshotHelper()
+    private var sut: WipeDatabaseViewController!
+    private let helper = SnapshotHelper()
 
     // MARK: - setUp
 

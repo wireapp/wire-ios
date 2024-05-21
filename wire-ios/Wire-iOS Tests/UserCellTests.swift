@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireUtilities
 import XCTest
+
+@testable import Wire
 
 final class UserCellTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
-    var sut: UserCell!
-    var teamID = UUID()
-    var conversation: MockGroupDetailsConversation!
-    var mockUser: MockUserType!
-    let helper = SnapshotHelper()
+    private var sut: UserCell!
+    private var teamID = UUID()
+    private var conversation: MockGroupDetailsConversation!
+    private var mockUser: MockUserType!
+    private let helper = SnapshotHelper()
 
     // MARK: - setUp
 

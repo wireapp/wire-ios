@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class GroupConversationCellTests: XCTestCase {
 
-    var sut: GroupConversationCell!
-    var otherUser: MockUserType!
-    let helper = SnapshotHelper()
+    private var sut: GroupConversationCell!
+    private var otherUser: MockUserType!
+    private let helper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()

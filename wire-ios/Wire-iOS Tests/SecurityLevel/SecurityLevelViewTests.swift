@@ -17,16 +17,17 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import WireUtilities
 import XCTest
+
+@testable import Wire
 
 final class SecurityLevelViewTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
-    let helper = SnapshotHelper()
+    private let helper = SnapshotHelper()
 
     // MARK: - setUp
 

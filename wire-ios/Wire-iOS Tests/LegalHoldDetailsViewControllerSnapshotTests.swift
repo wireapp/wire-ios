@@ -26,10 +26,10 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: LegalHoldDetailsViewController!
-    var selfUser: MockUserType!
-    var userSession: UserSessionMock!
-    let helper = SnapshotHelper()
+    private var sut: LegalHoldDetailsViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private let helper = SnapshotHelper()
 
     // MARK: - setUp
 
