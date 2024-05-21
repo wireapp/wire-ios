@@ -45,7 +45,6 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         }
 
         let uuid = UUID.create()
-        let test = MockOTREntity(messageData: GenericMessage(content: Confirmation(messageId: uuid)), conversation: groupConversation, context: syncMOC)
         let message = GenericMessageEntity(
             message: GenericMessage(content: Confirmation(messageId: uuid)),
             context: syncMOC,
