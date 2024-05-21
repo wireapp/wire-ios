@@ -23,6 +23,7 @@ final class GroupConversationCellTests: XCTestCase {
 
     var sut: GroupConversationCell!
     var otherUser: MockUserType!
+    let helper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -66,7 +67,7 @@ final class GroupConversationCellTests: XCTestCase {
 
         sut.configure(conversation: conversation)
 
-        verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        helper.verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
     }
 
     func testOneToOneConversation() {

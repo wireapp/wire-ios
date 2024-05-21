@@ -22,6 +22,7 @@ import XCTest
 final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
 
     var sut: ContactsCell!
+    let helper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -38,14 +39,14 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .invite
 
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testForOpenButton() {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .open
 
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testForOpenButtonWithALongUsername() {
@@ -54,7 +55,7 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
         sut.user = user
         sut.action = .open
 
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testForNoSubtitle() {
@@ -64,6 +65,6 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
         sut.user = user
         sut.action = .open
 
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 }

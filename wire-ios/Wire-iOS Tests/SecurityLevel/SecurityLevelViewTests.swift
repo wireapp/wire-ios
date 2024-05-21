@@ -26,6 +26,7 @@ final class SecurityLevelViewTests: BaseSnapshotTestCase {
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
+    let helper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -48,16 +49,16 @@ final class SecurityLevelViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testThatItRendersWithClassified() {
         sut.configure(with: .classified)
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testThatItDoesNotRenderWithNone() {
         sut.configure(with: .none)
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 }
