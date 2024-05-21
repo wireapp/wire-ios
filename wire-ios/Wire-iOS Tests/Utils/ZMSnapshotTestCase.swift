@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import FBSnapshotTestCase
 import UIKit
 @testable import Wire
 import WireCommonComponents
+import XCTest
 
-class ZMSnapshotTestCase: FBSnapshotTestCase {
-
-    typealias ConfigurationWithDeviceType = (_ view: UIView, _ isPad: Bool) -> Void
-    typealias Configuration = (_ view: UIView) -> Void
+class ZMSnapshotTestCase: XCTestCase {
 
     var uiMOC: NSManagedObjectContext!
     var coreDataStack: CoreDataStack!
@@ -53,11 +50,6 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         UIView.setAnimationsEnabled(false)
         accentColor = .red
         snapshotBackgroundColor = UIColor.clear
-
-        // Enable when the design of the view has changed in order to update the reference snapshots
-
-        recordMode = ProcessInfo.processInfo.environment["RECORDING_SNAPSHOTS"] == "YES"
-        usesDrawViewHierarchyInRect = true
 
         do {
             documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
