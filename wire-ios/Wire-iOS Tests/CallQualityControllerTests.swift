@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireCommonComponents
 import XCTest
 
-final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+@testable import Wire
+
+final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
     var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
@@ -36,7 +38,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         callConversationProvider = MockCallConversationProvider()
         sut = MockCallQualityController()
         sut.router = router
-
+        FontScheme.configure(with: .large)
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
@@ -78,7 +80,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
     // MARK: - SnapshotTests
     func testSurveyInterface() {
         CallQualityController.resetSurveyMuteFilter()
-        verifyInAllDeviceSizes(view: callQualityViewController.view, configuration: configure)
+        verify(matching: callQualityViewController.view)
     }
 
     // MARK: - CallQualitySurvey Presentation Tests
