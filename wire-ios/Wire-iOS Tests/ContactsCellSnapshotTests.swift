@@ -16,25 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import XCTest
 
 @testable import Wire
 
-final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
+final class ContactsCellSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
 
     private var sut: ContactsCell!
     private let helper = SnapshotHelper()
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
+        FontScheme.configure(with: .large)
         XCTestCase.accentColor = .blue
         sut = ContactsCell()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForInviteButton() {
         sut.user = SwiftMockLoader.mockUsers()[0]
