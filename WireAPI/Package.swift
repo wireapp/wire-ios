@@ -11,6 +11,10 @@ let package = Package(
         .library(
             name: "WireAPI",
             targets: ["WireAPI"]
+        ),
+        .library(
+            name: "WireAPISupport",
+            targets: ["WireAPISupport"]
         )
     ],
     dependencies: [
@@ -27,11 +31,18 @@ let package = Package(
         .target(
             name: "WireAPI"
         ),
+        .target(
+            name: "WireAPISupport",
+            dependencies: ["WireAPI"]
+        ),
         .testTarget(
             name: "WireAPITests",
             dependencies: [
                 "WireAPI",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
             ],
             resources: [
                 .process("Resources")
