@@ -27,7 +27,6 @@ extension SnapshotHelper {
     ///   - line: The invoking line number.
     ///
     /// - Note: This function calls `verifyInDarkScheme` and `verifyInLightScheme` internally to perform the validations for dark and light themes respectively.
-    ///
 
     func verifyInAllColorSchemes(createSut: () -> UIViewController,
                                  file: StaticString = #file,
@@ -47,6 +46,15 @@ extension SnapshotHelper {
                             line: line)
     }
 
+    /// Verifies the appearance of a view controller in dark mode.
+    ///
+    /// - Parameters:
+    ///   - createSut: A closure that creates and returns the view controller to be tested.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
+
     func verifyInDarkScheme(createSut: () -> UIViewController,
                             name: String? = nil,
                             file: StaticString = #file,
@@ -62,6 +70,15 @@ extension SnapshotHelper {
                testName: testName,
                line: line)
     }
+
+    /// Verifies the appearance of a view controller in light mode.
+    ///
+    /// - Parameters:
+    ///   - createSut: A closure that creates and returns the view controller to be tested.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
 
     func verifyInLightScheme(createSut: () -> UIViewController,
                              name: String? = nil,
