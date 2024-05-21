@@ -219,22 +219,51 @@ final class OneOnOneResolverTests: XCTestCase {
         }
     }
 
-    func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
+    func test_ResolveOneOnOneConversation_GivenProteus_SetsReadOnlyToFalse() async throws {
         // Given
         let resolver = makeResolver()
+        let userID: QualifiedID = .random()
 
         // Mock
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.proteus)
 
+        let conversation = await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
+            conversation.isForcedReadOnly = true
+            return conversation
+        }
+
         // When
-        let result = try await resolver.resolveOneOnOneConversation(with: .random(), in: syncContext)
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
 
         // Then
+        let isReadOnly = await syncContext.perform { conversation.isForcedReadOnly }
+        XCTAssertFalse(isReadOnly)
+
         guard case .noAction = result else {
             XCTFail("expected result '.noAction'")
             return
         }
+    }
 
+    func test_ResolveOneOnOneConversation_GivenProteus_DoesntAttemptMLSMigration() async throws {
+        // Given
+        let resolver = makeResolver()
+        let userID: QualifiedID = .random()
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.proteus)
+
+        _ = await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
+            conversation.isForcedReadOnly = true
+            return conversation
+        }
+
+        // When
+        _ = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+
+        // Then
         let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
         XCTAssert(invocations.isEmpty)
     }

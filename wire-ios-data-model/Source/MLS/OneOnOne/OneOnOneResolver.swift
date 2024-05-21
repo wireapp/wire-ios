@@ -82,7 +82,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         case .mls:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            return resolveCommonUserProtocolProteus()
+            return await resolveCommonUserProtocolProteus(with: userID, in: context)
         case .mixed:
             // This should never happen:
             // Users can only support proteus and mls protocols.
@@ -182,8 +182,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: Resolve - Proteus
 
-    private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
+    private func resolveCommonUserProtocolProteus(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
     }
 
