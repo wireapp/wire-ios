@@ -17,17 +17,33 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireCommonComponents
 import XCTest
 
-final class WipeDatabaseViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class WipeDatabaseViewControllerTests: XCTestCase {
+
+    // MARK: - Properties
 
     var sut: WipeDatabaseViewController!
+    let helper = SnapshotHelper()
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        FontScheme.configure(with: .large)
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForAllScreenSizes() {
         sut = WipeDatabaseViewController()
@@ -42,7 +58,7 @@ final class WipeDatabaseViewControllerTests: BaseSnapshotTestCase {
             return navigationController
         }
 
-        verifyInDarkScheme(createSut: createSut)
+        helper.verifyInDarkScheme(createSut: createSut)
     }
 
     func testForConfirmAlert() throws {
