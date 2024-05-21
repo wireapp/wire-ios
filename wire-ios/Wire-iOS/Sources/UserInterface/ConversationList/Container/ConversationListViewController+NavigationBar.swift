@@ -50,6 +50,56 @@ extension ConversationListViewController {
 
     // MARK: - Navigation Bar Items
 
+    func setupLeftNavigationBarButtons() {
+
+        // in the design the left bar button items are very close to each other,
+        // so we'll use stack view instead
+        let stackView = UIStackView()
+
+        // avatar
+        let accountView = createAccountView()
+
+        // legal hold
+        switch viewModel.selfUser.legalHoldStatus {
+        case .disabled:
+            break
+        case .pending:
+            let pendingRequestView = createPendingLegalHoldRequestView()
+            stackView.addArrangedSubview(pendingRequestView)
+        case .enabled:
+            let legalHoldView = createLegalHoldView()
+            stackView.addArrangedSubview(legalHoldView)
+        }
+
+        // verification status
+        // TODO: show shield views
+
+        navigationItem.leftBarButtonItem = .init(customView: stackView)
+    }
+
+    private func createAccountView() -> UIView {
+        guard let session = ZMUserSession.shared() else { return .init() }
+
+        let user = ZMUser.selfUser(inUserSession: session)
+
+        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
+        accountView.unreadCountStyle = .current
+        accountView.autoUpdateSelection = false
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentSettings))
+        accountView.addGestureRecognizer(tapGestureRecognizer)
+        accountView.accessibilityTraits = .button
+        accountView.accessibilityIdentifier = "bottomBarSettingsButton"
+        accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+
+        if let selfUser = ZMUser.selfUser(),
+           selfUser.clientsRequiringUserAttention.count > 0 {
+            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
+        }
+
+        return accountView.wrapInAvatarSizeContainer()
+    }
+
     func setupRightNavigationBarButtons() {
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
@@ -83,49 +133,6 @@ extension ConversationListViewController {
         let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
         let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
         rightBarButtonItems[1].width = spacerWidth
-    }
-
-    // MARK: - Account View
-
-    func setupLeftNavigationBarButtons() {
-        let accountView = UIBarButtonItem(customView: createAccountView())
-        var leftBarButtonItems = [accountView]
-
-        switch viewModel.selfUser.legalHoldStatus {
-        case .disabled:
-            break
-        case .pending:
-            let pendingRequestView = UIBarButtonItem(customView: createPendingLegalHoldRequestView())
-            leftBarButtonItems += [pendingRequestView]
-        case .enabled:
-            let legalHoldView = UIBarButtonItem(customView: createLegalHoldView())
-            leftBarButtonItems += [legalHoldView]
-        }
-
-        navigationItem.leftBarButtonItems = leftBarButtonItems
-    }
-
-    private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else { return .init() }
-
-        let user = ZMUser.selfUser(inUserSession: session)
-
-        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
-        accountView.unreadCountStyle = .current
-        accountView.autoUpdateSelection = false
-
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentSettings))
-        accountView.addGestureRecognizer(tapGestureRecognizer)
-        accountView.accessibilityTraits = .button
-        accountView.accessibilityIdentifier = "bottomBarSettingsButton"
-        accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
-
-        if let selfUser = ZMUser.selfUser(),
-           selfUser.clientsRequiringUserAttention.count > 0 {
-            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
-        }
-
-        return accountView.wrapInAvatarSizeContainer()
     }
 
     @objc
