@@ -3,6 +3,6 @@ sources:
 templates:
 - ./AutoMockable.stencil
 output:
-  ../Sources/WireAPISupport/Generated
+   ${DERIVED_SOURCES_DIR}
 args:
    autoMockableImports: ["WireAPI"]

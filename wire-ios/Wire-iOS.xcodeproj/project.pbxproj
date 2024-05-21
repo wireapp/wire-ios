@@ -1960,6 +1960,13 @@
 			remoteGlobalIDString = 8F42C537199244A700288E4D;
 			remoteInfo = "ZClient-iOS";
 		};
+		E60D03902BFC94F200D1DB06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E6C01B342BF769CB0059EC62;
+			remoteInfo = RunSourcery;
+		};
 		E6579E3A2AFF9B30004E7FD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F42C530199244A700288E4D /* Project object */;
@@ -8680,7 +8687,6 @@
 			buildConfigurationList = 8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */;
 			buildPhases = (
 				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
-				E6DDA96B2B767382003B7431 /* Run Sourcery */,
 				8F42C534199244A700288E4D /* Sources */,
 				8F42C535199244A700288E4D /* Frameworks */,
 				8F42C536199244A700288E4D /* Resources */,
@@ -8695,6 +8701,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E60D03912BFC94F200D1DB06 /* PBXTargetDependency */,
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
@@ -9092,25 +9099,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Wire-iOS\n../scripts/run-sourcery.sh --config ./Tests/Sourcery/config.yml\n\n# WireAPI\n../scripts/run-sourcery.sh --config ../WireAPI/Sourcery/config.yml\n";
-		};
-		E6DDA96B2B767382003B7431 /* Run Sourcery */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Sourcery";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-sourcery.sh --config ./Tests/Sourcery/config.yml\n";
 		};
 		E96301B82B4EDFE700726CDB /* Run SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10979,6 +10967,11 @@
 			isa = PBXTargetDependency;
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
 			targetProxy = BACB88571AF7C48900DDCDB0 /* PBXContainerItemProxy */;
+		};
+		E60D03912BFC94F200D1DB06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E6C01B342BF769CB0059EC62 /* RunSourcery */;
+			targetProxy = E60D03902BFC94F200D1DB06 /* PBXContainerItemProxy */;
 		};
 		E6579E3B2AFF9B30004E7FD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
