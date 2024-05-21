@@ -24,11 +24,11 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-        updateAccountView()
+        setupAccountAndLegalHoldBarButtonItems()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        updateLegalHoldIndictor()
+        setupAccountAndLegalHoldBarButtonItems()
     }
 
     // MARK: - Title View
@@ -52,13 +52,14 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons() {
 
+        let spacer = UIBarButtonItem(systemItem: .fixedSpace)
+        spacer.width = 29
+
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             self?.setState(.peoplePicker, animated: true)
         }
-        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction))]
-
-        // TODO: the items should have a larger width, they appear too close together
+        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
         let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
         let filterConversationsAction = UIAction(image: filerImage) { _ in
@@ -69,8 +70,22 @@ extension ConversationListViewController {
 
     // MARK: - Account View
 
-    func updateAccountView() {
-        navigationItem.leftBarButtonItem = .init(customView: createAccountView())
+    func setupAccountAndLegalHoldBarButtonItems() {
+        let accountView = UIBarButtonItem(customView: createAccountView())
+        var leftBarButtonItems = [accountView]
+
+        switch viewModel.selfUser.legalHoldStatus {
+        case .disabled:
+            break
+        case .pending:
+            let pendingRequestView = UIBarButtonItem(customView: createPendingLegalHoldRequestView())
+            leftBarButtonItems += [pendingRequestView]
+        case .enabled:
+            let legalHoldView = UIBarButtonItem(customView: createLegalHoldView())
+            leftBarButtonItems += [legalHoldView]
+        }
+
+        navigationItem.leftBarButtonItems = leftBarButtonItems
     }
 
     private func createAccountView() -> UIView {
@@ -170,17 +185,6 @@ extension ConversationListViewController {
         ])
 
         return button
-    }
-
-    func updateLegalHoldIndictor() {
-        switch viewModel.selfUser.legalHoldStatus {
-        case .disabled:
-            navigationItem.rightBarButtonItem = nil
-        case .pending:
-            navigationItem.rightBarButtonItem = .init(customView: createPendingLegalHoldRequestView())
-        case .enabled:
-            navigationItem.rightBarButtonItem = .init(customView: createLegalHoldView())
-        }
     }
 
     @objc

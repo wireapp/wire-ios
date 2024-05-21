@@ -113,8 +113,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         createViewConstraints()
 
         setupTitleView()
-        updateAccountView()
-        updateLegalHoldIndictor()
+        setupAccountAndLegalHoldBarButtonItems()
         setupRightNavigationBarButtons()
 
         viewModel.viewController = self
