@@ -53,7 +53,7 @@ func MainTabBarController(
         image: .init(resource: .TabBar.settings),
         selectedImage: .init(resource: .TabBar.settingsFilled)
     )
-    mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityIdentifier = "TODO" // TODO: accessibilityIdentifier?
+    mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
     mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Settings.description
     mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Settings.hint
 

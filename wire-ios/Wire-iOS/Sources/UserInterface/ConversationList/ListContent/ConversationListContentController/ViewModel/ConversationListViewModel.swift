@@ -646,7 +646,8 @@ final class ConversationListViewModel: NSObject {
 
     // MARK: - state presistent
 
-    // TODO: delete folder support
+    // TODO [WPB-7307]: the follow-up PR will remove anything around folders
+    // https://github.com/wireapp/wire-ios/pull/1466
     let isFolderStatePersistenceEnabled = false
 
     // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
