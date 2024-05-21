@@ -16,18 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
+
     var sut: UserSearchResultsViewController!
     var serviceUser: MockServiceUserType!
     var selfUser: MockUserType!
     var otherUser: MockUserType!
 
+    let helper = SnapshotHelper()
+
     // MARK: setUp
+
     override func setUp() {
         super.setUp()
         // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
@@ -85,7 +90,7 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
             return self.sut
         }
 
-        verifyInAllColorSchemes(createSut: createSut)
+        helper.verifyInAllColorSchemes(createSut: createSut)
     }
 
     func testThatItOverflowsWithTooManyUsers_darkMode() {

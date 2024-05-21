@@ -23,6 +23,10 @@ import XCTest
 
 final class FontBookSnapshotTests: XCTestCase {
 
+    // MARK: - Properties
+
+    let helper = SnapshotHelper()
+
     // MARK: Helper Method
 
     func setupLabel(
@@ -44,47 +48,47 @@ final class FontBookSnapshotTests: XCTestCase {
     // MARK: Snapshot Tests
 
     func testForTitle3FontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .h1))
+        helper.verifyForDynamicType(matching: setupLabel(style: .h1))
     }
 
     func testForHeadlineFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .h3))
+        helper.verifyForDynamicType(matching: setupLabel(style: .h3))
     }
 
     func testBodyFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .body1))
+        helper.verifyForDynamicType(matching: setupLabel(style: .body1))
     }
 
     func testForSubHeadLineFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .h4))
+        helper.verifyForDynamicType(matching: setupLabel(style: .h4))
     }
 
     func testForCaption1FontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .subline1))
+        helper.verifyForDynamicType(matching: setupLabel(style: .subline1))
     }
 
     func testForTitle3BoldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .h2))
+        helper.verifyForDynamicType(matching: setupLabel(style: .h2))
     }
 
     func testForCalloutBoldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .body3))
+        helper.verifyForDynamicType(matching: setupLabel(style: .body3))
     }
 
     func testForFootnoteSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .h5))
+        helper.verifyForDynamicType(matching: setupLabel(style: .h5))
     }
 
     func testForBodyTwoSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .body2))
+        helper.verifyForDynamicType(matching: setupLabel(style: .body2))
     }
 
     func testForButtonSmallSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .buttonSmall))
+        helper.verifyForDynamicType(matching: setupLabel(style: .buttonSmall))
     }
 
     func testForButtonBigSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .buttonBig))
+        helper.verifyForDynamicType(matching: setupLabel(style: .buttonBig))
     }
 
 }

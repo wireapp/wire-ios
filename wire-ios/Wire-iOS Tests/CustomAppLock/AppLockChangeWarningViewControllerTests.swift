@@ -23,7 +23,9 @@ import XCTest
 class AppLockChangeWarningViewControllerTests: XCTestCase {
 
     // MARK: - Properties
+
     var userSession: UserSessionMock!
+    let helper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -36,7 +38,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
     }
 
     func testWarningThatAppLockIsActive() {
-        verifyInAllColorSchemes(createSut: {
+        helper.verifyInAllColorSchemes(createSut: {
             AppLockChangeWarningViewController(
                 isAppLockActive: true,
                 userSession: userSession
@@ -46,7 +48,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
     }
 
     func testWarningThatAppLockIsNotActive() {
-        verifyInAllColorSchemes(createSut: {
+        helper.verifyInAllColorSchemes(createSut: {
             AppLockChangeWarningViewController(
                 isAppLockActive: false,
                 userSession: userSession
