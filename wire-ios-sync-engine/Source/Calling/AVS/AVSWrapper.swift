@@ -398,7 +398,7 @@ public final class AVSWrapper: AVSWrapperType {
             let isMLSConference = callCenter.conversationType(from: conversationId) == .mlsConference
 
             if isMLSConference {
-                callCenter.setMLSConferenceInfoIfNeeded(for: conversationId)
+//                callCenter.setMLSConferenceInfoIfNeeded(for: conversationId)
             } else {
 
                 // This handler is called once per call, but the participants may be added or removed from the
