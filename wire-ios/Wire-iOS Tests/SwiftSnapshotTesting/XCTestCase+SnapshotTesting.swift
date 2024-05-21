@@ -190,29 +190,6 @@ extension XCTestCase {
                        line: line)
     }
 
-    func verifyViewInAllColorSchemes(
-        matching: UIView,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        matching.overrideUserInterfaceStyle = .light
-
-        verify(matching: matching,
-               named: "LightTheme",
-               file: file,
-               testName: testName,
-               line: line)
-
-        matching.overrideUserInterfaceStyle = .dark
-
-        verify(matching: matching,
-               named: "DarkTheme",
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
 }
 
 extension XCTestCase {
