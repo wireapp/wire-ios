@@ -26,9 +26,6 @@ The sync engine itself is built on top of a few third-party frameworks, and uses
 
 ![Mobile app architecture](https://github.com/wireapp/wire/blob/master/assets/mobile-architecture.png?raw=true)
 
-### Documentation
-Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
-
 
 ## How to Build the Open Source Client
 
