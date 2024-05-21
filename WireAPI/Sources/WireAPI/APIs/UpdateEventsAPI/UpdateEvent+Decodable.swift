@@ -44,7 +44,8 @@ extension UpdateEvent: Decodable {
         case "conversation.knock":
             self = .conversationKnock
         case "conversation.member-join":
-            self = .conversationMemberJoin
+            let event = try container.decodeConversationMemberJoinEvent()
+            self = .conversationMemberJoin(event)
         case "conversation.member-leave":
             let event = try container.decodeConversationMemberLeaveEvent()
             self = .conversationMemberLeave(event)
@@ -170,6 +171,28 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationMemberJoinEvent() throws -> ConversationMemberJoinEvent {
+        let payload = try decodePayload(ConversationMemberJoinEventData.self)
+
+        return try ConversationMemberJoinEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
+            members: payload.users.map {
+                ConversationMember(
+                    id: $0.id,
+                    roleName: $0.conversationRole,
+                    service: $0.service.map {
+                        ConversationService(
+                            id: $0.id,
+                            provider: $0.provider
+                        )
+                    }
+                )
+            }
+        )
+    }
+
     func decodeConversationMemberLeaveEvent() throws -> ConversationMemberLeaveEvent {
         let payload = try decodePayload(ConversationMemberLeaveEventData.self)
 
@@ -254,6 +277,36 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
     }
 
 }
+
+private struct ConversationMemberJoinEventData: Decodable {
+
+    let users: [OtherConversationMember]
+
+}
+
+private struct OtherConversationMember: Decodable {
+
+    let id: UserID
+    let conversationRole: String
+    let service: ServiceReference?
+
+    enum CodingKeys: String, CodingKey {
+
+        case id = "qualified_id"
+        case conversationRole = "conversation_role"
+        case service = "service"
+
+    }
+
+}
+
+private struct ServiceReference: Decodable {
+
+    let id: UUID
+    let provider: UUID
+
+}
+
 
 private struct ConversationMemberLeaveEventData: Decodable {
 
