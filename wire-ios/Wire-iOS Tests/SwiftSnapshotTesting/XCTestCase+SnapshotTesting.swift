@@ -218,38 +218,6 @@ extension XCTestCase {
                line: line)
     }
 
-    func verifyInDarkScheme(createSut: () -> UIViewController,
-                            name: String? = nil,
-                            file: StaticString = #file,
-                            testName: String = #function,
-                            line: UInt = #line) {
-
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .dark
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInLightScheme(createSut: () -> UIViewController,
-                             name: String? = nil,
-                             file: StaticString = #file,
-                             testName: String = #function,
-                             line: UInt = #line) {
-
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
     func verifyInAllColorSchemes(matching: UIView,
                                  file: StaticString = #file,
                                  testName: String = #function,
