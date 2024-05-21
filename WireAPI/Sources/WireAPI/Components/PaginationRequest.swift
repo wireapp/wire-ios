@@ -17,7 +17,3 @@
 //
 
 import Foundation
-
-class ConnectionsAPIV4: ConnectionsAPIV3 {
-
-}

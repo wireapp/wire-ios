@@ -20,7 +20,4 @@ import Foundation
 
 class ConnectionsAPIV6: ConnectionsAPIV5 {
 
-    override func basePath(for qualifiedID: QualifiedUserId) -> String {
-        "/v6/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())"
-    }
 }

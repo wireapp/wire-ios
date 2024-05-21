@@ -42,12 +42,12 @@ class ConnectionsAPIV0: ConnectionsAPI {
         self.httpClient = httpClient
     }
 
-    func fetchConnections() async throws -> AsyncStream<[Connection]> {
+    func fetchConnections() async throws -> PayloadPager<Connection> {
 
-        let pager = PayloadPager { _ in
+        let pager = PayloadPager<Connection> { start in
 
             // body Params
-            let params = PaginationRequest(pagingState: nil, size: Constants.maxConnectionsCount)
+            let params = PaginationRequest(pagingState: start, size: Constants.maxConnectionsCount)
             let body = try JSONEncoder.defaultEncoder.encode(params)
 
             // Create request using "start" index
@@ -66,7 +66,7 @@ class ConnectionsAPIV0: ConnectionsAPI {
                 .failure(code: 400, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
 
-            let a: PayloadPager.Page = PayloadPager.Page(
+            let a = PayloadPager<Connection>.Page(
                 element: responsePayload.connections.map { $0.toAPIModel() },
                 hasMore: responsePayload.hasMore,
                 nextStart: responsePayload.pagingState
@@ -130,7 +130,7 @@ struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     }
 }
 
-enum ConnectionStatus: String, Decodable {
+public enum ConnectionStatus: String, Decodable {
 
     case accepted = "accepted"
     case blocked = "blocked"

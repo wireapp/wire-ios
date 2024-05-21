@@ -19,8 +19,4 @@
 import Foundation
 
 class ConnectionsAPIV1: ConnectionsAPIV0 {
-
-    override func basePath(for qualifiedID: QualifiedUserId) -> String {
-        "/v1/\(resourcePath)/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())"
-    }
 }

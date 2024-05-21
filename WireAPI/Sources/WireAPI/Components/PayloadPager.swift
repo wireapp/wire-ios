@@ -21,15 +21,15 @@ import Foundation
 /// Iterate through one or more pages returned from
 /// an api endpoint.
 
-struct PayloadPager<Payload>: AsyncSequence {
+public struct PayloadPager<Payload>: AsyncSequence {
 
-    typealias Element = [Payload]
+    public typealias Element = [Payload]
     typealias PageFetcher = (String?) async throws -> Page
 
     var start: String?
     let fetchPage: PageFetcher
 
-    func makeAsyncIterator() -> Iterator {
+    public func makeAsyncIterator() -> Iterator {
         return Iterator(
             start: start,
             fetchPage: fetchPage
@@ -44,7 +44,7 @@ struct PayloadPager<Payload>: AsyncSequence {
 
     }
 
-    struct Iterator: AsyncIteratorProtocol {
+    public struct Iterator: AsyncIteratorProtocol {
 
         private var start: String?
         private var hasMore = true
@@ -58,7 +58,7 @@ struct PayloadPager<Payload>: AsyncSequence {
             self.fetchPage = fetchPage
         }
 
-        mutating func next() async throws -> [Payload]? {
+        public mutating func next() async throws -> [Payload]? {
             guard hasMore else { return nil }
             let page = try await fetchPage(start)
             self.hasMore = page.hasMore

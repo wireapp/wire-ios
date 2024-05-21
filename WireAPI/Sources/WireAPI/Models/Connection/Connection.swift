@@ -28,6 +28,6 @@ public struct Connection {
     public let status: ConnectionStatus
 }
 
-struct ConnectionUpdate: Codable {
+public struct ConnectionUpdate: Decodable {
     let status: ConnectionStatus
 }

@@ -22,6 +22,5 @@ public protocol ConnectionsAPI {
 
     /// Fetch all connections .
 
-    func fetchConnections() async throws -> AsyncStream<[Connection]>
-
+    func fetchConnections() async throws -> PayloadPager<Connection>
 }

@@ -17,7 +17,41 @@
 //
 
 import Foundation
+@testable import WireAPI
 
 class ConnectionsAPITests {
 
+    func testGetConnections() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: 200,
+            jsonResponse: """
+            {
+                "domain": "example.com",
+                "federation": true,
+                "supported": [0, 1, 2],
+                "development": [3]
+            }
+            """
+        )
+
+        let sut = ConnectionsAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.fetchConnections()
+
+        for await page in result {
+            page
+        }
+        // Then
+        XCTAssertEqual(
+            result,
+            BackendInfo(
+                domain: "example.com",
+                isFederationEnabled: true,
+                supportedVersions: [.v0, .v1, .v2],
+                developmentVersions: [.v3]
+            )
+        )
+    }
 }

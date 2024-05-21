@@ -51,6 +51,10 @@ final class PayloadPagerTests: XCTestCase {
         // When
         var iterator = sut.makeAsyncIterator()
 
+        for await page in sut {
+            print(page)
+        }
+
         // Then
         let page1 = try await iterator.next()
         XCTAssertEqual(page1, ["A", "B", "C"])
