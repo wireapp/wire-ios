@@ -50,10 +50,10 @@ final class ArchivedListViewController: UIViewController {
         super.viewDidLoad()
 
         view.accessibilityViewIsModal = true
+        view.backgroundColor = SemanticColors.View.backgroundConversationList
         setupNavigationItem()
         setupCollectionView()
         setupEmptyPlaceholder()
-        createConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -97,9 +97,15 @@ final class ArchivedListViewController: UIViewController {
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = false
         collectionView.accessibilityIdentifier = "archived conversation list"
-
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
+
+        NSLayoutConstraint.activate([
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        ])
     }
 
     private func setupEmptyPlaceholder() {
@@ -137,16 +143,6 @@ final class ArchivedListViewController: UIViewController {
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
         stackView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
-    }
-
-    private func createConstraints() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
-        ])
     }
 
     // MARK: - Accessibility
