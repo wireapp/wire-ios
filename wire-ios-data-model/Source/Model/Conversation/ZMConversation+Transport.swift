@@ -155,7 +155,7 @@ extension ZMConversation {
         guard let teamId = identifier,
               let moc = self.managedObjectContext else { return }
         self.teamRemoteIdentifier = teamId
-        self.team = Team.fetchOrCreate(with: teamId, create: false, in: moc, created: nil)
+        self.team = Team.fetch(with: teamId, in: moc)
     }
 
     @objc func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
