@@ -28,6 +28,7 @@ final class UserCellTests: BaseSnapshotTestCase {
     var teamID = UUID()
     var conversation: MockGroupDetailsConversation!
     var mockUser: MockUserType!
+    let helper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -75,7 +76,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         )
         sut.accessoryIconView.isHidden = false
 
-        verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        helper.verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
     }
 
     // MARK: - Snapshot Tests
@@ -216,7 +217,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testUserScreenSharingInsideOngoingVideoCall() {
@@ -230,7 +231,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
         sut.overrideUserInterfaceStyle = .dark
-        verifyViewInAllColorSchemes(matching: sut)
+        helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
     // MARK: unit test
