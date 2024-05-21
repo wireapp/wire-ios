@@ -55,7 +55,7 @@ class UsersAPIV4: UsersAPIV3 {
 
 }
 
-public struct ListUsersResponseV4: Decodable, ToAPIModelConvertible {
+struct ListUsersResponseV4: Decodable, ToAPIModelConvertible {
 
     /// List of users which were found and succesfully retrieved.
 
