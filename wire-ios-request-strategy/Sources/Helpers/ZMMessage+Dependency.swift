@@ -48,6 +48,10 @@ extension ZMOTRMessage: OTREntity {
         update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: nil)
     }
 
+    public var shouldIgnoreTheSecurityLevelCheck: Bool {
+        hiddenInConversation != nil
+    }
+
 }
 
 /// Message that can block following messages
