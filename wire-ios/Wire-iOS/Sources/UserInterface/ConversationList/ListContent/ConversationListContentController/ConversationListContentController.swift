@@ -413,8 +413,6 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         }
     }
 
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {}
-
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,
         interrupt: ((Changeset<C>) -> Bool)? = nil,

@@ -128,7 +128,7 @@ final class ConversationListViewModel: NSObject {
 
         var kind: Kind
         var items: [SectionItem]
-        var collapsed: Bool
+        var collapsed: Bool // TODO: remove
 
         var elements: [SectionItem] {
             return collapsed ? [] : items
@@ -156,9 +156,11 @@ final class ConversationListViewModel: NSObject {
             items = Array(elements)
         }
 
-        init(kind: Kind,
-             conversationDirectory: ConversationDirectoryType,
-             collapsed: Bool) {
+        init(
+            kind: Kind,
+            conversationDirectory: ConversationDirectoryType,
+            collapsed: Bool // TODO: remove
+        ) {
             items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
             self.collapsed = collapsed
@@ -178,28 +180,7 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    weak var delegate: ConversationListViewModelDelegate? {
-        didSet {
-            delegateFolderEnableState(newState: state)
-        }
-    }
-
-    // TODO [WPB-7307]: remove everything regarding folders
-    var folderEnabled: Bool {
-        get {
-            return state.folderEnabled
-        }
-
-        set {
-            guard newValue != state.folderEnabled else { return }
-
-            state.folderEnabled = newValue
-
-            updateAllSections()
-            delegate?.listViewModelShouldBeReloaded()
-            delegateFolderEnableState(newState: state)
-        }
-    }
+    weak var delegate: ConversationListViewModelDelegate?
 
     // Local copies of the lists.
     private var sections: [Section] = []
@@ -229,40 +210,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    /// for folder enabled and collapse presistent
-    private lazy var _state: State = {
-        guard isFolderStatePersistenceEnabled else { return .init() }
-
-        guard let persistentPath = ConversationListViewModel.persistentURL,
-            let jsonData = try? Data(contentsOf: persistentPath) else { return State()
-        }
-
-        do {
-            return try JSONDecoder().decode(ConversationListViewModel.State.self, from: jsonData)
-        } catch {
-            log.error("restore state error: \(error)")
-            return State()
-        }
-    }()
-
-    private var state: State {
-        get {
-            return _state
-        }
-
-        set {
-            /// simulate willSet
-
-            /// assign
-            if newValue != _state {
-                _state = newValue
-            }
-
-            /// simulate didSet
-            saveState(state: _state)
-        }
-    }
-
     private var conversationDirectoryToken: Any?
 
     private let userSession: UserSession?
@@ -274,10 +221,10 @@ final class ConversationListViewModel: NSObject {
 
         setupObservers()
         updateAllSections()
-    }
 
-    private func delegateFolderEnableState(newState: State) {
-        delegate?.listViewModel(self, didChangeFolderEnabled: folderEnabled)
+        DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(500)) {
+            self.cleanUpLegacyFolderViewState()
+        }
     }
 
     private func setupObservers() {
@@ -288,18 +235,14 @@ final class ConversationListViewModel: NSObject {
         return kind(of: sectionIndex)?.localizedName
     }
 
-    /// return true if seaction header is visible.
+    /// return true if section header is visible.
     /// For .contactRequests section it is always invisible
-    /// When folderEnabled == true, returns false
+    /// When folderEnabled != true, returns false
     ///
     /// - Parameter sectionIndex: section number of collection view
     /// - Returns: if the section exists and visible, return true. 
     func sectionHeaderVisible(section: Int) -> Bool {
-        guard sections.indices.contains(section),
-              kind(of: section) != .contactRequests,
-              folderEnabled else { return false }
-
-        return !sections[section].items.isEmpty
+        false
     }
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
@@ -484,21 +427,14 @@ final class ConversationListViewModel: NSObject {
     private func createSections() -> [Section] {
         guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
 
-        var kinds: [Section.Kind]
-        if folderEnabled {
-            kinds = [.contactRequests,
-                     .favorites,
-                     .groups,
-                     .contacts]
+        let kinds: [Section.Kind] = [
+            .contactRequests,
+            .conversations
+        ]
 
-            let folders: [Section.Kind] = conversationDirectory.allFolders.map({ .folder(label: $0) })
-            kinds.append(contentsOf: folders)
-        } else {
-            kinds = [.contactRequests,
-                     .conversations]
+        return kinds.map {
+            Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: false)
         }
-
-        return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
@@ -596,13 +532,7 @@ final class ConversationListViewModel: NSObject {
     // MARK: - collapse section
 
     func collapsed(at sectionIndex: Int) -> Bool {
-        return collapsed(at: sectionIndex, state: state)
-    }
-
-    private func collapsed(at sectionIndex: Int, state: State) -> Bool {
-        guard let kind = kind(of: sectionIndex) else { return false }
-
-        return state.collapsed.contains(kind.identifier)
+        false
     }
 
     /// set a collpase state of a section
@@ -618,12 +548,6 @@ final class ConversationListViewModel: NSObject {
         guard let kind = self.kind(of: sectionIndex) else { return }
         guard self.collapsed(at: sectionIndex) != collapsed else { return }
         guard let sectionNumber = self.sectionNumber(for: kind) else { return }
-
-        if collapsed {
-            state.collapsed.insert(kind.identifier)
-        } else {
-            state.collapsed.remove(kind.identifier)
-        }
 
         var newValue = sections
         newValue[sectionNumber] = Section(kind: kind, conversationDirectory: conversationDirectory, collapsed: collapsed)
@@ -642,69 +566,6 @@ final class ConversationListViewModel: NSObject {
             sections = newValue
             delegate?.listViewModel(self, didUpdateSectionForReload: sectionIndex, animated: true)
         }
-    }
-
-    // MARK: - state presistent
-
-    // TODO: this PR will clean up everything regarding folders
-    let isFolderStatePersistenceEnabled = false
-
-    // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
-    private struct State: Codable, Equatable {
-        var collapsed: Set<SectionIdentifier>
-        // TODO [WPB-7307]: remove everything regarding folders
-        var folderEnabled: Bool
-
-        init() {
-            collapsed = []
-            folderEnabled = false
-        }
-
-        var jsonString: String? {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .sortedKeys
-            guard let jsonData = try? encoder.encode(self) else {
-                return nil }
-
-            return String(data: jsonData, encoding: .utf8)
-        }
-    }
-
-    var jsonString: String? {
-        return state.jsonString
-    }
-
-    private func saveState(state: State) {
-
-        guard isFolderStatePersistenceEnabled,
-              let jsonString = state.jsonString,
-              let persistentDirectory = ConversationListViewModel.persistentDirectory,
-              let directoryURL = URL.directoryURL(persistentDirectory) else { return }
-
-        try! FileManager.default.createAndProtectDirectory(at: directoryURL)
-
-        do {
-            try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)
-        } catch {
-            log.error("error writing ConversationListViewModel to \(directoryURL): \(error)")
-        }
-    }
-
-    private static var persistentDirectory: String? {
-        guard let userID = ZMUser.selfUser()?.remoteIdentifier else { return nil }
-
-        return "UI_state/\(userID)"
-    }
-
-    private static var persistentFilename: String {
-        let className = String(describing: self)
-        return "\(className).json"
-    }
-
-    static var persistentURL: URL? {
-        guard let persistentDirectory else { return nil }
-
-        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
     }
 }
 
@@ -758,6 +619,28 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
         }
 
         return kind
+    }
+}
 
+// MARK: - Helpers
+
+extension ConversationListViewModel {
+
+    /// The conversation list view, when it supported folders, kept a persistent state of which
+    /// folders were expanded or collapsed. Since we don't show folders anymore on the mobile
+    /// clients, this can be cleaned up.
+    /// This code can be removed eventually, maybe in mid-2025 or later.
+    /// Cleaning this up or not is not critical.
+    private func cleanUpLegacyFolderViewState() {
+
+        do {
+            let fileManager = FileManager()
+            let url = try fileManager
+                .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                .appendingPathComponent("UI_state")
+            try fileManager.removeItem(at: url)
+        } catch {
+            return log.error("error cleaning up legacy view state: file manager threw error: " + String(reflecting: error))
+        }
     }
 }

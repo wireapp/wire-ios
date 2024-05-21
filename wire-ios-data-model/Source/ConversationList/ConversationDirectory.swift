@@ -45,7 +45,7 @@ public protocol ConversationDirectoryObserver: AnyObject {
 public protocol ConversationDirectoryType {
 
     /// All folder created by the user
-    var allFolders: [LabelType] { get }
+    var allFolders: [LabelType] { get } // TODO: remove
 
     /// Create a new folder with a given name
     func createFolder(_ name: String) -> LabelType?
