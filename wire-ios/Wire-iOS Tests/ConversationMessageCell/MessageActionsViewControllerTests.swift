@@ -17,13 +17,16 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireCommonComponents
 import XCTest
+
+@testable import Wire
 
 final class MessageActionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        FontScheme.configure(with: .large)
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
@@ -130,7 +133,12 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
 }
 
-final class BasicReactionPickerTests: ZMSnapshotTestCase {
+final class BasicReactionPickerTests: XCTestCase {
+
+    override func setUp() {
+        super.setUp()
+        FontScheme.configure(with: .large)
+    }
 
     func test_BasicReactionPicker() {
         // GIVEN WHEN
