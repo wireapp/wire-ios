@@ -46,7 +46,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
             .parse(response)
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> ListUsersResponse {
+    func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIds: userIDs))
         let request = HTTPRequest(
             path: "\(pathPrefix)/list-users",
@@ -124,8 +124,8 @@ struct ListUsersRequestV0: Encodable {
 typealias ListUsersResponseV0 = [UserResponseV0]
 
 extension ListUsersResponseV0: ToAPIModelConvertible {
-    func toAPIModel() -> ListUsersResponse {
-        ListUsersResponse(found: map({ $0.toAPIModel() }), failed: [])
+    func toAPIModel() -> UserList {
+        UserList(found: map({ $0.toAPIModel() }), failed: [])
     }
 }
 

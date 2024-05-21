@@ -74,7 +74,7 @@ final class UsersAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             result,
-            ListUsersResponse(found: [Scaffolding.user], failed: [])
+            UserList(found: [Scaffolding.user], failed: [])
         )
     }
 
@@ -140,7 +140,7 @@ final class UsersAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             result,
-            ListUsersResponse(found: [Scaffolding.user], failed: [Scaffolding.userID])
+            UserList(found: [Scaffolding.user], failed: [Scaffolding.userID])
         )
     }
 

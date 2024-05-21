@@ -20,7 +20,7 @@ import Foundation
 
 /// Response when retrieving a list users.
 
-public struct ListUsersResponse: Equatable {
+public struct UserList: Equatable {
 
     /// List of users which were found and succesfully retrieved.
 

@@ -38,7 +38,7 @@ class UsersAPIV4: UsersAPIV3 {
             .parse(response)
     }
 
-    override func getUsers(userIDs: [UserID]) async throws -> ListUsersResponse {
+    override func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIds: userIDs))
         let request = HTTPRequest(
             path: "\(pathPrefix)/list-users",
@@ -49,13 +49,13 @@ class UsersAPIV4: UsersAPIV3 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: ListUsersResponseV4.self)
+            .success(code: 200, type: UserListResponseV4.self)
             .parse(response)
     }
 
 }
 
-struct ListUsersResponseV4: Decodable, ToAPIModelConvertible {
+struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 
     /// List of users which were found and succesfully retrieved.
 
@@ -65,8 +65,8 @@ struct ListUsersResponseV4: Decodable, ToAPIModelConvertible {
     ///
     let failed: [UserID]
 
-    func toAPIModel() -> ListUsersResponse {
-        ListUsersResponse(found: found.map { $0.toAPIModel() }, failed: failed)
+    func toAPIModel() -> UserList {
+        UserList(found: found.map { $0.toAPIModel() }, failed: failed)
     }
 }
 
