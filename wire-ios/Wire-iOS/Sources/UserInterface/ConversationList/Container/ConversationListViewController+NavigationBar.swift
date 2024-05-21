@@ -55,9 +55,11 @@ extension ConversationListViewController {
         // in the design the left bar button items are very close to each other,
         // so we'll use stack view instead
         let stackView = UIStackView()
+        stackView.spacing = 4
 
         // avatar
         let accountView = createAccountView()
+        stackView.addArrangedSubview(accountView)
 
         // legal hold
         switch viewModel.selfUser.legalHoldStatus {
@@ -72,7 +74,16 @@ extension ConversationListViewController {
         }
 
         // verification status
-        // TODO: show shield views
+        if viewModel.selfUserStatus.isE2EICertified {
+            let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
+            imageView.contentMode = .scaleAspectFit
+            stackView.addArrangedSubview(imageView)
+        }
+        if viewModel.selfUserStatus.isProteusVerified {
+            let imageView = UIImageView(image: .init(resource: .verifiedShield))
+            imageView.contentMode = .scaleAspectFit
+            stackView.addArrangedSubview(imageView)
+        }
 
         navigationItem.leftBarButtonItem = .init(customView: stackView)
     }
@@ -132,7 +143,7 @@ extension ConversationListViewController {
         let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
         let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
         let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
-        rightBarButtonItems[1].width = spacerWidth
+        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
     }
 
     @objc

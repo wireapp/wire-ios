@@ -321,6 +321,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         setupTitleView()
+        setupLeftNavigationBarButtons()
     }
 }
 
