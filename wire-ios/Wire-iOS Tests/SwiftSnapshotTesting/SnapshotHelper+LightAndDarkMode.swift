@@ -65,14 +65,13 @@ extension SnapshotHelper {
         line: UInt = #line
     ) {
 
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .dark
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
+        self
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: createSut(),
+                    named: name,
+                    file: file,
+                    testName: testName,
+                    line: line)
     }
 
     /// Verifies the appearance of a view controller in light mode.
@@ -92,14 +91,13 @@ extension SnapshotHelper {
         line: UInt = #line
     ) {
 
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
+        self
+            .withUserInterfaceStyle(.light)
+            .verify(matching: createSut(),
+                    named: name,
+                    file: file,
+                    testName: testName,
+                    line: line)
     }
 
     /// Verifies the appearance of a view under dark and light themes to ensure that it appears correctly in both modes.
@@ -117,21 +115,14 @@ extension SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        matching.overrideUserInterfaceStyle = .light
 
-        verify(matching: matching,
-               named: "LightTheme",
-               file: file,
-               testName: testName,
-               line: line)
+        self
+            .withUserInterfaceStyle(.light)
+            .verify(matching: matching, named: "LightTheme", file: file, testName: testName, line: line)
 
-        matching.overrideUserInterfaceStyle = .dark
-
-        verify(matching: matching,
-               named: "DarkTheme",
-               file: file,
-               testName: testName,
-               line: line)
+        self
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: matching, named: "DarkTheme", file: file, testName: testName, line: line)
     }
 
     /// Verifies the appearance of a view in dark mode.

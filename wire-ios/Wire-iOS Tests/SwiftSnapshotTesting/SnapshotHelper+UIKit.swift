@@ -47,11 +47,11 @@ extension SnapshotHelper {
         if let customSize {
             config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
                                      size: customSize,
-                                     traits: UITraitCollection())
+                                     traits: traits)
         }
 
         let failure = verifySnapshot(matching: value,
-                                     as: config == nil ? .image(perceptualPrecision: perceptualPrecision) : .image(on: config!, perceptualPrecision: perceptualPrecision),
+                                     as: config == nil ? .image(perceptualPrecision: perceptualPrecision, traits: traits) : .image(on: config!, perceptualPrecision: perceptualPrecision, traits: traits),
                                      named: name,
                                      record: recording,
                                      snapshotDirectory: snapshotDirectory(file: file),
@@ -81,7 +81,7 @@ extension SnapshotHelper {
 
         let failure = verifySnapshot(
             matching: value,
-            as: .image(perceptualPrecision: perceptualPrecision),
+            as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,

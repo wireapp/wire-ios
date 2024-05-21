@@ -215,7 +215,6 @@ final class UserCellTests: BaseSnapshotTestCase {
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
         helper.verifyViewInAllColorSchemes(matching: sut)
@@ -231,7 +230,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
-        sut.overrideUserInterfaceStyle = .dark
+
         helper.verifyViewInAllColorSchemes(matching: sut)
     }
 
