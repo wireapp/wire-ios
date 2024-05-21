@@ -268,7 +268,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 guard let bundle = try await coreCrypto.perform({
                     do {
                         return try await $0.commitPendingProposals(conversationId: groupID.data)
-
                     } catch {
                         // if we already have a pending commit `commitPendingProposals()` will fail
                         // and we must first clear it in order to generate the commit again.
