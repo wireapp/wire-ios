@@ -24,7 +24,7 @@ class ConnectionsAPITests: XCTestCase {
 
     /// Verifies generation of request
     func testGetConnectionsRequest() async throws {
-        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
+        try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
             let pager = try await sut.fetchConnections()
             for try await page in pager {
                 print(page)

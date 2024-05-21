@@ -31,7 +31,7 @@ struct PaginationRequest: Codable {
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
     enum Constants {
-        static let resourcePath = "/list-connections/"
+        static let resourcePath = ""
         static let maxConnectionsCount = 500
     }
 
@@ -46,6 +46,10 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         .v0
     }
 
+    var resourcePath: String {
+        "\(pathPrefix)/list-connections/"
+    }
+
     func fetchConnections() async throws -> PayloadPager<Connection> {
 
         let pager = PayloadPager<Connection> { start in
@@ -56,7 +60,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
             // Create request using "start" index
             let request = HTTPRequest(
-                path: Constants.resourcePath,
+                path: self.resourcePath,
                 method: .post,
                 body: body
             )
