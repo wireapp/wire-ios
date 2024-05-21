@@ -21,23 +21,40 @@ import XCTest
 
 final class MediaBarSnapshotTests: ZMSnapshotTestCase {
 
+    // MARK: - Properties
+
     var sut: MediaBar!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        sut = MediaBar()
-        sut.titleLabel.text = "demo media"
-
-        sut.backgroundColor = .black
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: sut.intrinsicContentSize.height)
+        setupMediaBar()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
+    // MARK: - Helper Method
+
+    func setupMediaBar() {
+        sut = MediaBar()
+        sut.overrideUserInterfaceStyle = .dark
+        sut.titleLabel.text = "demo media"
+
+        sut.backgroundColor = .black
+        sut.frame = CGRect(x: 0, y: 0, width: 375, height: sut.intrinsicContentSize.height)
+        sut.setNeedsUpdateConstraints()
+        sut.layoutIfNeeded()
+    }
+
+    // MARK: - Snapshot Tests
+
     func testForInitState() {
-        verify(view: sut)
+        verify(matching: sut)
     }
 }
