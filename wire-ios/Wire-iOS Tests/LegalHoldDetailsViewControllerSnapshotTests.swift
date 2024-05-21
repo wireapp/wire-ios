@@ -17,21 +17,25 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireCommonComponents
 import XCTest
 
-final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     var sut: LegalHoldDetailsViewController!
     var selfUser: MockUserType!
     var userSession: UserSessionMock!
+    let helper = SnapshotHelper()
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        FontScheme.configure(with: .large)
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
@@ -71,7 +75,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
-        verifyInAllColorSchemes(createSut: sut)
+        helper.verifyInAllColorSchemes(createSut: sut)
     }
 
     func testOtherUserUnderLegalHold() {
@@ -87,7 +91,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         }
 
         // THEN
-        verifyInAllColorSchemes(createSut: createSut)
+        helper.verifyInAllColorSchemes(createSut: createSut)
     }
 
 }
