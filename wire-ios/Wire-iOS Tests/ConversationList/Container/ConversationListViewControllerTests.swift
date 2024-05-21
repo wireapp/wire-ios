@@ -46,12 +46,16 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         userSession = .init()
         userSession.contextProvider = coreDataFixture.coreDataStack
 
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
 
         sut = ConversationListViewController(
@@ -81,6 +85,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         window = nil
         tabBarController = nil
         sut = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
         coreDataFixture = nil
 

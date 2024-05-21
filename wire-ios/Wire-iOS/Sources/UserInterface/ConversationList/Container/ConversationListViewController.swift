@@ -27,7 +27,7 @@ enum ConversationListState {
     case peoplePicker
 }
 
-final class ConversationListViewController: UIViewController, ConversationListContainerViewModelDelegate {
+final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
 
@@ -73,12 +73,14 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(
             viewModel: viewModel,
@@ -154,6 +156,8 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
+
+        viewModel.updateE2EICertifiedStatus()
 
         onboardingHint.arrowPointToView = tabBarController?.tabBar
 
@@ -290,14 +294,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         return startUIViewController
     }
 
-    /*
-    func presentPeoplePicker( ?
-        completion: Completion? = nil
-    ) {
-        setState(.peoplePicker, animated: true, completion: completion)
-    }
-     */
-
     func selectOnListContentController(
         _ conversation: ZMConversation!,
         scrollTo message: ZMConversationMessage?,
@@ -325,7 +321,7 @@ extension ConversationListViewController {
 
     /*
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
-        updateTitleView()
+        setupTitleView()
     }
      */
 }
@@ -347,7 +343,11 @@ extension ConversationListViewController: UITabBarControllerDelegate {
             }
 
         case .settings:
-            let alertController = UIAlertController(title: "not implemented yet", message: "will be done within [WPB-7306]", alertAction: .ok())
+            let alertController = UIAlertController(
+                title: "not implemented yet",
+                message: "will be done within [WPB-7306]",
+                alertAction: .ok()
+            )
             present(alertController, animated: true) { [self] in
                 tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
             }

@@ -72,6 +72,7 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
@@ -718,7 +719,7 @@ final class ZClientViewController: UIViewController {
 
     func minimizeCallOverlay(
         animated: Bool,
-        completion: @escaping Completion
+        completion: Completion?
     ) {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
     }
