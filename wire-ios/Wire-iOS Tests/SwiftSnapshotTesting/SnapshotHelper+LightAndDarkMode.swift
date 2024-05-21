@@ -35,17 +35,21 @@ extension SnapshotHelper {
         line: UInt = #line
     ) {
 
-        verifyInDarkScheme(createSut: createSut,
-                           name: "DarkTheme",
-                           file: file,
-                           testName: testName,
-                           line: line)
+        verifyInDarkScheme(
+            createSut: createSut,
+            name: "DarkTheme",
+            file: file,
+            testName: testName,
+            line: line
+        )
 
-        verifyInLightScheme(createSut: createSut,
-                            name: "LightTheme",
-                            file: file,
-                            testName: testName,
-                            line: line)
+        verifyInLightScheme(
+            createSut: createSut,
+            name: "LightTheme",
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     /// Verifies the appearance of a view controller in dark mode.
@@ -67,11 +71,13 @@ extension SnapshotHelper {
 
         self
             .withUserInterfaceStyle(.dark)
-            .verify(matching: createSut(),
-                    named: name,
-                    file: file,
-                    testName: testName,
-                    line: line)
+            .verify(
+                matching: createSut(),
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     /// Verifies the appearance of a view controller in light mode.
@@ -93,11 +99,13 @@ extension SnapshotHelper {
 
         self
             .withUserInterfaceStyle(.light)
-            .verify(matching: createSut(),
-                    named: name,
-                    file: file,
-                    testName: testName,
-                    line: line)
+            .verify(
+                matching: createSut(),
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     /// Verifies the appearance of a view under dark and light themes to ensure that it appears correctly in both modes.
@@ -118,11 +126,23 @@ extension SnapshotHelper {
 
         self
             .withUserInterfaceStyle(.light)
-            .verify(matching: matching, named: "LightTheme", file: file, testName: testName, line: line)
+            .verify(
+                matching: matching,
+                named: "LightTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
 
         self
             .withUserInterfaceStyle(.dark)
-            .verify(matching: matching, named: "DarkTheme", file: file, testName: testName, line: line)
+            .verify(
+                matching: matching,
+                named: "DarkTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     /// Verifies the appearance of a view in dark mode.
@@ -143,11 +163,13 @@ extension SnapshotHelper {
     ) {
         let sut = createSut()
         sut.overrideUserInterfaceStyle = .dark
-        verify(matching: createSut(),
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
+        verify(
+            matching: createSut(),
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     /// Verifies the appearance of a view in light mode.
@@ -168,11 +190,13 @@ extension SnapshotHelper {
     ) {
         let sut = createSut()
         sut.overrideUserInterfaceStyle = .light
-        verify(matching: createSut(),
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
+        verify(
+            matching: createSut(),
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
 }
