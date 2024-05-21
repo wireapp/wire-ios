@@ -6,20 +6,6 @@
 	objectVersion = 54;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		E6C01B342BF769CB0059EC62 /* RunSourcery */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = E6C01B372BF769CB0059EC62 /* Build configuration list for PBXAggregateTarget "RunSourcery" */;
-			buildPhases = (
-				E6C01B382BF7788A0059EC62 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = RunSourcery;
-			productName = RunSourcery;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D02940D8990046124D /* DatadogWrapper.swift */; };
 		010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D62940F4F30046124D /* TextFieldWrapper.swift */; };
@@ -8815,9 +8801,6 @@
 						CreatedOnToolsVersion = 15.0.1;
 						TestTargetID = 8F42C537199244A700288E4D;
 					};
-					E6C01B342BF769CB0059EC62 = {
-						CreatedOnToolsVersion = 15.4;
-					};
 					F1FEA14921DCEB1700790A54 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
@@ -8867,7 +8850,6 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
-				E6C01B342BF769CB0059EC62 /* RunSourcery */,
 			);
 		};
 /* End PBXProject section */
@@ -9073,24 +9055,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
-		};
-		E6C01B382BF7788A0059EC62 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Wire-iOS\n../scripts/run-sourcery.sh --config ./Tests/Sourcery/config.yml\n\n# WireAPI\n../scripts/run-sourcery.sh --config ../WireAPI/Sourcery/config.yml\n";
 		};
 		E96301B82B4EDFE700726CDB /* Run SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11612,24 +11576,6 @@
 			};
 			name = Release;
 		};
-		E6C01B352BF769CB0059EC62 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		E6C01B362BF769CB0059EC62 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		F1FEA15321DCEB1700790A54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F156509721DCED3000210504 /* CommonComponents-Debug.xcconfig */;
@@ -11731,15 +11677,6 @@
 			buildConfigurations = (
 				E6579E3C2AFF9B30004E7FD8 /* Debug */,
 				E6579E3D2AFF9B30004E7FD8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E6C01B372BF769CB0059EC62 /* Build configuration list for PBXAggregateTarget "RunSourcery" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E6C01B352BF769CB0059EC62 /* Debug */,
-				E6C01B362BF769CB0059EC62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
