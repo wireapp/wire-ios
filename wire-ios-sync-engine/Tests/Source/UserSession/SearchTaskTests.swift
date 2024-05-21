@@ -38,7 +38,10 @@ final class SearchTaskTests: DatabaseTest {
             let selfUser = ZMUser.selfUser(in: self.uiMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.teamIdentifier = self.teamIdentifier
-            guard let team = Team.fetchOrCreate(with: self.teamIdentifier, create: true, in: self.uiMOC, created: nil) else { XCTFail(); return }
+            let team = Team.fetchOrCreate(
+                with: self.teamIdentifier,
+                in: self.uiMOC
+            )
             _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.uiMOC)
             uiMOC.saveOrRollback()
         }
