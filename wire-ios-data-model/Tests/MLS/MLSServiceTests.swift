@@ -1875,7 +1875,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we didn't process any events.
         XCTAssertEqual(
-            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap(\.self),
+            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap { $0 },
             []
         )
 

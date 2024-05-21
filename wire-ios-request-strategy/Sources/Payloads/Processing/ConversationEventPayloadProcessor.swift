@@ -375,7 +375,7 @@ struct ConversationEventPayloadProcessor {
                 in: context
             ),
             let timestamp = payload.timestamp,
-            timestamp > conversation.lastServerTimeStamp // Discard event if it has already been applied
+            conversation.lastServerTimeStamp == nil || conversation.lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
             Logging.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return
@@ -722,7 +722,7 @@ struct ConversationEventPayloadProcessor {
             conversation.mlsGroupID = mlsGroupID
         }
 
-        if let ciphersuite = payload.cipherSuite, payload.epoch > 0 {
+        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
             conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
         }
     }

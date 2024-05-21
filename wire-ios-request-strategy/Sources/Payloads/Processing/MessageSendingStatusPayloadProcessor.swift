@@ -51,7 +51,7 @@ final class MessageSendingStatusPayloadProcessor {
             WireLogger.messaging.debug("detected missing clients")
         }
 
-        for deletedClient in deletedClients.values.flatMap(\.self) {
+        for deletedClient in deletedClients.values.flatMap({ $0 }) {
             await deletedClient.deleteClientAndEndSession()
         }
 

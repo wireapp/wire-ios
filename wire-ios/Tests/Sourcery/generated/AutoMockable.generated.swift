@@ -35,6 +35,7 @@ import WireDataModel
 import WireSyncEngine
 
 @testable import Wire
+@testable import WireCommonComponents
 
 
 
@@ -318,6 +319,29 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
 
 }
 
+class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotificationPermissionHintUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockMethod: (() -> Void)?
+
+    func invoke() {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock()
+    }
+
+}
+
 class MockImageTransformer: ImageTransformer {
 
     // MARK: - Life cycle
@@ -341,6 +365,24 @@ class MockImageTransformer: ImageTransformer {
             fatalError("no mock for `adjustInputSaturationValueImage`")
         }
     }
+
+}
+
+public class MockNetworkStatusObservable: NetworkStatusObservable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - reachability
+
+    public var reachability: ServerReachability {
+        get { return underlyingReachability }
+        set(value) { underlyingReachability = value }
+    }
+
+    public var underlyingReachability: ServerReachability!
+
 
 }
 
@@ -812,6 +854,32 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock(delegate)
+    }
+
+}
+
+class MockShouldPresentNotificationPermissionHintUseCaseProtocol: ShouldPresentNotificationPermissionHintUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockMethod: (() async -> Bool)?
+    var invoke_MockValue: Bool?
+
+    func invoke() async -> Bool {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
     }
 
 }
