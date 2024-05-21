@@ -75,7 +75,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         )
         sut.accessoryIconView.isHidden = false
 
-        verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
     }
 
     // MARK: - Snapshot Tests
@@ -216,7 +216,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testUserScreenSharingInsideOngoingVideoCall() {
@@ -230,7 +230,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
         sut.overrideUserInterfaceStyle = .dark
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     // MARK: unit test

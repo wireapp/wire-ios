@@ -38,14 +38,14 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .invite
 
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testForOpenButton() {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .open
 
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testForOpenButtonWithALongUsername() {
@@ -54,7 +54,7 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
         sut.user = user
         sut.action = .open
 
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testForNoSubtitle() {
@@ -64,6 +64,6 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
         sut.user = user
         sut.action = .open
 
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 }

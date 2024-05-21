@@ -218,7 +218,7 @@ extension XCTestCase {
                line: line)
     }
 
-    func verifyInAllColorSchemes(
+    func verifyViewInAllColorSchemes(
         matching: UIView,
         file: StaticString = #file,
         testName: String = #function,

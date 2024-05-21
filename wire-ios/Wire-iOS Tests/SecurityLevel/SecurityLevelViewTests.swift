@@ -48,16 +48,16 @@ final class SecurityLevelViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testThatItRendersWithClassified() {
         sut.configure(with: .classified)
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 
     func testThatItDoesNotRenderWithNone() {
         sut.configure(with: .none)
-        verifyInAllColorSchemes(matching: sut)
+        verifyViewInAllColorSchemes(matching: sut)
     }
 }

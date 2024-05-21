@@ -66,7 +66,7 @@ final class GroupConversationCellTests: XCTestCase {
 
         sut.configure(conversation: conversation)
 
-        verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
     }
 
     func testOneToOneConversation() {
