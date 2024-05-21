@@ -44,16 +44,12 @@ final class PayloadPagerTests: XCTestCase {
                     nextStart: ""
                 )
             default:
-                throw TestError(message: "unknown index: \(index)")
+                throw TestError(message: "unknown index: \(String(describing: index))")
             }
         }
 
         // When
         var iterator = sut.makeAsyncIterator()
-
-        for await page in sut {
-            print(page)
-        }
 
         // Then
         let page1 = try await iterator.next()

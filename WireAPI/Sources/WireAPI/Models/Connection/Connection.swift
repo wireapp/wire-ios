@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct Connection {
+public struct Connection: Equatable {
     public let senderId: UUID?
     public let receiverId: UUID?
     public let receiverQualifiedId: QualifiedID?

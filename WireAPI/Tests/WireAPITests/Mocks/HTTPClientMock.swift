@@ -27,7 +27,12 @@ struct HTTPClientMockError: Error {
 
 final class HTTPClientMock: HTTPClient {
 
-    var receivedRequest: HTTPRequest?
+    private (set) var receivedRequests: [HTTPRequest] = []
+
+    var receivedRequest: HTTPRequest? {
+        receivedRequests.first
+    }
+
     var executeRequestMock: (HTTPRequest) async throws -> HTTPResponse
 
     convenience init() {
@@ -107,7 +112,7 @@ final class HTTPClientMock: HTTPClient {
     }
 
     func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
-        receivedRequest = request
+        receivedRequests.append(request)
         return try await executeRequestMock(request)
     }
 

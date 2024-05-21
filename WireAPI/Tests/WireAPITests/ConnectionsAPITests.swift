@@ -18,40 +18,46 @@
 
 import Foundation
 @testable import WireAPI
+import XCTest
 
-class ConnectionsAPITests {
+class ConnectionsAPITests: XCTestCase {
 
-    func testGetConnections() async throws {
+    /// Verifies generation of request
+    func testGetConnectionsRequest() async throws {
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
+            let pager = try await sut.fetchConnections()
+            for try await page in pager {
+                print(page)
+            }
+        }
+    }
+
+    func testGetConnectionsGeneratesMultipleRequests() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "domain": "example.com",
-                "federation": true,
-                "supported": [0, 1, 2],
-                "development": [3]
-            }
-            """
+            payloadResourceName: "GetConnectionsSuccessResponseV0"
         )
 
         let sut = ConnectionsAPIV0(httpClient: httpClient)
 
         // When
-        let result = try await sut.fetchConnections()
+        let pager = try await sut.fetchConnections()
+        var iterator = pager.makeAsyncIterator()
+        let result = try await iterator.next()
 
-        for await page in result {
-            page
-        }
         // Then
+        let connection = try XCTUnwrap(result?.first)
         XCTAssertEqual(
-            result,
-            BackendInfo(
-                domain: "example.com",
-                isFederationEnabled: true,
-                supportedVersions: [.v0, .v1, .v2],
-                developmentVersions: [.v3]
-            )
+            connection,
+            Connection(senderId: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                       receiverId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                       receiverQualifiedId: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
+                       conversationId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                       qualifiedConversationId: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
+                       lastUpdate: Date(), // 2021-05-12T10:52:02.671Z
+                       status: .accepted)
         )
     }
+
 }
