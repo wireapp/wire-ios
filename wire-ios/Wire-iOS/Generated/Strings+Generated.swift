@@ -1096,6 +1096,12 @@ internal enum L10n {
     internal enum ArchivedList {
       /// archive
       internal static let title = L10n.tr("Localizable", "archived_list.title", fallback: "archive")
+      internal enum EmptyPlaceholder {
+        /// Nothing archived yet
+        internal static let headline = L10n.tr("Localizable", "archived_list.empty_placeholder.headline", fallback: "Nothing archived yet")
+        /// To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.
+        internal static let subheadline = L10n.tr("Localizable", "archived_list.empty_placeholder.subheadline", fallback: "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.")
+      }
     }
     internal enum Availability {
       /// Available

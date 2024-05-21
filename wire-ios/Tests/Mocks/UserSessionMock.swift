@@ -74,6 +74,7 @@ final class UserSessionMock: UserSession {
     var mockConversationList: ZMConversationList?
 
     var searchUsersCache: SearchUsersCache
+    var contextProvider: ContextProvider?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
@@ -324,5 +325,15 @@ final class UserSessionMock: UserSession {
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
     }
+}
 
+// MARK: - UserSessionMock + ContextProvider
+
+extension UserSessionMock: ContextProvider {
+
+    var account: Account { contextProvider!.account }
+    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
 }

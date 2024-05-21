@@ -32,6 +32,7 @@ extension ConversationListViewController {
         self.state = state
 
         switch state {
+
         case .conversationList:
             view.alpha = 1
 
@@ -51,7 +52,9 @@ extension ConversationListViewController {
             }
 
         case .archived:
-            show(createArchivedListViewController(), animated: animated, completion: completion)
+            let archiveViewController = createArchivedListViewController()
+            let navigationController = UINavigationController(rootViewController: archiveViewController)
+            show(navigationController, animated: animated, completion: completion)
         }
     }
 
@@ -62,6 +65,7 @@ extension ConversationListViewController {
 }
 
 extension ConversationListViewController {
+
     func show(
         _ viewController: UIViewController,
         animated: Bool,
@@ -70,6 +74,6 @@ extension ConversationListViewController {
         viewController.transitioningDelegate = self
         viewController.modalPresentationStyle = .currentContext
 
-        navigationController?.present(viewController, animated: animated, completion: completion)
+        tabBarController?.present(viewController, animated: animated, completion: completion)
     }
 }

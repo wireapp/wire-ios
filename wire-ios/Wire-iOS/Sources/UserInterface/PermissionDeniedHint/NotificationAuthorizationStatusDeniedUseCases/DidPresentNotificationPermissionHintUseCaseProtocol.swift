@@ -16,28 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import XCTest
-
-final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
-
-    var sut: ArchivedNavigationBar!
-
-    override func setUp() {
-        super.setUp()
-        accentColor = .purple
-        sut = ArchivedNavigationBar(title: "Archive")
-    }
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    func testThatItRendersTheNavigationBarCorrectInitially() {
-        verifyInAllPhoneWidths(
-            matching: sut,
-            snapshotBackgroundColor: SemanticColors.View.backgroundDefault
-        )
-    }
+// sourcery: AutoMockable
+/// Remembers the current time for having presented the notificaiton permission hint to the user.
+protocol DidPresentNotificationPermissionHintUseCaseProtocol {
+    func invoke()
 }
