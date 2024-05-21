@@ -26,7 +26,7 @@ import XCTest
 
 struct SnapshotHelper {
 
-    private var perceptualPrecision: Float = 0.98
+    var perceptualPrecision: Float = 0.98
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
 
@@ -185,52 +185,7 @@ struct SnapshotHelper {
 
     }
 
-    func verify(matching value: UIViewController,
-                customSize: CGSize? = nil,
-                named name: String? = nil,
-                record recording: Bool = false,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        var config: ViewImageConfig?
-        if let customSize {
-            config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
-                                     size: customSize,
-                                     traits: UITraitCollection())
-        }
-
-        let failure = verifySnapshot(matching: value,
-                                     as: config == nil ? .image(perceptualPrecision: perceptualPrecision) : .image(on: config!, perceptualPrecision: perceptualPrecision),
-                                     named: name,
-                                     record: recording,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
-    func verify(matching value: UIView,
-                named name: String? = nil,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        let failure = verifySnapshot(matching: value,
-                                     as: .image(perceptualPrecision: perceptualPrecision),
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-
-    }
-
-    private func snapshotDirectory(file: StaticString = #file) -> String {
+    func snapshotDirectory(file: StaticString = #file) -> String {
         let fileName = "\(file)"
         let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
         return path
