@@ -58,7 +58,7 @@ private let activityCounterQueue = DispatchQueue(label: "wire-transport.backgrou
      * For example, when you request:
      *
      * ~~~swift
-     * BackgroundActivityFactory.shared.startBackgroundActivity(withName: "Test")?.execute {
+     * BackgroundActivityFactory.shared.startBackgroundActivity(name: "Test")?.execute {
      *     defer { BackgroundActivityFactory.shared.endBackgroundActivity($0) }
      *     // perform the long task
      *     print("Hello background world")
