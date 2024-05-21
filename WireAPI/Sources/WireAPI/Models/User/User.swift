@@ -28,51 +28,51 @@ public struct User: Equatable {
 
     /// The unique id of the user
 
-    let id: UserID
+    public let id: UserID
 
     /// The user's full name
 
-    let name: String
+    public let name: String
 
     /// The users's unique handle
 
-    let handle: String?
+    public let handle: String?
 
     /// Team ID if the user belongs to a team
 
-    let teamID: UUID
+    public let teamID: UUID
 
     /// Color accent of the user
 
-    let accentID: Int
+    public let accentID: Int
 
     /// The user's profile image assets
 
-    let assets: [UserAsset]
+    public let assets: [UserAsset]
 
     /// Deleted is `True` if the user has been deleted
 
-    let deleted: Bool?
+    public let deleted: Bool?
 
     /// The email associated with this user
 
-    let email: String?
+    public let email: String?
 
     /// The date when user will expire
     ///
     /// Only set of guest (ephemeral) users
 
-    let expiresAt: String?
+    public let expiresAt: String?
 
     /// Service information associated with this user
 
-    let service: Service?
+    public let service: Service?
 
     /// Messaging protocols which this user supports
 
-    let supportedProtocols: Set<SupportedProtocol>?
+    public let supportedProtocols: Set<SupportedProtocol>?
 
     /// The user's legalhold status
 
-    let legalholdStatus: LegalholdStatus
+    public let legalholdStatus: LegalholdStatus
 }

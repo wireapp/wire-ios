@@ -21,8 +21,8 @@ import Foundation
 /// Fully qualified identifier in a federated environment
 
 public struct QualifiedID: Codable, Equatable {
-    let uuid: UUID
-    let domain: String
+    public let uuid: UUID
+    public let domain: String
 
     enum CodingKeys: String, CodingKey {
         case uuid = "id"

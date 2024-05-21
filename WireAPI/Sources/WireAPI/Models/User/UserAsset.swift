@@ -46,13 +46,13 @@ public struct UserAsset: Codable, Equatable {
 
     /// Unique key for this asset, if the asset is updated it will be assigned new key.
 
-    let key: String
+    public let key: String
 
     /// Asset size
 
-    let size: UserAssetSize
+    public let size: UserAssetSize
 
     /// Asset type
 
-    let type: UserAssetType
+    public let type: UserAssetType
 }
