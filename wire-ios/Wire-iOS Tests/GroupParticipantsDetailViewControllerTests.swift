@@ -38,9 +38,10 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 }
 
-final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
+final class GroupParticipantsDetailViewControllerTests: BaseSnapshotTestCase {
 
     var userSession: UserSessionMock!
+    let helper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -52,7 +53,6 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
     override func tearDown() {
         SelfUser.provider = nil
         userSession = nil
-
         super.tearDown()
     }
 
@@ -70,16 +70,16 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-		let createSut: () -> UIViewController = {
+        let createSut: () -> UIViewController = {
             let sut = GroupParticipantsDetailViewController(
                 selectedParticipants: selected,
                 conversation: conversation,
                 userSession: self.userSession
             )
-			return sut.wrapInNavigationController()
-		}
+            return sut.wrapInNavigationController()
+        }
 
-        verifyInAllColorSchemes(createSut: createSut)
+        helper.verifyInAllColorSchemes(createSut: createSut)
     }
 
     func testThatItRendersALotOfUsers_WithoutNames() {
