@@ -24,9 +24,9 @@ import Foundation
 struct PayloadPager<Payload>: AsyncSequence {
 
     typealias Element = [Payload]
-    typealias PageFetcher = (String) async throws -> Page
+    typealias PageFetcher = (String?) async throws -> Page
 
-    var start: String
+    var start: String?
     let fetchPage: PageFetcher
 
     func makeAsyncIterator() -> Iterator {
@@ -46,12 +46,12 @@ struct PayloadPager<Payload>: AsyncSequence {
 
     struct Iterator: AsyncIteratorProtocol {
 
-        private var start: String
+        private var start: String?
         private var hasMore = true
         private let fetchPage: PageFetcher
 
         init(
-            start: String,
+            start: String?,
             fetchPage: @escaping PageFetcher
         ) {
             self.start = start

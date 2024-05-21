@@ -22,6 +22,6 @@ public protocol ConnectionsAPI {
 
     /// Fetch all connections .
 
-    func getConnections(qualifiedId: QualifiedID) async throws -> Connection
+    func fetchConnections() async throws -> AsyncStream<[Connection]>
 
 }

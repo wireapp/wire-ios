@@ -22,8 +22,8 @@ import Foundation
 
 public enum ConnectionsAPIError: Error {
 
-    /// Invalid size or start
+    /// Invalid body
 
-    case invalidParameters
+    case invalidBody
 
 }

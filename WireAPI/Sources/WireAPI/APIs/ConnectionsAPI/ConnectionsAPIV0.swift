@@ -18,50 +18,86 @@
 
 import Foundation
 
+struct PaginationRequest: Codable {
+    enum CodingKeys: String, CodingKey {
+        case pagingState = "paging_state"
+        case size
+    }
+    var pagingState: String?
+    // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
+    var size: Int?
+}
+
 class ConnectionsAPIV0: ConnectionsAPI {
 
+    enum Constants {
+        static let resourcePath = "/list-connections/"
+        static let maxConnectionsCount = 500
+    }
+
     let httpClient: HTTPClient
+    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
     }
 
-    func basePath(for qualifiedId: QualifiedID) -> String {
-        "\(resourcePath)\(qualifiedId.uuid.transportString())"
-    }
-
-    let resourcePath = "/list-connections/"
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
-
     func fetchConnections() async throws -> AsyncStream<[Connection]> {
 
-        PayloadPager(start: ...) {
+        let pager = PayloadPager { _ in
+
+            // body Params
+            let params = PaginationRequest(pagingState: nil, size: Constants.maxConnectionsCount)
+            let body = try JSONEncoder.defaultEncoder.encode(params)
+
             // Create request using "start" index
-            // Execute request
-            // Parse response
-            return Page(
-                element: response.connections,
-                hasMore: response.hasMore,
-                nextStart: ...
+            let request = HTTPRequest(
+                path: Constants.resourcePath,
+                method: .post,
+                body: body
             )
+
+            // Execute request
+            let response = try await self.httpClient.executeRequest(request)
+
+            // Parse response
+            let responsePayload = try ResponseParser()
+                .success(code: 200, type: PaginatedConnectionList.self)
+                .failure(code: 400, error: ConnectionsAPIError.invalidBody)
+                .parse(response)
+
+            let a: PayloadPager.Page = PayloadPager.Page(
+                element: responsePayload.connections.map { $0.toAPIModel() },
+                hasMore: responsePayload.hasMore,
+                nextStart: responsePayload.pagingState
+            )
+            return a
         }
-    }    func getConnections(qualifiedId: QualifiedID) async throws -> Connection {
-        let userId = qualifiedId.uuid
 
-        let request = HTTPRequest(
-            path: basePath(for: qualifiedId),
-            method: .get
-        )
-
-        let response = try await httpClient.executeRequest(request)
-
-        return try ResponseParser()
-            .success(code: 200, type: ConnectionResponseV0.self)
-            .failure(code: 400, error: ConnectionsAPIError.invalidParameters)
-            .parse(response)
+        return pager
     }
-
 }
+
+private struct PaginatedConnectionList: Decodable, ToAPIModelConvertible {
+
+     enum CodingKeys: String, CodingKey {
+         case connections
+         case pagingState = "paging_state"
+         case hasMore = "has_more"
+     }
+
+     var nextStartReference: String? {
+         return pagingState
+     }
+
+     let connections: [ConnectionResponseV0]
+     let pagingState: String
+     let hasMore: Bool
+
+    func toAPIModel() -> PaginatedConnectionList {
+        self
+    }
+ }
 
 struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
 
@@ -74,7 +110,7 @@ struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
         case lastUpdate = "last_update"
         case status
     }
-    
+
     let from: UUID?
     let to: UUID?
     let qualifiedTo: QualifiedID?
@@ -104,3 +140,27 @@ enum ConnectionStatus: String, Decodable {
     case cancelled = "cancelled"
     case missingLegalholdConsent = "missing-legalhold-consent"
 }
+
+/*
+ {
+   "connections": [
+     {
+       "conversation": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+       "from": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+       "last_update": "2021-05-12T10:52:02.671Z",
+       "qualified_conversation": {
+         "domain": "example.com",
+         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+       },
+       "qualified_to": {
+         "domain": "example.com",
+         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+       },
+       "status": "accepted",
+       "to": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+     }
+   ],
+   "has_more": true,
+   "paging_state": "string"
+ }
+ */
