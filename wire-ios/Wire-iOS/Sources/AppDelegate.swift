@@ -356,5 +356,4 @@ private extension AppDelegate {
         // this forces transition to standard ones.
         return .standard
     }
-
 }
