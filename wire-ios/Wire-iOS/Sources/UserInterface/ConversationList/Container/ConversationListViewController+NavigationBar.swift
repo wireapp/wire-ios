@@ -24,11 +24,11 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-        setupAccountAndLegalHoldBarButtonItems()
+        setupLeftNavigationBarButtons()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        setupAccountAndLegalHoldBarButtonItems()
+        setupLeftNavigationBarButtons()
     }
 
     // MARK: - Title View
@@ -50,10 +50,70 @@ extension ConversationListViewController {
 
     // MARK: - Navigation Bar Items
 
+    func setupLeftNavigationBarButtons() {
+
+        // in the design the left bar button items are very close to each other,
+        // so we'll use stack view instead
+        let stackView = UIStackView()
+        stackView.spacing = 4
+
+        // avatar
+        let accountView = createAccountView()
+        stackView.addArrangedSubview(accountView)
+
+        // legal hold
+        switch viewModel.selfUser.legalHoldStatus {
+        case .disabled:
+            break
+        case .pending:
+            let pendingRequestView = createPendingLegalHoldRequestView()
+            stackView.addArrangedSubview(pendingRequestView)
+        case .enabled:
+            let legalHoldView = createLegalHoldView()
+            stackView.addArrangedSubview(legalHoldView)
+        }
+
+        // verification status
+        if viewModel.selfUserStatus.isE2EICertified {
+            let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
+            imageView.contentMode = .scaleAspectFit
+            stackView.addArrangedSubview(imageView)
+        }
+        if viewModel.selfUserStatus.isProteusVerified {
+            let imageView = UIImageView(image: .init(resource: .verifiedShield))
+            imageView.contentMode = .scaleAspectFit
+            stackView.addArrangedSubview(imageView)
+        }
+
+        navigationItem.leftBarButtonItem = .init(customView: stackView)
+    }
+
+    private func createAccountView() -> UIView {
+        guard let session = ZMUserSession.shared() else { return .init() }
+
+        let user = ZMUser.selfUser(inUserSession: session)
+
+        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
+        accountView.unreadCountStyle = .current
+        accountView.autoUpdateSelection = false
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentSettings))
+        accountView.addGestureRecognizer(tapGestureRecognizer)
+        accountView.accessibilityTraits = .button
+        accountView.accessibilityIdentifier = "bottomBarSettingsButton"
+        accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+
+        if let selfUser = ZMUser.selfUser(),
+           selfUser.clientsRequiringUserAttention.count > 0 {
+            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
+        }
+
+        return accountView.wrapInAvatarSizeContainer()
+    }
+
     func setupRightNavigationBarButtons() {
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
-        spacer.width = 29
 
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
@@ -83,50 +143,7 @@ extension ConversationListViewController {
         let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
         let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
         let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
-        rightBarButtonItems[1].width = spacerWidth
-    }
-
-    // MARK: - Account View
-
-    func setupAccountAndLegalHoldBarButtonItems() {
-        let accountView = UIBarButtonItem(customView: createAccountView())
-        var leftBarButtonItems = [accountView]
-
-        switch viewModel.selfUser.legalHoldStatus {
-        case .disabled:
-            break
-        case .pending:
-            let pendingRequestView = UIBarButtonItem(customView: createPendingLegalHoldRequestView())
-            leftBarButtonItems += [pendingRequestView]
-        case .enabled:
-            let legalHoldView = UIBarButtonItem(customView: createLegalHoldView())
-            leftBarButtonItems += [legalHoldView]
-        }
-
-        navigationItem.leftBarButtonItems = leftBarButtonItems
-    }
-
-    private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else { return .init() }
-
-        let user = ZMUser.selfUser(inUserSession: session)
-
-        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
-        accountView.unreadCountStyle = .current
-        accountView.autoUpdateSelection = false
-
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentSettings))
-        accountView.addGestureRecognizer(tapGestureRecognizer)
-        accountView.accessibilityTraits = .button
-        accountView.accessibilityIdentifier = "bottomBarSettingsButton"
-        accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
-
-        if let selfUser = ZMUser.selfUser(),
-           selfUser.clientsRequiringUserAttention.count > 0 {
-            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
-        }
-
-        return accountView.wrapInAvatarSizeContainer()
+        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
     }
 
     @objc
