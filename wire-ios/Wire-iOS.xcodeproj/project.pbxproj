@@ -1401,6 +1401,7 @@
 		E9EBE0D428194F890058C793 /* FontScheme+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */; };
 		E9EBE0D9281958BE0058C793 /* FontSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D8281958BE0058C793 /* FontSpec.swift */; };
 		E9EC273429D4440C00599D0A /* String+Capitalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EC273329D4440C00599D0A /* String+Capitalization.swift */; };
+		E9F0BC292BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */; };
 		E9F2D63E2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */; };
 		E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */; };
 		E9F2D6422B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */; };
@@ -3498,6 +3499,7 @@
 		E9EBE0D8281958BE0058C793 /* FontSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSpec.swift; sourceTree = "<group>"; };
 		E9EC273329D4440C00599D0A /* String+Capitalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Capitalization.swift"; path = "Wire-iOS/Sources/Helpers/String+Capitalization.swift"; sourceTree = SOURCE_ROOT; };
 		E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringCapitalizationTests.swift; sourceTree = "<group>"; };
+		E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapshotTesting+UITableViewCell.swift"; sourceTree = "<group>"; };
 		E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStartedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D6412B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationIgnoredDeviceSystemMessageCellDescription.swift; sourceTree = "<group>"; };
@@ -8223,6 +8225,7 @@
 			children = (
 				EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */,
 				EF2121992292EEF3006C4293 /* XCTestCase+SnapshotTesting.swift */,
+				E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */,
 			);
 			path = SwiftSnapshotTesting;
 			sourceTree = "<group>";
@@ -10706,6 +10709,7 @@
 				A96E802A24C846E40010CD80 /* WipeDatabaseViewControllerTests.swift in Sources */,
 				870C92671E8CE55800A10995 /* RandomGeneratorFromDataTests.swift in Sources */,
 				EF7ECE1B211111B4003786C6 /* XCTestCase+FullscreenImageViewController.swift in Sources */,
+				E9F0BC292BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift in Sources */,
 				5E1314B82204A041000FAFC5 /* URLWireLocaleTests.swift in Sources */,
 				EF37AB732366F67500C1F5D9 /* StatusMessageTypeTests.swift in Sources */,
 				16030DAD21A846A200F8032E /* ConversationVideoMessageCellTests.swift in Sources */,
