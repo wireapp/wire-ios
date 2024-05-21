@@ -131,6 +131,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult] {
+        WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
+
         guard let messageData = message.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
@@ -148,14 +150,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }
 
-        WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
-
         do {
-            WireLogger.mls.debug("received MLS message in groupID \(groupID) data = \(messageData.base64EncodedString())")
-
             let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
-
-            WireLogger.mls.debug("decrypted MLS message in groupID \(groupID) proposals = \(decryptedMessage.proposals)")
 
             if decryptedMessage.hasEpochChanged {
                 onEpochChangedSubject.send(groupID)
