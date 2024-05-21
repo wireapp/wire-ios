@@ -93,7 +93,7 @@ final class ConversationTableViewDataSource: NSObject {
         // the initial fetch, which results in unwanted table view updates. This is normally what
         // we want when new message arrive but not when fetchOffset > 0.
 
-        if fetchController?.fetchRequest.fetchOffset > 0 {
+        if let fetchOffset = fetchController?.fetchRequest.fetchOffset, fetchOffset > 0 {
             return Array(fetchController?.fetchedObjects?.suffix(lastFetchedObjectCount) ?? [])
         } else {
             return fetchController?.fetchedObjects ?? []
@@ -334,7 +334,7 @@ final class ConversationTableViewDataSource: NSObject {
         loadNewerMessages()
 
         // 3. Get the index path of the message that should stay displayed
-        if let newestMessageBeforeReload = newestMessageBeforeReload,
+        if let newestMessageBeforeReload,
            let sectionIndex = self.index(of: newestMessageBeforeReload) {
 
             // 4. Get the frame of that message
@@ -475,7 +475,7 @@ extension ConversationTableViewDataSource {
     }
 
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
-        guard let message = message,
+        guard let message,
             Message.isNormal(message),
             !Message.isKnock(message) else { return false }
 

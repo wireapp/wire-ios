@@ -62,7 +62,7 @@ public enum ButtonMessageState {
     case confirmed
 
     init(from state: ButtonState.State?) {
-        guard let state = state else {
+        guard let state else {
             self = .unselected
             return
         }

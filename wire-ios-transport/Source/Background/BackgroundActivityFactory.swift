@@ -88,20 +88,20 @@ import WireUtilities
      */
 
     @objc(startBackgroundActivityWithName:)
-    public func startBackgroundActivity(withName name: String) -> BackgroundActivity? {
-        return startActivityIfPossible(name, nil)
+    public func startBackgroundActivity(name: String) -> BackgroundActivity? {
+        startActivityIfPossible(name, nil)
     }
 
     /**
      * Starts a background activity if possible.
      * - parameter name: The name of the task, for debugging purposes.
-     * - parameter handler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
+     * - parameter expirationHandler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
      * - warning: If this method returns `nil`, you should **not** perform the work you are planning to do.
      */
 
     @objc(startBackgroundActivityWithName:expirationHandler:)
-    public func startBackgroundActivity(withName name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
-        return startActivityIfPossible(name, expirationHandler)
+    public func startBackgroundActivity(name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
+        startActivityIfPossible(name, expirationHandler)
     }
 
     /**
@@ -182,7 +182,7 @@ import WireUtilities
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
         return isolationQueue.sync {
             let activityName = ActivityName(name: name)
-            guard let activityManager = activityManager else {
+            guard let activityManager else {
                 WireLogger.backgroundActivity.info(
                     "Start activity <\(activityName)>: failed, activityManager is nil",
                     attributes: .safePublic
@@ -283,7 +283,7 @@ import WireUtilities
         // No need to keep any activities after finishing
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
-            if let activityManager = activityManager {
+            if let activityManager {
                 let value = SafeValueForLogging(currentBackgroundTask.rawValue)
                 WireLogger.backgroundActivity.info(
                     "Finishing background task: \(value)",

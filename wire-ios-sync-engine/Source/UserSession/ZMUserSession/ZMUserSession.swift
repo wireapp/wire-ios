@@ -84,8 +84,6 @@ public final class ZMUserSession: NSObject {
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
 
-    let useCaseFactory: UseCaseFactoryProtocol
-
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -313,6 +311,23 @@ public final class ZMUserSession: NSObject {
             gracePeriodEndDate: gracePeriodEndDate)
     }()
 
+    public lazy var removeUserClient: RemoveUserClientUseCaseProtocol? = {
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let apiProvider = APIProvider(httpClient: httpClient)
+        guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            return nil
+        }
+
+        return RemoveUserClientUseCase(
+            userClientAPI: apiProvider.userClientAPI(apiVersion: apiVersion),
+            syncContext: syncContext)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
@@ -345,7 +360,6 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
-        useCaseFactory: any UseCaseFactoryProtocol,
         observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
@@ -384,7 +398,6 @@ public final class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
-        self.useCaseFactory = useCaseFactory
         self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatusUseCase
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
@@ -454,6 +467,10 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
+            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        }
     }
 
     // MARK: - Deinitalize
@@ -479,6 +496,7 @@ public final class ZMUserSession: NSObject {
         contextStorage.clear()
 
         NotificationCenter.default.removeObserver(self)
+        WireLogger.authentication.addTag(.selfClientId, value: nil)
 
         tornDown = true
     }
@@ -497,7 +515,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
-        return StrategyDirectory(
+        StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
             cookieStorage: transportSession.cookieStorage,
@@ -511,7 +529,6 @@ public final class ZMUserSession: NSObject {
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: useCaseFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
@@ -839,8 +856,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WaitingGroupTask(context: syncContext) { [self] in
             do {
                 var getFeatureConfigAction = GetFeatureConfigsAction()
+                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+
                 try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+                try await resolveOneOnOneUseCase.invoke()
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
             }
@@ -855,6 +874,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.checkE2EICertificateExpiryStatus()
         }
+    }
+
+    private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        let supportedProtocolService = SupportedProtocolsService(context: context)
+        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
+        return ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: resolver
+        )
     }
 
     func processEvents() {
@@ -923,6 +953,18 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
+
+        if userClient.hasRegisteredMLSClient {
+            // Before the client was registered as an MLS client,
+            // They wouldn't have been able to migrate any conversations from Proteus to MLS.
+            // So we perform a slow sync to sync the conversations. This will ensure that
+            // the message protocol of each conversation is up-to-date.
+            // The client will then join any MLS groups they haven't joined yet.
+            syncStatus.forceSlowSync()
+        }
+
+        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.addTag(.selfClientId, value: clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {

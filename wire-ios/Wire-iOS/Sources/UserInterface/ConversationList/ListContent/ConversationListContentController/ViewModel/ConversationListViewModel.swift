@@ -178,11 +178,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    weak var restorationDelegate: ConversationListViewModelRestorationDelegate? {
-        didSet {
-            restorationDelegate?.listViewModel(self, didRestoreFolderEnabled: folderEnabled)
-        }
-    }
     weak var delegate: ConversationListViewModelDelegate? {
         didSet {
             delegateFolderEnableState(newState: state)
@@ -235,6 +230,8 @@ final class ConversationListViewModel: NSObject {
 
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
+        guard isFolderStatePersistenceEnabled else { return .init() }
+
         guard let persistentPath = ConversationListViewModel.persistentURL,
             let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
@@ -269,8 +266,12 @@ final class ConversationListViewModel: NSObject {
 
     private let userSession: UserSession?
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        isFolderStatePersistenceEnabled: Bool
+    ) {
         self.userSession = userSession
+        self.isFolderStatePersistenceEnabled = isFolderStatePersistenceEnabled
 
         super.init()
 
@@ -356,7 +357,7 @@ final class ConversationListViewModel: NSObject {
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
-        guard let item = item else { return nil }
+        guard let item else { return nil }
 
         for (sectionIndex, section) in sections.enumerated() {
             if let index = section.index(for: item) {
@@ -515,7 +516,7 @@ final class ConversationListViewModel: NSObject {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
 
         var newValue: [Section]
-        if let kind = kind,
+        if let kind,
             let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
@@ -539,13 +540,13 @@ final class ConversationListViewModel: NSObject {
             delegate?.reload(using: changeset, interrupt: { _ in
                 return false
             }, setData: { data in
-                if let data = data {
+                if let data {
                     self.sections = data
                 }
             })
         }
 
-        if let kind = kind,
+        if let kind,
            let sectionNumber = sectionNumber(for: kind) {
             delegate?.listViewModel(self, didUpdateSection: sectionNumber)
         } else {
@@ -557,7 +558,7 @@ final class ConversationListViewModel: NSObject {
 
     @discardableResult
     func select(itemToSelect: ConversationListItem?) -> Bool {
-        guard let itemToSelect = itemToSelect else {
+        guard let itemToSelect else {
             internalSelect(itemToSelect: nil)
             return false
         }
@@ -580,7 +581,7 @@ final class ConversationListViewModel: NSObject {
     private func internalSelect(itemToSelect: ConversationListItem?) {
         selectedItem = itemToSelect
 
-        if let itemToSelect = itemToSelect {
+        if let itemToSelect {
             delegate?.listViewModel(self, didSelectItem: itemToSelect)
         }
     }
@@ -636,7 +637,7 @@ final class ConversationListViewModel: NSObject {
             delegate?.reload(using: changeset, interrupt: { _ in
                 return false
             }, setData: { data in
-                if let data = data {
+                if let data {
                     self.sections = data
                 }
             })
@@ -648,6 +649,9 @@ final class ConversationListViewModel: NSObject {
 
     // MARK: - state presistent
 
+    let isFolderStatePersistenceEnabled: Bool
+
+    // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
         var folderEnabled: Bool
@@ -673,7 +677,8 @@ final class ConversationListViewModel: NSObject {
 
     private func saveState(state: State) {
 
-        guard let jsonString = state.jsonString,
+        guard isFolderStatePersistenceEnabled,
+              let jsonString = state.jsonString,
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 
@@ -698,7 +703,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     static var persistentURL: URL? {
-        guard let persistentDirectory = persistentDirectory else { return nil }
+        guard let persistentDirectory else { return nil }
 
         return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
     }

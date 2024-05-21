@@ -26,8 +26,6 @@ import WireRequestStrategy
 import WireTransport
 import WireUtilities
 
-private let log = WireLogger(tag: "SessionManager")
-
 public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
 public extension Bundle {
@@ -248,7 +246,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
 
-    var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
+    var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
     var authenticatedSessionFactory: AuthenticatedSessionFactory
     let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
@@ -510,7 +508,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         // non nil in order to process the notification
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
 
-        if let analytics = analytics {
+        if let analytics {
             self.notificationsTracker = NotificationsTracker(analytics: analytics)
         } else {
             self.notificationsTracker = nil
@@ -523,7 +521,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         pushTokenService.onTokenChange = { [weak self] _ in
             guard
-                let `self` = self,
+                let self,
                 let session = self.activeUserSession
             else {
                 return
@@ -552,7 +550,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 application: application,
                 minTLSVersion: minTLSVersion,
                 blacklistCallback: { [weak self] blacklisted in
-                    guard let `self` = self, !self.isAppVersionBlacklisted else { return }
+                    guard let self, !self.isAppVersionBlacklisted else { return }
 
                     if blacklisted {
                         self.isAppVersionBlacklisted = true
@@ -646,7 +644,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let `self` = self, let session = session else { return }
+            guard let self, let session else { return }
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
         }
@@ -655,32 +653,58 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// Select the account to be the active account.
     /// - completion: runs when the user session was loaded
     /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
-    public func select(_ account: Account, completion: ((ZMUserSession) -> Void)? = nil, tearDownCompletion: (() -> Void)? = nil) {
-        guard !isSelectingAccount else { return }
+    public func select(
+        _ account: Account,
+        completion: ((ZMUserSession?) -> Void)? = nil,
+        tearDownCompletion: (() -> Void)? = nil
+    ) {
+        guard !isSelectingAccount else {
+            completion?(nil)
+            return
+        }
 
-        confirmSwitchingAccount { [weak self] in
+        confirmSwitchingAccount { [weak self] isConfirmed in
+
+            guard isConfirmed else {
+                completion?(nil)
+                return
+            }
+
             self?.isSelectingAccount = true
             let selectedAccount = self?.accountManager.selectedAccount
 
-            self?.delegate?.sessionManagerWillOpenAccount(account,
-                                                          from: selectedAccount,
-                                                          userSessionCanBeTornDown: { [weak self] in
-                self?.activeUserSession = nil
-                tearDownCompletion?()
-                self?.loadSession(for: account) { [weak self] session in
-                    self?.isSelectingAccount = false
+            guard let delegate = self?.delegate else {
+                completion?(nil)
+                return
+            }
+            delegate.sessionManagerWillOpenAccount(
+                account,
+                from: selectedAccount,
+                userSessionCanBeTornDown: { [weak self] in
+                    self?.activeUserSession = nil
+                    tearDownCompletion?()
+                    guard let self else {
+                        completion?(nil)
+                        return
+                    }
+                    loadSession(for: account) { [weak self] session in
+                        self?.isSelectingAccount = false
 
-                    if let session = session {
-                        self?.accountManager.select(account)
-                        completion?(session)
+                        if let session {
+                            self?.accountManager.select(account)
+                            completion?(session)
+                        } else {
+                            completion?(nil)
+                        }
                     }
                 }
-            })
+            )
         }
     }
 
     public func addAccount(userInfo: [String: Any]? = nil) {
-        confirmSwitchingAccount { [weak self] in
+        confirmSwitchingAccount { [weak self] isConfirmed in
+            guard isConfirmed else { return }
             let error = NSError(code: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
                 self?.activeUserSession = nil
@@ -830,7 +854,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
-        self.withSession(for: account, notifyAboutMigration: true) { session in
+        withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
             WireLogger.sessionManager.debug("Activated ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)")
 
@@ -1437,7 +1461,6 @@ extension SessionManager {
     public static var companyLoginRequestTimestampKey: String {
         return "WireCompanyLoginTimesta;p"
     }
-
 }
 
 // MARK: - End-to-end Identity
@@ -1537,26 +1560,29 @@ extension SessionManager {
 
 extension SessionManager {
 
-    public func confirmSwitchingAccount(completion: @escaping () -> Void) {
+    public func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
         guard
-            let switchingDelegate = switchingDelegate,
-            let activeUserSession = activeUserSession,
+            let switchingDelegate,
+            let activeUserSession,
             activeUserSession.isCallOngoing
         else {
-            return completion()
+            // no confirmation to show if no call is ongoing
+            return completion(true)
         }
 
-        switchingDelegate.confirmSwitchingAccount(completion: { confirmed in
+        switchingDelegate.confirmSwitchingAccount { confirmed in
             if confirmed {
                 activeUserSession.callCenter?.endAllCalls()
-                completion()
             }
-        })
+            completion(confirmed)
+        }
     }
 }
 
 // MARK: - AVS Logging
+
 extension SessionManager {
+
     public static func startAVSLogging() {
         avsLogObserver = AVSLogObserver()
     }

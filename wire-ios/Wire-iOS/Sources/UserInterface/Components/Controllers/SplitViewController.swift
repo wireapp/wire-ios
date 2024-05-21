@@ -240,6 +240,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             return
         }
 
+        // without this line on iPad the text is displayed next to the tab item icon
+        newLeftViewController.map { setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: $0) }
+
         let animator: UIViewControllerAnimatedTransitioning
 
         if leftViewController == nil || newLeftViewController == nil {
@@ -396,13 +399,13 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
                             animated: Bool,
                             completion: Completion? = nil) -> Bool {
         // Return if transition is done or already in progress
-        if let toViewController = toViewController, children.contains(toViewController) {
+        if let toViewController, children.contains(toViewController) {
             return false
         }
 
         fromViewController?.willMove(toParent: nil)
 
-        if let toViewController = toViewController {
+        if let toViewController {
             toViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             addChild(toViewController)
         } else {
@@ -497,7 +500,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         guard layoutSize != .regularLandscape,
             delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
             isConversationViewVisible,
-            let gestureRecognizer = gestureRecognizer else {
+            let gestureRecognizer else {
                 return
         }
 
@@ -545,7 +548,7 @@ extension SplitViewController: UIGestureRecognizerDelegate {
             return false
         }
 
-        if let delegate = delegate, !delegate.splitViewControllerShouldMoveLeftViewController(self) {
+        if let delegate, !delegate.splitViewControllerShouldMoveLeftViewController(self) {
             return false
         }
 

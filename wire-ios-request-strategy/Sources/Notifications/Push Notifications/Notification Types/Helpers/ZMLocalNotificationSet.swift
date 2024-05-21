@@ -19,12 +19,13 @@
 import UIKit
 import UserNotifications
 import WireTransport
+import WireUtilities
 
 @objc public class ZMLocalNotificationSet: NSObject {
 
     let archivingKey: String
     let keyValueStore: ZMSynchonizableKeyValueStore
-    public var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
+    public var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
     public var notifications = Set<ZMLocalNotification>() {
         didSet { try? updateArchive() }
@@ -87,7 +88,8 @@ import WireTransport
     /// Cancels all notifications
     public func cancelAllNotifications() {
         let ids = allNotifications.compactMap { $0.requestID?.uuidString }
-        notificationCenter.removeAllNotifications(withIdentifiers: ids)
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications = Set()
         oldNotifications = []
     }
@@ -102,7 +104,9 @@ import WireTransport
     func cancelCurrentNotifications(_ conversation: ZMConversation) {
         guard notifications.count > 0 else { return }
         let toRemove = notifications.filter { $0.conversationID == conversation.remoteIdentifier }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        let ids = toRemove.map { $0.id.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications.subtract(toRemove)
     }
 
@@ -116,7 +120,8 @@ import WireTransport
                 let requestID = userInfo.requestID?.uuidString
                 else { return true }
 
-            notificationCenter.removeAllNotifications(withIdentifiers: [requestID])
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: [requestID])
+            notificationCenter.removeDeliveredNotifications(withIdentifiers: [requestID])
             return false
         }
     }
@@ -125,7 +130,9 @@ import WireTransport
     public func cancelCurrentNotifications(messageNonce: UUID) {
         guard notifications.count > 0 else { return }
         let toRemove = notifications.filter { $0.messageNonce == messageNonce }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        let ids = toRemove.map { $0.id.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications.subtract(toRemove)
     }
 }
@@ -137,7 +144,9 @@ extension ZMLocalNotificationSet {
         let toRemove = notifications.filter {
             $0.conversationID == conversation.remoteIdentifier && $0.isCallingNotification
         }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        let ids = toRemove.map { $0.id.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications.subtract(toRemove)
     }
 }
@@ -151,11 +160,11 @@ public extension ZMConversation {
 
         switch conversationType {
         case .group:
-            if let conversationName = conversationName, let callerName = callerName {
+            if let conversationName, let callerName {
                 result = String.localizedStringWithFormat("callkit.call.started.group".pushFormatString, callerName, conversationName)
-            } else if let conversationName = conversationName {
+            } else if let conversationName {
                 result = String.localizedStringWithFormat("callkit.call.started.group.nousername".pushFormatString, conversationName)
-            } else if let callerName = callerName {
+            } else if let callerName {
                 result = String.localizedStringWithFormat("callkit.call.started.group.noconversationname".pushFormatString, callerName)
             }
         case .oneOnOne:

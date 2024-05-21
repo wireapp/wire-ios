@@ -26,7 +26,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     }
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        guard let host = host else { return false }
+        guard let host else { return false }
         let pinnedKeys = trustData
             .filter { trustData in
                 trustData.matches(host: host)

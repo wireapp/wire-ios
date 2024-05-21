@@ -89,13 +89,13 @@ final class BackupRestoreController: NSObject {
         from url: URL
     ) {
         guard let sessionManager = SessionManager.shared,
-              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "restore backup") else {
+              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
             return
         }
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
@@ -132,7 +132,7 @@ final class BackupRestoreController: NSObject {
 
     private func requestPassword(completion: @escaping (String) -> Void) {
         let controller = UIAlertController.requestRestorePassword { password in
-            password.apply(completion)
+            password.map(completion)
         }
 
         target.present(controller, animated: true, completion: nil)

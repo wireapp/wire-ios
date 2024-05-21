@@ -132,7 +132,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
 
 extension ConversationVideoMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        guard let message = message else { return }
+        guard let message else { return }
 
         delegate?.perform(action: action, for: message, view: self)
     }

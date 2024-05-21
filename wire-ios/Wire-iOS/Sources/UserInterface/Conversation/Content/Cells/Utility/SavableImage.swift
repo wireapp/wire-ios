@@ -111,7 +111,7 @@ final class SavableImage: NSObject {
             } completionHandler: { success, error in
                 DispatchQueue.main.async {
                     self.writeInProgess = false
-                    error.apply(self.warnAboutError)
+                    error.map(self.warnAboutError)
                     cleanup(success)
                 }
             }

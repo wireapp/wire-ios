@@ -238,7 +238,9 @@ extension ZMMessage: ZMConversationMessage {
     @NSManaged public var replies: Set<ZMMessage>
 
     public var readReceipts: [ReadReceipt] {
-        return confirmations.filter({ $0.type == .read }).sorted(by: { a, b in  a.serverTimestamp < b.serverTimestamp })
+        confirmations
+            .filter { $0.type == .read }
+            .sortedAscendingPrependingNil(by: \.serverTimestamp)
     }
 
     public var objectIdentifier: String {
@@ -381,7 +383,7 @@ extension ZMMessage {
     }
 
     @objc public func startSelfDestructionIfNeeded() -> Bool {
-        if !isZombieObject && isEphemeral, let sender = sender, !sender.isSelfUser {
+        if !isZombieObject && isEphemeral, let sender, !sender.isSelfUser {
             return startDestructionIfNeeded()
         }
         return false

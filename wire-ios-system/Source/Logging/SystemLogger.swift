@@ -86,6 +86,10 @@ struct SystemLogger: LoggerProtocol {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
+    func addTag(_ key: LogAttributesKey, value: String?) {
+       // do nothing, as it's only available on datadog
+    }
+
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
         var logger: OSLog = OSLog.default
         if let tag = attributes?["tag"] as? String {

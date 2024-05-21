@@ -158,7 +158,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let account = self.createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
 
-        guard let application = application else { return XCTFail() }
+        guard let application else { return XCTFail() }
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
 
@@ -519,7 +519,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
     // the background as soon as the SessionManager is created
     func testThatABackgroundTaskCanBeCreatedAfterCreatingSessionManager() {
         // WHEN
-        let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "PushActivity")
+        let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "PushActivity")
 
         // THEN
         XCTAssertNotNil(activity)

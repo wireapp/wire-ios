@@ -150,7 +150,7 @@ public final class NotificationSession {
             // Currently it is the given behavior, but should be refactored
             // into a "setup" or "load" func that can be async and handle errors.
 
-            if let error = error {
+            if let error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
         }
@@ -337,6 +337,11 @@ public final class NotificationSession {
                 WireLogger.notifications.error("Not displaying notification because app is not authenticated")
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
+            }
+
+            let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
+            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.addTag(.selfClientId, value: clientId)
             }
 
             self.fetchEvents(fromPushChannelPayload: payload)
@@ -529,7 +534,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func processCallEvent() {
-        if let callEvent = callEvent {
+        if let callEvent {
             delegate?.reportCallEvent(
                 callEvent,
                 currentTimestamp: context.serverTimeDelta
@@ -596,7 +601,7 @@ extension NotificationSession {
     }
 
     private func isEventTimedOut(currentTimestamp: Date, eventTimestamp: Date?) -> Bool {
-        guard let eventTimestamp = eventTimestamp else {
+        guard let eventTimestamp else {
             return true
         }
 

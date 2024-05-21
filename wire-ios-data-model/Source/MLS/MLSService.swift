@@ -25,16 +25,16 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded() async
 
-    func createSelfGroup(for groupID: MLSGroupID) async
+    func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite
 
     func joinGroup(with groupID: MLSGroupID) async throws
 
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
+    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite
 
-    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws
+    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
@@ -359,7 +359,7 @@ public final class MLSService: MLSServiceInterface {
         ) { [weak self] _ in
             guard
                 let self,
-                let context = context else {
+                let context else {
                 return
             }
 
@@ -420,6 +420,7 @@ public final class MLSService: MLSServiceInterface {
     enum MLSGroupCreationError: Error, Equatable {
         case failedToGetExternalSenders
         case failedToCreateGroup
+        case invalidCiphersuite
     }
 
     /// Establish an MLS group with the given group id.
@@ -430,11 +431,11 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
-        guard let context else { return }
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
+        guard let context else { throw MLSGroupCreationError.failedToCreateGroup }
 
         do {
-            try await createGroup(for: groupID)
+            let ciphersuite = try await createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -442,6 +443,7 @@ public final class MLSService: MLSServiceInterface {
 
             let usersWithSelfUser = users + [mlsSelfUser]
             try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+            return ciphersuite
         } catch {
             try await self.wipeGroup(groupID)
             throw error
@@ -451,8 +453,14 @@ public final class MLSService: MLSServiceInterface {
     public func createGroup(
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
-    ) async throws {
+    ) async throws -> MLSCipherSuite {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
+
+        let ciphersuiteRawValue = await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue
+
+        guard let ciphersuite = MLSCipherSuite(rawValue: ciphersuiteRawValue) else {
+            throw MLSGroupCreationError.invalidCiphersuite
+        }
 
         do {
             let externalSenders: [Data]
@@ -466,20 +474,18 @@ public final class MLSService: MLSServiceInterface {
                     [try await $0.getExternalSender(conversationId: parentGroupID.data)]
                 }
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
-                externalSenders = backendPublicKeys.externalSenderKeys
+                externalSenders = backendPublicKeys.externalSenderKey(for: ciphersuite)
             } else {
                 throw MLSGroupCreationError.failedToGetExternalSenders
             }
-
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let config = ConversationConfiguration(
-                ciphersuite: ciphersuite,
+                ciphersuite: UInt16(ciphersuite.rawValue),
                 externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
             try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: UInt16(ciphersuite.rawValue))
                 try await $0.createConversation(
                     conversationId: groupID.data,
                     creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
@@ -492,13 +498,14 @@ public final class MLSService: MLSServiceInterface {
         }
 
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+
+        return ciphersuite
     }
 
-    public func createSelfGroup(for groupID: MLSGroupID) async {
-        guard let context else { return }
-
+    public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
         do {
-            try await self.createGroup(for: groupID)
+            guard let context else { throw MLSAddMembersError.noManagedObjectContext }
+            let ciphersuite = try await self.createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -510,8 +517,10 @@ public final class MLSService: MLSServiceInterface {
                 logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
                 try await updateKeyMaterial(for: groupID)
             }
+            return ciphersuite
         } catch {
             logger.error("create group for self conversation failed: \(error.localizedDescription)")
+            throw error
         }
     }
 
@@ -521,7 +530,9 @@ public final class MLSService: MLSServiceInterface {
 
         case noMembersToAdd
         case noInviteesToAdd
+        case noManagedObjectContext
         case failedToClaimKeyPackages(users: [MLSUser])
+        case invalidCiphersuite
     }
 
     /// Add users to MLS group in the given conversation.
@@ -544,7 +555,11 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
-            let keyPackages = try await claimKeyPackages(for: users)
+            let mlsConfig = await featureRepository.fetchMLS().config
+            guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+                throw MLSAddMembersError.invalidCiphersuite
+            }
+            let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
             let events = if keyPackages.isEmpty {
                 // CC does not accept empty keypackages in addMembers, but
@@ -563,7 +578,8 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func claimKeyPackages(
-        for users: [MLSUser]
+        for users: [MLSUser],
+        ciphersuite: MLSCipherSuite
     ) async throws -> [KeyPackage] {
 
         guard let context else {
@@ -579,6 +595,7 @@ public final class MLSService: MLSServiceInterface {
                 let keyPackages = try await actionsProvider.claimKeyPackages(
                     userID: user.id,
                     domain: user.domain,
+                    ciphersuite: ciphersuite,
                     excludedSelfClientID: user.selfClientID,
                     in: context.notificationContext
                 )
@@ -589,7 +606,7 @@ public final class MLSService: MLSServiceInterface {
             }
         }
 
-        if failedUsers.isNonEmpty {
+        if !failedUsers.isEmpty {
             throw MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
         }
 
@@ -714,7 +731,7 @@ public final class MLSService: MLSServiceInterface {
     private var hasMoreThan24HoursPassedSinceLastCheck: Bool {
         guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else { return true }
 
-        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
+        if let hour = Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour, hour > 24 {
             return true
         } else {
             return false
@@ -813,13 +830,16 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Joining conversations
 
     public func joinNewGroup(with groupID: MLSGroupID) async throws {
-        guard let context = context else {
+        guard let context else {
             logger.warn("MLSService is missing sync context")
             return
         }
 
+        // TODO: [WPB-9029] jacob this looks wrong,
+        // why would we create the MLS group if doesn't exist? We are about
+        // to join it via external commit.
         if await !conversationExists(groupID: groupID) {
-            try await createGroup(for: groupID)
+            try await _ = createGroup(for: groupID)
         }
 
         let mlsUser = await context.perform {
@@ -842,7 +862,7 @@ public final class MLSService: MLSServiceInterface {
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
     /// and sends external commits to join these groups
     public func performPendingJoins() async throws {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -910,7 +930,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -979,7 +999,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func fetchAndRepairSubgroup(parentGroupID: MLSGroupID) async {
-        guard let context = context else { return }
+        guard let context else { return }
 
         do {
             logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
@@ -1071,7 +1091,7 @@ public final class MLSService: MLSServiceInterface {
         var epoch: UInt64?
 
         await context.perform {
-            if let subgroup = subgroup {
+            if let subgroup {
                 groupID = subgroup.groupID
                 epoch = UInt64(subgroup.epoch)
             } else {
@@ -1138,7 +1158,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("sending proposal in group (\(groupID.safeForLoggingDescription))")
 
-            guard let context = context else { return }
+            guard let context else { return }
 
             let updateEvents = try await actionsProvider.sendMessage(
                 data,
@@ -1198,7 +1218,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("sending external commit to join group (\(logInfo))")
 
-            guard let context = context else { return }
+            guard let context else { return }
 
             guard let parentConversationInfo = fetchConversationInfo(
                 with: parentID,
@@ -1216,7 +1236,7 @@ public final class MLSService: MLSServiceInterface {
 
             let updateEvents: [ZMUpdateEvent]
 
-            if let subgroupID = subgroupID {
+            if let subgroupID {
                 updateEvents = try await mlsActionExecutor.joinGroup(
                     subgroupID,
                     groupInfo: groupInfo
@@ -1255,8 +1275,8 @@ public final class MLSService: MLSServiceInterface {
         }
 
         guard
-            let conversation = conversation,
-            let qualifiedID = qualifiedID
+            let conversation,
+            let qualifiedID
         else {
             return nil
         }
@@ -1308,7 +1328,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func commitPendingProposalsIfNeeded() {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -1357,7 +1377,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
-        guard let context = context else {
+        guard let context else {
             return []
         }
 
@@ -1403,7 +1423,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
-        guard let context = context else { return false }
+        guard let context else { return false }
 
         var groupHasPendingProposals = false
 
@@ -1439,7 +1459,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func clearPendingProposalCommitDate(for groupID: MLSGroupID) {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -1740,7 +1760,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Proteus to MLS Migration
 
     public func startProteusToMLSMigration() async throws {
-        guard let context = context else {
+        guard let context else {
             assertionFailure("MLSService.context is nil")
             return
         }
@@ -1837,7 +1857,7 @@ public struct MLSUser: Equatable {
 
     public init(from user: ZMUser) {
         id = user.remoteIdentifier
-        domain = user.domain?.selfOrNilIfEmpty ?? BackendInfo.domain!
+        domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID

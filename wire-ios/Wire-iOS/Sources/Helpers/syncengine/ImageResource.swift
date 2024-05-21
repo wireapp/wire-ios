@@ -267,7 +267,7 @@ extension WireImageResource {
                 }
             }
 
-            guard let imageData = imageData else { return }
+            guard let imageData else { return }
 
             if isAnimatedGIF {
                 image = FLAnimatedImage(animatedGIFData: imageData)
@@ -284,7 +284,7 @@ extension WireImageResource {
                 }
             }
 
-            if let image = image {
+            if let image {
                 cache.cache.setObject(image, forKey: cacheKey)
             }
         }

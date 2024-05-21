@@ -38,7 +38,7 @@ extension LoginCredentials {
         userInfo[ZMUserHasPasswordKey] = hasPassword
         userInfo[ZMUserUsesCompanyLoginCredentialKey] = usesCompanyLogin
 
-        if let emailAddress = emailAddress, !emailAddress.isEmpty {
+        if let emailAddress, !emailAddress.isEmpty {
             userInfo[ZMEmailCredentialKey] = emailAddress
         }
 
