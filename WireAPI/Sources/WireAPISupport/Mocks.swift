@@ -18,4 +18,6 @@
 
 import Foundation
 
-enum WireAPISupport { }
+/// This is just a placeholder to give the compiler some food.
+/// To auto generate mocks via 'sourcery' we use only the plugin configured in `Package.swift`.
+enum Mocks { }

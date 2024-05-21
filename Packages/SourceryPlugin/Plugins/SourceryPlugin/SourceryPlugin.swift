@@ -20,13 +20,15 @@ import Foundation
 import PackagePlugin
 
 @main
-struct WireAPIPlugin: BuildToolPlugin {
+struct SourceryPlugin: BuildToolPlugin {
     func createBuildCommands(
         context: PackagePlugin.PluginContext,
         target: PackagePlugin.Target
     ) async throws -> [PackagePlugin.Command] {
 
-        print("WireAPIPlugin work directory: \(context.pluginWorkDirectory)")
+        // TODO: pass config yml
+
+        print("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
 
         return [
             .prebuildCommand(

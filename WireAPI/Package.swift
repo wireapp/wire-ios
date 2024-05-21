@@ -25,7 +25,8 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
-        )
+        ),
+        .package(path: "../Packages/SourceryPlugin")
     ],
     targets: [
         .target(
@@ -37,18 +38,11 @@ let package = Package(
                 "WireAPI"
             ],
             plugins: [
-                .plugin(name: "WireAPIPlugin")
+                .plugin(
+                    name: "SourceryPlugin",
+                    package: "SourceryPlugin"
+                )
             ]
-        ),
-        .binaryTarget(
-            name: "sourcery2",
-            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.1.7/sourcery-2.1.7.artifactbundle.zip",
-            checksum: "b54ff217c78cada3f70d3c11301da03a199bec87426615b8144fc9abd13ac93b"
-        ),
-        .plugin(
-            name: "WireAPIPlugin",
-            capability: .buildTool(),
-            dependencies: ["sourcery2"]
         ),
         .testTarget(
             name: "WireAPITests",
