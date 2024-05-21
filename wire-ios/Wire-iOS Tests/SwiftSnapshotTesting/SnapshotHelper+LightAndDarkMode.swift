@@ -28,10 +28,12 @@ extension SnapshotHelper {
     ///
     /// - Note: This function calls `verifyInDarkScheme` and `verifyInLightScheme` internally to perform the validations for dark and light themes respectively.
 
-    func verifyInAllColorSchemes(createSut: () -> UIViewController,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
+    func verifyInAllColorSchemes(
+        createSut: () -> UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         verifyInDarkScheme(createSut: createSut,
                            name: "DarkTheme",
@@ -55,11 +57,13 @@ extension SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - line: The invoking line number.
 
-    func verifyInDarkScheme(createSut: () -> UIViewController,
-                            name: String? = nil,
-                            file: StaticString = #file,
-                            testName: String = #function,
-                            line: UInt = #line) {
+    func verifyInDarkScheme(
+        createSut: () -> UIViewController,
+        name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         let sut = createSut()
         sut.overrideUserInterfaceStyle = .dark
@@ -80,16 +84,50 @@ extension SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - line: The invoking line number.
 
-    func verifyInLightScheme(createSut: () -> UIViewController,
-                             name: String? = nil,
-                             file: StaticString = #file,
-                             testName: String = #function,
-                             line: UInt = #line) {
+    func verifyInLightScheme(
+        createSut: () -> UIViewController,
+        name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         let sut = createSut()
         sut.overrideUserInterfaceStyle = .light
 
         verify(matching: sut,
+               named: name,
+               file: file,
+               testName: testName,
+               line: line)
+    }
+
+    func verifyViewInDarkScheme(
+        createSut: () -> UIView,
+        name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let sut = createSut()
+        sut.overrideUserInterfaceStyle = .dark
+        verify(matching: createSut(),
+               named: name,
+               file: file,
+               testName: testName,
+               line: line)
+    }
+
+    func verifyViewInLightScheme(
+        createSut: () -> UIView,
+        name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let sut = createSut()
+        sut.overrideUserInterfaceStyle = .light
+        verify(matching: createSut(),
                named: name,
                file: file,
                testName: testName,

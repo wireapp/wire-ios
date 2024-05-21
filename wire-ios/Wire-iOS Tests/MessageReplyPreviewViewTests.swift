@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireCommonComponents
 import WireLinkPreview
 import XCTest
+
+@testable import Wire
 
 // MARK: - UIView extension
 
 extension UIView {
+
     fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
         container.translatesAutoresizingMaskIntoConstraints = false
@@ -33,11 +36,21 @@ extension UIView {
 
         return container
     }
+
 }
 
 // MARK: - MessageReplyPreviewViewTests
 
-final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
+final class MessageReplyPreviewViewTests: XCTestCase {
+
+    let helper = SnapshotHelper()
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        FontScheme.configure(with: .large)
+    }
 
     // MARK: - tearDown
 
@@ -53,21 +66,25 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
         NSAttributedString.invalidateParagraphStyle()
     }
 
-    private func verifyInLightMode(message: MockMessage,
-                                   file: StaticString = #file,
-                                   testName: String = #function,
-                                   line: UInt = #line) {
+    private func verifyInLightMode(
+        message: MockMessage,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let sut = message.replyPreview()!.prepareForSnapshot()
-		verifyViewInLightScheme(createSut: {sut
-		}, file: file, testName: testName, line: line)
-	}
+        helper.verifyViewInLightScheme(createSut: {sut
+        }, file: file, testName: testName, line: line)
+    }
 
-    private func verifyInDarkMode(message: MockMessage,
-                                  file: StaticString = #file,
-                                  testName: String = #function,
-                                  line: UInt = #line) {
+    private func verifyInDarkMode(
+        message: MockMessage,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let sut = message.replyPreview()!.prepareForSnapshot()
-        verifyViewInDarkScheme(createSut: { sut
+        helper.verifyViewInDarkScheme(createSut: { sut
         }, file: file, testName: testName, line: line)
     }
 
@@ -76,7 +93,7 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
     func testThatItRendersTextMessagePreview() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
 
-		verifyInLightMode(message: message)
+        verifyInLightMode(message: message)
     }
 
     func testThatItRendersTextMessagePreview_DarkMode() {
@@ -115,7 +132,7 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
     // MARK: - Snapshot Tests
 
     func testThatItRendersMention() {
-		verifyInLightMode(message: mentionMessage())
+        verifyInLightMode(message: mentionMessage())
     }
 
     func testThatItRendersMention_DarkMode() {
@@ -124,7 +141,7 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersTextMessagePreview_LongText() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed.")
-		verifyInLightMode(message: message)
+        verifyInLightMode(message: message)
     }
 
     func testThatItRendersTextMessagePreview_LongText_DarkMode() {
@@ -134,7 +151,7 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersFileMessagePreview() {
         let message = MockMessageFactory.fileTransferMessage()
-		verifyInLightMode(message: message)
+        verifyInLightMode(message: message)
     }
 
     func testThatItRendersFileMessagePreview_DarkMode() {
@@ -144,7 +161,7 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersLocationMessagePreview() {
         let message = MockMessageFactory.locationMessage()
-		verifyInLightMode(message: message)
+        verifyInLightMode(message: message)
     }
 
     func testThatItRendersLocationMessagePreview_DarkMode() {
