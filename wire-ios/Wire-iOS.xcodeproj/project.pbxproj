@@ -328,6 +328,7 @@
 		5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */; };
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
+		592344A32BFE1EBD00859FEB /* SettingsMainViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592344A12BFE1EBC00859FEB /* SettingsMainViewControllerBuilder.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		595D304B2BF923B30064A018 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; };
@@ -2384,6 +2385,7 @@
 		5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift"; sourceTree = "<group>"; };
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
+		592344A12BFE1EBC00859FEB /* SettingsMainViewControllerBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsMainViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		5952693E2BE8C93B001C1E8B /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -6903,6 +6905,7 @@
 				870815851BF4E76A00D321BC /* SettingsCell.swift */,
 				E5337CF028CF48DE00C3F8A3 /* SettingsLinkTableCell.swift */,
 				E591D01028C7220800C1469C /* SettingsAppearanceCell.swift */,
+				592344A12BFE1EBC00859FEB /* SettingsMainViewControllerBuilder.swift */,
 				870815871BF4EAD100D321BC /* SettingsTableViewController.swift */,
 				87AB6DB51D9AB47400ADAD38 /* SettingsStyleNavigationController.swift */,
 				87AC9F551C0749FB00E1ED6F /* TailEditingTextField.swift */,
@@ -10397,6 +10400,7 @@
 				16D68E9B1CEF99C7003AB9E0 /* WaveformProgressView.swift in Sources */,
 				EF4C5D50233A17680092CA38 /* ConversationListContentController.swift in Sources */,
 				87BEB0441D3E478500DE9575 /* AssetLibrary.swift in Sources */,
+				592344A32BFE1EBD00859FEB /* SettingsMainViewControllerBuilder.swift in Sources */,
 				D30880FE292E521D00DDEAB0 /* CallingActionsInfoViewController.swift in Sources */,
 				16D74BEA2B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift in Sources */,
 				EE593F9C2B73C3F0008D1109 /* DeepLinksView.swift in Sources */,

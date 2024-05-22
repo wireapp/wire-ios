@@ -69,10 +69,6 @@ final class ZClientViewController: UIViewController {
             userSession: userSession,
             accountSelector: SessionManager.shared
         )
-        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
-            userSession: userSession,
-            selfUser: userSession.selfUser
-        )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
@@ -182,10 +178,15 @@ final class ZClientViewController: UIViewController {
 
         wireSplitViewController.view.backgroundColor = .clear
 
+        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
+            userSession: userSession,
+            selfUser: userSession.selfUser
+        )
+
         mainTabBarController = MainTabBarController(
             conversations: UINavigationController(rootViewController: conversationListViewController),
             archive: createArchivedListViewController(),
-            settings: .init()
+            settings: settingsViewControllerBuilder.build()
         )
         wireSplitViewController.leftViewController = mainTabBarController
 
