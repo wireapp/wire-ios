@@ -17,3 +17,25 @@
 //
 
 import Foundation
+
+/// An event where an encrypted Proteus message was received in a conversation.
+
+public struct ConversationProteusMessageAddEvent {
+
+    /// The id of the conversation.
+
+    public let conversationID: ConversationID
+
+    /// The id of the user who sent the message.
+
+    public let senderID: UserID
+
+    /// When the message was sent.
+
+    public let timestamp: Date
+
+    /// The encrypted serialized (base 64 encoded) protobuf message.
+
+    public let encryptedProtobufMessage: String
+
+}
