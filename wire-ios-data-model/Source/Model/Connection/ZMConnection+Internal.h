@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMConnection.h"
-#import "ZMManagedObject+Internal.h"
+#import <WireDataModel/ZMConnection.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
 
 @class ZMConversation;
 @class ZMUser;

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMManagedObject.h"
+#import <WireDataModel/ZMManagedObject.h>
 @import WireUtilities;
 
 @class ZMConversation;
