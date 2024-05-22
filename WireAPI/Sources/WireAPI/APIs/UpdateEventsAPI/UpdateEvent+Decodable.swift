@@ -34,7 +34,8 @@ extension UpdateEvent: Decodable {
             let event = try container.decodeConversationClientMessageAddEvent()
             self = .conversationClientMessageAdd(event)
         case "conversation.code-update":
-            self = .conversationCodeUpdate
+            let event = try container.decodeConversationCodeUpdateEvent()
+            self = .conversationCodeUpdate(event)
         case "conversation.connect-request":
             self = .conversationConnectRequest
         case "conversation.create":
@@ -344,6 +345,18 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationCodeUpdateEvent() throws -> ConversationCodeUpdateEvent {
+        let payload = try decodePayload(ConversationCodeUpdateEventData.self)
+
+        return try ConversationCodeUpdateEvent(
+            conversationID: decodeConversationID(),
+            key: payload.key,
+            code: payload.code,
+            uri: payload.uri,
+            isPasswordProtected: payload.has_password
+        )
+    }
+
 }
 
 private struct ConversationMemberJoinEventData: Decodable {
@@ -455,5 +468,14 @@ private struct ConversationAccessUpdateEventData: Decodable {
     let access: Set<ConversationAccessMode>
     let access_role: ConversationAccessRoleLegacy?
     let access_role_v2: Set<ConversationAccessRole>?
+
+}
+
+private struct ConversationCodeUpdateEventData: Decodable {
+
+    let key: String
+    let code: String
+    let uri: String?
+    let has_password: Bool
 
 }
