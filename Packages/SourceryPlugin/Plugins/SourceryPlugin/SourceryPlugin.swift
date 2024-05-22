@@ -30,12 +30,13 @@ struct SourceryPlugin {
 
         enum Environment {
             static let derivedSourcesDirectory = "DERIVED_SOURCES_DIR"
+            static let targetRootDirectory = "TARGET_ROOT_DIR"
         }
 
         static let displayName = "Execute Sourcery"
         static let toolName = "sourcery"
 
-        static let configFileName = ".sourcery.yml"
+        static let configFileName = "sourcery.yml"
     }
 }
 
@@ -53,9 +54,11 @@ extension SourceryPlugin: BuildToolPlugin {
         // Find configuration from possible paths where there may be a config file:
         // 1. root of package
         // 2. target directory
+        // 3. target directory subfolder named 'Sourcery'
         let configuration = [
             context.package.directory,
-            target.directory
+            target.directory,
+            target.directory.appending(subpath: "/Sourcery")
         ]
             .map { $0.appending(Constant.configFileName) }
             .filter { FileManager.default.fileExists(atPath: $0.string) }
@@ -65,21 +68,28 @@ extension SourceryPlugin: BuildToolPlugin {
             Diagnostics.error(
 """
 No configurations found for target \(target.name). If you would like to generate sources for this \
-target include a `.sourcery.yml` in the target's source directory, or include a shared `.sourcery.yml` at the \
-package's root.
+target include a `\(Constant.configFileName)` either in:
+1. root of package
+2. target directory
+3. target directory subfolder named 'Sourcery'
 """
             )
             return []
         }
 
         return [
-            try makePrebuildCommand(context: context, configuration: configuration)
+            try makePrebuildCommand(
+                context: context,
+                configuration: configuration,
+                targetRootDirectory: target.directory
+            )
         ]
     }
 
     private func makePrebuildCommand(
         context: PackagePlugin.PluginContext,
-        configuration: Path
+        configuration: Path,
+        targetRootDirectory: Path
     ) throws -> PackagePlugin.Command {
         .prebuildCommand(
             displayName: Constant.displayName,
@@ -91,7 +101,8 @@ package's root.
                 context.pluginWorkDirectory
             ],
             environment: [
-                Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectory
+                Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectory,
+                Constant.Environment.targetRootDirectory: targetRootDirectory.string
             ],
             outputFilesDirectory: context.pluginWorkDirectory
         )
