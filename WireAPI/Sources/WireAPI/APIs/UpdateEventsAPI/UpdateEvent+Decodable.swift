@@ -65,7 +65,8 @@ extension UpdateEvent: Decodable {
             let event = try container.decodeConversationMLSWelcomeEvent()
             self = .conversationMLSWelcome(event)
         case "conversation.otr-asset-add":
-            self = .conversationOTRAssetAdd
+            let event = try container.decodeConversationProteusAssetAddEvent()
+            self = .conversationOTRAssetAdd(event)
         case "conversation.otr-message-add":
             let event = try container.decodeConversationProteusMessageAddEvent()
             self = .conversationOTRMessageAdd(event)
@@ -255,6 +256,17 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationProteusAssetAddEvent() throws -> ConversationProteusAssetAddEvent {
+        let payload = try decodePayload(ConversationProteusAssetAddEventData.self)
+
+        return try ConversationProteusAssetAddEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
+            encryptedProtobufMessage: payload.info
+        )
+    }
+
     func decodeConversationProteusMessageAddEvent() throws -> ConversationProteusMessageAddEvent {
         let payload = try decodePayload(ConversationProteusMessageAddEventData.self)
 
@@ -387,6 +399,12 @@ private struct ConversationMessageTimerUpdateEventData: Decodable {
 
 }
 
+private struct ConversationProteusAssetAddEventData: Decodable {
+
+    let info: String
+
+}
+
 private struct ConversationProteusMessageAddEventData: Decodable {
 
     let text: String
@@ -398,7 +416,6 @@ private struct ConversationProtocolEventData: Decodable {
     let `protocol`: ConversationProtocol
 
 }
-
 
 private struct ConversationReceiptModeUpdateEventData: Decodable {
 

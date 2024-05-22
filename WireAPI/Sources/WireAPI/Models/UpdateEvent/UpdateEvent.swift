@@ -36,7 +36,7 @@ public enum UpdateEvent {
     case conversationMessageTimerUpdate(ConversationMessageTimerUpdateEvent)
     case conversationMLSMessageAdd(ConversationMLSMessageAddEvent)
     case conversationMLSWelcome(ConversationMLSWelcomeEvent)
-    case conversationOTRAssetAdd
+    case conversationOTRAssetAdd(ConversationProteusAssetAddEvent)
     case conversationOTRMessageAdd(ConversationProteusMessageAddEvent)
     case conversationProtocolUpdate(ConversationProtocolUpdateEvent)
     case conversationReceiptModeUpdate(ConversationReceiptModeUpdateEvent)
