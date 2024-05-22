@@ -32,7 +32,7 @@ class ConnectionsAPITests: XCTestCase {
         }
     }
 
-    func testGetConnectionsGeneratesMultipleRequests() async throws {
+    func testGetConnections_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: 200,
@@ -47,17 +47,17 @@ class ConnectionsAPITests: XCTestCase {
         let result = try await iterator.next()
 
         // Then
+        let expectedConnection = Connection(senderId: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!,
+                                            receiverId: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                                            receiverQualifiedId: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                                                                             domain: "example.com"),
+                                            conversationId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                            qualifiedConversationId: QualifiedID(uuid: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                                                                 domain: "example.com"),
+                                            lastUpdate: try XCTUnwrap(ISO8601DateFormatter.default.date(from: "2021-05-12T10:52:02.671Z")),
+                                            status: .accepted)
         let connection = try XCTUnwrap(result?.first)
-        XCTAssertEqual(
-            connection,
-            Connection(senderId: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
-                       receiverId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
-                       receiverQualifiedId: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
-                       conversationId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
-                       qualifiedConversationId: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
-                       lastUpdate: Date(), // 2021-05-12T10:52:02.671Z
-                       status: .accepted)
-        )
+        XCTAssertEqual(connection, expectedConnection)
     }
 
 }
