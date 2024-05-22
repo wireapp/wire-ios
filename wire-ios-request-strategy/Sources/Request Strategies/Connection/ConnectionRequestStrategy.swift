@@ -333,7 +333,7 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         // GET /connections/domain/<UUID>
-        return ZMTransportRequest(getFromPath: "/\(resourcePath)/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(getFromPath: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
