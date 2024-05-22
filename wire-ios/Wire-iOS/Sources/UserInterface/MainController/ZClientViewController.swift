@@ -26,6 +26,7 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
+    // TODO [WPB-8778]: Check if this property is still needed
     private(set) var currentConversation: ZMConversation?
 
     weak var router: AuthenticatedRouterProtocol?
@@ -441,10 +442,6 @@ final class ZClientViewController: UIViewController {
     /// Attempt to load the last viewed conversation associated with the current account.
     /// If no info is available, we attempt to load the first conversation in the list.
     ///
-    ///
-    /// - Parameters:
-    ///   - focus: <#focus description#>
-    ///   - animated: <#animated description#>
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
