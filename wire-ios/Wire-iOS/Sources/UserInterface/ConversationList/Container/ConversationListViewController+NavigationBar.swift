@@ -75,7 +75,7 @@ extension ConversationListViewController {
 
         // verification status
         if viewModel.selfUserStatus.isE2EICertified {
-            let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
+            let imageView = UIImageView(image: .init(resource: .certificateValid))
             imageView.contentMode = .scaleAspectFit
             stackView.addArrangedSubview(imageView)
         }
@@ -117,7 +117,7 @@ extension ConversationListViewController {
 
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            self?.setState(.peoplePicker, animated: true)
+            self?.presentNewConversationViewController()
         }
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
@@ -239,20 +239,6 @@ extension ConversationListViewController {
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
-    }
-}
-
-// MARK: - UserStatusViewControllerDelegate
-
-extension ConversationListViewController: UserStatusViewControllerDelegate {
-
-    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === userStatusViewController else { return }
-
-        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
-        viewModel.userSession.perform { [weak self] in
-            self?.viewModel.selfUser.availability = availability
-        }
     }
 }
 

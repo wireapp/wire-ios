@@ -210,7 +210,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             _ = searchHeader.tokenField.becomeFirstResponder()
         }
-
     }
 
     func updateActionBar() {
