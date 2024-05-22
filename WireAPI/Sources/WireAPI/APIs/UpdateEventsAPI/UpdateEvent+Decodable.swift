@@ -240,11 +240,13 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
     }
 
     func decodeConversationMLSMessageAddEvent() throws -> ConversationMLSMessageAddEvent {
-        try ConversationMLSMessageAddEvent(
+        let payload = try decodePayload(ConversationMLSMessageAddEventData.self)
+
+        return try ConversationMLSMessageAddEvent(
             conversationID: decodeConversationID(),
             senderID: decodeSenderID(),
             subconversation: decodeSubconversation(),
-            message: decodePayload(String.self)
+            message: payload.text
         )
     }
 
@@ -396,6 +398,12 @@ private struct ConversationMemberUpdateEventData: Decodable {
 private struct ConversationMessageTimerUpdateEventData: Decodable {
 
     let message_timer: Int64?
+
+}
+
+private struct ConversationMLSMessageAddEventData: Decodable {
+
+    let text: String
 
 }
 
