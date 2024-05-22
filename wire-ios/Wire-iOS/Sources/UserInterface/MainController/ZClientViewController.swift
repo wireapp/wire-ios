@@ -32,7 +32,7 @@ final class ZClientViewController: UIViewController {
 
     var isComingFromRegistration = false
     var needToShowDataUsagePermissionDialog = false
-    let wireSplitViewController: SplitViewController = SplitViewController()
+    let wireSplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: UITabBarController!
@@ -73,7 +73,6 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
@@ -349,7 +348,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.setState(.conversationList, animated: true) // ?
+        conversationListViewController.setState(.conversationList, animated: true)
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 

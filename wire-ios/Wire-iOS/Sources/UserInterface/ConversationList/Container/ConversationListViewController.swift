@@ -74,8 +74,7 @@ final class ConversationListViewController: UIViewController {
         selfUser: SelfUserType,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        isFolderStatePersistenceEnabled: Bool,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -97,7 +96,7 @@ final class ConversationListViewController: UIViewController {
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController = .init(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
@@ -116,8 +115,7 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         setupTitleView()
-        updateAccountView()
-        updateLegalHoldIndictor()
+        setupLeftNavigationBarButtons()
         setupRightNavigationBarButtons()
 
         viewModel.viewController = self
@@ -171,6 +169,11 @@ final class ConversationListViewController: UIViewController {
             ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        adjustRightBarButtonItemsSpace()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -318,6 +321,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         setupTitleView()
+        setupLeftNavigationBarButtons()
     }
 }
 

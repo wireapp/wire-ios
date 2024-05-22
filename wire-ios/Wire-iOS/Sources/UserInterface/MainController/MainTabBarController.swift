@@ -49,7 +49,7 @@ func MainTabBarController(
     mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Archived.hint
 
     mainTabBarController.viewControllers?[tab: .settings].tabBarItem = .init(
-        title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
+        title: L10n.Localizable.ConversationList.BottomBar.Settings.title,
         image: .init(resource: .TabBar.settings),
         selectedImage: .init(resource: .TabBar.settingsFilled)
     )
@@ -92,7 +92,7 @@ private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
         return MainTabBarController(
             conversations: tabItem(BottomBar.Conversations.title),
             archive: tabItem(BottomBar.Archived.title),
-            settings: .init()
+            settings: tabItem(BottomBar.Settings.title)
         )
     }
 

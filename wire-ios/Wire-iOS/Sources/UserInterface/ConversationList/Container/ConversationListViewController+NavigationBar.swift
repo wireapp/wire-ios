@@ -24,11 +24,11 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-        updateAccountView()
+        setupLeftNavigationBarButtons()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        updateLegalHoldIndictor()
+        setupLeftNavigationBarButtons()
     }
 
     // MARK: - Title View
@@ -50,25 +50,42 @@ extension ConversationListViewController {
 
     // MARK: - Navigation Bar Items
 
-    func setupRightNavigationBarButtons() {
+    func setupLeftNavigationBarButtons() {
 
-        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filterConversationsAction = UIAction(image: filerImage) { _ in
-            assertionFailure("TODO [WPB-7298]: implement filtering")
+        // in the design the left bar button items are very close to each other,
+        // so we'll use stack view instead
+        let stackView = UIStackView()
+        stackView.spacing = 4
+
+        // avatar
+        let accountView = createAccountView()
+        stackView.addArrangedSubview(accountView)
+
+        // legal hold
+        switch viewModel.selfUser.legalHoldStatus {
+        case .disabled:
+            break
+        case .pending:
+            let pendingRequestView = createPendingLegalHoldRequestView()
+            stackView.addArrangedSubview(pendingRequestView)
+        case .enabled:
+            let legalHoldView = createLegalHoldView()
+            stackView.addArrangedSubview(legalHoldView)
         }
-        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: filterConversationsAction))]
 
-        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
-        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            self?.setState(.peoplePicker, animated: true)
+        // verification status
+        if viewModel.selfUserStatus.isE2EICertified {
+            let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
+            imageView.contentMode = .scaleAspectFit
+            stackView.addArrangedSubview(imageView)
         }
-        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: newConversationAction)))
-    }
+        if viewModel.selfUserStatus.isProteusVerified {
+            let imageView = UIImageView(image: .init(resource: .verifiedShield))
+            imageView.contentMode = .scaleAspectFit
+            stackView.addArrangedSubview(imageView)
+        }
 
-    // MARK: - Account View
-
-    func updateAccountView() {
-        navigationItem.leftBarButtonItem = .init(customView: createAccountView())
+        navigationItem.leftBarButtonItem = .init(customView: stackView)
     }
 
     private func createAccountView() -> UIView {
@@ -92,6 +109,41 @@ extension ConversationListViewController {
         }
 
         return accountView.wrapInAvatarSizeContainer()
+    }
+
+    func setupRightNavigationBarButtons() {
+
+        let spacer = UIBarButtonItem(systemItem: .fixedSpace)
+
+        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
+        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
+            self?.setState(.peoplePicker, animated: true)
+        }
+        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
+
+        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filterConversationsAction = UIAction(image: filerImage) { _ in
+            assertionFailure("TODO [WPB-7298]: implement filtering")
+        }
+        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: filterConversationsAction)))
+    }
+
+    /// Equally distributes the space on the left and on the right side of the filter bar button item.
+    func adjustRightBarButtonItemsSpace() {
+        guard
+            let rightBarButtonItems = navigationItem.rightBarButtonItems,
+            rightBarButtonItems.count == 3, // new conversation, spacer, filter
+            let newConversationButton = rightBarButtonItems[0].customView,
+            let filterConversationsButton = rightBarButtonItems[2].customView,
+            let titleViewLabel,
+            let window = viewIfLoaded?.window
+        else { return }
+
+        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
+        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
+        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
+        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
+        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
     }
 
     @objc
@@ -168,17 +220,6 @@ extension ConversationListViewController {
         ])
 
         return button
-    }
-
-    func updateLegalHoldIndictor() {
-        switch viewModel.selfUser.legalHoldStatus {
-        case .disabled:
-            navigationItem.rightBarButtonItem = nil
-        case .pending:
-            navigationItem.rightBarButtonItem = .init(customView: createPendingLegalHoldRequestView())
-        case .enabled:
-            navigationItem.rightBarButtonItem = .init(customView: createLegalHoldView())
-        }
     }
 
     @objc
