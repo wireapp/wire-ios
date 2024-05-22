@@ -34,6 +34,7 @@ let package = Package(
         ),
         .target(
             name: "WireAPISupport",
+            dependencies: ["WireAPI"],
             plugins: [
                 .plugin(
                     name: "SourceryPlugin",
