@@ -346,6 +346,10 @@ extension ConversationListViewController: UITabBarControllerDelegate {
             fatalError("unexpected selected tab index")
         }
     }
+
+    func selectInboxAndFocusOnView(focus: Bool) {
+        listContentController.selectInboxAndFocus(onView: focus)
+    }
 }
 
 // MARK: - sklsdfj
