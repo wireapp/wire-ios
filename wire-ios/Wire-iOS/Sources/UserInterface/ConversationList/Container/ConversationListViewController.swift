@@ -352,7 +352,7 @@ extension ConversationListViewController: UITabBarControllerDelegate {
     }
 }
 
-// MARK: - sklsdfj
+// MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
 
 extension ConversationListViewController: ArchivedListViewControllerDelegate {
 

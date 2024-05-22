@@ -26,7 +26,7 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
-    private(set) var currentConversation: ZMConversation? // why do we need this here?
+    private(set) var currentConversation: ZMConversation?
 
     weak var router: AuthenticatedRouterProtocol?
 
