@@ -87,7 +87,7 @@ class ConnectionsAPITests: XCTestCase {
         // Given
         var requestIndex = 0
         let httpClient = HTTPClientMock { _ in
-            let response = PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
+            let response = HTTPClientMock.PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
             requestIndex += 1
 
             return HTTPResponse(code: 200, payload: try response.data())

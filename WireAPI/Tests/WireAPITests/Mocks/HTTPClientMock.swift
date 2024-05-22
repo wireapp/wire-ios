@@ -103,26 +103,30 @@ final class HTTPClientMock: HTTPClient {
         receivedRequests.append(request)
         return try await executeRequestMock(request)
     }
-
 }
 
-struct PredefinedResponse {
-    var resourceName: String
+// MARK: - Predefined responses
 
-    func data() throws -> Data {
-        guard let url = Bundle.module.url(
-            forResource: resourceName,
-            withExtension: "json"
-        ) else {
-            throw HTTPClientMockError(message: "payload resource \(resourceName).json not found")
-        }
+extension HTTPClientMock {
 
-        let payload: Data
-        do {
-            payload = try Data(contentsOf: url)
-        } catch {
-            throw HTTPClientMockError(message: "unable to load data from resource: \(error)")
+    struct PredefinedResponse {
+        var resourceName: String
+
+        func data() throws -> Data {
+            guard let url = Bundle.module.url(
+                forResource: resourceName,
+                withExtension: "json"
+            ) else {
+                throw HTTPClientMockError(message: "payload resource \(resourceName).json not found")
+            }
+
+            let payload: Data
+            do {
+                payload = try Data(contentsOf: url)
+            } catch {
+                throw HTTPClientMockError(message: "unable to load data from resource: \(error)")
+            }
+            return payload
         }
-        return payload
     }
 }
