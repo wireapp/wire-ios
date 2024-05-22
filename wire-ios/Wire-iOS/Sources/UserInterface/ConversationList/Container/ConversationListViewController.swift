@@ -24,7 +24,6 @@ import WireSyncEngine
 enum ConversationListState {
     case conversationList
     case archived
-    case peoplePicker
 }
 
 final class ConversationListViewController: UIViewController {
@@ -194,7 +193,7 @@ final class ConversationListViewController: UIViewController {
         .portrait
     }
 
-    // MARK: - setup UI
+    // MARK: - Setup UI
 
     private func setupObservers() {
         viewModel.setupObservers()
@@ -288,10 +287,17 @@ final class ConversationListViewController: UIViewController {
         listContentController.scrollToCurrentSelection(animated: animated)
     }
 
-    func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
-        startUIViewController.delegate = viewModel
-        return startUIViewController
+    func presentNewConversationViewController(completion: Completion? = nil) {
+
+        let viewController = StartUIViewController(userSession: viewModel.userSession)
+        viewController.delegate = viewModel
+        viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        let navigationController = UINavigationController(rootViewController: viewController)
+
+        show(navigationController, animated: true) {
+            viewController.showKeyboardIfNeeded()
+            completion?()
+        }
     }
 
     func selectOnListContentController(
@@ -311,7 +317,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
+            presentViewController: self,
+            completionHandler: completionHandler
+        )
     }
 }
 
@@ -334,12 +343,10 @@ extension ConversationListViewController: UITabBarControllerDelegate {
         switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
 
         case .conversations:
-            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
+            previouslySelectedTabIndex = .conversations
 
         case .archive:
-            setState(.archived, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
+            previouslySelectedTabIndex = .archive
 
         case .settings:
             let alertController = UIAlertController(
@@ -352,8 +359,6 @@ extension ConversationListViewController: UITabBarControllerDelegate {
             }
 
         case .none:
-            fallthrough
-        default:
             fatalError("unexpected selected tab index")
         }
     }

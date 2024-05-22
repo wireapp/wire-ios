@@ -117,7 +117,7 @@ extension ConversationListViewController {
 
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            self?.setState(.peoplePicker, animated: true)
+            self?.presentNewConversationViewController()
         }
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 

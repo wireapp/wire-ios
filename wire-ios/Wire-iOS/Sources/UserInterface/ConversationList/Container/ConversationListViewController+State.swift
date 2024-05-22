@@ -42,15 +42,6 @@ extension ConversationListViewController {
                 completion?()
             }
 
-        case .peoplePicker:
-            let startUIViewController = createPeoplePickerController()
-            let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-            show(navigationWrapper, animated: true) {
-                startUIViewController.showKeyboardIfNeeded()
-                completion?()
-            }
-
         case .archived:
             let archiveViewController = createArchivedListViewController()
             let navigationController = UINavigationController(rootViewController: archiveViewController)
