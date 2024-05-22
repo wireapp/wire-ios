@@ -30,7 +30,8 @@ struct SourceryPlugin {
 
         enum Environment {
             static let derivedSourcesDirectory = "DERIVED_SOURCES_DIR"
-            static let targetRootDirectory = "TARGET_ROOT_DIR"
+            static let packageRootDirectory = "PACKAGE_ROOT_DIR"
+            static let targetDirectory = "TARGET_DIR"
         }
 
         static let displayName = "Execute Sourcery"
@@ -49,7 +50,7 @@ extension SourceryPlugin: BuildToolPlugin {
         target: PackagePlugin.Target
     ) async throws -> [PackagePlugin.Command] {
 
-        debugPrint("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
+        Diagnostics.remark("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
 
         // Find configuration from possible paths where there may be a config file:
         // 1. root of package
@@ -81,7 +82,7 @@ target include a `\(Constant.configFileName)` either in:
             try makePrebuildCommand(
                 context: context,
                 configuration: configuration,
-                targetRootDirectory: target.directory
+                targetDirectory: target.directory
             )
         ]
     }
@@ -89,7 +90,7 @@ target include a `\(Constant.configFileName)` either in:
     private func makePrebuildCommand(
         context: PackagePlugin.PluginContext,
         configuration: Path,
-        targetRootDirectory: Path
+        targetDirectory: Path
     ) throws -> PackagePlugin.Command {
         .prebuildCommand(
             displayName: Constant.displayName,
@@ -102,7 +103,8 @@ target include a `\(Constant.configFileName)` either in:
             ],
             environment: [
                 Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectory,
-                Constant.Environment.targetRootDirectory: targetRootDirectory.string
+                Constant.Environment.packageRootDirectory: context.package.directory,
+                Constant.Environment.targetDirectory: targetDirectory.string
             ],
             outputFilesDirectory: context.pluginWorkDirectory
         )

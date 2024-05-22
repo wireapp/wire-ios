@@ -1,7 +1,7 @@
 sources:
-- ${TARGET_ROOT_DIR}/../WireAPI
+- ${PACKAGE_ROOT_DIR}/Sources/WireAPI
 templates:
-- ${TARGET_ROOT_DIR}/Sourcery/AutoMockable.stencil
+- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
    ${DERIVED_SOURCES_DIR}
 args:
