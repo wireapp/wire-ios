@@ -60,4 +60,37 @@ class ConnectionsAPITests: XCTestCase {
         XCTAssertEqual(connection, expectedConnection)
     }
 
+    func testGetConnections_FailureResponse_400_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: 400, errorLabel: ""
+        )
+
+        let sut = ConnectionsAPIV0(httpClient: httpClient)
+
+        // When
+        let pager = try await sut.fetchConnections()
+        var iterator = pager.makeAsyncIterator()
+
+        // Then
+        do {
+            _ = try await iterator.next()
+            XCTFail("Expected error")
+        } catch {
+
+            let error = try XCTUnwrap(error as? ConnectionsAPIError)
+            XCTAssertEqual(error, .invalidBody)
+        }
+    }
+
+    func testGetConnections_Paging_V0() async throws {
+        try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequest(apiVersion: .v0) { sut in
+
+            let pager = try await sut.fetchConnections()
+
+            for try await page in pager {
+                print(page)
+            }
+        }
+    }
 }
