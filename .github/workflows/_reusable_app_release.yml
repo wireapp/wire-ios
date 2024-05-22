@@ -137,7 +137,7 @@ jobs:
         id: cache-bundler
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-bundler-${{ hashFiles('Gemfile.lock') }}
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials
