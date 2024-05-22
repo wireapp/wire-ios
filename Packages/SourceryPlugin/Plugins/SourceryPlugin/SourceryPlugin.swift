@@ -26,7 +26,7 @@ struct SourceryPlugin: BuildToolPlugin {
         target: PackagePlugin.Target
     ) async throws -> [PackagePlugin.Command] {
 
-        print("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
+        debugPrint("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
 
         // Possible paths where there may be a config file (root of package, target dir.)
         let configurations: [Path] = [context.package.directory, target.directory]
