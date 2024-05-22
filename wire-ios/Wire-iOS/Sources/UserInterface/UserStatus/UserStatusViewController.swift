@@ -60,6 +60,7 @@ final class UserStatusViewController: UIViewController {
         let availabilityChangedHandler = { [weak self] (availability: Availability) in
             guard let self else { return }
 
+            userStatus.availability = availability
             delegate?.userStatusViewController(self, didSelect: availability)
             feedbackGenerator.impactOccurred()
 

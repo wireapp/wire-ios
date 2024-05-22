@@ -242,20 +242,6 @@ extension ConversationListViewController {
     }
 }
 
-// MARK: - UserStatusViewControllerDelegate
-
-extension ConversationListViewController: UserStatusViewControllerDelegate {
-
-    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === userStatusViewController else { return }
-
-        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
-        viewModel.userSession.perform { [weak self] in
-            self?.viewModel.selfUser.availability = availability
-        }
-    }
-}
-
 // MARK: - wrapInAvatarSizeContainer
 
 extension UIView {

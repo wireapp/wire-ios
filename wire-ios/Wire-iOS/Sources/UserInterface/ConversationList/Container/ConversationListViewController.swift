@@ -61,7 +61,6 @@ final class ConversationListViewController: UIViewController {
 
     let listContentController: ConversationListContentController
 
-    var userStatusViewController: UserStatusViewController?
     weak var titleViewLabel: UILabel?
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
