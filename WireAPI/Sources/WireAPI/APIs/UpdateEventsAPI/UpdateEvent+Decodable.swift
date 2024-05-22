@@ -67,7 +67,8 @@ extension UpdateEvent: Decodable {
         case "conversation.otr-message-add":
             self = .conversationOTRMessageAdd
         case "conversation.protocol-update":
-            self = .conversationProtocolUpdate
+            let event = try container.decodeConversationProtocolUpdateEvent()
+            self = .conversationProtocolUpdate(event)
         case "conversation.receipt-mode-update":
             let event = try container.decodeConversationRecieptModeUpdateEvent()
             self = .conversationReceiptModeUpdate(event)
@@ -233,6 +234,16 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationProtocolUpdateEvent() throws -> ConversationProtocolUpdateEvent {
+        let payload = try decodePayload(ConversationProtocolEventData.self)
+
+        return try ConversationProtocolUpdateEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            newProtocol: payload.protocol
+        )
+    }
+
     func decodeConversationRecieptModeUpdateEvent() throws -> ConversationReceiptModeUpdateEvent {
         let payload = try decodePayload(ConversationReceiptModeUpdateEventData.self)
 
@@ -320,6 +331,13 @@ private struct ConversationMessageTimerUpdateEventData: Decodable {
     let message_timer: Int64?
 
 }
+
+private struct ConversationProtocolEventData: Decodable {
+
+    let `protocol`: ConversationProtocol
+
+}
+
 
 private struct ConversationReceiptModeUpdateEventData: Decodable {
 
