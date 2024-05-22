@@ -81,43 +81,17 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
         let builder = Builder(httpClient: httpClient)
         let sut = builder.makeAPI(for: apiVersion)
         try? await block(sut)
-        let request = try XCTUnwrap(httpClient.receivedRequests.first, "no request was generated")
-
-        let errorMessage = verifySnapshot(
-            of: request,
-            as: .dump,
-            named: "v\(apiVersion.rawValue)",
-            file: file,
-            testName: function,
-            line: line
-        )
-
-        if let errorMessage {
-            XCTFail(errorMessage, file: file, line: line)
-        }
-    }
-
-    @MainActor
-    func verifyRequest(
-        apiVersion: APIVersion,
-        when block: (any ConnectionsAPI) async throws -> Void,
-        file: StaticString = #file,
-        function: String = #function,
-        line: UInt = #line
-    ) async throws {
-        let httpClient = HTTPClientMock()
-        let builder = ConnectionsAPIBuilder(httpClient: httpClient)
-        let sut = builder.makeAPI(for: apiVersion)
-        try? await block(sut)
 
         if httpClient.receivedRequests.isEmpty {
             throw Failure.noRequestGenerated
         }
+        var index = 0
         for request in httpClient.receivedRequests {
+            let suffix = index == 0 ? "" : ".1"
             let errorMessage = verifySnapshot(
                 of: request,
                 as: .dump,
-                named: "v\(apiVersion.rawValue)",
+                named: "v\(apiVersion.rawValue)\(suffix)",
                 file: file,
                 testName: function,
                 line: line
