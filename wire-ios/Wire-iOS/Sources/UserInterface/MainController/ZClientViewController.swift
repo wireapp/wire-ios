@@ -26,7 +26,7 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
-    private(set) var currentConversation: ZMConversation?
+    private(set) var currentConversation: ZMConversation? // why do we need this here?
 
     weak var router: AuthenticatedRouterProtocol?
 
@@ -348,7 +348,6 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.setState(.conversationList, animated: true)
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 

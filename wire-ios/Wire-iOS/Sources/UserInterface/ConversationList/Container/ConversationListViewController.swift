@@ -21,16 +21,9 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-enum ConversationListState {
-    case conversationList
-}
-
 final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
-
-    /// internal View Model
-    var state: ConversationListState = .conversationList
 
     private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
 
@@ -148,8 +141,6 @@ final class ConversationListViewController: UIViewController {
             Settings.shared[.lastViewedScreen] = SettingsLastScreen.list
         }
 
-        state = .conversationList
-
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
@@ -250,7 +241,6 @@ final class ConversationListViewController: UIViewController {
     }
 
     func showNoContactLabel(animated: Bool = true) {
-        if state != .conversationList { return }
 
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations

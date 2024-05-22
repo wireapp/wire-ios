@@ -16,35 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
 extension ConversationListViewController {
 
-    #warning("TODO: remove")
-    func setState(
-        _ state: ConversationListState,
-        animated: Bool,
-        completion: Completion? = nil
-    ) {
-        if self.state == state {
-            completion?()
-            return
-        }
-        self.state = state
-
-        switch state {
-
-        case .conversationList:
-            if let presentedViewController = navigationController?.presentedViewController {
-                presentedViewController.dismiss(animated: true, completion: completion)
-            } else {
-                completion?()
-            }
-        }
-    }
-
     func selectInboxAndFocusOnView(focus: Bool) {
-        setState(.conversationList, animated: false)
+        assertionFailure("TODO how to replace setState?")
+        // setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
 }
