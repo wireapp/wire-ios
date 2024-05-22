@@ -18,10 +18,6 @@
 
 import Foundation
 
-/// Fully quallified user identifier
-
-public typealias UserID = QualifiedID
-
 /// User profile for a user
 
 public struct User: Equatable {

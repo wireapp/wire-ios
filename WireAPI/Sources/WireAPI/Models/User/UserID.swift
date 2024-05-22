@@ -18,16 +18,6 @@
 
 import Foundation
 
-/// Uniquely idetify a user across domains.
+/// Fully quallified user identifier.
 
-public struct UserID: Hashable, Decodable {
-
-    /// A unique identifier.
-
-    public let id: UUID
-
-    /// The domain of the user.
-
-    public let domain: String
-
-}
+public typealias UserID = QualifiedID
