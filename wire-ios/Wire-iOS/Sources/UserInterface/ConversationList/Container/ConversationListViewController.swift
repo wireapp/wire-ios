@@ -287,16 +287,18 @@ final class ConversationListViewController: UIViewController {
         listContentController.scrollToCurrentSelection(animated: animated)
     }
 
-    func presentNewConversationViewController(completion: Completion? = nil) {
+    func presentNewConversationViewController() {
 
         let viewController = StartUIViewController(userSession: viewModel.userSession)
         viewController.delegate = viewModel
         viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        let navigationController = UINavigationController(rootViewController: viewController)
 
-        show(navigationController, animated: true) {
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.transitioningDelegate = self
+        navigationController.modalPresentationStyle = .currentContext
+
+        tabBarController?.present(viewController, animated: true) {
             viewController.showKeyboardIfNeeded()
-            completion?()
         }
     }
 

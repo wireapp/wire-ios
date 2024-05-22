@@ -45,26 +45,14 @@ extension ConversationListViewController {
         case .archived:
             let archiveViewController = createArchivedListViewController()
             let navigationController = UINavigationController(rootViewController: archiveViewController)
-            show(navigationController, animated: animated, completion: completion)
+            navigationController.transitioningDelegate = self
+            navigationController.modalPresentationStyle = .currentContext
+            tabBarController?.present(navigationController, animated: animated, completion: completion)
         }
     }
 
     func selectInboxAndFocusOnView(focus: Bool) {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
-    }
-}
-
-extension ConversationListViewController {
-
-    func show(
-        _ viewController: UIViewController,
-        animated: Bool,
-        completion: (() -> Void)?
-    ) {
-        viewController.transitioningDelegate = self
-        viewController.modalPresentationStyle = .currentContext
-
-        tabBarController?.present(viewController, animated: animated, completion: completion)
     }
 }
