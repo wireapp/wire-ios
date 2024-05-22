@@ -50,7 +50,8 @@ extension UpdateEvent: Decodable {
             let event = try container.decodeConversationMemberLeaveEvent()
             self = .conversationMemberLeave(event)
         case "conversation.member-update":
-            self = .conversationMemberUpdate
+            let event = try container.decodeConversationMemberUpdateEvent()
+            self = .conversationMemberUpdate(event)
         case "conversation.message-add":
             self = .conversationMessageAdd
         case "conversation.message-timer-update":
@@ -206,6 +207,24 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationMemberUpdateEvent() throws -> ConversationMemberUpdateEvent {
+        let payload = try decodePayload(ConversationMemberUpdateEventData.self)
+
+        return try ConversationMemberUpdateEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
+            memberChange: ConversationMemberChange(
+                id: payload.qualified_target,
+                newRoleName: payload.conversation_role,
+                newMuteStatus: payload.otr_muted_status,
+                muteStatusReferenceDate: payload.otr_muted_ref,
+                newArchivedStatus: payload.otr_archived,
+                archivedStatusReferenceDate: payload.otr_archived_ref
+            )
+        )
+    }
+
     func decodeConversationMessageTimerUpdateEvent() throws -> ConversationMessageTimerUpdateEvent {
         let payload = try decodePayload(ConversationMessageTimerUpdateEventData.self)
 
@@ -325,6 +344,18 @@ private struct ConversationMemberLeaveEventData: Decodable {
     let reason: ConversationMemberLeaveReason?
 
 }
+
+private struct ConversationMemberUpdateEventData: Decodable {
+
+    let qualified_target: UserID
+    let conversation_role: String?
+    let otr_muted_status: Int?
+    let otr_muted_ref: Date?
+    let otr_archived: Bool?
+    let otr_archived_ref: Date?
+
+}
+
 
 private struct ConversationMessageTimerUpdateEventData: Decodable {
 

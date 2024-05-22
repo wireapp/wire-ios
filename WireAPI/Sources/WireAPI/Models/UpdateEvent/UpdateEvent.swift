@@ -31,7 +31,7 @@ public enum UpdateEvent {
     case conversationKnock
     case conversationMemberJoin(ConversationMemberJoinEvent)
     case conversationMemberLeave(ConversationMemberLeaveEvent)
-    case conversationMemberUpdate
+    case conversationMemberUpdate(ConversationMemberUpdateEvent)
     case conversationMessageAdd
     case conversationMessageTimerUpdate(ConversationMessageTimerUpdateEvent)
     case conversationMLSMessageAdd(ConversationMLSMessageAddEvent)
