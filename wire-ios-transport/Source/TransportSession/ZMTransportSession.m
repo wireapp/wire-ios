@@ -412,7 +412,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
     [WireLoggerObjc logRequest:URLRequest];
-    ZMLogPublic(@"Request: %@", request.safeForLoggingDescription); // TODO: to remove
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }

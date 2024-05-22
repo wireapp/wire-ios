@@ -47,20 +47,6 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
     }
 }
 
-private let zmLog = ZMSLog(tag: "Network")
-
-fileprivate extension ZMTransportRequest {
-    func log() {
-        zmLog.debug("[Unauthenticated] ----> Request: \(description)")
-    }
-}
-
-fileprivate extension ZMTransportResponse {
-    func log() {
-        zmLog.debug("[Unauthenticated] <---- Response: \(description)")
-    }
-}
-
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
 /// until a user has been authenticated. Consumers should set themselves as delegate to 
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
@@ -143,14 +129,12 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     private func enqueueRequest(_ request: ZMTransportRequest) {
         guard readyForRequests else {
-            zmLog.info("Dropping request \(request) as networkTransportSession not ready")
+            WireLogger.network.info("Dropping request \(request) as networkTransportSession not ready", attributes: .safePublic)
             return
         }
         guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init) else { preconditionFailure() }
         urlRequest.configure(with: request)
         WireLogger.network.log(request: urlRequest)
-
-        request.log() // TODO: remove this one
 
         let task = session.task(with: urlRequest as URLRequest) { [weak self] data, response, error in
 
@@ -166,8 +150,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
             if transportResponse == nil {
                 preconditionFailure()
             }
-
-            transportResponse?.log() // TODO: to remove
 
             request.complete(with: transportResponse)
             self?.decrement(notify: true)
