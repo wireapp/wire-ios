@@ -656,8 +656,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             conversation.remoteIdentifier = UUID.create()
             conversation.conversationType = .group
             let role = Role.create(managedObjectContext: self.syncMOC, name: "foo", conversation: conversation)
-            var created = false
-            _ = Action.fetchOrCreate(with: "delete", role: role, in: self.syncMOC, created: &created)
+            let action = Action.fetchOrCreate(name: "delete", in: self.syncMOC)
+            role.actions.insert(action)
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: role)
 
             // when

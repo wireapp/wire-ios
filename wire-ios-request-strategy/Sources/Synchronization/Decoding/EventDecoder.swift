@@ -37,7 +37,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
 
     static var BatchSize: Int {
-        if let testingBatchSize = testingBatchSize {
+        if let testingBatchSize {
             return testingBatchSize
         }
         return 500
@@ -283,11 +283,11 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
-            WireLogger.updateEvent.debug("EventDecoder: process events finished")
+            WireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
             return
         }
 
-        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events")
+        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events", attributes: .safePublic)
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)

@@ -113,7 +113,7 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sorted { $0.name < $1.name }
+        participants = users.sortedAscendingPrependingNil(by: \.name)
         self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
@@ -167,7 +167,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     fileprivate weak var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView = collectionView else { return }
+            guard let collectionView else { return }
             SectionFooter.register(collectionView: collectionView)
         }
     }

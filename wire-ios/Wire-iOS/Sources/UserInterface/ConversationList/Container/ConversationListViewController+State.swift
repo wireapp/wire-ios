@@ -32,10 +32,11 @@ extension ConversationListViewController {
         self.state = state
 
         switch state {
+
         case .conversationList:
             view.alpha = 1
 
-            if let presentedViewController = presentedViewController {
+            if let presentedViewController = navigationController?.presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()
@@ -51,12 +52,28 @@ extension ConversationListViewController {
             }
 
         case .archived:
-            show(createArchivedListViewController(), animated: animated, completion: completion)
+            let archiveViewController = createArchivedListViewController()
+            let navigationController = UINavigationController(rootViewController: archiveViewController)
+            show(navigationController, animated: animated, completion: completion)
         }
     }
 
     func selectInboxAndFocusOnView(focus: Bool) {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
+    }
+}
+
+extension ConversationListViewController {
+
+    func show(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
+        viewController.transitioningDelegate = self
+        viewController.modalPresentationStyle = .currentContext
+
+        tabBarController?.present(viewController, animated: animated, completion: completion)
     }
 }

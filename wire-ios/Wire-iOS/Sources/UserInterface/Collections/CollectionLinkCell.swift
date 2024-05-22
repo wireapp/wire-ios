@@ -79,7 +79,7 @@ final class CollectionLinkCell: CollectionCell {
 
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = message, let textMessageData = message.textMessageData, textMessageData.linkPreview != nil else {
+        guard let message, let textMessageData = message.textMessageData, textMessageData.linkPreview != nil else {
             return
         }
 

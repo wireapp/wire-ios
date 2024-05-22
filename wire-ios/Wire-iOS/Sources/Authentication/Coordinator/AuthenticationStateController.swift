@@ -115,6 +115,10 @@ final class AuthenticationStateController {
      */
 
     func transition(to step: AuthenticationFlowStep, mode: StateChangeMode = .normal) {
+        guard step != currentStep else {
+            return
+        }
+
         currentStep = step
 
         switch mode {

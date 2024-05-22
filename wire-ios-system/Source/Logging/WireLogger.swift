@@ -19,113 +19,122 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
-
-  public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
-
-  public let tag: String
-
-  public init(tag: String = "") {
-    self.tag = tag
-  }
-
-  public func debug(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .debug, message: message, attributes: attributes)
-  }
-
-  public func info(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .info, message: message, attributes: attributes)
-  }
-
-  public func notice(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .notice, message: message, attributes: attributes)
-  }
-
-  public func warn(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .warn, message: message, attributes: attributes)
-  }
-
-  public func error(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .error, message: message, attributes: attributes)
-  }
-
-  public func critical(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .critical, message: message, attributes: attributes)
-  }
-
-  private func shouldLogMessage(_ message: LogConvertible) -> Bool {
-    return Self.provider != nil && !message.logDescription.isEmpty
-  }
-
-  private func log(
-    level: LogLevel,
-    message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    var attributes = attributes ?? .init()
-
-    if !tag.isEmpty {
-      attributes["tag"] = tag
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        Self.provider?.addTag(key, value: value)
     }
 
-    switch level {
-    case .debug:
-      Self.provider?.debug(message, attributes: attributes)
+    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
 
-    case .info:
-      Self.provider?.info(message, attributes: attributes)
+    public let tag: String
 
-    case .notice:
-      Self.provider?.notice(message, attributes: attributes)
-
-    case .warn:
-      Self.provider?.warn(message, attributes: attributes)
-
-    case .error:
-      Self.provider?.error(message, attributes: attributes)
-
-    case .critical:
-      Self.provider?.critical(message, attributes: attributes)
+    public init(tag: String = "") {
+        self.tag = tag
     }
-  }
 
-  private enum LogLevel {
+    public func debug(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .debug, message: message, attributes: attributes)
+    }
 
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
+    public func info(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .info, message: message, attributes: attributes)
+    }
 
-  }
+    public func notice(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .notice, message: message, attributes: attributes)
+    }
+
+    public func warn(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .warn, message: message, attributes: attributes)
+    }
+
+    public func error(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .error, message: message, attributes: attributes)
+    }
+
+    public func critical(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .critical, message: message, attributes: attributes)
+    }
+
+    private func shouldLogMessage(_ message: LogConvertible) -> Bool {
+        return Self.provider != nil && !message.logDescription.isEmpty
+    }
+
+    private func log(
+        level: LogLevel,
+        message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        var attributes = attributes ?? .init()
+
+        if !tag.isEmpty {
+            attributes["tag"] = tag
+        }
+
+        switch level {
+        case .debug:
+            Self.provider?.debug(message, attributes: attributes)
+
+        case .info:
+            Self.provider?.info(message, attributes: attributes)
+
+        case .notice:
+            Self.provider?.notice(message, attributes: attributes)
+
+        case .warn:
+            Self.provider?.warn(message, attributes: attributes)
+
+        case .error:
+            Self.provider?.error(message, attributes: attributes)
+
+        case .critical:
+            Self.provider?.critical(message, attributes: attributes)
+        }
+    }
+
+    private enum LogLevel {
+
+        case debug
+        case info
+        case notice
+        case warn
+        case error
+        case critical
+
+    }
 
 }
 
 public typealias LogAttributes = [String: Encodable]
+
+public enum LogAttributesKey: String {
+    case selfClientId = "self_client_id"
+    case selfUserId = "self_user_id"
+    case eventId = "event_id"
+}
 
 public extension LogAttributes {
     static var safePublic = ["public": true]
@@ -133,14 +142,17 @@ public extension LogAttributes {
 
 public protocol LoggerProtocol {
 
-  func debug(_ message: LogConvertible, attributes: LogAttributes?)
-  func info(_ message: LogConvertible, attributes: LogAttributes?)
-  func notice(_ message: LogConvertible, attributes: LogAttributes?)
-  func warn(_ message: LogConvertible, attributes: LogAttributes?)
-  func error(_ message: LogConvertible, attributes: LogAttributes?)
-  func critical(_ message: LogConvertible, attributes: LogAttributes?)
+    func debug(_ message: LogConvertible, attributes: LogAttributes?)
+    func info(_ message: LogConvertible, attributes: LogAttributes?)
+    func notice(_ message: LogConvertible, attributes: LogAttributes?)
+    func warn(_ message: LogConvertible, attributes: LogAttributes?)
+    func error(_ message: LogConvertible, attributes: LogAttributes?)
+    func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
-  func persist(fileDestination: FileLoggerDestination) async
+    func persist(fileDestination: FileLoggerDestination) async
+
+    /// Add an attribute, value to each logs - DataDog only
+    func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {
@@ -150,15 +162,15 @@ extension LoggerProtocol {
 
 public protocol LogConvertible {
 
-  var logDescription: String { get }
+    var logDescription: String { get }
 
 }
 
 extension String: LogConvertible {
 
-  public var logDescription: String {
-    return self
-  }
+    public var logDescription: String {
+        return self
+    }
 
 }
 
@@ -193,6 +205,7 @@ public extension WireLogger {
     static let shareExtension = WireLogger(tag: "share-extension")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
+    static let ui = WireLogger(tag: "UI")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
 }
@@ -204,5 +217,4 @@ final class WireLoggerObjc: NSObject {
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
-
 }

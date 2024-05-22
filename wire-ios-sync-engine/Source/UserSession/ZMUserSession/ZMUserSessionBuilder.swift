@@ -49,7 +49,6 @@ struct ZMUserSessionBuilder {
     private var sharedUserDefaults: UserDefaults?
     private var transportSession: (any TransportSessionType)?
     private var updateMLSGroupVerificationStatusUseCase: (any UpdateMLSGroupVerificationStatusUseCaseProtocol)?
-    private var useCaseFactory: (any UseCaseFactoryProtocol)?
     private var userId: UUID?
 
     // MARK: - Initialize
@@ -83,7 +82,6 @@ struct ZMUserSessionBuilder {
             let sharedUserDefaults,
             let transportSession,
             let updateMLSGroupVerificationStatusUseCase,
-            let useCaseFactory,
             let userId
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
@@ -103,7 +101,6 @@ struct ZMUserSessionBuilder {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
-            useCaseFactory: useCaseFactory,
             observeMLSGroupVerificationStatusUseCase: observeMLSGroupVerificationStatusUseCase,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
@@ -138,7 +135,6 @@ struct ZMUserSessionBuilder {
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
-        useCaseFactory: (any UseCaseFactoryProtocol)?,
         userId: UUID
     ) {
         // reused dependencies
@@ -205,6 +201,7 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
@@ -219,11 +216,6 @@ struct ZMUserSessionBuilder {
             userID: userId
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
-        let useCaseFactory = useCaseFactory ?? UseCaseFactory(
-            context: coreDataStack.syncContext,
-            supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
-            oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
-        )
 
         // setup builder
 
@@ -251,7 +243,6 @@ struct ZMUserSessionBuilder {
         self.sharedUserDefaults = sharedUserDefaults
         self.transportSession = transportSession
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
-        self.useCaseFactory = useCaseFactory
         self.userId = userId
     }
 

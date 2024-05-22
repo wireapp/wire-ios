@@ -29,7 +29,7 @@ enum UserClientRequestError: Error {
 // TODO: when we should update last pre key or signaling keys?
 // swiftlint:enable todo_requires_jira_link
 
-public final class UserClientRequestFactory {
+extension UserClientRequestFactory {
 
     public func registerClientRequest(
         _ client: UserClient,
@@ -77,7 +77,7 @@ public final class UserClientRequestFactory {
 
     func storeMaxRangeID(_ client: UserClient, maxRangeID: UInt16) -> ZMCompletionHandler {
         let completionHandler = ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client = client else { return }
+            guard let client else { return }
             if response.result == .success {
                 client.preKeysRangeMax = Int64(maxRangeID)
             }
@@ -87,7 +87,7 @@ public final class UserClientRequestFactory {
 
     func storeAPSSignalingKeys(_ client: UserClient, signalingKeys: SignalingKeys) -> ZMCompletionHandler {
         let completionHandler = ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client = client else { return }
+            guard let client else { return }
             if response.result == .success {
                 client.apsDecryptionKey = signalingKeys.decryptionKey
                 client.apsVerificationKey = signalingKeys.verificationKey
@@ -99,7 +99,7 @@ public final class UserClientRequestFactory {
 
     func storeCapabilitiesHandler(_ client: UserClient) -> ZMCompletionHandler {
         let completionHandler = ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client = client else { return }
+            guard let client else { return }
             if response.result == .success {
                 client.needsToUpdateCapabilities = false
             }
@@ -204,7 +204,7 @@ public final class UserClientRequestFactory {
     public func deleteClientRequest(_ client: UserClient, credentials: ZMEmailCredentials?, apiVersion: APIVersion) -> ZMUpstreamRequest {
         let payload: [AnyHashable: Any]
 
-        if let credentials = credentials,
+        if let credentials,
             let email = credentials.email,
             let password = credentials.password {
             payload = [

@@ -55,7 +55,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
         TrackingOperation(),
-        AppCenterOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
@@ -79,7 +78,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return SessionManager.shared?.unauthenticatedSession
     }
 
-    var appCenterInitCompletion: Completion?
     var launchOptions: LaunchOptions = [:]
 
     static var shared: AppDelegate {
@@ -283,10 +281,10 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
+
         guard let viewController = window?.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
-
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }

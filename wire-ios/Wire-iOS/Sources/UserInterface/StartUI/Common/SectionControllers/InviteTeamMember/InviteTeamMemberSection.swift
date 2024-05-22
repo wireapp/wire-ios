@@ -42,7 +42,11 @@ final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
     }
 
     var isHidden: Bool {
-        return team?.members.count > 1
+        if let count = team?.members.count {
+            return count > 1
+        }
+
+        return false
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

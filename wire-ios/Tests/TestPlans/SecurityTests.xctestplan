@@ -45,10 +45,6 @@
         "argument" : "OPTIN_STDERR YES"
       },
       {
-        "argument" : "-DisableAppCenterUpdates 1",
-        "enabled" : false
-      },
-      {
         "argument" : "-SkipFirstTimeUseChecks 1",
         "enabled" : false
       },
@@ -82,11 +78,6 @@
         "enabled" : false,
         "key" : "DYLD_PRINT_RPATHS",
         "value" : ""
-      },
-      {
-        "enabled" : false,
-        "key" : "RECORDING_SNAPSHOTS",
-        "value" : "YES"
       },
       {
         "key" : "IMAGE_DIFF_DIR",

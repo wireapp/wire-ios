@@ -74,7 +74,7 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
             ]
         ]
 
-        if let teamId = teamId {
+        if let teamId {
             payload["team"] = teamId.transportString()
         } else {
             payload["team"] = NSNull()

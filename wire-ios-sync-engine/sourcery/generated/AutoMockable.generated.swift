@@ -93,6 +93,38 @@ public class MockCertificateRevocationListsChecking: CertificateRevocationListsC
 
 }
 
+public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserID_Invocations: [QualifiedID] = []
+    public var invokeUserID_MockError: Error?
+    public var invokeUserID_MockMethod: ((QualifiedID) async throws -> Bool)?
+    public var invokeUserID_MockValue: Bool?
+
+    public func invoke(userID: QualifiedID) async throws -> Bool {
+        invokeUserID_Invocations.append(userID)
+
+        if let error = invokeUserID_MockError {
+            throw error
+        }
+
+        if let mock = invokeUserID_MockMethod {
+            return try await mock(userID)
+        } else if let mock = invokeUserID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUserID`")
+        }
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -356,6 +388,35 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
 }
 
+public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
+    public var invokeClientIdCredentials_MockError: Error?
+    public var invokeClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+
+    public func invoke(clientId: String, credentials: EmailCredentials?) async throws {
+        invokeClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+
+        if let error = invokeClientIdCredentials_MockError {
+            throw error
+        }
+
+        guard let mock = invokeClientIdCredentials_MockMethod else {
+            fatalError("no mock for `invokeClientIdCredentials`")
+        }
+
+        try await mock(clientId, credentials)
+    }
+
+}
+
 public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -381,6 +442,33 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
         }
 
         try await mock()
+    }
+
+}
+
+public class MockSecurityClassificationProviding: SecurityClassificationProviding {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - classification
+
+    public var classificationUsersConversationDomain_Invocations: [(users: [UserType], conversationDomain: String?)] = []
+    public var classificationUsersConversationDomain_MockMethod: (([UserType], String?) -> SecurityClassification?)?
+    public var classificationUsersConversationDomain_MockValue: SecurityClassification??
+
+    public func classification(users: [UserType], conversationDomain: String?) -> SecurityClassification? {
+        classificationUsersConversationDomain_Invocations.append((users: users, conversationDomain: conversationDomain))
+
+        if let mock = classificationUsersConversationDomain_MockMethod {
+            return mock(users, conversationDomain)
+        } else if let mock = classificationUsersConversationDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `classificationUsersConversationDomain`")
+        }
     }
 
 }
@@ -764,28 +852,28 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
+public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - createResolveOneOnOneUseCase
+    // MARK: - calculateSupportedProtocols
 
-    public var createResolveOneOnOneUseCase_Invocations: [Void] = []
-    public var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
-    public var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
+    public var calculateSupportedProtocols_Invocations: [Void] = []
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
 
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
-        createResolveOneOnOneUseCase_Invocations.append(())
+    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+        calculateSupportedProtocols_Invocations.append(())
 
-        if let mock = createResolveOneOnOneUseCase_MockMethod {
+        if let mock = calculateSupportedProtocols_MockMethod {
             return mock()
-        } else if let mock = createResolveOneOnOneUseCase_MockValue {
+        } else if let mock = calculateSupportedProtocols_MockValue {
             return mock
         } else {
-            fatalError("no mock for `createResolveOneOnOneUseCase`")
+            fatalError("no mock for `calculateSupportedProtocols`")
         }
     }
 
@@ -978,6 +1066,33 @@ public class MockUserProfile: UserProfile {
             return mock
         } else {
             fatalError("no mock for `addObserver`")
+        }
+    }
+
+}
+
+public class MockUserRepositoryProtocol: UserRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchSelfUser
+
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
+
+    public func fetchSelfUser() -> ZMUser {
+        fetchSelfUser_Invocations.append(())
+
+        if let mock = fetchSelfUser_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfUser`")
         }
     }
 

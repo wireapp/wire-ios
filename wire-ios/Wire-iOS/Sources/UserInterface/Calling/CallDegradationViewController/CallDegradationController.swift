@@ -63,13 +63,14 @@ final class CallDegradationController: UIViewController {
                     continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
                 }
             case .degradedUser(user: let degradeduser):
-                visibleAlertController = UIAlertController.makeDegradedProteusCall(degradedUser: degradeduser?.value) { [weak self] continueDegradedCall in
-                    if continueDegradedCall {
-                        self?.delegate?.continueDegradedCall()
-                    } else {
-                        self?.delegate?.cancelDegradedCall()
+                visibleAlertController = UIAlertController.makeOutgoingDegradedProteusCall(
+                    degradedUser: degradeduser?.value) { [weak self] continueDegradedCall in
+                        if continueDegradedCall {
+                            self?.delegate?.continueDegradedCall()
+                        } else {
+                            self?.delegate?.cancelDegradedCall()
+                        }
                     }
-                }
             }
         case .none, .incoming, .terminating:
             return

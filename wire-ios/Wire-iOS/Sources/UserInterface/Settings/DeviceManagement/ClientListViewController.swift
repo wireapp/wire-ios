@@ -193,8 +193,8 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = userSession,
-              let contextProvider = contextProvider,
+        guard let userSession,
+              let contextProvider,
               let navigationController = self.navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -249,6 +249,7 @@ final class ClientListViewController: UIViewController,
             userClient: client,
             isSelfClient: client.isSelfClient(),
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
@@ -273,7 +274,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func createConstraints() {
-        guard let clientsTableView = clientsTableView else {
+        guard let clientsTableView else {
             return
         }
 
@@ -421,7 +422,7 @@ final class ClientListViewController: UIViewController,
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                if let selfClient = selfClient {
+                if let selfClient {
                     cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }
@@ -532,7 +533,7 @@ final class ClientListViewController: UIViewController,
         let mlsClients: [UserClient: MLSClientID] = Dictionary(
             uniqueKeysWithValues:
                 userClients
-                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .filter { !$0.mlsPublicKeys.allKeys.isEmpty }
                 .compactMap {
                     if let mlsClientId = MLSClientID(userClient: $0) {
                         ($0, mlsClientId)

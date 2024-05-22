@@ -333,7 +333,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             }
             let key = arguments[1]
             let value = arguments.count == 3 ? arguments[2] : nil
-            if let value = value {
+            if let value {
                 newState[key] = value
             } else {
                 newState.removeValue(forKey: key)

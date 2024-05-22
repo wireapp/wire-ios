@@ -30,10 +30,10 @@ public enum TeamOrConversation {
     /// Creates a team or a conversation
     static func fromTeamOrConversation(team: Team?,
                                        conversation: ZMConversation?) -> TeamOrConversation {
-        if let team = team {
+        if let team {
             return .team(team)
 
-        } else if let conversation = conversation {
+        } else if let conversation {
             return .conversation(conversation)
         }
         fatal("No team and no conversation")
@@ -126,6 +126,22 @@ public final class Role: ZMManagedObject {
         return existingRole ?? create(managedObjectContext: context, name: name, teamOrConversation: teamOrConversation)
     }
 
+    public static func fetchOrCreate(
+        name: String,
+        teamOrConversation: TeamOrConversation,
+        context: NSManagedObjectContext
+    ) -> Role {
+        if let role = fetchExistingRole(
+            with: name,
+            teamOrConversation: teamOrConversation,
+            in: context
+        ) {
+            return role
+        }
+
+        return Role.insertNewObject(in: context)
+    }
+
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any],
                                       teamOrConversation: TeamOrConversation,
@@ -141,8 +157,12 @@ public final class Role: ZMManagedObject {
         let role = fetchedRole ?? Role.insertNewObject(in: context)
 
         actionNames.forEach { actionName in
-            var created = false
-            Action.fetchOrCreate(with: actionName, role: role, in: context, created: &created)
+            let action = Action.fetchOrCreate(
+                name: actionName,
+                in: context
+            )
+
+            role.actions.insert(action)
         }
 
         switch teamOrConversation {

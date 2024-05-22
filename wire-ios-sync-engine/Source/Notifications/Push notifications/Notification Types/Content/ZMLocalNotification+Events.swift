@@ -87,7 +87,7 @@ private class EventNotificationBuilder: NotificationBuilder {
         // if there is a sender, it's not the selfUser
         if let sender = self.sender, sender.isSelfUser { return false }
 
-        if let conversation = conversation {
+        if let conversation {
             if conversation.mutedMessageTypesIncludingAvailability != .none {
                 return false
             }
@@ -165,7 +165,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
         guard message.reaction.emoji != "" else { return false }
 
         // fetch message that was reacted to and make sure the sender of the original message is the selfUser
-        guard let conversation = conversation,
+        guard let conversation,
               let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
             reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
 
@@ -311,7 +311,7 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
 
     override func shouldCreateNotification() -> Bool {
         guard
-            let conversation = conversation,
+            let conversation,
             let senderUUID = event.senderUUID,
             !conversation.isMessageSilenced(message, senderID: senderUUID)
         else {

@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class URLActionRouterTests: XCTestCase {
 
@@ -110,13 +111,12 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func updateActiveCallPresentationState() { }
 
-    func minimizeCallOverlay(animated: Bool, completion: () -> Void) { }
+    func minimizeCallOverlay(animated: Bool, completion: Completion?) { }
 
     var didNavigateToDestination: NavigationDestination?
     func navigate(to destination: NavigationDestination) {
         didNavigateToDestination = destination
     }
-
 }
 
 final class MockURLActionRouterDelegate: URLActionRouterDelegate {

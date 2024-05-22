@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import AppCenter
-import AppCenterAnalytics
-import AppCenterDistribute
 import avs
 import WireCommonComponents
 import WireSyncEngine
@@ -144,9 +141,6 @@ final class SettingsPropertyFactory {
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
         case .email:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.emailAddress)
-
-        case .phone:
-            return getOnlyProperty(propertyName: propertyName, value: selfUser?.phoneNumber)
 
         case .handle:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.handleDisplayString(withDomain: BackendInfo.isFederationEnabled))
@@ -280,9 +274,9 @@ final class SettingsPropertyFactory {
                     userSession.perform {
                         self.delegate?.asyncMethodDidStart(self)
                         userSession.setMarketingConsent(granted: number.boolValue) { [weak self] _ in
-                            if let weakSelf = self {
-                                weakSelf.marketingConsent = SettingsPropertyValue.number(value: number)
-                                weakSelf.delegate?.asyncMethodDidComplete(weakSelf)
+                            if let self {
+                                marketingConsent = SettingsPropertyValue.number(value: number)
+                                delegate?.asyncMethodDidComplete(self)
                             }
                         }
                     }

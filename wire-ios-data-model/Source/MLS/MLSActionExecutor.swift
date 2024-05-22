@@ -54,6 +54,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let commitSender: CommitSending
     private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
+    private let featureRepository: FeatureRepositoryInterface
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -65,10 +66,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        commitSender: CommitSending
+        commitSender: CommitSending,
+        featureRepository: FeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.commitSender = commitSender
+        self.featureRepository = featureRepository
     }
 
     // MARK: - Non-reentrant
@@ -102,7 +105,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
         defer {
             if var continuations = continuationsByGroupID[groupID] {
-                if continuations.isNonEmpty {
+                if !continuations.isEmpty {
                     continuations.removeFirst().resume()
                     continuationsByGroupID[groupID] = continuations
                 }
@@ -278,8 +281,9 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let groupInfo):
+                let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
                 let conversationInitBundle = try await coreCrypto.perform {
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
+                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                     return try await $0.joinByExternalCommit(
                         groupInfo: groupInfo,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),

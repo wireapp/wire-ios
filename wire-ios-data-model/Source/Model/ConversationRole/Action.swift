@@ -20,6 +20,7 @@ import Foundation
 
 @objcMembers
 public final class Action: ZMManagedObject {
+
     public static let nameKey = #keyPath(Action.name)
     public static let roleKey = #keyPath(Action.role)
 
@@ -30,41 +31,59 @@ public final class Action: ZMManagedObject {
         return String(describing: Action.self)
     }
 
-    private static func fetchExistingAction(
-        with name: String,
-        role: Role,
-        in context: NSManagedObjectContext
-    ) -> Action? {
-        let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
-
-        let actions = context.fetchOrAssert(request: fetchRequest)
-        return actions.first(where: {
-            role.actions.contains($0)
-        })
-    }
-
     @discardableResult
-    private static func create(
-        managedObjectContext: NSManagedObjectContext,
-        name: String
+    public static func fetchOrCreate(
+        name: String,
+        in context: NSManagedObjectContext
     ) -> Action {
-        let entry = Action.insertNewObject(in: managedObjectContext)
-        entry.name = name
-        return entry
+        var created = false
+        return fetchOrCreate(
+            name: name,
+            in: context,
+            created: &created
+        )
     }
 
     @discardableResult
     public static func fetchOrCreate(
-        with name: String,
-        role: Role,
+        name: String,
         in context: NSManagedObjectContext,
         created: inout Bool
     ) -> Action {
-        let existingAction = fetchExistingAction(with: name, role: role, in: context)
-        let action = existingAction ?? Action.create(managedObjectContext: context, name: name)
-        created = (existingAction == nil)
-        role.actions.insert(action)
+        if let action = fetch(
+            name: name,
+            in: context
+        ) {
+            created = false
+            return action
+        }
+
+        let action = create(
+            name: name,
+            in: context
+        )
+
+        created = true
+        return action
+    }
+
+    public static func fetch(
+        name: String,
+        in context: NSManagedObjectContext
+    ) -> Action? {
+        let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
+        let actions = context.fetchOrAssert(request: fetchRequest)
+        return actions.first
+    }
+
+    @discardableResult
+    public static func create(
+        name: String,
+        in context: NSManagedObjectContext
+    ) -> Action {
+        let action = Action.insertNewObject(in: context)
+        action.name = name
         return action
     }
 
