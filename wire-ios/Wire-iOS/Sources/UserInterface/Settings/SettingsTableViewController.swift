@@ -192,7 +192,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         super.viewDidLoad()
 
         setupTableView()
-        setupNavigationBar()
+        setupNavigationBarAccessibility()
     }
 
     private func setupTableView() {
@@ -214,15 +214,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        setupAccessibility()
-    }
-
-    private func setupAccessibility() {
+    private func setupNavigationBarAccessibility() {
         typealias Accessibility = L10n.Accessibility.Settings
 
-        navigationItem.rightBarButtonItem?.accessibilityLabel = Accessibility.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
