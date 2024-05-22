@@ -358,6 +358,28 @@ extension ConversationListViewController: UITabBarControllerDelegate {
     }
 }
 
+// MARK: - sklsdfj
+
+extension ConversationListViewController: ArchivedListViewControllerDelegate {
+
+    func archivedListViewController(
+        _ viewController: ArchivedListViewController,
+        didSelectConversation conversation: ZMConversation
+    ) {
+
+        _ = selectOnListContentController(
+            conversation,
+            scrollTo: nil,
+            focusOnView: true,
+            animated: true
+        ) { [weak self] in
+            self?.tabBarController?.selectedIndex = MainTabBarControllerTab.conversations.rawValue
+        }
+    }
+}
+
+// MARK: - Helpers
+
 private extension NSAttributedString {
 
     static var attributedTextForNoConversationLabel: NSAttributedString? {

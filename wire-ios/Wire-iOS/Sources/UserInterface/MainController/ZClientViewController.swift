@@ -728,8 +728,7 @@ final class ZClientViewController: UIViewController {
 
     private func createArchivedListViewController() -> UIViewController {
         let viewController = ArchivedListViewController(userSession: userSession)
-        viewController.delegate = conversationListViewController.viewModel
-
+        viewController.delegate = conversationListViewController
         return UINavigationController(rootViewController: viewController)
     }
 }

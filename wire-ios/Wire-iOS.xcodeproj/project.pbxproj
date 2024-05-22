@@ -1727,7 +1727,6 @@
 		EF44C6A42215861F007C5CDC /* MockUserClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D553661C86F0450026573C /* MockUserClient.swift */; };
 		EF46ECCD231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */; };
 		EF471BE4232658A9008E11A5 /* ConversationListViewControllerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF471BE3232658A9008E11A5 /* ConversationListViewControllerViewModel.swift */; };
-		EF471BE62326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */; };
 		EF4795AD2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4795AC2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift */; };
 		EF4C5D4A23351CF00092CA38 /* ConversationListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4C5D4923351CF00092CA38 /* ConversationListViewModelTests.swift */; };
 		EF4C5D4E23391C7E0092CA38 /* ConversationListCell+ZMConversationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4C5D4D23391C7E0092CA38 /* ConversationListCell+ZMConversationObserver.swift */; };
@@ -3827,7 +3826,6 @@
 		EF4478512090BF8700BD9827 /* FullscreenImageViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenImageViewControllerTests.swift; sourceTree = "<group>"; };
 		EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+StartUIDelegate.swift"; sourceTree = "<group>"; };
 		EF471BE3232658A9008E11A5 /* ConversationListViewControllerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewControllerViewModel.swift; sourceTree = "<group>"; };
-		EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		EF4795AC2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+UITextViewDelegate.swift"; sourceTree = "<group>"; };
 		EF4C5D4923351CF00092CA38 /* ConversationListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewModelTests.swift; sourceTree = "<group>"; };
 		EF4C5D4D23391C7E0092CA38 /* ConversationListCell+ZMConversationObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListCell+ZMConversationObserver.swift"; sourceTree = "<group>"; };
@@ -8361,7 +8359,6 @@
 				EF6E9FED231D4426000B7785 /* ConversationListViewControllerViewModel+ZMConversationListObserver.swift */,
 				EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */,
 				EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */,
-				EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */,
 				63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */,
 				EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */,
 			);
@@ -9726,7 +9723,6 @@
 				161ACB2823F5805000ABFF33 /* UIAlertController+LocalizedError.swift in Sources */,
 				634497DB24A49BF80000131D /* BaseCallParticipantView.swift in Sources */,
 				5E678061204E8BEB002F63FB /* CallQualityPresentationTransition.swift in Sources */,
-				EF471BE62326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift in Sources */,
 				EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */,
 				D5168F282008ED0700F8222A /* KeyboardBlockObserver.swift in Sources */,
 				EF7E96EE214BB41800475C63 /* ContactsViewController+ContactsDataSourceDelegate.swift in Sources */,

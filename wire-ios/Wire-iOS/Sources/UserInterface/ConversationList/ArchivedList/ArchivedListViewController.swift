@@ -134,13 +134,6 @@ final class ArchivedListViewController: UIViewController {
             emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
     }
-
-    // MARK: - Accessibility
-
-    override func accessibilityPerformEscape() -> Bool {
-        self.delegate?.archivedListViewControllerWantsToDismiss(self)
-        return true
-    }
 }
 
 // MARK: - CollectionViewDelegate

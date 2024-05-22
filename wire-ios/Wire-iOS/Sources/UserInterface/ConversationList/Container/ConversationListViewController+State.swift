@@ -20,6 +20,7 @@ import UIKit
 
 extension ConversationListViewController {
 
+    #warning("TODO: remove")
     func setState(
         _ state: ConversationListState,
         animated: Bool,
