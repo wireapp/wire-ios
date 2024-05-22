@@ -14,6 +14,7 @@
 		010497E12940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */; };
 		011853962AE6BA5D0071FA32 /* ProfileClientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */; };
 		0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; };
+		013638F42BF6A23200A68F89 /* DeveloperToolsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013638F32BF6A23200A68F89 /* DeveloperToolsPresenter.swift */; };
 		0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */; };
 		014389612BC8203100EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 014389602BC8201700EC6920 /* PrivacyInfo.xcprivacy */; };
 		014389632BC8203700EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895F2BC8200600EC6920 /* PrivacyInfo.xcprivacy */; };
@@ -2047,6 +2048,7 @@
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
 		010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationShowCustomBackendInfoHandler.swift; sourceTree = "<group>"; };
 		011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileClientViewModel.swift; sourceTree = "<group>"; };
+		013638F32BF6A23200A68F89 /* DeveloperToolsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsPresenter.swift; sourceTree = "<group>"; };
 		0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0143895F2BC8200600EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		014389602BC8201700EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -8060,6 +8062,7 @@
 			isa = PBXGroup;
 			children = (
 				EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */,
+				013638F32BF6A23200A68F89 /* DeveloperToolsPresenter.swift */,
 				EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */,
 				63238C692B860DE300951467 /* DeveloperE2ei */,
 				E66258852B4D391700C23E79 /* DebugActions */,
@@ -9897,6 +9900,7 @@
 				EEF28EEF1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift in Sources */,
 				EF39BD2E233E2FDA00F02DDB /* main.swift in Sources */,
 				5E8FFC2021EF83FF0052DF03 /* AuthenticationAddEmailPasswordInputHandler.swift in Sources */,
+				013638F42BF6A23200A68F89 /* DeveloperToolsPresenter.swift in Sources */,
 				EF218AC720A9DDEF004977BF /* ZClientViewController+DataUsagePermissions.swift in Sources */,
 				259BB5D32B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift in Sources */,
 				EF39BD30233E418B00F02DDB /* FileManager+Directory.swift in Sources */,
