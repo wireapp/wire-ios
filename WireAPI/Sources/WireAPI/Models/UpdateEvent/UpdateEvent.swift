@@ -23,7 +23,7 @@ public enum UpdateEvent {
 
     case conversationAssetAdd
     case conversationAccessUpdate(ConversationAccessUpdateEvent)
-    case conversationClientMessageAdd
+    case conversationClientMessageAdd(ConversationClientMessageAddEvent)
     case conversationCodeUpdate
     case conversationConnectRequest
     case conversationCreate

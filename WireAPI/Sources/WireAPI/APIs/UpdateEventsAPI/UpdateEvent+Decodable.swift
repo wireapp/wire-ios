@@ -31,7 +31,8 @@ extension UpdateEvent: Decodable {
             let event = try container.decodeConversationAccessUpdateEvent()
             self = .conversationAccessUpdate(event)
         case "conversation.client-message-add":
-            self = .conversationClientMessageAdd
+            let event = try container.decodeConversationClientMessageAddEvent()
+            self = .conversationClientMessageAdd(event)
         case "conversation.code-update":
             self = .conversationCodeUpdate
         case "conversation.connect-request":
@@ -303,6 +304,17 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             accessModes: payload.access,
             accessRoles: payload.access_role_v2 ?? [],
             legacyAccessRole: payload.access_role
+        )
+    }
+
+    func decodeConversationClientMessageAddEvent() throws -> ConversationClientMessageAddEvent {
+        let payload = try decodePayload(String.self)
+
+        return try ConversationClientMessageAddEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
+            protobufMessage: payload
         )
     }
 
