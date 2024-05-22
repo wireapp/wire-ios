@@ -149,25 +149,99 @@ private enum UpdateEventPayloadCodingKeys: String, CodingKey {
 
 private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
-    private func decodeConversationID() throws -> ConversationID {
+    func decodeConversationID() throws -> ConversationID {
         try decode(ConversationID.self, forKey: .conversationQualifiedID)
     }
 
-    private func decodeSenderID() throws -> UserID {
+    func decodeSenderID() throws -> UserID {
         try decode(UserID.self, forKey: .senderQualifiedID)
     }
 
-    private func decodeTimestamp() throws -> Date {
+    func decodeTimestamp() throws -> Date {
         try decode(Date.self, forKey: .timestamp)
     }
 
-    private func decodeSubconversation() throws -> String? {
+    func decodeSubconversation() throws -> String? {
         try decodeIfPresent(String.self, forKey: .subconversation)
     }
 
-    private func decodePayload<T: Decodable>(_ type: T.Type) throws -> T {
+    func decodePayload<T: Decodable>(_ type: T.Type) throws -> T {
         try decode(T.self, forKey: .payload)
     }
+
+}
+
+// MARK: - Conversation access update
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
+    func decodeConversationAccessUpdateEvent() throws -> ConversationAccessUpdateEvent {
+        let payload = try decodePayload(ConversationAccessUpdateEventPayload.self)
+
+        return try ConversationAccessUpdateEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            accessModes: payload.access,
+            accessRoles: payload.access_role_v2 ?? [],
+            legacyAccessRole: payload.access_role
+        )
+    }
+
+    private struct ConversationAccessUpdateEventPayload: Decodable {
+
+        let access: Set<ConversationAccessMode>
+        let access_role: ConversationAccessRoleLegacy?
+        let access_role_v2: Set<ConversationAccessRole>?
+
+    }
+
+}
+
+// MARK: - Conversation client message add
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
+    func decodeConversationClientMessageAddEvent() throws -> ConversationClientMessageAddEvent {
+        try ConversationClientMessageAddEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
+            protobufMessage: decodePayload(String.self)
+        )
+    }
+
+}
+
+// MARK: - Conversation code update
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
+    func decodeConversationCodeUpdateEvent() throws -> ConversationCodeUpdateEvent {
+        let payload = try decodePayload(ConversationCodeUpdateEventPayload.self)
+
+        return try ConversationCodeUpdateEvent(
+            conversationID: decodeConversationID(),
+            key: payload.key,
+            code: payload.code,
+            uri: payload.uri,
+            isPasswordProtected: payload.has_password
+        )
+    }
+
+    private struct ConversationCodeUpdateEventPayload: Decodable {
+
+        let key: String
+        let code: String
+        let uri: String?
+        let has_password: Bool
+
+    }
+
+}
+
+// MARK: - Conversation delete
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
     func decodeConversationDeleteEvent() throws -> ConversationDeleteEvent {
         try ConversationDeleteEvent(
@@ -177,8 +251,14 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+}
+
+// MARK: - Conversation member join
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationMemberJoinEvent() throws -> ConversationMemberJoinEvent {
-        let payload = try decodePayload(ConversationMemberJoinEventData.self)
+        let payload = try decodePayload(ConversationMemberJoinEventPayload.self)
 
         return try ConversationMemberJoinEvent(
             conversationID: decodeConversationID(),
@@ -199,8 +279,43 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationMemberJoinEventPayload: Decodable {
+
+        let users: [OtherConversationMember]
+
+    }
+
+    private struct OtherConversationMember: Decodable {
+
+        let id: UserID
+        let conversationRole: String
+        let service: ServiceReference?
+
+        enum CodingKeys: String, CodingKey {
+
+            case id = "qualified_id"
+            case conversationRole = "conversation_role"
+            case service = "service"
+
+        }
+
+    }
+
+    private struct ServiceReference: Decodable {
+
+        let id: UUID
+        let provider: UUID
+
+    }
+
+}
+
+// MARK: - Conversation member leave
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationMemberLeaveEvent() throws -> ConversationMemberLeaveEvent {
-        let payload = try decodePayload(ConversationMemberLeaveEventData.self)
+        let payload = try decodePayload(ConversationMemberLeaveEventPayload.self)
 
         return try ConversationMemberLeaveEvent(
             conversationID: decodeConversationID(),
@@ -211,8 +326,21 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationMemberLeaveEventPayload: Decodable {
+
+        let qualified_user_ids: Set<UserID>
+        let reason: ConversationMemberLeaveReason?
+
+    }
+
+}
+
+// MARK: - Conversation member update
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationMemberUpdateEvent() throws -> ConversationMemberUpdateEvent {
-        let payload = try decodePayload(ConversationMemberUpdateEventData.self)
+        let payload = try decodePayload(ConversationMemberUpdateEventPayload.self)
 
         return try ConversationMemberUpdateEvent(
             conversationID: decodeConversationID(),
@@ -229,8 +357,25 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationMemberUpdateEventPayload: Decodable {
+
+        let qualified_target: UserID
+        let conversation_role: String?
+        let otr_muted_status: Int?
+        let otr_muted_ref: Date?
+        let otr_archived: Bool?
+        let otr_archived_ref: Date?
+
+    }
+
+}
+
+// MARK: - Conversation message timer update
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationMessageTimerUpdateEvent() throws -> ConversationMessageTimerUpdateEvent {
-        let payload = try decodePayload(ConversationMessageTimerUpdateEventData.self)
+        let payload = try decodePayload(ConversationMessageTimerUpdateEventPayload.self)
 
         return try ConversationMessageTimerUpdateEvent(
             conversationID: decodeConversationID(),
@@ -240,8 +385,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationMessageTimerUpdateEventPayload: Decodable {
+
+        let message_timer: Int64?
+
+    }
+
+}
+
+// MARK: - Conversation mls message add
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationMLSMessageAddEvent() throws -> ConversationMLSMessageAddEvent {
-        let payload = try decodePayload(ConversationMLSMessageAddEventData.self)
+        let payload = try decodePayload(ConversationMLSMessageAddEventPayload.self)
 
         return try ConversationMLSMessageAddEvent(
             conversationID: decodeConversationID(),
@@ -251,6 +408,18 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationMLSMessageAddEventPayload: Decodable {
+
+        let text: String
+
+    }
+
+}
+
+// MARK: - Conversation mls welcome
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationMLSWelcomeEvent() throws -> ConversationMLSWelcomeEvent {
         try ConversationMLSWelcomeEvent(
             conversationID: decodeConversationID(),
@@ -259,8 +428,14 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+}
+
+// MARK: - Conversation proteus asset add
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationProteusAssetAddEvent() throws -> ConversationProteusAssetAddEvent {
-        let payload = try decodePayload(ConversationProteusAssetAddEventData.self)
+        let payload = try decodePayload(ConversationProteusAssetAddEventPayload.self)
 
         return try ConversationProteusAssetAddEvent(
             conversationID: decodeConversationID(),
@@ -270,8 +445,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationProteusAssetAddEventPayload: Decodable {
+
+        let info: String
+
+    }
+
+}
+
+// MARK: - Conversation proteus message add
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationProteusMessageAddEvent() throws -> ConversationProteusMessageAddEvent {
-        let payload = try decodePayload(ConversationProteusMessageAddEventData.self)
+        let payload = try decodePayload(ConversationProteusMessageAddEventPayload.self)
 
         return try ConversationProteusMessageAddEvent(
             conversationID: decodeConversationID(),
@@ -281,8 +468,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationProteusMessageAddEventPayload: Decodable {
+
+        let text: String
+
+    }
+
+}
+
+// MARK: - Conversation protocol update
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationProtocolUpdateEvent() throws -> ConversationProtocolUpdateEvent {
-        let payload = try decodePayload(ConversationProtocolEventData.self)
+        let payload = try decodePayload(ConversationProtocolEventPayload.self)
 
         return try ConversationProtocolUpdateEvent(
             conversationID: decodeConversationID(),
@@ -291,8 +490,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationProtocolEventPayload: Decodable {
+
+        let `protocol`: ConversationProtocol
+
+    }
+
+}
+
+// MARK: - Conversation receipt mode update
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationRecieptModeUpdateEvent() throws -> ConversationReceiptModeUpdateEvent {
-        let payload = try decodePayload(ConversationReceiptModeUpdateEventData.self)
+        let payload = try decodePayload(ConversationReceiptModeUpdateEventPayload.self)
 
         return try ConversationReceiptModeUpdateEvent(
             conversationID: decodeConversationID(),
@@ -301,8 +512,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationReceiptModeUpdateEventPayload: Decodable {
+
+        let receipt_mode: Int
+
+    }
+
+}
+
+// MARK: - Conversation rename
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationRenameEvent() throws -> ConversationRenameEvent {
-        let payload = try decodePayload(ConversationRenameEventData.self)
+        let payload = try decodePayload(ConversationRenameEventPayload.self)
 
         return try ConversationRenameEvent(
             conversationID: decodeConversationID(),
@@ -312,8 +535,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    private struct ConversationRenameEventPayload: Decodable {
+
+        let name: String
+
+    }
+
+}
+
+// MARK: - Conversation typing
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
     func decodeConversationTypingEvent() throws -> ConversationTypingEvent {
-        let payload = try decodePayload(ConversationTypingEventData.self)
+        let payload = try decodePayload(ConversationTypingEventPayload.self)
 
         return try ConversationTypingEvent(
             conversationID: decodeConversationID(),
@@ -322,160 +557,17 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
-    func decodeConversationAccessUpdateEvent() throws -> ConversationAccessUpdateEvent {
-        let payload = try decodePayload(ConversationAccessUpdateEventData.self)
+    private struct ConversationTypingEventPayload: Decodable {
 
-        return try ConversationAccessUpdateEvent(
-            conversationID: decodeConversationID(),
-            senderID: decodeSenderID(),
-            accessModes: payload.access,
-            accessRoles: payload.access_role_v2 ?? [],
-            legacyAccessRole: payload.access_role
-        )
-    }
-
-    func decodeConversationClientMessageAddEvent() throws -> ConversationClientMessageAddEvent {
-        let payload = try decodePayload(String.self)
-
-        return try ConversationClientMessageAddEvent(
-            conversationID: decodeConversationID(),
-            senderID: decodeSenderID(),
-            timestamp: decodeTimestamp(),
-            protobufMessage: payload
-        )
-    }
-
-    func decodeConversationCodeUpdateEvent() throws -> ConversationCodeUpdateEvent {
-        let payload = try decodePayload(ConversationCodeUpdateEventData.self)
-
-        return try ConversationCodeUpdateEvent(
-            conversationID: decodeConversationID(),
-            key: payload.key,
-            code: payload.code,
-            uri: payload.uri,
-            isPasswordProtected: payload.has_password
-        )
-    }
-
-}
-
-private struct ConversationMemberJoinEventData: Decodable {
-
-    let users: [OtherConversationMember]
-
-}
-
-private struct OtherConversationMember: Decodable {
-
-    let id: UserID
-    let conversationRole: String
-    let service: ServiceReference?
-
-    enum CodingKeys: String, CodingKey {
-
-        case id = "qualified_id"
-        case conversationRole = "conversation_role"
-        case service = "service"
+        let status: TypingStatus
 
     }
 
-}
-
-private struct ServiceReference: Decodable {
-
-    let id: UUID
-    let provider: UUID
-
-}
-
-
-private struct ConversationMemberLeaveEventData: Decodable {
-
-    let qualified_user_ids: Set<UserID>
-    let reason: ConversationMemberLeaveReason?
-
-}
-
-private struct ConversationMemberUpdateEventData: Decodable {
-
-    let qualified_target: UserID
-    let conversation_role: String?
-    let otr_muted_status: Int?
-    let otr_muted_ref: Date?
-    let otr_archived: Bool?
-    let otr_archived_ref: Date?
-
-}
-
-
-private struct ConversationMessageTimerUpdateEventData: Decodable {
-
-    let message_timer: Int64?
-
-}
-
-private struct ConversationMLSMessageAddEventData: Decodable {
-
-    let text: String
-
-}
-
-private struct ConversationProteusAssetAddEventData: Decodable {
-
-    let info: String
-
-}
-
-private struct ConversationProteusMessageAddEventData: Decodable {
-
-    let text: String
-
-}
-
-private struct ConversationProtocolEventData: Decodable {
-
-    let `protocol`: ConversationProtocol
-
-}
-
-private struct ConversationReceiptModeUpdateEventData: Decodable {
-
-    let receipt_mode: Int
-
-}
-
-private struct ConversationRenameEventData: Decodable {
-
-    let name: String
-
-}
-
-private struct ConversationTypingEventData: Decodable {
-
-    let status: TypingStatus
-
-    enum TypingStatus: String, Decodable {
+    private enum TypingStatus: String, Decodable {
 
         case started
         case stopped
 
     }
-
-}
-
-private struct ConversationAccessUpdateEventData: Decodable {
-
-    let access: Set<ConversationAccessMode>
-    let access_role: ConversationAccessRoleLegacy?
-    let access_role_v2: Set<ConversationAccessRole>?
-
-}
-
-private struct ConversationCodeUpdateEventData: Decodable {
-
-    let key: String
-    let code: String
-    let uri: String?
-    let has_password: Bool
 
 }
