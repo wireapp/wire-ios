@@ -23,3 +23,57 @@ import Foundation
 /// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
 /// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
 enum Mocks { }
+
+extension Mocks {
+
+    /// An Example how generated mocks are structured.
+    public class MockExample {
+
+        // MARK: - Life cycle
+
+        public init() {}
+
+        // MARK: lastPrekeyID
+
+        public var lastPrekeyIDCallsCount = 0
+        public var lastPrekeyIDCalled: Bool {
+            return lastPrekeyIDCallsCount > 0
+        }
+
+        public var lastPrekeyID: UInt16 {
+            get async {
+                lastPrekeyIDCallsCount += 1
+                if let lastPrekeyIDClosure {
+                    return await lastPrekeyIDClosure()
+                } else {
+                    return underlyingLastPrekeyID
+                }
+            }
+        }
+        public var underlyingLastPrekeyID: UInt16!
+        public var lastPrekeyIDClosure: (() async -> UInt16)?
+
+        // MARK: - getName
+
+        public var getNameFor_Invocations: [String] = []
+        public var getNameFor_MockError: Error?
+        public var getNameFor_MockMethod: ((String) async throws -> String)?
+        public var getNameFor_MockValue: String?
+
+        public func getName(for identifier: String) async throws -> String {
+            getNameFor_Invocations.append(identifier)
+
+            if let error = getNameFor_MockError {
+                throw error
+            }
+
+            if let mock = getNameFor_MockMethod {
+                return try await mock(identifier)
+            } else if let mock = getNameFor_MockValue {
+                return mock
+            } else {
+                fatalError("no mock for `getNameFor`")
+            }
+        }
+    }
+}
