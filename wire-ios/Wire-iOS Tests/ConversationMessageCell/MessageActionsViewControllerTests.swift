@@ -22,7 +22,11 @@ import XCTest
 
 @testable import Wire
 
+// MARK: - MessageActionsViewControllerTests
+
 final class MessageActionsViewControllerTests: XCTestCase {
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -30,6 +34,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
+
+    // MARK: - Unit Tests
 
     func testReactionPicker_ExistForStandardMessage() {
         // GIVEN
@@ -133,38 +139,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
 }
 
-final class BasicReactionPickerTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
-    }
-
-    func test_BasicReactionPicker() {
-        // GIVEN WHEN
-        let sut = pickerWithReaction(nil)
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    func test_BasicReactionPicker_withSelectedReaction() {
-        // GIVEN WHEN
-        let sut = pickerWithReaction([Emoji.ID.thumbsUp])
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    private func pickerWithReaction(_ reaction: Set<Emoji.ID>?) -> BasicReactionPicker {
-        var picker = BasicReactionPicker(selectedReactions: reaction ?? [])
-        picker.sizeToFit()
-        picker.backgroundColor = .white
-        picker.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))
-
-        return picker
-    }
-}
+// MARK: - UIView extension
 
 fileprivate extension UIView {
 
