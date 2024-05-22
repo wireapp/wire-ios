@@ -181,17 +181,25 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         return try ConversationAccessUpdateEvent(
             conversationID: decodeConversationID(),
             senderID: decodeSenderID(),
-            accessModes: payload.access,
-            accessRoles: payload.access_role_v2 ?? [],
-            legacyAccessRole: payload.access_role
+            accessModes: payload.accessModes,
+            accessRoles: payload.accessRoles ?? [],
+            legacyAccessRole: payload.legacyAccessRole
         )
     }
 
     private struct ConversationAccessUpdateEventPayload: Decodable {
 
-        let access: Set<ConversationAccessMode>
-        let access_role: ConversationAccessRoleLegacy?
-        let access_role_v2: Set<ConversationAccessRole>?
+        let accessModes: Set<ConversationAccessMode>
+        let legacyAccessRole: ConversationAccessRoleLegacy?
+        let accessRoles: Set<ConversationAccessRole>?
+
+        enum CodingKeys: String, CodingKey {
+
+            case accessModes = "access"
+            case legacyAccessRole = "access_role"
+            case accessRoles = "access_role_v2"
+
+        }
 
     }
 
@@ -224,7 +232,7 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             key: payload.key,
             code: payload.code,
             uri: payload.uri,
-            isPasswordProtected: payload.has_password
+            isPasswordProtected: payload.hasPassword
         )
     }
 
@@ -233,7 +241,16 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         let key: String
         let code: String
         let uri: String?
-        let has_password: Bool
+        let hasPassword: Bool
+
+        enum CodingKeys: String, CodingKey {
+
+            case key
+            case code
+            case uri
+            case hasPassword = "has_password"
+
+        }
 
     }
 
@@ -321,15 +338,22 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             conversationID: decodeConversationID(),
             senderID: decodeSenderID(),
             timestamp: decodeTimestamp(),
-            removedUserIDs: payload.qualified_user_ids,
+            removedUserIDs: payload.userIDs,
             reason: payload.reason ?? .left
         )
     }
 
     private struct ConversationMemberLeaveEventPayload: Decodable {
 
-        let qualified_user_ids: Set<UserID>
+        let userIDs: Set<UserID>
         let reason: ConversationMemberLeaveReason?
+
+        enum CodingKeys: String, CodingKey {
+
+            case userIDs = "qualified_user_ids"
+            case reason
+
+        }
 
     }
 
@@ -347,24 +371,35 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             senderID: decodeSenderID(),
             timestamp: decodeTimestamp(),
             memberChange: ConversationMemberChange(
-                id: payload.qualified_target,
-                newRoleName: payload.conversation_role,
-                newMuteStatus: payload.otr_muted_status,
-                muteStatusReferenceDate: payload.otr_muted_ref,
-                newArchivedStatus: payload.otr_archived,
-                archivedStatusReferenceDate: payload.otr_archived_ref
+                id: payload.userID,
+                newRoleName: payload.role,
+                newMuteStatus: payload.muteStatus,
+                muteStatusReferenceDate: payload.muteStatusReference,
+                newArchivedStatus: payload.archivedStatus,
+                archivedStatusReferenceDate: payload.archivedStatusReference
             )
         )
     }
 
     private struct ConversationMemberUpdateEventPayload: Decodable {
 
-        let qualified_target: UserID
-        let conversation_role: String?
-        let otr_muted_status: Int?
-        let otr_muted_ref: Date?
-        let otr_archived: Bool?
-        let otr_archived_ref: Date?
+        let userID: UserID
+        let role: String?
+        let muteStatus: Int?
+        let muteStatusReference: Date?
+        let archivedStatus: Bool?
+        let archivedStatusReference: Date?
+
+        enum CodingKeys: String, CodingKey {
+
+            case userID = "qualified_target"
+            case role = "conversation_role"
+            case muteStatus = "otr_muted_status"
+            case muteStatusReference = "otr_muted_ref"
+            case archivedStatus = "otr_archived"
+            case archivedStatusReference = "otr_archived_ref"
+
+        }
 
     }
 
@@ -381,13 +416,19 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             conversationID: decodeConversationID(),
             senderID: decodeSenderID(),
             timestamp: decodeTimestamp(),
-            newTimer: payload.message_timer
+            newTimer: payload.messageTimer
         )
     }
 
     private struct ConversationMessageTimerUpdateEventPayload: Decodable {
 
-        let message_timer: Int64?
+        let messageTimer: Int64?
+
+        enum CodingKeys: String, CodingKey {
+
+            case messageTimer = "message_timer"
+
+        }
 
     }
 
@@ -508,13 +549,19 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         return try ConversationReceiptModeUpdateEvent(
             conversationID: decodeConversationID(),
             senderID: decodeSenderID(),
-            newRecieptMode: payload.receipt_mode
+            newRecieptMode: payload.receiptMode
         )
     }
 
     private struct ConversationReceiptModeUpdateEventPayload: Decodable {
 
-        let receipt_mode: Int
+        let receiptMode: Int
+
+        enum CodingKeys: String, CodingKey {
+
+            case receiptMode = "receipt_mode"
+
+        }
 
     }
 
