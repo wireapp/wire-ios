@@ -23,6 +23,7 @@ targets: [
         ]
     )
 ]
+```
 
 ### Configuration
 
