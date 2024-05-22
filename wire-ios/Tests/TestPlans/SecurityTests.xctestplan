@@ -80,11 +80,6 @@
         "value" : ""
       },
       {
-        "enabled" : false,
-        "key" : "RECORDING_SNAPSHOTS",
-        "value" : "YES"
-      },
-      {
         "key" : "IMAGE_DIFF_DIR",
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },

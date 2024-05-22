@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
