@@ -20,7 +20,7 @@ import Foundation
 
 /// A builder of `TeamsAPI`.
 
-public struct TeamsAPIBuilder {
+public struct TeamsAPIBuilder: APIBuilder {
 
     let httpClient: any HTTPClient
 

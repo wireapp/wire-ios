@@ -16,20 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIImage {
+/// Response when retrieving a list users.
 
-    convenience init?(testImageNamed name: String) {
-        func url(forTestResourceNamed name: String) -> URL? {
-            let bundle = Bundle(for: CanvasTests.self)
-            return bundle.url(forResource: (name as NSString).deletingPathExtension, withExtension: (name as NSString).pathExtension)
-        }
+public struct UserList: Equatable {
 
-        guard let url = url(forTestResourceNamed: name) else { return nil }
-        guard let data = try? Data(contentsOf: url) else { return nil }
+    /// List of users which were found and succesfully retrieved.
 
-        self.init(data: data, scale: 2)
-    }
+    public let found: [User]
 
+    /// List of user IDs for which a user couldn't be retrieved.
+
+    public let failed: [UserID]
 }
