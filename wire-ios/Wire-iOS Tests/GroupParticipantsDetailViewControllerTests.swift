@@ -39,7 +39,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 }
 
-final class GroupParticipantsDetailViewControllerTests: BaseSnapshotTestCase {
+final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     private var userSession: UserSessionMock!
     private let helper = SnapshotHelper()
