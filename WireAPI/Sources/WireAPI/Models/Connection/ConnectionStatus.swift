@@ -18,12 +18,13 @@
 
 import Foundation
 
-struct PaginationRequest: Codable {
-    enum CodingKeys: String, CodingKey {
-        case pagingState = "paging_state"
-        case size
-    }
-    var pagingState: String?
-    // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
-    var size: Int?
+public enum ConnectionStatus: String, Decodable, Equatable {
+
+    case accepted = "accepted"
+    case blocked = "blocked"
+    case pending = "pending"
+    case ignored = "ignored"
+    case sent = "sent"
+    case cancelled = "cancelled"
+    case missingLegalholdConsent = "missing-legalhold-consent"
 }

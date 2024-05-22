@@ -18,16 +18,6 @@
 
 import Foundation
 
-struct PaginationRequest: Codable {
-    enum CodingKeys: String, CodingKey {
-        case pagingState = "paging_state"
-        case size
-    }
-    var pagingState: String?
-    // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
-    var size: Int?
-}
-
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
     enum Constants {
@@ -108,7 +98,7 @@ private struct PaginatedConnectionList: Decodable, ToAPIModelConvertible {
     }
  }
 
-struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
+private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
 
     enum CodingKeys: String, CodingKey {
         case from
@@ -137,15 +127,4 @@ struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
                    lastUpdate: lastUpdate,
                    status: status)
     }
-}
-
-public enum ConnectionStatus: String, Decodable, Equatable {
-
-    case accepted = "accepted"
-    case blocked = "blocked"
-    case pending = "pending"
-    case ignored = "ignored"
-    case sent = "sent"
-    case cancelled = "cancelled"
-    case missingLegalholdConsent = "missing-legalhold-consent"
 }
