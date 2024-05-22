@@ -85,21 +85,46 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
         if httpClient.receivedRequests.isEmpty {
             throw Failure.noRequestGenerated
         }
-        var index = 0
-        for request in httpClient.receivedRequests {
-            let suffix = index == 0 ? "" : ".1"
-            let errorMessage = verifySnapshot(
-                of: request,
-                as: .dump,
-                named: "v\(apiVersion.rawValue)\(suffix)",
-                file: file,
-                testName: function,
-                line: line
-            )
 
-            if let errorMessage {
-                XCTFail(errorMessage, file: file, line: line)
-            }
+        let name = "v\(apiVersion.rawValue)"
+
+        for request in httpClient.receivedRequests {
+
+            try verifyRequest(request: request,
+                              resourceName: name,
+                              file: file,
+                              function: function,
+                              line: line)
+        }
+    }
+
+    /// Snapshot test a given request
+    /// - Parameters:
+    ///   - request: httpRequest to verify
+    ///   - resourceName: name of the file containing the expected request description
+    ///   - file: The file invoking the test.
+    ///   - function: The method invoking the test.
+    ///   - line: The line invoking the test.
+
+    @MainActor
+    func verifyRequest(
+        request: HTTPRequest,
+        resourceName: String,
+        file: StaticString = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) throws {
+        let errorMessage = verifySnapshot(
+            of: request,
+            as: .dump,
+            named: resourceName,
+            file: file,
+            testName: function,
+            line: line
+        )
+
+        if let errorMessage {
+            XCTFail(errorMessage, file: file, line: line)
         }
     }
 }

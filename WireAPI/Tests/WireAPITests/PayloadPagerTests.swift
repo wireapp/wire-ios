@@ -65,9 +65,42 @@ final class PayloadPagerTests: XCTestCase {
         XCTAssertNil(page4)
     }
 
+    func test_PagerStopIteratesThroughPagesIfThrowingError() async throws {
+        // Given
+        let expectedError = TestError(message: "unexpected error from api")
+        let sut = PayloadPager<String>(start: "first") { index in
+            switch index {
+            case "first":
+                return PayloadPager.Page(
+                    element: ["A", "B", "C"],
+                    hasMore: true,
+                    nextStart: "second"
+                )
+            default:
+                throw expectedError
+            }
+        }
+
+        // When
+        var iterator = sut.makeAsyncIterator()
+
+        // Then
+        let page1 = try await iterator.next()
+        XCTAssertEqual(page1, ["A", "B", "C"])
+
+        let page2 = try? await iterator.next()
+        XCTAssertNil(page2)
+
+        do {
+            _ = try await iterator.next()
+            XCTFail("expected error thrown")
+        } catch {
+            XCTAssertEqual(expectedError, error as? TestError)
+        }
+    }
 }
 
-private struct TestError: Error {
+private struct TestError: Error, Equatable {
 
     let message: String
 

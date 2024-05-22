@@ -22,12 +22,12 @@ import XCTest
 
 class ConnectionsAPITests: XCTestCase {
 
-    /// Verifies generation of request
+    /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
         try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
             let pager = try await sut.fetchConnections()
-            for try await page in pager {
-                print(page)
+            for try await _ in pager {
+                // this triggers fetching the data
             }
         }
     }
@@ -83,14 +83,31 @@ class ConnectionsAPITests: XCTestCase {
         }
     }
 
-    func testGetConnections_Paging_V0() async throws {
-        try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequest(apiVersion: .v0) { sut in
+    func testGetConnections_MultiplePages_SuccessResponse_V0() async throws {
+        // Given
+        var requestIndex = 0
+        let httpClient = HTTPClientMock { _ in
+            let response = PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
+            requestIndex += 1
 
-            let pager = try await sut.fetchConnections()
+            return HTTPResponse(code: 200, payload: try response.data())
+        }
 
-            for try await page in pager {
-                print(page)
-            }
+        // WHEN
+        let sut = ConnectionsAPIV0(httpClient: httpClient, fetchLimit: 1)
+        let pager = try await sut.fetchConnections()
+        for try await _ in pager {
+            // do something with the data
+            // this will trigger the fetch when we wait for the page
+        }
+
+        // THEN
+        XCTAssertEqual(httpClient.receivedRequests.count, 3)
+
+        // checks we made the 3 correct requests
+        for (index, receivedRequest) in httpClient.receivedRequests.enumerated() {
+            try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequest(request: receivedRequest,
+                                                                                   resourceName: "v0.\(index)")
         }
     }
 }

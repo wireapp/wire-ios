@@ -31,15 +31,20 @@ struct PaginationRequest: Codable {
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
     enum Constants {
-        static let resourcePath = ""
         static let maxConnectionsCount = 500
     }
 
     let httpClient: HTTPClient
+    let fetchLimit: Int
     let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
-    init(httpClient: HTTPClient) {
+    convenience init(httpClient: HTTPClient) {
+        self.init(httpClient: httpClient, fetchLimit: Constants.maxConnectionsCount)
+    }
+
+    init(httpClient: HTTPClient, fetchLimit: Int) {
         self.httpClient = httpClient
+        self.fetchLimit = Constants.maxConnectionsCount
     }
 
     var apiVersion: APIVersion {
@@ -58,14 +63,11 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let params = PaginationRequest(pagingState: start, size: Constants.maxConnectionsCount)
             let body = try JSONEncoder.defaultEncoder.encode(params)
 
-            // Create request using "start" index
             let request = HTTPRequest(
                 path: self.resourcePath,
                 method: .post,
                 body: body
             )
-
-            // Execute request
             let response = try await self.httpClient.executeRequest(request)
 
             // Parse response
@@ -74,12 +76,11 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
                 .failure(code: 400, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
 
-            let a = PayloadPager<Connection>.Page(
+            return PayloadPager<Connection>.Page(
                 element: responsePayload.connections.map { $0.toAPIModel() },
                 hasMore: responsePayload.hasMore,
                 nextStart: responsePayload.pagingState
             )
-            return a
         }
 
         return pager
@@ -148,27 +149,3 @@ public enum ConnectionStatus: String, Decodable, Equatable {
     case cancelled = "cancelled"
     case missingLegalholdConsent = "missing-legalhold-consent"
 }
-
-/*
- {
-   "connections": [
-     {
-       "conversation": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
-       "from": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
-       "last_update": "2021-05-12T10:52:02.671Z",
-       "qualified_conversation": {
-         "domain": "example.com",
-         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-       },
-       "qualified_to": {
-         "domain": "example.com",
-         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-       },
-       "status": "accepted",
-       "to": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-     }
-   ],
-   "has_more": true,
-   "paging_state": "string"
- }
- */
