@@ -23,7 +23,6 @@ import WireSyncEngine
 
 enum ConversationListState {
     case conversationList
-    case archived
 }
 
 final class ConversationListViewController: UIViewController {
@@ -251,12 +250,6 @@ final class ConversationListViewController: UIViewController {
         ])
     }
 
-    func createArchivedListViewController() -> ArchivedListViewController {
-        let archivedViewController = ArchivedListViewController(userSession: viewModel.userSession)
-        archivedViewController.delegate = viewModel
-        return archivedViewController
-    }
-
     func showNoContactLabel(animated: Bool = true) {
         if state != .conversationList { return }
 
@@ -297,7 +290,7 @@ final class ConversationListViewController: UIViewController {
         navigationController.transitioningDelegate = self
         navigationController.modalPresentationStyle = .currentContext
 
-        tabBarController?.present(viewController, animated: true) {
+        tabBarController?.present(navigationController, animated: true) {
             viewController.showKeyboardIfNeeded()
         }
     }

@@ -34,20 +34,11 @@ extension ConversationListViewController {
         switch state {
 
         case .conversationList:
-            view.alpha = 1
-
             if let presentedViewController = navigationController?.presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()
             }
-
-        case .archived:
-            let archiveViewController = createArchivedListViewController()
-            let navigationController = UINavigationController(rootViewController: archiveViewController)
-            navigationController.transitioningDelegate = self
-            navigationController.modalPresentationStyle = .currentContext
-            tabBarController?.present(navigationController, animated: animated, completion: completion)
         }
     }
 

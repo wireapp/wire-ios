@@ -75,7 +75,7 @@ extension ConversationListViewController {
 
         // verification status
         if viewModel.selfUserStatus.isE2EICertified {
-            let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
+            let imageView = UIImageView(image: .init(resource: .certificateValid))
             imageView.contentMode = .scaleAspectFit
             stackView.addArrangedSubview(imageView)
         }

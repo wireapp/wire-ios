@@ -179,7 +179,7 @@ final class ZClientViewController: UIViewController {
 
         mainTabBarController = MainTabBarController(
             conversations: UINavigationController(rootViewController: conversationListViewController),
-            archive: .init(),
+            archive: createArchivedListViewController(),
             settings: .init()
         )
         wireSplitViewController.leftViewController = mainTabBarController
@@ -722,5 +722,14 @@ final class ZClientViewController: UIViewController {
         completion: Completion?
     ) {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
+    }
+
+    // MARK: - Archive Tab
+
+    private func createArchivedListViewController() -> UIViewController {
+        let viewController = ArchivedListViewController(userSession: userSession)
+        viewController.delegate = conversationListViewController.viewModel
+
+        return UINavigationController(rootViewController: viewController)
     }
 }
