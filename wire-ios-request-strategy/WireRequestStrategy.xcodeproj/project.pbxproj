@@ -2285,6 +2285,7 @@
 			mainGroup = 166901601D707509000FE4AF;
 			packageReferences = (
 				EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */,
+				E67F36282BFDE35000B83E0F /* XCLocalSwiftPackageReference "../Packages/SourceryPlugin" */,
 			);
 			productRefGroup = 1669016B1D707509000FE4AF /* Products */;
 			projectDirPath = "";
@@ -3170,6 +3171,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		E67F36282BFDE35000B83E0F /* XCLocalSwiftPackageReference "../Packages/SourceryPlugin" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Packages/SourceryPlugin;
+		};
 		EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../WireAPI;

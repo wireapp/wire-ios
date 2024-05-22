@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "WireAPI",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v15),
+        .macOS(.v12)
     ],
     products: [
         .library(
@@ -26,7 +27,7 @@ let package = Package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
         ),
-        .package(path: "../Packages/SourceryPlugin")
+        .package(path: "../SourceryPlugin")
     ],
     targets: [
         .target(

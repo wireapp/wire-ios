@@ -20,7 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-DIRECTORY="$REPO_ROOT/Packages/SourceryPlugin"
+DIRECTORY="$REPO_ROOT/SourceryPlugin"
 SOURCERY="$DIRECTORY/.build/artifacts/sourceryplugin/sourcery/sourcery/bin/sourcery"
 
 if [ ! -z "${CI-}" ]; then

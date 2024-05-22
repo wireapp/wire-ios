@@ -113,6 +113,6 @@
       location = "group:WireAPI">
    </FileRef>
    <FileRef
-      location = "group:Packages/SourceryPlugin">
+      location = "group:SourceryPlugin">
    </FileRef>
 </Workspace>
