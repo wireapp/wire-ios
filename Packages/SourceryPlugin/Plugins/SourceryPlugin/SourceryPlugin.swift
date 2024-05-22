@@ -20,7 +20,29 @@ import Foundation
 import PackagePlugin
 
 @main
-struct SourceryPlugin: BuildToolPlugin {
+struct SourceryPlugin {
+
+    private enum Constant {
+        enum Arguments {
+            static let config = "config"
+            static let cacheBasePath = "cacheBasePath"
+        }
+
+        enum Environment {
+            static let derivedSourcesDirectory = "DERIVED_SOURCES_DIR"
+        }
+
+        static let displayName = "Execute Sourcery"
+        static let toolName = "sourcery"
+
+        static let configFileName = ".sourcery.yml"
+    }
+}
+
+// MARK: - BuildToolPlugin
+
+extension SourceryPlugin: BuildToolPlugin {
+
     func createBuildCommands(
         context: PackagePlugin.PluginContext,
         target: PackagePlugin.Target
@@ -28,49 +50,50 @@ struct SourceryPlugin: BuildToolPlugin {
 
         debugPrint("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
 
-        // Possible paths where there may be a config file (root of package, target dir.)
-        let configurations: [Path] = [context.package.directory, target.directory]
-            .map { $0.appending(".sourcery.yml") }
-            .filter { FileManager.default.fileExists(atPath: $0.string) }
-
-        // Validate paths list
-        guard
-            validate(configurations: configurations, targetName: target.name),
-            let configuration = configurations.first
-        else {
-            return []
-        }
-
-        return [
-            .prebuildCommand(
-                displayName: "Execute Sourcery",
-                executable: try context.tool(named: "sourcery").path,
-                arguments: [
-                    "--config",
-                    configuration.string,
-                    "--cacheBasePath",
-                    context.pluginWorkDirectory
-                ],
-                environment: [
-                    "DERIVED_SOURCES_DIR": context.pluginWorkDirectory
-                ],
-                outputFilesDirectory: context.pluginWorkDirectory
-            )
+        // Find configuration from possible paths where there may be a config file:
+        // 1. root of package
+        // 2. target directory
+        let configuration = [
+            context.package.directory,
+            target.directory
         ]
-    }
+            .map { $0.appending(Constant.configFileName) }
+            .filter { FileManager.default.fileExists(atPath: $0.string) }
+            .first
 
-    func validate(configurations: [Path], targetName: String) -> Bool {
-        guard !configurations.isEmpty else {
+        guard let configuration else {
             Diagnostics.error(
 """
-No configurations found for target \(targetName). If you would like to generate sources for this \
+No configurations found for target \(target.name). If you would like to generate sources for this \
 target include a `.sourcery.yml` in the target's source directory, or include a shared `.sourcery.yml` at the \
 package's root.
 """
             )
-            return false
+            return []
         }
 
-        return true
+        return [
+            try makePrebuildCommand(context: context, configuration: configuration)
+        ]
+    }
+
+    private func makePrebuildCommand(
+        context: PackagePlugin.PluginContext,
+        configuration: Path
+    ) throws -> PackagePlugin.Command {
+        .prebuildCommand(
+            displayName: Constant.displayName,
+            executable: try context.tool(named: Constant.toolName).path,
+            arguments: [
+                "--\(Constant.Arguments.config)",
+                configuration.string,
+                "--\(Constant.Arguments.cacheBasePath)",
+                context.pluginWorkDirectory
+            ],
+            environment: [
+                Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectory
+            ],
+            outputFilesDirectory: context.pluginWorkDirectory
+        )
     }
 }
