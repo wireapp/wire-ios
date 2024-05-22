@@ -33,21 +33,8 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    final fileprivate class IntrinsicSizeTableView: UITableView {
-        override var contentSize: CGSize {
-            didSet {
-                invalidateIntrinsicContentSize()
-            }
-        }
-
-        override var intrinsicContentSize: CGSize {
-            layoutIfNeeded()
-            return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
-        }
-    }
-
     init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+        tableView = .init()
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = UIRectEdge()
     }
@@ -151,7 +138,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {

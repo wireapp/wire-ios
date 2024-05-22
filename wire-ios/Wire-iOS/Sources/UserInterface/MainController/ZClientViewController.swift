@@ -186,7 +186,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController = MainTabBarController(
             conversations: UINavigationController(rootViewController: conversationListViewController),
             archive: createArchivedListViewController(),
-            settings: settingsViewControllerBuilder.build()
+            settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
         wireSplitViewController.leftViewController = mainTabBarController
 
