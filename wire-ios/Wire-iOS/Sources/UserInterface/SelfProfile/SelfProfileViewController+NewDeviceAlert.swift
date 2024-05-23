@@ -55,23 +55,36 @@ extension SelfProfileViewController {
         present(newLoginAlertController, animated: true, completion: .none)
 
         userSession.enqueue {
-            clients.forEach {
-                $0.needsToNotifyUser = false
+            clients.forEach { _ in
+                // $0.needsToNotifyUser = false
             }
         }
     }
 
     @discardableResult
     func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
+
+        guard
+            let tabBarController = ZClientViewController.shared?.mainTabBarController,
+            let settingsViewController = tabBarController.viewControllers?
+                .compactMap({ $0 as? UINavigationController })
+                .compactMap({ $0.viewControllers.first as? SettingsTableViewController })
+                .first
+        else { return nil }
+
         var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
-        rootGroup.allCellDescriptors().forEach { topCellDescriptor in
+        settingsViewController.group.allCellDescriptors().forEach { topCellDescriptor in
 
             if let cellIdentifier = topCellDescriptor.identifier,
                let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
                let viewController = cellGroupDescriptor.generateViewController(),
                cellIdentifier == identifier {
-                self.navigationController?.pushViewController(viewController, animated: false)
+
+                presentingViewController?.dismiss(animated: true) {
+                    tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
+                    settingsViewController.navigationController?.pushViewController(viewController, animated: true)
+                }
                 resultViewController = viewController
             }
 
@@ -82,8 +95,12 @@ extension SelfProfileViewController {
                        let topViewController = topCellGroupDescriptor.generateViewController(),
                        let viewController = cellGroupDescriptor.generateViewController(),
                        cellIdentifier == identifier {
-                        self.navigationController?.pushViewController(topViewController, animated: false)
-                        self.navigationController?.pushViewController(viewController, animated: false)
+
+                        presentingViewController?.dismiss(animated: true) {
+                            tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
+                            settingsViewController.navigationController?.pushViewController(topViewController, animated: true)
+                            settingsViewController.navigationController?.pushViewController(viewController, animated: true)
+                        }
                         resultViewController = viewController
                     }
                 })
