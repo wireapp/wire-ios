@@ -20,10 +20,12 @@ import avs
 import Foundation
 import WireDataModel
 import WireDataModelSupport
-@testable import WireSyncEngine
-@testable import WireSyncEngineSupport
 import WireTesting
 import WireTransport.Testing
+import WireUtilitiesSupport
+
+@testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
@@ -152,7 +154,7 @@ extension IntegrationTest {
 
         pushRegistry = PushRegistryMock(queue: nil)
         application = ApplicationMock()
-        notificationCenter = UserNotificationCenterMock()
+        notificationCenter = .init()
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
         mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier, useCache: true)
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self

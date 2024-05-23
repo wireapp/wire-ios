@@ -852,6 +852,33 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
+public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - calculateSupportedProtocols
+
+    public var calculateSupportedProtocols_Invocations: [Void] = []
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
+
+    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+        calculateSupportedProtocols_Invocations.append(())
+
+        if let mock = calculateSupportedProtocols_MockMethod {
+            return mock()
+        } else if let mock = calculateSupportedProtocols_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `calculateSupportedProtocols`")
+        }
+    }
+
+}
+
 public class MockUserProfile: UserProfile {
 
     // MARK: - Life cycle
@@ -1039,6 +1066,33 @@ public class MockUserProfile: UserProfile {
             return mock
         } else {
             fatalError("no mock for `addObserver`")
+        }
+    }
+
+}
+
+public class MockUserRepositoryProtocol: UserRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchSelfUser
+
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
+
+    public func fetchSelfUser() -> ZMUser {
+        fetchSelfUser_Invocations.append(())
+
+        if let mock = fetchSelfUser_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfUser`")
         }
     }
 

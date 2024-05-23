@@ -5349,33 +5349,6 @@ public class MockUserObserving: UserObserving {
 
 }
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - selfUser
-
-    public var selfUser_Invocations: [Void] = []
-    public var selfUser_MockMethod: (() -> ZMUser)?
-    public var selfUser_MockValue: ZMUser?
-
-    public func selfUser() -> ZMUser {
-        selfUser_Invocations.append(())
-
-        if let mock = selfUser_MockMethod {
-            return mock()
-        } else if let mock = selfUser_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `selfUser`")
-        }
-    }
-
-}
-
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace
