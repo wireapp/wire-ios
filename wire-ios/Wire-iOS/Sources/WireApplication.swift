@@ -16,21 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
 
 final class WireApplication: UIApplication {
 
-    private let presenter = DeveloperToolsPresenter()
+    private var displayedDeveloperTools = false
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         guard Bundle.developerModeEnabled else {
             return
         }
 
-        guard motion == .motionShake else { return }
+        guard motion == .motionShake, !displayedDeveloperTools else { return }
 
-        presenter.presentIfNotDisplayed(with: AppDelegate.shared.appRootRouter, from: self.topmostViewController())
+        let developerTools = UIHostingController(
+            rootView: NavigationView {
+                DeveloperToolsView(viewModel: DeveloperToolsViewModel(
+                    router: AppDelegate.shared.appRootRouter,
+                    onDismiss: { [weak self] completion in
+                        if let topmostViewController = self?.topmostViewController() {
+                            topmostViewController.dismissIfNeeded(completion: completion)
+                        } else {
+                            completion()
+                        }
+                    }
+                ))
+            }
+        )
+
+        topmostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
+            self?.displayedDeveloperTools = true
+        })
     }
 }
 

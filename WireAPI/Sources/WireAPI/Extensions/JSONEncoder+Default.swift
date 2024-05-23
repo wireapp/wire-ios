@@ -24,7 +24,6 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = .sortedKeys
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
             let transportString = ISO8601DateFormatter.default.string(from: date)

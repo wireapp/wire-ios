@@ -17,16 +17,14 @@
 //
 
 import Foundation
-import WireCommonComponents
+@testable import Wire
 import XCTest
 
-@testable import Wire
-
-final class BackupViewControllerTests: XCTestCase {
+final class BackupViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
+        self.snapshotBackgroundColor = .darkGray
     }
 
     func testInitialState() {
@@ -34,15 +32,23 @@ final class BackupViewControllerTests: XCTestCase {
         let sut = makeViewController()
 
         // WHEN && THEN
-        self.verify(matching: sut.view)
+        self.verifyInIPhoneSize(view: sut.view)
+    }
+
+    func testLoading() {
+        // GIVEN
+        let sut = makeViewController()
+        sut.view.layer.speed = 0
+        sut.tableView(UITableView(), didSelectRowAt: IndexPath(row: 1, section: 0))
+
+        // WHEN && THEN
+        self.verifyInIPhoneSize(view: sut.view)
     }
 
     // MARK: Helpers
 
     private func makeViewController() -> BackupViewController {
         let backupSource = MockBackupSource()
-        let vc = BackupViewController(backupSource: backupSource)
-        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
-        return vc
+        return BackupViewController(backupSource: backupSource)
     }
 }

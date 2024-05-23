@@ -18,7 +18,7 @@
 
 import Foundation
 
-class TeamsAPIV0: TeamsAPI, VersionedAPI {
+class TeamsAPIV0: TeamsAPI {
 
     let httpClient: HTTPClient
     let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
@@ -27,12 +27,8 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         self.httpClient = httpClient
     }
 
-    var apiVersion: APIVersion {
-        .v0
-    }
-
     func basePath(for teamID: Team.ID) -> String {
-        "\(pathPrefix)/teams/\(teamID.transportString())"
+        "/teams/\(teamID.transportString())"
     }
 
     // MARK: - Get team
