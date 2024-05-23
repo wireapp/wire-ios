@@ -96,16 +96,14 @@ final class SettingsDismissProfileAndSwitchTabDescriptor_: SettingsExternalScree
     func select(_ value: SettingsPropertyValue?) {
 
         // dismiss the profile and switch to the settings tab
-        guard let presenter = viewController?.presentingViewController else {
-            return assertionFailure()
-        }
 
-        // assuming the self profile is modally presented by the main tab bar controller (or any child)
-        guard let tabBarController = presenter as? UITabBarController ?? presenter.tabBarController else {
-            return assertionFailure()
-        }
+        guard
+            let presenter = viewController?.presentingViewController as? RootViewController,
+            let zClientViewController = presenter.children.compactMap({ $0 as? ZClientViewController }).first,
+            let tabBarController = zClientViewController.mainTabBarController
+        else { return assertionFailure("Wrong assumptions about the VC presentation") }
 
-        tabBarController.presentingViewController?.dismiss(animated: true) {
+        presenter.dismiss(animated: true) {
             tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
         }
     }
