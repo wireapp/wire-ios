@@ -107,7 +107,6 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
-    // TODO: delete?
     func settingsGroup(
         isTeamMember: Bool,
         userSession: UserSession,

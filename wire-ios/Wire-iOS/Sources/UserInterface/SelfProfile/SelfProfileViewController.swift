@@ -67,7 +67,6 @@ final class SelfProfileViewController: UIViewController {
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup()
-        // TODO: still needed?
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options
