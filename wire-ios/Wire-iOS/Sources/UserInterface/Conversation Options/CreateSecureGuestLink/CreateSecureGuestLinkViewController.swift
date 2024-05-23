@@ -229,10 +229,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         setupNavigationBar()
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     // MARK: - Setup UI
 
     private func setUpViews() {
