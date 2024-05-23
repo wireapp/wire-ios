@@ -19,42 +19,25 @@
 @testable import Wire
 import XCTest
 
-final class MediaBarSnapshotTests: XCTestCase {
-
-    // MARK: - Properties
+final class MediaBarSnapshotTests: ZMSnapshotTestCase {
 
     var sut: MediaBar!
 
-    // MARK: - setUp
-
     override func setUp() {
         super.setUp()
-        setupMediaBar()
-    }
+        sut = MediaBar()
+        sut.titleLabel.text = "demo media"
 
-    // MARK: - tearDown
+        sut.backgroundColor = .black
+        sut.frame = CGRect(x: 0, y: 0, width: 375, height: sut.intrinsicContentSize.height)
+    }
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
-    // MARK: - Helper Method
-
-    func setupMediaBar() {
-        sut = MediaBar()
-        sut.overrideUserInterfaceStyle = .dark
-        sut.titleLabel.text = "demo media"
-
-        sut.backgroundColor = .black
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: sut.intrinsicContentSize.height)
-        sut.setNeedsUpdateConstraints()
-        sut.layoutIfNeeded()
-    }
-
-    // MARK: - Snapshot Tests
-
     func testForInitState() {
-        verify(matching: sut)
+        verify(view: sut)
     }
 }

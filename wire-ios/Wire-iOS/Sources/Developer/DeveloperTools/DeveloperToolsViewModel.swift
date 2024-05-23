@@ -173,9 +173,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 items: [
                     .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
                     .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
-                    .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
-                        self?.checkRegisteredTokens()
-                    }))
+                    .button(ButtonItem(title: "Check registered tokens", action: checkRegisteredTokens))
                 ]
             ))
         }
@@ -210,15 +208,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         })))
 
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
-        items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
-            self?.stopFederatingFoma()
-        })))
-        items.append(.button(ButtonItem(title: "Stop federating with Bella", action: { [weak self] in
-            self?.stopFederatingBella()
-        })))
-        items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: { [weak self] in
-            self?.stopBellaFomaFederating()
-        })))
+        items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
+        items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
+        items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
         return Section(
             header: header,
             items: items
