@@ -76,8 +76,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     public var environment: BackendEnvironmentProvider
     fileprivate let reachability: ReachabilityProvider
 
-    private let remoteMonitoring: RemoteMonitoring
-
     /// Property to accept requests
     public let readyForRequests: Bool
 
@@ -93,7 +91,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         self.environment = environment
         self.reachability = reachability
         self.userAgent = ZMUserAgent()
-        self.remoteMonitoring = RemoteMonitoring(level: .debug)
         self.readyForRequests = readyForRequests
 
         super.init()
@@ -151,16 +148,16 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         }
         guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init) else { preconditionFailure() }
         urlRequest.configure(with: request)
-        remoteMonitoring.log(request: urlRequest)
+        WireLogger.network.log(request: urlRequest)
 
-        request.log()
+        request.log() // TODO: remove this one
 
         let task = session.task(with: urlRequest as URLRequest) { [weak self] data, response, error in
 
             var transportResponse: ZMTransportResponse!
 
             if let response = response as? HTTPURLResponse {
-                self?.remoteMonitoring.log(response: response)
+                WireLogger.network.log(response: response)
                 transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
             } else if let error {
                 transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
@@ -170,7 +167,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
                 preconditionFailure()
             }
 
-            transportResponse?.log()
+            transportResponse?.log() // TODO: to remove
 
             request.complete(with: transportResponse)
             self?.decrement(notify: true)

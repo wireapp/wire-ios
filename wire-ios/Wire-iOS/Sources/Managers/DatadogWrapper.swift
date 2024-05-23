@@ -109,7 +109,6 @@ public final class DatadogWrapper {
             )
         )
         Datadog.setUserInfo(id: datadogUserId)
-        RemoteMonitoring.remoteLogger = self
 
         log(
             level: defaultLevel,
@@ -215,31 +214,6 @@ public final class DatadogWrapper {
 #endif
 
 // MARK: - COMMON
-
-extension RemoteMonitoring.Level {
-
-    var logLevel: LogLevel {
-        switch self {
-        case .debug:
-            return .debug
-
-        case .info:
-            return .info
-
-        case .notice:
-            return .notice
-
-        case .warn:
-            return .warn
-
-        case .error:
-            return .error
-
-        case .critical:
-            return .critical
-        }
-    }
-}
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
