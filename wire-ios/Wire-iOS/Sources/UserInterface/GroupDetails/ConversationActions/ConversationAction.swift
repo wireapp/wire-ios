@@ -23,8 +23,6 @@ extension ZMConversation {
     enum Action: Equatable {
 
         case deleteGroup
-        case moveToFolder
-        case removeFromFolder(folder: String)
         case clearContent
         case leave
         case configureNotifications
@@ -115,11 +113,6 @@ extension ZMConversation {
 
         if !isArchived {
             actions.append(.favorite(isFavorite: isFavorite))
-            actions.append(.moveToFolder)
-
-            if let folderName = folder?.name {
-                actions.append(.removeFromFolder(folder: folderName))
-            }
         }
 
         if DeveloperFlag.debugDuplicateObjects.isOn {
@@ -157,10 +150,6 @@ extension ZMConversation.Action {
         switch self {
         case .deleteGroup:
             return MetaMenuLocale.delete
-        case .moveToFolder:
-            return MetaMenuLocale.moveToFolder
-        case .removeFromFolder(let folder):
-            return MetaMenuLocale.removeFromFolder(folder)
         case .remove:
             return ProfileLocale.removeDialogButtonRemove
         case .clearContent:

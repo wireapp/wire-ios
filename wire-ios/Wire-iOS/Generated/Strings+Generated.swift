@@ -4025,14 +4025,8 @@ internal enum L10n {
         internal static let markRead = L10n.tr("Localizable", "meta.menu.mark_read", fallback: "Mark as Read")
         /// Mark as Unread
         internal static let markUnread = L10n.tr("Localizable", "meta.menu.mark_unread", fallback: "Mark as Unread")
-        /// Move to…
-        internal static let moveToFolder = L10n.tr("Localizable", "meta.menu.move_to_folder", fallback: "Move to…")
         /// Open Profile
         internal static let openSelfProfile = L10n.tr("Localizable", "meta.menu.open_self_profile", fallback: "Open Profile")
-        /// Remove from "%@"
-        internal static func removeFromFolder(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "meta.menu.remove_from_folder", String(describing: p1), fallback: "Remove from \"%@\"")
-        }
         /// Rename
         internal static let rename = L10n.tr("Localizable", "meta.menu.rename", fallback: "Rename")
         /// Unarchive

@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension ZMConversation {
 
     @objc
@@ -36,30 +34,6 @@ extension ZMConversation {
                 removeLabel(favoriteLabel)
             }
         }
-
-    }
-
-    @objc
-    public var folder: LabelType? {
-        return labels.first(where: { $0.kind == .folder })
-    }
-
-    @objc
-    public func moveToFolder(_ folder: LabelType) {
-        guard let label = folder as? Label, !label.isZombieObject, label.kind == .folder else { return }
-
-        removeFromFolder()
-        assignLabel(label)
-    }
-
-    @objc
-    public func removeFromFolder() {
-        let existingFolders = labels.filter({ $0.kind == .folder })
-        labels.subtract(existingFolders)
-
-        for emptyFolder in existingFolders.filter({ $0.conversations.isEmpty }) {
-            emptyFolder.markForDeletion()
-        }
     }
 
     func assignLabel(_ label: Label) {
@@ -69,5 +43,6 @@ extension ZMConversation {
     func removeLabel(_ label: Label) {
         labels.remove(label)
     }
-
 }
+
+// TODO: make sure conversations in folders are visible!

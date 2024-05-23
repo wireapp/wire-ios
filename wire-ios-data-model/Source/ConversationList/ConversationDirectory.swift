@@ -19,7 +19,9 @@
 import Foundation
 
 public enum ConversationListType {
-    case archived, unarchived, pending, contacts, groups, favorites, folder(_ folder: LabelType)
+    case archived, unarchived, pending, contacts, groups, favorites
+    @available(*, deprecated, message: "will be deleted")
+    case folder(_ folder: LabelType)
 }
 
 public struct ConversationDirectoryChangeInfo {
@@ -44,20 +46,13 @@ public protocol ConversationDirectoryObserver: AnyObject {
 
 public protocol ConversationDirectoryType {
 
-    /// All folder created by the user
-    var allFolders: [LabelType] { get } // TODO: remove
-
-    /// Create a new folder with a given name
-    func createFolder(_ name: String) -> LabelType?
-
     /// Retrieve a conversation list by a given type
     func conversations(by: ConversationListType) -> [ZMConversation]
 
-    /// Observe changes to the conversation lists & folders
+    /// Observe changes to the conversation lists
     ///
     /// NOTE that returned token must be retained for as long you want the observer to be active
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any
-
 }
 
 extension ZMConversationListDirectory: ConversationDirectoryType {
@@ -90,16 +85,6 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
 
         return [folderToken, listToken, reloadToken, observerProxy]
     }
-
-    @objc
-    public func createFolder(_ name: String) -> LabelType? {
-        var created = false
-        let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: managedObjectContext, created: &created)
-        label?.name = name
-        label?.kind = .folder
-        return label
-    }
-
 }
 
 private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver {
@@ -143,5 +128,4 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
 
         observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
     }
-
 }
