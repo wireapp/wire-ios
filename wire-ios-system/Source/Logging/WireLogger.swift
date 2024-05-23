@@ -133,9 +133,12 @@ public typealias LogAttributes = [String: Encodable]
 public enum LogAttributesKey: String {
     case selfClientId = "self_client_id"
     case selfUserId = "self_user_id"
+    case recipientID = "recipient_id"
     case eventId = "event_id"
     case senderUserId = "sender_user_id"
     case nonce = "message_nonce"
+    case messageType = "message_type"
+    case lastEventID = "last_event_id"
 }
 
 public extension LogAttributes {

@@ -110,7 +110,7 @@ struct SystemLogger: LoggerProtocol {
         // drop attributes used for visibility and category
         logAttributes?.removeValue(forKey: "public")
         logAttributes?.removeValue(forKey: "tag")
-        return logAttributes != nil ? " - \(logAttributes!.description)" : ""
+        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
     }
 }
 
