@@ -21,18 +21,9 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-enum ConversationListState {
-    case conversationList
-    case archived
-    case peoplePicker
-}
-
 final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
-
-    /// internal View Model
-    var state: ConversationListState = .conversationList
 
     private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
 
@@ -63,7 +54,6 @@ final class ConversationListViewController: UIViewController {
 
     let listContentController: ConversationListContentController
 
-    var userStatusViewController: UserStatusViewController?
     weak var titleViewLabel: UILabel?
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
@@ -151,8 +141,6 @@ final class ConversationListViewController: UIViewController {
             Settings.shared[.lastViewedScreen] = SettingsLastScreen.list
         }
 
-        state = .conversationList
-
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
@@ -194,7 +182,7 @@ final class ConversationListViewController: UIViewController {
         .portrait
     }
 
-    // MARK: - setup UI
+    // MARK: - Setup UI
 
     private func setupObservers() {
         viewModel.setupObservers()
@@ -252,14 +240,7 @@ final class ConversationListViewController: UIViewController {
         ])
     }
 
-    func createArchivedListViewController() -> ArchivedListViewController {
-        let archivedViewController = ArchivedListViewController(userSession: viewModel.userSession)
-        archivedViewController.delegate = viewModel
-        return archivedViewController
-    }
-
     func showNoContactLabel(animated: Bool = true) {
-        if state != .conversationList { return }
 
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations
@@ -288,10 +269,19 @@ final class ConversationListViewController: UIViewController {
         listContentController.scrollToCurrentSelection(animated: animated)
     }
 
-    func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
-        startUIViewController.delegate = viewModel
-        return startUIViewController
+    func presentNewConversationViewController() {
+
+        let viewController = StartUIViewController(userSession: viewModel.userSession)
+        viewController.delegate = viewModel
+        viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.transitioningDelegate = self
+        navigationController.modalPresentationStyle = .currentContext
+
+        tabBarController?.present(navigationController, animated: true) {
+            viewController.showKeyboardIfNeeded()
+        }
     }
 
     func selectOnListContentController(
@@ -311,7 +301,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
+            presentViewController: self,
+            completionHandler: completionHandler
+        )
     }
 }
 
@@ -334,12 +327,10 @@ extension ConversationListViewController: UITabBarControllerDelegate {
         switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
 
         case .conversations:
-            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
+            previouslySelectedTabIndex = .conversations
 
         case .archive:
-            setState(.archived, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
+            previouslySelectedTabIndex = .archive
 
         case .settings:
             let alertController = UIAlertController(
@@ -352,12 +343,36 @@ extension ConversationListViewController: UITabBarControllerDelegate {
             }
 
         case .none:
-            fallthrough
-        default:
             fatalError("unexpected selected tab index")
         }
     }
+
+    func selectInboxAndFocusOnView(focus: Bool) {
+        listContentController.selectInboxAndFocus(onView: focus)
+    }
 }
+
+// MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
+
+extension ConversationListViewController: ArchivedListViewControllerDelegate {
+
+    func archivedListViewController(
+        _ viewController: ArchivedListViewController,
+        didSelectConversation conversation: ZMConversation
+    ) {
+
+        _ = selectOnListContentController(
+            conversation,
+            scrollTo: nil,
+            focusOnView: true,
+            animated: true
+        ) { [weak self] in
+            self?.tabBarController?.selectedIndex = MainTabBarControllerTab.conversations.rawValue
+        }
+    }
+}
+
+// MARK: - Helpers
 
 private extension NSAttributedString {
 

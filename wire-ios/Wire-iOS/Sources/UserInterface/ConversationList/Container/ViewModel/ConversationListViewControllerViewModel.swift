@@ -32,12 +32,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         didUpdate selfUserStatus: UserStatus
     )
 
-    func setState(
-        _ state: ConversationListState,
-        animated: Bool,
-        completion: Completion?
-    )
-
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
@@ -168,16 +162,22 @@ extension ConversationListViewController.ViewModel {
     ///   - focus: focus on the view or not
     ///   - animated: perform animation or not
     ///   - completion: the completion block
-    func select(conversation: ZMConversation,
-                scrollTo message: ZMConversationMessage? = nil,
-                focusOnView focus: Bool = false,
-                animated: Bool = false,
-                completion: Completion? = nil) {
-        selectedConversation = conversation
+    func select(
+        conversation: ZMConversation,
+        scrollTo message: ZMConversationMessage? = nil,
+        focusOnView focus: Bool = false,
+        animated: Bool = false,
+        completion: Completion? = nil
+    ) {
 
-        viewController?.setState(.conversationList, animated: animated) { [weak self] in
-            self?.viewController?.selectOnListContentController(self?.selectedConversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
-        }
+        selectedConversation = conversation
+        viewController?.selectOnListContentController(
+            selectedConversation,
+            scrollTo: message,
+            focusOnView: focus,
+            animated: animated,
+            completion: completion
+        )
     }
 
     func requestMarketingConsentIfNeeded() {

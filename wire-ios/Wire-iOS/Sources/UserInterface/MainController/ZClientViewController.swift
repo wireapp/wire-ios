@@ -179,7 +179,7 @@ final class ZClientViewController: UIViewController {
 
         mainTabBarController = MainTabBarController(
             conversations: UINavigationController(rootViewController: conversationListViewController),
-            archive: .init(),
+            archive: createArchivedListViewController(),
             settings: .init()
         )
         wireSplitViewController.leftViewController = mainTabBarController
@@ -231,7 +231,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.setState(.peoplePicker, animated: true)
+        conversationListViewController.presentNewConversationViewController()
     }
 
     // MARK: Status bar
@@ -279,6 +279,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
+        mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
@@ -348,7 +349,6 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.setState(.conversationList, animated: true)
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 
@@ -722,5 +722,13 @@ final class ZClientViewController: UIViewController {
         completion: Completion?
     ) {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
+    }
+
+    // MARK: - Archive Tab
+
+    private func createArchivedListViewController() -> UIViewController {
+        let viewController = ArchivedListViewController(userSession: userSession)
+        viewController.delegate = conversationListViewController
+        return UINavigationController(rootViewController: viewController)
     }
 }

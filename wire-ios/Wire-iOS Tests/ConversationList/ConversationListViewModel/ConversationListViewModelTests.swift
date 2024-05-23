@@ -46,10 +46,6 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?) {
         // no-op
     }
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateConversationWithChange change: ConversationChangeInfo?) {
-        // no-op
-    }
 }
 
 final class ConversationListViewModelTests: XCTestCase {
