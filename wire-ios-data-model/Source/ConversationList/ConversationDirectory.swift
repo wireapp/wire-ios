@@ -20,22 +20,17 @@ import Foundation
 
 public enum ConversationListType {
     case archived, unarchived, pending, contacts, groups, favorites
-    @available(*, deprecated, message: "will be deleted")
-    case folder(_ folder: LabelType)
 }
 
 public struct ConversationDirectoryChangeInfo {
 
     public var reloaded: Bool
     public var updatedLists: [ConversationListType]
-    public var updatedFolders: Bool
 
-    public init(reloaded: Bool, updatedLists: [ConversationListType], updatedFolders: Bool) {
+    public init(reloaded: Bool, updatedLists: [ConversationListType]) {
         self.reloaded = reloaded
         self.updatedLists = updatedLists
-        self.updatedFolders = updatedFolders
     }
-
 }
 
 public protocol ConversationDirectoryObserver: AnyObject {
@@ -71,9 +66,6 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return groupConversations as! [ZMConversation]
         case .favorites:
             return favoriteConversations as! [ZMConversation]
-        case .folder(let label):
-            guard let objectID = (label as? Label)?.objectID else { return [] } // TODO jacob make optional?
-            return listsByFolder[objectID] as? [ZMConversation] ?? []
         }
     }
 
@@ -98,11 +90,11 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
     }
 
     func conversationListsDidReload() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: []))
     }
 
     func conversationListsDidChangeFolders() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: []))
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -121,11 +113,12 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
         } else if changeInfo.conversationList === directory.favoriteConversations {
             updatedLists = [.favorites]
         } else if let label = changeInfo.conversationList.label, label.kind == .folder {
-            updatedLists = [.folder(label)]
+            // updatedLists = [.folder(label)]
+            fatalError("TODO: what needs to be done here?")
         } else {
             updatedLists = []
         }
 
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists))
     }
 }

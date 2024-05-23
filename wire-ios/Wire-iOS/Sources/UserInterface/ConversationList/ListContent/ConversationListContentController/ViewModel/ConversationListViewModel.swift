@@ -46,30 +46,16 @@ final class ConversationListViewModel: NSObject {
             /// favorites
             case favorites
 
-            /// conversations in folders
-            case folder(label: LabelType)
-
             func hash(into hasher: inout Hasher) {
                 hasher.combine(identifier)
             }
 
             var identifier: SectionIdentifier {
-                switch self {
-                case.folder(label: let label):
-                    return label.remoteIdentifier?.transportString() ?? "folder"
-                default:
-                    return canonicalName
-                }
+                canonicalName
             }
 
             var obfuscatedName: String {
-                switch self {
-                case .folder:
-                    return "user-defined-folder"
-
-                default:
-                    return canonicalName
-                }
+                canonicalName
             }
 
             var canonicalName: String {
@@ -84,8 +70,6 @@ final class ConversationListViewModel: NSObject {
                     return "groups"
                 case .favorites:
                     return "favorites"
-                case .folder(label: let label):
-                    return label.name ?? "folder"
                 }
             }
 
