@@ -92,7 +92,8 @@ extension UpdateEvent: Decodable {
             let event = try container.decodeFederationDeleteEvent()
             self = .federationDelete(event)
         case "user.client-add":
-            self = .userClientAdd
+            let event = try container.decodeUserClientAddEvent()
+            self = .userClientAdd(event)
         case "user.client-remove":
             self = .userClientRemove
         case "user.connection":
@@ -146,6 +147,7 @@ private enum UpdateEventPayloadCodingKeys: String, CodingKey {
     case subconversation = "subconv"
     case timestamp = "time"
     case payload = "data"
+    case clientPayload = "client"
 
 }
 
@@ -169,6 +171,10 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
     func decodePayload<T: Decodable>(_ type: T.Type) throws -> T {
         try decode(T.self, forKey: .payload)
+    }
+
+    func decodeClientPayload<T: Decodable>(_ type: T.Type) throws -> T {
+        try decode(T.self, forKey: .clientPayload)
     }
 
 }
@@ -650,6 +656,72 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
     private struct FederationDeleteEventPayload: Decodable {
 
         let domain: String
+
+    }
+
+}
+
+// MARK: - User client add
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
+    func decodeUserClientAddEvent() throws -> UserClientAddEvent {
+        let payload = try decodeClientPayload(UserClientAddEventPayload.self)
+
+        return UserClientAddEvent(
+            client:UserClient(
+                id: payload.id,
+                type: payload.type,
+                activationDate: payload.activationDate,
+                label: payload.label,
+                model: payload.model,
+                deviceClass: payload.deviceClass,
+                lastActiveDate: payload.lastActiveDate,
+                mlsPublicKeys: payload.mlsPublicKeys,
+                cookie: payload.cookie,
+                capabilities: payload.capabilities?.capabilities ?? []
+            )
+        )
+    }
+
+    private struct UserClientAddEventPayload: Decodable {
+
+        let id: String
+        let type: UserClientType
+        let activationDate: Date
+        let label: String?
+        let model: String?
+        let deviceClass: DeviceClass?
+        let lastActiveDate: Date?
+        let mlsPublicKeys: MLSPublicKeys?
+        let cookie: String?
+        let capabilities: CapabilitiesList?
+
+        enum CodingKeys: String, CodingKey {
+
+            case id
+            case type
+            case activationDate = "time"
+            case label
+            case model
+            case deviceClass = "class"
+            case lastActiveDate = "last_active"
+            case mlsPublicKeys = "mls_public_keys"
+            case cookie
+            case capabilities
+
+        }
+
+    }
+
+    private struct CapabilitiesList: Decodable {
+
+        let capabilities: [UserClientCapability]
+
+    }
+
+
+}
 
     }
 
