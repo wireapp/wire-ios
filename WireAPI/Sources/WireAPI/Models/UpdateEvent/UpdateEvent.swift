@@ -45,7 +45,7 @@ public enum UpdateEvent {
     case federationConnectionRemoved(FederationConnectionRemovedEvent)
     case federationDelete(FederationDeleteEvent)
     case userClientAdd(UserClientAddEvent)
-    case userClientRemove
+    case userClientRemove(UserClientRemoveEvent)
     case userConnection
     case userContactJoin
     case userDelete

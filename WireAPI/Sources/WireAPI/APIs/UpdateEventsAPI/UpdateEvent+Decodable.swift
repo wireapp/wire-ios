@@ -95,7 +95,8 @@ extension UpdateEvent: Decodable {
             let event = try container.decodeUserClientAddEvent()
             self = .userClientAdd(event)
         case "user.client-remove":
-            self = .userClientRemove
+            let event = try container.decodeUserClientRemoveEvent()
+            self = .userClientRemove(event)
         case "user.connection":
             self = .userConnection
         case "user.contact-join":
@@ -722,6 +723,19 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
 
 }
+
+// MARK: - User client remove
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
+    func decodeUserClientRemoveEvent() throws -> UserClientRemoveEvent {
+        let payload = try decodeClientPayload(UserClientRemoveEventPayload.self)
+        return UserClientRemoveEvent(clientID: payload.id)
+    }
+
+    private struct UserClientRemoveEventPayload: Decodable {
+
+        let id: String
 
     }
 
