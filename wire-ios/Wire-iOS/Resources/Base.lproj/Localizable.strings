@@ -1042,6 +1042,7 @@
 "self.add_email_password" = "Add email address and password";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title"="Terms of Use";
 "about.privacy.title"="Privacy Policy";
 "about.license.title" = "License Information";
