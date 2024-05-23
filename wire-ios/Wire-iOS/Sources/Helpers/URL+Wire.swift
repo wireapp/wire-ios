@@ -22,6 +22,7 @@ import WireTransport
 private enum WebsitePages {
     case termsOfServices
     case privacyPolicy
+    case legal
 }
 
 enum TeamSource: Int {
@@ -119,6 +120,10 @@ extension URL {
         BackendEnvironment.localizedWebsiteLink(forPage: .privacyPolicy)
     }
 
+    static var wr_legal: URL {
+        BackendEnvironment.localizedWebsiteLink(forPage: .legal)
+    }
+
     static var wr_licenseInformation: URL {
         BackendEnvironment.websiteLink(path: "legal/licenses/embed")
     }
@@ -209,13 +214,17 @@ private extension BackendEnvironment {
     }
 
     static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
+        let languageCode = Locale.autoupdatingCurrent.languageCode
+        let baseURL = shared.websiteURL
+
         switch page {
         case .termsOfServices, .privacyPolicy:
-            if Locale.autoupdatingCurrent.languageCode == "de" {
-                return shared.websiteURL.appendingPathComponent("datenschutz")
-            } else {
-                return shared.websiteURL.appendingPathComponent("legal")
-            }
+            let pathComponent = (languageCode == "de") ? "datenschutz" : "legal"
+            return baseURL.appendingPathComponent(pathComponent)
+
+        case .legal:
+            let pathComponent = (languageCode == "de") ? "de/nutzungsbedingungen" : "legal"
+            return baseURL.appendingPathComponent(pathComponent)
         }
     }
 
