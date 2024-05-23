@@ -35,6 +35,7 @@ struct SettingsCellDescriptorFactory {
             rootElements.append(manageTeamCell())
         }
 
+        rootElements.append(settingsCell())
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
@@ -96,6 +97,29 @@ struct SettingsCellDescriptorFactory {
                                                     copiableText: nil)
     }
 
+    func settingsCell() -> SettingsCellDescriptorType {
+
+        // return SettingsDismissProfileAndSwitchTabDescriptor()
+        // return SettingsGroupCellDescriptor(items: [topSection],
+        //                                    title: L10n.Localizable.Self.settings,
+        //                                    style: .plain,
+        //                                    previewGenerator: .none,
+        //                                    icon: .gear,
+        //                                    accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description)
+
+        return SettingsDismissProfileAndSwitchTabDescriptor_(
+            title: L10n.Localizable.Self.settings,
+            isDestructive: false,
+            presentationStyle: PresentationStyle.navigation,
+            identifier: type(of: self).settingsDevicesCellIdentifier,
+            presentationAction: { nil },
+            previewGenerator: .none,
+            icon: .gear,
+            copiableText: nil
+        )
+    }
+
+    // TODO: delete?
     func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
