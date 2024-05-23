@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
 @testable import Wire
+import XCTest
 
 final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
 
@@ -69,12 +68,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(addressBookHelperType: MockAddressBookHelper.self, userSession: userSession)
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
-
-        // Set the size for the SUT to match iPhone 14 dimensions
-        let screenSize = CGSize(width: 390, height: 844)
-        sut.view.frame = CGRect(origin: .zero, size: screenSize)
     }
 
     func testForWrappedInNavigationViewController() {
@@ -86,7 +81,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
             navigationController.pushViewController(sut, animated: false)
 
-            verify(matching: sut.view)
+            verifyInAllIPhoneSizes(view: navigationController.view)
         }
     }
 
@@ -94,7 +89,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         nonTeamTest {
             setupSut()
 
-            verify(matching: sut.view)
+            verifyInAllIPhoneSizes(view: sut.view)
         }
     }
 
@@ -103,7 +98,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         teamTest {
             setupSut()
 
-            verify(matching: sut.view)
+            verifyInAllIPhoneSizes(view: sut.view)
         }
     }
 
@@ -114,7 +109,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
             setupSut()
 
-            verify(matching: sut.view)
+            verifyInIPhoneSize(view: sut.view)
         }
     }
 }

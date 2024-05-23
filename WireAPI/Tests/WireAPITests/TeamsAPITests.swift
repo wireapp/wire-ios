@@ -25,25 +25,25 @@ final class TeamsAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetTeamRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getTeam(for: .mockID1)
         }
     }
 
     func testGetTeamRolesRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getTeamRoles(for: .mockID1)
         }
     }
 
     func testGetTeamMembersRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
         }
     }
 
     func testGetLegalholdStatusRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLegalholdStatus(for: .mockID1, userID: .mockID2)
         }
     }
