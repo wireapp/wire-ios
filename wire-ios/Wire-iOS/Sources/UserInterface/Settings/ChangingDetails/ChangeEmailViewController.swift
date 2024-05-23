@@ -99,10 +99,14 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     let userSession: UserSession
 
-    init(user: UserType, userSession: UserSession) {
+    init(
+        user: UserType,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
         self.userSession = userSession
         state = ChangeEmailState(currentEmail: user.emailAddress)
-        super.init(style: .grouped)
+        super.init(style: .grouped, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
         setupViews()
     }
 
@@ -235,7 +239,12 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
         navigationController?.isLoadingViewVisible = false
         updateSaveButtonState()
         if let newEmail = state.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            let confirmController = ConfirmEmailViewController(
+                newEmail: newEmail,
+                delegate: self,
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: true
+            )
             navigationController?.pushViewController(confirmController, animated: true)
         }
     }

@@ -108,11 +108,16 @@ struct SettingsCellDescriptorFactory {
     }
 
     // TODO: delete?
-    func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func settingsGroup(
+        isTeamMember: Bool,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
                 isTeamMember: isTeamMember,
-                userSession: userSession
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),
             devicesCell(),
             optionsGroup,

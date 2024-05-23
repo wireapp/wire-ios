@@ -36,7 +36,8 @@ struct SettingsMainViewControllerBuilder: ViewControllerBuilder {
         )
         return settingsCellDescriptorFactory.settingsGroup(
             isTeamMember: userSession.selfUser.isTeamMember,
-            userSession: userSession
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: false
         ).generateViewController()!
     }
 }

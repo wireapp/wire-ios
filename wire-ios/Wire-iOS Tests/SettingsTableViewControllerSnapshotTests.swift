@@ -77,7 +77,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     func testForSettingGroup() {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
-        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession, useTypeIntrinsicSizeTableView: true)
         verify(group: group)
     }
 
@@ -92,7 +92,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession, useTypeIntrinsicSizeTableView: true)
         verify(group: group, file: file, testName: testName, line: line)
     }
 
