@@ -259,7 +259,7 @@ public final class ZMUserSession: NSObject {
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
 
-        // TODO: why is this observer started two times? first time is 'setupCertificateRevocationLists'!
+        assert(cRLsDistributionPointsObserver != nil, "requires to execute 'setupCertificateRevocationLists' first. this is a workaround and should be refactored.")
         cRLsDistributionPointsObserver?.startObservingNewCRLsDistributionPoints(
             from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
         )
