@@ -99,23 +99,11 @@ struct SettingsCellDescriptorFactory {
 
     func settingsCell() -> SettingsCellDescriptorType {
 
-        // return SettingsDismissProfileAndSwitchTabDescriptor()
-        // return SettingsGroupCellDescriptor(items: [topSection],
-        //                                    title: L10n.Localizable.Self.settings,
-        //                                    style: .plain,
-        //                                    previewGenerator: .none,
-        //                                    icon: .gear,
-        //                                    accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description)
-
-        return SettingsDismissProfileAndSwitchTabDescriptor_(
+        SettingsDismissProfileAndSwitchTabDescriptor_(
             title: L10n.Localizable.Self.settings,
-            isDestructive: false,
-            presentationStyle: PresentationStyle.navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
-            presentationAction: { nil },
-            previewGenerator: .none,
             icon: .gear,
-            copiableText: nil
+            targetTab: .settings
         )
     }
 
