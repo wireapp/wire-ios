@@ -21,48 +21,79 @@ import Foundation
 // TODO: document
 public enum UpdateEvent {
 
-    case conversationAssetAdd
-    case conversationAccessUpdate(ConversationAccessUpdateEvent)
-    case conversationClientMessageAdd(ConversationClientMessageAddEvent)
-    case conversationConnectRequest
-    case conversationCreate
-    case conversationDelete(ConversationDeleteEvent)
-    case conversationKnock
-    case conversationMemberJoin(ConversationMemberJoinEvent)
-    case conversationMemberLeave(ConversationMemberLeaveEvent)
-    case conversationMemberUpdate(ConversationMemberUpdateEvent)
-    case conversationMessageAdd
-    case conversationMessageTimerUpdate(ConversationMessageTimerUpdateEvent)
-    case conversationMLSMessageAdd(ConversationMLSMessageAddEvent)
-    case conversationMLSWelcome(ConversationMLSWelcomeEvent)
-    case conversationOTRAssetAdd(ConversationProteusAssetAddEvent)
-    case conversationOTRMessageAdd(ConversationProteusMessageAddEvent)
-    case conversationProtocolUpdate(ConversationProtocolUpdateEvent)
-    case conversationReceiptModeUpdate(ConversationReceiptModeUpdateEvent)
-    case conversationRename(ConversationRenameEvent)
-    case conversationTyping(ConversationTypingEvent)
-    case featureConfigUpdate
-    case federationConnectionRemoved(FederationConnectionRemovedEvent)
-    case federationDelete(FederationDeleteEvent)
-    case userClientAdd(UserClientAddEvent)
-    case userClientRemove(UserClientRemoveEvent)
-    case userConnection
-    case userContactJoin
-    case userDelete
-    case userNew
-    case userLegalholdDisable
-    case userLegalholdEnable
-    case userLegalHoldRequest
-    case userPropertiesSet
-    case userPropertiesDelete
-    case userPushRemove
-    case userUpdate
-    case teamConversationCreate
-    case teamConversationDelete
-    case teamCreate
-    case teamDelete
-    case teamMemberLeave
-    case teamMemberUpdate
+    case conversation(ConversationEvent)
+    case featureConfig(FeatureConfigEvent)
+    case federation(FederationEvent)
+    case user(UserEvent)
+    case team(TeamEvent)
     case unknown(eventType: String)
+
+}
+
+public enum ConversationEvent {
+
+    case assetAdd
+    case accessUpdate(ConversationAccessUpdateEvent)
+    case clientMessageAdd(ConversationClientMessageAddEvent)
+    case codeUpdate(ConversationCodeUpdateEvent)
+    case connectRequest // deprecated?
+    case create // TODO
+    case delete(ConversationDeleteEvent)
+    case knock // deprecated?
+    case memberJoin(ConversationMemberJoinEvent)
+    case memberLeave(ConversationMemberLeaveEvent)
+    case memberUpdate(ConversationMemberUpdateEvent)
+    case messageAdd // deprecated?
+    case messageTimerUpdate(ConversationMessageTimerUpdateEvent)
+    case mlsMessageAdd(ConversationMLSMessageAddEvent)
+    case mlsWelcome(ConversationMLSWelcomeEvent)
+    case proteusAssetAdd(ConversationProteusAssetAddEvent)
+    case proteusMessageAdd(ConversationProteusMessageAddEvent)
+    case protocolUpdate(ConversationProtocolUpdateEvent)
+    case receiptModeUpdate(ConversationReceiptModeUpdateEvent)
+    case rename(ConversationRenameEvent)
+    case typing(ConversationTypingEvent)
+
+}
+
+public enum FeatureConfigEvent {
+
+    case update
+
+}
+
+public enum FederationEvent {
+
+    case connectionRemoved(FederationConnectionRemovedEvent)
+    case delete(FederationDeleteEvent)
+
+}
+
+public enum UserEvent {
+
+    case clientAdd(UserClientAddEvent)
+    case clientRemove(UserClientRemoveEvent)
+    case connection
+    case contactJoin
+    case delete(UserDeleteEvent)
+    case new
+    case legalholdDisable
+    case legalholdEnable
+    case legalholdRequest
+    case propertiesSet
+    case propertiesDelete
+    case pushRemove
+    case update
+
+}
+
+public enum TeamEvent {
+
+    case conversationCreate
+    case conversationDelete
+    case create
+    case delete
+    case memberLeave
+    case memberUpdate
 
 }
