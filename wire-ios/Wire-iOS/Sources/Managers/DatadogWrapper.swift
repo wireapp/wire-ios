@@ -143,24 +143,6 @@ public final class DatadogWrapper {
     }
 }
 
-extension DatadogWrapper: RemoteLogger {
-
-    public func log(
-        message: String,
-        error: Error?,
-        attributes: [String: Encodable]?,
-        level: RemoteMonitoring.Level
-    ) {
-        log(
-            level: level.logLevel,
-            message: message,
-            error: error,
-            attributes: attributes
-        )
-    }
-
-}
-
 // MARK: Crypto helper
 
 import CryptoKit
