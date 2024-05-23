@@ -3510,8 +3510,6 @@
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
 		E9D70C882BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPickerSnapshotTests.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
-		E9DFF50E2AC3063000BDC25C /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
-		E9DFF50F2AC3063000BDC25C /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewController.swift; sourceTree = "<group>"; };
 		E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSnapshotTestCase.swift; sourceTree = "<group>"; };
@@ -6378,7 +6376,6 @@
 		8F42C52F199244A700288E4D = {
 			isa = PBXGroup;
 			children = (
-				E9DFF50B2AC3063000BDC25C /* sourcery */,
 				EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */,
 				01A5E043297FDAB500624B65 /* README.md */,
 				01A5E045297FDAB500624B65 /* Scripts */,
@@ -7988,6 +7985,17 @@
 			path = Reactions;
 			sourceTree = "<group>";
 		};
+		E9C014E92BFBCAD1002574FC /* EphemeralKeyboardViewController */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */,
+				E9C014EA2BFBCB11002574FC /* PickerView.swift */,
+				E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */,
+				E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */,
+			);
+			path = EphemeralKeyboardViewController;
+			sourceTree = "<group>";
+		};
 		E9D141632AC704E9005EE75D /* CreateSecureGuestLink */ = {
 			isa = PBXGroup;
 			children = (
@@ -7998,24 +8006,6 @@
 				E94BF7882ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift */,
 			);
 			path = CreateSecureGuestLink;
-			sourceTree = "<group>";
-		};
-		E9DFF50B2AC3063000BDC25C /* sourcery */ = {
-			isa = PBXGroup;
-			children = (
-				E9DFF50E2AC3063000BDC25C /* AutoMockable.stencil */,
-				E9DFF50F2AC3063000BDC25C /* config.yml */,
-			);
-			path = sourcery;
-		E9C014E92BFBCAD1002574FC /* EphemeralKeyboardViewController */ = {
-			isa = PBXGroup;
-			children = (
-				BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */,
-				E9C014EA2BFBCB11002574FC /* PickerView.swift */,
-				E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */,
-				E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */,
-			);
-			path = EphemeralKeyboardViewController;
 			sourceTree = "<group>";
 		};
 		E9E6F09C2861E549004A4BD6 /* Styles */ = {
