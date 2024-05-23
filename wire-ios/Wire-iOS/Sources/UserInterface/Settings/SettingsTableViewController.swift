@@ -33,8 +33,21 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         }
     }
 
+    final fileprivate class IntrinsicSizeTableView: UITableView {
+        override var contentSize: CGSize {
+            didSet {
+                invalidateIntrinsicContentSize()
+            }
+        }
+
+        override var intrinsicContentSize: CGSize {
+            layoutIfNeeded()
+            return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
+        }
+    }
+
     init(style: UITableView.Style) {
-        tableView = .init()
+        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = UIRectEdge()
     }
