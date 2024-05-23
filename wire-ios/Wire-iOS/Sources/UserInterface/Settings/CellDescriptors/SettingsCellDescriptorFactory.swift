@@ -227,12 +227,11 @@ struct SettingsCellDescriptorFactory {
 
     func aboutSection() -> SettingsCellDescriptorType {
 
-        let privacyPolicyButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Privacy.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_privacyPolicy.appendingLocaleParameter)
-        }, previewGenerator: .none)
-        let tosButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Tos.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            let url = URL.wr_termsOfServicesURL.appendingLocaleParameter
-            return BrowserViewController(url: url)
+        let legalButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Legal.title,
+                                                               isDestructive: false,
+                                                               presentationStyle: .modal,
+                                                               presentationAction: {
+            return BrowserViewController(url: URL.wr_legal.appendingLocaleParameter)
         }, previewGenerator: .none)
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
@@ -247,7 +246,7 @@ struct SettingsCellDescriptorFactory {
         let copyrightInfo = String(format: L10n.Localizable.About.Copyright.title, currentYear)
 
         let linksSection = SettingsSectionDescriptor(
-            cellDescriptors: [tosButton, privacyPolicyButton, licensesSection()],
+            cellDescriptors: [legalButton, licensesSection()],
             header: nil,
             footer: "\n" + version + "\n" + copyrightInfo
         )
