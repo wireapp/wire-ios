@@ -48,6 +48,7 @@ final class URL_WireTests: XCTestCase {
         XCTAssertEqual(URL.wr_createTeamFeatures, websiteURL.appendingPathComponent("teams/learnmore"))
         XCTAssertEqual(URL.wr_emailInUseLearnMore, websiteURL.appendingPathComponent("support/email-in-use"))
         XCTAssertEqual(URL.wr_termsOfServicesURL, websiteURL.appendingPathComponent("legal"))
+        XCTAssertEqual(URL.wr_legal, websiteURL.appendingPathComponent("legal"))
     }
 
     func testThatSupportURLsAreLoadedCorrectly() {
