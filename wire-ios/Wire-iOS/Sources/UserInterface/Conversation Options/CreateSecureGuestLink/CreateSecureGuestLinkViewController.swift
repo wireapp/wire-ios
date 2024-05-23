@@ -205,11 +205,18 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             createSecuredLinkButton
         ]
 
+        // Keyboard notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBar()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - Setup UI
@@ -264,46 +271,43 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.safeLeadingAnchor.constraint(equalTo: scrollView.safeLeadingAnchor),
-            contentView.safeTrailingAnchor.constraint(equalTo: scrollView.safeTrailingAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
-            warningLabel.safeLeadingAnchor.constraint(equalTo: self.contentView.safeLeadingAnchor, constant: 20),
-            warningLabel.safeTrailingAnchor.constraint(equalTo: self.contentView.safeTrailingAnchor, constant: -20),
-            warningLabel.safeTopAnchor.constraint(equalTo: self.contentView.safeTopAnchor, constant: 30),
+            warningLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            warningLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            warningLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
 
             generatePasswordButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 40),
-            generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
-
+            generatePasswordButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             generatePasswordButton.heightAnchor.constraint(equalToConstant: 32),
 
-            setPasswordLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
-            setPasswordLabel.safeTrailingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeTrailingAnchor),
+            setPasswordLabel.leadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.leadingAnchor),
+            setPasswordLabel.trailingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.trailingAnchor),
             setPasswordLabel.bottomAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.topAnchor, constant: -6),
 
             securedGuestLinkPasswordTextfield.topAnchor.constraint(equalTo: generatePasswordButton.bottomAnchor, constant: 50),
-            securedGuestLinkPasswordTextfield.safeLeadingAnchor.constraint(equalTo: self.contentView.safeLeadingAnchor, constant: 16),
-            securedGuestLinkPasswordTextfield.safeTrailingAnchor.constraint(equalTo: self.contentView.safeTrailingAnchor, constant: -16),
+            securedGuestLinkPasswordTextfield.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            securedGuestLinkPasswordTextfield.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
             passwordRequirementsLabel.topAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.bottomAnchor, constant: 8),
-            passwordRequirementsLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
-            passwordRequirementsLabel.safeTrailingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeTrailingAnchor),
+            passwordRequirementsLabel.leadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.leadingAnchor),
+            passwordRequirementsLabel.trailingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.trailingAnchor),
 
             confirmPasswordLabel.topAnchor.constraint(equalTo: passwordRequirementsLabel.bottomAnchor, constant: 16),
-            confirmPasswordLabel.safeLeadingAnchor.constraint(equalTo: passwordRequirementsLabel.safeLeadingAnchor),
-            confirmPasswordLabel.safeTrailingAnchor.constraint(equalTo: passwordRequirementsLabel.safeTrailingAnchor),
+            confirmPasswordLabel.leadingAnchor.constraint(equalTo: passwordRequirementsLabel.leadingAnchor),
+            confirmPasswordLabel.trailingAnchor.constraint(equalTo: passwordRequirementsLabel.trailingAnchor),
 
             securedGuestLinkPasswordValidatedTextField.topAnchor.constraint(equalTo: confirmPasswordLabel.bottomAnchor, constant: 6),
-            securedGuestLinkPasswordValidatedTextField.safeLeadingAnchor.constraint(equalTo: self.contentView.safeLeadingAnchor, constant: 16),
-            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.contentView.safeTrailingAnchor, constant: -16),
+            securedGuestLinkPasswordValidatedTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            securedGuestLinkPasswordValidatedTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
             createSecuredLinkButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
-            createSecuredLinkButton.safeLeadingAnchor.constraint(equalTo: contentView.safeLeadingAnchor, constant: 18),
-            createSecuredLinkButton.safeTrailingAnchor.constraint(equalTo: contentView.safeTrailingAnchor, constant: -18),
-
+            createSecuredLinkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
+            createSecuredLinkButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
             createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56)
         ])
-
     }
 
     // MARK: - Button Actions
@@ -350,6 +354,23 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         )
     }
 
+    // MARK: - Keyboard Handling
+
+    @objc
+    private func keyboardWillShow(notification: NSNotification) {
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardFrame.height, right: 0)
+            scrollView.contentInset = contentInsets
+            scrollView.scrollIndicatorInsets = contentInsets
+        }
+    }
+
+    @objc
+    private func keyboardWillHide(notification: NSNotification) {
+        scrollView.contentInset = .zero
+        scrollView.scrollIndicatorInsets = .zero
+    }
+
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(
@@ -382,6 +403,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         print("Failed to create link: \(error.localizedDescription)")
     }
 }
+
 // MARK: - ValidatedTextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
