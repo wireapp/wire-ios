@@ -55,8 +55,8 @@ extension SelfProfileViewController {
         present(newLoginAlertController, animated: true, completion: .none)
 
         userSession.enqueue {
-            clients.forEach { _ in
-                // $0.needsToNotifyUser = false
+            clients.forEach {
+                $0.needsToNotifyUser = false
             }
         }
     }

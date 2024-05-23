@@ -81,12 +81,6 @@ final class ClientListViewController: UIViewController,
     var userObserverToken: NSObjectProtocol?
 
     var leftBarButtonItem: UIBarButtonItem? {
-        if self.isIPadRegular() {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(ClientListViewController.backPressed(_:)))
-        }
 
         if let rootViewController = self.navigationController?.viewControllers.first,
             self.isEqual(rootViewController) {
