@@ -22,6 +22,7 @@ import WireSyncEngine
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
+    let useTypeIntrinsicSizeTableView: Bool
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
@@ -46,8 +47,16 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+    init(
+        style: UITableView.Style,
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        tableView = if useTypeIntrinsicSizeTableView {
+            IntrinsicSizeTableView(frame: .zero, style: style)
+        } else {
+            UITableView(frame: .zero, style: style)
+        }
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = UIRectEdge()
     }
@@ -151,7 +160,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
@@ -163,7 +171,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     required init(group: SettingsInternalGroupCellDescriptorType) {
         self.group = group
         self.sections = group.visibleItems
-        super.init(style: group.style == .plain ? .plain : .grouped)
+        super.init(
+            style: group.style == .plain ? .plain : .grouped,
+            useTypeIntrinsicSizeTableView: true
+        )
         setupNavigationTitle()
 
         self.group.items.flatMap { return $0.cellDescriptors }.forEach {
@@ -192,7 +203,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         super.viewDidLoad()
 
         setupTableView()
-        setupNavigationBar()
+        setupNavigationBarAccessibility()
     }
 
     private func setupTableView() {
@@ -214,15 +225,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        setupAccessibility()
-    }
-
-    private func setupAccessibility() {
+    private func setupNavigationBarAccessibility() {
         typealias Accessibility = L10n.Accessibility.Settings
 
-        navigationItem.rightBarButtonItem?.accessibilityLabel = Accessibility.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
