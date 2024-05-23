@@ -32,7 +32,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     // MARK: - Properties
 
-    private let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let updateVerificationStatus: any UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     private let mlsService: MLSServiceInterface
     private let syncContext: NSManagedObjectContext
@@ -42,11 +42,11 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     // MARK: - Initialize
 
     public init(
-        updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
+        updateVerificationStatus: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         mlsService: any MLSServiceInterface,
         syncContext: NSManagedObjectContext
     ) {
-        self.updateUseCase = updateUseCase
+        self.updateVerificationStatus = updateVerificationStatus
         self.mlsService = mlsService
         self.syncContext = syncContext
     }
@@ -59,7 +59,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     public func startObserving() {
         observationTask = .detached { [weak self] in
-            guard let asyncStream = self?.mlsService.epochChanges() else { return}
+            guard let asyncStream = self?.mlsService.epochChanges() else { return }
 
             for await groupID in asyncStream {
                 if Task.isCancelled { return }
@@ -82,7 +82,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     public func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async {
         do {
-            try await updateUseCase.invoke(for: conversation, groupID: groupID)
+            try await updateVerificationStatus.invoke(for: conversation, groupID: groupID)
         } catch {
             WireLogger.e2ei.warn("failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))")
         }

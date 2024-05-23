@@ -29,7 +29,7 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     private var mockCoreDataStack: CoreDataStack!
     private var mockMLService: MockMLSServiceInterface!
-    private var mockUpdateUseCase: MockUpdateMLSGroupVerificationStatusUseCaseProtocol!
+    private var mockUpdateVerificationStatus: MockUpdateMLSGroupVerificationStatusUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -38,11 +38,11 @@ final class MLSGroupVerificationTests: XCTestCase {
 
         mockCoreDataStack = try await coreDataStackHelper.createStack()
         mockMLService = MockMLSServiceInterface()
-        mockUpdateUseCase = MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+        mockUpdateVerificationStatus = MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
     }
 
     override func tearDown() async throws {
-        mockUpdateUseCase = nil
+        mockUpdateVerificationStatus = nil
         mockMLService = nil
         mockCoreDataStack = nil
 
@@ -66,7 +66,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         mockMLService.epochChanges_MockValue = AsyncStream {
             streamContinuation = $0
         }
-        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in
+        mockUpdateVerificationStatus.invokeForGroupID_MockMethod = { _, _ in
             expectation.fulfill()
         }
 
@@ -79,7 +79,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 0.5)
 
         // then
-        let groupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        let groupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
         XCTAssertEqual(groupIDs, [mlsGroupID])
     }
 
@@ -97,7 +97,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         mockMLService.epochChanges_MockValue = AsyncStream {
             streamContinuation = $0
         }
-        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in
+        mockUpdateVerificationStatus.invokeForGroupID_MockMethod = { _, _ in
             expectation.fulfill()
         }
 
@@ -111,12 +111,12 @@ final class MLSGroupVerificationTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 0.5)
 
         // then
-        XCTAssert(mockUpdateUseCase.invokeForGroupID_Invocations.isEmpty)
+        XCTAssert(mockUpdateVerificationStatus.invokeForGroupID_Invocations.isEmpty)
     }
 
     func testUpdateConversationByGroupID_givenMLSGroupID() async {
         // given
-        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
+        mockUpdateVerificationStatus.invokeForGroupID_MockMethod = { _, _ in }
 
         let mlsGroupID: MLSGroupID = .random()
         await syncContext.perform { [self] in
@@ -129,13 +129,13 @@ final class MLSGroupVerificationTests: XCTestCase {
         await mlsGroupVerification.updateConversation(by: mlsGroupID)
 
         // then
-        let mlsGroupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        let mlsGroupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
         XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
     }
 
     func testUpdateConversation_givenMLSGroupID() async {
         // given
-        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
+        mockUpdateVerificationStatus.invokeForGroupID_MockMethod = { _, _ in }
 
         let mlsGroupID: MLSGroupID = .random()
         let conversation = await syncContext.perform { [self] in
@@ -148,13 +148,13 @@ final class MLSGroupVerificationTests: XCTestCase {
         await mlsGroupVerification.updateConversation(conversation, with: mlsGroupID)
 
         // then
-        let mlsGroupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        let mlsGroupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
         XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
     }
 
     func testUpdateAllConversations_givenMLSGroupID() async throws {
         // given
-        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
+        mockUpdateVerificationStatus.invokeForGroupID_MockMethod = { _, _ in }
 
         let mlsGroupID: MLSGroupID = .random()
         await syncContext.perform { [self] in
@@ -167,7 +167,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         await mlsGroupVerification.updateAllConversations()
 
         // then
-        let mlsGroupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        let mlsGroupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
         XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
     }
 
@@ -175,7 +175,7 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     private func makeMLSGroupVerification() -> MLSGroupVerification {
         MLSGroupVerification(
-            updateUseCase: mockUpdateUseCase,
+            updateVerificationStatus: mockUpdateVerificationStatus,
             mlsService: mockMLService,
             syncContext: mockCoreDataStack.syncContext
         )

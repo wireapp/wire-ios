@@ -22,14 +22,14 @@ extension ZMUserSession {
 
     func setupMLSGroupVerification() {
         let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-        let updateUseCase = UpdateMLSGroupVerificationStatusUseCase(
+        let updateVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eiVerificationStatusService,
             syncContext: syncContext,
             featureRepository: featureRepository
         )
 
         mlsGroupVerification = MLSGroupVerification(
-            updateUseCase: updateUseCase,
+            updateVerificationStatus: updateVerificationStatus,
             mlsService: mlsService,
             syncContext: coreDataStack.syncContext
         )
