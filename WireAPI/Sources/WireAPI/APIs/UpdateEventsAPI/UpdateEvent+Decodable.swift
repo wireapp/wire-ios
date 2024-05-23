@@ -86,7 +86,8 @@ extension UpdateEvent: Decodable {
         case "feature-config.update":
             self = .featureConfigUpdate
         case "federation.connectionRemoved":
-            self = .federationConnectionRemoved
+            let event = try container.decodeFederationConnectionRemovedEvent()
+            self = .federationConnectionRemoved(event)
         case "federation.delete":
             let event = try container.decodeFederationDeleteEvent()
             self = .federationDelete(event)
@@ -615,6 +616,23 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
         case started
         case stopped
+
+    }
+
+}
+
+// MARK: - Federation connection removed
+
+private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
+
+    func decodeFederationConnectionRemovedEvent() throws -> FederationConnectionRemovedEvent {
+        let payload = try decodePayload(FederationConnectionRemovedEventPayload.self)
+        return FederationConnectionRemovedEvent(domains: payload.domains)
+    }
+
+    private struct FederationConnectionRemovedEventPayload: Decodable {
+
+        let domains: Set<String>
 
     }
 

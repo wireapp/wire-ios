@@ -42,7 +42,7 @@ public enum UpdateEvent {
     case conversationRename(ConversationRenameEvent)
     case conversationTyping(ConversationTypingEvent)
     case featureConfigUpdate
-    case federationConnectionRemoved
+    case federationConnectionRemoved(FederationConnectionRemovedEvent)
     case federationDelete(FederationDeleteEvent)
     case userClientAdd
     case userClientRemove
