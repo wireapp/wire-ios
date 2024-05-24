@@ -23,8 +23,9 @@ import XCTest
 @objcMembers class MockOTREntity: OTREntity, Hashable {
 
     var context: NSManagedObjectContext
-    public var expirationDate: Date?
-    public var isExpired: Bool = false
+    var expirationDate: Date?
+    var isExpired: Bool = false
+    var shouldIgnoreTheSecurityLevelCheck: Bool = false
     public func expire() {
         isExpired = true
     }

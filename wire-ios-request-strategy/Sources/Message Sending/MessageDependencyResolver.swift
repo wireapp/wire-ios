@@ -43,6 +43,10 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 message.conversation?.isDegraded == true
             }
 
+            let shouldIgnoreTheSecurityLevelCheck = await self.context.perform {
+                message.shouldIgnoreTheSecurityLevelCheck
+            }
+
             let legalHoldPendingApproval = await self.context.perform {
                 message.conversation?.legalHoldStatus == .pendingApproval
             }
@@ -51,7 +55,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 throw MessageDependencyResolverError.legalHoldPendingApproval
             }
 
-            if isSecurityLevelDegraded {
+            if isSecurityLevelDegraded && !shouldIgnoreTheSecurityLevelCheck {
                 throw MessageDependencyResolverError.securityLevelDegraded
             }
 
