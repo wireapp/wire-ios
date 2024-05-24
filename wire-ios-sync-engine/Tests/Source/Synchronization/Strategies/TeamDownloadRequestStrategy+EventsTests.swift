@@ -428,14 +428,11 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let conversationId = UUID.create()
         let teamId = UUID.create()
 
-TODO: solve conflict
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             _ = Team.fetchOrCreate(
                 with: teamId,
                 in: self.syncMOC
             )
-        syncMOC.performGroupedAndWait {
-            _ = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
         }
 
         let payload: [String: Any] = [
