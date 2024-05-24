@@ -52,7 +52,12 @@ extension ZMOTRMessage {
                 return nil
         }
         zmLog.debug("Processing:\n\(message)")
-
+        let logAttributes: LogAttributes = [
+            LogAttributesKey.eventId.rawValue: updateEvent.safeUUID,
+            LogAttributesKey.nonce.rawValue: updateEvent.messageNonce,
+            LogAttributesKey.messageType.rawValue: updateEvent.safeType
+        ]
+        WireLogger.updateEvent.debug("Processing message", attributes: logAttributes)
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
 
@@ -115,6 +120,7 @@ extension ZMOTRMessage {
                 conversation.shouldAdd(event: updateEvent),
                 let nonce = UUID(uuidString: message.messageID)
             else {
+                WireLogger.updateEvent.warn("Dropping message because no nonce or for self conv", attributes: logAttributes)
                 return nil
             }
 
@@ -126,6 +132,7 @@ extension ZMOTRMessage {
                                                    assumeMissingIfNotPrefetched: true) as? ZMOTRMessage
 
             guard !isZombieObject(clientMessage) else {
+                WireLogger.updateEvent.warn("Dropping message because zombieObject", attributes: logAttributes)
                 return nil
             }
 
@@ -138,6 +145,7 @@ extension ZMOTRMessage {
                 } else if messageClass is ZMAssetClientMessage.Type {
                     clientMessage = ZMAssetClientMessage(nonce: nonce, managedObjectContext: moc)
                 } else {
+                    WireLogger.updateEvent.warn("Dropping unknown type new message", attributes: logAttributes)
                     return nil
                 }
 
@@ -165,6 +173,7 @@ extension ZMOTRMessage {
             // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
             // relationship between the deleted object and the conversation and / or sender
             guard !isZombieObject(clientMessage) && clientMessage?.nonce != nil else {
+                WireLogger.updateEvent.warn("Dropping potential zombie message", attributes: logAttributes)
                 return nil
             }
 
