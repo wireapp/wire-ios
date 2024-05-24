@@ -1022,6 +1022,10 @@ internal enum L10n {
         /// © Wire Swiss GmbH
         internal static let title = L10n.tr("Localizable", "about.copyright.title", fallback: "© Wire Swiss GmbH")
       }
+      internal enum Legal {
+        /// Legal
+        internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
+      }
       internal enum License {
         /// Acknowledgements
         internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
