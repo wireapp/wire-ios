@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireCommonComponents
 import WireDataModel
 
@@ -32,7 +32,7 @@ final class ListSkeletonCellNameItemView: UIView {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 }
 
@@ -44,14 +44,8 @@ final class ListSkeletonCellView: UIView {
     private lazy var lineConstraint: NSLayoutConstraint = lineView.rightAnchor.constraint(equalTo: rightAnchor)
 
     var lineInset: Float {
-        get {
-            let inset = lineConstraint.constant
-            return -(Float)(inset)
-        }
-
-        set {
-            lineConstraint.constant = -CGFloat(newValue + 16)
-        }
+        get { -.init(lineConstraint.constant) }
+        set { lineConstraint.constant = -CGFloat(newValue + 16) }
     }
 
     init() {
@@ -68,28 +62,27 @@ final class ListSkeletonCellView: UIView {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createConstraints() {
         [avatarView, lineView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-          avatarView.widthAnchor.constraint(equalToConstant: 28),
-          avatarView.heightAnchor.constraint(equalToConstant: 28),
-          avatarView.leftAnchor.constraint(equalTo: leftAnchor, constant: 18),
-          avatarView.topAnchor.constraint(equalTo: topAnchor, constant: 18),
-          avatarView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -17.5),
+            avatarView.widthAnchor.constraint(equalToConstant: 28),
+            avatarView.heightAnchor.constraint(equalToConstant: 28),
+            avatarView.leftAnchor.constraint(equalTo: leftAnchor, constant: 18),
+            avatarView.topAnchor.constraint(equalTo: topAnchor, constant: 18),
+            avatarView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -17.5),
 
-          lineView.heightAnchor.constraint(equalToConstant: 14),
-          lineView.leftAnchor.constraint(equalTo: avatarView.rightAnchor, constant: 16),
-          lineConstraint,
-          lineView.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor)
+            lineView.heightAnchor.constraint(equalToConstant: 14),
+            lineView.leftAnchor.constraint(equalTo: avatarView.rightAnchor, constant: 16),
+            lineConstraint,
+            lineView.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor)
         ])
 
         lineInset = 0
     }
-
 }
 
 final class ListSkeletonCell: UITableViewCell {
@@ -108,28 +101,22 @@ final class ListSkeletonCell: UITableViewCell {
         contentView.addSubview(skeletonCellView)
         skeletonCellView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          skeletonCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          skeletonCellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          skeletonCellView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          skeletonCellView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
+            skeletonCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            skeletonCellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            skeletonCellView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            skeletonCellView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
         ])
     }
 
     var lineInset: Float {
-        get {
-            return skeletonCellView.lineInset
-        }
-
-        set {
-            skeletonCellView.lineInset = newValue
-        }
+        get { skeletonCellView.lineInset }
+        set { skeletonCellView.lineInset = newValue }
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
-
 }
 
 final class ListSkeletonContentView: UITableView, UITableViewDataSource {
@@ -153,7 +140,7 @@ final class ListSkeletonContentView: UITableView, UITableViewDataSource {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -169,7 +156,6 @@ final class ListSkeletonContentView: UITableView, UITableViewDataSource {
 
         return cell!
     }
-
 }
 
 final class ListSkeletonView: UIView {
@@ -186,24 +172,20 @@ final class ListSkeletonView: UIView {
     }()
 
     let listContentView: ListSkeletonContentView
-    lazy var buttonRowView: UIStackView = { UIStackView(arrangedSubviews: disabledButtons(with: [.person, .archive]))
-    }()
 
     init(_ account: Account, randomizeDummyItem: Bool) {
-        let accountView = AccountViewBuilder(account: account, displayContext: .conversationListHeader).build()
+        let accountView = AccountViewBuilder(
+            account: account,
+            displayContext: .conversationListHeader
+        ).build()
         accountView.selected = false
 
         listContentView = ListSkeletonContentView(randomizeDummyItem: randomizeDummyItem)
 
         super.init(frame: CGRect.zero)
 
-        buttonRowView.distribution = .equalCentering
-
-        [
-            topBar,
-            listContentView,
-            buttonRowView
-        ].forEach(addSubview)
+        addSubview(topBar)
+        addSubview(listContentView)
 
         topBar.leftView = accountView.wrapInAvatarSizeContainer()
 
@@ -211,42 +193,26 @@ final class ListSkeletonView: UIView {
         backgroundColor = SemanticColors.View.backgroundDefault
     }
 
-    func disabledButtons(with iconTypes: [StyleKitIcon]) -> [IconButton] {
-        return iconTypes.map { iconType in
-            let button = IconButton()
-            button.setIcon(iconType, size: .tiny, for: .normal)
-            button.setIconColor(SemanticColors.Icon.foregroundPlainCheckMark.withAlphaComponent(0.32), for: .disabled)
-            button.isEnabled = false
-            return button
-        }
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createConstraints() {
         [
             topBar,
-            buttonRowView,
             listContentView
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-          topBar.topAnchor.constraint(equalTo: safeTopAnchor),
-          topBar.leftAnchor.constraint(equalTo: leftAnchor),
-          topBar.rightAnchor.constraint(equalTo: rightAnchor),
-          topBar.bottomAnchor.constraint(equalTo: listContentView.topAnchor, constant: -10),
+            topBar.topAnchor.constraint(equalTo: safeTopAnchor),
+            topBar.leftAnchor.constraint(equalTo: leftAnchor),
+            topBar.rightAnchor.constraint(equalTo: rightAnchor),
+            topBar.bottomAnchor.constraint(equalTo: listContentView.topAnchor, constant: -10),
 
-          buttonRowView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-          buttonRowView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-          buttonRowView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UIScreen.safeArea.bottom),
-          buttonRowView.heightAnchor.constraint(equalToConstant: 55),
-
-          listContentView.leftAnchor.constraint(equalTo: leftAnchor),
-          listContentView.rightAnchor.constraint(equalTo: rightAnchor),
-          listContentView.bottomAnchor.constraint(equalTo: buttonRowView.topAnchor)
+            listContentView.leftAnchor.constraint(equalTo: leftAnchor),
+            listContentView.rightAnchor.constraint(equalTo: rightAnchor),
+            listContentView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 }
@@ -257,9 +223,11 @@ final class SkeletonViewController: UIViewController {
     let listView: ListSkeletonView
     let customSplitViewController: SplitViewController
 
-    init(from: Account?,
-         to: Account,
-         randomizeDummyItem: Bool = true) {
+    init(
+        from: Account?,
+        to: Account,
+        randomizeDummyItem: Bool = true
+    ) {
 
         if let fromUnwrapped = from, to.imageData == nil, to.teamName == nil {
             account = fromUnwrapped
@@ -275,7 +243,7 @@ final class SkeletonViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -304,11 +272,30 @@ final class SkeletonViewController: UIViewController {
         splitViewControllerView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          splitViewControllerView.topAnchor.constraint(equalTo: view.topAnchor),
-          splitViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          splitViewControllerView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          splitViewControllerView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            splitViewControllerView.topAnchor.constraint(equalTo: view.topAnchor),
+            splitViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            splitViewControllerView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            splitViewControllerView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
+}
 
+// MARK: - Previews
+
+struct SkeletonViewController_Previews: PreviewProvider {
+
+    static var previews: some View {
+        SkeletonViewControllerRepresentable()
+            .ignoresSafeArea(.all)
+    }
+}
+
+private struct SkeletonViewControllerRepresentable: UIViewControllerRepresentable {
+
+    func makeUIViewController(context: Context) -> SkeletonViewController {
+        let mockAccount = Account(userName: "", userIdentifier: .init(), imageData: .init())
+        return .init(from: mockAccount, to: mockAccount, randomizeDummyItem: false)
+    }
+
+    func updateUIViewController(_ viewController: SkeletonViewController, context: Context) {}
 }
