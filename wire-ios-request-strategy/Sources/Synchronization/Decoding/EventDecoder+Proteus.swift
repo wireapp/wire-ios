@@ -167,8 +167,13 @@ extension EventDecoder {
         in context: NSManagedObjectContext
     ) {
         var attributes: LogAttributes = .safePublic
-        attributes.merge([LogAttributesKey.eventId.rawValue: event.safeUUID,
-                          LogAttributesKey.senderUserId.rawValue: sender.safeRemoteIdentifier.value], uniquingKeysWith: { _, new in new })
+        attributes.merge(
+            [
+                LogAttributesKey.eventId.rawValue: event.safeUUID,
+                LogAttributesKey.senderUserId.rawValue: sender.safeRemoteIdentifier.value
+            ],
+            uniquingKeysWith: { _, new in new }
+        )
         WireLogger.updateEvent.error("Failed to decrypt message with error: \(String(describing: error))", attributes: attributes)
         WireLogger.updateEvent.debug("event debug: \(event.debugInformation)")
 
