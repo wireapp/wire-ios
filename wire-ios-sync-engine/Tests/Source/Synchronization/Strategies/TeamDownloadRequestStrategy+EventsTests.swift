@@ -65,7 +65,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        XCTAssertNil(Team.fetchOrCreate(with: teamId, create: false, in: uiMOC, created: nil))
+        XCTAssertNil(Team.fetch(with: teamId, in: uiMOC))
     }
 
     func testThatItDoesNotSetNeedsToBeUpdatedFromBackendForExistingTeamWhenReceivingTeamCreateUpdateEvent() {
@@ -73,7 +73,10 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let teamId = UUID.create()
 
         syncMOC.performGroupedBlock {
-            _ = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
+            _ = Team.fetchOrCreate(
+                with: teamId,
+                in: self.syncMOC
+            )
             XCTAssert(self.syncMOC.saveOrRollback())
         }
 
@@ -88,7 +91,13 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        guard let team = Team.fetchOrCreate(with: teamId, create: false, in: uiMOC, created: nil) else { return XCTFail("No team created") }
+        guard let team = Team.fetch(
+            with: teamId,
+            in: uiMOC
+        ) else {
+            return XCTFail("No team created")
+        }
+
         XCTAssertFalse(team.needsToBeUpdatedFromBackend)
     }
 
@@ -99,7 +108,10 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let teamId = UUID.create()
 
         syncMOC.performGroupedBlock {
-            _ = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
+            _ = Team.fetchOrCreate(
+                with: teamId,
+                in: self.syncMOC
+            )
             XCTAssert(self.syncMOC.saveOrRollback())
         }
 
@@ -135,7 +147,10 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let teamId = UUID.create()
 
         syncMOC.performGroupedBlock {
-            let team = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
+            let team = Team.fetchOrCreate(
+                with: teamId,
+                in: self.syncMOC
+            )
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = conversationId
             conversation.team = team
@@ -370,7 +385,10 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let userId = UUID.create()
 
         syncMOC.performGroupedBlock {
-            let team = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)!
+            let team = Team.fetchOrCreate(
+                with: teamId,
+                in: self.syncMOC
+            )
             let user = ZMUser.fetchOrCreate(with: userId, domain: nil, in: self.syncMOC)
             user.needsToBeUpdatedFromBackend = false
             let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
@@ -410,6 +428,12 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let conversationId = UUID.create()
         let teamId = UUID.create()
 
+TODO: solve conflict
+        syncMOC.performGroupedBlockAndWait {
+            _ = Team.fetchOrCreate(
+                with: teamId,
+                in: self.syncMOC
+            )
         syncMOC.performGroupedAndWait {
             _ = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
         }

@@ -176,7 +176,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatItCreatesPayloadDataForTextMessage() async throws {
         // Mock
         self.mockProteusService.encryptDataForSession_MockMethod = { plaintext, sessionID in
-            let expectedRecipientClientIDs = self.expectedRecipients.values.flatMap(\.self)
+            let expectedRecipientClientIDs = self.expectedRecipients.values.flatMap { $0 }
 
             if sessionID.clientID.isOne(of: expectedRecipientClientIDs) {
                 return plaintext

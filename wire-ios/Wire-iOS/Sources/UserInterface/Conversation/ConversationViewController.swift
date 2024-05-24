@@ -104,10 +104,14 @@ final class ConversationViewController: UIViewController {
         return viewController?.wrapInNavigationController()
     }
 
-    required init(conversation: ZMConversation,
-                  visibleMessage: ZMMessage?,
-                  zClientViewController: ZClientViewController,
-                  userSession: UserSession) {
+    required init(
+        conversation: ZMConversation,
+        visibleMessage: ZMMessage?,
+        zClientViewController: ZClientViewController,
+        userSession: UserSession,
+        classificationProvider: (any SecurityClassificationProviding)?,
+        networkStatusObservable: any NetworkStatusObservable
+    ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
         self.zClientViewController = zClientViewController
@@ -117,7 +121,12 @@ final class ConversationViewController: UIViewController {
                                                                   mediaPlaybackManager: zClientViewController.mediaPlaybackManager,
                                                                   userSession: userSession)
 
-        inputBarController = ConversationInputBarViewController(conversation: conversation, userSession: userSession)
+        inputBarController = ConversationInputBarViewController(
+            conversation: conversation,
+            userSession: userSession,
+            classificationProvider: classificationProvider,
+            networkStatusObservable: networkStatusObservable
+        )
 
         mediaBarViewController = MediaBarViewController(mediaPlaybackManager: zClientViewController.mediaPlaybackManager)
 
@@ -456,14 +465,8 @@ final class ConversationViewController: UIViewController {
         }
 
         Task {
-            do {
-                try await userSession.updateMLSGroupVerificationStatus.invoke(
-                    for: conversation,
-                    groupID: mlsGroupID)
-                setupNavigatiomItem()
-            } catch {
-                WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
-            }
+            await userSession.mlsGroupVerification?.updateConversation(conversation, with: mlsGroupID)
+            setupNavigatiomItem()
         }
     }
 }

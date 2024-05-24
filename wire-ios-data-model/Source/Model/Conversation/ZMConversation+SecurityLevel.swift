@@ -492,7 +492,13 @@ extension ZMConversation {
         undeliveredMessages += managedObjectContext.fetchOrAssert(request: assetFetchRequest) as [ZMOTRMessage]
 
         return undeliveredMessages.filter { message in
-            return message.serverTimestamp > timeoutLimit || message.updatedAt > timeoutLimit
+            if let serverTimestamp = message.serverTimestamp, serverTimestamp > timeoutLimit {
+                return true
+            }
+            if let updatedAt = message.updatedAt, updatedAt > timeoutLimit {
+                return true
+            }
+            return false
         }
     }
 

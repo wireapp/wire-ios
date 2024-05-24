@@ -17,6 +17,7 @@
 //
 
 import UserNotifications
+import WireUtilitiesSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -44,7 +45,8 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-        self.notificationCenter = UserNotificationCenterMock()
+
+        notificationCenter = .init()
         self.syncMOC.performAndWait {
             self.sut = LocalNotificationDispatcher(in: self.syncMOC)
         }

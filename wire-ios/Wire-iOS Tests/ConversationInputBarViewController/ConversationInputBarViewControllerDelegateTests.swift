@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireCommonComponents
+import WireSyncEngineSupport
 import XCTest
+
+@testable import Wire
 
 final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 
@@ -28,6 +31,9 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
+        FontScheme.configure(with: .large)
+
         coreDataFixture = CoreDataFixture()
         userSession = UserSessionMock()
     }
@@ -43,8 +49,16 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 
     func testThatDismissingQuoteUpdatesDraftAndNotifiesDelegate() {
         // Given
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
+
         let conversation = coreDataFixture.otherUserConversation!
-        sut = ConversationInputBarViewController(conversation: conversation, userSession: userSession)
+        sut = ConversationInputBarViewController(
+            conversation: conversation,
+            userSession: userSession,
+            classificationProvider: mockClassificationProvider,
+            networkStatusObservable: MockNetworkStatusObservable()
+        )
 
         mockDelegate = MockDelegate()
 

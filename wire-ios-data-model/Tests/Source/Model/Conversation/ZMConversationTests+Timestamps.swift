@@ -19,7 +19,7 @@
 @testable import WireDataModel
 import XCTest
 
-class ZMConversationTests_Timestamps: ZMConversationTestsBase {
+final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     // MARK: - Unread Count
 

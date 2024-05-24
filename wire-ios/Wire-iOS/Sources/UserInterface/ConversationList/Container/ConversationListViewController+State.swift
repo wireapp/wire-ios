@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 extension ConversationListViewController {
+
     func setState(_ state: ConversationListState,
                   animated: Bool,
                   completion: Completion? = nil) {
@@ -29,14 +30,16 @@ extension ConversationListViewController {
         self.state = state
 
         switch state {
+
         case .conversationList:
             view.alpha = 1
 
-            if let presentedViewController {
+            if let presentedViewController = navigationController?.presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()
             }
+
         case .peoplePicker:
             let startUIViewController = createPeoplePickerController()
             let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
@@ -45,8 +48,11 @@ extension ConversationListViewController {
                 startUIViewController.showKeyboardIfNeeded()
                 completion?()
             }
+
         case .archived:
-            show(createArchivedListViewController(), animated: animated, completion: completion)
+            let archiveViewController = createArchivedListViewController()
+            let navigationController = UINavigationController(rootViewController: archiveViewController)
+            show(navigationController, animated: animated, completion: completion)
         }
     }
 
@@ -54,5 +60,18 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
+}
 
+extension ConversationListViewController {
+
+    func show(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
+        viewController.transitioningDelegate = self
+        viewController.modalPresentationStyle = .currentContext
+
+        tabBarController?.present(viewController, animated: animated, completion: completion)
+    }
 }

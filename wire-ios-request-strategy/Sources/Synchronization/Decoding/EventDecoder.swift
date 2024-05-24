@@ -283,11 +283,11 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
-            WireLogger.updateEvent.debug("EventDecoder: process events finished")
+            WireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
             return
         }
 
-        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events")
+        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events", attributes: .safePublic)
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
