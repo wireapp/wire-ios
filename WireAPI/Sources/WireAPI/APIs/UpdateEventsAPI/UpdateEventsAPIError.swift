@@ -18,11 +18,20 @@
 
 import Foundation
 
-// TODO: document
+/// Errors originating from `UpdateEventsAPI`.
+
 public enum UpdateEventsAPIError: Error {
 
+    /// A request path is not invalid.
+
     case invalidPath
+
+    /// A provided client id is not valid.
+
     case invalidClient
+
+    /// The requested notification(s) was not found.
+
     case notFound
 
 }
