@@ -18,82 +18,34 @@
 
 import Foundation
 
-// TODO: document
+/// Represents an update event received from the backend
+/// that can be used to incrementaly update the state of
+/// the client.
+
 public enum UpdateEvent {
 
+    /// A conversation event.
+
     case conversation(ConversationEvent)
+
+    /// A feature config event.
+
     case featureConfig(FeatureConfigEvent)
+
+    /// A federation event.
+
     case federation(FederationEvent)
+
+    /// A user event.
+
     case user(UserEvent)
+
+    /// A team event.
+
     case team(TeamEvent)
+
+    /// An event that is not known by the client.
+
     case unknown(eventType: String)
-
-}
-
-public enum ConversationEvent {
-
-    case assetAdd
-    case accessUpdate(ConversationAccessUpdateEvent)
-    case clientMessageAdd(ConversationClientMessageAddEvent)
-    case codeUpdate(ConversationCodeUpdateEvent)
-    case connectRequest // deprecated?
-    case create // TODO
-    case delete(ConversationDeleteEvent)
-    case knock // deprecated?
-    case memberJoin(ConversationMemberJoinEvent)
-    case memberLeave(ConversationMemberLeaveEvent)
-    case memberUpdate(ConversationMemberUpdateEvent)
-    case messageAdd // deprecated?
-    case messageTimerUpdate(ConversationMessageTimerUpdateEvent)
-    case mlsMessageAdd(ConversationMLSMessageAddEvent)
-    case mlsWelcome(ConversationMLSWelcomeEvent)
-    case proteusAssetAdd(ConversationProteusAssetAddEvent)
-    case proteusMessageAdd(ConversationProteusMessageAddEvent)
-    case protocolUpdate(ConversationProtocolUpdateEvent)
-    case receiptModeUpdate(ConversationReceiptModeUpdateEvent)
-    case rename(ConversationRenameEvent)
-    case typing(ConversationTypingEvent)
-
-}
-
-public enum FeatureConfigEvent {
-
-    case update
-
-}
-
-public enum FederationEvent {
-
-    case connectionRemoved(FederationConnectionRemovedEvent)
-    case delete(FederationDeleteEvent)
-
-}
-
-public enum UserEvent {
-
-    case clientAdd(UserClientAddEvent)
-    case clientRemove(UserClientRemoveEvent)
-    case connection
-    case contactJoin
-    case delete(UserDeleteEvent)
-    case new
-    case legalholdDisable
-    case legalholdEnable
-    case legalholdRequest
-    case propertiesSet
-    case propertiesDelete
-    case pushRemove
-    case update
-
-}
-
-public enum TeamEvent {
-
-    case conversationCreate
-    case conversationDelete
-    case create
-    case delete
-    case memberLeave
-    case memberUpdate
 
 }

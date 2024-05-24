@@ -18,24 +18,12 @@
 
 import Foundation
 
-/// An event where an encrypted Proteus asset message was received in a conversation.
+/// An event concerning feature configs.
 
-public struct ConversationProteusAssetAddEvent {
+public enum FeatureConfigEvent {
 
-    /// The id of the conversation.
+    /// A feature config was updated.
 
-    public let conversationID: ConversationID
-
-    /// The id of the user who sent the message.
-
-    public let senderID: UserID
-
-    /// When the asset message was sent.
-
-    public let timestamp: Date
-
-    /// The encrypted serialized (base 64 encoded) protobuf message.
-
-    public let encryptedProtobufMessage: String
+    case update
 
 }
