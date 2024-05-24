@@ -218,7 +218,7 @@ private extension NSManagedObject {
 
 // MARK: Mergeable
 
-public protocol Mergeable {
+protocol Mergeable {
     func merged(with other: Self) -> Self
 }
 
