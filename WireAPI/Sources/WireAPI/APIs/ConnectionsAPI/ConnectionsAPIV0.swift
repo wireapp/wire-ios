@@ -32,7 +32,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         self.init(httpClient: httpClient, fetchLimit: Constants.maxConnectionsCount)
     }
 
-    init(httpClient: HTTPClient, fetchLimit: Int) {
+    init(httpClient: HTTPClient, batchSize: Int) {
         self.httpClient = httpClient
         self.fetchLimit = Constants.maxConnectionsCount
     }
