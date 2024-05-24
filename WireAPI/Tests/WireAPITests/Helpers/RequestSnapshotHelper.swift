@@ -69,8 +69,7 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
     ///   - function: The method invoking the test.
     ///   - line: The line invoking the test.
 
-    @MainActor
-    func verifyRequest(
+    private func verifyRequest(
         apiVersion: APIVersion,
         when block: (Builder.API) async throws -> Void,
         file: StaticString = #file,
@@ -85,7 +84,7 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
         let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
         let name = "v\(apiVersion.rawValue)"
 
-        try verifyRequest(request: request,
+        try await verifyRequest(request: request,
                           resourceName: name,
                           file: file,
                           function: function,

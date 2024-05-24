@@ -94,7 +94,7 @@ class ConnectionsAPITests: XCTestCase {
         }
 
         // WHEN
-        let sut = ConnectionsAPIV0(httpClient: httpClient, fetchLimit: 1)
+        let sut = ConnectionsAPIV0(httpClient: httpClient, batchSize: 1)
         let pager = try await sut.getConnections()
         for try await _ in pager {
             // do something with the data

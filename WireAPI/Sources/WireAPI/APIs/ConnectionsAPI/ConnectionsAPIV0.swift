@@ -29,12 +29,12 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     convenience init(httpClient: HTTPClient) {
-        self.init(httpClient: httpClient, fetchLimit: Constants.maxConnectionsCount)
+        self.init(httpClient: httpClient, batchSize: Constants.batchSize)
     }
 
     init(httpClient: HTTPClient, batchSize: Int) {
         self.httpClient = httpClient
-        self.fetchLimit = Constants.maxConnectionsCount
+        self.fetchLimit = Constants.batchSize
     }
 
     var apiVersion: APIVersion {
@@ -50,7 +50,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         let pager = PayloadPager<Connection> { start in
 
             // body Params
-            let params = PaginationRequest(pagingState: start, size: Constants.maxConnectionsCount)
+            let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try JSONEncoder.defaultEncoder.encode(params)
 
             let request = HTTPRequest(
