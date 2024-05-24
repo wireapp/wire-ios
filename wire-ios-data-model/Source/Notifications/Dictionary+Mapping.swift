@@ -50,28 +50,3 @@ extension Set {
         return dict
     }
 }
-
-public protocol Mergeable {
-    func merged(with other: Self) -> Self
-}
-
-extension Dictionary where Value: Mergeable {
-
-    public mutating func merge(with other: Dictionary) {
-        other.forEach { key, value in
-            if let currentValue = self[key] {
-                self[key] = currentValue.merged(with: value)
-            } else {
-                self[key] = value
-            }
-        }
-    }
-
-    public func merged(with other: Dictionary) -> Dictionary {
-        var newDict = self
-        other.forEach { key, value in
-            newDict[key] = newDict[key]?.merged(with: value) ?? value
-        }
-        return newDict
-    }
-}
