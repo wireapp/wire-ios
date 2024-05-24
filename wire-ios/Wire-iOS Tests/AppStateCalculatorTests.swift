@@ -297,7 +297,7 @@ final class AppStateCalculatorTests: XCTestCase {
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
-        // delegate.wasNotified = false
+        delegate.wasNotified = false
         sut.applicationDidEnterBackground()
         sut.sessionManagerDidReportLockChange(forSession: userSession)
 
