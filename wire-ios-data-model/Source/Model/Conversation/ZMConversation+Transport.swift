@@ -206,16 +206,3 @@ extension ZMConversation {
     }
 
 }
-
-// MARK: - Payload parsing utils
-
-extension ZMConversation {
-
-    public func fetchOrCreateRoleForConversation(name: String) -> Role {
-        return Role.fetchOrCreateRole(
-            with: name,
-            teamOrConversation: self.team != nil ? .team(self.team!) : .conversation(self),
-            in: self.managedObjectContext!)
-    }
-
-}
