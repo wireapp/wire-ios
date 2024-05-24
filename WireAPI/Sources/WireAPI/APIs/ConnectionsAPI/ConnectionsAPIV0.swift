@@ -21,7 +21,7 @@ import Foundation
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
     private enum Constants {
-        static let maxConnectionsCount = 500
+        static let batchSize = 500
     }
 
     let httpClient: HTTPClient
