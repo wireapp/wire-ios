@@ -48,6 +48,9 @@ public protocol SessionActivationObserver: AnyObject {
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
+    func sessionManagerWillOpenAccount(_ account: Account,
+                                       from selectedAccount: Account?,
+                                       userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
@@ -674,23 +677,28 @@ public final class SessionManager: NSObject, SessionManagerType {
                 completion?(nil)
                 return
             }
+            delegate.sessionManagerWillOpenAccount(
+                account,
+                from: selectedAccount,
+                userSessionCanBeTornDown: { [weak self] in
+                    self?.activeUserSession = nil
+                    tearDownCompletion?()
+                    guard let self else {
+                        completion?(nil)
+                        return
+                    }
+                    loadSession(for: account) { [weak self] session in
+                        self?.isSelectingAccount = false
 
-            self?.activeUserSession = nil
-            tearDownCompletion?()
-            guard let self else {
-                completion?(nil)
-                return
-            }
-            loadSession(for: account) { [weak self] session in
-                self?.isSelectingAccount = false
-
-                if let session {
-                    self?.accountManager.select(account)
-                    completion?(session)
-                } else {
-                    completion?(nil)
+                        if let session {
+                            self?.accountManager.select(account)
+                            completion?(session)
+                        } else {
+                            completion?(nil)
+                        }
+                    }
                 }
-            }
+            )
         }
     }
 
