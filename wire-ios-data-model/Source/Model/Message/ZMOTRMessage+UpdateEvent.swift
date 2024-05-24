@@ -52,7 +52,11 @@ extension ZMOTRMessage {
                 return nil
         }
         zmLog.debug("Processing:\n\(message)")
-        let logAttributes: LogAttributes = [LogAttributesKey.eventId.rawValue: updateEvent.safeUUID, LogAttributesKey.nonce.rawValue: updateEvent.messageNonce, LogAttributesKey.messageType.rawValue: updateEvent.safeType]
+        let logAttributes: LogAttributes = [
+            LogAttributesKey.eventId.rawValue: updateEvent.safeUUID,
+            LogAttributesKey.nonce.rawValue: updateEvent.messageNonce,
+            LogAttributesKey.messageType.rawValue: updateEvent.safeType
+        ]
         WireLogger.updateEvent.debug("Processing message", attributes: logAttributes)
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
