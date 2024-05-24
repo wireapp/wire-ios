@@ -18,7 +18,7 @@
 
 import Foundation
 
-class UpdateEventsAPIV0: UpdateEventsAPI {
+class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
     private let httpClient: HTTPClient
 
@@ -26,14 +26,18 @@ class UpdateEventsAPIV0: UpdateEventsAPI {
         self.httpClient = httpClient
     }
 
-    var path: String {
+    var apiVersion: APIVersion {
+        .v0
+    }
+
+    private var basePath: String {
         "/notifications"
     }
 
     // MARK: - Get last update event
 
     func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope {
-        var components = URLComponents(string: "\(path)/last")
+        var components = URLComponents(string: "\(pathPrefix)\(basePath)/last")
         components?.queryItems = [URLQueryItem(name: "client", value: selfClientID)]
 
         guard let path = components?.string else {
@@ -47,15 +51,10 @@ class UpdateEventsAPIV0: UpdateEventsAPI {
 
         let response = try await httpClient.executeRequest(request)
 
-        // TODO: remove
-        if let data = response.payload, let string = String(data: data, encoding: .utf8) {
-            print("Got response: \(string)")
-        }
-
         return try ResponseParser()
             .success(code: 200, type: UpdateEventEnvelopeV0.self)
             .failure(code: 400, error: UpdateEventsAPIError.invalidClient)
-            .failure(code: 400, label: "not-found", error: UpdateEventsAPIError.notFound)
+            .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
     }
 
