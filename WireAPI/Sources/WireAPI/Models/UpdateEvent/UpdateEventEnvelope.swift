@@ -37,5 +37,4 @@ public struct UpdateEventEnvelope {
 
     public let isTransient: Bool
 
-
 }
