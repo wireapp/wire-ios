@@ -34,7 +34,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         mockFeatureRepository.fetchE2EI_MockValue = Feature.E2EI(status: .enabled)
         e2eIVerificationStatusService = MockE2EIVerificationStatusServiceInterface()
         sut = UpdateMLSGroupVerificationStatusUseCase(e2eIVerificationStatusService: e2eIVerificationStatusService,
-                                                      context: syncMOC,
+                                                      syncContext: syncMOC,
                                                       featureRepository: mockFeatureRepository)
 
     }

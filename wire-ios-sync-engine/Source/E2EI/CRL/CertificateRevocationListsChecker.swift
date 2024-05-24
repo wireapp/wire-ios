@@ -30,7 +30,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
     private let crlAPI: CertificateRevocationListAPIProtocol
-    private let mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating
+    private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -47,7 +47,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     public convenience init(
         userID: UUID,
         crlAPI: CertificateRevocationListAPIProtocol,
-        mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
@@ -55,7 +55,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         self.init(
             crlAPI: crlAPI,
             crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
-            mlsConversationsVerificationUpdater: mlsConversationsVerificationUpdater,
+            mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
             coreCryptoProvider: coreCryptoProvider,
             context: context
@@ -65,14 +65,14 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     init(
         crlAPI: CertificateRevocationListAPIProtocol,
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
-        mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
         self.crlAPI = crlAPI
         self.crlExpirationDatesRepository = crlExpirationDatesRepository
-        self.mlsConversationsVerificationUpdater = mlsConversationsVerificationUpdater
+        self.mlsGroupVerification = mlsGroupVerification
         self.selfClientCertificateProvider = selfClientCertificateProvider
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
@@ -108,7 +108,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
-
         var shouldNotifyAboutRevokedCertificate = false
         for distributionPoint in distributionPoints {
             do {
@@ -129,7 +128,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 // check if certificate is "dirty"
                 if registration.dirty {
                     // update verification state for conversations
-                    await mlsConversationsVerificationUpdater.updateAllStatuses()
+                    await mlsGroupVerification.updateAllConversations()
 
                     shouldNotifyAboutRevokedCertificate = true
 

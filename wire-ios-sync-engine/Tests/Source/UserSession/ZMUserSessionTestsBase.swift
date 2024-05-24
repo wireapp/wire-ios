@@ -117,9 +117,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
-        let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
-        mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
-
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = { }
 
@@ -138,7 +135,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             flowManager: flowManagerMock,
             mediaManager: mediaManager,
             mlsService: mockMLSService,
-            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
