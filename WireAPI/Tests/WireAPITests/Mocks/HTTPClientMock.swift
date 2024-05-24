@@ -27,7 +27,7 @@ struct HTTPClientMockError: Error {
 
 final class HTTPClientMock: HTTPClient {
 
-    private (set) var receivedRequests: [HTTPRequest] = []
+    private(set) var receivedRequests: [HTTPRequest] = []
 
     var receivedRequest: HTTPRequest? {
         receivedRequests.first
