@@ -112,20 +112,46 @@ extension ConversationListViewController {
     }
 
     func setupRightNavigationBarButtons() {
-
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
 
+        // New Conversation Button
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             self?.presentNewConversationViewController()
         }
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
+        // Filter Conversations Button
         let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filterConversationsAction = UIAction(image: filerImage) { _ in
-            assertionFailure("TODO [WPB-7298]: implement filtering")
+
+        // Define the menu actions
+        let allConversations = UIAction(title: "All Conversations", image: UIImage(systemName: "message")) { _ in
+            // Implement the action for all conversations
+            print("All Conversations selected")
         }
-        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: filterConversationsAction)))
+        let favorites = UIAction(title: "Favorites", image: UIImage(systemName: "star")) { _ in
+            // Implement the action for favorites
+            print("Favorites selected")
+        }
+        let groups = UIAction(title: "Groups", image: UIImage(systemName: "person.3")) { _ in
+            // Implement the action for groups
+            print("Groups selected")
+        }
+        let oneToOneConversations = UIAction(title: "1:1 Conversations", image: UIImage(systemName: "person")) { _ in
+            // Implement the action for 1:1 conversations
+            print("1:1 Conversations selected")
+        }
+
+        // Create the menu
+        let filterMenu = UIMenu(children: [allConversations, favorites, groups, oneToOneConversations])
+
+        // Create the filter button and assign the menu
+        let filterButton = UIButton(type: .system)
+        filterButton.setImage(filerImage, for: .normal)
+        filterButton.showsMenuAsPrimaryAction = true
+        filterButton.menu = filterMenu
+
+        navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
     }
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
