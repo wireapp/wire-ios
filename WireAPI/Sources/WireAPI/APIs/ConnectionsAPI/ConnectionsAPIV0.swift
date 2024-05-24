@@ -77,7 +77,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 }
 
-private struct PaginatedConnectionList: Decodable, ToAPIModelConvertible {
+private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
 
      enum CodingKeys: String, CodingKey {
          case connections
