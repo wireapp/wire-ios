@@ -25,7 +25,7 @@ final class InvalidFeatureRemovalTests: DiskDatabaseTest {
     private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     func testAllInstancesRemoved() throws {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // Given
             let team = Team.insertNewObject(in: context)
             team.remoteIdentifier = UUID()
@@ -44,7 +44,7 @@ final class InvalidFeatureRemovalTests: DiskDatabaseTest {
     }
 
     func testRestoreNewDefaultConferenceCallingConfig() throws {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // Given
             self.fetchInstances(in: context).forEach(context.delete)
 
@@ -65,4 +65,5 @@ final class InvalidFeatureRemovalTests: DiskDatabaseTest {
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         return context.fetchOrAssert(request: fetchRequest)
     }
+
 }

@@ -24,7 +24,7 @@ extension NSManagedObjectContext: TearDownCapable {
     /// Tear down the context. Using the context after this call results in
     /// undefined behavior.
     public func tearDown() {
-        performGroupedAndWait { [self] _ in
+        performGroupedAndWait { [self] in
             tearDownUserInfo()
             registeredObjects.forEach { object in
                 if let tearDownCapable = object as? TearDownCapable {

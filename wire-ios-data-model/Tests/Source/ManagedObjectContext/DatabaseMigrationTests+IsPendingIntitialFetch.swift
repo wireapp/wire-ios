@@ -51,7 +51,7 @@ final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
                 try context.save()
             },
             postMigrationAction: { context in
-                try context.performGroupedAndWait { context in
+                try context.performGroupedAndWait {
                     let conversation1 = try XCTUnwrap(ZMConversation.fetch(with: conversationID1, in: context))
                     let conversation2 = try XCTUnwrap(ZMConversation.fetch(with: conversationID2, in: context))
                     XCTAssertFalse(conversation1.isPendingInitialFetch)

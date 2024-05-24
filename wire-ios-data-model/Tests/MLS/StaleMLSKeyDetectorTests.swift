@@ -42,15 +42,15 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
     // MARK: - Tests
 
     func test_GroupsWithStaleKeyingMaterial() throws {
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait {
             // Given
-            let staleGroup1 = self.createMLSGroup(in: context)
+            let staleGroup1 = self.createMLSGroup(in: syncMOC)
             staleGroup1.lastKeyMaterialUpdate = .distantPast
 
-            let staleGroup2 = self.createMLSGroup(in: context)
+            let staleGroup2 = self.createMLSGroup(in: syncMOC)
             staleGroup2.lastKeyMaterialUpdate = Date().addingTimeInterval(.oneDay * -6)
 
-            let nonStaleGroup = self.createMLSGroup(in: context)
+            let nonStaleGroup = self.createMLSGroup(in: syncMOC)
             nonStaleGroup.lastKeyMaterialUpdate = Date().addingTimeInterval(.oneDay * -2)
 
             // When

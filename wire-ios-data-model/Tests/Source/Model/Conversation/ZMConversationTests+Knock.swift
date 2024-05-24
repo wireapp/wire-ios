@@ -25,7 +25,7 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
     private var context: NSManagedObjectContext { syncMOC }
 
     func testThatItCanInsertAKnock() throws {
-        try context.performGroupedAndWait { context in
+        try context.performGroupedAndWait {
 
             // given
             let conversation = self.createConversationWithMessages(context: context)

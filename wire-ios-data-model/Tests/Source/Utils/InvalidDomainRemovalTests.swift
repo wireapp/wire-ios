@@ -26,7 +26,7 @@ final class InvalidDomainRemovalTests: DiskDatabaseTest {
     private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     func testAllUsersWithInvalidDomainIsRemoved() throws {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // GIVEN
             let selfDomain = "example.com"
             let otherDomain = "other.com"
@@ -52,7 +52,7 @@ final class InvalidDomainRemovalTests: DiskDatabaseTest {
     }
 
     func testAllConversationsWithInvalidDomainIsRemoved() throws {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // GIVEN
             let selfDomain = "example.com"
             let otherDomain = "other.com"

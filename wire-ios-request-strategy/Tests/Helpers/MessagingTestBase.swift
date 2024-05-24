@@ -72,7 +72,7 @@ class MessagingTestBase: ZMTBaseTest {
         setupCaches(in: coreDataStack)
         setupTimers()
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
 
             self.setupUsersAndClients()
@@ -88,7 +88,7 @@ class MessagingTestBase: ZMTBaseTest {
 
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.otherUser = nil
             self.otherClient = nil
             self.selfClient = nil
@@ -468,18 +468,18 @@ extension MessagingTestBase {
 
     func setupTimers() {
         syncMOC.performGroupedAndWait {
-            $0.zm_createMessageObfuscationTimer()
+            syncMOC.zm_createMessageObfuscationTimer()
         }
         uiMOC.zm_createMessageDeletionTimer()
     }
 
     func stopEphemeralMessageTimers() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.uiMOC.performGroupedBlockAndWait {
+        self.uiMOC.performGroupedAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))

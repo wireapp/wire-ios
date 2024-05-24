@@ -39,7 +39,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatConversationInitialSecurityLevelIsNotSecured() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
@@ -50,7 +50,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItIncreasesSecurityLevelIfAllClientsInConversationAreTrusted() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
@@ -65,7 +65,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotIncreaseTheSecurityLevelIfAConversationIsAConnection() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.uiMOC)
 
@@ -92,7 +92,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotIncreaseTheSecurityLevelIfAConversationContainsUsersWithoutAConnection() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
 
@@ -139,7 +139,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItIncreaseTheSecurityLevelIfAConversationContainsUsersWithoutAConnection_Wireless() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
 
@@ -179,7 +179,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItInsertsAnIgnoredClientsSystemMessageWhenAddingAConversationParticipantInASecuredConversation() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
 
@@ -220,7 +220,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotIncreaseSecurityLevelIfNotAllClientsAreTrusted() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
@@ -235,7 +235,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotIncreaseSecurityLevelIfNotAllUsersHaveClients() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let userWithoutClients = ZMUser.insertNewObject(in: context)
             let users = self.createUsersWithClientsOnSyncMOC(count: 2) + [userWithoutClients]
@@ -255,7 +255,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDecreaseSecurityLevelIfSomeOfTheClientsIsIgnored() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
@@ -271,7 +271,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotDecreaseSecurityLevelIfItIsInPartialSecureLevel() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
@@ -317,7 +317,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     func testThatItNotifiesWhenAllClientAreVerified() {
         var conversationObjectID: NSManagedObjectID! = nil
         var token: Any?
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
@@ -351,7 +351,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
     func testThatIncreasesSecurityLevelOfCreatedGroupConversationWithAllParticipantsAlreadyTrusted() {
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let clients = users.first!.clients.union(users.last!.clients)
@@ -374,7 +374,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotIncreaseSecurityLevelOfCreatedGroupConversationWithAllParticipantsIfNotAlreadyTrusted() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
             let selfClient = self.createSelfClient(onMOC: context)
@@ -514,7 +514,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatAConversationIsTrustedIfItHasTeamUsers() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.conversationType = .group
@@ -540,7 +540,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatAConversationIsNotTrustedIfItExternalUsers() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.conversationType = .group
@@ -583,7 +583,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     // MARK: - Resending / cancelling messages in degraded conversation
 
     func testItExpiresAllMessagesAfterTheCurrentOneWhenAUserCausesDegradation() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
 
             // GIVEN
             self.createSelfClient()
@@ -618,7 +618,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testItExpiresAllMessagesAfterTheCurrentOneWhenAMessageCausesDegradation() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
 
             // GIVEN
             self.createSelfClient()
@@ -666,7 +666,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         var message2: ZMOTRMessage! = nil
         var message3: ZMOTRMessage! = nil
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
 
             // GIVEN
             self.createSelfClient()
@@ -692,7 +692,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
         uiConversation.discardPendingMessagesAfterPrivacyChanges()
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             context.refreshAllObjects()
 
             // THEN
@@ -711,7 +711,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
     func testItMarksConversationAsNotSecureAfterResendMessages() {
         var conversation: ZMConversation! = nil
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // GIVEN
             conversation = ZMConversation.insertNewObject(in: context)
             conversation.conversationType = .group
@@ -724,7 +724,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         uiConversation.acknowledgePrivacyWarningAndResendMessages()
         self.uiMOC.saveOrRollback()
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             context.refreshAllObjects()
 
             // THEN
@@ -776,7 +776,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         var message2: ZMOTRMessage! = nil
         var message3: ZMOTRMessage! = nil
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
 
             // GIVEN
             self.createSelfClient()
@@ -809,7 +809,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
         uiConversation.acknowledgePrivacyWarningAndResendMessages()
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
 
             // THEN
             XCTAssertFalse(message1.isExpired)

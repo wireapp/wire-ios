@@ -31,9 +31,9 @@ final class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
         XCTAssertNil(conversation.domain)
         XCTAssertNil(user.domain)
 
-        try uiMOC.performGroupedAndWait { moc in
+        try uiMOC.performGroupedAndWait {
             // When
-            XCTAssertNoThrow(try moc.migrateToFederation())
+            XCTAssertNoThrow(try uiMOC.migrateToFederation())
 
             // Then
             XCTAssertEqual(conversation.domain, domain)

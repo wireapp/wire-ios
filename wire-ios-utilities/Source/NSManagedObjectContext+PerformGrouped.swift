@@ -23,7 +23,7 @@ extension NSManagedObjectContext {
     static private let timeout: TimeInterval = 10
 
     @discardableResult @available(*, noasync)
-    public func performGroupedAndWait<T>(_ block: (NSManagedObjectContext) -> T) -> T {
+    public func performGroupedAndWait<T>(_ block: () -> T) -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return performAndWait {
@@ -33,7 +33,7 @@ extension NSManagedObjectContext {
                 dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
             }
-            return block(self)
+            return block()
         }
     }
 
@@ -53,7 +53,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult @available(*, noasync)
-    public func performGroupedAndWait<T>(_ block: (NSManagedObjectContext) throws -> T) throws -> T {
+    public func performGroupedAndWait<T>(_ block: () throws -> T) throws -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return try performAndWait {
@@ -63,7 +63,7 @@ extension NSManagedObjectContext {
                 dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
             }
-            return try block(self)
+            return try block()
         }
     }
 

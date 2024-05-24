@@ -29,7 +29,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesFeature() {
         // given
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let defaultAppLock = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -39,21 +39,21 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // when
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.status = .disabled
             }
         }
 
         // then
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             let updatedAppLock = Feature.fetch(name: .appLock, context: context)
             XCTAssertEqual(updatedAppLock?.status, .disabled)
         }
     }
 
     func testThatItFetchesFeature() {
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // when
             let defaultAppLock = Feature.fetch(name: .appLock, context: context)
 
@@ -64,14 +64,14 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameForced() {
         // given
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: false)
                 $0.hasInitialDefault = false
             }
         }
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -81,14 +81,14 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // when
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: true)
             }
         }
 
         // then
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -100,7 +100,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameNonForced() {
         // given
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: true)
                 $0.needsToNotifyUser = false
@@ -108,7 +108,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             }
         }
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -118,14 +118,14 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // when
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: false)
             }
         }
 
         // then
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -137,7 +137,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItNeedsToNotifyUser_AfterAChange() {
         // Given
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.context)
             defaultConferenceCalling?.status = .disabled
             defaultConferenceCalling?.hasInitialDefault = false
@@ -145,7 +145,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .conferenceCalling, in: self.context) { feature in
                 feature.needsToNotifyUser = false
                 feature.status = .enabled
@@ -153,7 +153,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // Then
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
                 XCTFail()
                 return
@@ -165,21 +165,21 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItDoesNotNeedToNotifyUser_IfThePreviousValueIsDefault() {
         // Given
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.context)
             XCTAssertNotNil(defaultConferenceCalling)
             XCTAssertTrue(defaultConferenceCalling!.hasInitialDefault)
         }
 
         // When
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .conferenceCalling, in: self.context) { feature in
                 feature.status = .enabled
             }
         }
 
         // Then
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
                 XCTFail()
                 return
