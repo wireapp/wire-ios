@@ -133,7 +133,12 @@ public typealias LogAttributes = [String: Encodable]
 public enum LogAttributesKey: String {
     case selfClientId = "self_client_id"
     case selfUserId = "self_user_id"
+    case recipientID = "recipient_id"
     case eventId = "event_id"
+    case senderUserId = "sender_user_id"
+    case nonce = "message_nonce"
+    case messageType = "message_type"
+    case lastEventID = "last_event_id"
 }
 
 public extension LogAttributes {
@@ -211,10 +216,22 @@ public extension WireLogger {
 
 /// Class to proxy WireLogger methods to Objective-C
 @objcMembers
-final class WireLoggerObjc: NSObject {
+public final class WireLoggerObjc: NSObject {
 
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
 
+    @objc(logReceivedUpdateEventWithId:)
+    static func logReceivedUpdateEvent(eventId: String) {
+        var mergedAttributes: LogAttributes = LogAttributes.safePublic
+
+        mergedAttributes.merge([LogAttributesKey.eventId.rawValue: eventId], uniquingKeysWith: { _, new in new })
+
+        WireLogger.updateEvent.info("received event", attributes: mergedAttributes)
+    }
+
+    static func updateEventError(_ message: String) {
+        WireLogger.updateEvent.error(message, attributes: .safePublic)
+    }
 }
