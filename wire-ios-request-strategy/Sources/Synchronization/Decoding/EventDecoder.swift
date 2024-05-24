@@ -385,7 +385,10 @@ extension EventDecoder {
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
                 let included = genericMessage.hasAvailability
                 if !included {
-                    WireLogger.updateEvent.warn("dropping stored event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
+                    WireLogger.updateEvent.warn(
+                        "dropping stored event",
+                        attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID]
+                    )
                 }
                 return included
             }
