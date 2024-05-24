@@ -30,7 +30,6 @@ enum AppState: Equatable {
     case certificateEnrollmentRequired
     case databaseFailure(reason: Error)
     case migrating
-    case loading(account: Account, from: Account?)
 
     static func == (lhs: AppState, rhs: AppState) -> Bool {
         switch (lhs, rhs) {
@@ -52,8 +51,6 @@ enum AppState: Equatable {
             return true
         case (migrating, migrating):
             return true
-        case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
-            return accountTo1 == accountTo2 && accountFrom1 == accountFrom2
         case (.retryStart, .retryStart):
             return true
         default:
@@ -203,15 +200,6 @@ extension AppStateCalculator: SessionManagerDelegate {
 
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
         transition(to: .migrating, completion: userSessionCanBeTornDown)
-    }
-
-    func sessionManagerWillOpenAccount(_ account: Account,
-                                       from selectedAccount: Account?,
-                                       userSessionCanBeTornDown: @escaping () -> Void) {
-        let appState: AppState = .loading(account: account,
-                                          from: selectedAccount)
-        transition(to: appState,
-                   completion: userSessionCanBeTornDown)
     }
 
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {

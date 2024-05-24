@@ -89,7 +89,6 @@ final class AppStateCalculatorTests: XCTestCase {
         // GIVEN
         let account = Account(userName: "dummy", userIdentifier: UUID())
         let selectedAccount = Account(userName: "selectedDummy", userIdentifier: UUID())
-        sut.testHelper_setAppState(.loading(account: account, from: selectedAccount))
         delegate.wasNotified = false
         sut.applicationDidBecomeActive()
 
