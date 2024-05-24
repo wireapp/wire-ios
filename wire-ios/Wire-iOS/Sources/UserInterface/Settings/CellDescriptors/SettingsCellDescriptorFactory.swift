@@ -99,7 +99,7 @@ struct SettingsCellDescriptorFactory {
 
     func settingsCell() -> SettingsCellDescriptorType {
 
-        SettingsDismissProfileAndSwitchTabDescriptor_(
+        SettingsDismissProfileAndSwitchTabDescriptor(
             title: L10n.Localizable.Self.settings,
             identifier: type(of: self).settingsDevicesCellIdentifier,
             icon: .gear,

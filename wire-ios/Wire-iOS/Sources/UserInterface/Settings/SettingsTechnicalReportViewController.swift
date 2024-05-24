@@ -59,7 +59,7 @@ final class SettingsTechnicalReportViewController: UITableViewController {
         super.viewDidLoad()
 
         setupNavigationTitle()
-        tableView.backgroundColor = UIColor.clear
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         tableView.isScrollEnabled = false
         tableView.separatorColor = UIColor(white: 1, alpha: 0.1)
     }
