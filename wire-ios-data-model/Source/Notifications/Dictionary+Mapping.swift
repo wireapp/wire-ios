@@ -20,7 +20,7 @@ import Foundation
 
 extension Array where Element: Hashable {
 
-    public func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
+    func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
         var dict = [Element: Value]()
         forEach {
             if let value = block($0) {
@@ -29,7 +29,8 @@ extension Array where Element: Hashable {
         }
         return dict
     }
-    public func mapToDictionaryWithOptionalValue<Value>(with block: (Element) -> Value?) -> [Element: Value?] {
+
+    func mapToDictionaryWithOptionalValue<Value>(with block: (Element) -> Value?) -> [Element: Value?] {
         var dict = [Element: Value?]()
         forEach {
             dict.updateValue(block($0), forKey: $0)
@@ -40,7 +41,7 @@ extension Array where Element: Hashable {
 
 extension Set {
 
-    public func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
+    func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
         var dict = [Element: Value]()
         forEach {
             if let value = block($0) {
