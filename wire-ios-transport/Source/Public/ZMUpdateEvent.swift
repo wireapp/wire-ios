@@ -268,7 +268,10 @@ open class ZMUpdateEvent: NSObject {
 
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
             var attributes: LogAttributes = .safePublic
-            attributes.merge([LogAttributesKey.eventId.rawValue: uuid.transportString().readableHash], uniquingKeysWith: { _, new in new })
+            attributes.merge(
+                [LogAttributesKey.eventId.rawValue: uuid.transportString().readableHash],
+                uniquingKeysWith: { _, new in new }
+            )
             WireLogger.updateEvent.error("Push event payload is invalid", attributes: attributes)
             return []
         }
