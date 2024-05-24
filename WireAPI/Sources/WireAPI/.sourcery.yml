@@ -1,8 +1,0 @@
-sources:
-- .
-templates:
-- ../../Sourcery/AutoMockable.stencil
-output:
-  ../WireAPISupport/Generated
-args:
-   autoMockableImports: ["WireAPI"]
