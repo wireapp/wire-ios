@@ -18,25 +18,17 @@
 
 import Foundation
 
-class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
+class UpdateEventsAPIV5: UpdateEventsAPIV4 {
 
-    let httpClient: HTTPClient
-
-    init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
-    }
-
-    var apiVersion: APIVersion {
-        .v0
+    override var apiVersion: APIVersion {
+        .v5
     }
 
     private var basePath: String {
         "/notifications"
     }
 
-    // MARK: - Get last update event
-
-    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope {
+    override func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope {
         var components = URLComponents(string: "\(pathPrefix)\(basePath)/last")
         components?.queryItems = [URLQueryItem(name: "client", value: selfClientID)]
 
@@ -51,27 +43,11 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
         let response = try await httpClient.executeRequest(request)
 
+        // Change: 400 error removed.
         return try ResponseParser()
             .success(code: 200, type: UpdateEventEnvelopeV0.self)
-            .failure(code: 400, error: UpdateEventsAPIError.invalidClient)
             .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
-    }
-
-}
-
-struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
-
-    var id: UUID
-    var payload: [UpdateEvent]?
-    var transient: Bool?
-
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            payloads: payload ?? [],
-            isTransient: transient ?? false
-        )
     }
 
 }
