@@ -234,15 +234,3 @@ extension Dictionary where Key == String, Value == Any {
         return optionalDictionary(forKey: key)?.optionalString(forKey: ZMConversation.PayloadKeys.domainKey)
     }
 }
-
-extension Dictionary where Key == String, Value == Any? {
-
-    func UUID(fromKey key: String) -> UUID? {
-        return (self[key] as? String).flatMap(Foundation.UUID.init(transportString:))
-    }
-
-    func date(fromKey key: String) -> Date? {
-        return (self as NSDictionary).optionalDate(forKey: key)
-    }
-
-}
