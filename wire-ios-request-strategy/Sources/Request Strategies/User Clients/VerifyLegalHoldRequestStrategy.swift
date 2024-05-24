@@ -140,6 +140,8 @@ private class VerifyClientsParser: OTREntity {
 
     var isExpired: Bool = false
 
+    var shouldIgnoreTheSecurityLevelCheck: Bool = false
+
     var expirationDate: Date?
 
     var expirationReasonCode: NSNumber?

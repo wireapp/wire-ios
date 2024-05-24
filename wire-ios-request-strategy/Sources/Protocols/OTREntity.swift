@@ -37,6 +37,9 @@ private let zmLog = ZMSLog(tag: "Dependencies")
     /// This message entity has expired and no more attempt will be made to sent it
     var isExpired: Bool { get }
 
+    /// This message entity should be ignored for security level check
+    var shouldIgnoreTheSecurityLevelCheck: Bool { get }
+
     /// Date when the message will expire unless it has been sent by then.
     var expirationDate: Date? { get }
 
