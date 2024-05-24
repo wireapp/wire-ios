@@ -175,7 +175,7 @@ extension IntegrationTest {
             userSession?.syncManagedObjectContext.zm_teardownMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.performGroupedAndWait {
-            userSession?.syncManagedObjectContext.zm_teardownMessageDeletionTimer()
+            userSession?.managedObjectContext.zm_teardownMessageDeletionTimer()
         }
     }
 
