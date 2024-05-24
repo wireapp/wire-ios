@@ -23,11 +23,6 @@ import PackagePlugin
 struct SourceryPlugin {
 
     private enum Constant {
-        enum Arguments {
-            static let config = "config"
-            static let cacheBasePath = "cacheBasePath"
-        }
-
         enum Environment {
             static let derivedSourcesDirectory = "DERIVED_SOURCES_DIR"
             static let packageRootDirectory = "PACKAGE_ROOT_DIR"
@@ -95,9 +90,9 @@ extension SourceryPlugin: BuildToolPlugin {
             displayName: Constant.displayName,
             executable: try context.tool(named: Constant.toolName).path,
             arguments: [
-                "--\(Constant.Arguments.config)",
+                "--config",
                 configuration.string,
-                "--\(Constant.Arguments.cacheBasePath)",
+                "--cacheBasePath",
                 context.pluginWorkDirectory
             ],
             environment: [
