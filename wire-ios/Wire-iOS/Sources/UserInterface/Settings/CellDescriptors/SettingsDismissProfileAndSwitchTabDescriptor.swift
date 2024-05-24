@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-final class SettingsDismissProfileAndSwitchTabDescriptor_: SettingsExternalScreenCellDescriptorType {
+final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreenCellDescriptorType {
 
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
 
