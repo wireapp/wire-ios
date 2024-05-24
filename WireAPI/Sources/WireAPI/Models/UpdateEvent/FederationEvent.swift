@@ -18,24 +18,18 @@
 
 import Foundation
 
-/// An event where the conversation's name was changed.
+/// An event concerning federation between domains.
 
-public struct ConversationRenameEvent {
+public enum FederationEvent {
 
-    /// The id of the conversation.
+    /// Two or more other domains have stopped federating
+    /// with each other.
 
-    public let conversationID: ConversationID
+    case connectionRemoved
 
-    /// The id of the user who renamed the conversation.
+    /// The self domain has stopped federating with another
+    /// domain.
 
-    public let senderID: UserID
-
-    /// When the conversation was renamed.
-
-    public let timestamp: Date
-
-    /// The new name of the conversation.
-
-    public let newName: String
+    case delete
 
 }

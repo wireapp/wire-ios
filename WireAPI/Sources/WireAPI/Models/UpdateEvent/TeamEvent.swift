@@ -18,12 +18,32 @@
 
 import Foundation
 
-/// An event where an existing user was deleted.
+/// An event concerning teams.
 
-public struct UserDeleteEvent {
+public enum TeamEvent {
 
-    /// The id of the deleted user.
+    /// A team conversation was created.
 
-    public let userID: UserID
+    case conversationCreate
+
+    /// A team conversation was deleted.
+
+    case conversationDelete
+
+    // TODO: ?
+
+    case create
+
+    /// The self team was deleted.
+
+    case delete
+
+    /// A user has left the self team.
+
+    case memberLeave
+
+    /// A member of the self team has updated their metadata.
+
+    case memberUpdate
 
 }

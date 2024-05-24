@@ -24,8 +24,6 @@ extension UpdateEvent {
         eventType: TeamEventType,
         from decoder: any Decoder
     ) throws {
-        let _ = try decoder.container(keyedBy: TeamEventCodingKeys.self)
-
         switch eventType {
         case .conversationCreate:
             self = .team(.conversationCreate)
@@ -45,9 +43,5 @@ extension UpdateEvent {
             self = .team(.memberUpdate)
         }
     }
-
-}
-
-private enum TeamEventCodingKeys: CodingKey {
 
 }
