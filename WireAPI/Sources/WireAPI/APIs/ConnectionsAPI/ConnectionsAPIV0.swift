@@ -20,7 +20,7 @@ import Foundation
 
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
-    enum Constants {
+    private enum Constants {
         static let maxConnectionsCount = 500
     }
 
@@ -79,24 +79,24 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
 private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
 
-     enum CodingKeys: String, CodingKey {
-         case connections
-         case pagingState = "paging_state"
-         case hasMore = "has_more"
-     }
+    enum CodingKeys: String, CodingKey {
+        case connections
+        case pagingState = "paging_state"
+        case hasMore = "has_more"
+    }
 
-     var nextStartReference: String? {
-         return pagingState
-     }
+    var nextStartReference: String? {
+        return pagingState
+    }
 
-     let connections: [ConnectionResponseV0]
-     let pagingState: String
-     let hasMore: Bool
+    let connections: [ConnectionResponseV0]
+    let pagingState: String
+    let hasMore: Bool
 
     func toAPIModel() -> PaginatedConnectionListV0 {
         self
     }
- }
+}
 
 private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
 
@@ -119,12 +119,14 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     let status: ConnectionStatus
 
     func toAPIModel() -> Connection {
-        Connection(senderId: from,
-                   receiverId: to,
-                   receiverQualifiedId: qualifiedTo,
-                   conversationId: conversationID,
-                   qualifiedConversationId: qualifiedConversationID,
-                   lastUpdate: lastUpdate,
-                   status: status)
+        Connection(
+            senderId: from,
+            receiverId: to,
+            receiverQualifiedId: qualifiedTo,
+            conversationId: conversationID,
+            qualifiedConversationId: qualifiedConversationID,
+            lastUpdate: lastUpdate,
+            status: status
+        )
     }
 }

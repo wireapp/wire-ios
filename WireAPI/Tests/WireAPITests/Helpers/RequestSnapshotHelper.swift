@@ -82,20 +82,15 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
         let sut = builder.makeAPI(for: apiVersion)
         try? await block(sut)
 
-        if httpClient.receivedRequests.isEmpty {
-            throw Failure.noRequestGenerated
-        }
-
+        let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
         let name = "v\(apiVersion.rawValue)"
 
-        for request in httpClient.receivedRequests {
+        try verifyRequest(request: request,
+                          resourceName: name,
+                          file: file,
+                          function: function,
+                          line: line)
 
-            try verifyRequest(request: request,
-                              resourceName: name,
-                              file: file,
-                              function: function,
-                              line: line)
-        }
     }
 
     /// Snapshot test a given request
