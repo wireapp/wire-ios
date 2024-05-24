@@ -25,7 +25,7 @@ class ConnectionsAPITests: XCTestCase {
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
         try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
-            let pager = try await sut.fetchConnections()
+            let pager = try await sut.getConnections()
             for try await _ in pager {
                 // this triggers fetching the data
             }
@@ -42,7 +42,7 @@ class ConnectionsAPITests: XCTestCase {
         let sut = ConnectionsAPIV0(httpClient: httpClient)
 
         // When
-        let pager = try await sut.fetchConnections()
+        let pager = try await sut.getConnections()
         var iterator = pager.makeAsyncIterator()
         let result = try await iterator.next()
 
@@ -69,7 +69,7 @@ class ConnectionsAPITests: XCTestCase {
         let sut = ConnectionsAPIV0(httpClient: httpClient)
 
         // When
-        let pager = try await sut.fetchConnections()
+        let pager = try await sut.getConnections()
         var iterator = pager.makeAsyncIterator()
 
         // Then
@@ -95,7 +95,7 @@ class ConnectionsAPITests: XCTestCase {
 
         // WHEN
         let sut = ConnectionsAPIV0(httpClient: httpClient, fetchLimit: 1)
-        let pager = try await sut.fetchConnections()
+        let pager = try await sut.getConnections()
         for try await _ in pager {
             // do something with the data
             // this will trigger the fetch when we wait for the page

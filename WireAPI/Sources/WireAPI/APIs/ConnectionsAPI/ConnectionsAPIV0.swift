@@ -45,7 +45,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         "\(pathPrefix)/list-connections/"
     }
 
-    func fetchConnections() async throws -> PayloadPager<Connection> {
+    func getConnections() async throws -> PayloadPager<Connection> {
 
         let pager = PayloadPager<Connection> { start in
 
@@ -62,7 +62,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
             // Parse response
             let responsePayload = try ResponseParser()
-                .success(code: 200, type: PaginatedConnectionList.self)
+                .success(code: 200, type: PaginatedConnectionListV0.self)
                 .failure(code: 400, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
 
@@ -93,7 +93,7 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
      let pagingState: String
      let hasMore: Bool
 
-    func toAPIModel() -> PaginatedConnectionList {
+    func toAPIModel() -> PaginatedConnectionListV0 {
         self
     }
  }
