@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v2/teams/213248a1-5499-418f-8173-5010d1c1e506/legalhold/302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c"
+  - method: get
+  - body: none

@@ -71,20 +71,16 @@ public class Team: ZMManagedObject, TeamType {
         return false
     }
 
-    @objc(fetchOrCreateTeamWithRemoteIdentifier:createIfNeeded:inContext:created:)
-    public static func fetchOrCreate(with identifier: UUID, create: Bool, in context: NSManagedObjectContext, created: UnsafeMutablePointer<Bool>?) -> Team? {
-        precondition(!create || context.zm_isSyncContext, "Needs to be called on the sync context")
+    @objc(fetchOrCreateTeamWithRemoteIdentifier:inContext:)
+    public static func fetchOrCreate(with identifier: UUID, in context: NSManagedObjectContext) -> Team {
         if let existing = Team.fetch(with: identifier, in: context) {
-            created?.pointee = false
             return existing
-        } else if create {
-            let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = identifier
-            created?.pointee = true
-            return team
         }
 
-        return nil
+        precondition(context.zm_isSyncContext, "Needs to be called on the sync context")
+        let team = Team.insertNewObject(in: context)
+        team.remoteIdentifier = identifier
+        return team
     }
 
     public func refreshMetadata() {
@@ -97,12 +93,14 @@ extension Team {
     public func members(matchingQuery query: String) -> [Member] {
         let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
 
-        return members.filter({ member in
-            guard let user = member.user else { return false }
-            return !user.isSelfUser && searchPredicate.evaluate(with: user)
-        }).sorted(by: { first, second -> Bool in
-            return first.user?.normalizedName < second.user?.normalizedName
-        })
+        return members
+            .filter { member in
+                guard let user = member.user else {
+                    return false
+                }
+                return !user.isSelfUser && searchPredicate.evaluate(with: user)
+            }
+            .sortedAscendingPrependingNil { $0.user?.normalizedName }
     }
 }
 

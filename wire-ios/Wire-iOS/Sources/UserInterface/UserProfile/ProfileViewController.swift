@@ -229,7 +229,7 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(
+            let userClientListViewController = OtherUserClientsListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
                 contextProvider: viewModel.userSession as? ContextProvider,
@@ -239,7 +239,10 @@ final class ProfileViewController: UIViewController {
         }
 
         tabsController = TabBarController(viewControllers: viewControllers)
-        if viewModel.context == .deviceList, tabsController?.viewControllers.count > 1 {
+
+        if viewModel.context == .deviceList,
+           let count = tabsController?.viewControllers.count,
+           count > 1 {
             tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
         }
         addToSelf(tabsController!)
@@ -386,7 +389,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.topBarViewController.presentSettings()
+                ZClientViewController.shared?.conversationListViewController.presentSettings()
             }
         }
     }

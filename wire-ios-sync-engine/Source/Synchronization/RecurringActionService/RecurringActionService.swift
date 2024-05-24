@@ -26,11 +26,11 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
     private(set) var actionsByID = [String: RecurringAction]()
     private let storage: UserDefaults
-    private let dateProvider: DateProviding
+    private let dateProvider: CurrentDateProviding
 
     public init(
         storage: UserDefaults,
-        dateProvider: DateProviding
+        dateProvider: CurrentDateProviding
     ) {
         self.storage = storage
         self.dateProvider = dateProvider

@@ -17,10 +17,12 @@
 //
 
 extension ZClientViewController: SplitViewControllerDelegate {
+
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+
         return splitViewController.rightViewController != nil &&
-            splitViewController.leftViewController == conversationListViewController &&
-            conversationListViewController.state == .conversationList &&
-            (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
+        splitViewController.leftViewController == conversationListViewController.tabBarController &&
+        conversationListViewController.state == .conversationList &&
+        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }

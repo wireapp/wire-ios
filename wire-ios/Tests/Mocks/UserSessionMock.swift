@@ -73,6 +73,9 @@ final class UserSessionMock: UserSession {
     var mockConversationList: ZMConversationList?
 
     var searchUsersCache: SearchUsersCache
+    var contextProvider: ContextProvider?
+
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
@@ -290,10 +293,6 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
-    }
-
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(
@@ -323,5 +322,15 @@ final class UserSessionMock: UserSession {
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
     }
+}
 
+// MARK: - UserSessionMock + ContextProvider
+
+extension UserSessionMock: ContextProvider {
+
+    var account: Account { contextProvider!.account }
+    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
 }

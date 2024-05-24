@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+
 @testable import Wire
 
 final class ModalTopBarTests: BaseSnapshotTestCase {
@@ -59,5 +60,4 @@ final class ModalTopBarTests: BaseSnapshotTestCase {
 
         verifyInAllPhoneWidths(matching: sut)
     }
-
 }
