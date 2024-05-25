@@ -163,7 +163,14 @@ extension ConversationListViewController {
         )
 
         // Create the menu
-        let filterMenu = UIMenu(children: [allConversationsAction, favoritesAction, groupsAction, oneToOneConversationsAction])
+        let filterMenu = UIMenu(
+            children: [
+                allConversationsAction,
+                favoritesAction,
+                groupsAction,
+                oneToOneConversationsAction
+            ]
+        )
 
         // Create the filter button and assign the menu
         let filterButton = UIButton(type: .system)
