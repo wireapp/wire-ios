@@ -128,6 +128,7 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons() {
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
+        typealias FilterMenuLocale = L10n.Localizable.ConversationList.NavigationBar.FilterMenu
 
         // New Conversation Button
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
@@ -141,22 +142,22 @@ extension ConversationListViewController {
 
         // Define the menu actions with initial states
         let allConversationsAction = createFilterAction(
-            title: "All Conversations",
+            title: FilterMenuLocale.AllConversations.title,
             filter: .allConversations,
             isSelected: selectedFilter == .allConversations
         )
         let favoritesAction = createFilterAction(
-            title: "Favorites",
+            title: FilterMenuLocale.Favorites.title,
             filter: .favorites,
             isSelected: selectedFilter == .favorites
         )
         let groupsAction = createFilterAction(
-            title: "Groups",
+            title: FilterMenuLocale.Groups.title,
             filter: .groups,
             isSelected: selectedFilter == .groups
         )
         let oneToOneConversationsAction = createFilterAction(
-            title: "1:1 Conversations",
+            title: FilterMenuLocale.OneOnOneConversations.title,
             filter: .oneToOneConversations,
             isSelected: selectedFilter == .oneToOneConversations
         )
