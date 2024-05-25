@@ -192,10 +192,18 @@ extension ConversationListViewController {
             tintedActionImage = actionImage
         }
 
+        let titleAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: isSelected ? UIColor.accent() : SemanticColors.Label.textDefault
+        ]
+
+        let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
+
         let action = UIAction(title: title, image: tintedActionImage) { [weak self] _ in
             self?.selectedFilter = filter
             self?.setupRightNavigationBarButtons()
         }
+
+        action.setValue(attributedTitle, forKey: "attributedTitle")
 
         return action
     }
