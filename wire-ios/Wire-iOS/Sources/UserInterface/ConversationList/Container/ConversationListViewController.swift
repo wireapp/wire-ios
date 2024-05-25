@@ -30,6 +30,7 @@ final class ConversationListViewController: UIViewController {
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
+    var selectedFilter: FilterType = .allConversations
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false

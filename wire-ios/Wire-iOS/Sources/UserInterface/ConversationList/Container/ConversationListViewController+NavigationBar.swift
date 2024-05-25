@@ -23,6 +23,21 @@ import WireSyncEngine
 
 extension ConversationListViewController {
 
+    enum FilterType {
+        case allConversations, favorites, groups, oneToOneConversations
+    }
+
+    enum FilterImageName: String {
+        case textBubble = "text.bubble"
+        case textBubbleFill = "text.bubble.fill"
+        case star = "star"
+        case starFill = "star.fill"
+        case person = "person"
+        case personFill = "person.fill"
+        case person3 = "person.3"
+        case person3Fill = "person.3.fill"
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
         setupLeftNavigationBarButtons()
     }
@@ -122,36 +137,80 @@ extension ConversationListViewController {
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
         // Filter Conversations Button
-        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filterImage = UIImage(resource: .ConversationList.Header.filterConversations)
 
-        // Define the menu actions
-        let allConversations = UIAction(title: "All Conversations", image: UIImage(systemName: "message")) { _ in
-            // Implement the action for all conversations
-            print("All Conversations selected")
-        }
-        let favorites = UIAction(title: "Favorites", image: UIImage(systemName: "star")) { _ in
-            // Implement the action for favorites
-            print("Favorites selected")
-        }
-        let groups = UIAction(title: "Groups", image: UIImage(systemName: "person.3")) { _ in
-            // Implement the action for groups
-            print("Groups selected")
-        }
-        let oneToOneConversations = UIAction(title: "1:1 Conversations", image: UIImage(systemName: "person")) { _ in
-            // Implement the action for 1:1 conversations
-            print("1:1 Conversations selected")
-        }
+        // Define the menu actions with initial states
+        let allConversationsAction = createFilterAction(
+            title: "All Conversations",
+            filter: .allConversations,
+            isSelected: selectedFilter == .allConversations
+        )
+        let favoritesAction = createFilterAction(
+            title: "Favorites",
+            filter: .favorites,
+            isSelected: selectedFilter == .favorites
+        )
+        let groupsAction = createFilterAction(
+            title: "Groups",
+            filter: .groups,
+            isSelected: selectedFilter == .groups
+        )
+        let oneToOneConversationsAction = createFilterAction(
+            title: "1:1 Conversations",
+            filter: .oneToOneConversations,
+            isSelected: selectedFilter == .oneToOneConversations
+        )
 
         // Create the menu
-        let filterMenu = UIMenu(children: [allConversations, favorites, groups, oneToOneConversations])
+        let filterMenu = UIMenu(children: [allConversationsAction, favoritesAction, groupsAction, oneToOneConversationsAction])
 
         // Create the filter button and assign the menu
         let filterButton = UIButton(type: .system)
-        filterButton.setImage(filerImage, for: .normal)
+        filterButton.setImage(filterImage, for: .normal)
         filterButton.showsMenuAsPrimaryAction = true
         filterButton.menu = filterMenu
 
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
+    }
+
+    private func createFilterAction(
+        title: String,
+        filter: FilterType,
+        isSelected: Bool
+    ) -> UIAction {
+        let imageName = getFilterImageName(for: filter, isSelected: isSelected)
+
+        let font = UIFont.systemFont(ofSize: 17)
+        let configuration = UIImage.SymbolConfiguration(font: font)
+        let actionImage = UIImage(systemName: imageName)?.applyingSymbolConfiguration(configuration)
+
+        // Apply the tint color conditionally based on the selection state
+        let tintedActionImage: UIImage?
+        if isSelected {
+            tintedActionImage = actionImage?.withTintColor(UIColor.accent(), renderingMode: .alwaysOriginal)
+        } else {
+            tintedActionImage = actionImage
+        }
+
+        let action = UIAction(title: title, image: tintedActionImage) { [weak self] _ in
+            self?.selectedFilter = filter
+            self?.setupRightNavigationBarButtons()
+        }
+
+        return action
+    }
+
+    private func getFilterImageName(for filter: FilterType, isSelected: Bool) -> String {
+        switch filter {
+        case .allConversations:
+            return isSelected ? FilterImageName.textBubbleFill.rawValue : FilterImageName.textBubble.rawValue
+        case .favorites:
+            return isSelected ? FilterImageName.starFill.rawValue : FilterImageName.star.rawValue
+        case .groups:
+            return isSelected ? FilterImageName.person3Fill.rawValue : FilterImageName.person3.rawValue
+        case .oneToOneConversations:
+            return isSelected ? FilterImageName.personFill.rawValue : FilterImageName.person.rawValue
+        }
     }
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
