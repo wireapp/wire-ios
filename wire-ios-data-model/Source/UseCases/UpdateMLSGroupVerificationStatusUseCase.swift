@@ -37,11 +37,11 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     public init(
         e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
-        context: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
         featureRepository: FeatureRepositoryInterface
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
-        self.context = context
+        self.context = syncContext
         self.featureRepository = featureRepository
     }
 
