@@ -16,30 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@testable import Wire
-
-final class SkeletonViewControllerTests: BaseSnapshotTestCase {
-
-    var sut: SkeletonViewController!
-    var mockAccount: Account!
-
-    override func setUp() {
-        super.setUp()
-
-        mockAccount = Account.mockAccount(imageData: Data())
-        sut = SkeletonViewController(from: mockAccount, to: mockAccount, randomizeDummyItem: false)
-    }
-
-    override func tearDown() {
-        sut = nil
-        mockAccount = nil
-
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        verify(matching: sut)
-    }
+protocol ShareContactsViewControllerDelegate: AnyObject {
+    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController)
+    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController)
 }

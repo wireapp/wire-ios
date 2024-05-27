@@ -18,16 +18,9 @@
 
 import Foundation
 
-/// Erros that can occur when decoding response payloads.
+class ConnectionsAPIV2: ConnectionsAPIV1 {
 
-enum ResponsePayloadDecoderError: Error {
-
-    /// The data to decode could not be found.
-
-    case missingResponseData
-
-    /// The payload could not be decoded due to a decoding error.
-
-    case failedToDecodePayload(Decodable.Type, Error)
-
+    override var apiVersion: APIVersion {
+        .v2
+    }
 }
