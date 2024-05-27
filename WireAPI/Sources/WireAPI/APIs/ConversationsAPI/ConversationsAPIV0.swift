@@ -38,7 +38,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         self.httpClient = httpClient
     }
 
-    public func getAllConversations() async throws -> PayloadPager<[QualifiedID]> {
+    public func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
         let resourcePath = "/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 

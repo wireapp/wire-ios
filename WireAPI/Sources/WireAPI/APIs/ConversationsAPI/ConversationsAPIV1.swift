@@ -21,7 +21,7 @@ import Foundation
 class ConversationsAPIV1: ConversationsAPIV0 {
     override var apiVersion: APIVersion { .v1 }
 
-    override public func getAllConversations() async throws -> PayloadPager<[QualifiedID]> {
+    override public func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
         let resourcePath = "\(pathPrefix)/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
