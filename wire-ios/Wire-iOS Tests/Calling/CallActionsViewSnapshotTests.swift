@@ -207,7 +207,7 @@ final class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
             canToggleMediaType: true,
             isVideoCall: true,
             isMuted: false,
-            mediaState: .sendingVideo,
+            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
             cameraType: .front,
             callState: CallStateMock.outgoing
         )
@@ -305,7 +305,7 @@ final class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
             canToggleMediaType: true,
             isVideoCall: true,
             isMuted: false,
-            mediaState: .sendingVideo,
+            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -329,7 +329,7 @@ final class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
             canToggleMediaType: true,
             isVideoCall: true,
             isMuted: false,
-            mediaState: .sendingVideo,
+            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -353,7 +353,7 @@ final class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
             canToggleMediaType: true,
             isVideoCall: true,
             isMuted: false,
-            mediaState: .sendingVideo,
+            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -403,7 +403,7 @@ final class CallActionsViewSnapshotTests: BaseSnapshotTestCase {
             canToggleMediaType: true,
             isVideoCall: true,
             isMuted: false,
-            mediaState: .sendingVideo,
+            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
             cameraType: .front,
             callState: CallStateMock.terminating
         )

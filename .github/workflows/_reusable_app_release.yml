@@ -13,6 +13,10 @@ on:
       skip_security_tests:
         type: boolean
         default: true
+      distribute_externals:
+        type: boolean
+        default: false
+
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -51,6 +55,10 @@ on:
       C3_S3_SUBFOLDER_PRODUCTION:
         required: true
       C3_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true
+      PLAYGROUND_TESTFLIGHT_LINK:
+        required: true
+      BETA_TESTFLIGHT_LINK:
         required: true
       SUBMODULE_PAT:
         required: true
@@ -99,8 +107,12 @@ jobs:
       C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+      
       
     steps:
       - name: Add Masks
@@ -179,7 +191,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
       - name: Notify on Wire if failed
         if: failure()
         uses: 8398a7/action-slack@v3
