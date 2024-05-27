@@ -198,7 +198,7 @@ extension ConversationListViewController {
         filter: FilterType,
         isSelected: Bool
     ) -> UIAction {
-        let imageName = getFilterImageName(for: filter, isSelected: isSelected)
+        let imageName = getFilterImageName(for: filter, isSelected: isSelected).rawValue
 
         let font = UIFont.systemFont(ofSize: 17)
         let configuration = UIImage.SymbolConfiguration(font: font)
@@ -228,16 +228,16 @@ extension ConversationListViewController {
         return action
     }
 
-    private func getFilterImageName(for filter: FilterType, isSelected: Bool) -> String {
+    private func getFilterImageName(for filter: FilterType, isSelected: Bool) -> FilterImageName {
         switch filter {
         case .allConversations:
-            return isSelected ? FilterImageName.textBubbleFill.rawValue : FilterImageName.textBubble.rawValue
+            return isSelected ? .textBubbleFill : .textBubble
         case .favorites:
-            return isSelected ? FilterImageName.starFill.rawValue : FilterImageName.star.rawValue
+            return isSelected ? .starFill : .star
         case .groups:
-            return isSelected ? FilterImageName.person3Fill.rawValue : FilterImageName.person3.rawValue
+            return isSelected ? .person3Fill : .person3
         case .oneToOneConversations:
-            return isSelected ? FilterImageName.personFill.rawValue : FilterImageName.person.rawValue
+            return isSelected ? .personFill : .person
         }
     }
 
