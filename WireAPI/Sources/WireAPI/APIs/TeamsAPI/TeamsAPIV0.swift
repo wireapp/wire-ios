@@ -21,7 +21,6 @@ import Foundation
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     let httpClient: HTTPClient
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient

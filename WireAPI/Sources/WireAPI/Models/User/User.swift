@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// Fully quallified user identifier
+/// Fully qualified user identifier
 
 public typealias UserID = QualifiedID
 
