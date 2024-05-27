@@ -140,6 +140,18 @@ extension ConversationListViewController {
         // Filter Conversations Button
         let filterImage = UIImage(resource: .ConversationList.Header.filterConversations)
 
+        let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filledFilterImage = UIImage(resource: .ConversationList.Header.filterConversationsFilled)
+
+        var selectedFilterImage: UIImage
+
+        switch selectedFilter {
+        case .allConversations:
+            selectedFilterImage = defaultFilterImage
+        case .favorites, .groups, .oneToOneConversations:
+            selectedFilterImage = filledFilterImage
+        }
+
         // Define the menu actions with initial states
         let allConversationsAction = createFilterAction(
             title: FilterMenuLocale.AllConversations.title,
@@ -174,7 +186,7 @@ extension ConversationListViewController {
 
         // Create the filter button and assign the menu
         let filterButton = UIButton(type: .system)
-        filterButton.setImage(filterImage, for: .normal)
+        filterButton.setImage(selectedFilterImage, for: .normal)
         filterButton.showsMenuAsPrimaryAction = true
         filterButton.menu = filterMenu
 
