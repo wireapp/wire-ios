@@ -16,21 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-extension ProfileSelfPictureViewController: ZMUserObserver {
-
-    public func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.imageMediumDataChanged,
-            let userSession = ZMUserSession.shared(),
-            let profileImageUser = changeInfo.user as? ProfileImageFetchable else { return }
-
-        profileImageUser.fetchProfileImage(session: userSession,
-                                           cache: UIImage.defaultUserImageCache,
-                                           sizeLimit: nil,
-                                           desaturate: false) { image, _ in
-            self.selfUserImageView.image = image
-        }
-    }
-
+protocol ShareContactsViewControllerDelegate: AnyObject {
+    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController)
+    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController)
 }

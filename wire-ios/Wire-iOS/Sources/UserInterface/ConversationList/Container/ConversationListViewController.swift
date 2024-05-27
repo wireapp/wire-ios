@@ -25,8 +25,6 @@ final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
 
-    private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
-
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -152,8 +150,6 @@ final class ConversationListViewController: UIViewController {
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
-
-            tabBarController?.delegate = self
 
             ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
@@ -307,6 +303,10 @@ final class ConversationListViewController: UIViewController {
             completionHandler: completionHandler
         )
     }
+
+    func selectInboxAndFocusOnView(focus: Bool) {
+        listContentController.selectInboxAndFocus(onView: focus)
+    }
 }
 
 // MARK: - ViewModel Delegate
@@ -316,40 +316,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         setupTitleView()
         setupLeftNavigationBarButtons()
-    }
-}
-
-// MARK: - UITabBarControllerDelegate
-
-extension ConversationListViewController: UITabBarControllerDelegate {
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
-
-        case .conversations:
-            previouslySelectedTabIndex = .conversations
-
-        case .archive:
-            previouslySelectedTabIndex = .archive
-
-        case .settings:
-            let alertController = UIAlertController(
-                title: "not implemented yet",
-                message: "will be done within [WPB-7306]",
-                alertAction: .ok()
-            )
-            present(alertController, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-
-        case .none:
-            fatalError("unexpected selected tab index")
-        }
-    }
-
-    func selectInboxAndFocusOnView(focus: Bool) {
-        listContentController.selectInboxAndFocus(onView: focus)
     }
 }
 
