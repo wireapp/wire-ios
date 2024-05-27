@@ -20,11 +20,31 @@ import Foundation
 
 public struct Connection: Equatable {
 
+    /// Remote identifier of the sender
+
     public let senderId: UUID?
+
+    /// Remote identifier of the receiver
+
     public let receiverId: UUID?
+
+    /// Qualified identifier of the receiver
+
     public let receiverQualifiedId: QualifiedID?
+
+    /// Remote identifier of the conversation
+
     public let conversationId: UUID?
+
+    /// Qualified identifier of the conversation
+
     public let qualifiedConversationId: QualifiedID?
+
+    /// Time when connection was last updated
+
     public let lastUpdate: Date
+
+    /// current status of connection
+
     public let status: ConnectionStatus
 }
