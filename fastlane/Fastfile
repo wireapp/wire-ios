@@ -327,7 +327,7 @@ platform :ios do
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
-            xcargs += ["COUNTLY_APP_KEY": build.countly_api_key] if build.countly_enabled
+            xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
 
             build_app(
                 scheme: "Wire-iOS",
