@@ -197,8 +197,6 @@ final class CallActionsView: UIView {
         cameraButton.isEnabled = input.canToggleMediaType
         cameraButton.isSelected = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
         flipCameraButton.isEnabled = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
-        flipCameraButton.isHidden = input.mediaState.showSpeaker
-        speakerButton.isHidden = !input.mediaState.showSpeaker
         speakerButton.isSelected = input.mediaState.isSpeakerEnabled
         speakerButton.isEnabled = canToggleSpeakerButton(input)
         [microphoneButton, cameraButton, flipCameraButton, speakerButton].forEach { $0.appearance = input.appearance }

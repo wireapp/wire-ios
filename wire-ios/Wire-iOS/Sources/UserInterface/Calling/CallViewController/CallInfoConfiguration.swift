@@ -75,7 +75,7 @@ extension VoiceChannel {
         )
 
         guard permissions.canAcceptVideoCalls else { return .notSendingVideo(speakerState: speakerState) }
-        guard !videoState.isSending else { return .sendingVideo }
+        guard !videoState.isSending else { return .sendingVideo(speakerState: speakerState) }
         return .notSendingVideo(speakerState: speakerState)
     }
 
