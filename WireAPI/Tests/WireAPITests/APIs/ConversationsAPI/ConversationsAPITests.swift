@@ -69,7 +69,6 @@ final class ConversationsAPITests: XCTestCase {
         ])
     }
 
-    @MainActor
     func testGetConversationIdentifiers_givenV1AndSuccessResponseWithMultiplePages() async throws {
         // Given
         let httpClient = MockHTTPClientPredefinedResponses()
@@ -104,7 +103,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // validate requests
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            try snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
+            try await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
         }
     }
 }
