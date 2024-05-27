@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct Conversation: ConversationsAPI, VersionedAPI {
+class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     // MARK: - Constants
 
