@@ -1,0 +1,21 @@
+{
+  "connections": [
+    {
+      "conversation": "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c",
+      "from": "99db9768-04e3-4b5d-9268-831b6a25c4ac",
+      "last_update": "2021-05-13T10:52:02.671Z",
+      "qualified_conversation": {
+        "domain": "example3.com",
+        "id": "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c"
+      },
+      "qualified_to": {
+        "domain": "example3.com",
+        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+      },
+      "status": "accepted",
+      "to": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+    }
+  ],
+  "has_more": true,
+  "paging_state": "first"
+}

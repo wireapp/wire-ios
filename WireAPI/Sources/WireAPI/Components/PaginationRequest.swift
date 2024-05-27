@@ -18,32 +18,12 @@
 
 import Foundation
 
-/// An object responsible for decoding the http response payload into
-/// an api model.
-
-struct ResponsePayloadDecoder {
-
-    let decoder: JSONDecoder
-
-    func decodePayload<T: Decodable>(
-        from response: HTTPResponse,
-        as type: T.Type
-    ) throws -> T {
-        guard let data = response.payload else {
-            throw ResponsePayloadDecoderError.missingResponseData
-        }
-
-        do {
-            return try decoder.decode(
-                T.self,
-                from: data
-            )
-        } catch {
-            throw ResponsePayloadDecoderError.failedToDecodePayload(
-                T.self,
-                error
-            )
-        }
+struct PaginationRequest: Codable {
+    enum CodingKeys: String, CodingKey {
+        case pagingState = "paging_state"
+        case size
     }
-
+    var pagingState: String?
+    // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
+    var size: Int?
 }
