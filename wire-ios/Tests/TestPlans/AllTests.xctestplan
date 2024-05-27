@@ -45,6 +45,11 @@
     {
       "skippedTests" : [
         "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
+<<<<<<< HEAD
+=======
+        "CallActionsViewSnapshotTests",
+        "ConversationListTopBarViewControllerSnapshotTests\/testForLongName()",
+>>>>>>> 265ad9d626 (fix: enable speaker button for video calls - WPB-9217 (#1488))
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
