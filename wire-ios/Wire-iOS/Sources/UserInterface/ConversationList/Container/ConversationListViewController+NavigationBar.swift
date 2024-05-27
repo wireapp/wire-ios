@@ -192,7 +192,10 @@ extension ConversationListViewController {
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
     ///
-    /// This method generates an action that updates the filter applied to the content list. It configures the action's image and title based on the filter type and whether it is selected. When the action is triggered, it updates the filter, adjusts the navigation bar buttons, reloads the list sections, and triggers a layout update to ensure correct positioning of the buttons.
+    /// This method generates an action that updates the filter applied to the content list.
+    /// It configures the action's image and title based on the filter type and whether it is selected.
+    /// When the action is triggered, it updates the filter, adjusts the navigation bar buttons,
+    /// reloads the list sections, and triggers a layout update to ensure correct positioning of the buttons.
     ///
     /// - Parameters:
     ///   - title: The title of the filter action.
