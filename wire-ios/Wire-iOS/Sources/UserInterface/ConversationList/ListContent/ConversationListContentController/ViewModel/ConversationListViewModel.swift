@@ -26,7 +26,12 @@ import WireSystem
 final class ConversationListViewModel: NSObject {
 
     typealias SectionIdentifier = String
-    var selectedFilter: FilterType = .allConversations
+
+    var selectedFilter: FilterType = .allConversations {
+        didSet {
+            reloadConversationList()
+        }
+    }
 
     fileprivate struct Section: DifferentiableSection {
 
@@ -479,7 +484,12 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    func updateAllSections() {
+    func reloadConversationList() {
+        updateAllSections()
+        delegate?.listViewModelShouldBeReloaded()
+    }
+
+    private func updateAllSections() {
         sections = createSections()
     }
 

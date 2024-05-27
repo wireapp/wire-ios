@@ -190,6 +190,17 @@ extension ConversationListViewController {
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
     }
 
+    /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
+    ///
+    /// This method generates an action that updates the filter applied to the content list. It configures the action's image and title based on the filter type and whether it is selected. When the action is triggered, it updates the filter, adjusts the navigation bar buttons, reloads the list sections, and triggers a layout update to ensure correct positioning of the buttons.
+    ///
+    /// - Parameters:
+    ///   - title: The title of the filter action.
+    ///   - filter: The filter type to be applied when the action is triggered.
+    ///   - isSelected: A boolean indicating whether the filter is currently selected.
+    /// - Returns: A `UIAction` configured with the provided title, filter type, and selection state.
+    ///
+    /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
         filter: FilterType,
@@ -216,19 +227,23 @@ extension ConversationListViewController {
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
 
         let action = UIAction(title: title, image: tintedActionImage) { [weak self] _ in
-            self?.listContentController.listViewModel.selectedFilter = filter
-            self?.setupRightNavigationBarButtons()
-            self?.listContentController.listViewModel.updateAllSections()
-            self?.listContentController.listViewModel.delegate?.listViewModelShouldBeReloaded()
-            // Trigger a layout update to ensure the correct positioning
-            // of the add conversation button and filter button
-            // when the filter button is tapped.
-            self?.view.setNeedsLayout()
+            self?.applyFilter(filter)
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
 
         return action
+    }
+
+    /// Method to apply the selected filter and update the UI accordingly
+    private func applyFilter(_ filter: FilterType) {
+        self.listContentController.listViewModel.selectedFilter = filter
+        self.setupRightNavigationBarButtons()
+
+        // Trigger a layout update to ensure the correct positioning
+        // of the add conversation button and filter button
+        // when the filter button is tapped.
+        self.view.setNeedsLayout()
     }
 
     private func getFilterImageName(for filter: FilterType, isSelected: Bool) -> FilterImageName {
