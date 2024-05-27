@@ -51,7 +51,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
                 partialResult[item] = item.lastMonthMessageCount()
             }
             let identifiers = countByConversation
-                .filter { $0.1 > 0 }
+                .filter { _, value in value > 0 }
                 .sorted { $0.1 > $1.1 }
                 .prefix(TopConversationsDirectory.topConversationSize)
                 .compactMap { $0.0.objectID }
