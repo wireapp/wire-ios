@@ -16,30 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import Wire
-
-final class SkeletonViewControllerTests: BaseSnapshotTestCase {
-
-    var sut: SkeletonViewController!
-    var mockAccount: Account!
-
-    override func setUp() {
-        super.setUp()
-
-        mockAccount = Account.mockAccount(imageData: Data())
-        sut = SkeletonViewController(from: mockAccount, to: mockAccount, randomizeDummyItem: false)
+struct PaginationRequest: Codable {
+    enum CodingKeys: String, CodingKey {
+        case pagingState = "paging_state"
+        case size
     }
-
-    override func tearDown() {
-        sut = nil
-        mockAccount = nil
-
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        verify(matching: sut)
-    }
+    var pagingState: String?
+    // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
+    var size: Int?
 }
