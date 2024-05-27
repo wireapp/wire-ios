@@ -31,11 +31,13 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     var apiVersion: APIVersion { .v0 }
 
     let httpClient: HTTPClient
+    let batchSize: Int
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: HTTPClient, batchSize: Int = Constants.batchSize) {
         self.httpClient = httpClient
+        self.batchSize = batchSize
     }
 
     public func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
@@ -44,7 +46,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
         return PayloadPager<[QualifiedID]> { start in
             // body Params
-            let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
+            let params = PaginationRequest(pagingState: start, size: self.batchSize)
             let body = try jsonEncoder.encode(params)
 
             let request = HTTPRequest(

@@ -27,7 +27,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
 
         return PayloadPager<[QualifiedID]> { start in
             // body Params
-            let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
+            let params = PaginationRequest(pagingState: start, size: self.batchSize)
             let body = try jsonEncoder.encode(params)
 
             let request = HTTPRequest(
