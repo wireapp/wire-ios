@@ -222,8 +222,6 @@ public final class WireLoggerObjc: NSObject {
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
-<<<<<<< HEAD
-=======
 
     @objc(logReceivedUpdateEventWithId:)
     static func logReceivedUpdateEvent(eventId: String) {
@@ -233,9 +231,4 @@ public final class WireLoggerObjc: NSObject {
 
         WireLogger.updateEvent.info("received event", attributes: mergedAttributes)
     }
-
-    static func updateEventError(_ message: String) {
-        WireLogger.updateEvent.error(message, attributes: .safePublic)
-    }
->>>>>>> 1003ca0bab (feat: add logs message lost - WPB-9221 (#1486))
 }
