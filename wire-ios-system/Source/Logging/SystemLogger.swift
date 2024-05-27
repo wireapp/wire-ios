@@ -87,7 +87,7 @@ struct SystemLogger: LoggerProtocol {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-        log("🤖 add \(key.rawValue) = \(value) - NO EFFECT HERE", attributes: nil, osLogType: .info)
+       // do nothing, as it's only available on datadog
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
@@ -96,11 +96,21 @@ struct SystemLogger: LoggerProtocol {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
+        let message = "\(message.logDescription)\(attributesDescription(from: attributes))"
+
         if attributes?["public"] as? Bool == true {
-            os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
+            os_log(osLogType, log: logger, "%{public}@", message)
         } else {
-            os_log(osLogType, log: logger, "\(message.logDescription)")
+            os_log(osLogType, log: logger, "\(message)")
         }
+    }
+
+    private func attributesDescription(from attributes: LogAttributes?) -> String {
+        var logAttributes = attributes
+        // drop attributes used for visibility and category
+        logAttributes?.removeValue(forKey: "public")
+        logAttributes?.removeValue(forKey: "tag")
+        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
     }
 }
 

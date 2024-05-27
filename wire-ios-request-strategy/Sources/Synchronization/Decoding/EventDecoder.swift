@@ -250,6 +250,7 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?
     ) {
         for (idx, event) in decryptedEvents.enumerated() {
+            WireLogger.updateEvent.info("store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
@@ -277,11 +278,11 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
-            WireLogger.updateEvent.debug("EventDecoder: process events finished")
+            WireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
             return
         }
 
-        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events")
+        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events", attributes: .safePublic)
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
@@ -382,7 +383,14 @@ extension EventDecoder {
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
-                return genericMessage.hasAvailability
+                let included = genericMessage.hasAvailability
+                if !included {
+                    WireLogger.updateEvent.warn(
+                        "dropping stored event",
+                        attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID]
+                    )
+                }
+                return included
             }
 
             return true
