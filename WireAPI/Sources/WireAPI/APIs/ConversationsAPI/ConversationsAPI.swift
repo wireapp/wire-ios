@@ -18,6 +18,6 @@
 
 public protocol ConversationsAPI {
 
-    func getAllConversations() async throws -> [Conversation]
+    func getAllConversations() async throws -> PayloadPager<[QualifiedID]>
 
 }
