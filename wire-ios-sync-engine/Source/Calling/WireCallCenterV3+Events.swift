@@ -388,15 +388,55 @@ extension WireCallCenterV3 {
             // }
 
             do {
+                
+                // 1. Check in which thread we process the event
+                //      - If the main thread, move to background thread
+
                 let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
+
                 if let call = self.callSnapshots[conversationId] {
+
                     self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
-                    WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
+
+                    if self.isSignificantActiveSpeakersChange(
+                        change: change,
+                        in: call
+                    ) {
+                        WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
+                    }
                 }
             } catch {
                 zmLog.safePublic("Cannot decode active speakers change JSON")
             }
         }
+    }
+
+    // TODO: Move somewhere better
+    private func isSignificantActiveSpeakersChange(
+        change: AVSActiveSpeakersChange,
+        in call: CallSnapshot
+    ) -> Bool {
+        let currentSpeakers = Set(call.activeSpeakers)
+        let newSpeakers = Set(change.activeSpeakers)
+        
+        var isSignificant = false
+
+        for newSpeaker in newSpeakers {
+            let currentSpeaker = currentSpeakers.first {
+                $0.client.avsIdentifier == newSpeaker.client.avsIdentifier
+            }
+
+            if let currentSpeaker {
+                let stoppedTalking = currentSpeaker.audioLevelNow > 0 && newSpeaker.audioLevelNow == 0
+                let startedTalking = currentSpeaker.audioLevelNow == 0 && newSpeaker.audioLevelNow > 0
+
+                isSignificant = stoppedTalking || startedTalking
+            } else if newSpeaker.audioLevelNow > 0 {
+                isSignificant = true
+            }
+        }
+
+        return isSignificant
     }
 
     func handleNewEpochRequest(conversationID: AVSIdentifier) {
