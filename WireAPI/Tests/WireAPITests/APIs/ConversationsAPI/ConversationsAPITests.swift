@@ -51,22 +51,21 @@ final class ConversationsAPITests: XCTestCase {
     }
 
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateRequests() async throws {
-        // Given
+        // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
-        // WHEN
+        // when
         let api = ConversationsAPIV1(httpClient: httpClient)
         let pager = try await api.getConversationIdentifiers()
 
-        // THEN
         for try await _ in pager {
             // trigger fetching date
         }
 
-        // validate requests
+        // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
             try await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
         }
@@ -79,13 +78,14 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient)
         let expectedIDs: [[QualifiedID]] = [[
             QualifiedID(
                 uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
             )
         ]]
+
+        let api = ConversationsAPIV1(httpClient: httpClient)
 
         // when
         let pager = try await api.getConversationIdentifiers()
