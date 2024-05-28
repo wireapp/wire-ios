@@ -35,6 +35,8 @@ extension FeatureRepository: FeatureChangeAcknowledger {
 
 extension UIAlertController {
 
+    private typealias Strings = L10n.Localizable.FeatureConfig
+
     class func fromFeatureChange(_ change: FeatureRepository.FeatureChange,
                                  acknowledger: FeatureChangeAcknowledger) -> UIAlertController? {
         switch change {
@@ -103,15 +105,7 @@ extension UIAlertController {
 
     }
 
-}
-
-private extension UIAlertController {
-
-    // MARK: - Helpers
-
-    typealias Strings = L10n.Localizable.FeatureConfig
-
-    static func alertForFeatureChange(
+    private static func alertForFeatureChange(
         message: String,
         onOK: @escaping () -> Void
     ) -> UIAlertController {
