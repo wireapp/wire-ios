@@ -43,7 +43,7 @@ class CallQualityController: NSObject {
     // MARK: - Configuration
 
     /// Whether we use a maxmimum budget for call surveying per user.
-    var usesCallSurveyBudget: Bool = false
+    var usesCallSurveyBudget: Bool = true
 
     /// The range of scores where we consider the call quality is not satisfying.
     let callQualityRejectionRange = 1 ... 2
