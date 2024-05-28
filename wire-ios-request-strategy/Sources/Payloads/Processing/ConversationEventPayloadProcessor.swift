@@ -1045,3 +1045,17 @@ struct ConversationEventPayloadProcessor {
     }
 
 }
+
+// MARK: - Payload parsing utils
+
+private extension ZMConversation {
+
+    func fetchOrCreateRoleForConversation(name: String) -> Role {
+        Role.fetchOrCreateRole(
+            with: name,
+            teamOrConversation: team != nil ? .team(team!) : .conversation(self),
+            in: managedObjectContext!
+        )
+    }
+
+}
