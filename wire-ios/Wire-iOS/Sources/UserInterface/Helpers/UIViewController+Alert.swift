@@ -21,12 +21,16 @@ import UIKit
 extension UIViewController {
 
     func presentLocalizedErrorAlert(_ error: LocalizedError) {
-        let alertController = UIAlertController(error, preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: error.localizedDescription,
+            message: error.failureReason,
+            preferredStyle: .alert
+        )
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .default
         ))
-        present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true)
     }
 
 }
