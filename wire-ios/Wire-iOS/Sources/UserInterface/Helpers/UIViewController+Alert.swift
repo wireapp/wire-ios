@@ -20,35 +20,6 @@ import UIKit
 
 extension UIViewController {
 
-    /// Present an alert with a OK button
-    ///
-    /// - Parameters:
-    ///   - title: optional title of the alert
-    ///   - message: message of the alert
-    ///   - animated: present the alert animated or not
-    ///   - okActionHandler: optional closure for the OK button
-    /// - Returns: the alert presented
-    @discardableResult
-    func presentAlertWithOKButton(title: String? = nil,
-                                  message: String,
-                                  animated: Bool = true,
-                                  okActionHandler: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .cancel,
-            handler: okActionHandler
-        ))
-
-        present(alert, animated: animated)
-
-        return alert
-    }
-
     func presentLocalizedErrorAlert(_ error: LocalizedError) {
         let alertController = UIAlertController(error, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(

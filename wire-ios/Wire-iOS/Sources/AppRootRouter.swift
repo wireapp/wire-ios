@@ -535,14 +535,30 @@ extension AppRootRouter {
 
         switch reason {
         case .sessionExpired:
-            rootViewController.presentAlertWithOKButton(
+            let alert = UIAlertController(
                 title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
-                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message)
+                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
+
+            rootViewController.present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
-            rootViewController.presentAlertWithOKButton(
+            let alert = UIAlertController(
                 title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
-                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message)
+                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
+
+            rootViewController.present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
