@@ -179,7 +179,7 @@ extension ZMConversation {
     }
 
     private func updateIsArchived(payload: [String: Any]) -> Bool {
-        if let silencedRef = payload.date(fromKey: PayloadKeys.OTRArchivedReferenceKey),
+        if let silencedRef = (payload as NSDictionary).optionalDate(forKey: PayloadKeys.OTRArchivedReferenceKey),
            self.updateArchived(silencedRef, synchronize: false) {
             self.internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
             return true
@@ -203,46 +203,6 @@ extension ZMConversation {
             return false
         }
         return self.conversationType != .self
-    }
-
-}
-
-// MARK: - Payload parsing utils
-
-extension ZMConversation {
-
-    public func fetchOrCreateRoleForConversation(name: String) -> Role {
-        return Role.fetchOrCreateRole(
-            with: name,
-            teamOrConversation: self.team != nil ? .team(self.team!) : .conversation(self),
-            in: self.managedObjectContext!)
-    }
-
-}
-
-extension Dictionary where Key == String, Value == Any {
-
-    func UUID(fromKey key: String) -> UUID? {
-        return (self[key] as? String).flatMap(Foundation.UUID.init(transportString:))
-    }
-
-    func date(fromKey key: String) -> Date? {
-        return (self as NSDictionary).optionalDate(forKey: key)
-    }
-
-    func domain(fromKey key: String) -> String? {
-        return optionalDictionary(forKey: key)?.optionalString(forKey: ZMConversation.PayloadKeys.domainKey)
-    }
-}
-
-extension Dictionary where Key == String, Value == Any? {
-
-    func UUID(fromKey key: String) -> UUID? {
-        return (self[key] as? String).flatMap(Foundation.UUID.init(transportString:))
-    }
-
-    func date(fromKey key: String) -> Date? {
-        return (self as NSDictionary).optionalDate(forKey: key)
     }
 
 }
