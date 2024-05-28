@@ -515,9 +515,16 @@ final class ConversationListViewModel: NSObject {
             ]
         }
 
-        // Only show favorites if the selected filter is favorites
-        if selectedFilter == .favorites {
+        // Filter sections based on the selected filter
+        switch selectedFilter {
+        case .groups:
+            kinds = [.groups]
+        case .favorites:
             kinds = [.favorites]
+        case .oneToOneConversations:
+            kinds = [.contacts, .contactRequests]
+        case .allConversations:
+            kinds = [.conversations, .contactRequests]
         }
 
         return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
