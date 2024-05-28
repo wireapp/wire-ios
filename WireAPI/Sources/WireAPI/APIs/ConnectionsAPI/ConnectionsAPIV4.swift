@@ -18,32 +18,9 @@
 
 import Foundation
 
-/// An object responsible for decoding the http response payload into
-/// an api model.
+class ConnectionsAPIV4: ConnectionsAPIV3 {
 
-struct ResponsePayloadDecoder {
-
-    let decoder: JSONDecoder
-
-    func decodePayload<T: Decodable>(
-        from response: HTTPResponse,
-        as type: T.Type
-    ) throws -> T {
-        guard let data = response.payload else {
-            throw ResponsePayloadDecoderError.missingResponseData
-        }
-
-        do {
-            return try decoder.decode(
-                T.self,
-                from: data
-            )
-        } catch {
-            throw ResponsePayloadDecoderError.failedToDecodePayload(
-                T.self,
-                error
-            )
-        }
+    override var apiVersion: APIVersion {
+        .v4
     }
-
 }
