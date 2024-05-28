@@ -118,6 +118,8 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             return finishWithoutShowingNotification()
         }
 
+        removeNotification(withSameMessageId: notification.messageNonce)
+
         WireLogger.notifications.info("session did generate a notification")
 
         defer { tearDown() }
@@ -140,7 +142,24 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         contentHandler(content)
     }
 
+<<<<<<< HEAD
     func reportCallEvent(
+=======
+    private func removeNotification(withSameMessageId messageNonce: UUID?) {
+        guard let messageNonce else { return }
+
+        let notificationCenter = UNUserNotificationCenter.current()
+
+        notificationCenter.getDeliveredNotifications { notifications in
+            let matched = notifications.first(where: { $0.userInfo.messageNonce == messageNonce })
+            if let id = matched?.request.identifier {
+                notificationCenter.removeDeliveredNotifications(withIdentifiers: [id])
+            }
+        }
+    }
+
+    public func reportCallEvent(
+>>>>>>> c2b64b7876 (fix: duplicate link notifications - WPB-9417 (#1487))
         _ callEvent: CallEventPayload,
         currentTimestamp: TimeInterval
     ) {
