@@ -610,7 +610,10 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let alertController = UIAlertController(
             title: "",
             message: ConversationError.cannotStart(username, username),
-            alertAction: .ok()
+            alertAction: UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .default
+            )
         )
         present(alertController, animated: true, completion: nil)
     }

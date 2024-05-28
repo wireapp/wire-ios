@@ -111,12 +111,18 @@ private extension UIAlertController {
 
     typealias Strings = L10n.Localizable.FeatureConfig
 
-    static func alertForFeatureChange(message: String,
-                                      onOK: @escaping () -> Void) -> UIAlertController {
+    static func alertForFeatureChange(
+        message: String,
+        onOK: @escaping () -> Void
+    ) -> UIAlertController {
 
-        return UIAlertController(title: Strings.Alert.genericTitle,
-                                 message: message,
-                                 alertAction: .ok { _ in onOK() })
+        UIAlertController(
+            title: Strings.Alert.genericTitle,
+            message: message,
+            alertAction: UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .default,
+                handler: { _ in onOK() }
+            ))
     }
-
 }

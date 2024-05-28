@@ -36,10 +36,6 @@ extension UIAlertController {
 }
 
 extension UIAlertAction {
-    public static func ok(_ completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
-        return UIAlertAction.ok(style: .default, handler: completion)
-    }
-
     public static func ok(style: Style = .default, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
         return UIAlertAction(
             title: "general.ok".localized,

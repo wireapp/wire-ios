@@ -51,7 +51,10 @@ extension UIViewController {
 
     func presentLocalizedErrorAlert(_ error: LocalizedError) {
         let alertController = UIAlertController(error, preferredStyle: .alert)
-        alertController.addAction(.ok())
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
         present(alertController, animated: true, completion: nil)
     }
 

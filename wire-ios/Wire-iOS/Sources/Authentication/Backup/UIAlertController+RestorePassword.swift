@@ -59,8 +59,12 @@ extension UIAlertController {
             message: nil,
             preferredStyle: .alert
         )
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default,
+            handler: completion
+        ))
 
-        controller.addAction(.ok(completion))
         return controller
     }
 
