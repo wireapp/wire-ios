@@ -126,7 +126,7 @@ final class RootViewController: UIViewController {
         transition(
             from: fromViewController,
             to: toViewController,
-            duration: 0.5,
+            duration: animated ? 0.5 : 0,
             options: .transitionCrossDissolve,
             animations: {
                 self.view.bringSubviewToFront(fromViewController.view)
