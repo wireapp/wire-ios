@@ -18,9 +18,9 @@
 
 import UIKit
 
-extension UIAlertController {
+extension BackupRestoreController {
 
-    static func requestRestorePassword(completion: @escaping (String?) -> Void) -> UIAlertController {
+    func requestRestorePassword(completion: @escaping (String?) -> Void) -> UIAlertController {
         let controller = UIAlertController(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackup.Password.title,
             message: nil,
@@ -53,7 +53,7 @@ extension UIAlertController {
         return controller
     }
 
-    static func importWrongPasswordError(completion: @escaping (UIAlertAction) -> Void) -> UIAlertController {
+    func importWrongPasswordError(completion: @escaping (UIAlertAction) -> Void) -> UIAlertController {
         let controller = UIAlertController(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackup.PasswordError.title,
             message: nil,
