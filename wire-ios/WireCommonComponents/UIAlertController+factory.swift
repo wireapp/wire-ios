@@ -22,28 +22,6 @@ public typealias AlertActionHandler = (UIAlertAction) -> Void
 
 extension UIAlertController {
 
-    /// Create an alert with a OK button
-    ///
-    /// - Parameters:
-    ///   - title: optional title of the alert
-    ///   - message: message of the alert
-    ///   - okActionHandler: a nullable closure for the OK button
-    /// - Returns: the alert presented
-    public static func alertWithOKButton(
-        title: String? = nil,
-        message: String,
-        okActionHandler: AlertActionHandler? = nil
-    ) -> UIAlertController {
-        let alert = UIAlertController(title: title,
-                                      message: message,
-                                      preferredStyle: .alert)
-
-        let okAction = UIAlertAction.ok(style: .cancel, handler: okActionHandler)
-        alert.addAction(okAction)
-
-        return alert
-    }
-
     public convenience init(
         title: String? = nil,
         message: String,

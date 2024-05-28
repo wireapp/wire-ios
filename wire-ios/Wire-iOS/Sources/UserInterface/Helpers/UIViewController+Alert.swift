@@ -33,10 +33,16 @@ extension UIViewController {
                                   message: String,
                                   animated: Bool = true,
                                   okActionHandler: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
-
-        let alert = UIAlertController.alertWithOKButton(title: title,
-                                                        message: message,
-                                                        okActionHandler: okActionHandler)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel,
+            handler: okActionHandler
+        ))
 
         present(alert, animated: animated)
 

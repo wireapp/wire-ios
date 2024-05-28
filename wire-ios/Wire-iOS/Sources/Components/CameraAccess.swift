@@ -46,10 +46,15 @@ final class CameraAccess: NSObject {
         at feature: CameraAccessFeature,
         from viewController: UIViewController
     ) {
-        let alert = UIAlertController.alertWithOKButton(
+        let alert = UIAlertController(
             title: L10n.Localizable.Conversation.InputBar.OngoingCallAlert.title,
-            message: feature.message
+            message: feature.message,
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         viewController.present(alert, animated: true)
     }

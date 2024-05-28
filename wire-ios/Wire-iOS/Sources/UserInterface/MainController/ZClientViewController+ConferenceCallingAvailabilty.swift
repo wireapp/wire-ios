@@ -56,7 +56,15 @@ extension ZClientViewController {
         let title = ConferenceCallingAlert.title
         let message = ConferenceCallingAlert.message
 
-        let alert = UIAlertController.alertWithOKButton(title: title, message: message)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         present(alert, animated: true)
     }
 
@@ -65,7 +73,15 @@ extension ZClientViewController {
         let title = ConferenceCallingAlert.title
         let message = ConferenceCallingAlert.message
 
-        let alert = UIAlertController.alertWithOKButton(title: title, message: message)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         present(alert, animated: true)
     }
 
