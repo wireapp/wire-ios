@@ -97,6 +97,27 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testGetConversationIdentifiers_givenV0AndErrorResponse_thenVerifyResponse() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        ]
+
+        let api = ConversationsAPIV0(httpClient: httpClient)
+
+        // when
+        // then
+        do {
+            _ = try await api.getConversationIdentifiers()
+        } catch let error as FailureResponse {
+            XCTAssertEqual(error.code, 503)
+            XCTAssertEqual(error.label, "service unavailable")
+        } catch {
+            XCTFail("expected error 'FailureResponse'")
+        }
+    }
+
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
@@ -141,6 +162,27 @@ final class ConversationsAPITests: XCTestCase {
         for try await ids in pager {
             // validate responses
             XCTAssertEqual(ids, expectedIDs)
+        }
+    }
+
+    func testGetConversationIdentifiers_givenV1AndErrorResponse_thenVerifyResponse() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        ]
+
+        let api = ConversationsAPIV1(httpClient: httpClient)
+
+        // when
+        // then
+        do {
+            _ = try await api.getConversationIdentifiers()
+        } catch let error as FailureResponse {
+            XCTAssertEqual(error.code, 503)
+            XCTAssertEqual(error.label, "service unavailable")
+        } catch {
+            XCTFail("expected error 'FailureResponse'")
         }
     }
 }
