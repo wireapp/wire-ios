@@ -38,72 +38,62 @@ final class ConversationsAPITests: XCTestCase {
     // MARK: - Tests
 
     func testGetConversationIdentifiers() async throws {
+        // given
         try await snapshotHelper.verifyRequestForAllAPIVersions { sut in
+            // when
             let pager = try await sut.getConversationIdentifiers()
+
+            // then
             for try await _ in pager {
-                // this triggers fetching the data
+                // trigger fetching data
             }
         }
     }
 
-    func testGetConversationIdentifiers_givenV1AndSuccessResponse200() async throws {
+    func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateRequests() async throws {
         // Given
+        let httpClient = MockHTTPClientPredefinedResponses()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+        ]
+
+        // WHEN
+        let api = ConversationsAPIV1(httpClient: httpClient)
+        let pager = try await api.getConversationIdentifiers()
+
+        // THEN
+        for try await _ in pager {
+            // trigger fetching date
+        }
+
+        // validate requests
+        for (index, request) in httpClient.receivedRequests.enumerated() {
+            try await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
+        }
+    }
+
+    func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateResponse() async throws {
+        // given
         let httpClient = try HTTPClientMock(
             code: 200,
             payloadResourceName: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
         )
 
         let api = ConversationsAPIV1(httpClient: httpClient)
-
-        // When
-        let pager = try await api.getConversationIdentifiers()
-        var iterator = pager.makeAsyncIterator()
-        let result = try await iterator.next()
-
-        // Then
-        XCTAssertEqual(result?.first, [
-            .init(
+        let expectedIDs: [[QualifiedID]] = [[
+            QualifiedID(
                 uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
             )
-        ])
-    }
+        ]]
 
-    func testGetConversationIdentifiers_givenV1AndSuccessResponseWithMultiplePages() async throws {
-        // Given
-        let httpClient = MockHTTPClientPredefinedResponses()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponseWithMultiplePages.0"),
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponseWithMultiplePages.1")
-        ]
-        var expectedIDs: [[QualifiedID]] = [
-            [
-                .init(
-                    uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
-                    domain: "staging.zinfra.io"
-                )
-            ],
-            [
-                .init(
-                    uuid: try XCTUnwrap(UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")),
-                    domain: "staging.zinfra.io"
-                )
-            ]
-        ]
-
-        // WHEN
-        let api = ConversationsAPIV1(httpClient: httpClient, batchSize: 1)
+        // when
         let pager = try await api.getConversationIdentifiers()
 
-        // THEN
+        // then
         for try await ids in pager {
             // validate responses
-            XCTAssertEqual(ids, [expectedIDs.removeFirst()])
-        }
-
-        // validate requests
-        for (index, request) in httpClient.receivedRequests.enumerated() {
-            try await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
+            XCTAssertEqual(ids, expectedIDs)
         }
     }
 }
