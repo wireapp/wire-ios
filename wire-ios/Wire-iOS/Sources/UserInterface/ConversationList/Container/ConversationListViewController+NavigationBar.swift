@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-enum FilterType {
+enum ConversationFilterType {
     case allConversations, favorites, groups, oneToOneConversations
 }
 
@@ -188,6 +188,11 @@ extension ConversationListViewController {
         filterButton.menu = filterMenu
 
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
+
+        // Trigger a layout update to ensure the correct positioning
+        // of the add conversation button and filter button
+        // when the filter button is tapped.
+        self.view.setNeedsLayout()
     }
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
@@ -206,7 +211,7 @@ extension ConversationListViewController {
     /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
-        filter: FilterType,
+        filter: ConversationFilterType,
         isSelected: Bool
     ) -> UIAction {
         let imageName = getFilterImageName(for: filter, isSelected: isSelected).rawValue
@@ -239,17 +244,12 @@ extension ConversationListViewController {
     }
 
     /// Method to apply the selected filter and update the UI accordingly
-    private func applyFilter(_ filter: FilterType) {
+    private func applyFilter(_ filter: ConversationFilterType) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
-
-        // Trigger a layout update to ensure the correct positioning
-        // of the add conversation button and filter button
-        // when the filter button is tapped.
-        self.view.setNeedsLayout()
     }
 
-    private func getFilterImageName(for filter: FilterType, isSelected: Bool) -> FilterImageName {
+    private func getFilterImageName(for filter: ConversationFilterType, isSelected: Bool) -> FilterImageName {
         switch filter {
         case .allConversations:
             return isSelected ? .textBubbleFill : .textBubble
