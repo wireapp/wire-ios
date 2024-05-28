@@ -89,7 +89,7 @@ extension ZMConversation {
             }).count.logRound()
         ]
 
-        return attributes.updated(other: guestAttributes)
+        return attributes.merging(guestAttributes) { _, new in new }
     }
 
     var guestAttributes: [String: Any] {
