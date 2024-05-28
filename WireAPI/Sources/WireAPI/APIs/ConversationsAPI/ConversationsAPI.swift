@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Access to conversations API.
 public protocol ConversationsAPI {
 
+    /// Fetch all conversation identifiers in batches.
     func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
 
 }
