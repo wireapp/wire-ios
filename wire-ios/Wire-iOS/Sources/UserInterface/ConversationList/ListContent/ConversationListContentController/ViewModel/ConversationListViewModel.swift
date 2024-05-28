@@ -522,7 +522,7 @@ final class ConversationListViewModel: NSObject {
         case .favorites:
             kinds = [.favorites]
         case .oneToOneConversations:
-            kinds = [.contacts]
+            kinds = [.contacts, .contactRequests]
         case .allConversations:
             kinds = [.conversations, .contactRequests]
         }
