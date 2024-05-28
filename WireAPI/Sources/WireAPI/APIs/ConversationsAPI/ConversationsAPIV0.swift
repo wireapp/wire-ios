@@ -22,7 +22,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     // MARK: - Constants
 
-    enum Constants {
+    enum Constant {
         static let batchSize = 500
     }
 
@@ -31,13 +31,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     var apiVersion: APIVersion { .v0 }
 
     let httpClient: HTTPClient
-    let batchSize: Int
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient, batchSize: Int = Constants.batchSize) {
+    init(httpClient: HTTPClient) {
         self.httpClient = httpClient
-        self.batchSize = batchSize
     }
 
     public func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
@@ -46,7 +44,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
         return PayloadPager<[QualifiedID]> { start in
             // body Params
-            let params = PaginationRequest(pagingState: start, size: self.batchSize)
+            let params = PaginationRequest(pagingState: start, size: Constant.batchSize)
             let body = try jsonEncoder.encode(params)
 
             let request = HTTPRequest(
@@ -58,7 +56,6 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
             return try ResponseParser()
                 .success(code: 200, type: PaginatedConversationIDsV0.self)
-                .failure(code: 400, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
         }
     }
