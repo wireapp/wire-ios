@@ -515,9 +515,9 @@ final class ConversationListViewModel: NSObject {
             ]
         }
 
-        // Only show groups if the selected filter is groups
-        if selectedFilter == .groups {
-            kinds = [.groups]
+        // Only show favorites if the selected filter is favorites
+        if selectedFilter == .favorites {
+            kinds = [.favorites]
         }
 
         return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
