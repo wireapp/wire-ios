@@ -25,15 +25,9 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     let httpClient: HTTPClient
-    let fetchLimit: Int
 
-    convenience init(httpClient: HTTPClient) {
-        self.init(httpClient: httpClient, batchSize: Constants.batchSize)
-    }
-
-    init(httpClient: HTTPClient, batchSize: Int) {
+    init(httpClient: HTTPClient) {
         self.httpClient = httpClient
-        self.fetchLimit = Constants.batchSize
     }
 
     var apiVersion: APIVersion {

@@ -215,3 +215,30 @@ private extension NSManagedObject {
     }
 
 }
+
+// MARK: Mergeable
+
+protocol Mergeable {
+    func merged(with other: Self) -> Self
+}
+
+private extension Dictionary where Value: Mergeable {
+
+    mutating func merge(with other: Dictionary) {
+        other.forEach { key, value in
+            if let currentValue = self[key] {
+                self[key] = currentValue.merged(with: value)
+            } else {
+                self[key] = value
+            }
+        }
+    }
+
+    func merged(with other: Dictionary) -> Dictionary {
+        var newDict = self
+        other.forEach { key, value in
+            newDict[key] = newDict[key]?.merged(with: value) ?? value
+        }
+        return newDict
+    }
+}

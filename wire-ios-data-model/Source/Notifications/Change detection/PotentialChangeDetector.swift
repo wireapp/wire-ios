@@ -49,13 +49,3 @@ class PotentialChangeDetector: ChangeDetector {
     }
 
 }
-
-// MARK: - Helper extensions
-
-private extension Dictionary where Value: SetAlgebra {
-
-    subscript(key: Key, default defaultValue: Value) -> Value {
-        return self[key] ?? defaultValue
-    }
-
-}
