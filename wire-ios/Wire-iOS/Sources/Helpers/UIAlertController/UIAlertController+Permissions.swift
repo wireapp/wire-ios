@@ -21,7 +21,7 @@ import WireCommonComponents
 
 extension UIAlertController {
 
-    class func cameraPermissionAlert(with completion: AlertActionHandler? = nil) -> UIAlertController {
+    class func cameraPermissionAlert(with completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
         return permissionAlert(
             title: L10n.Localizable.Voice.Alert.CameraWarning.title,
             message: "NSCameraUsageDescription".infoPlistLocalized,
@@ -46,7 +46,7 @@ extension UIAlertController {
     private class func permissionAlert(
         title: String,
         message: String,
-        completion: AlertActionHandler? = nil
+        completion: ((UIAlertAction) -> Void)? = nil
     ) -> UIAlertController {
 
         let alert = UIAlertController(
@@ -66,7 +66,7 @@ extension UIAlertAction {
 
     typealias GeneralLocale = L10n.Localizable.General
 
-    class func actionLater(with completion: AlertActionHandler?) -> UIAlertAction {
+    class func actionLater(with completion: ((UIAlertAction) -> Void)?) -> UIAlertAction {
         return UIAlertAction(
             title: GeneralLocale.later,
             style: .cancel,
@@ -75,7 +75,7 @@ extension UIAlertAction {
             })
     }
 
-    class func actionSettings(with completion: AlertActionHandler?) -> UIAlertAction {
+    class func actionSettings(with completion: ((UIAlertAction) -> Void)?) -> UIAlertAction {
         return UIAlertAction(
             title: GeneralLocale.openSettings,
             style: .default,

@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension UIViewController {
 
-    func showAlert(for error: LocalizedError, handler: AlertActionHandler? = nil) {
+    func showAlert(for error: LocalizedError, handler: ((UIAlertAction) -> Void)? = nil) {
         let alert = UIAlertController(
             title: error.errorDescription,
             message: error.failureReason ?? L10n.Localizable.Error.User.unkownError,
@@ -37,7 +37,7 @@ extension UIViewController {
         present(alert, animated: true)
     }
 
-    func showAlert(for error: Error, handler: AlertActionHandler? = nil) {
+    func showAlert(for error: Error, handler: ((UIAlertAction) -> Void)? = nil) {
         let nsError: NSError = error as NSError
         var message = ""
 

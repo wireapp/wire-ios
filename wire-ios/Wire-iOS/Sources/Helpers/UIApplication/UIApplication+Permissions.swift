@@ -84,7 +84,7 @@ extension UIApplication {
         })
     }
 
-    private class func wr_warnAboutCameraPermission(withCompletion completion: AlertActionHandler?) {
+    private class func wr_warnAboutCameraPermission(withCompletion completion: ((UIAlertAction) -> Void)?) {
         let currentResponder = UIResponder.currentFirst
         (currentResponder as? UIView)?.endEditing(true)
 
