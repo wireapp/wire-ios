@@ -50,7 +50,54 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateRequests() async throws {
+    func testGetConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyRequests() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
+        ]
+
+        // when
+        let api = ConversationsAPIV0(httpClient: httpClient)
+        let pager = try await api.getConversationIdentifiers()
+
+        for try await _ in pager {
+            // trigger fetching date
+        }
+
+        // then
+        for (index, request) in httpClient.receivedRequests.enumerated() {
+            try await snapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
+        }
+    }
+
+    func testGetConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
+        ]
+
+        let expectedIDs: [[QualifiedID]] = [[
+            QualifiedID(
+                uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
+                domain: ""
+            )
+        ]]
+
+        let api = ConversationsAPIV0(httpClient: httpClient)
+
+        // when
+        let pager = try await api.getConversationIdentifiers()
+
+        // then
+        for try await ids in pager {
+            // validate responses
+            XCTAssertEqual(ids, expectedIDs)
+        }
+    }
+
+    func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
@@ -71,7 +118,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateResponse() async throws {
+    func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
