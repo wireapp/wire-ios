@@ -97,7 +97,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV0AndErrorResponse_thenVerifyResponse() async throws {
+    func testGetConversationIdentifiers_givenV0AndErrorResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
@@ -165,7 +165,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV1AndErrorResponse_thenVerifyResponse() async throws {
+    func testGetConversationIdentifiers_givenV1AndErrorResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
