@@ -52,7 +52,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateRequests() async throws {
         // Given
-        let httpClient = MockHTTPClientPredefinedResponses()
+        let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
@@ -74,10 +74,10 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenValidateResponse() async throws {
         // given
-        let httpClient = try HTTPClientMock(
-            code: 200,
-            payloadResourceName: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
-        )
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+        ]
 
         let api = ConversationsAPIV1(httpClient: httpClient)
         let expectedIDs: [[QualifiedID]] = [[
