@@ -55,35 +55,24 @@ extension UIAlertController {
             preferredStyle: .alert
         )
 
-        alert.addAction(.actionLater(with: completion))
-        alert.addAction(.actionSettings(with: completion))
-
-        return alert
-    }
-}
-
-extension UIAlertAction {
-
-    typealias GeneralLocale = L10n.Localizable.General
-
-    class func actionLater(with completion: ((UIAlertAction) -> Void)?) -> UIAlertAction {
-        return UIAlertAction(
-            title: GeneralLocale.later,
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.later,
             style: .cancel,
             handler: { action in
                 completion?(action)
-            })
-    }
-
-    class func actionSettings(with completion: ((UIAlertAction) -> Void)?) -> UIAlertAction {
-        return UIAlertAction(
-            title: GeneralLocale.openSettings,
+            }
+        ))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.openSettings,
             style: .default,
             handler: { action in
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url, options: [:])
                 }
                 completion?(action)
-            })
+            }
+        ))
+
+        return alert
     }
 }
