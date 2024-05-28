@@ -24,15 +24,15 @@ extension UIAlertController {
         let controller = UIAlertController(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.title,
             message: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.message,
-            alertAction: .cancel()
+            preferredStyle: .alert
         )
-
-        let proceedAction = UIAlertAction(
+        controller.addAction(.cancel())
+        controller.addAction(UIAlertAction(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
             style: .default,
             handler: { _ in completion() }
-        )
-        controller.addAction(proceedAction)
+        ))
+
         return controller
     }
 

@@ -145,13 +145,13 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
         let alert = UIAlertController(
             title: "Calling Error",
             message: "AVS I/O error",
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            )
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         alert.presentTopmost()
-
     }
 
 }

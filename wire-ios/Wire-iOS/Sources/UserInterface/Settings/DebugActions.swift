@@ -169,11 +169,12 @@ enum DebugActions {
         let alert = UIAlertController(
             title: "Analytics identifier",
             message: "\(selfUser.analyticsIdentifier ?? "nil")",
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            )
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -193,11 +194,12 @@ enum DebugActions {
         let alert = UIAlertController(
             title: "API Version info",
             message: message,
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            )
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -215,12 +217,15 @@ enum DebugActions {
 
         CallQualityController.resetSurveyMuteFilter()
 
-        let alert = UIAlertController(title: "Success",
-                                      message: "The call quality survey will be displayed after the next call.",
-                                      alertAction: UIAlertAction(
-                                        title: L10n.Localizable.General.ok,
-                                        style: .cancel
-                                      ))
+        let alert = UIAlertController(
+            title: "Success",
+            message: "The call quality survey will be displayed after the next call.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -303,11 +308,13 @@ enum DebugActions {
         let alertController = UIAlertController(
             title: "Updated",
             message: "Badge count  has been re-calculated",
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            )
+            preferredStyle: .alert
         )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
         controller.show(alertController, sender: nil)
     }
 

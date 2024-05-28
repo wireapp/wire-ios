@@ -344,11 +344,12 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let alert = UIAlertController(
             title: ConnectionError.title,
             message: ConnectionError.genericError,
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            )
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         present(
             alert,
@@ -362,11 +363,12 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let alert = UIAlertController(
             title: ConversationError.title,
             message: ConversationError.missingLegalholdConsent,
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            )
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         present(
             alert,

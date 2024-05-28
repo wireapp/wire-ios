@@ -656,11 +656,13 @@ extension ShareExtensionViewController {
                 let alert = UIAlertController(
                     title: "",
                     message: L10n.ShareExtension.Unlock.Alert.message,
-                    alertAction: UIAlertAction(
-                        title: L10n.General.ok,
-                        style: .cancel
-                    )
+                    preferredStyle: .alert
                 )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
+
                 self.present(alert, animated: true, completion: nil)
 
                 localAuthenticationStatus = .denied

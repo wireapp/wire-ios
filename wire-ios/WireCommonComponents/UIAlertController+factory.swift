@@ -19,18 +19,3 @@
 import UIKit
 
 public typealias AlertActionHandler = (UIAlertAction) -> Void
-
-extension UIAlertController {
-
-    public convenience init(
-        title: String? = nil,
-        message: String,
-        alertAction: UIAlertAction
-    ) {
-        self.init(title: title,
-                  message: message,
-                  preferredStyle: .alert)
-        addAction(alertAction)
-    }
-
-}

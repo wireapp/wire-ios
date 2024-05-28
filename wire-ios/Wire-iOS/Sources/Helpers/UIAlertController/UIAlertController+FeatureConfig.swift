@@ -116,13 +116,17 @@ private extension UIAlertController {
         onOK: @escaping () -> Void
     ) -> UIAlertController {
 
-        UIAlertController(
+        let alert = UIAlertController(
             title: Strings.Alert.genericTitle,
             message: message,
-            alertAction: UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .default,
-                handler: { _ in onOK() }
-            ))
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default,
+            handler: { _ in onOK() }
+        ))
+
+        return alert
     }
 }
