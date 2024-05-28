@@ -27,6 +27,12 @@ final class ConversationListViewModel: NSObject {
 
     typealias SectionIdentifier = String
 
+    var selectedFilter: ConversationFilterType = .allConversations {
+        didSet {
+            reloadConversationList()
+        }
+    }
+
     fileprivate struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
@@ -55,7 +61,7 @@ final class ConversationListViewModel: NSObject {
 
             var identifier: SectionIdentifier {
                 switch self {
-                case.folder(label: let label):
+                case .folder(label: let label):
                     return label.remoteIdentifier?.transportString() ?? "folder"
                 default:
                     return canonicalName
@@ -156,9 +162,11 @@ final class ConversationListViewModel: NSObject {
             items = Array(elements)
         }
 
-        init(kind: Kind,
-             conversationDirectory: ConversationDirectoryType,
-             collapsed: Bool) {
+        init(
+            kind: Kind,
+            conversationDirectory: ConversationDirectoryType,
+            collapsed: Bool
+        ) {
             items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
             self.collapsed = collapsed
@@ -225,7 +233,7 @@ final class ConversationListViewModel: NSObject {
 
         static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
             return lhs.isFavorite == rhs.isFavorite &&
-                   lhs.item == rhs.item
+            lhs.item == rhs.item
         }
     }
 
@@ -234,7 +242,7 @@ final class ConversationListViewModel: NSObject {
         guard isFolderStatePersistenceEnabled else { return .init() }
 
         guard let persistentPath = ConversationListViewModel.persistentURL,
-            let jsonData = try? Data(contentsOf: persistentPath) else { return State()
+              let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
 
         do {
@@ -293,7 +301,7 @@ final class ConversationListViewModel: NSObject {
     /// When folderEnabled == true, returns false
     ///
     /// - Parameter sectionIndex: section number of collection view
-    /// - Returns: if the section exists and visible, return true. 
+    /// - Returns: if the section exists and visible, return true.
     func sectionHeaderVisible(section: Int) -> Bool {
         guard sections.indices.contains(section),
               kind(of: section) != .contactRequests,
@@ -476,6 +484,11 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    func reloadConversationList() {
+        updateAllSections()
+        delegate?.listViewModelShouldBeReloaded()
+    }
+
     private func updateAllSections() {
         sections = createSections()
     }
@@ -486,16 +499,25 @@ final class ConversationListViewModel: NSObject {
 
         var kinds: [Section.Kind]
         if folderEnabled {
-            kinds = [.contactRequests,
-                     .favorites,
-                     .groups,
-                     .contacts]
+            kinds = [
+                .contactRequests,
+                .favorites,
+                .groups,
+                .contacts
+            ]
 
             let folders: [Section.Kind] = conversationDirectory.allFolders.map({ .folder(label: $0) })
             kinds.append(contentsOf: folders)
         } else {
-            kinds = [.contactRequests,
-                     .conversations]
+            kinds = [
+                .contactRequests,
+                .conversations
+            ]
+        }
+
+        // Only show favorites if the selected filter is favorites
+        if selectedFilter == .favorites {
+            kinds = [.favorites]
         }
 
         return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
@@ -514,7 +536,7 @@ final class ConversationListViewModel: NSObject {
 
         var newValue: [Section]
         if let kind,
-            let sectionNumber = self.sectionNumber(for: kind) {
+           let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
 
@@ -587,13 +609,11 @@ final class ConversationListViewModel: NSObject {
 
     func folderBadge(at sectionIndex: Int) -> Int {
         return sections[sectionIndex].items.filter({
-             let status = ($0.item as? ZMConversation)?.status
-             return status?.messagesRequiringAttention.isEmpty == false &&
-                    status?.showingAllMessages == true
+            let status = ($0.item as? ZMConversation)?.status
+            return status?.messagesRequiringAttention.isEmpty == false &&
+            status?.showingAllMessages == true
         }).count
     }
-
-    // MARK: - collapse section
 
     func collapsed(at sectionIndex: Int) -> Bool {
         return collapsed(at: sectionIndex, state: state)
@@ -664,8 +684,7 @@ final class ConversationListViewModel: NSObject {
         var jsonString: String? {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .sortedKeys
-            guard let jsonData = try? encoder.encode(self) else {
-                return nil }
+            guard let jsonData = try? encoder.encode(self) else { return nil }
 
             return String(data: jsonData, encoding: .utf8)
         }

@@ -21,11 +21,11 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-extension ConversationListViewController {
+enum ConversationFilterType {
+    case allConversations, favorites, groups, oneToOneConversations
+}
 
-    enum FilterType {
-        case allConversations, favorites, groups, oneToOneConversations
-    }
+extension ConversationListViewController {
 
     enum FilterImageName: String {
         case textBubble = "text.bubble"
@@ -137,15 +137,12 @@ extension ConversationListViewController {
         }
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
-        // Filter Conversations Button
-        let filterImage = UIImage(resource: .ConversationList.Header.filterConversations)
-
         let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
         let filledFilterImage = UIImage(resource: .ConversationList.Header.filterConversationsFilled)
 
         var selectedFilterImage: UIImage
 
-        switch selectedFilter {
+        switch listContentController.listViewModel.selectedFilter {
         case .allConversations:
             selectedFilterImage = defaultFilterImage
         case .favorites, .groups, .oneToOneConversations:
@@ -156,22 +153,22 @@ extension ConversationListViewController {
         let allConversationsAction = createFilterAction(
             title: FilterMenuLocale.AllConversations.title,
             filter: .allConversations,
-            isSelected: selectedFilter == .allConversations
+            isSelected: listContentController.listViewModel.selectedFilter == .allConversations
         )
         let favoritesAction = createFilterAction(
             title: FilterMenuLocale.Favorites.title,
             filter: .favorites,
-            isSelected: selectedFilter == .favorites
+            isSelected: listContentController.listViewModel.selectedFilter == .favorites
         )
         let groupsAction = createFilterAction(
             title: FilterMenuLocale.Groups.title,
             filter: .groups,
-            isSelected: selectedFilter == .groups
+            isSelected: listContentController.listViewModel.selectedFilter == .groups
         )
         let oneToOneConversationsAction = createFilterAction(
             title: FilterMenuLocale.OneOnOneConversations.title,
             filter: .oneToOneConversations,
-            isSelected: selectedFilter == .oneToOneConversations
+            isSelected: listContentController.listViewModel.selectedFilter == .oneToOneConversations
         )
 
         // Create the menu
@@ -191,11 +188,30 @@ extension ConversationListViewController {
         filterButton.menu = filterMenu
 
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
+
+        // Trigger a layout update to ensure the correct positioning
+        // of the add conversation button and filter button
+        // when the filter button is tapped.
+        self.view.setNeedsLayout()
     }
 
+    /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
+    ///
+    /// This method generates an action that updates the filter applied to the content list.
+    /// It configures the action's image and title based on the filter type and whether it is selected.
+    /// When the action is triggered, it updates the filter, adjusts the navigation bar buttons,
+    /// reloads the list sections, and triggers a layout update to ensure correct positioning of the buttons.
+    ///
+    /// - Parameters:
+    ///   - title: The title of the filter action.
+    ///   - filter: The filter type to be applied when the action is triggered.
+    ///   - isSelected: A boolean indicating whether the filter is currently selected.
+    /// - Returns: A `UIAction` configured with the provided title, filter type, and selection state.
+    ///
+    /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
-        filter: FilterType,
+        filter: ConversationFilterType,
         isSelected: Bool
     ) -> UIAction {
         let imageName = getFilterImageName(for: filter, isSelected: isSelected).rawValue
@@ -219,8 +235,7 @@ extension ConversationListViewController {
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
 
         let action = UIAction(title: title, image: tintedActionImage) { [weak self] _ in
-            self?.selectedFilter = filter
-            self?.setupRightNavigationBarButtons()
+            self?.applyFilter(filter)
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
@@ -228,7 +243,13 @@ extension ConversationListViewController {
         return action
     }
 
-    private func getFilterImageName(for filter: FilterType, isSelected: Bool) -> FilterImageName {
+    /// Method to apply the selected filter and update the UI accordingly
+    private func applyFilter(_ filter: ConversationFilterType) {
+        self.listContentController.listViewModel.selectedFilter = filter
+        self.setupRightNavigationBarButtons()
+    }
+
+    private func getFilterImageName(for filter: ConversationFilterType, isSelected: Bool) -> FilterImageName {
         switch filter {
         case .allConversations:
             return isSelected ? .textBubbleFill : .textBubble
