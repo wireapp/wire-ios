@@ -58,13 +58,4 @@ extension UIViewController {
         present(alertController, animated: true, completion: nil)
     }
 
-    // MARK: - user profile deep link
-
-    @discardableResult
-    func presentInvalidUserProfileLinkAlert(okActionHandler: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
-        return presentAlertWithOKButton(title: L10n.Localizable.UrlAction.InvalidUser.title,
-                                        message: L10n.Localizable.UrlAction.InvalidUser.message,
-                                        okActionHandler: okActionHandler)
-    }
-
 }
