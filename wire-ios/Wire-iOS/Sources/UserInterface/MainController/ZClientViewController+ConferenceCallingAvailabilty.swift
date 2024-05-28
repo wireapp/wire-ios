@@ -21,7 +21,7 @@ import WireSyncEngine
 
 extension ZClientViewController {
 
-     func presentConferenceCallingAvailableAlert() {
+    func presentConferenceCallingAvailableAlert() {
         typealias ConferenceCallingAlert = L10n.Localizable.FeatureConfig.Update.ConferenceCalling.Alert
         let title = ConferenceCallingAlert.title
         let message = ConferenceCallingAlert.message
@@ -29,9 +29,13 @@ extension ZClientViewController {
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wireEnterpriseLearnMore, presenter: self))
-        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] _ in
-            self?.confirmChanges()
-        }))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.confirmChanges()
+            }
+        ))
 
         present(alert, animated: true)
     }

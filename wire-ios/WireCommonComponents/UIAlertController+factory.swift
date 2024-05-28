@@ -34,13 +34,3 @@ extension UIAlertController {
     }
 
 }
-
-extension UIAlertAction {
-    public static func ok(style: Style = .default, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
-        return UIAlertAction(
-            title: "general.ok".localized,
-            style: style,
-            handler: handler
-        )
-    }
-}

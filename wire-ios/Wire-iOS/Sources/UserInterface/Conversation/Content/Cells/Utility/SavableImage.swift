@@ -134,7 +134,10 @@ final class SavableImage: NSObject {
         let alert = UIAlertController(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,
             message: (error as NSError).localizedDescription,
-            alertAction: .ok(style: .cancel))
+            alertAction: UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
 
         AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }

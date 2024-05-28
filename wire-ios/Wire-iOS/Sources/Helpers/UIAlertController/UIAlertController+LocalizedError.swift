@@ -37,9 +37,14 @@ extension UIAlertController {
         title: String,
         message: String
     ) {
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                alertAction: .ok(style: .cancel))
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            alertAction: UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            )
+        )
 
         UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alertController, animated: true)
     }

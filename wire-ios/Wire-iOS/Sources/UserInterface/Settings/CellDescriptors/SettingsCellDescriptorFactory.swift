@@ -78,7 +78,10 @@ struct SettingsCellDescriptorFactory {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.AddAccount.Error.title,
                         message: L10n.Localizable.Self.Settings.AddAccount.Error.message,
-                        alertAction: .ok(style: .cancel))
+                        alertAction: UIAlertAction(
+                            title: L10n.Localizable.General.ok,
+                            style: .cancel
+                        ))
                     controller.present(alert, animated: true, completion: nil)
                 }
             }

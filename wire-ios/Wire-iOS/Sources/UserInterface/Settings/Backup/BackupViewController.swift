@@ -139,7 +139,10 @@ private extension BackupViewController {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
             message: error.localizedDescription,
-            alertAction: .ok(style: .cancel)
+            alertAction: UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            )
         )
 
         present(alert, animated: true)
