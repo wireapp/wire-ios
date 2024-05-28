@@ -147,7 +147,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
-        guard isActiveCallShown else { completion?(); return }
+        guard isActiveCallShown else {
+            completion?()
+            return
+        }
         dismissActiveCall(animated: animated, completion: completion)
     }
 
