@@ -49,7 +49,7 @@ struct Changes: Mergeable {
 
         return Changes(
             changedKeys: changedKeys.union(other.changedKeys),
-            originalChanges: originalChanges.updated(other: other.originalChanges),
+            originalChanges: originalChanges.merging(other.originalChanges) { _, new in new },
             mayHaveUnknownChanges: mayHaveUnknownChanges || other.mayHaveUnknownChanges
         )
     }
