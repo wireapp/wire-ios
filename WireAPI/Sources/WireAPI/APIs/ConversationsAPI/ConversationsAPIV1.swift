@@ -39,7 +39,6 @@ class ConversationsAPIV1: ConversationsAPIV0 {
 
             return try ResponseParser()
                 .success(code: 200, type: PaginatedConversationIDsV1.self)
-                .failure(code: 400, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
         }
     }
