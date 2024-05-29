@@ -27,7 +27,6 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         otherUser = MockUserType.createUser(name: "Bruno")
-        FontScheme.shared.configure(with: .large)
     }
 
     override func tearDown() {
