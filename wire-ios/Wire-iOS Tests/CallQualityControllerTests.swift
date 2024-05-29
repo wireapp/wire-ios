@@ -39,10 +39,6 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         sut.router = router
         sut.usesCallSurveyBudget = false
 
-        // temporary fix when running test individually
-        FontScheme.configure(with: .large)
-        Analytics.shared = Analytics(optedOut: true)
-
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
