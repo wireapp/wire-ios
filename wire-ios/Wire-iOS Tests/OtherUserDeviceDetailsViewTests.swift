@@ -21,7 +21,7 @@ import SwiftUI
 import WireRequestStrategySupport
 import XCTest
 
-final class OtherUserDeviceDetailsViewTests: BaseSnapshotTestCase {
+final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()

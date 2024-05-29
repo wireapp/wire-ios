@@ -19,8 +19,7 @@
 import SnapshotTesting
 @testable import Wire
 import XCTest
-
-final class SettingsTechnicalReportViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
