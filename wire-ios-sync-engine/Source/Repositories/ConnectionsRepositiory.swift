@@ -49,8 +49,12 @@ final class ConnectionsRepository: ConnectionsRepositoryProtocol {
         let connectionsPager = try await connectionsAPI.getConnections()
 
         for try await connections in connectionsPager {
-            for connection in connections {
-                try await storeConnection(connection)
+            await withThrowingTaskGroup(of: Void.self) { taskGroup in
+                for connection in connections {
+                    taskGroup.addTask {
+                        try await self.storeConnection(connection)
+                    }
+                }
             }
         }
     }
