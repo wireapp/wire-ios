@@ -42,8 +42,6 @@ final class SelfCallParticipantViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        FontScheme.configure(with: .large)
-
         stubProvider = StreamStubProvider()
         previewViewMock = MockAVSVideoPreview()
 

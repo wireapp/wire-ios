@@ -38,7 +38,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callConversationProvider = MockCallConversationProvider()
         sut = MockCallQualityController()
         sut.router = router
-        FontScheme.configure(with: .large)
+
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
