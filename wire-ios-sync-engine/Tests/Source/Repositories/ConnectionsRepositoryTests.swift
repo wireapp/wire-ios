@@ -57,6 +57,34 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
+    func testPullConnections_GivenOneConnectionFails_OtherConnectionsAreStored() async throws {
+        // Mock
+        let connection = Scaffolding.connection
+        let brokenConnection = WireAPI.Connection(senderId: nil,
+                                                  receiverId: nil,
+                                                  receiverQualifiedId: nil,
+                                                  conversationId: nil,
+                                                  qualifiedConversationId: nil,
+                                                  lastUpdate: Date(),
+                                                  status: .pending)
+
+        connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
+
+            return WireAPI.PayloadPager.Page(element: [brokenConnection, connection], hasMore: false, nextStart: "first")
+        })
+
+        // When
+        try await sut.pullConnections()
+
+        // Then
+        await context.perform { [context] in
+            // There is a team in the database.
+            let fetchRequest = NSFetchRequest<any NSFetchRequestResult>(entityName: ZMConnection.entityName())
+            let a = context.executeFetchRequestOrAssert(fetchRequest)
+            XCTAssertEqual(a.count, 1)
+        }
+    }
+
     func testPullConnections_GivenConnectionDoesNotExist_FederationDisabled() async throws {
         try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: false)
     }
@@ -66,18 +94,13 @@ final class ConnectionsRepositoryTests: XCTestCase {
         try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: true)
     }
 
+    // MARK: Private
+
     func internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: Bool,
                                                                  file: StaticString = #file,
                                                                  line: UInt = #line) async throws {
         // Mock
-        let connection = WireAPI.Connection(senderId: Scaffolding.member1ID.uuid,
-                                            receiverId: Scaffolding.member2ID.uuid,
-                                            receiverQualifiedId: Scaffolding.member2ID,
-                                            conversationId: Scaffolding.conversationID.uuid,
-                                            qualifiedConversationId: Scaffolding.conversationID,
-                                            lastUpdate: Scaffolding.lastUpdate,
-                                            status: Scaffolding.connectionStatus)
-
+        let connection = Scaffolding.connection
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
             return WireAPI.PayloadPager.Page(element: [connection], hasMore: false, nextStart: "first")
         })
@@ -120,4 +143,12 @@ private enum Scaffolding {
     static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
     static let lastUpdate = Date()
     static let connectionStatus = ConnectionStatus.accepted
+
+    static let connection = WireAPI.Connection(senderId: Scaffolding.member1ID.uuid,
+                                               receiverId: Scaffolding.member2ID.uuid,
+                                               receiverQualifiedId: Scaffolding.member2ID,
+                                               conversationId: Scaffolding.conversationID.uuid,
+                                               qualifiedConversationId: Scaffolding.conversationID,
+                                               lastUpdate: Scaffolding.lastUpdate,
+                                               status: Scaffolding.connectionStatus)
 }
