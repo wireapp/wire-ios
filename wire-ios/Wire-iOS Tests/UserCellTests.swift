@@ -20,7 +20,7 @@
 import WireUtilities
 import XCTest
 
-final class UserCellTests: BaseSnapshotTestCase {
+final class UserCellTests: XCTestCase {
 
     // MARK: - Properties
 

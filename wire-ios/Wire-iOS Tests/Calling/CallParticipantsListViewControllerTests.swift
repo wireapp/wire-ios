@@ -44,7 +44,7 @@ final class CallParticipantsListHelper {
 
 }
 
-final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
+final class CallParticipantsListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

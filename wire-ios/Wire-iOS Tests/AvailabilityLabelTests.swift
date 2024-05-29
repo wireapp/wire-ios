@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireCommonComponents
 import XCTest
 
-final class AvailabilityLabelTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class AvailabilityLabelTests: XCTestCase {
 
     // MARK: - List labels
 

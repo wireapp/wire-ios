@@ -43,9 +43,6 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                              searchQueries: [],
                                              previousMessageIsKnock: false,
                                              spacing: 0)
-
-        FontScheme.configure(with: .large)
-
     }
 
     // MARK: - tearDown

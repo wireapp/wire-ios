@@ -17,10 +17,11 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class ConversationTitleViewTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ConversationTitleViewTests: XCTestCase {
 
     var sut: ConversationTitleView!
     var conversation: MockGroupDetailsConversation!

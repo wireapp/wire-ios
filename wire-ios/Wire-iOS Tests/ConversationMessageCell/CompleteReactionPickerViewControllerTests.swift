@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
+final class CompleteReactionPickerViewControllerTests: XCTestCase {
 
     // MARK: Properties
 

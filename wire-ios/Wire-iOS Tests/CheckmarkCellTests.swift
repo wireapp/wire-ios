@@ -20,7 +20,7 @@ import SnapshotTesting
 @testable import Wire
 import XCTest
 
-final class CheckmarkCellTests: BaseSnapshotTestCase {
+final class CheckmarkCellTests: XCTestCase {
 
     // MARK: - Properties
 

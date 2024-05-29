@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
 import WireSyncEngineSupport
 import XCTest
 
@@ -31,8 +30,6 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
-        FontScheme.configure(with: .large)
 
         coreDataFixture = CoreDataFixture()
         userSession = UserSessionMock()

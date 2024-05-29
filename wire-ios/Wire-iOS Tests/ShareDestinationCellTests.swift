@@ -51,7 +51,7 @@ final class MockDestination: NSObject, ShareDestination {
 
 // MARK: - ShareDestinationCellTests
 
-final class ShareDestinationCellTests: BaseSnapshotTestCase {
+final class ShareDestinationCellTests: XCTestCase {
 
     // MARK: - Properties
 

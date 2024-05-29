@@ -67,7 +67,7 @@ final class NetworkStatusViewTests: XCTestCase {
     }
 }
 
-final class NetworkStatusViewSnapShotTests: BaseSnapshotTestCase {
+final class NetworkStatusViewSnapShotTests: XCTestCase {
 
     var sut: NetworkStatusView!
     var mockContainer: MockContainer!

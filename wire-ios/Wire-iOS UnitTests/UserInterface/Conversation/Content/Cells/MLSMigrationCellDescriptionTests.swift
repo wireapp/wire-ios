@@ -17,7 +17,6 @@
 //
 
 import XCTest
-import enum WireCommonComponents.FontScheme
 
 @testable import Wire
 
@@ -28,7 +27,6 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         otherUser = MockUserType.createUser(name: "Bruno")
-        FontScheme.configure(with: .large)
     }
 
     override func tearDown() {
