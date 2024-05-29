@@ -142,9 +142,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         contentHandler(content)
     }
 
-<<<<<<< HEAD
-    func reportCallEvent(
-=======
     private func removeNotification(withSameMessageId messageNonce: UUID?) {
         guard let messageNonce else { return }
 
@@ -158,8 +155,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         }
     }
 
-    public func reportCallEvent(
->>>>>>> c2b64b7876 (fix: duplicate link notifications - WPB-9417 (#1487))
+    func reportCallEvent(
         _ callEvent: CallEventPayload,
         currentTimestamp: TimeInterval
     ) {
