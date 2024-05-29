@@ -97,7 +97,7 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 
 // MARK: - CameraKeyboardViewControllerTests
 
-final class CameraKeyboardViewControllerTests: BaseSnapshotTestCase {
+final class CameraKeyboardViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

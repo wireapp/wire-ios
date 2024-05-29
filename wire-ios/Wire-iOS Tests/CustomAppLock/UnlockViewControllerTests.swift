@@ -17,10 +17,11 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class UnlockViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class UnlockViewControllerTests: XCTestCase {
     var sut: UnlockViewController!
 
     override func setUp() {
