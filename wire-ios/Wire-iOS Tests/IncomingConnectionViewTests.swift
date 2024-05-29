@@ -21,7 +21,7 @@ import XCTest
 
 // MARK: - IncomingConnectionViewTests
 
-final class IncomingConnectionViewTests: BaseSnapshotTestCase {
+final class IncomingConnectionViewTests: XCTestCase {
 
     // MARK: - Properties
 

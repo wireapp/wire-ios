@@ -17,13 +17,14 @@
 //
 
 import SnapshotTesting
-import XCTest
 import WireDataModel
+import XCTest
+
 @testable import Wire
 
 // MARK: - CollectionsViewControllerTests
 
-final class CollectionsViewControllerTests: BaseSnapshotTestCase {
+final class CollectionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

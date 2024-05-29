@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationListTabBarTests: BaseSnapshotTestCase {
+final class ConversationListTabBarTests: XCTestCase {
 
     // MARK: - Properties
 
