@@ -203,7 +203,7 @@ extension ConversationListViewController {
         filter: ConversationFilterType,
         isSelected: Bool
     ) -> UIAction {
-        let imageName = FilterImageName.getFilterImageName(for: filter, isSelected: isSelected).rawValue
+        let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
         let actionImage = FilterButtonStyleHelper.configureActionImage(named: imageName, isSelected: isSelected)
         let attributedTitle = FilterButtonStyleHelper.configureAttributedTitle(for: title, isSelected: isSelected)
 

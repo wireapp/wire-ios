@@ -53,7 +53,7 @@ enum FilterImageName: String {
     ///     - `.oneToOneConversations`: Represents one-to-one conversations.
     ///   - isSelected: A boolean value indicating whether the filter is selected.
     /// - Returns: The corresponding `FilterImageName` based on the provided filter type and selection state.
-    static func getFilterImageName(
+    static func filterImageName(
         for filter: ConversationFilterType,
         isSelected: Bool
     ) -> FilterImageName {
