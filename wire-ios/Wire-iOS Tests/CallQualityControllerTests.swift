@@ -18,7 +18,6 @@
 
 import XCTest
 @testable import Wire
-@testable import WireCommonComponents
 
 final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
