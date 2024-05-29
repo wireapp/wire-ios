@@ -80,6 +80,7 @@ public enum LocalNotificationContentType: Equatable {
             self = .knock
 
         case .image:
+            // NOTE: is this v2 asset ?
             self = .image
 
         case .ephemeral:
