@@ -118,6 +118,13 @@ public class ZMLocalNotification: NSObject {
         return UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
     }()
 
+    public var contentHashValue: Int {
+        var hash = Hasher()
+        hash.combine(messageNonce)
+        hash.combine(title)
+        hash.combine(body)
+        return hash.finalize()
+    }
 }
 
 // MARK: - Properties
