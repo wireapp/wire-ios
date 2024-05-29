@@ -29,7 +29,7 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
     var classification: SecurityClassification?
 }
 
-final class CallStatusViewTests: BaseSnapshotTestCase {
+final class CallStatusViewTests: XCTestCase {
 
     private var sut: CallStatusView!
 

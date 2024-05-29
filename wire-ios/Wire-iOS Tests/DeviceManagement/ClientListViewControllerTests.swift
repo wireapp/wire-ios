@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: ClientListViewController!

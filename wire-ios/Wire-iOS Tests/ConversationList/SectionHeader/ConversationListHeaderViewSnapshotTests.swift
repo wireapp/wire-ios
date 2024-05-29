@@ -20,7 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationListHeaderViewSnapshotTests: BaseSnapshotTestCase {
+final class ConversationListHeaderViewSnapshotTests: XCTestCase {
 
     var sut: ConversationListHeaderView!
 

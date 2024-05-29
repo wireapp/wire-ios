@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
+final class UserSearchResultsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
     var sut: UserSearchResultsViewController!
