@@ -78,12 +78,12 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
-        let expectedIDs: [[QualifiedID]] = [[
+        let expectedIDs: [QualifiedID] = [
             QualifiedID(
                 uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: ""
             )
-        ]]
+        ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
 
@@ -146,12 +146,12 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
-        let expectedIDs: [[QualifiedID]] = [[
+        let expectedIDs: [QualifiedID] = [
             QualifiedID(
                 uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
             )
-        ]]
+        ]
 
         let api = ConversationsAPIV1(httpClient: httpClient)
 

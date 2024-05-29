@@ -38,11 +38,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         self.httpClient = httpClient
     }
 
-    public func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
+    public func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
         let resourcePath = "/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
-        return PayloadPager<[QualifiedID]> { start in
+        return PayloadPager<QualifiedID> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constant.batchSize)
             let body = try jsonEncoder.encode(params)
@@ -74,13 +74,13 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
     let pagingState: String
     let hasMore: Bool
 
-    func toAPIModel() -> PayloadPager<[QualifiedID]>.Page {
+    func toAPIModel() -> PayloadPager<QualifiedID>.Page {
         let qualifiedIDs = conversationUUIDs.map {
             QualifiedID(uuid: $0, domain: "")
         }
 
-        return PayloadPager<[QualifiedID]>.Page(
-            element: [qualifiedIDs], // TODO: why does it need to be an array of arrays?
+        return PayloadPager<QualifiedID>.Page(
+            element: qualifiedIDs,
             hasMore: hasMore,
             nextStart: pagingState
         )
