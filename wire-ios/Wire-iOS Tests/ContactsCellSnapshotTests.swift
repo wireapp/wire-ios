@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
+final class ContactsCellSnapshotTests: XCTestCase {
 
     var sut: ContactsCell!
 
