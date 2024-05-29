@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class UserClientCellTests: BaseSnapshotTestCase {
+final class UserClientCellTests: XCTestCase {
     var sut: UserClientCell!
     var container: UIView!
 
