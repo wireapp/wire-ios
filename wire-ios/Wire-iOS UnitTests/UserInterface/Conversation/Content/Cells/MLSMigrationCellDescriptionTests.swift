@@ -17,7 +17,6 @@
 //
 
 import XCTest
-import class WireCommonComponents.FontScheme
 @testable import Wire
 
 final class MLSMigrationCellDescriptionTests: XCTestCase {
