@@ -30,10 +30,10 @@ public struct ConversationsAPIBuilder: APIBuilder {
         self.httpClient = httpClient
     }
 
-    /// Make a versioned`ConnectionsAPI`.
+    /// Make a versioned `ConversationsAPI`.
     ///
     /// - Parameter version: An api version.
-    /// - Returns: A versioned `ConnectionsAPI`.
+    /// - Returns: A versioned `ConversationsAPI`.
     public func makeAPI(for version: APIVersion) -> any ConversationsAPI {
         switch version {
         case .v0:
