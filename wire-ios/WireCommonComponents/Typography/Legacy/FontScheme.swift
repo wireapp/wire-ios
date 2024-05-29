@@ -152,15 +152,17 @@ extension FontSpec: CustomStringConvertible {
 
 public final class FontScheme {
 
-    public static let shared = FontScheme()
+    public static let shared: FontScheme = {
+        let fontScheme = FontScheme()
+        fontScheme.configure(with: .large)
+        return fontScheme
+    }()
 
     private typealias FontSizeAndPoint = (size: FontSize, point: CGFloat)
 
     private var fontsByFontSpec: [FontSpec: UIFont] = [:]
 
-    private init() {
-        configure(with: .large)
-    }
+    private init() { }
 
     // MARK: - Configuration
 
