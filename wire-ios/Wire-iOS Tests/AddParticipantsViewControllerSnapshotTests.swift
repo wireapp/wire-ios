@@ -41,7 +41,7 @@ final class MockTeam: TeamType {
     }
 }
 
-final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
     var userSession: UserSessionMock!
     var mockSelfUser: MockUserType!
 

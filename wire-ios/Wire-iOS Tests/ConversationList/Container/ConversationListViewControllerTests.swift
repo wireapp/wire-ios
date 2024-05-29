@@ -53,7 +53,7 @@ final class MockConversationListDelegate: ConversationListTabBarControllerDelega
 
 // MARK: - ConversationListViewControllerTests
 
-final class ConversationListViewControllerTests: BaseSnapshotTestCase {
+final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
