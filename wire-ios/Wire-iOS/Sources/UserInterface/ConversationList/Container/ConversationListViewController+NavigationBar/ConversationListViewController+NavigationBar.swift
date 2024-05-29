@@ -204,8 +204,8 @@ extension ConversationListViewController {
         isSelected: Bool
     ) -> UIAction {
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
-        let actionImage = FilterButtonStyleHelper.configureActionImage(named: imageName, isSelected: isSelected)
-        let attributedTitle = FilterButtonStyleHelper.configureAttributedTitle(for: title, isSelected: isSelected)
+        let actionImage = FilterButtonStyleHelper.makeActionImage(named: imageName, isSelected: isSelected)
+        let attributedTitle = FilterButtonStyleHelper.makeAttributedTitle(for: title, isSelected: isSelected)
 
         let action = UIAction(title: title, image: actionImage) { [weak self] _ in
             self?.applyFilter(filter)
