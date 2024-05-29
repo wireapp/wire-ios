@@ -44,7 +44,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                              previousMessageIsKnock: false,
                                              spacing: 0)
 
-        FontScheme.configure(with: .large)
+        FontScheme.shared.configure(with: .large)
 
     }
 

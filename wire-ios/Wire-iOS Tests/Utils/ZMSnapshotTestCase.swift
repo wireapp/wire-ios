@@ -94,7 +94,7 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
-        FontScheme.configure(with: .large)
+        FontScheme.shared.configure(with: .large)
 
         UIView.setAnimationsEnabled(false)
         accentColor = .vividRed
