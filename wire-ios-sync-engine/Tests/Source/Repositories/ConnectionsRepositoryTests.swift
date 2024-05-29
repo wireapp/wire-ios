@@ -38,6 +38,8 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        BackendInfo.storage = .temporary()
+
         stack = try await coreDataStackHelper.createStack()
         connectionsAPI = MockConnectionsAPI()
         sut = ConnectionsRepository(connectionsAPI: connectionsAPI,
@@ -49,12 +51,24 @@ final class ConnectionsRepositoryTests: XCTestCase {
         connectionsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
+        BackendInfo.storage = .standard
         try await super.tearDown()
     }
 
     // MARK: - Tests
 
-    func testPullConnections_GivenConnectionDoesNotExist() async throws {
+    func testPullConnections_GivenConnectionDoesNotExist_FederationDisabled() async throws {
+        try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: false)
+    }
+
+    func testPullConnections_GivenConnectionDoesNotExist_FederationEnabled() async throws {
+        BackendInfo.isFederationEnabled = true
+        try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: true)
+    }
+
+    func internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: Bool,
+                                                                 file: StaticString = #file,
+                                                                 line: UInt = #line) async throws {
         // Mock
         let connection = WireAPI.Connection(senderId: Scaffolding.member1ID.uuid,
                                             receiverId: Scaffolding.member2ID.uuid,
@@ -76,17 +90,26 @@ final class ConnectionsRepositoryTests: XCTestCase {
             // There is a team in the database.
             let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
 
-            XCTAssertFalse(storedConnection.needsToBeUpdatedFromBackend)
             XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
 
             XCTAssertEqual(storedConnection.to.remoteIdentifier, connection.receiverId)
-            XCTAssertEqual(storedConnection.to.domain, connection.qualifiedConversationId?.domain)
+            if federationEnabled {
+                XCTAssertEqual(storedConnection.to.domain, connection.receiverQualifiedId?.domain)
+            } else {
+                XCTAssertNil(storedConnection.to.domain)
+            }
             XCTAssertEqual(storedConnection.status, ZMConnectionStatus.accepted)
 
             let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
             XCTAssertEqual(relatedConversation.remoteIdentifier, connection.qualifiedConversationId?.uuid)
-            XCTAssertEqual(relatedConversation.domain, connection.qualifiedConversationId?.domain)
 
+            if federationEnabled {
+                XCTAssertEqual(relatedConversation.domain, connection.qualifiedConversationId?.domain)
+            } else {
+                XCTAssertNil(relatedConversation.domain)
+            }
+
+            XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
         }
     }
 }
