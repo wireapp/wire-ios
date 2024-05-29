@@ -27,17 +27,6 @@ enum ConversationFilterType {
 
 extension ConversationListViewController {
 
-    enum FilterImageName: String {
-        case textBubble = "text.bubble"
-        case textBubbleFill = "text.bubble.fill"
-        case star = "star"
-        case starFill = "star.fill"
-        case person = "person"
-        case personFill = "person.fill"
-        case person3 = "person.3"
-        case person3Fill = "person.3.fill"
-    }
-
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
         setupLeftNavigationBarButtons()
     }
@@ -214,32 +203,15 @@ extension ConversationListViewController {
         filter: ConversationFilterType,
         isSelected: Bool
     ) -> UIAction {
-        let imageName = getFilterImageName(for: filter, isSelected: isSelected).rawValue
+        let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
+        let actionImage = FilterButtonStyleHelper.makeActionImage(named: imageName, isSelected: isSelected)
+        let attributedTitle = FilterButtonStyleHelper.makeAttributedTitle(for: title, isSelected: isSelected)
 
-        let font = UIFont.systemFont(ofSize: 17)
-        let configuration = UIImage.SymbolConfiguration(font: font)
-        let actionImage = UIImage(systemName: imageName)?.applyingSymbolConfiguration(configuration)
-
-        // Apply the tint color conditionally based on the selection state
-        let tintedActionImage: UIImage?
-        if isSelected {
-            tintedActionImage = actionImage?.withTintColor(UIColor.accent(), renderingMode: .alwaysOriginal)
-        } else {
-            tintedActionImage = actionImage
-        }
-
-        let titleAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: isSelected ? UIColor.accent() : SemanticColors.Label.textDefault
-        ]
-
-        let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
-
-        let action = UIAction(title: title, image: tintedActionImage) { [weak self] _ in
+        let action = UIAction(title: title, image: actionImage) { [weak self] _ in
             self?.applyFilter(filter)
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
-
         return action
     }
 
@@ -247,19 +219,6 @@ extension ConversationListViewController {
     private func applyFilter(_ filter: ConversationFilterType) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
-    }
-
-    private func getFilterImageName(for filter: ConversationFilterType, isSelected: Bool) -> FilterImageName {
-        switch filter {
-        case .allConversations:
-            return isSelected ? .textBubbleFill : .textBubble
-        case .favorites:
-            return isSelected ? .starFill : .star
-        case .groups:
-            return isSelected ? .person3Fill : .person3
-        case .oneToOneConversations:
-            return isSelected ? .personFill : .person
-        }
     }
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
