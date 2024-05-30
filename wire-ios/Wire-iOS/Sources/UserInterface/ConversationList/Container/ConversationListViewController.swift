@@ -25,14 +25,17 @@ final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
 
-    /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
+
+    private var filterContainerView: UIView!
+    private var filterLabel: UILabel!
+    private var removeButton: UIButton!
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
 
-    var startCallToken: Any?
+    private var startCallToken: Any?
 
     weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
 
@@ -43,6 +46,8 @@ final class ConversationListViewController: UIViewController {
         label.backgroundColor = .clear
         return label
     }()
+
+    private var stackView: UIStackView!
 
     let contentContainer: UIView = {
         let view = UIView()
@@ -92,19 +97,7 @@ final class ConversationListViewController: UIViewController {
         definesPresentationContext = true
 
         /// setup UI
-        view.addSubview(contentContainer)
         view.backgroundColor = SemanticColors.View.backgroundConversationList
-
-        setupListContentController()
-        setupNoConversationLabel()
-        setupOnboardingHint()
-        setupNetworkStatusBar()
-
-        createViewConstraints()
-
-        setupTitleView()
-        setupLeftNavigationBarButtons()
-        setupRightNavigationBarButtons()
 
         viewModel.viewController = self
     }
@@ -117,7 +110,22 @@ final class ConversationListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Update
+        setupStackView()
+        setupListContentController()
+        setupNoConversationLabel()
+        setupOnboardingHint()
+        setupNetworkStatusBar()
+        setupFilterContainerView()
+
+        stackView.addArrangedSubview(contentContainer)
+
+        createViewConstraints()
+
+        setupTitleView()
+        setupLeftNavigationBarButtons()
+        setupRightNavigationBarButtons()
+
+        // Update the UI as needed
         hideNoContactLabel(animated: false)
 
         setupObservers()
@@ -130,6 +138,37 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.savePendingLastRead()
         viewModel.requestMarketingConsentIfNeeded()
+    }
+
+    /// Method to apply the selected filter and update the UI accordingly
+    func applyFilter(_ filter: ConversationFilterType) {
+        self.listContentController.listViewModel.selectedFilter = filter
+        self.setupRightNavigationBarButtons()
+
+        if filter == .allConversations {
+            filterContainerView.isHidden = true
+        } else {
+            filterLabel.text = "Filtered by \(getFilterLabelText())"
+            filterContainerView.isHidden = false
+        }
+
+        // Trigger a layout update to ensure the correct positioning
+        // of the add conversation button and filter button
+        // when the filter button is tapped.
+        view.setNeedsLayout()
+    }
+
+    func getFilterLabelText() -> String {
+        switch listContentController.listViewModel.selectedFilter {
+        case .allConversations:
+            return ""
+        case .favorites:
+            return "Favorites"
+        case .groups:
+            return "Groups"
+        case .oneToOneConversations:
+            return "1:1 Conversations"
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -184,6 +223,62 @@ final class ConversationListViewController: UIViewController {
         viewModel.setupObservers()
     }
 
+    /// Sets up a vertical stack view containing all subviews
+    private func setupStackView() {
+        stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    func setupFilterContainerView() {
+        filterContainerView = .init()
+        stackView.addArrangedSubview(filterContainerView)
+
+        let filterContainerStackView = UIStackView()
+        filterContainerStackView.axis = .horizontal
+        filterContainerStackView.alignment = .center
+        filterContainerStackView.spacing = 4
+        filterContainerStackView.translatesAutoresizingMaskIntoConstraints = false
+        filterContainerStackView.backgroundColor = SemanticColors.View.backgroundDefault
+        filterContainerView.addSubview(filterContainerStackView)
+        NSLayoutConstraint.activate([
+            filterContainerStackView.topAnchor.constraint(equalToSystemSpacingBelow: filterContainerView.topAnchor, multiplier: 1),
+            filterContainerView.bottomAnchor.constraint(equalToSystemSpacingBelow: filterContainerStackView.bottomAnchor, multiplier: 1),
+            filterContainerStackView.centerXAnchor.constraint(equalTo: filterContainerView.centerXAnchor),
+            filterContainerStackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 1),
+            filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 1)
+        ])
+
+        filterLabel = UILabel()
+        filterLabel.font = UIFont.font(for: .h5)
+        filterLabel.textColor = SemanticColors.Label.baseSecondaryText
+        filterLabel.text = "Filtered by \(getFilterLabelText())"
+
+        removeButton = UIButton(type: .system)
+        removeButton.setTitle("Remove", for: .normal)
+        removeButton.titleLabel?.font = UIFont.font(for: .h5)
+        removeButton.setTitleColor(UIColor.accent(), for: .normal)
+        removeButton.addTarget(self, action: #selector(removeFilter), for: .touchUpInside)
+
+        filterContainerStackView.addArrangedSubview(filterLabel)
+        filterContainerStackView.addArrangedSubview(removeButton)
+
+        // Initially hide the filter container view
+        filterContainerView.isHidden = true
+    }
+
+    @objc
+    func removeFilter() {
+        applyFilter(.allConversations)
+    }
+
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
         add(listContentController, to: contentContainer)
@@ -212,11 +307,6 @@ final class ConversationListViewController: UIViewController {
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: safeBottomAnchor),
-
             networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
@@ -224,7 +314,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor),
 
             onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
@@ -237,7 +327,6 @@ final class ConversationListViewController: UIViewController {
     }
 
     func showNoContactLabel(animated: Bool = true) {
-
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations
             self.noConversationLabel.alpha = hasArchivedConversations ? 1.0 : 0.0
@@ -266,7 +355,6 @@ final class ConversationListViewController: UIViewController {
     }
 
     func presentNewConversationViewController() {
-
         let viewController = StartUIViewController(userSession: viewModel.userSession)
         viewController.delegate = viewModel
         viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -326,7 +414,6 @@ extension ConversationListViewController: ArchivedListViewControllerDelegate {
         _ viewController: ArchivedListViewController,
         didSelectConversation conversation: ZMConversation
     ) {
-
         _ = selectOnListContentController(
             conversation,
             scrollTo: nil,
@@ -343,7 +430,6 @@ extension ConversationListViewController: ArchivedListViewControllerDelegate {
 private extension NSAttributedString {
 
     static var attributedTextForNoConversationLabel: NSAttributedString? {
-
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
 
