@@ -22,12 +22,24 @@ import Foundation
 public struct ConversationsAPIBuilder: APIBuilder {
 
     private let httpClient: any HTTPClient
+    private let backendInfo: BackendInfo
 
     /// Create a new builder for the conversations API.
     ///
     /// - Parameter httpClient: A http client.
+    public init(httpClient: any HTTPClient, backendInfo: BackendInfo) {
+        self.httpClient = httpClient
+        self.backendInfo = backendInfo
+    }
+
     public init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
+        self.backendInfo = .init(
+            domain: "",
+            isFederationEnabled: true,
+            supportedVersions: .init(),
+            developmentVersions: .init()
+        )
     }
 
     /// Make a versioned `ConversationsAPI`.
@@ -37,19 +49,20 @@ public struct ConversationsAPIBuilder: APIBuilder {
     public func makeAPI(for version: APIVersion) -> any ConversationsAPI {
         switch version {
         case .v0:
-            ConversationsAPIV0(httpClient: httpClient)
+            ConversationsAPIV0(httpClient: httpClient, backendInfo: backendInfo)
         case .v1:
-            ConversationsAPIV1(httpClient: httpClient)
+            // TODO: we only need backend info for V0, but now pass to all?
+            ConversationsAPIV1(httpClient: httpClient, backendInfo: backendInfo)
         case .v2:
-            ConversationsAPIV2(httpClient: httpClient)
+            ConversationsAPIV2(httpClient: httpClient, backendInfo: backendInfo)
         case .v3:
-            ConversationsAPIV3(httpClient: httpClient)
+            ConversationsAPIV3(httpClient: httpClient, backendInfo: backendInfo)
         case .v4:
-            ConversationsAPIV4(httpClient: httpClient)
+            ConversationsAPIV4(httpClient: httpClient, backendInfo: backendInfo)
         case .v5:
-            ConversationsAPIV5(httpClient: httpClient)
+            ConversationsAPIV5(httpClient: httpClient, backendInfo: backendInfo)
         case .v6:
-            ConversationsAPIV6(httpClient: httpClient)
+            ConversationsAPIV6(httpClient: httpClient, backendInfo: backendInfo)
         }
     }
 
