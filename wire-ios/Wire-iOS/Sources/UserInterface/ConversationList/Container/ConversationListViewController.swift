@@ -253,7 +253,12 @@ final class ConversationListViewController: UIViewController {
         removeButton.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
         removeButton.titleLabel?.font = UIFont.font(for: .h5)
         removeButton.setTitleColor(UIColor.accent(), for: .normal)
-        removeButton.addTarget(self, action: #selector(removeFilter), for: .touchUpInside)
+
+        let action = UIAction { [weak self] _ in
+            self?.removeFilter()
+        }
+
+        removeButton.addAction(action, for: .touchUpInside)
 
         filterContainerStackView.addArrangedSubview(filterLabel)
         filterContainerStackView.addArrangedSubview(removeButton)
@@ -262,7 +267,6 @@ final class ConversationListViewController: UIViewController {
         filterContainerView.isHidden = true
     }
 
-    @objc
     func removeFilter() {
         applyFilter(.allConversations)
     }
