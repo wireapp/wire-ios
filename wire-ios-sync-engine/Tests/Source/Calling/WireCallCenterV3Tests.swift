@@ -1822,7 +1822,7 @@ extension WireCallCenterV3Tests {
         sut.callSnapshots = [conversationId: callSnapshot]
 
         // We prepare the change of active speaker.
-        // They're not relevant if the audio level stays >0
+        // They're not relevant if the audio level stays > 0
         let newSpeaker = ActiveSpeaker(
             userId: client.userId,
             clientId: client.clientId,
@@ -1832,20 +1832,16 @@ extension WireCallCenterV3Tests {
 
         let change = AVSActiveSpeakersChange(activeSpeakers: [newSpeaker])
 
-        // We set the expectation for notifications
-        customExpectation(
-            forNotification: WireCallCenterActiveSpeakersNotification.notificationName,
-            object: nil
-        ) { _ in
-            // expect a notification
-            return true
-        }
+        // We set the expectation for notifications.
+        // We expect a notification to be sent since there has been a relevant change in active speakers.
+        let expectation = XCTNSNotificationExpectation(name: WireCallCenterActiveSpeakersNotification.notificationName)
 
         // WHEN
         sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func test_HandleActiveSpeakersChange_DoesntPostNotification_WhenActiveSpeakersChange_IsNotRelevant() throws {
@@ -1907,20 +1903,18 @@ extension WireCallCenterV3Tests {
 
         let change = AVSActiveSpeakersChange(activeSpeakers: [speakerOne, newSpeakerTwo, newSpeakerThree])
 
-        // We set the expectation for notifications
-        customExpectation(
-            forNotification: WireCallCenterActiveSpeakersNotification.notificationName,
-            object: nil
-        ) { _ in
-            // expect no notification
-            return false
-        }
+        // We set a notification expectation
+        let expectation = XCTNSNotificationExpectation(name: WireCallCenterActiveSpeakersNotification.notificationName)
+        // We expect to NOT receive any notification since there has been no significant change in active speakers
+        // So we set the expectation as inverted
+        expectation.isInverted = true
 
         // WHEN
         sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        wait(for: [expectation], timeout: 0.5)
     }
 
     typealias CallParticipantsTestsAssertion = ([CallParticipant], Int) -> Void

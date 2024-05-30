@@ -370,7 +370,7 @@ extension WireCallCenterV3 {
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
         guard let data = data.data(using: .utf8) else {
-            zmLog.safePublic("Invalid active speakers data")
+            WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
             return
         }
 
@@ -405,7 +405,7 @@ extension WireCallCenterV3 {
                 }
             }
         } catch {
-            zmLog.safePublic("Cannot decode active speakers change JSON")
+            WireLogger.calling.error("Cannot decode active speakers change JSON", attributes: .safePublic)
         }
     }
 
@@ -428,8 +428,8 @@ extension WireCallCenterV3 {
                 let startedTalking = currentSpeaker.audioLevelNow == 0 && newSpeaker.audioLevelNow > 0
 
                 isSignificant = stoppedTalking || startedTalking
-            } else if newSpeaker.audioLevelNow > 0 {
-                isSignificant = true
+            } else {
+                isSignificant = newSpeaker.audioLevelNow > 0
             }
         }
 
