@@ -52,8 +52,8 @@ struct APISnapshotHelper<API> {
         function: String = #function,
         line: UInt = #line
     ) async throws {
-        try await verifyRequestForAPIVersions(
-            APIVersion.allCases,
+        try await verifyRequest(
+            for: APIVersion.allCases,
             when: block,
             file: file,
             function: function,
@@ -72,8 +72,8 @@ struct APISnapshotHelper<API> {
     ///   - function: The method invoking the test.
     ///   - line: The line invoking the test.
 
-    func verifyRequestForAPIVersions(
-        _ apiVersions: any Sequence<APIVersion>,
+    func verifyRequest(
+        for apiVersions: any Sequence<APIVersion>,
         when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,

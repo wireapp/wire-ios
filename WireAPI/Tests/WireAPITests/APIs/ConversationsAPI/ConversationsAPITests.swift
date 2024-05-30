@@ -49,7 +49,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         // then
-        try await apiSnapshotHelper.verifyRequestForAPIVersions(apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
             let pager = try await sut.getLegacyConversationIdentifiers()
 
             for try await _ in pager {
@@ -69,7 +69,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         // then
-        try await apiSnapshotHelper.verifyRequestForAPIVersions(apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
             let pager = try await sut.getConversationIdentifiers()
 
             for try await _ in pager {
