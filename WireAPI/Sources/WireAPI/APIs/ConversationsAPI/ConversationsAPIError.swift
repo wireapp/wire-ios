@@ -16,14 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `ConversationsAPI`.
 
-/// Access to conversations API.
-public protocol ConversationsAPI {
+public enum ConversationsAPIError: Error {
 
-    /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID>
+    /// Invalid body
 
-    /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID>
+    case notImplemented
+
 }
