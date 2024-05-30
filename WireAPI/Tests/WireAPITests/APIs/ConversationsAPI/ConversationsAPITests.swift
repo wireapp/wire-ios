@@ -82,7 +82,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         // when
@@ -103,7 +103,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         let expectedIDs: [UUID] = [
