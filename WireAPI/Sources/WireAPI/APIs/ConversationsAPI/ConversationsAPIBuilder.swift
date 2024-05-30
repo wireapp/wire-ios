@@ -19,7 +19,7 @@
 import Foundation
 
 /// Builder for the conversations API.
-public struct ConversationsAPIBuilder: APIBuilder {
+public struct ConversationsAPIBuilder {
 
     private let httpClient: any HTTPClient
 

@@ -24,7 +24,17 @@ class ConnectionsAPITests: XCTestCase {
 
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
-        try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        // given
+        let apiSnapshotHelper = APISnapshotHelper<ConnectionsAPI>(
+            buildAPI: { httpClient, apiVersion in
+                let builder = ConnectionsAPIBuilder(httpClient: httpClient)
+                return builder.makeAPI(for: apiVersion)
+            }
+        )
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             let pager = try await sut.getConnections()
             for try await _ in pager {
                 // this triggers fetching the data
@@ -108,8 +118,10 @@ class ConnectionsAPITests: XCTestCase {
 
         // checks we made the 3 correct requests
         for (index, receivedRequest) in httpClient.receivedRequests.enumerated() {
-            try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequest(request: receivedRequest,
-                                                                                   resourceName: "v0.\(index)")
+            await HTTPRequestSnapshotHelper().verifyRequest(
+                request: receivedRequest,
+                resourceName: "v0.\(index)"
+            )
         }
     }
 }

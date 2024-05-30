@@ -22,28 +22,56 @@ import XCTest
 
 final class ConversationsAPITests: XCTestCase {
 
-    private var snapshotHelper: RequestSnapshotHelper<ConversationsAPIBuilder>!
+    private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = .init()
+        httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
     }
 
     override func tearDown() {
-        snapshotHelper = nil
+        httpRequestSnapshotHelper = nil
+        super.tearDown()
     }
 
     // MARK: - Tests
 
+    func testGetLegacyConversationIdentifiers() async throws {
+        // given
+        let apiVersions: [APIVersion] = [.v0]
+
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
+            let builder = ConversationsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            let pager = try await sut.getLegacyConversationIdentifiers()
+
+            for try await _ in pager {
+                // trigger fetching data
+            }
+        }
+    }
+
     func testGetConversationIdentifiers() async throws {
         // given
-        try await snapshotHelper.verifyRequestForAllAPIVersions { sut in
-            // when
+        let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
+
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
+            let builder = ConversationsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
             let pager = try await sut.getConversationIdentifiers()
 
-            // then
             for try await _ in pager {
                 // trigger fetching data
             }
@@ -59,7 +87,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         let api = ConversationsAPIV0(httpClient: httpClient)
-        let pager = try await api.getConversationIdentifiers()
+        let pager = try await api.getLegacyConversationIdentifiers()
 
         for try await _ in pager {
             // trigger fetching date
@@ -67,7 +95,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            try await snapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
+            await httpRequestSnapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
         }
     }
 
@@ -78,17 +106,14 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
-        let expectedIDs: [QualifiedID] = [
-            QualifiedID(
-                uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
-                domain: ""
-            )
+        let expectedIDs: [UUID] = [
+            try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483"))
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
 
         // when
-        let pager = try await api.getConversationIdentifiers()
+        let pager = try await api.getLegacyConversationIdentifiers()
 
         // then
         for try await ids in pager {
@@ -109,7 +134,7 @@ final class ConversationsAPITests: XCTestCase {
         // when
         // then
         do {
-            _ = try await api.getConversationIdentifiers()
+            _ = try await api.getLegacyConversationIdentifiers()
         } catch let error as FailureResponse {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
@@ -135,7 +160,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            try await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
+            await httpRequestSnapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
         }
     }
 

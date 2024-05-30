@@ -21,6 +21,11 @@ import Foundation
 class ConversationsAPIV1: ConversationsAPIV0 {
     override var apiVersion: APIVersion { .v1 }
 
+    override func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
+        assertionFailure("not implemented! use getConversationIdentifiers() instead")
+        throw ConversationsAPIError.notImplemented
+    }
+
     override public func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
         let resourcePath = "\(pathPrefix)/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
@@ -43,6 +48,8 @@ class ConversationsAPIV1: ConversationsAPIV0 {
         }
     }
 }
+
+// MARK: -
 
 private struct PaginatedConversationIDsV1: Decodable, ToAPIModelConvertible {
 

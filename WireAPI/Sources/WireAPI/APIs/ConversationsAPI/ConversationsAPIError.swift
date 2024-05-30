@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `ConversationsAPI`.
 
-public protocol APIBuilder {
-    associatedtype API
+public enum ConversationsAPIError: Error {
 
-    init(httpClient: any HTTPClient)
+    /// Invalid body
 
-    func makeAPI(for version: APIVersion) -> API
+    case notImplemented
+
 }
