@@ -45,6 +45,27 @@ final class ConversationsAPITests: XCTestCase {
 
     // MARK: - Tests
 
+    func testGetLegacyConversationIdentifiers() async throws {
+        // given
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
+            httpRequestHelper: httpRequestSnapshotHelper,
+            buildAPI: { httpClient, apiVersion in
+                let builder = ConversationsAPIBuilder(httpClient: httpClient, backendDomain: self.mockBackendDomain)
+                return builder.makeAPI(for: apiVersion)
+            }
+        )
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequestForAPIVersions([.v0]) { sut in
+            let pager = try await sut.getLegacyConversationIdentifiers()
+
+            for try await _ in pager {
+                // trigger fetching data
+            }
+        }
+    }
+
     func testGetConversationIdentifiers() async throws {
         // given
         let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
@@ -57,7 +78,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         // then
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAPIVersions([.v1, .v2, .v3, .v4, .v5, .v6]) { sut in
             let pager = try await sut.getConversationIdentifiers()
 
             for try await _ in pager {
@@ -75,7 +96,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
-        let pager = try await api.getConversationIdentifiers()
+        let pager = try await api.getLegacyConversationIdentifiers()
 
         for try await _ in pager {
             // trigger fetching date
@@ -94,17 +115,14 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
-        let expectedIDs: [QualifiedID] = [
-            QualifiedID(
-                uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
-                domain: mockBackendDomain
-            )
+        let expectedIDs: [UUID] = [
+            try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483"))
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
 
         // when
-        let pager = try await api.getConversationIdentifiers()
+        let pager = try await api.getLegacyConversationIdentifiers()
 
         // then
         for try await ids in pager {
@@ -125,7 +143,7 @@ final class ConversationsAPITests: XCTestCase {
         // when
         // then
         do {
-            _ = try await api.getConversationIdentifiers()
+            _ = try await api.getLegacyConversationIdentifiers()
         } catch let error as FailureResponse {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
