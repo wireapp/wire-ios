@@ -67,6 +67,7 @@ struct APISnapshotHelper<API> {
     /// This will generate one snapshot reference for each version.
     ///
     /// - Parameters:
+    ///   - apiVersions: A sequence of api versions to test.
     ///   - block: Some code that should invoke a method of the given api to generate a request.
     ///   - file: The file invoking the test.
     ///   - function: The method invoking the test.
