@@ -17,11 +17,9 @@
 //
 
 /// Errors originating from `ConversationsAPI`.
-
 public enum ConversationsAPIError: Error {
 
-    /// Invalid body
-
+    /// Failure if functionality has not been implemented.
     case notImplemented
 
 }
