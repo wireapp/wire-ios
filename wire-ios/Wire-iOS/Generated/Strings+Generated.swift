@@ -2694,6 +2694,24 @@ internal enum L10n {
           internal static let message = L10n.tr("Localizable", "conversation_list.empty.no_contacts.message", fallback: "Start a conversation or\ncreate a group.")
         }
       }
+      internal enum Filter {
+        internal enum AllConversations {
+          /// All Conversations
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All Conversations")
+        }
+        internal enum Favorites {
+          /// Favorites
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.favorites.title", fallback: "Favorites")
+        }
+        internal enum Groups {
+          /// Groups
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.groups.title", fallback: "Groups")
+        }
+        internal enum OneOnOneConversations {
+          /// 1:1 Conversations
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.oneOnOneConversations.title", fallback: "1:1 Conversations")
+        }
+      }
       internal enum Header {
         internal enum SelfTeam {
           /// %@ account.
@@ -2707,26 +2725,6 @@ internal enum L10n {
             internal static let hasNewMessages = L10n.tr("Localizable", "conversation_list.header.self_team.accessibility_value.has_new_messages", fallback: "Has new messages.")
             /// Tap to activate.
             internal static let inactive = L10n.tr("Localizable", "conversation_list.header.self_team.accessibility_value.inactive", fallback: "Tap to activate.")
-          }
-        }
-      }
-      internal enum NavigationBar {
-        internal enum FilterMenu {
-          internal enum AllConversations {
-            /// All Conversations
-            internal static let title = L10n.tr("Localizable", "conversation_list.navigation_bar.filter_menu.all_conversations.title", fallback: "All Conversations")
-          }
-          internal enum Favorites {
-            /// Favorites
-            internal static let title = L10n.tr("Localizable", "conversation_list.navigation_bar.filter_menu.favorites.title", fallback: "Favorites")
-          }
-          internal enum Groups {
-            /// Groups
-            internal static let title = L10n.tr("Localizable", "conversation_list.navigation_bar.filter_menu.groups.title", fallback: "Groups")
-          }
-          internal enum OneOnOneConversations {
-            /// 1:1 Conversations
-            internal static let title = L10n.tr("Localizable", "conversation_list.navigation_bar.filter_menu.oneOnOneConversations.title", fallback: "1:1 Conversations")
           }
         }
       }

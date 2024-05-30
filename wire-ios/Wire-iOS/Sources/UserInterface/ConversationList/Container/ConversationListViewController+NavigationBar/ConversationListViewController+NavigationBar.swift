@@ -117,7 +117,7 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons() {
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
-        typealias FilterMenuLocale = L10n.Localizable.ConversationList.NavigationBar.FilterMenu
+        typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
         // New Conversation Button
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)

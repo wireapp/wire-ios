@@ -35,15 +35,16 @@ final class ConversationListViewController: UIViewController {
     private var removeButton: UIButton!
 
     var selectedFilterLabel: String {
+        typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
         switch listContentController.listViewModel.selectedFilter {
         case .allConversations:
             return ""
         case .favorites:
-            return "Favorites"
+            return FilterMenuLocale.Favorites.title
         case .groups:
-            return "Groups"
+            return FilterMenuLocale.Groups.title
         case .oneToOneConversations:
-            return "1:1 Conversations"
+            return FilterMenuLocale.OneOnOneConversations.title
         }
     }
 
