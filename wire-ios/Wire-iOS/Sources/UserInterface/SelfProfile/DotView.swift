@@ -21,8 +21,8 @@ import WireSyncEngine
 
 final class DotView: UIView {
 
-    private let circleView = ShapeView()
-    private let centerView = ShapeView()
+    private let circleLayer = CALayer()
+    private let centerLayer = CALayer()
     private var userObserver: NSObjectProtocol!
     private var clientsObserverTokens: [NSObjectProtocol] = []
     private let user: ZMUser?
@@ -45,24 +45,21 @@ final class DotView: UIView {
         super.init(frame: .zero)
         isHidden = true
 
-        circleView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
-        }
-        circleView.hostedLayer.lineWidth = 0
-        circleView.hostedLayer.fillColor = UIColor.white.cgColor
+        // Configure circle layer
+        circleLayer.backgroundColor = UIColor.white.cgColor
+        circleLayer.cornerRadius = 0
+        circleLayer.masksToBounds = true
+        layer.addSublayer(circleLayer)
 
-        centerView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
-        }
-        centerView.hostedLayer.fillColor = UIColor.accent().cgColor
-
-        addSubview(circleView)
-        addSubview(centerView)
+        // Configure center layer
+        centerLayer.backgroundColor = UIColor.accent().cgColor
+        centerLayer.cornerRadius = 0
+        centerLayer.masksToBounds = true
+        layer.addSublayer(centerLayer)
 
         createConstraints()
 
-        if let userSession = ZMUserSession.shared(),
-            let user {
+        if let userSession = ZMUserSession.shared(), let user {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
@@ -70,15 +67,23 @@ final class DotView: UIView {
     }
 
     private func createConstraints() {
-        [self, circleView, centerView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        let centerViewConstraints = centerView.fitInConstraints(view: self, inset: 1)
-
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            circleView.topAnchor.constraint(equalTo: topAnchor),
-            circleView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            circleView.leftAnchor.constraint(equalTo: leftAnchor),
-            circleView.rightAnchor.constraint(equalTo: rightAnchor)] + centerViewConstraints)
+            widthAnchor.constraint(equalToConstant: 30),
+            heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // Layout circleLayer and centerLayer
+        circleLayer.frame = bounds
+        circleLayer.cornerRadius = bounds.width / 2
+
+        let inset: CGFloat = 1
+        centerLayer.frame = bounds.insetBy(dx: inset, dy: inset)
+        centerLayer.cornerRadius = centerLayer.bounds.width / 2
     }
 
     @available(*, unavailable)
@@ -88,7 +93,12 @@ final class DotView: UIView {
 
     private func createClientObservers() {
         guard let user else { return }
-        clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
+        clientsObserverTokens = user.clients.compactMap {
+            UserClientChangeInfo.add(
+                observer: self,
+                for: $0
+            )
+        }
     }
 
     func updateIndicator() {
@@ -104,16 +114,16 @@ final class DotView: UIView {
     }
 }
 
+// MARK: - User Observing
+
 extension DotView: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         guard changeInfo.trustLevelChanged ||
-              changeInfo.clientsChanged ||
-              changeInfo.accentColorValueChanged ||
-              changeInfo.readReceiptsEnabledChanged ||
-              changeInfo.readReceiptsEnabledChangedRemotelyChanged else { return }
-
-        centerView.hostedLayer.fillColor = UIColor.accent().cgColor
+                changeInfo.clientsChanged ||
+                changeInfo.accentColorValueChanged ||
+                changeInfo.readReceiptsEnabledChanged ||
+                changeInfo.readReceiptsEnabledChangedRemotelyChanged else { return }
 
         updateIndicator()
 
