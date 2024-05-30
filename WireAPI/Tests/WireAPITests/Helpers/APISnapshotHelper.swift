@@ -28,14 +28,10 @@ struct APISnapshotHelper<API> {
         case noRequestGenerated
     }
 
-    private let httpRequestHelper: HTTPRequestSnapshotHelper
+    private let httpRequestHelper = HTTPRequestSnapshotHelper()
     private let buildAPI: (HTTPClientMock, APIVersion) -> API
 
-    init(
-        httpRequestHelper: HTTPRequestSnapshotHelper? = nil,
-        buildAPI: @escaping (HTTPClientMock, APIVersion) -> API
-    ) {
-        self.httpRequestHelper = httpRequestHelper ?? .init()
+    init(buildAPI: @escaping (HTTPClientMock, APIVersion) -> API) {
         self.buildAPI = buildAPI
     }
 

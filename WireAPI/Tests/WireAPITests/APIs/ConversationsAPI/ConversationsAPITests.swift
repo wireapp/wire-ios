@@ -42,13 +42,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let apiVersions: [APIVersion] = [.v0]
 
-        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
-            httpRequestHelper: httpRequestSnapshotHelper,
-            buildAPI: { httpClient, apiVersion in
-                let builder = ConversationsAPIBuilder(httpClient: httpClient)
-                return builder.makeAPI(for: apiVersion)
-            }
-        )
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
+            let builder = ConversationsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
 
         // when
         // then
@@ -65,13 +62,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
 
-        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
-            httpRequestHelper: httpRequestSnapshotHelper,
-            buildAPI: { httpClient, apiVersion in
-                let builder = ConversationsAPIBuilder(httpClient: httpClient)
-                return builder.makeAPI(for: apiVersion)
-            }
-        )
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
+            let builder = ConversationsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
 
         // when
         // then
