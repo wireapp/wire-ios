@@ -32,13 +32,10 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     let httpClient: HTTPClient
 
-    private let backendDomain: String
-
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient, backendDomain: String) {
+    init(httpClient: HTTPClient) {
         self.httpClient = httpClient
-        self.backendDomain = backendDomain
     }
 
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {

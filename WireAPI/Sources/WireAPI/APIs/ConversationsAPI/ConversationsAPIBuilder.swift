@@ -22,14 +22,12 @@ import Foundation
 public struct ConversationsAPIBuilder {
 
     private let httpClient: any HTTPClient
-    private let backendDomain: String
 
     /// Create a new builder for the conversations API.
     ///
     /// - Parameter httpClient: A http client.
-    public init(httpClient: any HTTPClient, backendDomain: String) {
+    public init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
-        self.backendDomain = backendDomain
     }
 
     /// Make a versioned `ConversationsAPI`.
@@ -39,20 +37,19 @@ public struct ConversationsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any ConversationsAPI {
         switch version {
         case .v0:
-            ConversationsAPIV0(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV0(httpClient: httpClient)
         case .v1:
-            // TODO: we only need backend info for V0, but now pass to all?
-            ConversationsAPIV1(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV1(httpClient: httpClient)
         case .v2:
-            ConversationsAPIV2(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV2(httpClient: httpClient)
         case .v3:
-            ConversationsAPIV3(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV3(httpClient: httpClient)
         case .v4:
-            ConversationsAPIV4(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV4(httpClient: httpClient)
         case .v5:
-            ConversationsAPIV5(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV5(httpClient: httpClient)
         case .v6:
-            ConversationsAPIV6(httpClient: httpClient, backendDomain: backendDomain)
+            ConversationsAPIV6(httpClient: httpClient)
         }
     }
 

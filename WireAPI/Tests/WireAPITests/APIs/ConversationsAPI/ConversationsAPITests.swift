@@ -24,22 +24,15 @@ final class ConversationsAPITests: XCTestCase {
 
     private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
 
-    private var mockBackendDomain: String!
-
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-
         httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
-
-        mockBackendDomain = "test.wire.com"
     }
 
     override func tearDown() {
-        mockBackendDomain = nil
         httpRequestSnapshotHelper = nil
-
         super.tearDown()
     }
 
@@ -50,7 +43,7 @@ final class ConversationsAPITests: XCTestCase {
         let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
             httpRequestHelper: httpRequestSnapshotHelper,
             buildAPI: { httpClient, apiVersion in
-                let builder = ConversationsAPIBuilder(httpClient: httpClient, backendDomain: self.mockBackendDomain)
+                let builder = ConversationsAPIBuilder(httpClient: httpClient)
                 return builder.makeAPI(for: apiVersion)
             }
         )
@@ -71,7 +64,7 @@ final class ConversationsAPITests: XCTestCase {
         let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
             httpRequestHelper: httpRequestSnapshotHelper,
             buildAPI: { httpClient, apiVersion in
-                let builder = ConversationsAPIBuilder(httpClient: httpClient, backendDomain: self.mockBackendDomain)
+                let builder = ConversationsAPIBuilder(httpClient: httpClient)
                 return builder.makeAPI(for: apiVersion)
             }
         )
@@ -95,7 +88,7 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
+        let api = ConversationsAPIV0(httpClient: httpClient)
         let pager = try await api.getLegacyConversationIdentifiers()
 
         for try await _ in pager {
@@ -119,7 +112,7 @@ final class ConversationsAPITests: XCTestCase {
             try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483"))
         ]
 
-        let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
+        let api = ConversationsAPIV0(httpClient: httpClient)
 
         // when
         let pager = try await api.getLegacyConversationIdentifiers()
@@ -138,7 +131,7 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
-        let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
+        let api = ConversationsAPIV0(httpClient: httpClient)
 
         // when
         // then
@@ -160,7 +153,7 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let api = ConversationsAPIV1(httpClient: httpClient, backendDomain: mockBackendDomain)
+        let api = ConversationsAPIV1(httpClient: httpClient)
         let pager = try await api.getConversationIdentifiers()
 
         for try await _ in pager {
@@ -187,7 +180,7 @@ final class ConversationsAPITests: XCTestCase {
             )
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient, backendDomain: mockBackendDomain)
+        let api = ConversationsAPIV1(httpClient: httpClient)
 
         // when
         let pager = try await api.getConversationIdentifiers()
@@ -206,7 +199,7 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient, backendDomain: mockBackendDomain)
+        let api = ConversationsAPIV1(httpClient: httpClient)
 
         // when
         // then
