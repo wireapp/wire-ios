@@ -215,12 +215,6 @@ extension ConversationListViewController {
         return action
     }
 
-    /// Method to apply the selected filter and update the UI accordingly
-    private func applyFilter(_ filter: ConversationFilterType) {
-        self.listContentController.listViewModel.selectedFilter = filter
-        self.setupRightNavigationBarButtons()
-    }
-
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
         guard

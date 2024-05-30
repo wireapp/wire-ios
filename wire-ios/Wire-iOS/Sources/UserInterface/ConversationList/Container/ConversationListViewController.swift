@@ -23,6 +23,8 @@ import WireSyncEngine
 
 final class ConversationListViewController: UIViewController {
 
+    // MARK: - Properties
+
     let viewModel: ViewModel
 
     private var viewDidAppearCalled = false
@@ -31,6 +33,19 @@ final class ConversationListViewController: UIViewController {
     private var filterContainerView: UIView!
     private var filterLabel: UILabel!
     private var removeButton: UIButton!
+
+    var selectedFilterLabel: String {
+        switch listContentController.listViewModel.selectedFilter {
+        case .allConversations:
+            return ""
+        case .favorites:
+            return "Favorites"
+        case .groups:
+            return "Groups"
+        case .oneToOneConversations:
+            return "1:1 Conversations"
+        }
+    }
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -61,6 +76,8 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
+
+    // MARK: - Init
 
     convenience init(
         account: Account,
@@ -96,7 +113,6 @@ final class ConversationListViewController: UIViewController {
 
         definesPresentationContext = true
 
-        /// setup UI
         view.backgroundColor = SemanticColors.View.backgroundConversationList
 
         viewModel.viewController = self
@@ -106,6 +122,8 @@ final class ConversationListViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Override methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -138,37 +156,6 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.savePendingLastRead()
         viewModel.requestMarketingConsentIfNeeded()
-    }
-
-    /// Method to apply the selected filter and update the UI accordingly
-    func applyFilter(_ filter: ConversationFilterType) {
-        self.listContentController.listViewModel.selectedFilter = filter
-        self.setupRightNavigationBarButtons()
-
-        if filter == .allConversations {
-            filterContainerView.isHidden = true
-        } else {
-            filterLabel.text = "Filtered by \(getFilterLabelText())"
-            filterContainerView.isHidden = false
-        }
-
-        // Trigger a layout update to ensure the correct positioning
-        // of the add conversation button and filter button
-        // when the filter button is tapped.
-        view.setNeedsLayout()
-    }
-
-    func getFilterLabelText() -> String {
-        switch listContentController.listViewModel.selectedFilter {
-        case .allConversations:
-            return ""
-        case .favorites:
-            return "Favorites"
-        case .groups:
-            return "Groups"
-        case .oneToOneConversations:
-            return "1:1 Conversations"
-        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -259,7 +246,7 @@ final class ConversationListViewController: UIViewController {
         filterLabel = UILabel()
         filterLabel.font = UIFont.font(for: .h5)
         filterLabel.textColor = SemanticColors.Label.baseSecondaryText
-        filterLabel.text = "Filtered by \(getFilterLabelText())"
+        filterLabel.text = "Filtered by \(selectedFilterLabel)"
 
         removeButton = UIButton(type: .system)
         removeButton.setTitle("Remove", for: .normal)
@@ -326,6 +313,10 @@ final class ConversationListViewController: UIViewController {
         ])
     }
 
+    // MARK: - No Contact Label Management
+
+    /// Show or hide the "No Contact" label and onboarding hint based on whether there are archived conversations.
+    /// - Parameter animated: Boolean to indicate if the change should be animated
     func showNoContactLabel(animated: Bool = true) {
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations
@@ -340,6 +331,8 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
+    /// Hide the "No Contact" label and onboarding hint.
+    /// - Parameter animated: Boolean to indicate if the change should be animated
     func hideNoContactLabel(animated: Bool) {
         UIView.animate(withDuration: animated ? 0.2 : 0) {
             self.noConversationLabel.alpha = 0
@@ -347,27 +340,43 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
+    // MARK: - Filter Management
+
+    /// Method to apply the selected filter and update the UI accordingly
+    /// - Parameter filter: The selected filter type to be applied
+    func applyFilter(_ filter: ConversationFilterType) {
+        self.listContentController.listViewModel.selectedFilter = filter
+        self.setupRightNavigationBarButtons()
+
+        if filter == .allConversations {
+            filterContainerView.isHidden = true
+        } else {
+            filterLabel.text = "Filtered by \(selectedFilterLabel)"
+            filterContainerView.isHidden = false
+        }
+
+        // Trigger a layout update to ensure the correct positioning
+        // of the add conversation button and filter button
+        // when the filter button is tapped.
+        view.setNeedsLayout()
+    }
+
+    // MARK: - Selection Management
+
     /// Scroll to the current selection
-    ///
-    /// - Parameter animated: perform animation or not
+    /// - Parameter animated: Perform animation or not
     func scrollToCurrentSelection(animated: Bool) {
         listContentController.scrollToCurrentSelection(animated: animated)
     }
 
-    func presentNewConversationViewController() {
-        let viewController = StartUIViewController(userSession: viewModel.userSession)
-        viewController.delegate = viewModel
-        viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.transitioningDelegate = self
-        navigationController.modalPresentationStyle = .currentContext
-
-        tabBarController?.present(navigationController, animated: true) {
-            viewController.showKeyboardIfNeeded()
-        }
-    }
-
+    /// Select a conversation in the list content controller
+    /// - Parameters:
+    ///   - conversation: The conversation to select
+    ///   - message: The message to scroll to
+    ///   - focus: Boolean to indicate if the view should focus
+    ///   - animated: Boolean to indicate if the change should be animated
+    ///   - completion: Completion handler to be called after the selection
+    /// - Returns: Boolean indicating if the selection was successful
     func selectOnListContentController(
         _ conversation: ZMConversation!,
         scrollTo message: ZMConversationMessage?,
@@ -384,6 +393,25 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
+    // MARK: - Presentation
+
+    /// Present the new conversation view controller
+    func presentNewConversationViewController() {
+        let viewController = StartUIViewController(userSession: viewModel.userSession)
+        viewController.delegate = viewModel
+        viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.transitioningDelegate = self
+        navigationController.modalPresentationStyle = .currentContext
+
+        tabBarController?.present(navigationController, animated: true) {
+            viewController.showKeyboardIfNeeded()
+        }
+    }
+
+    /// Show the newsletter subscription dialog if needed
+    /// - Parameter completionHandler: The completion handler to be called after the dialog is shown
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
             presentViewController: self,
@@ -391,6 +419,8 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
+    /// Select the inbox and focus on the view
+    /// - Parameter focus: Boolean to indicate if the view should focus
     func selectInboxAndFocusOnView(focus: Bool) {
         listContentController.selectInboxAndFocus(onView: focus)
     }
