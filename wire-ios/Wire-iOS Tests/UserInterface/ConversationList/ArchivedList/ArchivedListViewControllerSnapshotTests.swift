@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class ArchivedListViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class ArchivedListViewControllerSnapshotTests: XCTestCase {
 
     private var userSessionMock: UserSessionMock!
 

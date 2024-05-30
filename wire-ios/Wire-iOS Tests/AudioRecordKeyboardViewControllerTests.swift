@@ -95,7 +95,7 @@ final class MockAudioRecorder: AudioRecorderType {
 
 }
 
-final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
+final class AudioRecordKeyboardViewControllerTests: XCTestCase {
 
     var sut: AudioRecordKeyboardViewController!
     var audioRecorder: MockAudioRecorder!

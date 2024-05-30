@@ -628,7 +628,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         NSAttributedString.invalidateParagraphStyle()
         NSAttributedString.invalidateMarkdownStyle()
         ConversationListCell.invalidateCachedCellSize()
-        FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
+        FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
         rootViewController.redrawAllFonts()
     }
