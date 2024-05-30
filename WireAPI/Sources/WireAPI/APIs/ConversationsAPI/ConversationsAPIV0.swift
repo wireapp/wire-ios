@@ -22,7 +22,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     // MARK: - Constants
 
-    enum Constant {
+    enum Constants {
         static let batchSize = 500
     }
 
@@ -44,7 +44,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
         return PayloadPager<UUID> { start in
             // body Params
-            let params = PaginationRequest(pagingState: start, size: Constant.batchSize)
+            let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
 
             let request = HTTPRequest(
@@ -60,7 +60,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         }
     }
 
-    public func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
+    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
         assertionFailure("not implemented! use getLegacyConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
