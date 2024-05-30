@@ -32,10 +32,13 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     let httpClient: HTTPClient
 
+    private let backendInfo: BackendInfo
+
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: HTTPClient, backendInfo: BackendInfo) {
         self.httpClient = httpClient
+        self.backendInfo = backendInfo
     }
 
     public func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
@@ -54,15 +57,29 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             )
             let response = try await self.httpClient.executeRequest(request)
 
-            return try ResponseParser()
-                .success(code: 200, type: PaginatedConversationIDsV0.self)
-                .parse(response)
+            return try self.decodeConversationIdentifiers(from: response)
+        }
+    }
+
+    private func decodeConversationIdentifiers(from response: HTTPResponse) throws -> PayloadPager<QualifiedID>.Page {
+        guard let data = response.payload else {
+            throw ResponseParserError.missingPayload
+        }
+
+        let decoder = JSONDecoder.defaultDecoder
+
+        switch response.code {
+        case 200..<400:
+            let payload = try decoder.decode(PaginatedConversationIDsV0.self, from: data)
+            return payload.toAPIModel(domain: backendInfo.domain)
+        default:
+            throw try decoder.decode(FailureResponse.self, from: data)
         }
     }
 
 }
 
-private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
+private struct PaginatedConversationIDsV0: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case conversationUUIDs = "conversations"
@@ -74,9 +91,9 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
     let pagingState: String
     let hasMore: Bool
 
-    func toAPIModel() -> PayloadPager<QualifiedID>.Page {
+    func toAPIModel(domain: String) -> PayloadPager<QualifiedID>.Page {
         let qualifiedIDs = conversationUUIDs.map {
-            QualifiedID(uuid: $0, domain: "")
+            QualifiedID(uuid: $0, domain: domain)
         }
 
         return PayloadPager<QualifiedID>.Page(
