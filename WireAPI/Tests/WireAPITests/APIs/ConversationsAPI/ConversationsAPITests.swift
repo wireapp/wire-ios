@@ -22,15 +22,18 @@ import XCTest
 
 final class ConversationsAPITests: XCTestCase {
 
-    private var snapshotHelper: HTTPRequestSnapshotHelper!
+    private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
+
     private var mockBackendInfo: BackendInfo!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = .init()
-        mockBackendInfo = .init( // TODO: find a better way to use backend info
+
+        httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
+
+        mockBackendInfo = BackendInfo( // TODO: find a better way to use backend info
             domain: "",
             isFederationEnabled: false,
             supportedVersions: .init(),
@@ -40,7 +43,7 @@ final class ConversationsAPITests: XCTestCase {
 
     override func tearDown() {
         mockBackendInfo = nil
-        snapshotHelper = nil
+        httpRequestSnapshotHelper = nil
 
         super.tearDown()
     }
@@ -49,13 +52,19 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers() async throws {
         // given
-        let snapshotHelper = RequestSnapshotHelper<ConversationsAPIBuilder>()
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPIBuilder>(
+            httpRequestHelper: httpRequestSnapshotHelper,
+            buildAPI: { httpClient, apiVersion in
+                let builder = ConversationsAPIBuilder(httpClient: httpClient, backendInfo: self.mockBackendInfo)
+                return builder.makeAPI(for: apiVersion)
+            }
+        )
 
-        try await snapshotHelper.verifyRequestForAllAPIVersions { sut in
-            // when
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             let pager = try await sut.getConversationIdentifiers()
 
-            // then
             for try await _ in pager {
                 // trigger fetching data
             }
@@ -79,7 +88,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            await snapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
+            await httpRequestSnapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
         }
     }
 
@@ -147,7 +156,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
+            await httpRequestSnapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
         }
     }
 

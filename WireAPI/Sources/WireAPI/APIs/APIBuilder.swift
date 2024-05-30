@@ -21,7 +21,5 @@ import Foundation
 public protocol APIBuilder {
     associatedtype API
 
-    init(httpClient: any HTTPClient)
-
     func makeAPI(for version: APIVersion) -> API
 }

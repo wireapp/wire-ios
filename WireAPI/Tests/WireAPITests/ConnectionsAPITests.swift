@@ -24,7 +24,17 @@ class ConnectionsAPITests: XCTestCase {
 
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
-        try await RequestSnapshotHelper<ConnectionsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        // given
+        let apiSnapshotHelper = APISnapshotHelper<ConnectionsAPIBuilder>(
+            buildAPI: { httpClient, apiVersion in
+                let builder = ConnectionsAPIBuilder(httpClient: httpClient)
+                return builder.makeAPI(for: apiVersion)
+            }
+        )
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             let pager = try await sut.getConnections()
             for try await _ in pager {
                 // this triggers fetching the data
