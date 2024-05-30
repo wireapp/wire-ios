@@ -86,7 +86,7 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
         let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
         let name = "v\(apiVersion.rawValue)"
 
-        try await snapshotHelper.verifyRequest(
+        await snapshotHelper.verifyRequest(
             request: request,
             resourceName: name,
             file: file,

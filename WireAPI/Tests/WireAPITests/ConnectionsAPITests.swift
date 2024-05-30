@@ -108,7 +108,7 @@ class ConnectionsAPITests: XCTestCase {
 
         // checks we made the 3 correct requests
         for (index, receivedRequest) in httpClient.receivedRequests.enumerated() {
-            try await HTTPRequestSnapshotHelper().verifyRequest(
+            await HTTPRequestSnapshotHelper().verifyRequest(
                 request: receivedRequest,
                 resourceName: "v0.\(index)"
             )

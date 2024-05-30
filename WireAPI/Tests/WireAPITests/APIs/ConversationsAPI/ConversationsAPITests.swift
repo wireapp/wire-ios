@@ -79,7 +79,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            try await snapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
+            await snapshotHelper.verifyRequest(request: request, resourceName: "v0.\(index)")
         }
     }
 
@@ -147,7 +147,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // then
         for (index, request) in httpClient.receivedRequests.enumerated() {
-            try await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
+            await snapshotHelper.verifyRequest(request: request, resourceName: "v1.\(index)")
         }
     }
 
