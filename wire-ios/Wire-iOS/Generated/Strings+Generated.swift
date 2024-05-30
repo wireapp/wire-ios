@@ -2712,6 +2712,12 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.oneOnOneConversations.title", fallback: "1:1 Conversations")
         }
       }
+      internal enum FilterLabel {
+        /// Filtered by %@
+        internal static func text(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.filter_label.text", String(describing: p1), fallback: "Filtered by %@")
+        }
+      }
       internal enum Header {
         internal enum SelfTeam {
           /// %@ account.

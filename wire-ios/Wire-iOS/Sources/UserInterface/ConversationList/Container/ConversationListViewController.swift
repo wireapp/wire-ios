@@ -247,7 +247,7 @@ final class ConversationListViewController: UIViewController {
         filterLabel = UILabel()
         filterLabel.font = UIFont.font(for: .h5)
         filterLabel.textColor = SemanticColors.Label.baseSecondaryText
-        filterLabel.text = "Filtered by \(selectedFilterLabel)"
+        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
 
         removeButton = UIButton(type: .system)
         removeButton.setTitle("Remove", for: .normal)
@@ -352,7 +352,7 @@ final class ConversationListViewController: UIViewController {
         if filter == .allConversations {
             filterContainerView.isHidden = true
         } else {
-            filterLabel.text = "Filtered by \(selectedFilterLabel)"
+            filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
             filterContainerView.isHidden = false
         }
 

@@ -128,11 +128,11 @@
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
 // Conversation List - Filter Conversations
-
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favorites";
 "conversation_list.filter.groups.title" = "Groups";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Join";
