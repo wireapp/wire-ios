@@ -78,7 +78,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyRequests() async throws {
+    func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
@@ -99,7 +99,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
+    func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
@@ -122,7 +122,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers_givenV0AndErrorResponse() async throws {
+    func testGetLegacyConversationIdentifiers_givenV0AndErrorResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
