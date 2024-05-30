@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
 import WireDataModel
+import XCTest
 
-final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!

@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
+final class ArchivedNavigationBarTests: XCTestCase {
 
     var sut: ArchivedNavigationBar!
 
