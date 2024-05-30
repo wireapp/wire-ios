@@ -26,7 +26,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
         throw ConversationsAPIError.notImplemented
     }
 
-    override public func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
+    override func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
         let resourcePath = "\(pathPrefix)/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
