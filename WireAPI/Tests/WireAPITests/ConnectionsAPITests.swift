@@ -25,7 +25,7 @@ class ConnectionsAPITests: XCTestCase {
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
         // given
-        let apiSnapshotHelper = APISnapshotHelper<ConnectionsAPIBuilder>(
+        let apiSnapshotHelper = APISnapshotHelper<ConnectionsAPI>(
             buildAPI: { httpClient, apiVersion in
                 let builder = ConnectionsAPIBuilder(httpClient: httpClient)
                 return builder.makeAPI(for: apiVersion)

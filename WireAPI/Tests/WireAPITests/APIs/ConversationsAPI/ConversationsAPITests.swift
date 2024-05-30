@@ -52,7 +52,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers() async throws {
         // given
-        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPIBuilder>(
+        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
             httpRequestHelper: httpRequestSnapshotHelper,
             buildAPI: { httpClient, apiVersion in
                 let builder = ConversationsAPIBuilder(httpClient: httpClient, backendInfo: self.mockBackendInfo)

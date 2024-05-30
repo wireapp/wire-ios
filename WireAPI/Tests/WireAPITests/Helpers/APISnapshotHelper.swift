@@ -17,23 +17,23 @@
 //
 
 import SnapshotTesting
-@testable import WireAPI
+import enum WireAPI.APIVersion
 import XCTest
 
 /// A helper object to make snapshotting API requests easier.
 
-struct APISnapshotHelper<Builder: APIBuilder> {
+struct APISnapshotHelper<API> {
 
     enum Failure: Error {
         case noRequestGenerated
     }
 
     private let httpRequestHelper: HTTPRequestSnapshotHelper
-    private let buildAPI: (HTTPClientMock, APIVersion) -> Builder.API
+    private let buildAPI: (HTTPClientMock, APIVersion) -> API
 
     init(
         httpRequestHelper: HTTPRequestSnapshotHelper? = nil,
-        buildAPI: @escaping (HTTPClientMock, APIVersion) -> Builder.API
+        buildAPI: @escaping (HTTPClientMock, APIVersion) -> API
     ) {
         self.httpRequestHelper = httpRequestHelper ?? .init()
         self.buildAPI = buildAPI
@@ -51,7 +51,7 @@ struct APISnapshotHelper<Builder: APIBuilder> {
     ///   - line: The line invoking the test.
 
     func verifyRequestForAllAPIVersions(
-        when block: (Builder.API) async throws -> Void,
+        when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
         line: UInt = #line
@@ -83,7 +83,7 @@ struct APISnapshotHelper<Builder: APIBuilder> {
 
     private func verifyRequest(
         apiVersion: APIVersion,
-        when block: (Builder.API) async throws -> Void,
+        when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
         line: UInt = #line
