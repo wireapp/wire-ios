@@ -40,6 +40,8 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetLegacyConversationIdentifiers() async throws {
         // given
+        let apiVersions: [APIVersion] = [.v0]
+
         let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
             httpRequestHelper: httpRequestSnapshotHelper,
             buildAPI: { httpClient, apiVersion in
@@ -50,7 +52,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         // then
-        try await apiSnapshotHelper.verifyRequestForAPIVersions([.v0]) { sut in
+        try await apiSnapshotHelper.verifyRequestForAPIVersions(apiVersions) { sut in
             let pager = try await sut.getLegacyConversationIdentifiers()
 
             for try await _ in pager {
@@ -61,6 +63,8 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers() async throws {
         // given
+        let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
+
         let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
             httpRequestHelper: httpRequestSnapshotHelper,
             buildAPI: { httpClient, apiVersion in
@@ -71,7 +75,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         // then
-        try await apiSnapshotHelper.verifyRequestForAPIVersions([.v1, .v2, .v3, .v4, .v5, .v6]) { sut in
+        try await apiSnapshotHelper.verifyRequestForAPIVersions(apiVersions) { sut in
             let pager = try await sut.getConversationIdentifiers()
 
             for try await _ in pager {

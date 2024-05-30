@@ -77,7 +77,7 @@ struct APISnapshotHelper<API> {
     ///   - line: The line invoking the test.
 
     func verifyRequestForAPIVersions(
-        _ apiVersions: [APIVersion],
+        _ apiVersions: any Sequence<APIVersion>,
         when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
