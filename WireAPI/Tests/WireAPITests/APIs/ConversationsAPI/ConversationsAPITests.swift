@@ -33,7 +33,7 @@ final class ConversationsAPITests: XCTestCase {
 
         httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
 
-        mockBackendDomain = ""
+        mockBackendDomain = "test.wire.com"
     }
 
     override func tearDown() {
@@ -97,7 +97,7 @@ final class ConversationsAPITests: XCTestCase {
         let expectedIDs: [QualifiedID] = [
             QualifiedID(
                 uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
-                domain: ""
+                domain: mockBackendDomain
             )
         ]
 
