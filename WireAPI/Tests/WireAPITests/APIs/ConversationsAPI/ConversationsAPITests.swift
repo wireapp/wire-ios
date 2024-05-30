@@ -24,7 +24,7 @@ final class ConversationsAPITests: XCTestCase {
 
     private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
 
-    private var mockBackendInfo: BackendInfo!
+    private var mockBackendDomain: String!
 
     // MARK: - Setup
 
@@ -33,16 +33,11 @@ final class ConversationsAPITests: XCTestCase {
 
         httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
 
-        mockBackendInfo = BackendInfo( // TODO: find a better way to use backend info
-            domain: "",
-            isFederationEnabled: false,
-            supportedVersions: .init(),
-            developmentVersions: .init()
-        )
+        mockBackendDomain = ""
     }
 
     override func tearDown() {
-        mockBackendInfo = nil
+        mockBackendDomain = nil
         httpRequestSnapshotHelper = nil
 
         super.tearDown()
@@ -55,7 +50,7 @@ final class ConversationsAPITests: XCTestCase {
         let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI>(
             httpRequestHelper: httpRequestSnapshotHelper,
             buildAPI: { httpClient, apiVersion in
-                let builder = ConversationsAPIBuilder(httpClient: httpClient, backendInfo: self.mockBackendInfo)
+                let builder = ConversationsAPIBuilder(httpClient: httpClient, backendDomain: self.mockBackendDomain)
                 return builder.makeAPI(for: apiVersion)
             }
         )
@@ -79,7 +74,7 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let api = ConversationsAPIV0(httpClient: httpClient, backendInfo: mockBackendInfo)
+        let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
         let pager = try await api.getConversationIdentifiers()
 
         for try await _ in pager {
@@ -106,7 +101,7 @@ final class ConversationsAPITests: XCTestCase {
             )
         ]
 
-        let api = ConversationsAPIV0(httpClient: httpClient, backendInfo: mockBackendInfo)
+        let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
 
         // when
         let pager = try await api.getConversationIdentifiers()
@@ -125,7 +120,7 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
-        let api = ConversationsAPIV0(httpClient: httpClient, backendInfo: mockBackendInfo)
+        let api = ConversationsAPIV0(httpClient: httpClient, backendDomain: mockBackendDomain)
 
         // when
         // then
@@ -147,7 +142,7 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let api = ConversationsAPIV1(httpClient: httpClient, backendInfo: mockBackendInfo)
+        let api = ConversationsAPIV1(httpClient: httpClient, backendDomain: mockBackendDomain)
         let pager = try await api.getConversationIdentifiers()
 
         for try await _ in pager {
@@ -174,7 +169,7 @@ final class ConversationsAPITests: XCTestCase {
             )
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient, backendInfo: mockBackendInfo)
+        let api = ConversationsAPIV1(httpClient: httpClient, backendDomain: mockBackendDomain)
 
         // when
         let pager = try await api.getConversationIdentifiers()
@@ -193,7 +188,7 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient, backendInfo: mockBackendInfo)
+        let api = ConversationsAPIV1(httpClient: httpClient, backendDomain: mockBackendDomain)
 
         // when
         // then

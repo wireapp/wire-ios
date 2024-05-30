@@ -32,13 +32,13 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     let httpClient: HTTPClient
 
-    private let backendInfo: BackendInfo
+    private let backendDomain: String
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient, backendInfo: BackendInfo) {
+    init(httpClient: HTTPClient, backendDomain: String) {
         self.httpClient = httpClient
-        self.backendInfo = backendInfo
+        self.backendDomain = backendDomain
     }
 
     public func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
@@ -71,7 +71,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         switch response.code {
         case 200..<400:
             let payload = try decoder.decode(PaginatedConversationIDsV0.self, from: data)
-            return payload.toAPIModel(domain: backendInfo.domain)
+            return payload.toAPIModel(domain: backendDomain)
         default:
             throw try decoder.decode(FailureResponse.self, from: data)
         }

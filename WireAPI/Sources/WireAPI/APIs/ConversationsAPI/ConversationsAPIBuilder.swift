@@ -22,24 +22,14 @@ import Foundation
 public struct ConversationsAPIBuilder {
 
     private let httpClient: any HTTPClient
-    private let backendInfo: BackendInfo
+    private let backendDomain: String
 
     /// Create a new builder for the conversations API.
     ///
     /// - Parameter httpClient: A http client.
-    public init(httpClient: any HTTPClient, backendInfo: BackendInfo) {
+    public init(httpClient: any HTTPClient, backendDomain: String) {
         self.httpClient = httpClient
-        self.backendInfo = backendInfo
-    }
-
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
-        self.backendInfo = .init(
-            domain: "",
-            isFederationEnabled: true,
-            supportedVersions: .init(),
-            developmentVersions: .init()
-        )
+        self.backendDomain = backendDomain
     }
 
     /// Make a versioned `ConversationsAPI`.
@@ -49,20 +39,20 @@ public struct ConversationsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any ConversationsAPI {
         switch version {
         case .v0:
-            ConversationsAPIV0(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV0(httpClient: httpClient, backendDomain: backendDomain)
         case .v1:
             // TODO: we only need backend info for V0, but now pass to all?
-            ConversationsAPIV1(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV1(httpClient: httpClient, backendDomain: backendDomain)
         case .v2:
-            ConversationsAPIV2(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV2(httpClient: httpClient, backendDomain: backendDomain)
         case .v3:
-            ConversationsAPIV3(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV3(httpClient: httpClient, backendDomain: backendDomain)
         case .v4:
-            ConversationsAPIV4(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV4(httpClient: httpClient, backendDomain: backendDomain)
         case .v5:
-            ConversationsAPIV5(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV5(httpClient: httpClient, backendDomain: backendDomain)
         case .v6:
-            ConversationsAPIV6(httpClient: httpClient, backendInfo: backendInfo)
+            ConversationsAPIV6(httpClient: httpClient, backendDomain: backendDomain)
         }
     }
 
