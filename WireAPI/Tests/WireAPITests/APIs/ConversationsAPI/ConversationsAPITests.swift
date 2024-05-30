@@ -22,23 +22,35 @@ import XCTest
 
 final class ConversationsAPITests: XCTestCase {
 
-    private var snapshotHelper: RequestSnapshotHelper<ConversationsAPIBuilder>!
+    private var snapshotHelper: HTTPRequestSnapshotHelper!
+    private var mockBackendInfo: BackendInfo!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
         snapshotHelper = .init()
+        mockBackendInfo = .init( // TODO: find a better way to use backend info
+            domain: "",
+            isFederationEnabled: false,
+            supportedVersions: .init(),
+            developmentVersions: .init()
+        )
     }
 
     override func tearDown() {
+        mockBackendInfo = nil
         snapshotHelper = nil
+
+        super.tearDown()
     }
 
     // MARK: - Tests
 
     func testGetConversationIdentifiers() async throws {
         // given
+        let snapshotHelper = RequestSnapshotHelper<ConversationsAPIBuilder>()
+
         try await snapshotHelper.verifyRequestForAllAPIVersions { sut in
             // when
             let pager = try await sut.getConversationIdentifiers()
@@ -58,7 +70,7 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let api = ConversationsAPIV0(httpClient: httpClient)
+        let api = ConversationsAPIV0(httpClient: httpClient, backendInfo: mockBackendInfo)
         let pager = try await api.getConversationIdentifiers()
 
         for try await _ in pager {
@@ -85,7 +97,7 @@ final class ConversationsAPITests: XCTestCase {
             )
         ]
 
-        let api = ConversationsAPIV0(httpClient: httpClient)
+        let api = ConversationsAPIV0(httpClient: httpClient, backendInfo: mockBackendInfo)
 
         // when
         let pager = try await api.getConversationIdentifiers()
@@ -104,7 +116,7 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
-        let api = ConversationsAPIV0(httpClient: httpClient)
+        let api = ConversationsAPIV0(httpClient: httpClient, backendInfo: mockBackendInfo)
 
         // when
         // then
@@ -126,7 +138,7 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let api = ConversationsAPIV1(httpClient: httpClient)
+        let api = ConversationsAPIV1(httpClient: httpClient, backendInfo: mockBackendInfo)
         let pager = try await api.getConversationIdentifiers()
 
         for try await _ in pager {
@@ -153,7 +165,7 @@ final class ConversationsAPITests: XCTestCase {
             )
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient)
+        let api = ConversationsAPIV1(httpClient: httpClient, backendInfo: mockBackendInfo)
 
         // when
         let pager = try await api.getConversationIdentifiers()
@@ -172,7 +184,7 @@ final class ConversationsAPITests: XCTestCase {
             try HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
-        let api = ConversationsAPIV1(httpClient: httpClient)
+        let api = ConversationsAPIV1(httpClient: httpClient, backendInfo: mockBackendInfo)
 
         // when
         // then

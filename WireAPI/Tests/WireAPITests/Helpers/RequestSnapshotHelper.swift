@@ -24,6 +24,8 @@ import XCTest
 
 struct RequestSnapshotHelper<Builder: APIBuilder> {
 
+    let snapshotHelper = HTTPRequestSnapshotHelper()
+
     enum Failure: Error {
         case noRequestGenerated
     }
@@ -84,41 +86,12 @@ struct RequestSnapshotHelper<Builder: APIBuilder> {
         let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
         let name = "v\(apiVersion.rawValue)"
 
-        try await verifyRequest(request: request,
-                          resourceName: name,
-                          file: file,
-                          function: function,
-                          line: line)
-
-    }
-
-    /// Snapshot test a given request
-    /// - Parameters:
-    ///   - request: httpRequest to verify
-    ///   - resourceName: name of the file containing the expected request description
-    ///   - file: The file invoking the test.
-    ///   - function: The method invoking the test.
-    ///   - line: The line invoking the test.
-
-    @MainActor
-    func verifyRequest(
-        request: HTTPRequest,
-        resourceName: String,
-        file: StaticString = #file,
-        function: String = #function,
-        line: UInt = #line
-    ) throws {
-        let errorMessage = verifySnapshot(
-            of: request,
-            as: .dump,
-            named: resourceName,
+        try await snapshotHelper.verifyRequest(
+            request: request,
+            resourceName: name,
             file: file,
-            testName: function,
+            function: function,
             line: line
         )
-
-        if let errorMessage {
-            XCTFail(errorMessage, file: file, line: line)
-        }
     }
 }
