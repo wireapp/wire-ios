@@ -250,7 +250,7 @@ final class ConversationListViewController: UIViewController {
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
 
         removeButton = UIButton(type: .system)
-        removeButton.setTitle("Remove", for: .normal)
+        removeButton.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
         removeButton.titleLabel?.font = UIFont.font(for: .h5)
         removeButton.setTitleColor(UIColor.accent(), for: .normal)
         removeButton.addTarget(self, action: #selector(removeFilter), for: .touchUpInside)

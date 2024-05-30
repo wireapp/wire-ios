@@ -2711,6 +2711,10 @@ internal enum L10n {
           /// 1:1 Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.oneOnOneConversations.title", fallback: "1:1 Conversations")
         }
+        internal enum RemoveButton {
+          /// Remove
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.remove_button.title", fallback: "Remove")
+        }
       }
       internal enum FilterLabel {
         /// Filtered by %@
