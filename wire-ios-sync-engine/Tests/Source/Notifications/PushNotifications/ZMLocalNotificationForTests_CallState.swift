@@ -29,7 +29,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.name = "Callie"
             sender.remoteIdentifier = UUID()
@@ -71,7 +71,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testIncomingAudioCall_WithAvailabilityAway() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.availability = .away
         }
@@ -87,7 +87,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testIncomingAudioCall_WithAllMutedConversation() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.conversation.mutedMessageTypes = .all
         }
 
@@ -207,7 +207,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // given
             let team = Team.insertNewObject(in: self.syncMOC)

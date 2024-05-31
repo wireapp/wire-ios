@@ -23,7 +23,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
 
     func testThatWeIgnoreClearedEventNotSentFromSelfUser() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID()
             let clearedDate = Date()
@@ -42,7 +42,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
 
     func testThatWeIgnoreLastReadEventNotSentFromSelfUser() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             guard let remoteIdentifier = self.syncConversation.remoteIdentifier else {
                 XCTFail("There's no remoteIdentifier")
@@ -67,7 +67,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
 
     func testThatWeIgnoreHideMessageEventNotSentFromSelfUser() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
@@ -88,7 +88,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     // MARK: - Analytics Data Transfer
 
     func test_AfterProcessingDataTransferMessage_ContainingTrackingIdentifier_SelfUserIsUpdated() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // Given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
@@ -112,7 +112,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     }
 
     func test_WeIgnoreDataTransferMessage_IfNotSentFromSelfUser() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // Given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
@@ -134,7 +134,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     }
 
     func test_WeIgnoreDataTransferMessage_IfNotSentInSelfConversation() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // Given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)

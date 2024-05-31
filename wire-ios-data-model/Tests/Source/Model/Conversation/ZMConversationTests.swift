@@ -96,7 +96,7 @@ extension ZMConversationTests {
         // given
         let uuid = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // when
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: "", in: self.syncMOC)
 
@@ -110,7 +110,7 @@ extension ZMConversationTests {
         // given
         let uuid = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // when
             BackendInfo.isFederationEnabled = false
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
@@ -127,7 +127,7 @@ extension ZMConversationTests {
         let uuid = UUID.create()
         let domain = "a.com"
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // when
             BackendInfo.isFederationEnabled = true
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)

@@ -62,6 +62,7 @@ enum AppState: Equatable {
     }
 }
 
+// sourcery: AutoMockable
 protocol AppStateCalculatorDelegate: AnyObject {
     func appStateCalculator(
         _ appStateCalculator: AppStateCalculator,
