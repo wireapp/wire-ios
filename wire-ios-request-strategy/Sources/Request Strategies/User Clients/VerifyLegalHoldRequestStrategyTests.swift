@@ -88,7 +88,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: APIVersion) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let conversation = self.createGroupConversation(with: self.otherUser)
             let conversationSet: Set<NSManagedObject> = [conversation]
@@ -114,7 +114,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
     func testThatItResetsNeedsToVerifyLegalHoldFlag_WhenReceivingTheResponse() {
         var conversation: ZMConversation!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             conversation = self.createGroupConversation(with: self.otherUser)
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
@@ -128,7 +128,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(conversation.needsToVerifyLegalHold)
         }
     }
@@ -142,7 +142,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         var conversation: ZMConversation!
         let clientID = "client123"
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             conversation = self.createGroupConversation(with: self.otherUser)
             let conversationSet: Set<NSManagedObject> = [conversation]
@@ -167,7 +167,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             guard let client = UserClient.fetchUserClient(withRemoteId: clientID, forUser: self.otherUser, createIfNeeded: false) else { return XCTFail("Failed to fetch client") }
 
             XCTAssertEqual(client.remoteIdentifier, clientID)
@@ -183,7 +183,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
         let existingClientID = "client2"
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: true))
             XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: self.otherUser, createIfNeeded: true))
@@ -210,7 +210,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             guard let existingClient = UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: self.otherUser, createIfNeeded: false) else { return XCTFail("Failed to fetch existing client") }
 
             XCTAssertNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: false))
@@ -226,7 +226,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     private func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: true))
 
@@ -251,7 +251,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: false))
         }
     }
@@ -265,7 +265,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         var conversation: ZMConversation!
         let selfClientID = "selfClient1"
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             conversation = self.createGroupConversation(with: self.otherUser)
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
@@ -291,7 +291,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
 
             XCTAssertNotNil(selfUser.selfClient())

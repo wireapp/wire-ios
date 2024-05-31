@@ -24,18 +24,18 @@ class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
     override func setUp() {
         super.setUp()
         deletionTimer?.isTesting = true
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.obfuscationTimer?.isTesting = true
         }
     }
 
     override func tearDown() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        uiMOC.performGroupedBlockAndWait {
+        uiMOC.performGroupedAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -117,7 +117,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsTheTimerForMultipartMessagesWhenTheAssetIsUploaded() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let fileMetadata = self.createFileMetadata()
@@ -137,7 +137,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         var message: ZMAssetClientMessage!
 
         // given
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // set timeout
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
 
@@ -152,12 +152,12 @@ extension ZMAssetClientMessageTests_Ephemeral {
         }
 
         // when timer extended by 5 seconds
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             message.extendDestructionTimer(to: Date(timeIntervalSinceNow: 15))
         }
 
         // then a new timer was created
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let newTimer = self.obfuscationTimer?.timer(for: message)
             XCTAssertNotEqual(oldTimer, newTimer)
         }
@@ -168,7 +168,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         var message: ZMAssetClientMessage!
 
         // given
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // set timeout
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
 
@@ -183,12 +183,12 @@ extension ZMAssetClientMessageTests_Ephemeral {
         }
 
         // when timer "extended" 5 seconds earlier
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             message.extendDestructionTimer(to: Date(timeIntervalSinceNow: 5))
         }
 
         // then no new timer created
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let newTimer = self.obfuscationTimer?.timer(for: message)
             XCTAssertEqual(oldTimer, newTimer)
         }

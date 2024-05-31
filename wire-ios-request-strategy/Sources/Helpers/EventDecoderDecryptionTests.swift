@@ -20,10 +20,11 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
 import XCTest
 
-class EventDecoderDecryptionTests: MessagingTestBase {
+@testable import WireRequestStrategy
+
+final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItCanDecryptOTRMessageAddEvent() async throws {
         // GIVEN
@@ -37,7 +38,7 @@ class EventDecoderDecryptionTests: MessagingTestBase {
             eventDecoder: sut
         )
 
-        self.syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // THEN
             XCTAssertEqual(decryptedEvent.senderUUID, self.otherUser.remoteIdentifier!)
             XCTAssertEqual(decryptedEvent.recipientClientID, self.selfClient.remoteIdentifier!)

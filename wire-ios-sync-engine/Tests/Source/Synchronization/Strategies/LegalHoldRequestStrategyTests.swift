@@ -34,7 +34,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
         sut = LegalHoldRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID()
         }
@@ -104,7 +104,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     // MARK: - Slow Sync
 
     func testThatItRequestsLegalHoldStatus_DuringSlowSync() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
@@ -122,7 +122,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     }
 
     func testThatItSkipsLegalHoldSyncPhase_IfUserDoesNotBelongToAteam() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
@@ -135,7 +135,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     }
 
     func testThatISkipsLegalHoldSyncPhase_OnPermanentErrors() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
@@ -145,7 +145,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
         }
     }
@@ -153,7 +153,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     func testThatItCreatesALegalHoldRequest_WhenLegalHoldStatusIsPending() {
         var expectedLegalHoldRequest: LegalHoldRequest!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
@@ -169,7 +169,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             guard case .pending(let legalHoldRequest) = selfUser.legalHoldStatus else { return XCTFail() }
             XCTAssertEqual(legalHoldRequest.clientIdentifier, expectedLegalHoldRequest.clientIdentifier)
@@ -177,7 +177,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCancelsALegalHoldRequest_WhenLegalHoldStatusIsDisabled() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
@@ -198,7 +198,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
         }
@@ -231,7 +231,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
     func testThatItProcessesLegalHoldDisabledEvent() {
         // GIVEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -256,7 +256,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         }
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
         }

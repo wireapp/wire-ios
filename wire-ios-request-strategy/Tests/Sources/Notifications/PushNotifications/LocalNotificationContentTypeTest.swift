@@ -25,7 +25,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheLocationMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let location = WireProtos.Location.with {
                 $0.latitude = 0.0
                 $0.longitude = 0.0
@@ -43,7 +43,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheKnockMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true })
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
@@ -57,7 +57,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheEphemeralMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let message = GenericMessage(content: Text(content: "Ephemeral Message"), nonce: UUID(), expiresAfterTimeInterval: 100)
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
@@ -71,7 +71,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheTextMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let message = GenericMessage(content: Text(content: "Text Message"))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
@@ -85,7 +85,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheAudioMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let audioMetadata = ZMAudioMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), duration: 100)
             let message = GenericMessage(content: WireProtos.Asset(audioMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
@@ -100,7 +100,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheVideoMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let videoMetadata = ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())
             let message = GenericMessage(content: WireProtos.Asset(videoMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
@@ -115,7 +115,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheFileMessage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let fileMetaData = self.createFileMetadata()
             let message = GenericMessage(content: WireProtos.Asset(fileMetaData))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
@@ -130,7 +130,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMemberJoinEvent() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMemberJoinUpdateEvent(UUID.create(), conversationID: UUID.create(), users: [self.selfUser])
 
             // when
@@ -143,7 +143,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMemberLeaveEvent() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMemberLeaveUpdateEvent(UUID.create(), conversationID: UUID.create(), users: [self.selfUser])
 
             // when
@@ -156,7 +156,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMessageTimerUpdateEvent() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMessageTimerUpdateEvent(UUID.create(), conversationID: UUID.create())
 
             // when

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDataModel
 import XCTest
+
+@testable import WireDataModel
 
 final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
 
@@ -57,7 +57,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
                     XCTAssertEqual(clients.count, 2)
                 },
                 postMigrationAction: { context in
-                    try context.performGroupedAndWait { [self] context in
+                    try context.performGroupedAndWait {
                         // verify it deleted duplicates
                         var clients = try fetchClients(with: clientID, in: context)
                         XCTAssertEqual(clients.count, 1)

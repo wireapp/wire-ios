@@ -105,7 +105,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .connection
 
@@ -776,7 +776,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         // given
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         var conversation: ZMConversation!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group
             self.syncMOC.saveOrRollback()
@@ -791,7 +791,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(conversationList.count, 0)
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             conversation.userDefinedName = "foo"
             self.syncMOC.saveOrRollback()
         }
@@ -991,7 +991,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let team = Team.fetch(with: teamId, in: self.syncMOC)
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group

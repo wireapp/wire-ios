@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
 import XCTest
 
-class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
+@testable import WireDataModel
+
+final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
@@ -51,7 +51,7 @@ class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
                 try context.save()
             },
             postMigrationAction: { context in
-                try context.performGroupedAndWait { context in
+                try context.performGroupedAndWait {
                     let conversation1 = try XCTUnwrap(ZMConversation.fetch(with: conversationID1, in: context))
                     let conversation2 = try XCTUnwrap(ZMConversation.fetch(with: conversationID2, in: context))
                     XCTAssertFalse(conversation1.isPendingInitialFetch)

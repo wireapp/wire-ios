@@ -16,19 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class AppStateCalculatorTests: XCTestCase {
 
-    var sut: AppStateCalculator!
-    var delegate: MockAppStateCalculatorDelegate!
+    private var sut: AppStateCalculator!
+    private var delegate: MockAppStateCalculatorDelegate!
 
     override func setUp() {
         super.setUp()
+
         sut = AppStateCalculator()
         delegate = MockAppStateCalculatorDelegate()
-        delegate.wasNotified = false
+        delegate.appStateCalculatorDidCalculateCompletion_MockMethod = { _, _, completion in
+            completion()
+        }
         sut.delegate = delegate
         BackendInfo.apiVersion = .v0
     }
@@ -37,60 +41,66 @@ final class AppStateCalculatorTests: XCTestCase {
         sut = nil
         delegate = nil
         BackendInfo.apiVersion = nil
+
         super.tearDown()
     }
 
     // MARK: - Tests AppState Cases
 
     func testThatAppStateChanges_OnDidBlacklistCurrentVersion() {
+
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
 
         // THEN
         XCTAssertEqual(sut.appState, .blacklisted(reason: .appVersionBlacklisted))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidJailbreakCurrentVersion() {
+
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerDidBlacklistJailbrokenDevice()
 
         // THEN
         XCTAssertEqual(sut.appState, .jailbroken)
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidFailToLoadDatabase() {
+
         enum DBError: Error {
             case migrationError
         }
+
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerDidFailToLoadDatabase(error: DBError.migrationError)
 
         // THEN
         XCTAssertEqual(sut.appState, .databaseFailure(reason: DBError.migrationError))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnRetryStart() {
+
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerAsksToRetryStart()
 
         // THEN
         XCTAssertEqual(sut.appState, .retryStart)
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnWillMigrateAccount() {
+
         // GIVEN
         let account = Account(userName: "dummy", userIdentifier: UUID())
         let selectedAccount = Account(userName: "selectedDummy", userIdentifier: UUID())
         sut.testHelper_setAppState(.loading(account: account, from: selectedAccount))
-        delegate.wasNotified = false
         sut.applicationDidBecomeActive()
 
         // WHEN
@@ -98,10 +108,11 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .migrating)
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnSessionManagerWillLogout() {
+
         // GIVEN
         let error = NSError(code: ZMUserSessionErrorCode.unknownError, userInfo: nil)
         sut.applicationDidBecomeActive()
@@ -111,10 +122,11 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(error: error))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidFailToLogin() {
+
         // GIVEN
         let error = NSError(code: ZMUserSessionErrorCode.invalidCredentials, userInfo: nil)
         sut.applicationDidBecomeActive()
@@ -124,10 +136,11 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(error: error))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {
+
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
@@ -138,10 +151,11 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .locked(userSession))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnUserAuthenticationDidComplete() {
+
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -153,15 +167,23 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .authenticated(userSession))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
-    func testThatAppStateChanges_OnDidPerformFederationMigration() {
-        testThatAppStateChanges_OnDidPerformFederationMigration(authenticated: false)
+    func testThatAppStateChanges_OnDidPerformFederationMigration_authenticated() {
         testThatAppStateChanges_OnDidPerformFederationMigration(authenticated: true)
     }
 
-    func testThatAppStateChanges_OnDidPerformFederationMigration(authenticated: Bool) {
+    func testThatAppStateChanges_OnDidPerformFederationMigration_unauthenticated() {
+        testThatAppStateChanges_OnDidPerformFederationMigration(authenticated: false)
+    }
+
+    func testThatAppStateChanges_OnDidPerformFederationMigration(
+        authenticated: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+
         // GIVEN
         let userSession = authenticated ? UserSessionMock() : nil
         sut.applicationDidBecomeActive()
@@ -179,10 +201,11 @@ final class AppStateCalculatorTests: XCTestCase {
 
             XCTAssertEqual(error?.userSessionErrorCode, .needsAuthenticationAfterMigration)
         }
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidCompleteInitialSync() {
+
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -192,10 +215,11 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .authenticated(userSession))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnWillEnrollCertificate() {
+
         // GIVEN
         sut.applicationDidBecomeActive()
 
@@ -207,6 +231,7 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidUpdateCertificate() {
+
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -221,57 +246,57 @@ final class AppStateCalculatorTests: XCTestCase {
     // MARK: - Tests AppState Changes
 
     func testApplicationDontTransit_WhenAppStateDontChanges() {
+
         // GIVEN
         sut.applicationDidBecomeActive()
         sut.testHelper_setAppState(.blacklisted(reason: .appVersionBlacklisted))
-        delegate.wasNotified = false
 
         // WHEN
         sut.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
 
         // THEN
         XCTAssertEqual(sut.appState, .blacklisted(reason: .appVersionBlacklisted))
-        XCTAssertFalse(delegate.wasNotified)
+        XCTAssertTrue(delegate.appStateCalculatorDidCalculateCompletion_Invocations.isEmpty)
     }
 
     // Quarantined
     func testApplicationTransit_WhenAppStateChanges() {
+
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
         sut.applicationDidBecomeActive()
         sut.testHelper_setAppState(.blacklisted(reason: .appVersionBlacklisted))
-        delegate.wasNotified = false
 
         // WHEN
         sut.sessionManagerDidReportLockChange(forSession: userSession)
 
         // THEN
         XCTAssertEqual(sut.appState, .locked(userSession))
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     // MARK: - Tests When App Become Active
 
     func testThatAppStateDoesntChange_OnDidReportLockChange_BeforeAppBecomeActive() {
+
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
-        delegate.wasNotified = false
         sut.applicationDidEnterBackground()
 
         // WHEN
         sut.sessionManagerDidReportLockChange(forSession: userSession)
 
         // THEN
-        XCTAssertFalse(delegate.wasNotified)
+        XCTAssertTrue(delegate.appStateCalculatorDidCalculateCompletion_Invocations.isEmpty)
     }
 
     func testThatAppStateChanges_OnDidReportLockChange_AfterAppHasBecomeActive() {
+
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
-        delegate.wasNotified = false
         sut.applicationDidEnterBackground()
         sut.sessionManagerDidReportLockChange(forSession: userSession)
 
@@ -279,10 +304,11 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // THEN
-        XCTAssertTrue(delegate.wasNotified)
+        XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatItDoesntTransitionAwayFromBlacklisted_IfThereIsNoCurrentAPIVersion() {
+
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -296,14 +322,5 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, blacklistState)
-    }
-}
-
-final class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
-    var wasNotified: Bool = false
-    func appStateCalculator(_: AppStateCalculator,
-                            didCalculate appState: AppState,
-                            completion: @escaping () -> Void) {
-        wasNotified = true
     }
 }

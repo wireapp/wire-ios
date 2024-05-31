@@ -40,7 +40,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
                                              messageSender: mockMessageSender)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = UUID.create()
 
@@ -61,7 +61,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     // MARK: Request generation
 
     func testThatDeliveryReceiptIsScheduled_WhenProcessingEventWhichNeedsDeliveryReceipt() throws {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
 
@@ -78,7 +78,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     // MARK: Delivery receipt creation
 
     func testThatDeliveryReceiptIsCreatedFromUpdateEvent() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
 
@@ -93,7 +93,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatDeliveryReceiptIsNotCreatedFromUpdateEvent_WhenMessageIsADeliveryReceipt() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let confirmation = GenericMessage(content: Confirmation(messageId: .create()))
             let event = self.createUpdateEvent(message: confirmation, from: self.otherUser, in: self.oneToOneConversation)
@@ -107,7 +107,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatDeliveryReceiptIsNotCreatedFromUpdateEvent_WhenMessageIsSentInGroupConversation() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.groupConversation)
 
@@ -120,7 +120,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatDeliveryReceiptIsNotCreatedFromUpdateEvent_WhenMessageIsSentBySelfUser() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let event = self.createTextUpdateEvent(from: selfUser, in: self.groupConversation)
@@ -134,7 +134,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatDeliveryReceiptIsNotCreatedFromUpdateEvent_WhenMessageIsOlderThan7Days() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let eightDaysAgo = Date(timeIntervalSinceNow: -(60 * 60 * 24 * 8))
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -149,7 +149,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testMessagesAreCombined_WhenSameSenderMultipleMessageInAConversation() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let events = [self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
                           self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)]
@@ -165,7 +165,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testMessagesAreNotCombined_WhenSameSenderMultipleMessageInDifferentConversations() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let events = [self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
                           self.createTextUpdateEvent(from: self.otherUser, in: self.secondOneToOneConveration)]
@@ -180,7 +180,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     }
 
     func testMessagesAreNotCombined_WhenDifferentSendersSendMultipleMessageInAConversations() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let events = [self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
                           self.createTextUpdateEvent(from: self.secondUser, in: self.oneToOneConversation)]

@@ -24,7 +24,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Access Mode
 
     func testThatItUpdateAccessStatus() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let accessRoles: Set<ConversationAccessRoleV2> = [.teamMember, .guest, .service]
             let accessMode = ConversationAccessMode.allowGuests
@@ -41,7 +41,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Receipt Mode
 
     func testThatItUpdateReadReceiptStatusAndInsertsSystemMessage_ForNonEmptyConversations() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.appendNewConversationSystemMessage(at: Date(), users: Set())
@@ -56,7 +56,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItDoesntInsertsSystemMessage_WhenReadReceiptStatusDoesntChange() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.hasReadReceiptsEnabled = true
@@ -72,7 +72,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Archiving
 
     func testThatItUpdateArchiveStatus() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
 
@@ -88,7 +88,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Muting
 
     func testThatItUpdateMutedStatus() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let mutedMessages: MutedMessageTypes = .all
@@ -106,7 +106,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsRoles_WhenNotInTeam() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -136,7 +136,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsRoles_WhenInTeam() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -172,7 +172,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItUpdatesRoles_WhenInTeam() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -198,7 +198,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsSelfRole_WhenInTeam() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -219,7 +219,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItAssignsSelfRole_WhenNotInTeam() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -238,7 +238,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
     func testThatItRefetchesRoles_WhenSelfUserIsAssignedARole() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

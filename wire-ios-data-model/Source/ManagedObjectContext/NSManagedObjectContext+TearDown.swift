@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 import WireUtilities
 
 extension NSManagedObjectContext: TearDownCapable {
@@ -24,15 +24,14 @@ extension NSManagedObjectContext: TearDownCapable {
     /// Tear down the context. Using the context after this call results in
     /// undefined behavior.
     public func tearDown() {
-        self.performGroupedBlockAndWait {
-            self.tearDownUserInfo()
-            let objects = self.registeredObjects
-            objects.forEach {
-                if let tearDownCapable = $0 as? TearDownCapable {
+        performGroupedAndWait { [self] in
+            tearDownUserInfo()
+            registeredObjects.forEach { object in
+                if let tearDownCapable = object as? TearDownCapable {
                     tearDownCapable.tearDown()
                 }
             }
-            self.reset()
+            reset()
         }
     }
 

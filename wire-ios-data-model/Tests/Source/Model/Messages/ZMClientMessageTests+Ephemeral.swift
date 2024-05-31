@@ -27,18 +27,18 @@ class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
     override func setUp() {
         super.setUp()
         deletionTimer?.isTesting = true
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.obfuscationTimer?.isTesting = true
         }
     }
 
     override func tearDown() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        uiMOC.performGroupedBlockAndWait {
+        uiMOC.performGroupedAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -134,7 +134,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsATimerWhenTheMessageIsMarkedAsSent() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let message = try! self.syncConversation.appendText(content: "foo") as! ZMClientMessage
@@ -152,7 +152,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsATimerWhenTheMessageIsMarkedAsSent_IncomingFromOtherDevice() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             self.syncConversation.lastReadServerTimeStamp = Date()
@@ -192,7 +192,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testThatItDoesNotStartATimerWhenTheMessageHasUnsentLinkPreviewAndIsMarkedAsSent() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
 
@@ -237,7 +237,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItClearsTheMessageContentWhenTheTimerFiresAndSetsIsObfuscatedToTrue() {
         var message: ZMClientMessage!
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.custom(0.1), for: .selfUser)
             message = try! self.syncConversation.appendText(content: "foo") as? ZMClientMessage
@@ -263,7 +263,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testThatItDoesNotStartTheTimerWhenTheMessageExpires() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.custom(0.1), for: .selfUser)
             let message = try! self.syncConversation.appendText(content: "foo") as! ZMClientMessage
@@ -280,7 +280,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteForItFromOtherUser() {
         var message: ZMClientMessage!
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.custom(0.1), for: .selfUser)
             message = try! self.syncConversation.appendText(content: "foo") as? ZMClientMessage
@@ -289,7 +289,7 @@ extension ZMClientMessageTests_Ephemeral {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         spinMainQueue(withTimeout: 0.5)
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertTrue(message.isObfuscated)
             XCTAssertNil(message.destructionDate)
 
@@ -307,7 +307,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteFromSelfUser() {
         var message: ZMClientMessage!
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             message = try! self.syncConversation.appendText(content: "foo") as? ZMClientMessage
@@ -316,7 +316,7 @@ extension ZMClientMessageTests_Ephemeral {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // when
             let delete = GenericMessage(content: MessageDelete(messageId: message.nonce!), nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
@@ -573,7 +573,7 @@ extension ZMClientMessageTests_Ephemeral {
 
     func obfuscatedMessagesByTheSelfUser(timerHadStarted: Bool) -> Bool {
         var isObfuscated = false
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let message = try! self.syncConversation.appendText(content: "foo") as! ZMClientMessage

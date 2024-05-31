@@ -83,7 +83,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItDoesNotUpdateAssetsWhenThereAreLocalModifications() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let user = ZMUser.selfUser(in: self.syncMOC)
@@ -102,7 +102,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItIgnoreAssetsWithIllegalCharacters() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let user = ZMUser.selfUser(in: self.syncMOC)
@@ -121,7 +121,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItRemovesRemoteIdentifiersWhenWeGetEmptyAssets() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "some"
@@ -137,7 +137,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItUpdatesIdentifiersAndRemovesCachedImagesWhenWeGetRemoteIdentifiers() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "123"
@@ -162,7 +162,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItDoesNotRemoveLocalImagesIfRemoteIdentifiersHaveNotChanged() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let previewId = "some"
             let previewData = "some".data(using: .utf8)
@@ -193,7 +193,7 @@ extension ZMUserTests_Swift {
 // MARK: - AssetV3 filter predicates
 extension ZMUserTests_Swift {
     func testThatPreviewImageDownloadFilterPicksUpUser() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let predicate = ZMUser.previewImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
@@ -205,7 +205,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatCompleteImageDownloadFilterPicksUpUser() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
@@ -218,7 +218,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatCompleteImageDownloadFilterDoesNotPickUpUsersWithoutAssetId() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
@@ -231,7 +231,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatCompleteImageDownloadFilterDoesNotPickUpUsersWithInvalidAssetId() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
@@ -244,7 +244,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatPreviewImageDownloadFilterDoesNotPickUpUsersWithCachedImages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
@@ -257,7 +257,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatCompleteImageDownloadFilterDoesNotPickUpUsersWithCachedImages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
@@ -953,7 +953,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItDoesNotSetModifiedKeysForEnableReadReceipts() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let sut = ZMUser.selfUser(in: self.syncMOC)
             sut.resetLocallyModifiedKeys(Set())
@@ -1169,7 +1169,7 @@ extension ZMUserTests_Swift {
         // given
         let uuid = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // when
             let created = ZMUser.fetchOrCreate(with: uuid, domain: "", in: self.syncMOC)
 
@@ -1183,7 +1183,7 @@ extension ZMUserTests_Swift {
         // given
         let uuid = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // when
             BackendInfo.isFederationEnabled = false
             let created = ZMUser.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
@@ -1200,7 +1200,7 @@ extension ZMUserTests_Swift {
         let uuid = UUID.create()
         let domain = "a.com"
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // when
             BackendInfo.isFederationEnabled = true
             let created = ZMUser.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)

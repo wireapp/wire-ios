@@ -283,7 +283,7 @@ extension CoreDataStack {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 
-        try context.performGroupedAndWait { context in
+        try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
                 guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
                 try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
@@ -303,7 +303,7 @@ extension CoreDataStack {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 
-        try context.performGroupedAndWait { context in
+        try context.performGroupedAndWait {
             context.prepareToImportBackup()
             try context.save()
         }

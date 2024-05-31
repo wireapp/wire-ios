@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
+
 @testable import WireDataModel
 
-class InvalidFeatureRemovalTests: DiskDatabaseTest {
+final class InvalidFeatureRemovalTests: DiskDatabaseTest {
+
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     func testAllInstancesRemoved() throws {
-        coreDataStack.syncContext.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             // Given
             let team = Team.insertNewObject(in: context)
             team.remoteIdentifier = UUID()
@@ -41,7 +44,7 @@ class InvalidFeatureRemovalTests: DiskDatabaseTest {
     }
 
     func testRestoreNewDefaultConferenceCallingConfig() throws {
-        coreDataStack.syncContext.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             // Given
             self.fetchInstances(in: context).forEach(context.delete)
 

@@ -52,7 +52,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
     // MARK: - Processing events
 
     func testThatItProcessesEvent_FederationDelete() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let payload: NSDictionary = [
                 "type": "federation.delete",
@@ -72,7 +72,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItProcessesEvent_federationConnectionRemoved() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let payload: NSDictionary = [
                 "type": "federation.connectionRemoved",

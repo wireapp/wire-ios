@@ -22,7 +22,7 @@ import WireTesting
 final class TeamTests: ZMConversationTestsBase {
 
     func testThatItCreatesANewTeamIfThereIsNone() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let uuid = UUID.create()
 

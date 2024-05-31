@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
+
 @testable import WireDataModel
 
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
+
+    private var context: NSManagedObjectContext { syncMOC }
+
     func testThatItCanInsertAKnock() throws {
-        try syncMOC.performGroupedAndWait { context in
+        try context.performGroupedAndWait {
 
             // given
             let conversation = self.createConversationWithMessages(context: context)

@@ -35,7 +35,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.selfUser = ZMUser.selfUser(in: self.syncMOC)
             self.selfUser.remoteIdentifier = UUID.create()
             self.sender = self.insertUser(with: UUID.create(), name: "Super User")
@@ -98,7 +98,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     func insertUser(with remoteID: UUID, name: String?) -> ZMUser {
         var user: ZMUser!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             user = ZMUser.insertNewObject(in: self.syncMOC)
             user.name = name
             user.remoteIdentifier = remoteID
@@ -113,7 +113,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         mutedMessages: MutedMessageTypes,
         otherParticipants: [ZMUser]) -> ZMConversation {
             var conversation: ZMConversation!
-            self.syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.performGroupedAndWait {
                 conversation = ZMConversation.insertNewObject(in: self.syncMOC)
                 conversation.remoteIdentifier = remoteID
                 conversation.userDefinedName = name
@@ -131,7 +131,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     func noteWithPayload(_ data: NSDictionary?, fromUserID: UUID?, in conversation: ZMConversation?, type: String) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let payload = self.payloadForEvent(in: conversation, type: type, data: data, from: fromUserID)
             if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                 note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: self.syncMOC)

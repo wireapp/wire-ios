@@ -76,7 +76,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItShowsDefaultAlertBodyWhenHidePreviewSettingIsTrue() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = "Super User"
             let note1 = self.textNotification(self.oneOnOneConversation, sender: self.sender)
             XCTAssertEqual(note1?.content.title, "Super User")
@@ -98,7 +98,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItShowsShowsEphemeralStringEvenWhenHidePreviewSettingIsTrue() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note1 = self.textNotification(self.oneOnOneConversation, sender: self.sender, isEphemeral: true)
             XCTAssertEqual(note1?.content.title, "Someone")
             XCTAssertEqual(note1?.content.body, "Sent a message")
@@ -119,7 +119,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItDoesNotSetThreadIdentifierForEphemeralMessages() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, isEphemeral: true)
 
             // then
@@ -135,7 +135,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         //    "push.notification.add.message.oneonone" = "%1$@";
         //    "push.notification.add.message.group" = "%1$@: %2$@";
         //    "push.notification.add.message.group.noconversationname" = "%1$@ in a conversation: %2$@";
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForNote(self.oneOnOneConversation, sender: self.sender), "Hello Hello!")
             XCTAssertEqual(self.bodyForNote(self.groupConversation, sender: self.sender), "Super User: Hello Hello!")
             XCTAssertEqual(self.bodyForNote(self.groupConversationWithoutUserDefinedName, sender: self.sender), "Super User: Hello Hello!")
@@ -145,7 +145,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatObfuscatesNotificationsForEphemeralMessages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             [self.oneOnOneConversation,
              self.groupConversation,
              self.groupConversationWithoutUserDefinedName,
@@ -159,7 +159,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotDuplicatePercentageSignsInTextAndConversationName() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForNote(self.groupConversation, sender: self.sender, text: "Today we grew by 100%"), "Super User: Today we grew by 100%")
         }
     }
@@ -167,7 +167,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItSavesTheSenderOfANotification() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)!
 
             // then
@@ -178,7 +178,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItSavesTheConversationOfANotification() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)!
 
             // then
@@ -189,7 +189,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItSavesTheMessageNonce() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createUpdateEvent(UUID.create(),
                                                conversationID: self.oneOnOneConversation.remoteIdentifier!,
                                                genericMessage: GenericMessage(content: Text(content: "Hello Hello!"),
@@ -207,7 +207,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilenced() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.groupConversation.mutedMessageTypes = .all
 
             // when
@@ -221,7 +221,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: Mentions
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilencedAndOtherUserIsMentioned() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.teamTest {
                 // Given
                 self.groupConversation.mutedMessageTypes = .all
@@ -236,7 +236,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsFullySilencedAndSelfUserIsMentioned() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.teamTest {
                 // Given
                 self.groupConversation.mutedMessageTypes = .all
@@ -251,7 +251,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItDoesCreateANotificationWhenTheConversationIsSilencedAndSelfUserIsMentioned() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.teamTest {
                 // Given
                 self.groupConversation.mutedMessageTypes = .regular
@@ -267,7 +267,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversation, sender: self.sender, mentionedUser: self.selfUser)
 
             // Then
@@ -277,7 +277,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned_UserWithoutName() {
         // Given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = nil
 
             // When
@@ -290,7 +290,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned_NoConversationName() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversationWithoutName, sender: self.sender, mentionedUser: self.selfUser)
 
             // Then
@@ -300,7 +300,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned_UserWithoutNameNoConversationName() {
         // Given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = nil
 
             // When
@@ -313,7 +313,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned_OneOnOne() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, mentionedUser: self.selfUser)
 
             // Then
@@ -323,7 +323,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned_OneOnOne_NoUserName() {
         // Given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = nil
 
             // Given
@@ -336,7 +336,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItUsesCorrectBodyWhenSelfUserIsMentioned_Ephemeral() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversation, sender: self.sender, mentionedUser: self.selfUser, isEphemeral: true)
 
             // Then
@@ -348,7 +348,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: Replies
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsFullySilencedAndSelfUserIsQuoted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.teamTest {
                 // Given
                 self.groupConversation.mutedMessageTypes = .all
@@ -363,7 +363,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilencedAndOtherUserIsQuoted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.teamTest {
                 // Given
                 self.groupConversation.mutedMessageTypes = .regular
@@ -378,7 +378,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesANotificationWhenTheConversationIsSilencedAndSelfUserIsQuoted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.teamTest {
                 // Given
                 self.groupConversation.mutedMessageTypes = .regular
@@ -394,7 +394,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversation, sender: self.sender, quotedUser: self.selfUser)
 
             // Then
@@ -404,7 +404,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_NoUserName() {
         // Given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = nil
 
             // When
@@ -417,7 +417,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_NoConversationName() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversationWithoutName, sender: self.sender, quotedUser: self.selfUser)
 
             // Then
@@ -427,7 +427,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_NoUserName_NoConversationName() {
         // Given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = nil
 
             // When
@@ -440,7 +440,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_OneOnOne() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, quotedUser: self.selfUser)
 
             // Then
@@ -450,7 +450,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_OneOnOne_NoUserName() {
         // Given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sender.name = nil
 
             // When
@@ -463,7 +463,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_Ephemeral() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversation, sender: self.sender, quotedUser: self.selfUser, isEphemeral: true)
 
             // Then
@@ -474,7 +474,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItCreatesCorrectBodyWhenOtherIsQuoted() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversation, sender: self.sender, quotedUser: self.sender)
 
             // Then
@@ -484,7 +484,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItPrioritizesMentionsOverReply() {
         // Given & When
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.groupConversation, sender: self.sender, mentionedUser: self.selfUser, quotedUser: self.selfUser)
 
             // Then
@@ -497,7 +497,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
             team.remoteIdentifier = UUID.create()
@@ -516,7 +516,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
         // when
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)
 
             // then
@@ -559,7 +559,7 @@ extension ZMLocalNotificationTests_Message {
     // MARK: Tests
 
     func testItCreatesImageNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForImageNote(self.oneOnOneConversation, sender: self.sender), "Shared a picture")
             XCTAssertEqual(self.bodyForImageNote(self.groupConversation, sender: self.sender), "Super User shared a picture")
             XCTAssertEqual(self.bodyForImageNote(self.groupConversationWithoutUserDefinedName, sender: self.sender), "Super User shared a picture")
@@ -569,7 +569,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatObfuscatesNotificationsForEphemeralImageMessages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             [self.oneOnOneConversation, self.groupConversation, self.groupConversationWithoutUserDefinedName, self.groupConversationWithoutName, self.invalidConversation].forEach {
                 let note = self.imageNote($0!, sender: self.sender, isEphemeral: true)
                 XCTAssertEqual(note?.title, "Someone")
@@ -645,7 +645,7 @@ extension ZMLocalNotificationTests_Message {
     // MARK: Tests
 
     func testThatItCreatesFileAddNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForAssetNote(.txt, conversation: self.oneOnOneConversation, sender: self.sender), "Shared a file")
             XCTAssertEqual(self.bodyForAssetNote(.txt, conversation: self.groupConversation, sender: self.sender), "Super User shared a file")
             XCTAssertEqual(self.bodyForAssetNote(.txt, conversation: self.groupConversationWithoutUserDefinedName, sender: self.sender), "Super User shared a file")
@@ -655,7 +655,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesVideoAddNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForAssetNote(.video, conversation: self.oneOnOneConversation, sender: self.sender), "Shared a video")
             XCTAssertEqual(self.bodyForAssetNote(.video, conversation: self.groupConversation, sender: self.sender), "Super User shared a video")
             XCTAssertEqual(self.bodyForAssetNote(.video, conversation: self.groupConversationWithoutUserDefinedName, sender: self.sender), "Super User shared a video")
@@ -665,7 +665,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesEphemeralFileAddNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             [self.oneOnOneConversation, self.groupConversation, self.groupConversationWithoutUserDefinedName, self.groupConversationWithoutName, self.invalidConversation].forEach {
                 let note = self.assetNote(.txt, conversation: $0!, sender: self.sender, isEphemeral: true)
                 XCTAssertEqual(note?.title, "Someone")
@@ -675,7 +675,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesEphemeralVideoAddNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             [self.oneOnOneConversation, self.groupConversation, self.groupConversationWithoutUserDefinedName, self.groupConversationWithoutName, self.invalidConversation].forEach {
                 let note = self.assetNote(.video, conversation: $0!, sender: self.sender, isEphemeral: true)
                 XCTAssertEqual(note?.title, "Someone")
@@ -685,7 +685,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesAudioNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForAssetNote(.audio, conversation: self.oneOnOneConversation, sender: self.sender), "Shared an audio message")
             XCTAssertEqual(self.bodyForAssetNote(.audio, conversation: self.groupConversation, sender: self.sender), "Super User shared an audio message")
             XCTAssertEqual(self.bodyForAssetNote(.audio, conversation: self.groupConversationWithoutUserDefinedName, sender: self.sender), "Super User shared an audio message")
@@ -727,7 +727,7 @@ extension ZMLocalNotificationTests_Message {
     // MARK: Tests
 
     func testThatItCreatesKnockNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.bodyForKnockNote(self.oneOnOneConversation, sender: self.sender), "pinged")
             XCTAssertEqual(self.bodyForKnockNote(self.groupConversation, sender: self.sender), "Super User pinged")
             XCTAssertEqual(self.bodyForKnockNote(self.groupConversationWithoutUserDefinedName, sender: self.sender), "Super User pinged")
@@ -735,7 +735,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesEphemeralKnockNotificationsCorrectly() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             [self.oneOnOneConversation, self.groupConversation, self.groupConversationWithoutUserDefinedName, self.groupConversationWithoutName, self.invalidConversation].forEach {
                 let note = self.knockNote($0!, sender: self.sender, isEphemeral: true)
                 XCTAssertEqual(note?.title, "Someone")
@@ -766,7 +766,7 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItDoesntCreateANotificationForAnEditMessage() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let message = try! self.oneOnOneConversation.appendText(content: "Foo") as! ZMClientMessage
             message.markAsSent()
             let note = self.editNote(message, sender: self.sender, text: "Edited Text")
@@ -782,7 +782,7 @@ extension ZMLocalNotificationTests_Message {
 
     func testThatItGeneratesTheNotificationWithoutMuteInTheTeam() {
         // GIVEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
             let user = ZMUser.selfUser(in: self.syncMOC)
@@ -798,7 +798,7 @@ extension ZMLocalNotificationTests_Message {
 
     func testThatItGeneratesTheNotificationWithMuteForNormalUser() {
         // WHEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!
 
             // THEN
@@ -808,7 +808,7 @@ extension ZMLocalNotificationTests_Message {
 
     func testThatItGeneratesCorrectCategoryIfEncryptionAtRestIsEnabledForTeamUser() throws {
         // GIVEN
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
@@ -832,7 +832,7 @@ extension ZMLocalNotificationTests_Message {
 
     func testThatItGeneratesCorrectCategoryIfEncryptionAtRestIsEnabledForNormalUser() throws {
         // GIVEN
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],

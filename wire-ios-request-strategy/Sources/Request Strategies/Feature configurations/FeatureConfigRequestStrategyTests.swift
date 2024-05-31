@@ -54,7 +54,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     // MARK: - Processing events
 
     func test_ItProcessesEvent_AppLock() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             let appLock = Feature.AppLock(
                 status: .disabled,
@@ -85,7 +85,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let existingFeature = self.featureRepository.fetchAppLock()
             XCTAssertEqual(existingFeature.status, .enabled)
             XCTAssertEqual(existingFeature.config.enforceAppLock, true)
@@ -96,7 +96,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_FileSharing() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeFileSharing(.init(status: .disabled))
 
@@ -118,7 +118,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let existingFeature = self.featureRepository.fetchFileSharing()
             XCTAssertEqual(existingFeature.status, .enabled)
         }
@@ -127,7 +127,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_SelfDeletingMessages() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             let selfDeletingMessages = Feature.SelfDeletingMessages(
                 status: .disabled,
@@ -158,7 +158,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let existingfeature = self.featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(existingfeature.status, .enabled)
             XCTAssertEqual(existingfeature.config.enforcedTimeoutSeconds, 60)
@@ -168,7 +168,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ConferenceCalling() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeConferenceCalling(.init(status: .disabled))
 
@@ -191,7 +191,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let existingFeature = self.featureRepository.fetchConferenceCalling()
             XCTAssertNotNil(existingFeature)
             XCTAssertEqual(existingFeature.status, .enabled)
@@ -199,7 +199,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ConversationGuestLinks() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeConversationGuestLinks(.init(status: .disabled))
 
@@ -222,7 +222,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let existingFeature = self.featureRepository.fetchConversationGuestLinks()
             XCTAssertNotNil(existingFeature)
             XCTAssertEqual(existingFeature.status, .enabled)
@@ -230,7 +230,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_DigitalSignature() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeDigitalSignature(.init(status: .disabled))
 
@@ -253,7 +253,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let existingFeature = self.featureRepository.fetchDigitalSignature()
             XCTAssertNotNil(existingFeature)
             XCTAssertEqual(existingFeature.status, .enabled)
@@ -261,7 +261,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ClassifiedDomains() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // Given
             let classifiedDomains = Feature.ClassifiedDomains(status: .disabled, config: .init())
             self.featureRepository.storeClassifiedDomains(classifiedDomains)
@@ -288,7 +288,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let classifiedDomains = self.featureRepository.fetchClassifiedDomains()
             XCTAssertEqual(classifiedDomains.status, .enabled)
             XCTAssertEqual(classifiedDomains.config.domains, ["a", "b", "c"])
@@ -317,7 +317,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let mls = self.featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
@@ -350,7 +350,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let mls = self.featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
@@ -397,7 +397,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let mlsMigration = self.featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
             XCTAssertEqual(mlsMigration.config.startTime, Date(transportString: startTime))
