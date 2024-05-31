@@ -84,6 +84,7 @@ final class ConversationListViewController: UIViewController {
         return label
     }()
 
+    /// Arranges the filterContainerView (if visible) and the contentContainer below each other.
     private var stackView: UIStackView!
 
     let contentContainer: UIView = {
