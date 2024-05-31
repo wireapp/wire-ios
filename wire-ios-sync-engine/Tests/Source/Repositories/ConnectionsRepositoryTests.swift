@@ -71,7 +71,14 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
 
-            return WireAPI.PayloadPager.Page(element: [brokenConnection, connection], hasMore: false, nextStart: "first")
+            return WireAPI.PayloadPager.Page(
+                element: [
+                    brokenConnection,
+                    connection
+                ],
+                hasMore: false,
+                nextStart: "first"
+            )
         })
 
         // When
