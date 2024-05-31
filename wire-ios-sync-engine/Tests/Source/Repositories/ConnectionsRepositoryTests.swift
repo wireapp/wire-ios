@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModelSupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+
+@testable import WireAPI
+@testable import WireSyncEngine
 
 final class ConnectionsRepositoryTests: XCTestCase {
 
