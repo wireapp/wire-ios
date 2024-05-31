@@ -24,7 +24,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     // MARK: - Unread Count
 
     func testThatLastUnreadKnockDateIsSetWhenMessageInserted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -48,7 +48,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatLastUnreadMissedCallDateIsSetWhenMessageInserted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -67,7 +67,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatUnreadCountIsUpdatedWhenMessageIsInserted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -85,7 +85,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatSelfMentionUnreadCountIsUpdatedWhenMessageIsInserted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID()
             let timestamp = Date()
@@ -111,7 +111,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatUnreadCountIsUpdatedWhenMessageIsDeleted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -131,7 +131,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatUnreadSelfMentionCountIsUpdatedWhenMessageIsDeleted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID()
             let timestamp = Date()
@@ -162,7 +162,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() throws {
 
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
@@ -188,7 +188,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedAfterCallingtTheCalculateLastUnreadMessages() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
             conversation.needsToCalculateUnreadMessages = true
@@ -423,7 +423,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatNotRelevantMessagesDoesntCountTowardsUnreadMessagesAmount() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
