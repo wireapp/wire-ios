@@ -28,7 +28,10 @@ extension UIAlertController {
             message: GuestRoom.Error.Generic.message,
             preferredStyle: .alert
         )
-        controller.addAction(.ok())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
         controller.view.tintColor = SemanticColors.Label.textDefault
         return controller
     }

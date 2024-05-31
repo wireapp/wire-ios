@@ -139,7 +139,17 @@ extension ConversationInputBarViewController {
 
         let maxSizeString = ByteCountFormatter.string(fromByteCount: Int64(maxUploadFileSize), countStyle: .binary)
         let errorMessage = L10n.Localizable.Content.File.tooBig(maxSizeString)
-        let alert = UIAlertController.alertWithOKButton(message: errorMessage)
+
+        let alert = UIAlertController(
+            title: nil,
+            message: errorMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
         present(alert, animated: true)
     }
 }

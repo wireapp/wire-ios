@@ -25,7 +25,7 @@ extension ConversationContentViewController {
         if let message {
 
             if message.hasBeenDeleted {
-                presentAlertWithOKButton(message: L10n.Localizable.Conversation.Alert.messageDeleted)
+                presentAlert(message: L10n.Localizable.Conversation.Alert.messageDeleted)
             } else {
                 dataSource.loadMessages(near: message) { index in
 
@@ -66,5 +66,19 @@ extension ConversationContentViewController {
 
         tableView.scroll(toIndex: 0, animated: shouldAnimate)
         updateTableViewHeaderView()
+    }
+
+    private func presentAlert(message: String) {
+        let alert = UIAlertController(
+            title: nil,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        present(alert, animated: true)
     }
 }

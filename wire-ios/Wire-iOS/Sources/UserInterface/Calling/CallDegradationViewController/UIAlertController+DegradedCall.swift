@@ -97,9 +97,13 @@ extension UIAlertController {
 
                 controller.addAction(.cancel(cancelBlock))
             } else {
-                controller.addAction(.ok({ _ in
-                    cancelBlock?()
-                }))
+                controller.addAction(UIAlertAction(
+                    title: L10n.Localizable.General.ok,
+                    style: .default,
+                    handler: { _ in
+                        cancelBlock?()
+                    }
+                ))
             }
 
             return controller
@@ -124,9 +128,13 @@ extension UIAlertController {
 
                 controller.addAction(.cancel(cancelBlock))
             } else {
-                controller.addAction(.ok({ _ in
-                    cancelBlock?()
-                }))
+                controller.addAction(UIAlertAction(
+                    title: L10n.Localizable.General.ok,
+                    style: .default,
+                    handler: { _ in
+                        cancelBlock?()
+                    }
+                ))
             }
 
             return controller
