@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct QualifiedConversationList: Decodable {
+struct QualifiedConversationList {
     enum CodingKeys: String, CodingKey {
         case found = "found"
         case notFound = "not_found"
@@ -31,7 +31,7 @@ struct QualifiedConversationList: Decodable {
 }
 
 extension QualifiedConversationList {
-    struct Conversation: Decodable {
+    struct Conversation {
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"
             case id
@@ -63,7 +63,7 @@ extension QualifiedConversationList {
         var accessRoles: [String]?
         var legacyAccessRole: String?
         var name: String?
-        var members: ConversationMembers?
+        var members: QualifiedConversationMembers?
         var lastEvent: String?
         var lastEventTime: String?
         var teamID: UUID?
@@ -84,7 +84,7 @@ extension QualifiedConversationList {
             legacyAccessRole: String? = nil,
             accessRoles: [String]? = nil,
             name: String? = nil,
-            members: ConversationMembers? = nil,
+            members: QualifiedConversationMembers? = nil,
             lastEvent: String? = nil,
             lastEventTime: String? = nil,
             teamID: UUID? = nil,
@@ -125,7 +125,7 @@ extension QualifiedConversationList {
             creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
             access = try container.decodeIfPresent([String].self, forKey: .access)
             name = try container.decodeIfPresent(String.self, forKey: .name)
-            members = try container.decodeIfPresent(ConversationMembers.self, forKey: .members)
+            members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
             lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
             lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
             teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
@@ -163,87 +163,6 @@ extension QualifiedConversationList {
                 cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
-        }
-    }
-}
-
-// MARK: -
-
-extension QualifiedConversationList {
-    struct ConversationMembers: Decodable {
-        enum CodingKeys: String, CodingKey {
-            case selfMember = "self"
-            case others
-        }
-
-        let selfMember: ConversationMember
-        let others: [ConversationMember]
-    }
-}
-
-// MARK: -
-
-extension QualifiedConversationList {
-    struct ConversationMember: Decodable {
-
-        struct Service: Codable {
-            let id: UUID
-            let provider: UUID
-        }
-
-        enum CodingKeys: String, CodingKey {
-            case id
-            case qualifiedID = "qualified_id"
-            case target
-            case qualifiedTarget = "qualified_target"
-            case service
-            case mutedStatus = "otr_muted_status"
-            case mutedReference = "otr_muted_ref"
-            case archived = "otr_archived"
-            case archivedReference = "otr_archived_ref"
-            case hidden = "otr_hidden"
-            case hiddenReference = "otr_hidden_ref"
-            case conversationRole = "conversation_role"
-        }
-
-        let id: UUID?
-        let qualifiedID: QualifiedID?
-        let target: UUID?
-        let qualifiedTarget: QualifiedID?
-        let service: Service?
-        let mutedStatus: Int?
-        let mutedReference: Date?
-        let archived: Bool?
-        let archivedReference: Date?
-        let hidden: Bool?
-        let hiddenReference: String?
-        let conversationRole: String?
-
-        init(id: UUID? = nil,
-             qualifiedID: QualifiedID? = nil,
-             target: UUID? = nil,
-             qualifiedTarget: QualifiedID? = nil,
-             service: Service? = nil,
-             mutedStatus: Int? = nil,
-             mutedReference: Date? = nil,
-             archived: Bool? = nil,
-             archivedReference: Date? = nil,
-             hidden: Bool? = nil,
-             hiddenReference: String? = nil,
-             conversationRole: String? = nil
-        ) {
-            self.id = id
-            self.qualifiedID = qualifiedID
-            self.target = target
-            self.qualifiedTarget = qualifiedTarget
-            self.service = service
-            self.mutedStatus = mutedStatus
-            self.mutedReference = mutedReference
-            self.archived = archived
-            self.archivedReference = archivedReference
-            self.hidden = hidden
-            self.hiddenReference = hiddenReference
-            self.conversationRole = conversationRole
         }
     }
 }
