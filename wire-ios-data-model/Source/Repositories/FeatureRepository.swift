@@ -437,7 +437,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         var result = false
 
         context.performGroupedAndWait {
-            let feature = Feature.fetch(name: featureName, context: $0)
+            let feature = Feature.fetch(name: featureName, context: context)
             result = feature?.needsToNotifyUser ?? false
         }
 
@@ -446,7 +446,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     public func setNeedsToNotifyUser(_ notifyUser: Bool, for featureName: Feature.Name) {
         context.performGroupedAndWait {
-            let feature = Feature.fetch(name: featureName, context: $0)
+            let feature = Feature.fetch(name: featureName, context: context)
             feature?.needsToNotifyUser = notifyUser
         }
     }

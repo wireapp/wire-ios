@@ -34,7 +34,7 @@ class ZMConversationTests_Mute: ZMConversationTestsBase {
     func testThatItDoesNotCountsSilencedConversationsUnreadContentAsUnread() {
         let context = syncMOC
 
-        context.performGroupedAndWait { _ in
+        context.performGroupedAndWait {
             // given
             XCTAssertEqual(ZMConversation.unreadConversationCount(in: context), 0)
 

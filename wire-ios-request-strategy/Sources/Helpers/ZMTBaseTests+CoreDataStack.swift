@@ -49,7 +49,7 @@ extension ZMTBaseTest {
         coreDataStack.viewContext.zm_userImageCache = userImageCache
         coreDataStack.viewContext.zm_fileAssetCache = fileAssetCache
 
-        coreDataStack.syncContext.performGroupedBlockAndWait {
+        coreDataStack.syncContext.performGroupedAndWait {
             coreDataStack.syncContext.zm_userImageCache = userImageCache
             coreDataStack.syncContext.zm_fileAssetCache = fileAssetCache
         }
