@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireTesting
+
 @testable import WireSyncEngine
 
 final class SessionManagerMultiUserSessionTests: IntegrationTest {
@@ -352,7 +354,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             expectation.fulfill()
         })
 
-        XCTAssertTrue(self.wait(withTimeout: 0.1) { return self.sessionManager!.activeUserSession != nil })
+        wait(for: { self.sessionManager!.activeUserSession != nil }, timeout: 0.1)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
@@ -392,7 +394,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
                                                    completionHandler: {})
         }
 
-        XCTAssertTrue(self.wait(withTimeout: 0.1) { return self.sessionManager!.activeUserSession != nil })
+        wait(for: { self.sessionManager!.activeUserSession != nil }, timeout: 0.1)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN

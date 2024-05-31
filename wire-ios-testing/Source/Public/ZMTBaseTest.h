@@ -36,12 +36,12 @@ typedef BOOL(^VerificationBlock)(void);
 - (void)tearDown;
 
 /// Should be wrapped in call to @c XCTAssert()
-- (BOOL)waitOnMainLoopUntilBlock:(nonnull VerificationBlock)block timeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
+- (BOOL)waitOnMainLoopUntilBlock:(nonnull VerificationBlock)block timeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE("");
 
 /// Wait for a condition to be met, periodically verifying if the condition is met. It will verify at least once
-- (BOOL)waitWithTimeout:(NSTimeInterval)timeout verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN;
+- (BOOL)waitWithTimeout:(NSTimeInterval)timeout verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE("");
 /// Wait for a condition to be met, periodically verifying if the condition is met. It will verify at least once
-- (BOOL)waitUntilDate:(nonnull NSDate *)runUntil verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN;
+- (BOOL)waitUntilDate:(nonnull NSDate *)runUntil verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE("");
 
 /// Returns whether we are debugging the tests. This is enabled by setting the "DEBUG_TESTS" environment variable to 1
 + (BOOL)isDebuggingTests;
@@ -49,7 +49,7 @@ typedef BOOL(^VerificationBlock)(void);
 /// timer calculation - will be adjusted to device speed and whether we are debugging tests
 + (NSTimeInterval)timeToUseForOriginalTime:(NSTimeInterval)originalTime;
 /// spins the run loop for a reasonable time
-+ (void)performRunLoopTick;
++ (void)performRunLoopTick NS_SWIFT_UNAVAILABLE("");
 
 /// If this is set to true, we will ignore the debug flag for tests in timer (use this to test timer test failures)
 @property (nonatomic) BOOL ignoreTestDebugFlagForTestTimers;
@@ -64,7 +64,7 @@ typedef BOOL(^VerificationBlock)(void);
 - (void)spinMainQueueWithTimeout:(NSTimeInterval)timeout;
 
 /// Wait for all dispatch groups to be empty
-- (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
+- (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE_FROM_ASYNC("");
 
 - (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description NS_SWIFT_NAME(customExpectation(description:));
 
@@ -72,8 +72,8 @@ typedef BOOL(^VerificationBlock)(void);
 
 - (XCTestExpectation *_Nonnull)customKeyValueObservingExpectationForObject:(id _Nonnull)objectToObserve keyPath:(NSString *_Nonnull)keyPath expectedValue:(id  _Nullable)expectedValue;
 
-- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
-- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
+- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE_FROM_ASYNC("");
+- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE_FROM_ASYNC("");
 
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(nonnull void(^)(void))block;
