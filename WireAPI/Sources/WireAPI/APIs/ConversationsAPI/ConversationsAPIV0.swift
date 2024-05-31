@@ -74,6 +74,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getConversations(for identifiers: [QualifiedID]) async throws -> [ConversationList] {
+        // /conversations/list/v2
         fatalError("not implemented")
     }
 }
