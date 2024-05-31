@@ -54,12 +54,14 @@ enum FilterImageName: String {
     ///   - isSelected: A boolean value indicating whether the filter is selected.
     /// - Returns: The corresponding `FilterImageName` based on the provided filter type and selection state.
     static func filterImageName(
-        for filter: ConversationFilterType,
+        for filter: ConversationFilterType?,
         isSelected: Bool
     ) -> FilterImageName {
-        switch filter {
-        case .allConversations:
+        guard let filter else {
             return isSelected ? .textBubbleFill : .textBubble
+        }
+
+        switch filter {
         case .favorites:
             return isSelected ? .starFill : .star
         case .groups:

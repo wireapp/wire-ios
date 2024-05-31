@@ -58,14 +58,14 @@ final class ConversationListViewController: UIViewController {
     var selectedFilterLabel: String {
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
         switch listContentController.listViewModel.selectedFilter {
-        case .allConversations:
-            return ""
         case .favorites:
             return FilterMenuLocale.Favorites.title
         case .groups:
             return FilterMenuLocale.Groups.title
         case .oneToOneConversations:
             return FilterMenuLocale.OneOnOneConversations.title
+        case .none:
+            return ""
         }
     }
 
@@ -273,7 +273,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func removeFilter() {
-        applyFilter(.allConversations)
+        applyFilter(nil)
     }
 
     private func setupListContentController() {
@@ -354,15 +354,15 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter(_ filter: ConversationFilterType) {
+    func applyFilter(_ filter: ConversationFilterType?) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
 
-        if filter == .allConversations {
-            filterContainerView.isHidden = true
-        } else {
+        if let filter {
             filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
             filterContainerView.isHidden = false
+        } else {
+            filterContainerView.isHidden = true
         }
 
     }
