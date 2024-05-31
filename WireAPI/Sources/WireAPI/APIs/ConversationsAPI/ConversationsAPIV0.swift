@@ -39,6 +39,14 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
+        // This function needs to be used in APIVersion.v0 instead of `getConversationIdentifiers`,
+        // because the backend API returns only `UUID`s instead of `QualifiedID`s in later versions.
+        // We are missing the related domain to map the UUID to a valid `QualifiedID` object.
+        //
+        // For design reasons, we decided to implement two functions rather than passing the domain from the outside
+        // and manually mapping `QualifiedID`. This task can be performed by the caller.
+        // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to understand.
+
         let resourcePath = "/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
