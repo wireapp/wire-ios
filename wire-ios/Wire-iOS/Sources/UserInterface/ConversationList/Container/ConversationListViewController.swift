@@ -360,16 +360,10 @@ final class ConversationListViewController: UIViewController {
             filterContainerView.isHidden = false
         }
 
-        // Trigger a layout update to ensure the correct positioning
-        // of the add conversation button and filter button
-        // when the filter button is tapped.
-        view.setNeedsLayout()
     }
 
     // MARK: - Selection Management
 
-    /// Scroll to the current selection
-    /// - Parameter animated: Perform animation or not
     func scrollToCurrentSelection(animated: Bool) {
         listContentController.scrollToCurrentSelection(animated: animated)
     }
