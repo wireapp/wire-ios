@@ -66,8 +66,6 @@ final class OperationStatusTests: MessagingTest {
         // given
         sut.isInBackground = true
         let handlerCalled = customExpectation(description: "background task handler called")
-        let waitExpectation = XCTestExpectation()
-        waitExpectation.isInverted = true
 
         // when
         sut.startBackgroundTask { _ in
@@ -79,7 +77,7 @@ final class OperationStatusTests: MessagingTest {
 
         // when
         sut.finishBackgroundTask(withTaskResult: .finished)
-        wait(for: [waitExpectation], timeout: 0.05)
+        wait(for: [InvertedTestExpectation()], timeout: 0.05)
 
         // then
         XCTAssertEqual(sut.operationState, .background)
@@ -90,8 +88,6 @@ final class OperationStatusTests: MessagingTest {
         // given
         sut.isInBackground = true
         let handlerCalled = customExpectation(description: "background fetch handler called")
-        let waitExpectation = XCTestExpectation()
-        waitExpectation.isInverted = true
 
         // when
         sut.startBackgroundFetch(withCompletionHandler: { _ in
@@ -100,11 +96,11 @@ final class OperationStatusTests: MessagingTest {
 
         // then
         XCTAssertEqual(sut.operationState, .backgroundFetch)
-        wait(for: [waitExpectation], timeout: 0.05)
+        wait(for: [InvertedTestExpectation()], timeout: 0.05)
 
         // when
         sut.finishBackgroundFetch(withFetchResult: .noData)
-        wait(for: [waitExpectation], timeout: 0.05)
+        wait(for: [InvertedTestExpectation()], timeout: 0.05)
 
         // then
         XCTAssertEqual(sut.operationState, .background)
