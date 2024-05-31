@@ -61,6 +61,7 @@ final class SlowSyncTests_NotificationsV3: IntegrationTest {
         self.performQuickSync()
 
         // THEN
+        // ensure it performs slow sync
         wait(for: { self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true }, timeout: 1)
     }
 }
