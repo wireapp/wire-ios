@@ -32,22 +32,17 @@ final class QuickSyncObserverTests: MessagingTestBase {
         }
     }
 
-    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() throws {
+    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() async throws {
         // given
         let (_, quickSyncObserver) = Arrangement(coreDataStack: coreDataStack)
             .withSynchronizationState(.quickSyncing)
             .arrange()
 
-        Task {
-            // Sleeping in order to hit the code path where we start observing .quickSyncCompletedNotification
-            try? await Task.sleep(nanoseconds: 250_000_000)
-            NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
-        }
+        try await Task.sleep(nanoseconds: 250_000_000)
+        NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
 
         // then test completes
-        wait(timeout: 0.5) {
-            await quickSyncObserver.waitForQuickSyncToFinish()
-        }
+        await quickSyncObserver.waitForQuickSyncToFinish()
     }
 
     struct Arrangement {

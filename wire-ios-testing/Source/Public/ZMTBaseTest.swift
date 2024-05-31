@@ -18,6 +18,7 @@
 
 extension ZMTBaseTest {
 
+    @available(*, deprecated, message: "Please declare the test async instead!")
     public func wait(timeout: TimeInterval = 0.5,
                      file: StaticString = #filePath,
                      line: UInt = #line,
