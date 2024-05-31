@@ -30,9 +30,30 @@ final class ConversationListViewController: UIViewController {
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
 
-    private var filterContainerView: UIView!
-    private var filterLabel: UILabel!
-    private var removeButton: UIButton!
+    private lazy var filterContainerView: UIView = {
+        let view = UIView()
+        return view
+    }()
+
+    private lazy var filterLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.font(for: .h5)
+        label.textColor = SemanticColors.Label.baseSecondaryText
+        label.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        return label
+    }()
+
+    private lazy var removeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
+        button.titleLabel?.font = UIFont.font(for: .h5)
+        button.setTitleColor(UIColor.accent(), for: .normal)
+        let action = UIAction { [weak self] _ in
+            self?.removeFilter()
+        }
+        button.addAction(action, for: .touchUpInside)
+        return button
+    }()
 
     var selectedFilterLabel: String {
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
@@ -226,7 +247,6 @@ final class ConversationListViewController: UIViewController {
     }
 
     func setupFilterContainerView() {
-        filterContainerView = .init()
         stackView.addArrangedSubview(filterContainerView)
 
         let filterContainerStackView = UIStackView()
@@ -243,22 +263,6 @@ final class ConversationListViewController: UIViewController {
             filterContainerStackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 1),
             filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 1)
         ])
-
-        filterLabel = UILabel()
-        filterLabel.font = UIFont.font(for: .h5)
-        filterLabel.textColor = SemanticColors.Label.baseSecondaryText
-        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
-
-        removeButton = UIButton(type: .system)
-        removeButton.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
-        removeButton.titleLabel?.font = UIFont.font(for: .h5)
-        removeButton.setTitleColor(UIColor.accent(), for: .normal)
-
-        let action = UIAction { [weak self] _ in
-            self?.removeFilter()
-        }
-
-        removeButton.addAction(action, for: .touchUpInside)
 
         filterContainerStackView.addArrangedSubview(filterLabel)
         filterContainerStackView.addArrangedSubview(removeButton)
