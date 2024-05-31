@@ -73,7 +73,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         throw ConversationsAPIError.notImplemented
     }
 
-    func getConversations(for identifiers: [QualifiedID]) async throws -> [Conversation] {
+    func getConversations(for identifiers: [QualifiedID]) async throws -> [ConversationList] {
         fatalError("not implemented")
     }
 }
@@ -98,5 +98,129 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
             hasMore: hasMore,
             nextStart: pagingState
         )
+    }
+}
+
+// MARK: - Decodables
+
+private struct ConversationListV0<Conversation: Decodable>: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case found = "found"
+        case notFound = "not_found"
+        case failed = "failed"
+    }
+
+    let found: [Conversation]
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
+
+    func toAPIModel() -> [Conversation] {
+        // TODO: implement
+        return []
+    }
+}
+
+private struct ConversationV0: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case qualifiedID = "qualified_id"
+        case id
+        case type
+        case creator
+        case cipherSuite = "cipher_suite"
+        case access
+        case accessRole = "access_role"
+        case accessRoleV2 = "access_role_v2"
+        case name
+        case members
+        case lastEvent = "last_event"
+        case lastEventTime = "last_event_time"
+        case teamID = "team"
+        case messageTimer = "message_timer"
+        case readReceiptMode = "receipt_mode"
+        case messageProtocol = "protocol"
+        case mlsGroupID = "group_id"
+        case epoch
+        case epochTimestamp = "epoch_timestamp"
+    }
+
+    var qualifiedID: QualifiedID?
+    var id: UUID?
+    var type: Int?
+    var creator: UUID?
+    var access: [String]?
+    var accessRoles: [String]?
+    var legacyAccessRole: String?
+    var name: String?
+    var members: QualifiedConversationMembers?
+    var lastEvent: String?
+    var lastEventTime: String?
+    var teamID: UUID?
+    var messageTimer: TimeInterval?
+    var readReceiptMode: Int?
+    var messageProtocol: String?
+    var mlsGroupID: String?
+    var epoch: UInt?
+
+    init(
+        qualifiedID: QualifiedID? = nil,
+        id: UUID?  = nil,
+        type: Int? = nil,
+        creator: UUID? = nil,
+        cipherSuite: UInt16? = nil,
+        access: [String]? = nil,
+        legacyAccessRole: String? = nil,
+        accessRoles: [String]? = nil,
+        name: String? = nil,
+        members: QualifiedConversationMembers? = nil,
+        lastEvent: String? = nil,
+        lastEventTime: String? = nil,
+        teamID: UUID? = nil,
+        messageTimer: TimeInterval? = nil,
+        readReceiptMode: Int? = nil,
+        messageProtocol: String? = nil,
+        mlsGroupID: String? = nil,
+        epoch: UInt? = nil,
+        epochTimestamp: Date? = nil
+    ) {
+        self.qualifiedID = qualifiedID
+        self.id = id
+        self.type = type
+        self.creator = creator
+        self.access = access
+        self.legacyAccessRole = legacyAccessRole
+        self.accessRoles = accessRoles
+        self.name = name
+        self.members = members
+        self.lastEvent = lastEvent
+        self.lastEventTime = lastEventTime
+        self.teamID = teamID
+        self.messageTimer = messageTimer
+        self.readReceiptMode = readReceiptMode
+        self.messageProtocol = messageProtocol
+        self.mlsGroupID = mlsGroupID
+        self.epoch = epoch
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id)
+        type = try container.decodeIfPresent(Int.self, forKey: .type)
+        creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
+        access = try container.decodeIfPresent([String].self, forKey: .access)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
+        lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
+        lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
+        teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
+        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+        messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+        mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
+        epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+
+        legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+        accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
     }
 }

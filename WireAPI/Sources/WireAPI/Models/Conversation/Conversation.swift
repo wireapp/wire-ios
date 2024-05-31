@@ -19,5 +19,51 @@
 import Foundation
 
 public struct Conversation {
+    var qualifiedID: QualifiedID?
+    var id: UUID?
+    var type: Int?
+    var creator: UUID?
+    var cipherSuite: UInt16?
+    var access: [String]?
+    var accessRoles: [String]?
+    var legacyAccessRole: String?
+    var name: String?
+    var members: Members?
+    var lastEvent: String?
+    var lastEventTime: String?
+    var teamID: UUID?
+    var messageTimer: TimeInterval?
+    var readReceiptMode: Int?
+    var messageProtocol: String?
+    var mlsGroupID: String?
+    var epoch: UInt?
+    var epochTimestamp: Date?
+}
 
+// MARK: -
+
+extension Conversation {
+    struct Members {
+        let selfMember: Member
+        let others: [Member]
+    }
+}
+
+// MARK: -
+
+extension Conversation {
+    struct Member {
+        let id: UUID?
+        let qualifiedID: QualifiedID?
+        let target: UUID?
+        let qualifiedTarget: QualifiedID?
+        let service: Service?
+        let mutedStatus: Int?
+        let mutedReference: Date?
+        let archived: Bool?
+        let archivedReference: Date?
+        let hidden: Bool?
+        let hiddenReference: String?
+        let conversationRole: String?
+    }
 }

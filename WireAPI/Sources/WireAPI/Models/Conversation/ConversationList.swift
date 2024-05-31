@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-class ConversationsAPIV2: ConversationsAPIV1 {
-    override var apiVersion: APIVersion { .v2 }
+public struct ConversationList {
+    let found: [Conversation]
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
 }
