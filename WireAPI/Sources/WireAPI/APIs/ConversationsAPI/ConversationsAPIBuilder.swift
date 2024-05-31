@@ -18,41 +18,38 @@
 
 import Foundation
 
-/// A builder of `ConnectionsAPI`.
+/// Builder for the conversations API.
+public struct ConversationsAPIBuilder {
 
-public struct ConnectionsAPIBuilder {
+    private let httpClient: any HTTPClient
 
-    let httpClient: any HTTPClient
-
-    /// Create a new builder.
+    /// Create a new builder for the conversations API.
     ///
     /// - Parameter httpClient: A http client.
-
     public init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
-    /// Make a versioned `ConnectionsAPI`.
+    /// Make a versioned `ConversationsAPI`.
     ///
     /// - Parameter version: An api version.
-    /// - Returns: A versioned `ConnectionsAPI`.
-
-    public func makeAPI(for version: APIVersion) -> any ConnectionsAPI {
+    /// - Returns: A versioned `ConversationsAPI`.
+    public func makeAPI(for version: APIVersion) -> any ConversationsAPI {
         switch version {
         case .v0:
-            ConnectionsAPIV0(httpClient: httpClient)
+            ConversationsAPIV0(httpClient: httpClient)
         case .v1:
-            ConnectionsAPIV1(httpClient: httpClient)
+            ConversationsAPIV1(httpClient: httpClient)
         case .v2:
-            ConnectionsAPIV2(httpClient: httpClient)
+            ConversationsAPIV2(httpClient: httpClient)
         case .v3:
-            ConnectionsAPIV3(httpClient: httpClient)
+            ConversationsAPIV3(httpClient: httpClient)
         case .v4:
-            ConnectionsAPIV4(httpClient: httpClient)
+            ConversationsAPIV4(httpClient: httpClient)
         case .v5:
-            ConnectionsAPIV5(httpClient: httpClient)
+            ConversationsAPIV5(httpClient: httpClient)
         case .v6:
-            ConnectionsAPIV6(httpClient: httpClient)
+            ConversationsAPIV6(httpClient: httpClient)
         }
     }
 

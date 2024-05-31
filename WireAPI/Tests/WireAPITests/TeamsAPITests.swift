@@ -17,33 +17,51 @@
 //
 
 import SnapshotTesting
-@testable import WireAPI
 import XCTest
 
+@testable import WireAPI
+
 final class TeamsAPITests: XCTestCase {
+
+    private var apiSnapshotHelper: APISnapshotHelper<TeamsAPI>!
+
+    // MARK: - Setup
+
+    override func setUp() {
+        super.setUp()
+        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
+            let builder = TeamsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
+    }
+
+    override func tearDown() {
+        apiSnapshotHelper = nil
+        super.tearDown()
+    }
 
     // MARK: - Request generation
 
     func testGetTeamRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getTeam(for: .mockID1)
         }
     }
 
     func testGetTeamRolesRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getTeamRoles(for: .mockID1)
         }
     }
 
     func testGetTeamMembersRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
         }
     }
 
     func testGetLegalholdStatusRequest() async throws {
-        try await RequestSnapshotHelper<TeamsAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLegalholdStatus(for: .mockID1, userID: .mockID2)
         }
     }
