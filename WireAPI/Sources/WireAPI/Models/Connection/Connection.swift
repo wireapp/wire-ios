@@ -18,32 +18,33 @@
 
 import Foundation
 
-/// An object responsible for decoding the http response payload into
-/// an api model.
+public struct Connection: Equatable {
 
-struct ResponsePayloadDecoder {
+    /// Remote identifier of the sender
 
-    let decoder: JSONDecoder
+    public let senderId: UUID?
 
-    func decodePayload<T: Decodable>(
-        from response: HTTPResponse,
-        as type: T.Type
-    ) throws -> T {
-        guard let data = response.payload else {
-            throw ResponsePayloadDecoderError.missingResponseData
-        }
+    /// Remote identifier of the receiver
 
-        do {
-            return try decoder.decode(
-                T.self,
-                from: data
-            )
-        } catch {
-            throw ResponsePayloadDecoderError.failedToDecodePayload(
-                T.self,
-                error
-            )
-        }
-    }
+    public let receiverId: UUID?
 
+    /// Qualified identifier of the receiver
+
+    public let receiverQualifiedId: QualifiedID?
+
+    /// Remote identifier of the conversation
+
+    public let conversationId: UUID?
+
+    /// Qualified identifier of the conversation
+
+    public let qualifiedConversationId: QualifiedID?
+
+    /// Time when connection was last updated
+
+    public let lastUpdate: Date
+
+    /// current status of connection
+
+    public let status: ConnectionStatus
 }

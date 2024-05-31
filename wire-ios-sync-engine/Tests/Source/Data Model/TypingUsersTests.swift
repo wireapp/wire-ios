@@ -121,7 +121,7 @@ class TypingUsersTests: MessagingTest {
 
     func testThatItDoesNotAddAnInstanceToTheSyncContext() {
         // When, then
-        syncMOC.performGroupedBlockAndWait { XCTAssertNil(self.syncMOC.typingUsers) }
+        syncMOC.performGroupedAndWait { XCTAssertNil(self.syncMOC.typingUsers) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 }

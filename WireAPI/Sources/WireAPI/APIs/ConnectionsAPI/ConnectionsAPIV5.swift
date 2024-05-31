@@ -16,14 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import XCTest
+import Foundation
 
-class BaseSnapshotTestCase: XCTestCase {
+class ConnectionsAPIV5: ConnectionsAPIV4 {
 
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
+    override var apiVersion: APIVersion {
+        .v5
     }
-
 }

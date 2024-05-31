@@ -83,7 +83,7 @@ final class Analytics: NSObject {
                                  conversation: ZMConversation?) {
         var attributes: [String: Any] = conversation?.attributesForConversation ?? [:]
 
-        attributes.merge(userInfo, strategy: .preferNew)
+        attributes.merge(userInfo) { _, new in new }
         tagEvent("e2ee.failed_message_decryption", attributes: attributes)
     }
 }

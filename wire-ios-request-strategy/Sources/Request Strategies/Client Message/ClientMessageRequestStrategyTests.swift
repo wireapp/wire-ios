@@ -81,7 +81,7 @@ extension ClientMessageRequestStrategyTests {
 
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
@@ -99,7 +99,7 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItNotifiesAttachmentPrepocessorOfChanges() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let text = String(repeating: "Hi", count: 100000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
@@ -118,7 +118,7 @@ extension ClientMessageRequestStrategyTests {
 
         // GIVEN
         var confirmationMessage: ZMMessage!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
@@ -130,7 +130,7 @@ extension ClientMessageRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertTrue(confirmationMessage.isZombieObject)
         }
     }
@@ -147,7 +147,7 @@ extension ClientMessageRequestStrategyTests {
             message: "",
             data: nil)
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
@@ -177,7 +177,7 @@ extension ClientMessageRequestStrategyTests {
 extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromAnEvent() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             let text = "Everything"

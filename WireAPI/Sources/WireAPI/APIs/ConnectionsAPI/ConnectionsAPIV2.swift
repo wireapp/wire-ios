@@ -18,19 +18,9 @@
 
 import Foundation
 
-enum DictionaryMergeStrategy {
-    case preferNew, preferOld
-}
+class ConnectionsAPIV2: ConnectionsAPIV1 {
 
-extension Dictionary {
-
-    mutating func merge(_ other: [Dictionary.Key: Dictionary.Value], strategy: DictionaryMergeStrategy) {
-        switch strategy {
-        case .preferNew:
-            merge(other) { _, new in new }
-        case .preferOld:
-            merge(other) { old, _ in old }
-        }
+    override var apiVersion: APIVersion {
+        .v2
     }
-
 }

@@ -16,30 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import Wire
+class ConnectionsAPIV4: ConnectionsAPIV3 {
 
-final class SkeletonViewControllerTests: BaseSnapshotTestCase {
-
-    var sut: SkeletonViewController!
-    var mockAccount: Account!
-
-    override func setUp() {
-        super.setUp()
-
-        mockAccount = Account.mockAccount(imageData: Data())
-        sut = SkeletonViewController(from: mockAccount, to: mockAccount, randomizeDummyItem: false)
-    }
-
-    override func tearDown() {
-        sut = nil
-        mockAccount = nil
-
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        verify(matching: sut)
+    override var apiVersion: APIVersion {
+        .v4
     }
 }

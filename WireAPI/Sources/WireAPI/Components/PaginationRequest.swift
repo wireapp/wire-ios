@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// Erros that can occur when decoding response payloads.
-
-enum ResponsePayloadDecoderError: Error {
-
-    /// The data to decode could not be found.
-
-    case missingResponseData
-
-    /// The payload could not be decoded due to a decoding error.
-
-    case failedToDecodePayload(Decodable.Type, Error)
-
+struct PaginationRequest: Codable {
+    enum CodingKeys: String, CodingKey {
+        case pagingState = "paging_state"
+        case size
+    }
+    var pagingState: String?
+    // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
+    var size: Int?
 }

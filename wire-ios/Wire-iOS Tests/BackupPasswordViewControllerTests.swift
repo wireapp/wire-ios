@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class BackupPasswordViewControllerTests: BaseSnapshotTestCase {
+final class BackupPasswordViewControllerTests: XCTestCase {
 
     func testDefaultState() {
         // GIVEN
