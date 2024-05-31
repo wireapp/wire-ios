@@ -72,9 +72,13 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         assertionFailure("not implemented! use getLegacyConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
+
+    func getConversations(for identifiers: [QualifiedID]) async throws -> [Conversation] {
+        fatalError("not implemented")
+    }
 }
 
-// MARK: -
+// MARK: Decodables
 
 private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 

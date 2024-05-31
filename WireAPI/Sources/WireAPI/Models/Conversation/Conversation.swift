@@ -18,10 +18,6 @@
 
 import Foundation
 
-class ConversationsAPIV2: ConversationsAPIV1 {
-    override var apiVersion: APIVersion { .v2 }
+public struct Conversation {
 
-    override public func getConversations(for identifiers: [QualifiedID]) async throws -> [Conversation] {
-        fatalError("not implemented")
-    }
 }
