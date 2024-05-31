@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class ProfileFooterViewTests: BaseSnapshotTestCase {
+final class ProfileFooterViewTests: XCTestCase {
 
     // MARK: - Properties
 

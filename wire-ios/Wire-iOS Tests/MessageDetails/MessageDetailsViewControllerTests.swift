@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
+final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

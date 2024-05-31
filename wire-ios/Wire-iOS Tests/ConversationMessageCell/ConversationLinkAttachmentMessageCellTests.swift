@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
+final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     // MARK: - Properties
 

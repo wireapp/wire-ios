@@ -86,6 +86,8 @@ class ConnectionsAPITests: XCTestCase {
     func testGetConnections_MultiplePages_SuccessResponse_V0() async throws {
         // Given
         var requestIndex = 0
+        // We fake responses with 1 element per page even if batchSize is 500
+        // pager is driven by has_more attribute in response
         let httpClient = HTTPClientMock { _ in
             let response = HTTPClientMock.PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
             requestIndex += 1
@@ -94,7 +96,7 @@ class ConnectionsAPITests: XCTestCase {
         }
 
         // WHEN
-        let sut = ConnectionsAPIV0(httpClient: httpClient, batchSize: 1)
+        let sut = ConnectionsAPIV0(httpClient: httpClient)
         let pager = try await sut.getConnections()
         for try await _ in pager {
             // do something with the data
