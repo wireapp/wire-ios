@@ -75,23 +75,45 @@ final class BlockerViewController: LaunchImageViewController {
     private func showBackendNotSupportedMessage() {
         typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
 
-        presentAlertWithOKButton(
+        presentOKAlert(
             title: BackendNotSupported.title,
             message: BackendNotSupported.message
         )
     }
 
     private func showBlacklistMessage() {
-
-        presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
-                                 message: L10n.Localizable.Force.Update.message) { _ in
+        presentOKAlert(
+            title: L10n.Localizable.Force.Update.title,
+            message: L10n.Localizable.Force.Update.message
+        ) { _ in
             UIApplication.shared.open(URL.wr_wireAppOnItunes)
         }
     }
 
     private func showJailbrokenMessage() {
-        presentAlertWithOKButton(title: L10n.Localizable.Jailbrokendevice.Alert.title,
-                                 message: L10n.Localizable.Jailbrokendevice.Alert.message)
+        presentOKAlert(
+            title: L10n.Localizable.Jailbrokendevice.Alert.title,
+            message: L10n.Localizable.Jailbrokendevice.Alert.message
+        )
+    }
+
+    private func presentOKAlert(
+        title: String,
+        message: String,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel,
+            handler: handler
+        ))
+
+        present(alert, animated: true)
     }
 
     private func showGetCertificateMessage() {
