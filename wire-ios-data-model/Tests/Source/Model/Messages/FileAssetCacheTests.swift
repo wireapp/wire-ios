@@ -449,7 +449,7 @@ class FileAssetCacheTests: XCTestCase {
     func testThatHasDataOnDiskForTeam() {
         // given
         let syncContext = coreDataStack.syncContext
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"
             self.sut.storeImage(data: self.testData(), for: team)
@@ -464,7 +464,7 @@ class FileAssetCacheTests: XCTestCase {
 
     func testThatItDeletesAnExistingAssetDataForTeam() {
         let syncContext = coreDataStack.syncContext
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             // given
             let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"

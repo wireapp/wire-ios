@@ -1116,10 +1116,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreate_withoutRegisteredMLSClient_dontEstablishMLSSelfGroup() async throws {
         // given
+        let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
         let expectation = XCTestExpectation(description: "didCallCreateGroup")
         expectation.isInverted = true
         mockMLSService.createSelfGroupFor_MockMethod = { _ in
             expectation.fulfill()
+            return ciphersuite
         }
         try await syncMOC.perform {
             let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
@@ -1137,9 +1139,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() async throws {
         // given
+        let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
         let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
         mockMLSService.createSelfGroupFor_MockMethod = { _ in
             didCallCreateGroup.fulfill()
+            return ciphersuite
         }
         try await syncMOC.perform {
             let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
@@ -1153,6 +1157,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
+        await syncMOC.perform {
+            let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.syncMOC)
+            XCTAssertEqual(selfConversation?.ciphersuite, ciphersuite)
+        }
+
     }
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() async throws {
@@ -1421,7 +1430,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         originalEvent: ZMUpdateEvent
     ) {
         syncMOC.performAndWait {
-            let team = Team.fetchOrCreate(with: .init(), create: true, in: syncMOC, created: .none)
+            let team = Team.fetchOrCreate(
+                with: .init(),
+                in: syncMOC
+            )
 
             let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
             users.forEach { user in

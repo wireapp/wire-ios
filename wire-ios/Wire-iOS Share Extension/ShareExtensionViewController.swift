@@ -92,6 +92,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private var localAuthenticationStatus: LocalAuthenticationStatus = .denied
     private var observer: SendableBatchObserver?
+    private let networkStatusObservable: any NetworkStatusObservable = NetworkStatus.shared
     private weak var progressViewController: SendingProgressViewController?
 
     var dispatchQueue: DispatchQueue = DispatchQueue.main
@@ -187,7 +188,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     override func configurationItems() -> [Any]! {
-        if accountManager?.accounts.count > 1 {
+        if let count = accountManager?.accounts.count, count > 1 {
             return [accountItem, conversationItem]
         } else {
             return [conversationItem]
@@ -400,7 +401,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Transitions
 
     private func presentSendingProgress(mode: SendingProgressViewController.ProgressMode) {
-        let progressSendingViewController = SendingProgressViewController()
+        let progressSendingViewController = SendingProgressViewController(networkStatusObservable: networkStatusObservable)
         progressViewController?.mode = mode
 
         progressSendingViewController.cancelHandler = { [weak self] in

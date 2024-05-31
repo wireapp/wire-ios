@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDataModelSupport
 import XCTest
+
+@testable import Wire
 
 final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
@@ -146,7 +148,8 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         sut = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: MockUserRight.self,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: MockAccountSelector()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

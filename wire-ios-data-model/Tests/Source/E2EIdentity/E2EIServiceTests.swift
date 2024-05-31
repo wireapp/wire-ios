@@ -21,7 +21,7 @@ import WireCoreCrypto
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class E2EIServiceTests: ZMConversationTestsBase {
+final class E2EIServiceTests: ZMConversationTestsBase {
 
     var sut: E2EIService!
     var mockE2eIdentity: MockE2EIEnrollment!

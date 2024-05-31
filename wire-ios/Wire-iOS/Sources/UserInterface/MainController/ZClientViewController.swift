@@ -35,7 +35,9 @@ final class ZClientViewController: UIViewController {
     let wireSplitViewController: SplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
+    private(set) var mainTabBarController: UITabBarController!
     let conversationListViewController: ConversationListViewController
+    let conversationListWithFoldersViewController: ConversationListViewController
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
@@ -64,15 +66,27 @@ final class ZClientViewController: UIViewController {
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+        // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
+        conversationListWithFoldersViewController = .init(
+            account: account,
+            selfUser: userSession.selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: true,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
+        conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
 
         colorSchemeController = .init(userSession: userSession)
 
@@ -174,7 +188,14 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-        wireSplitViewController.leftViewController = conversationListViewController
+
+        mainTabBarController = MainTabBarController(
+            contacts: .init(),
+            conversations: UINavigationController(rootViewController: conversationListViewController),
+            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
+            archive: .init()
+        )
+        wireSplitViewController.leftViewController = mainTabBarController
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -340,7 +361,6 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.hideArchivedConversations()
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 

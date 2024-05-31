@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCase {
+final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

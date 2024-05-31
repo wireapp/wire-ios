@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import Wire
 @testable import WireSyncEngineSupport
 
-final class ProfileViewControllerTests: BaseSnapshotTestCase {
+final class ProfileViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -263,5 +262,4 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         // THEN
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
-
 }

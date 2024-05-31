@@ -30,7 +30,7 @@ final class CallParticipantsListHelper {
         let sortedParticipants = (0..<participantCount)
             .lazy
             .map { mockUsers[$0] }
-            .sorted { $0.name < $1.name }
+            .sortedAscendingPrependingNil(by: \.name)
         var callParticipantState: CallParticipantState = .connecting
         if let videoState, let microphoneState {
             callParticipantState = .connected(videoState: videoState, microphoneState: microphoneState)
@@ -44,7 +44,7 @@ final class CallParticipantsListHelper {
 
 }
 
-final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
+final class CallParticipantsListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

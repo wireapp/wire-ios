@@ -17,10 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class ChangeEmailViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+final class ChangeEmailViewControllerTests: XCTestCase {
 
     var userSession: UserSession!
 

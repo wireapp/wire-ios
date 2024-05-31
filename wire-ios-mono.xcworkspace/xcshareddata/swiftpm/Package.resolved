@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/pinterest/PINCache",
         "state": {
           "branch": null,
-          "revision": "875c654984fb52b47ca65ae70d24852b0003ccd9",
-          "version": "3.0.3"
+          "revision": "2fb85948463292c2e824148cf17dc62a4c217a94",
+          "version": "3.0.4"
         }
       },
       {
@@ -33,8 +33,35 @@
         "repositoryURL": "https://github.com/pinterest/PINOperation.git",
         "state": {
           "branch": null,
-          "revision": "40504c156a68b20f98f7ddc73a115cbb7893be25",
-          "version": "1.2.2"
+          "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
+          "version": "1.2.3"
+        }
+      },
+      {
+        "package": "Starscream",
+        "repositoryURL": "https://github.com/wireapp/starscream",
+        "state": {
+          "branch": null,
+          "revision": "bf73a16e7409a83c38872726e45e4f432512315e",
+          "version": "4.0.8"
+        }
+      },
+      {
+        "package": "SwiftDocCPlugin",
+        "repositoryURL": "https://github.com/apple/swift-docc-plugin",
+        "state": {
+          "branch": null,
+          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "SymbolKit",
+        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
+        "state": {
+          "branch": null,
+          "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
+          "version": "1.0.0"
         }
       },
       {
@@ -42,8 +69,17 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {
           "branch": null,
-          "revision": "dc46eeb3928a75390651fac6c1ef7f93ad59a73b",
-          "version": "1.11.1"
+          "revision": "625ccca8570773dd84a34ee51a81aa2bc5a4f97a",
+          "version": "1.16.0"
+        }
+      },
+      {
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/apple/swift-syntax",
+        "state": {
+          "branch": null,
+          "revision": "303e5c5c36d6a558407d364878df131c3546fad8",
+          "version": "510.0.2"
         }
       }
     ]

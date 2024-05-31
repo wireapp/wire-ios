@@ -1022,6 +1022,10 @@ internal enum L10n {
         /// © Wire Swiss GmbH
         internal static let title = L10n.tr("Localizable", "about.copyright.title", fallback: "© Wire Swiss GmbH")
       }
+      internal enum Legal {
+        /// Legal
+        internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
+      }
       internal enum License {
         /// Acknowledgements
         internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
@@ -1102,6 +1106,12 @@ internal enum L10n {
     internal enum ArchivedList {
       /// archive
       internal static let title = L10n.tr("Localizable", "archived_list.title", fallback: "archive")
+      internal enum EmptyPlaceholder {
+        /// Nothing archived yet
+        internal static let headline = L10n.tr("Localizable", "archived_list.empty_placeholder.headline", fallback: "Nothing archived yet")
+        /// To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.
+        internal static let subheadline = L10n.tr("Localizable", "archived_list.empty_placeholder.subheadline", fallback: "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.")
+      }
     }
     internal enum Availability {
       /// Available
@@ -1266,6 +1276,14 @@ internal enum L10n {
               internal static func user(_ p1: Any) -> String {
                 return L10n.tr("Localizable", "call.degraded.ended.alert.message.user", String(describing: p1), fallback: "The call was disconnected because %@ is no longer a verified contact.")
               }
+            }
+          }
+        }
+        internal enum Incoming {
+          internal enum Alert {
+            internal enum Action {
+              /// Join anyway
+              internal static let `continue` = L10n.tr("Localizable", "call.degraded.incoming.alert.action.continue", fallback: "Join anyway")
             }
           }
         }

@@ -16,11 +16,6 @@
     ],
     "environmentVariableEntries" : [
       {
-        "enabled" : false,
-        "key" : "RECORDING_SNAPSHOTS",
-        "value" : "YES"
-      },
-      {
         "key" : "SNAPSHOT_REFERENCE_DIR",
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
@@ -50,7 +45,7 @@
     {
       "skippedTests" : [
         "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
-        "ConversationListTopBarViewControllerSnapshotTests\/testForLongName()",
+        "CallActionsViewSnapshotTests",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",

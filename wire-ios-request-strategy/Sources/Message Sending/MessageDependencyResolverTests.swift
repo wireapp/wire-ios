@@ -37,6 +37,29 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         }
     }
 
+    func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() throws {
+        // given
+        syncMOC.performAndWait {
+            groupConversation.messageProtocol = .mls
+            groupConversation.mlsVerificationStatus = .degraded
+        }
+
+        let uuid = UUID.create()
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Confirmation(messageId: uuid)),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+        message.shouldIgnoreTheSecurityLevelCheck = true
+        let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
+            .arrange()
+
+        // then test completes
+        wait(timeout: 0.5) {
+            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        }
+    }
+
     func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() throws {
         // given
         syncMOC.performAndWait {

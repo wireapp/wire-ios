@@ -17,9 +17,11 @@
 //
 
 import SnapshotTesting
+import XCTest
+
 @testable import Wire
 
-final class ModalTopBarTests: BaseSnapshotTestCase {
+final class ModalTopBarTests: XCTestCase {
 
     var sut: ModalTopBar! = nil
 
@@ -59,5 +61,4 @@ final class ModalTopBarTests: BaseSnapshotTestCase {
 
         verifyInAllPhoneWidths(matching: sut)
     }
-
 }

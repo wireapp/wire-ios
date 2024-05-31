@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 
-final class AccessoryTextFieldValidateionTests: XCTestCase {
+@testable import Wire
+
+final class AccessoryTextFieldValidationTests: XCTestCase {
     var sut: ValidatedTextField!
     var mockViewController: MockViewController!
 

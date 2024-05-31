@@ -156,7 +156,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
         Task {
             do {
-                let isOneOnOneReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+                let isOneOnOneReady = await isOneOnOneReady(userID: userID)
 
                 await MainActor.run {
                     let actionsList = makeActionsList(isOneOnOneReady: isOneOnOneReady)
@@ -165,6 +165,20 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             } catch {
                 WireLogger.mls.error("failed to update MLS migration status: \(error)")
             }
+        }
+    }
+
+    private func isOneOnOneReady(userID: QualifiedID) async -> Bool {
+        do {
+            return try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+        } catch {
+            // We assume the conversation is not ready and we log the error
+            //
+            // Note: It could be that the user wasn't found,
+            // which is to be expected if it's an unconnected search user
+
+            WireLogger.conversation.warn("failed to check 1:1 conversation readiness: \(error)")
+            return false
         }
     }
 

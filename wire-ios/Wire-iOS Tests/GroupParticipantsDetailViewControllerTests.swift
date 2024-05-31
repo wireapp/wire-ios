@@ -38,7 +38,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 }
 
-final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
+final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     var userSession: UserSessionMock!
 

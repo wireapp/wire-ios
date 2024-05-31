@@ -25,16 +25,16 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded() async
 
-    func createSelfGroup(for groupID: MLSGroupID) async
+    func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite
 
     func joinGroup(with groupID: MLSGroupID) async throws
 
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
+    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite
 
-    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws
+    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
@@ -420,6 +420,7 @@ public final class MLSService: MLSServiceInterface {
     enum MLSGroupCreationError: Error, Equatable {
         case failedToGetExternalSenders
         case failedToCreateGroup
+        case invalidCiphersuite
     }
 
     /// Establish an MLS group with the given group id.
@@ -430,11 +431,11 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
-        guard let context else { return }
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
+        guard let context else { throw MLSGroupCreationError.failedToCreateGroup }
 
         do {
-            try await createGroup(for: groupID)
+            let ciphersuite = try await createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -442,6 +443,7 @@ public final class MLSService: MLSServiceInterface {
 
             let usersWithSelfUser = users + [mlsSelfUser]
             try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+            return ciphersuite
         } catch {
             try await self.wipeGroup(groupID)
             throw error
@@ -451,16 +453,16 @@ public final class MLSService: MLSServiceInterface {
     public func createGroup(
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
-    ) async throws {
+    ) async throws -> MLSCipherSuite {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
+        let ciphersuiteRawValue = await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue
+
+        guard let ciphersuite = MLSCipherSuite(rawValue: ciphersuiteRawValue) else {
+            throw MLSGroupCreationError.invalidCiphersuite
+        }
+
         do {
-            let ciphersuiteRawValue = await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue
-
-            guard let ciphersuite = MLSCipherSuite(rawValue: ciphersuiteRawValue) else {
-                throw MLSGroupCreationError.failedToCreateGroup
-            }
-
             let externalSenders: [Data]
             if let parentGroupID {
                 // Anyone in the parent conversation can create a subconversation,
@@ -496,13 +498,14 @@ public final class MLSService: MLSServiceInterface {
         }
 
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+
+        return ciphersuite
     }
 
-    public func createSelfGroup(for groupID: MLSGroupID) async {
-        guard let context else { return }
-
+    public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
         do {
-            try await self.createGroup(for: groupID)
+            guard let context else { throw MLSAddMembersError.noManagedObjectContext }
+            let ciphersuite = try await self.createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -514,8 +517,10 @@ public final class MLSService: MLSServiceInterface {
                 logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
                 try await updateKeyMaterial(for: groupID)
             }
+            return ciphersuite
         } catch {
             logger.error("create group for self conversation failed: \(error.localizedDescription)")
+            throw error
         }
     }
 
@@ -525,6 +530,7 @@ public final class MLSService: MLSServiceInterface {
 
         case noMembersToAdd
         case noInviteesToAdd
+        case noManagedObjectContext
         case failedToClaimKeyPackages(users: [MLSUser])
         case invalidCiphersuite
     }
@@ -725,7 +731,7 @@ public final class MLSService: MLSServiceInterface {
     private var hasMoreThan24HoursPassedSinceLastCheck: Bool {
         guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else { return true }
 
-        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
+        if let hour = Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour, hour > 24 {
             return true
         } else {
             return false
@@ -829,8 +835,11 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
+        // TODO: [WPB-9029] jacob this looks wrong,
+        // why would we create the MLS group if doesn't exist? We are about
+        // to join it via external commit.
         if await !conversationExists(groupID: groupID) {
-            try await createGroup(for: groupID)
+            try await _ = createGroup(for: groupID)
         }
 
         let mlsUser = await context.perform {

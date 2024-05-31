@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archive";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Conversations start here";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ started using a new device.";
 "call.degraded.alert.message.unknown" = "Someone started using a new device.";
 "call.degraded.alert.action.continue" = "Call anyway";
+"call.degraded.incoming.alert.action.continue" = "Join anyway";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Add email address and password";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title"="Terms of Use";
 "about.privacy.title"="Privacy Policy";
 "about.license.title" = "License Information";

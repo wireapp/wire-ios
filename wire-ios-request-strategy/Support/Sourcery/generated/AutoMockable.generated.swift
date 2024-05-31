@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -1012,32 +1012,6 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
         }
 
         try await mock(clients, apiVersion)
-    }
-
-}
-public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - calculateSupportedProtocols
-
-    public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
-
-    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
-        calculateSupportedProtocols_Invocations.append(())
-
-        if let mock = calculateSupportedProtocols_MockMethod {
-            return mock()
-        } else if let mock = calculateSupportedProtocols_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `calculateSupportedProtocols`")
-        }
     }
 
 }
