@@ -16,9 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZClientViewController: SplitViewControllerDelegate {
+import UIKit
+
+extension ZClientViewController: UISplitViewControllerDelegate, SplitViewControllerDelegate {
 
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+
+        print("#^$% splitViewControllerShouldMoveLeftViewController:", splitViewController.rightViewController != nil &&
+              splitViewController.leftViewController == conversationListViewController.tabBarController &&
+              conversationListViewController.state == .conversationList &&
+              (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false))
+
+        print("#^$% splitViewController.rightViewController", splitViewController.rightViewController != nil)
+        print("#^$% splitViewController.leftViewController == conversationListViewController.tabBarController", splitViewController.leftViewController == conversationListViewController.tabBarController)
+        print("#^$% conversationListViewController.state == .conversationList", conversationListViewController.state == .conversationList)
+        print("#^$% conversationListViewController.presentedViewController", conversationListViewController.presentedViewController)
+        print("#^$% splitViewController.isLeftViewControllerRevealed", splitViewController.isLeftViewControllerRevealed)
 
         return splitViewController.rightViewController != nil &&
         splitViewController.leftViewController == conversationListViewController.tabBarController &&

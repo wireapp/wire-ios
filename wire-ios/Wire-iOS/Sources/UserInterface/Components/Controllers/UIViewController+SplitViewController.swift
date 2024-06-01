@@ -19,6 +19,7 @@
 import UIKit
 
 extension UIViewController {
+    #warning("TODO: delete")
     var wr_splitViewController: SplitViewController? {
         var possibleSplit: UIViewController? = self
 

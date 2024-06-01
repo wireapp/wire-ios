@@ -34,6 +34,7 @@ enum SplitViewControllerLayoutSize {
     case regularLandscape
 }
 
+@available(*, deprecated, message: "Will be removed")
 protocol SplitLayoutObservable: AnyObject {
     var layoutSize: SplitViewControllerLayoutSize { get }
     var leftViewControllerWidth: CGFloat { get }
@@ -43,6 +44,7 @@ protocol SplitViewControllerDelegate: AnyObject {
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool
 }
 
+#warning("TODO: delete")
 final class SplitViewController: UIViewController, SplitLayoutObservable {
     weak var delegate: SplitViewControllerDelegate?
 
