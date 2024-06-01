@@ -17,7 +17,6 @@
 //
 
 import SnapshotTesting
-import WireCommonComponents
 import WireSyncEngineSupport
 import XCTest
 
@@ -40,7 +39,6 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        FontScheme.configure(with: .large)
         UIColor.setAccentOverride(.red)
 
         mockConversation = MockInputBarConversationType()

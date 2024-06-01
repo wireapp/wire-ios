@@ -20,7 +20,7 @@ import Foundation
 
 /// A builder of `ConnectionsAPI`.
 
-public struct ConnectionsAPIBuilder: APIBuilder {
+public struct ConnectionsAPIBuilder {
 
     let httpClient: any HTTPClient
 
@@ -32,7 +32,7 @@ public struct ConnectionsAPIBuilder: APIBuilder {
         self.httpClient = httpClient
     }
 
-    /// Make a versioned`ConnectionsAPI`.
+    /// Make a versioned `ConnectionsAPI`.
     ///
     /// - Parameter version: An api version.
     /// - Returns: A versioned `ConnectionsAPI`.

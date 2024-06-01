@@ -45,7 +45,6 @@ class ZMSnapshotTestCase: XCTestCase {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
-        FontScheme.configure(with: .large)
 
         UIView.setAnimationsEnabled(false)
         accentColor = .red
