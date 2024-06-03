@@ -22,14 +22,6 @@ import Foundation
 
 public enum TeamEvent: Equatable {
 
-    /// A team conversation was created.
-
-    case conversationCreate
-
-    /// A team conversation was deleted.
-
-    case conversationDelete
-
     /// The self team was deleted.
 
     case delete

@@ -27,12 +27,6 @@ extension UpdateEvent {
         let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
 
         switch eventType {
-        case .conversationCreate:
-            self = .team(.conversationCreate)
-
-        case .conversationDelete:
-            self = .team(.conversationDelete)
-
         case .delete:
             self = .team(.delete)
 
