@@ -62,6 +62,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewModel: viewModel,
             selfProfileViewControllerBuilder: .mock
         )
+
         tabBarController = MainTabBarController(
             conversations: UINavigationController(rootViewController: sut),
             archive: .init(),
@@ -106,6 +107,75 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
         window.rootViewController = nil
+        verify(matching: tabBarController)
+    }
+
+    // MARK: - Snapshot Tests for Filter View
+
+    func testForShowingConversationsWithoutAnyFilterApplied() {
+        // GIVEN
+        let modelHelper = ModelHelper()
+        let fixture = CoreDataFixture()
+
+        let iOSGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        iOSGroupConversation.userDefinedName = "iOS Team"
+        let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        webGroupConversation.userDefinedName = "Web Team"
+        let qaGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        qaGroupConversation.userDefinedName = "QA Team"
+        let designGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        designGroupConversation.userDefinedName = "QA Team"
+        let iOSBugsAndQuestionsGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        iOSBugsAndQuestionsGroupConversation.userDefinedName = "iOS Bugs & Questions"
+
+        userSession.mockConversationDirectory.mockUnarchivedConversations = [
+            iOSGroupConversation,
+            webGroupConversation,
+            qaGroupConversation,
+            designGroupConversation,
+            iOSBugsAndQuestionsGroupConversation
+        ]
+
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(nil)
+
+        verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByGroups() {
+        // GIVEN
+        let modelHelper = ModelHelper()
+        let fixture = CoreDataFixture()
+
+        let iOSGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        iOSGroupConversation.userDefinedName = "iOS Team"
+        let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        webGroupConversation.userDefinedName = "Web Team"
+
+        userSession.mockConversationDirectory.mockGroupConversations = [iOSGroupConversation, webGroupConversation]
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.groups)
+
+        verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByFavourites() {
+        // GIVEN
+        let modelHelper = ModelHelper()
+        let fixture = CoreDataFixture()
+
+        let iOSGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        iOSGroupConversation.userDefinedName = "iOS Team"
+        iOSGroupConversation.isFavorite = true
+        let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        webGroupConversation.userDefinedName = "Web Team"
+
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
+        userSession.mockConversationDirectory.mockFavoritesConversations = [iOSGroupConversation]
+
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.favorites)
+
         verify(matching: tabBarController)
     }
 
