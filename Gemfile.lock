@@ -20,40 +20,24 @@ GEM
     artifactory (3.0.17)
     atomos (0.1.3)
     aws-eventstream (1.3.0)
-<<<<<<< HEAD
-    aws-partitions (1.917.0)
-    aws-sdk-core (3.192.1)
-=======
     aws-partitions (1.937.0)
     aws-sdk-core (3.196.1)
->>>>>>> 3955207059 (fix: ci set specific ruby version [WPB-9515] (#1520))
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.651.0)
       aws-sigv4 (~> 1.8)
       jmespath (~> 1, >= 1.6.1)
-<<<<<<< HEAD
-    aws-sdk-kms (1.79.0)
-      aws-sdk-core (~> 3, >= 3.191.0)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.147.0)
-      aws-sdk-core (~> 3, >= 3.192.0)
-=======
     aws-sdk-kms (1.82.0)
       aws-sdk-core (~> 3, >= 3.193.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-s3 (1.151.0)
       aws-sdk-core (~> 3, >= 3.194.0)
->>>>>>> 3955207059 (fix: ci set specific ruby version [WPB-9515] (#1520))
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.8)
     aws-sigv4 (1.8.0)
       aws-eventstream (~> 1, >= 1.0.2)
     babosa (1.0.4)
     base64 (0.2.0)
-<<<<<<< HEAD
-=======
     bigdecimal (3.1.8)
->>>>>>> 3955207059 (fix: ci set specific ruby version [WPB-9515] (#1520))
     claide (1.1.0)
     colored (1.2)
     colored2 (3.1.2)
@@ -163,7 +147,7 @@ GEM
       google-apis-core (>= 0.11.0, < 2.a)
     google-apis-playcustomapp_v1 (0.13.0)
       google-apis-core (>= 0.11.0, < 2.a)
-    google-apis-storage_v1 (0.32.0)
+    google-apis-storage_v1 (0.31.0)
       google-apis-core (>= 0.11.0, < 2.a)
     google-cloud-core (1.7.0)
       google-cloud-env (>= 1.0, < 3.a)
@@ -171,11 +155,7 @@ GEM
     google-cloud-env (1.6.0)
       faraday (>= 0.17.3, < 3.0)
     google-cloud-errors (1.4.0)
-<<<<<<< HEAD
-    google-cloud-storage (1.37.0)
-=======
     google-cloud-storage (1.47.0)
->>>>>>> 3955207059 (fix: ci set specific ruby version [WPB-9515] (#1520))
       addressable (~> 2.8)
       digest-crc (~> 0.4)
       google-apis-iamcredentials_v1 (~> 0.1)
@@ -207,25 +187,17 @@ GEM
     mini_mime (1.1.5)
     minitest (5.23.1)
     multi_json (1.15.0)
-<<<<<<< HEAD
-    multi_xml (0.6.0)
-    multipart-post (2.4.0)
-=======
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     multipart-post (2.4.1)
     mutex_m (0.2.0)
->>>>>>> 3955207059 (fix: ci set specific ruby version [WPB-9515] (#1520))
     nanaimo (0.3.0)
     naturally (2.2.1)
     nkf (0.2.0)
     optparse (0.5.0)
     os (1.1.4)
     plist (3.7.1)
-<<<<<<< HEAD
-=======
     process_executer (1.1.0)
->>>>>>> 3955207059 (fix: ci set specific ruby version [WPB-9515] (#1520))
     public_suffix (5.0.5)
     rake (13.2.1)
     rchardet (1.8.0)
@@ -278,9 +250,8 @@ GEM
       xcpretty (~> 0.2, >= 0.0.7)
 
 PLATFORMS
-  arm64-darwin-22
   arm64-darwin-23
-  x86_64-darwin-20
+  ruby
 
 DEPENDENCIES
   fastlane
