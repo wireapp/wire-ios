@@ -114,9 +114,30 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsWithoutAnyFilterApplied() {
         // GIVEN
-        let conversations = createConversations(
-            names: ["iOS Team", "Web Team", "QA Team", "Design Team", "iOS Bugs & Questions"]
-        )
+        let conversationData: [(String, Bool)] = [
+            (
+                "iOS Team",
+                false
+            ),
+            (
+                "Web Team",
+                false
+            ),
+            (
+                "QA Team",
+                false
+            ),
+            (
+                "Design Team",
+                false
+            ),
+            (
+                "iOS Bugs & Questions",
+                false
+            )
+        ]
+
+        let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
 
         // WHEN
@@ -129,7 +150,8 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByGroups() {
         // GIVEN
-        let conversations = createConversations(names: ["iOS Team", "Web Team"])
+        let conversationData: [(String, Bool)] = [("iOS Team", false), ("Web Team", false)]
+        let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockGroupConversations = conversations
 
         // WHEN
@@ -142,7 +164,8 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByFavourites() {
         // GIVEN
-        let conversations = createConversations(names: ["iOS Team", "Web Team"], favorite: [true, false])
+        let conversationData: [(String, Bool)] = [("iOS Team", true), ("Web Team", false)]
+        let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter { $0.isFavorite }
 
         // WHEN
@@ -182,23 +205,23 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Helper Methods
 
-    private func createConversations(names: [String], favorite: [Bool] = []) -> [ZMConversation] {
+    private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
         let modelHelper = ModelHelper()
         let fixture = CoreDataFixture()
 
         var conversations: [ZMConversation] = []
-        for (index, name) in names.enumerated() {
-            let conversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+
+        for (name, isFavorite) in conversationsData {
+            let conversation = modelHelper.createGroupConversation(
+                in: fixture.coreDataStack.viewContext
+            )
+
             conversation.userDefinedName = name
-            if index < favorite.count {
-                conversation.isFavorite = favorite[index]
-            }
+            conversation.isFavorite = isFavorite
             conversations.append(conversation)
         }
         return conversations
     }
-
-    // MARK: - Helpers
 
     private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
         let predicate = NSPredicate { _, _ in
