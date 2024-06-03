@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireAPI
+import XCTest
 
 final class FederationEventDecodingTests: XCTestCase {
 
