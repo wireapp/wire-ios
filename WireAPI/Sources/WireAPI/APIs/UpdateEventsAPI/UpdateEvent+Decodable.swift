@@ -44,7 +44,7 @@ extension UpdateEvent: Decodable {
             self = .unknown(eventType: eventType)
         }
     }
-    
+
     private enum CodingKeys: String, CodingKey {
 
         case eventType = "type"

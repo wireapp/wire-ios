@@ -29,7 +29,7 @@ final class UpdateEventsAPITests: XCTestCase {
             UpdateEventsAPIBuilder(httpClient: httpClient)
                 .makeAPI(for: apiVersion)
         }
-        
+
         try await snapshotter.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
