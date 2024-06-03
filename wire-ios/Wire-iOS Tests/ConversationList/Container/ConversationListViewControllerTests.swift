@@ -136,9 +136,11 @@ final class ConversationListViewControllerTests: XCTestCase {
             iOSBugsAndQuestionsGroupConversation
         ]
 
+        // WHEN
         sut.hideNoContactLabel(animated: false)
         sut.applyFilter(nil)
 
+        // THEN
         verify(matching: tabBarController)
     }
 
@@ -153,9 +155,12 @@ final class ConversationListViewControllerTests: XCTestCase {
         webGroupConversation.userDefinedName = "Web Team"
 
         userSession.mockConversationDirectory.mockGroupConversations = [iOSGroupConversation, webGroupConversation]
+
+        // WHEN
         sut.hideNoContactLabel(animated: false)
         sut.applyFilter(.groups)
 
+        // THEN
         verify(matching: tabBarController)
     }
 
@@ -173,9 +178,11 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         userSession.mockConversationDirectory.mockFavoritesConversations = [iOSGroupConversation]
 
+        // WHEN
         sut.hideNoContactLabel(animated: false)
         sut.applyFilter(.favorites)
 
+        // THEN
         verify(matching: tabBarController)
     }
 
