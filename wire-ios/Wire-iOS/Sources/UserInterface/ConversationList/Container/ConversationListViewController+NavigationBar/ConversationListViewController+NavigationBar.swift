@@ -22,7 +22,7 @@ import WireDataModel
 import WireSyncEngine
 
 enum ConversationFilterType {
-    case allConversations, favorites, groups, oneToOneConversations
+    case favorites, groups, oneToOneConversations
 }
 
 extension ConversationListViewController {
@@ -117,7 +117,7 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons() {
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
-        typealias FilterMenuLocale = L10n.Localizable.ConversationList.NavigationBar.FilterMenu
+        typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
         // New Conversation Button
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
@@ -132,18 +132,19 @@ extension ConversationListViewController {
         var selectedFilterImage: UIImage
 
         switch listContentController.listViewModel.selectedFilter {
-        case .allConversations:
-            selectedFilterImage = defaultFilterImage
         case .favorites, .groups, .oneToOneConversations:
             selectedFilterImage = filledFilterImage
+        case .none:
+            selectedFilterImage = defaultFilterImage
         }
 
         // Define the menu actions with initial states
         let allConversationsAction = createFilterAction(
             title: FilterMenuLocale.AllConversations.title,
-            filter: .allConversations,
-            isSelected: listContentController.listViewModel.selectedFilter == .allConversations
+            filter: nil,
+            isSelected: listContentController.listViewModel.selectedFilter == nil
         )
+
         let favoritesAction = createFilterAction(
             title: FilterMenuLocale.Favorites.title,
             filter: .favorites,
@@ -200,7 +201,7 @@ extension ConversationListViewController {
     /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
-        filter: ConversationFilterType,
+        filter: ConversationFilterType?,
         isSelected: Bool
     ) -> UIAction {
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
@@ -213,12 +214,6 @@ extension ConversationListViewController {
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
         return action
-    }
-
-    /// Method to apply the selected filter and update the UI accordingly
-    private func applyFilter(_ filter: ConversationFilterType) {
-        self.listContentController.listViewModel.selectedFilter = filter
-        self.setupRightNavigationBarButtons()
     }
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.

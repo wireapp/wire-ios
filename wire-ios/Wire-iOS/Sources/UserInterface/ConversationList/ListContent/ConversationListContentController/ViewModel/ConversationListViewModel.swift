@@ -27,7 +27,7 @@ final class ConversationListViewModel: NSObject {
 
     typealias SectionIdentifier = String
 
-    var selectedFilter: ConversationFilterType = .allConversations {
+    var selectedFilter: ConversationFilterType? {
         didSet {
             reloadConversationList()
         }
@@ -523,7 +523,7 @@ final class ConversationListViewModel: NSObject {
             kinds = [.favorites]
         case .oneToOneConversations:
             kinds = [.contacts, .contactRequests]
-        case .allConversations:
+        case .none:
             kinds = [.conversations, .contactRequests]
         }
 
