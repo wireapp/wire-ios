@@ -32,7 +32,7 @@ protocol ConnectionsRepositoryProtocol {
     func pullConnections() async throws
 }
 
-final class ConnectionsRepository: ConnectionsRepositoryProtocol {
+struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     private let connectionsAPI: any ConnectionsAPI
     private let context: NSManagedObjectContext
@@ -45,7 +45,7 @@ final class ConnectionsRepository: ConnectionsRepositoryProtocol {
         self.context = context
     }
 
-    /// Retrieve from backend and store connections location
+    /// Retrieve from backend and store connections locally
 
     public func pullConnections() async throws {
         let connectionsPager = try await connectionsAPI.getConnections()

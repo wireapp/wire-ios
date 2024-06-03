@@ -61,13 +61,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
     func testPullConnections_GivenOneConnectionFails_OtherConnectionsAreStored() async throws {
         // Mock
         let connection = Scaffolding.connection
-        let brokenConnection = WireAPI.Connection(senderId: nil,
-                                                  receiverId: nil,
-                                                  receiverQualifiedId: nil,
-                                                  conversationId: nil,
-                                                  qualifiedConversationId: nil,
-                                                  lastUpdate: Date(),
-                                                  status: .pending)
+        let brokenConnection = Scaffolding.brokenConnection
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
 
@@ -159,4 +153,12 @@ private enum Scaffolding {
                                                qualifiedConversationId: Scaffolding.conversationID,
                                                lastUpdate: Scaffolding.lastUpdate,
                                                status: Scaffolding.connectionStatus)
+
+    static let brokenConnection = WireAPI.Connection(senderId: nil,
+                                                     receiverId: nil,
+                                                     receiverQualifiedId: nil,
+                                                     conversationId: nil,
+                                                     qualifiedConversationId: nil,
+                                                     lastUpdate: Date(),
+                                                     status: .pending)
 }
