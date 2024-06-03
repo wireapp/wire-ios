@@ -118,6 +118,11 @@ jobs:
           path: vendor/bundle
           key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - name: Setup workspace
         run: |
           ./setup.sh
