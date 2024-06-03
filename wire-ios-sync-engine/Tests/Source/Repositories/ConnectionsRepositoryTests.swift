@@ -118,7 +118,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         // Then
         try await context.perform { [context] in
-            // There is a team in the database.
+            // There is a connection in the database.
             let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
 
             XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
