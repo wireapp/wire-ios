@@ -86,7 +86,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         // Then
         await context.perform { [context] in
-            // There is a team in the database.
+            // There is a connection in the database.
             let fetchRequest = NSFetchRequest<any NSFetchRequestResult>(entityName: ZMConnection.entityName())
             let a = context.executeFetchRequestOrAssert(fetchRequest)
             XCTAssertEqual(a.count, 1)
