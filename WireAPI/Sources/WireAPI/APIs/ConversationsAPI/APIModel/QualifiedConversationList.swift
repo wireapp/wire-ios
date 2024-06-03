@@ -18,14 +18,14 @@
 
 import Foundation
 
-struct QualifiedConversationList<C: Decodable>: Decodable {
+struct QualifiedConversationList<Conversation: Decodable>: Decodable {
     enum CodingKeys: String, CodingKey {
         case found = "found"
         case notFound = "not_found"
         case failed = "failed"
     }
 
-    let found: [C]
+    let found: [Conversation]
     let notFound: [QualifiedID]
     let failed: [QualifiedID]
 }
