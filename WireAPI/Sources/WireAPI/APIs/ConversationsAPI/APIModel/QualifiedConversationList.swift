@@ -18,15 +18,14 @@
 
 import Foundation
 
-/// Access to conversations API.
-public protocol ConversationsAPI {
+struct QualifiedConversationList<C: Decodable>: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case found = "found"
+        case notFound = "not_found"
+        case failed = "failed"
+    }
 
-    /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID>
-
-    /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID>
-
-    func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
-
+    let found: [C]
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
 }

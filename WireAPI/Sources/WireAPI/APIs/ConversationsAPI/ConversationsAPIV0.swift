@@ -73,13 +73,27 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         throw ConversationsAPIError.notImplemented
     }
 
-    func getConversations(for identifiers: [QualifiedID]) async throws -> [ConversationList] {
-        // /conversations/list/v2
-        fatalError("not implemented")
+    func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        let resourcePath = "/conversations/list/v2"
+        let jsonEncoder = JSONEncoder.defaultEncoder
+
+        // TODO: encode in the right way
+        let body = try jsonEncoder.encode(identifiers)
+
+        let request = HTTPRequest(
+            path: resourcePath,
+            method: .post,
+            body: body
+        )
+        let response = try await self.httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: 200, type: QualifiedConversationList<ConversationV0>.self)
+            .parse(response)
     }
 }
 
-// MARK: Decodables
+// MARK: - Decodables
 
 private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 
@@ -98,28 +112,6 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
             element: conversationIdentifiers,
             hasMore: hasMore,
             nextStart: pagingState
-        )
-    }
-}
-
-// MARK: - Decodables
-
-private struct ConversationListV0: Decodable, ToAPIModelConvertible {
-    enum CodingKeys: String, CodingKey {
-        case found = "found"
-        case notFound = "not_found"
-        case failed = "failed"
-    }
-
-    let found: [ConversationV0]
-    let notFound: [QualifiedID]
-    let failed: [QualifiedID]
-
-    func toAPIModel() -> ConversationList {
-        ConversationList(
-            found: found.map { $0.toAPIModel() },
-            notFound: notFound,
-            failed: failed
         )
     }
 }
@@ -212,6 +204,18 @@ private struct ConversationV0: Decodable, ToAPIModelConvertible {
             readReceiptMode: readReceiptMode,
             teamID: teamID,
             type: type
+        )
+    }
+}
+
+// MARK: -
+
+extension QualifiedConversationList<ConversationV0>: ToAPIModelConvertible {
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound,
+            failed: failed
         )
     }
 }

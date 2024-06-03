@@ -18,18 +18,6 @@
 
 import Foundation
 
-struct QualifiedConversationList {
-    enum CodingKeys: String, CodingKey {
-        case found = "found"
-        case notFound = "not_found"
-        case failed = "failed"
-    }
-
-    let found: [Conversation]
-    let notFound: [QualifiedID]
-    let failed: [QualifiedID]
-}
-
 extension QualifiedConversationList {
     struct Conversation {
         enum CodingKeys: String, CodingKey {
