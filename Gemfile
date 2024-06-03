@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby file: ".ruby-version"
+ruby File.read('.ruby-version').strip
 
 gem 'fastlane'
 gem 'git'
