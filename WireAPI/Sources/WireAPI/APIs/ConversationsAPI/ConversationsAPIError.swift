@@ -22,4 +22,6 @@ public enum ConversationsAPIError: Error {
     /// Failure if functionality has not been implemented.
     case notImplemented
 
+    case invalidBody
+
 }

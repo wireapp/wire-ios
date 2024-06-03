@@ -236,4 +236,25 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(list.notFound.count, 1)
         XCTAssertEqual(list.failed.count, 1)
     }
+
+    func testGetConversations_givenV0AndSuccessResponse400() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockError(code: 400, label: "invalid body")
+        ]
+
+        let api = ConversationsAPIV0(httpClient: httpClient)
+
+        // when
+        // then
+        do {
+            _ = try await api.getConversations(for: [])
+        } catch let error as FailureResponse {
+            XCTAssertEqual(error.code, 400)
+            XCTAssertEqual(error.label, "invalid body")
+        } catch {
+            XCTFail("expected error 'FailureResponse'")
+        }
+    }
 }

@@ -87,6 +87,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationList<ConversationV0>.self)
+            .failure(code: 400, error: ConversationsAPIError.invalidBody)
             .parse(response)
     }
 }
