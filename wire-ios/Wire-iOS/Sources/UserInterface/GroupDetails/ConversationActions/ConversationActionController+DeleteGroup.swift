@@ -41,9 +41,18 @@ extension ConversationActionController {
                 case .success:
                     break
                 case .failure:
-                    let alert = UIAlertController.alertWithOKButton(title: L10n.Localizable.Error.Conversation.title,
-                                                                    message: L10n.Localizable.Conversation.DeleteRequestErrorDialog.title(conversation.displayNameWithFallback))
-                    UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
+                    let alert = UIAlertController(
+                        title: L10n.Localizable.Error.Conversation.title,
+                        message: L10n.Localizable.Conversation.DeleteRequestErrorDialog.title(conversation.displayNameWithFallback),
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(
+                        title: L10n.Localizable.General.ok,
+                        style: .cancel
+                    ))
+
+                    let viewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+                    viewController?.present(alert, animated: true)
                 }
             }
         }

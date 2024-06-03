@@ -19,34 +19,30 @@
 import UIKit
 import WireDataModel
 
-extension UIAlertController {
-    enum BackupFailedAction {
-        case tryAgain, cancel
-    }
-
-    static func restoreBackupFailed(with error: Error, completion: @escaping (BackupFailedAction) -> Void) -> UIAlertController {
-        return restoreBackupFailed(title: title(for: error), message: message(for: error), completion: completion)
-    }
-
-    private static func restoreBackupFailed(title: String, message: String, completion: @escaping (BackupFailedAction) -> Void) -> UIAlertController {
+extension BackupRestoreController {
+    func restoreBackupFailed(
+        error: Error,
+        onTryAgain: @escaping () -> Void,
+        onCancel: @escaping () -> Void
+    ) -> UIAlertController {
         let controller = UIAlertController(
-            title: title,
-            message: message,
+            title: title(for: error),
+            message: message(for: error),
             preferredStyle: .alert
         )
 
         let tryAgainAction = UIAlertAction(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.tryAgain,
             style: .default,
-            handler: { _ in completion(.tryAgain) }
+            handler: { _ in onTryAgain() }
         )
 
         controller.addAction(tryAgainAction)
-        controller.addAction(.cancel { completion(.cancel) })
+        controller.addAction(.cancel { onCancel() })
         return controller
     }
 
-    private static func title(for error: Error) -> String {
+    private func title(for error: Error) -> String {
         switch error {
         case
             CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
@@ -58,7 +54,7 @@ extension UIAlertController {
         }
     }
 
-    private static func message(for error: Error) -> String {
+    private func message(for error: Error) -> String {
         switch error {
         case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
             return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.message
