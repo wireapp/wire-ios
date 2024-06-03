@@ -41,7 +41,8 @@ extension UpdateEvent {
             self = .team(.memberLeave(event))
 
         case .memberUpdate:
-            self = .team(.memberUpdate)
+            let event = try container.decodeMemberUpdateEvent()
+            self = .team(.memberUpdate(event))
         }
     }
 
@@ -88,6 +89,36 @@ private extension KeyedDecodingContainer<TeamEventCodingKeys> {
         enum CodingKeys: String, CodingKey {
 
             case userID = "user"
+
+        }
+
+    }
+
+}
+
+// MARK: - Member update
+
+private extension KeyedDecodingContainer<TeamEventCodingKeys> {
+
+    func decodeMemberUpdateEvent() throws -> TeamMemberUpdateEventData {
+        let payload = try decode(
+            TeamMemberUpdateEventPayload.self,
+            forKey: .payload
+        )
+
+        return try TeamMemberUpdateEventData(
+            teamID: decodeTeamID(),
+            membershipID: payload.membershipID
+        )
+    }
+
+    private struct TeamMemberUpdateEventPayload: Decodable {
+
+        let membershipID: UUID
+
+        enum CodingKeys: String, CodingKey {
+
+            case membershipID = "user"
 
         }
 

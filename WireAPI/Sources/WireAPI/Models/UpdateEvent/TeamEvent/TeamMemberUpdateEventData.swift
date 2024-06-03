@@ -18,28 +18,16 @@
 
 import Foundation
 
-/// An event concerning teams.
+/// An event where a user's team membership metadata was updated.
 
-public enum TeamEvent: Equatable {
+public struct TeamMemberUpdateEventData: Equatable {
 
-    /// A team conversation was created.
+    /// The team id.
 
-    case conversationCreate
+    public let teamID: UUID
 
-    /// A team conversation was deleted.
+    /// The membership id.
 
-    case conversationDelete
-
-    /// The self team was deleted.
-
-    case delete
-
-    /// A user has left a team.
-
-    case memberLeave(TeamMemberLeaveEventData)
-
-    /// A user's team membership was updated.
-
-    case memberUpdate(TeamMemberUpdateEventData)
+    public let membershipID: UUID
 
 }
