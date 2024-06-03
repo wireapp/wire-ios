@@ -27,7 +27,6 @@ class BackendInfoAPIV0: BackendInfoAPI {
     }
 
     let path = "/api-version"
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     func getBackendInfo() async throws -> BackendInfo {
         let request = HTTPRequest(
@@ -36,29 +35,14 @@ class BackendInfoAPIV0: BackendInfoAPI {
         )
 
         let response = try await httpClient.executeRequest(request)
-
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: BackendInfoResponseV0.self
-            )
-
-            return payload.toAPIModel()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            throw failure
-        }
+        return try ResponseParser()
+            .success(code: 200, type: BackendInfoResponseV0.self)
+            .parse(response)
     }
 
 }
 
-private struct BackendInfoResponseV0: Decodable {
+private struct BackendInfoResponseV0: Decodable, ToAPIModelConvertible {
 
     var domain: String
     var federation: Bool

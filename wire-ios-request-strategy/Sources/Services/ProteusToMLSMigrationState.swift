@@ -18,13 +18,15 @@
 
 import Foundation
 
-enum ProteusToMLSMigrationState: String, CustomStringConvertible {
+public enum ProteusToMLSMigrationState: String, CustomStringConvertible {
 
     case disabled
     case notStarted
     case ongoing
     case finalised
 
-    var description: String { rawValue }
+    public var description: String {
+        rawValue
+    }
 
 }

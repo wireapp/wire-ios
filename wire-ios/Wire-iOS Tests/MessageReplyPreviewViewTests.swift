@@ -37,7 +37,7 @@ extension UIView {
 
 // MARK: - MessageReplyPreviewViewTests
 
-final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
+final class MessageReplyPreviewViewTests: XCTestCase {
 
     // MARK: - tearDown
 

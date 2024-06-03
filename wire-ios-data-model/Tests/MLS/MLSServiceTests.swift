@@ -1392,9 +1392,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             self.mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
                 guard let tuple = conversationAndOutOfSyncTuples.first(
                     where: { element in
-                        self.uiMOC.performGroupedAndWait({ _ in
+                        self.uiMOC.performGroupedAndWait {
                             element.conversation.mlsGroupID?.data
-                        }) == groupID }
+                        } == groupID }
                 ) else {
                     return 1
                 }
@@ -1875,7 +1875,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we didn't process any events.
         XCTAssertEqual(
-            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap(\.self),
+            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap { $0 },
             []
         )
 

@@ -195,45 +195,43 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         resetAuthenticationCoordinatorIfNeeded(for: appState)
 
-        let completionBlock = { [weak self] in
+        let completion = { [weak self] in
             completion()
             self?.applicationDidTransition(to: appState)
         }
 
         switch appState {
         case .retryStart:
-            retryStart(completion: completionBlock)
+            retryStart(completion: completion)
         case .blacklisted(reason: let reason):
-            showBlacklisted(reason: reason, completion: completionBlock)
+            showBlacklisted(reason: reason, completion: completion)
         case .jailbroken:
-            showJailbroken(completion: completionBlock)
+            showJailbroken(completion: completion)
         case .certificateEnrollmentRequired:
-            showCertificateEnrollRequest(completion: completionBlock)
+            showCertificateEnrollRequest(completion: completion)
         case .databaseFailure(let error):
-            showDatabaseLoadingFailure(error: error, completion: completionBlock)
+            showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
-            showLaunchScreen(isLoading: true, completion: completionBlock)
+            showLaunchScreen(isLoading: true, completion: completion)
         case .unauthenticated(error: let error):
             screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
-            showUnauthenticatedFlow(error: error, completion: completionBlock)
+            showUnauthenticatedFlow(error: error, completion: completion)
         case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtain.userSession = userSession
             showAuthenticated(
                 userSession: userSession,
-                completion: completionBlock
+                completion: completion
             )
         case .headless:
-            showLaunchScreen(completion: completionBlock)
+            showLaunchScreen(completion: completion)
         case .loading(account: let toAccount, from: let fromAccount):
-            showSkeleton(fromAccount: fromAccount,
-                         toAccount: toAccount,
-                         completion: completionBlock)
+            completion()
         case let .locked(userSession):
             screenCurtain.userSession = userSession
-            showAppLock(userSession: userSession, completion: completionBlock)
+            showAppLock(userSession: userSession, completion: completion)
         }
     }
 
@@ -381,12 +379,6 @@ extension AppRootRouter {
             childViewController: authenticatedRouter.viewController,
             completion: completion
         )
-    }
-
-    private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
-        let skeletonViewController = SkeletonViewController(from: fromAccount, to: toAccount)
-        rootViewController.set(childViewController: skeletonViewController,
-                               completion: completion)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
@@ -543,14 +535,30 @@ extension AppRootRouter {
 
         switch reason {
         case .sessionExpired:
-            rootViewController.presentAlertWithOKButton(
+            let alert = UIAlertController(
                 title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
-                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message)
+                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
+
+            rootViewController.present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
-            rootViewController.presentAlertWithOKButton(
+            let alert = UIAlertController(
                 title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
-                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message)
+                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
+
+            rootViewController.present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
@@ -620,7 +628,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         NSAttributedString.invalidateParagraphStyle()
         NSAttributedString.invalidateMarkdownStyle()
         ConversationListCell.invalidateCachedCellSize()
-        FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
+        FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
         rootViewController.redrawAllFonts()
     }

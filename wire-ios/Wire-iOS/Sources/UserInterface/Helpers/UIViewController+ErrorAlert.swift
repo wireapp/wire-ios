@@ -22,14 +22,22 @@ import WireSyncEngine
 
 extension UIViewController {
 
-    func showAlert(for error: LocalizedError, handler: AlertActionHandler? = nil) {
-        present(UIAlertController.alertWithOKButton(title: error.errorDescription,
-                                                    message: error.failureReason ?? L10n.Localizable.Error.User.unkownError,
-                                                    okActionHandler: handler), animated: true)
+    func showAlert(for error: LocalizedError, handler: ((UIAlertAction) -> Void)? = nil) {
+        let alert = UIAlertController(
+            title: error.errorDescription,
+            message: error.failureReason ?? L10n.Localizable.Error.User.unkownError,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel,
+            handler: handler
+        ))
 
+        present(alert, animated: true)
     }
 
-    func showAlert(for error: Error, handler: AlertActionHandler? = nil) {
+    func showAlert(for error: Error, handler: ((UIAlertAction) -> Void)? = nil) {
         let nsError: NSError = error as NSError
         var message = ""
 
@@ -87,7 +95,17 @@ extension UIViewController {
             message = error.localizedDescription
         }
 
-        let alert = UIAlertController.alertWithOKButton(message: message, okActionHandler: handler)
+        let alert = UIAlertController(
+            title: nil,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel,
+            handler: handler
+        ))
+
         present(alert, animated: true)
     }
 }

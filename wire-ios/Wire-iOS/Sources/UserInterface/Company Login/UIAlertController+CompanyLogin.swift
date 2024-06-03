@@ -149,7 +149,10 @@ extension UIAlertController {
             preferredStyle: .alert
         )
 
-        controller.addAction(.ok())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
         return controller
     }
 }
