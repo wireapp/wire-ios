@@ -38,6 +38,8 @@ final class ConversationsAPITests: XCTestCase {
 
     // MARK: - Tests
 
+    // MARK: getLegacyConversation
+
     func testGetLegacyConversationIdentifiers() async throws {
         // given
         let apiVersions: [APIVersion] = [.v0]
@@ -143,6 +145,8 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    // MARK: getConversationIdentifiers
+
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
@@ -209,5 +213,27 @@ final class ConversationsAPITests: XCTestCase {
         } catch {
             XCTFail("expected error 'FailureResponse'")
         }
+    }
+
+    // MARK: getConversations
+
+    func testGetConversations_givenV0AndSuccessResponse200() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockJSONResource(
+                code: 200,
+                jsonResource: "testGetConversations_givenV0AndSuccessResponse200"
+            )
+        ]
+
+        let api = ConversationsAPIV0(httpClient: httpClient)
+
+        // when
+        // then
+        let list = try await api.getConversations(for: [])
+        XCTAssertEqual(list.found.count, 1)
+        XCTAssertEqual(list.notFound.count, 1)
+        XCTAssertEqual(list.failed.count, 1)
     }
 }
