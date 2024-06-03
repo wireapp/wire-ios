@@ -22,12 +22,15 @@ import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
 
-    typealias Snapshotter = RequestSnapshotHelper<UpdateEventsAPIBuilder>
-
     // MARK: - Request generation
 
     func testGetLastUpdateEvent() async throws {
-        try await Snapshotter().verifyRequestForAllAPIVersions { sut in
+        let snapshotter = APISnapshotHelper { httpClient, apiVersion in
+            UpdateEventsAPIBuilder(httpClient: httpClient)
+                .makeAPI(for: apiVersion)
+        }
+        
+        try await snapshotter.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
     }

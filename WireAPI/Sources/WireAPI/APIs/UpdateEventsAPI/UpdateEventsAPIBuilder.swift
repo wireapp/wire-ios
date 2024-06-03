@@ -20,7 +20,7 @@ import Foundation
 
 /// A builder of `UpdateEventsAPI`.
 
-public struct UpdateEventsAPIBuilder: APIBuilder {
+public struct UpdateEventsAPIBuilder {
 
     let httpClient: any HTTPClient
 
