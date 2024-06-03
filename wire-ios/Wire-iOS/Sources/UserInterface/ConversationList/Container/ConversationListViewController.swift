@@ -30,10 +30,7 @@ final class ConversationListViewController: UIViewController {
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
 
-    private lazy var filterContainerView: UIView = {
-        let view = UIView()
-        return view
-    }()
+    private lazy var filterContainerView = UIView()
 
     private lazy var filterLabel: UILabel = {
         let label = UILabel()
