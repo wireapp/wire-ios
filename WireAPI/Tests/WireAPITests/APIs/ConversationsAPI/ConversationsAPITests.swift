@@ -257,4 +257,25 @@ final class ConversationsAPITests: XCTestCase {
             XCTFail("expected error 'FailureResponse'")
         }
     }
+
+    func testGetConversations_givenV0AndSuccessResponse503() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        ]
+
+        let api = ConversationsAPIV0(httpClient: httpClient)
+
+        // when
+        // then
+        do {
+            _ = try await api.getConversations(for: [])
+        } catch let error as FailureResponse {
+            XCTAssertEqual(error.code, 503)
+            XCTAssertEqual(error.label, "service unavailable")
+        } catch {
+            XCTFail("expected error 'FailureResponse'")
+        }
+    }
 }
