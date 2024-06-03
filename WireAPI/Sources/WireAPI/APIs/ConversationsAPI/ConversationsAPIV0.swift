@@ -74,11 +74,9 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        let parameters = GetConversationsParameters(qualifiedIdentifiers: identifiers)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let resourcePath = "/conversations/list/v2"
-        let jsonEncoder = JSONEncoder.defaultEncoder
-
-        // TODO: encode in the right way
-        let body = try jsonEncoder.encode(identifiers)
 
         let request = HTTPRequest(
             path: resourcePath,
@@ -218,4 +216,14 @@ extension QualifiedConversationList<ConversationV0>: ToAPIModelConvertible {
             failed: failed
         )
     }
+}
+
+// MARK: Encodables
+
+private struct GetConversationsParameters: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case qualifiedIdentifiers = "qualified_ids"
+    }
+
+    let qualifiedIdentifiers: [QualifiedID]
 }
