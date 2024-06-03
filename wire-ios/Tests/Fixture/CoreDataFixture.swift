@@ -26,8 +26,8 @@ import XCTest
 final class CoreDataFixture {
 
     private var selfUserInTeam: Bool = false
-    var selfUser: (UserType & EditableUser)!
-    var otherUser: (UserType & EditableUser)!
+    var selfUser: ZMUser!
+    var otherUser: ZMUser!
     var otherUserConversation: ZMConversation!
     var team: Team?
     var teamMember: Member?
