@@ -111,13 +111,6 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-      - name: Restore Bundler Cache
-        uses: actions/cache@v3
-        id: cache-bundler
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
-
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
