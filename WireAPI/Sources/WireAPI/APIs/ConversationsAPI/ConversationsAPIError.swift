@@ -16,14 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import XCTest
+/// Errors originating from `ConversationsAPI`.
+public enum ConversationsAPIError: Error {
 
-class BaseSnapshotTestCase: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
-    }
+    /// Failure if functionality has not been implemented.
+    case notImplemented
 
 }

@@ -38,7 +38,8 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callConversationProvider = MockCallConversationProvider()
         sut = MockCallQualityController()
         sut.router = router
-        FontScheme.configure(with: .large)
+        sut.usesCallSurveyBudget = false
+
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
@@ -86,6 +87,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     // MARK: - CallQualitySurvey Presentation Tests
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
         // GIVEN
+
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .normal)
         conversation.remoteIdentifier = UUID()

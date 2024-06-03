@@ -17,12 +17,12 @@
 //
 
 import SwiftUI
-@testable import Wire
 import WireRequestStrategySupport
-import WireSyncEngineSupport
 import XCTest
 
-final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+@testable import Wire
+
+final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()

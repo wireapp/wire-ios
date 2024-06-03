@@ -1,0 +1,10 @@
+{
+    "has_more": false,
+    "paging_state": "first",
+    "qualified_conversations": [
+        {
+            "domain": "staging.zinfra.io",
+            "id": "14c3f0ff-1a46-4e66-8845-ae084f09c483"
+        }
+    ]
+}

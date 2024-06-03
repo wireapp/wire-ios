@@ -764,7 +764,7 @@ extension ZMAssetClientMessageTests {
 
     func testThatItDoesSetConversationLastServerTimestampWhenPostingAsset_MessageIsImage() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let message = self.appendImageMessage(to: self.syncConversation)
             let emptyDict = [String: String]()
             let payload: [AnyHashable: Any] = ["deleted": emptyDict, "missing": emptyDict, "redundant": emptyDict, "time": Date().transportString()]
@@ -779,7 +779,7 @@ extension ZMAssetClientMessageTests {
 
     func testThatItDoesSetExpectsReadConfirmationWhenPostingAsset_MessageIsImage_HasReceiptsEnabled() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncConversation.hasReadReceiptsEnabled = true
             let message = self.appendImageMessage(to: self.syncConversation)
             let emptyDict = [String: String]()
@@ -796,7 +796,7 @@ extension ZMAssetClientMessageTests {
 
     func testThatItDoesNotSetExpectsReadConfirmationWhenPostingAsset_MessageIsImage_HasReceiptsDisabled() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncConversation.hasReadReceiptsEnabled = false
             let message = self.appendImageMessage(to: self.syncConversation)
             let emptyDict = [String: String]()
@@ -1058,7 +1058,7 @@ extension ZMAssetClientMessageTests {
     }
 
     func testThatItDoesNotUpdateTheTimestampIfLater() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
