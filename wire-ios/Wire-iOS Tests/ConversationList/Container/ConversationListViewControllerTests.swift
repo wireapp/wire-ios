@@ -32,6 +32,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var window: UIWindow!
     private var tabBarController: UITabBarController!
     private var userSession: UserSessionMock!
+    private var selfUser: SelfUserType!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
@@ -40,16 +41,16 @@ final class ConversationListViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         accentColor = .blue
+        selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
 
         coreDataFixture = .init()
-
-        userSession = .init()
+        coreDataFixture.selfUser = selfUser
+        userSession = .init(selfUser: selfUser)
         userSession.contextProvider = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -175,12 +176,40 @@ final class ConversationListViewControllerTests: XCTestCase {
         let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
         webGroupConversation.userDefinedName = "Web Team"
 
-        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(
+            in: coreDataFixture.coreDataStack.viewContext
+        )
+
         userSession.mockConversationDirectory.mockFavoritesConversations = [iOSGroupConversation]
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
         sut.applyFilter(.favorites)
+
+        // THEN
+        verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByOneOnOne() {
+        // GIVEN
+        let modelHelper = ModelHelper()
+        let fixture = CoreDataFixture()
+
+        let user1 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+        let user2 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+
+        let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: fixture.coreDataStack.viewContext)
+        let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: fixture.coreDataStack.viewContext)
+
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(
+            in: coreDataFixture.coreDataStack.viewContext
+        )
+
+        userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.oneToOneConversations)
 
         // THEN
         verify(matching: tabBarController)
