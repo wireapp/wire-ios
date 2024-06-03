@@ -104,124 +104,114 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 
 // MARK: - Decodables
 
-private struct ConversationListV0<Conversation: Decodable>: Decodable, ToAPIModelConvertible {
+private struct ConversationListV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case found = "found"
         case notFound = "not_found"
         case failed = "failed"
     }
 
-    let found: [Conversation]
+    let found: [ConversationV0]
     let notFound: [QualifiedID]
     let failed: [QualifiedID]
 
-    func toAPIModel() -> [Conversation] {
-        // TODO: implement
-        return []
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound,
+            failed: failed
+        )
     }
 }
 
-private struct ConversationV0: Decodable {
+// MARK: -
+
+private struct ConversationV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case qualifiedID = "qualified_id"
-        case id
-        case type
-        case creator
-        case cipherSuite = "cipher_suite"
         case access
         case accessRole = "access_role"
         case accessRoleV2 = "access_role_v2"
-        case name
-        case members
-        case lastEvent = "last_event"
-        case lastEventTime = "last_event_time"
-        case teamID = "team"
-        case messageTimer = "message_timer"
-        case readReceiptMode = "receipt_mode"
-        case messageProtocol = "protocol"
-        case mlsGroupID = "group_id"
+        case cipherSuite = "cipher_suite"
+        case creator
         case epoch
         case epochTimestamp = "epoch_timestamp"
+        case id
+        case lastEvent = "last_event"
+        case lastEventTime = "last_event_time"
+        case members
+        case messageProtocol = "protocol"
+        case messageTimer = "message_timer"
+        case mlsGroupID = "group_id"
+        case name
+        case qualifiedID = "qualified_id"
+        case readReceiptMode = "receipt_mode"
+        case teamID = "team"
+        case type
     }
 
-    var qualifiedID: QualifiedID?
-    var id: UUID?
-    var type: Int?
-    var creator: UUID?
     var access: [String]?
     var accessRoles: [String]?
-    var legacyAccessRole: String?
-    var name: String?
-    var members: QualifiedConversationMembers?
+    var creator: UUID?
+    var epoch: UInt?
+    var id: UUID?
     var lastEvent: String?
     var lastEventTime: String?
-    var teamID: UUID?
-    var messageTimer: TimeInterval?
-    var readReceiptMode: Int?
+    var legacyAccessRole: String?
+    var members: QualifiedConversationMembers?
     var messageProtocol: String?
+    var messageTimer: TimeInterval?
     var mlsGroupID: String?
-    var epoch: UInt?
-
-    init(
-        qualifiedID: QualifiedID? = nil,
-        id: UUID?  = nil,
-        type: Int? = nil,
-        creator: UUID? = nil,
-        cipherSuite: UInt16? = nil,
-        access: [String]? = nil,
-        legacyAccessRole: String? = nil,
-        accessRoles: [String]? = nil,
-        name: String? = nil,
-        members: QualifiedConversationMembers? = nil,
-        lastEvent: String? = nil,
-        lastEventTime: String? = nil,
-        teamID: UUID? = nil,
-        messageTimer: TimeInterval? = nil,
-        readReceiptMode: Int? = nil,
-        messageProtocol: String? = nil,
-        mlsGroupID: String? = nil,
-        epoch: UInt? = nil,
-        epochTimestamp: Date? = nil
-    ) {
-        self.qualifiedID = qualifiedID
-        self.id = id
-        self.type = type
-        self.creator = creator
-        self.access = access
-        self.legacyAccessRole = legacyAccessRole
-        self.accessRoles = accessRoles
-        self.name = name
-        self.members = members
-        self.lastEvent = lastEvent
-        self.lastEventTime = lastEventTime
-        self.teamID = teamID
-        self.messageTimer = messageTimer
-        self.readReceiptMode = readReceiptMode
-        self.messageProtocol = messageProtocol
-        self.mlsGroupID = mlsGroupID
-        self.epoch = epoch
-    }
+    var name: String?
+    var qualifiedID: QualifiedID?
+    var readReceiptMode: Int?
+    var teamID: UUID?
+    var type: Int?
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
-        id = try container.decodeIfPresent(UUID.self, forKey: .id)
-        type = try container.decodeIfPresent(Int.self, forKey: .type)
-        creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
         access = try container.decodeIfPresent([String].self, forKey: .access)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
+        creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
+        epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id)
         lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
         lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
-        teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
-        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+        members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
         messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
         mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
-        epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
+        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+        teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
+        type = try container.decodeIfPresent(Int.self, forKey: .type)
 
+        // parsing for v0
         legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
         accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+    }
+
+    func toAPIModel() -> Conversation {
+        Conversation(
+            access: access,
+            accessRoles: accessRoles,
+            cipherSuite: nil,
+            creator: creator,
+            epoch: epoch,
+            epochTimestamp: nil,
+            id: id,
+            lastEvent: lastEvent,
+            lastEventTime: lastEventTime,
+            legacyAccessRole: legacyAccessRole,
+            members: members.map { $0.toAPIModel() },
+            messageProtocol: messageProtocol,
+            messageTimer: messageTimer,
+            mlsGroupID: mlsGroupID,
+            name: name,
+            qualifiedID: qualifiedID,
+            readReceiptMode: readReceiptMode,
+            teamID: teamID,
+            type: type
+        )
     }
 }

@@ -18,12 +18,19 @@
 
 import Foundation
 
-struct QualifiedConversationMembers: Decodable {
+struct QualifiedConversationMembers: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case selfMember = "self"
         case others
+        case selfMember = "self"
     }
 
-    let selfMember: QualifiedConversationMember
     let others: [QualifiedConversationMember]
+    let selfMember: QualifiedConversationMember
+
+    func toAPIModel() -> Conversation.Members {
+        Conversation.Members(
+            others: others.map { $0.toAPIModel() },
+            selfMember: selfMember.toAPIModel()
+        )
+    }
 }

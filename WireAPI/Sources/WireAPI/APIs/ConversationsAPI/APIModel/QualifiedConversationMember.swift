@@ -18,66 +18,64 @@
 
 import Foundation
 
-struct QualifiedConversationMember: Decodable {
+struct QualifiedConversationMember: Decodable, ToAPIModelConvertible {
 
-    struct Service: Codable {
+    struct Service: Decodable, ToAPIModelConvertible {
         let id: UUID
         let provider: UUID
+
+        func toAPIModel() -> WireAPI.Service {
+            // TODO: in WireRequestStrategy the object had also UUIDs
+            // but we want to unify the model classes. So does it work with Strings like that?
+            .init(
+                id: id.uuidString,
+                provider: provider.uuidString
+            )
+        }
     }
 
     enum CodingKeys: String, CodingKey {
-        case id
-        case qualifiedID = "qualified_id"
-        case target
-        case qualifiedTarget = "qualified_target"
-        case service
-        case mutedStatus = "otr_muted_status"
-        case mutedReference = "otr_muted_ref"
         case archived = "otr_archived"
         case archivedReference = "otr_archived_ref"
+        case conversationRole = "conversation_role"
         case hidden = "otr_hidden"
         case hiddenReference = "otr_hidden_ref"
-        case conversationRole = "conversation_role"
+        case id
+        case mutedReference = "otr_muted_ref"
+        case mutedStatus = "otr_muted_status"
+        case qualifiedID = "qualified_id"
+        case qualifiedTarget = "qualified_target"
+        case service
+        case target
     }
 
-    let id: UUID?
-    let qualifiedID: QualifiedID?
-    let target: UUID?
-    let qualifiedTarget: QualifiedID?
-    let service: Service?
-    let mutedStatus: Int?
-    let mutedReference: Date?
     let archived: Bool?
     let archivedReference: Date?
+    let conversationRole: String?
     let hidden: Bool?
     let hiddenReference: String?
-    let conversationRole: String?
+    let id: UUID?
+    let mutedStatus: Int?
+    let mutedReference: Date?
+    let qualifiedID: QualifiedID?
+    let qualifiedTarget: QualifiedID?
+    let service: Service?
+    let target: UUID?
 
-    init(
-        id: UUID? = nil,
-        qualifiedID: QualifiedID? = nil,
-        target: UUID? = nil,
-        qualifiedTarget: QualifiedID? = nil,
-        service: Service? = nil,
-        mutedStatus: Int? = nil,
-        mutedReference: Date? = nil,
-        archived: Bool? = nil,
-        archivedReference: Date? = nil,
-        hidden: Bool? = nil,
-        hiddenReference: String? = nil,
-        conversationRole: String? = nil
-    ) {
-        self.id = id
-        self.qualifiedID = qualifiedID
-        self.target = target
-        self.qualifiedTarget = qualifiedTarget
-        self.service = service
-        self.mutedStatus = mutedStatus
-        self.mutedReference = mutedReference
-        self.archived = archived
-        self.archivedReference = archivedReference
-        self.hidden = hidden
-        self.hiddenReference = hiddenReference
-        self.conversationRole = conversationRole
+    func toAPIModel() -> Conversation.Member {
+        Conversation.Member(
+            archived: archived,
+            archivedReference: archivedReference,
+            conversationRole: conversationRole,
+            hidden: hidden,
+            hiddenReference: hiddenReference,
+            id: id,
+            mutedReference: mutedReference,
+            mutedStatus: mutedStatus,
+            qualifiedID: qualifiedID,
+            qualifiedTarget: qualifiedTarget,
+            service: service?.toAPIModel(),
+            target: target
+        )
     }
-    }
+}

@@ -19,33 +19,33 @@
 import Foundation
 
 public struct Conversation {
-    var qualifiedID: QualifiedID?
-    var id: UUID?
-    var type: Int?
-    var creator: UUID?
-    var cipherSuite: UInt16?
     var access: [String]?
     var accessRoles: [String]?
-    var legacyAccessRole: String?
-    var name: String?
-    var members: Members?
-    var lastEvent: String?
-    var lastEventTime: String?
-    var teamID: UUID?
-    var messageTimer: TimeInterval?
-    var readReceiptMode: Int?
-    var messageProtocol: String?
-    var mlsGroupID: String?
+    var cipherSuite: UInt16?
+    var creator: UUID?
     var epoch: UInt?
     var epochTimestamp: Date?
+    var id: UUID?
+    var lastEvent: String?
+    var lastEventTime: String?
+    var legacyAccessRole: String?
+    var members: Members?
+    var messageProtocol: String?
+    var messageTimer: TimeInterval?
+    var mlsGroupID: String?
+    var name: String?
+    var qualifiedID: QualifiedID?
+    var readReceiptMode: Int?
+    var teamID: UUID?
+    var type: Int?
 }
 
 // MARK: -
 
 extension Conversation {
     struct Members {
-        let selfMember: Member
         let others: [Member]
+        let selfMember: Member
     }
 }
 
@@ -53,17 +53,17 @@ extension Conversation {
 
 extension Conversation {
     struct Member {
-        let id: UUID?
-        let qualifiedID: QualifiedID?
-        let target: UUID?
-        let qualifiedTarget: QualifiedID?
-        let service: Service?
-        let mutedStatus: Int?
-        let mutedReference: Date?
         let archived: Bool?
         let archivedReference: Date?
+        let conversationRole: String?
         let hidden: Bool?
         let hiddenReference: String?
-        let conversationRole: String?
+        let id: UUID?
+        let mutedReference: Date?
+        let mutedStatus: Int?
+        let qualifiedID: QualifiedID?
+        let qualifiedTarget: QualifiedID?
+        let service: Service?
+        let target: UUID?
     }
 }
