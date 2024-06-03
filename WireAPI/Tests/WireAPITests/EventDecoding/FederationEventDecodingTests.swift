@@ -39,6 +39,24 @@ final class FederationEventDecodingTests: XCTestCase {
         XCTAssertEqual(payload, Scaffolding.connectionRemovedEventPayload)
     }
 
+    func testDecodingFederationDeleteEvent() async throws {
+        // Given event data.
+        let resource = try EventDataResource(name: "FederationDelete")
+
+        // When decode update event.
+        let updateEvent = try JSONDecoder.defaultDecoder.decode(
+            UpdateEvent.self,
+            from: resource.jsonData
+        )
+
+        // Then it decoded the correct event.
+        guard case .federation(.delete(let payload)) = updateEvent else {
+            return XCTFail("unexpected event: \(updateEvent)")
+        }
+
+        XCTAssertEqual(payload, Scaffolding.deleteEventPayload)
+    }
+
     private enum Scaffolding {
 
         static let connectionRemovedEventPayload = FederationConnectionRemovedEvent(
@@ -47,6 +65,8 @@ final class FederationEventDecodingTests: XCTestCase {
                 "b.com"
             ]
         )
+
+        static let deleteEventPayload = FederationDeleteEvent(domain: "foo.com")
     }
 
 }

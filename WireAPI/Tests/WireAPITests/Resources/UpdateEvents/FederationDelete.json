@@ -1,0 +1,6 @@
+{
+    "type": "federation.delete",
+    "data": {
+        "domain": "foo.com"
+    }
+}

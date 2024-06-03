@@ -32,7 +32,8 @@ extension UpdateEvent {
             self = .federation(.connectionRemoved(event))
 
         case .delete:
-            self = .federation(.delete)
+            let event = try container.decodeDeleteEvent()
+            self = .federation(.delete(event))
         }
     }
 
@@ -61,3 +62,19 @@ private extension KeyedDecodingContainer<FederationEventCodingKeys> {
 
 }
 
+// MARK: - Federation delete
+
+private extension KeyedDecodingContainer<FederationEventCodingKeys> {
+
+    func decodeDeleteEvent() throws -> FederationDeleteEvent {
+        let payload = try decode(FederationDeleteEventPayload.self, forKey: .payload)
+        return FederationDeleteEvent(domain: payload.domain)
+    }
+
+    private struct FederationDeleteEventPayload: Decodable {
+
+        let domain: String
+
+    }
+
+}

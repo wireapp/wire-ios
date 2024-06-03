@@ -18,18 +18,14 @@
 
 import Foundation
 
-/// An event concerning federation between domains.
+/// An event where the self backend stopped federating
+/// with another backend.
 
-public enum FederationEvent: Equatable {
+public struct FederationDeleteEvent: Equatable {
 
-    /// Two or more other domains have stopped federating
-    /// with each other.
+    /// The domain of the backend that is no longer
+    /// federating with the self backend.
 
-    case connectionRemoved(FederationConnectionRemovedEvent)
-
-    /// The self domain has stopped federating with another
-    /// domain.
-
-    case delete(FederationDeleteEvent)
+    public let domain: String
 
 }
