@@ -128,6 +128,10 @@ extension ZMUserSession: UserSession {
         ZMUser.selfUser(inUserSession: self)
     }
 
+    public var editableSelfUser: any EditableUserType & UserType {
+        ZMUser.selfUser(inUserSession: self)
+    }
+
     public func addUserObserver(
         _ observer: UserObserving,
         for user: UserType

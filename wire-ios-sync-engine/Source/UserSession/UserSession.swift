@@ -120,6 +120,8 @@ public protocol UserSession: AnyObject {
 
     var selfUserLegalHoldSubject: any SelfUserLegalHoldable { get }
 
+    var editableSelfUser: any UserType & EditableUserType { get }
+
     func perform(_ changes: @escaping () -> Void)
 
     func enqueue(_ changes: @escaping () -> Void)

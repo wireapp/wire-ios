@@ -64,7 +64,7 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
-            selfUser: userSession.selfUser,
+            selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
             accountSelector: SessionManager.shared

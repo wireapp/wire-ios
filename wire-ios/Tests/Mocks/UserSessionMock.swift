@@ -73,6 +73,8 @@ final class UserSessionMock: UserSession {
 
     var selfUserLegalHoldSubject: any SelfUserLegalHoldable
 
+    var editableSelfUser: any EditableUserType & UserType
+
     var mockConversationList: ZMConversationList?
 
     var searchUsersCache: SearchUsersCache
@@ -89,23 +91,28 @@ final class UserSessionMock: UserSession {
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
             selfUser: mockUser,
-            selfUserLegalHoldSubject: mockUser
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
         )
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
         self.init(
             selfUser: mockUser,
-            selfUserLegalHoldSubject: mockUser
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
         )
     }
 
     init(
         selfUser: any UserType,
-        selfUserLegalHoldSubject: any SelfUserLegalHoldable
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
+        editableSelfUser: any EditableUserType & UserType
     ) {
         self.selfUser = selfUser
         self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
+        self.editableSelfUser = editableSelfUser
+
         searchUsersCache = .init()
     }
 
