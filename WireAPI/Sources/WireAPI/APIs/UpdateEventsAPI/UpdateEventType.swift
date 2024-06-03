@@ -104,7 +104,6 @@ enum TeamEventType: String {
 
     case conversationCreate = "team.conversation-create"
     case conversationDelete = "team.conversation-delete"
-    case create = "team.create"
     case delete = "team.delete"
     case memberLeave = "team.member-leave"
     case memberUpdate = "team.member-update"

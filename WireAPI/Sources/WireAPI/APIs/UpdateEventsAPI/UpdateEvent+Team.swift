@@ -30,8 +30,6 @@ extension UpdateEvent {
 
         case .conversationDelete:
             self = .team(.conversationDelete)
-        case .create:
-            self = .team(.create)
 
         case .delete:
             self = .team(.delete)
