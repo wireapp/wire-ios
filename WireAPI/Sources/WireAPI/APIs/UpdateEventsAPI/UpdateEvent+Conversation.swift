@@ -37,9 +37,6 @@ extension UpdateEvent {
         case .codeUpdate:
             self = .conversation(.codeUpdate)
 
-        case .connectRequest:
-            self = .conversation(.connectRequest)
-
         case .create:
             self = .conversation(.create)
 

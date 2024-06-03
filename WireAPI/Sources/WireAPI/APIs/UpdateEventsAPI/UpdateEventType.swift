@@ -51,7 +51,6 @@ enum ConversationEventType: String {
     case accessUpdate = "conversation.access-update"
     case clientMessageAdd = "conversation.client-message-add"
     case codeUpdate = "conversation.code-update"
-    case connectRequest = "conversation.connect-request"
     case create = "conversation.create"
     case delete = "conversation.delete"
     case knock = "conversation.knock"

@@ -40,9 +40,6 @@ extension UpdateEvent {
         case .delete:
             self = .user(.delete)
 
-        case .new:
-            self = .user(.new)
-
         case .legalholdDisable:
             self = .user(.legalholdDisable)
 
