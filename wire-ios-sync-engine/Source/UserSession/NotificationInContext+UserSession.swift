@@ -85,7 +85,6 @@ extension ZMConversation {
         @objc
         public func addTypingObserver(_ observer: ZMTypingChangeObserver) -> Any? {
             guard let managedObjectContext = self.managedObjectContext?.notificationContext else {
-                print("Error: managedObjectContext is nil")
                 return nil
             }
 

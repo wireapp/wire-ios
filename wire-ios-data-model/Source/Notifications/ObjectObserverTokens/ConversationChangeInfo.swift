@@ -237,7 +237,6 @@ extension ConversationChangeInfo {
     @objc(addObserver:forConversation:)
     public static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol? {
         guard let managedObjectContext = conversation.managedObjectContext else {
-            print("Error: managedObjectContext is nil")
             return nil
         }
 
