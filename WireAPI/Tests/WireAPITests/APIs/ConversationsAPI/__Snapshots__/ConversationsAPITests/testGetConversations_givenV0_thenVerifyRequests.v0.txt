@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/conversations/list/v2"
+  - method: post
+  - body: {"qualified_ids":[]}

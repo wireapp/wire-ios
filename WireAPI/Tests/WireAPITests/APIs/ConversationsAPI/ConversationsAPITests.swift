@@ -217,7 +217,23 @@ final class ConversationsAPITests: XCTestCase {
 
     // MARK: getConversations
 
-    func testGetConversations_givenV0AndSuccessResponse200() async throws {
+    func testGetConversations_givenV0_thenVerifyRequests() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            HTTPResponse(code: 200, payload: nil)
+        ]
+
+        // when
+        let api = ConversationsAPIV0(httpClient: httpClient)
+        _ = try? await api.getConversations(for: [])
+
+        // then
+        let request = try XCTUnwrap(httpClient.receivedRequests.first)
+        await httpRequestSnapshotHelper.verifyRequest(request: request, resourceName: "v0")
+    }
+
+    func testGetConversations_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
