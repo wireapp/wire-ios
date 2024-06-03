@@ -114,27 +114,10 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsWithoutAnyFilterApplied() {
         // GIVEN
-        let modelHelper = ModelHelper()
-        let fixture = CoreDataFixture()
-
-        let iOSGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        iOSGroupConversation.userDefinedName = "iOS Team"
-        let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        webGroupConversation.userDefinedName = "Web Team"
-        let qaGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        qaGroupConversation.userDefinedName = "QA Team"
-        let designGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        designGroupConversation.userDefinedName = "QA Team"
-        let iOSBugsAndQuestionsGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        iOSBugsAndQuestionsGroupConversation.userDefinedName = "iOS Bugs & Questions"
-
-        userSession.mockConversationDirectory.mockUnarchivedConversations = [
-            iOSGroupConversation,
-            webGroupConversation,
-            qaGroupConversation,
-            designGroupConversation,
-            iOSBugsAndQuestionsGroupConversation
-        ]
+        let conversations = createConversations(
+            names: ["iOS Team", "Web Team", "QA Team", "Design Team", "iOS Bugs & Questions"]
+        )
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
@@ -146,15 +129,8 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByGroups() {
         // GIVEN
-        let modelHelper = ModelHelper()
-        let fixture = CoreDataFixture()
-
-        let iOSGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        iOSGroupConversation.userDefinedName = "iOS Team"
-        let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        webGroupConversation.userDefinedName = "Web Team"
-
-        userSession.mockConversationDirectory.mockGroupConversations = [iOSGroupConversation, webGroupConversation]
+        let conversations = createConversations(names: ["iOS Team", "Web Team"])
+        userSession.mockConversationDirectory.mockGroupConversations = conversations
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
@@ -166,17 +142,8 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByFavourites() {
         // GIVEN
-        let modelHelper = ModelHelper()
-        let fixture = CoreDataFixture()
-
-        let iOSGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        iOSGroupConversation.userDefinedName = "iOS Team"
-        iOSGroupConversation.isFavorite = true
-        let webGroupConversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
-        webGroupConversation.userDefinedName = "Web Team"
-
-        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
-        userSession.mockConversationDirectory.mockFavoritesConversations = [iOSGroupConversation]
+        let conversations = createConversations(names: ["iOS Team", "Web Team"], favorite: [true, false])
+        userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter { $0.isFavorite }
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
@@ -184,6 +151,51 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         // THEN
         verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByOneOnOne() throws {
+        throw XCTSkip("We can't really work make this test work until we refactor all of the code we have related to User Types")
+
+        // GIVEN
+        let modelHelper = ModelHelper()
+        let fixture = CoreDataFixture()
+
+        let user1 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+        let user2 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+
+        let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: fixture.coreDataStack.viewContext)
+        let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: fixture.coreDataStack.viewContext)
+
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(
+            in: coreDataFixture.coreDataStack.viewContext
+        )
+
+        userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.oneToOneConversations)
+
+        // THEN
+        verify(matching: tabBarController)
+    }
+
+    // MARK: - Helper Methods
+
+    private func createConversations(names: [String], favorite: [Bool] = []) -> [ZMConversation] {
+        let modelHelper = ModelHelper()
+        let fixture = CoreDataFixture()
+
+        var conversations: [ZMConversation] = []
+        for (index, name) in names.enumerated() {
+            let conversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+            conversation.userDefinedName = name
+            if index < favorite.count {
+                conversation.isFavorite = favorite[index]
+            }
+            conversations.append(conversation)
+        }
+        return conversations
     }
 
     // MARK: - Helpers
