@@ -30,21 +30,17 @@ public enum UserEvent {
 
     case clientRemove
 
-    // TODO: ?
+    /// A connection to another user has been updated.
 
     case connection
 
-    // TODO: ?, possibly deprecated?
+    /// A contact has joined Wire.
 
     case contactJoin
 
     /// A user was deleted.
 
     case delete
-
-    // TODO: ?, possibly deprecated?
-
-    case new
 
     /// Legalhold was disabled for a user.
 

@@ -22,7 +22,6 @@ import Foundation
 
 public enum ConversationEvent {
 
-    // TODO: Is this deprecated?
     /// A new asset was added to a conversation.
 
     case assetAdd
@@ -31,7 +30,6 @@ public enum ConversationEvent {
 
     case accessUpdate
 
-    // TODO: Is this deprecated?
     /// An unencrypted client message was added to a conversation.
 
     case clientMessageAdd
@@ -39,10 +37,6 @@ public enum ConversationEvent {
     /// A conversation's guest link code was updated.
 
     case codeUpdate
-
-    // TODO: ???
-
-    case connectRequest
 
     /// A new conversation was created.
 
@@ -52,7 +46,6 @@ public enum ConversationEvent {
 
     case delete
 
-    // TODO: Is this deprecated?
     /// A knock (aka ping) message was added to a conversation.
 
     case knock
@@ -69,7 +62,7 @@ public enum ConversationEvent {
 
     case memberUpdate
 
-    // TODO: Is this deprecated?
+    /// An unencrypted message was added to a conversation.
 
     case messageAdd
 

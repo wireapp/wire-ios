@@ -91,7 +91,6 @@ enum UserEventType: String {
     case connection = "user.connection"
     case contactJoin = "user.contact-join"
     case delete = "user.delete"
-    case new = "user.new"
     case legalholdDisable = "user.legalhold-disable"
     case legalholdEnable = "user.legalhold-enable"
     case legalholdRequest = "user.legalhold-request"

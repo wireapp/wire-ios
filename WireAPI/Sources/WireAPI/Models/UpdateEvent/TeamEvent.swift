@@ -30,7 +30,7 @@ public enum TeamEvent {
 
     case conversationDelete
 
-    // TODO: ?
+    /// A team was created.
 
     case create
 
