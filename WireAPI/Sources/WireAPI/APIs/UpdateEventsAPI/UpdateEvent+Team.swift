@@ -24,6 +24,8 @@ extension UpdateEvent {
         eventType: TeamEventType,
         from decoder: any Decoder
     ) throws {
+        let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
+
         switch eventType {
         case .conversationCreate:
             self = .team(.conversationCreate)
@@ -35,11 +37,60 @@ extension UpdateEvent {
             self = .team(.delete)
 
         case .memberLeave:
-            self = .team(.memberLeave)
+            let event = try container.decodeMemberLeaveEvent()
+            self = .team(.memberLeave(event))
 
         case .memberUpdate:
             self = .team(.memberUpdate)
         }
+    }
+
+}
+
+private enum TeamEventCodingKeys: String, CodingKey {
+
+    case teamID = "team"
+    case payload = "data"
+
+}
+
+private extension KeyedDecodingContainer<TeamEventCodingKeys> {
+
+    func decodeTeamID() throws -> UUID {
+        try decode(
+            UUID.self,
+            forKey: .teamID
+        )
+    }
+
+}
+
+// MARK: - Member leave
+
+private extension KeyedDecodingContainer<TeamEventCodingKeys> {
+
+    func decodeMemberLeaveEvent() throws -> TeamMemberLeaveEventData {
+        let payload = try decode(
+            TeamMemberLeaveEventPayload.self,
+            forKey: .payload
+        )
+
+        return try TeamMemberLeaveEventData(
+            teamID: decodeTeamID(),
+            userID: payload.userID
+        )
+    }
+
+    private struct TeamMemberLeaveEventPayload: Decodable {
+
+        let userID: UUID
+
+        enum CodingKeys: String, CodingKey {
+
+            case userID = "user"
+
+        }
+
     }
 
 }
