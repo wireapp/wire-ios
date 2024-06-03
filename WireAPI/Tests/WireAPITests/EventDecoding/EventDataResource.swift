@@ -18,18 +18,23 @@
 
 import Foundation
 
-/// An event concerning federation between domains.
+struct EventDataResource {
 
-public enum FederationEvent {
+    let jsonData: Data
 
-    /// Two or more other domains have stopped federating
-    /// with each other.
+    init(name: String) throws {
+        guard let url = Bundle.module.url(
+            forResource: name,
+            withExtension: "json"
+        ) else {
+            throw "resource \(name).json not found"
+        }
 
-    case connectionRemoved
-
-    /// The self domain has stopped federating with another
-    /// domain.
-
-    case delete
+        do {
+            jsonData = try Data(contentsOf: url)
+        } catch {
+            throw "unable to load data from resource: \(error)"
+        }
+    }
 
 }
