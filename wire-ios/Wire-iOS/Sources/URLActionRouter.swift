@@ -315,7 +315,10 @@ private extension URLActionRouter {
         let title = error.errorDescription
         let message = error.failureReason ?? L10n.Localizable.Error.User.unkownError
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(.ok(style: .cancel))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         switch error {
         case URLActionError.conversationLinkIsDisabled:
