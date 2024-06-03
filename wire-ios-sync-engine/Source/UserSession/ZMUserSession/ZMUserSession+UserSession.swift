@@ -120,7 +120,11 @@ extension ZMUserSession: UserSession {
         try appLockController.deletePasscode()
     }
 
-    public var selfUser: SelfUserType {
+    public var selfUser: any UserType {
+        ZMUser.selfUser(inUserSession: self)
+    }
+
+    public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
         ZMUser.selfUser(inUserSession: self)
     }
 

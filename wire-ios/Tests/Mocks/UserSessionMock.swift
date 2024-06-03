@@ -69,7 +69,10 @@ final class UserSessionMock: UserSession {
 
     var networkState: ZMNetworkState = .offline
 
-    var selfUser: SelfUserType
+    var selfUser: any UserType
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable
+
     var mockConversationList: ZMConversationList?
 
     var searchUsersCache: SearchUsersCache
@@ -84,15 +87,25 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(mockUser: MockZMEditableUser) {
-        self.init(selfUser: mockUser)
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser
+        )
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(selfUser: mockUser)
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser
+        )
     }
 
-    init(selfUser: SelfUserType) {
+    init(
+        selfUser: any UserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable
+    ) {
         self.selfUser = selfUser
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
         searchUsersCache = .init()
     }
 
