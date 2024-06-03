@@ -72,4 +72,3 @@ final class TeamEventDecodingTests: XCTestCase {
     }
 
 }
-
