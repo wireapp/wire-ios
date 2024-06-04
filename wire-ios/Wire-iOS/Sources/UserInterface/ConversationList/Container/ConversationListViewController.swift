@@ -45,6 +45,7 @@ final class ConversationListViewController: UIViewController {
         button.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
         button.titleLabel?.font = UIFont.font(for: .h5)
         button.setTitleColor(UIColor.accent(), for: .normal)
+        button.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterView.RemoveButton.descritpion
         let action = UIAction { [weak self] _ in
             self?.removeFilter()
         }
@@ -355,7 +356,7 @@ final class ConversationListViewController: UIViewController {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
 
-        if let filter {
+        if filter != nil {
             filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
             filterContainerView.isHidden = false
         } else {

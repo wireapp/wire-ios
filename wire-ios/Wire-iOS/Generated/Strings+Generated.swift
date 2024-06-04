@@ -650,6 +650,50 @@ internal enum L10n {
         /// Double tap to open profile
         internal static let hint = L10n.tr("Accessibility", "conversationsList.connectionRequest.hint", fallback: "Double tap to open profile")
       }
+      internal enum FilterButton {
+        /// Filter conversations
+        internal static let description = L10n.tr("Accessibility", "conversationsList.filterButton.description", fallback: "Filter conversations")
+      }
+      internal enum FilterMenuOptions {
+        internal enum AllConversations {
+          /// Show all conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.description", fallback: "Show all conversations")
+          internal enum Selected {
+            /// Show all conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "Show all conversations")
+          }
+        }
+        internal enum Favorites {
+          /// Show all favorite conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
+          internal enum Selected {
+            /// Show all favorite conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Show all favorite conversations")
+          }
+        }
+        internal enum Groups {
+          /// Show all group conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.description", fallback: "Show all group conversations")
+          internal enum Selected {
+            /// Show all group conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Show all group conversations")
+          }
+        }
+        internal enum OneOnOne {
+          /// Show all one on one conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.description", fallback: "Show all one on one conversations")
+          internal enum Selected {
+            /// Show all one on one conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "Show all one on one conversations")
+          }
+        }
+      }
+      internal enum FilterView {
+        internal enum RemoveButton {
+          /// Remove conversation filter
+          internal static let descritpion = L10n.tr("Accessibility", "conversationsList.filter_view.removeButton.descritpion", fallback: "Remove conversation filter")
+        }
+      }
       internal enum ItemCell {
         /// Double tap to open conversation
         internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
