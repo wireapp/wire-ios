@@ -18,16 +18,6 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// Fully quallified user identifier.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
-
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
-
-}
+public typealias UserID = QualifiedID

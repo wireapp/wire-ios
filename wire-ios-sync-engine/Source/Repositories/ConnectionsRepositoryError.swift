@@ -18,16 +18,15 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// Errors originating from `ConnectionsRepository`.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+enum ConnectionsRepositoryError: Error {
 
-    public let uuid: UUID
-    public let domain: String
+    /// Failed to get receiver id from api response
 
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case missingReceiverId
 
+    /// Failed to get conversation id from api response
+
+    case missingConversationId
 }

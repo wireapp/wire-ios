@@ -18,16 +18,10 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+class UpdateEventsAPIV2: UpdateEventsAPIV1 {
 
-public struct QualifiedID: Codable, Hashable, Equatable {
-
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
+    override var apiVersion: APIVersion {
+        .v2
     }
 
 }
