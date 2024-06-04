@@ -66,7 +66,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     func openUserProfile(_ user: UserType) {
         let profileViewController = ProfileViewController(
             user: user,
-            viewer: selfUser,
+            viewer: selfUserLegalHoldSubject,
             context: .profileViewer,
             userSession: userSession
         )
