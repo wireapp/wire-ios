@@ -20,11 +20,11 @@ import Foundation
 
 /// An event concerning users.
 
-public enum UserEvent {
+public enum UserEvent: Equatable {
 
     /// The self user has added a new client.
 
-    case clientAdd
+    case clientAdd(UserClientAddEvent)
 
     /// A self user's client was removed.
 
