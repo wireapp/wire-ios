@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct ConversationList {
-    public let found: [Conversation]
-    public let notFound: [QualifiedID]
-    public let failed: [QualifiedID]
+extension Conversation {
+    public struct Members {
+        public let others: [Member]
+        public let selfMember: Member
+    }
 }

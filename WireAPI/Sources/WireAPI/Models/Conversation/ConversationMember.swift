@@ -16,8 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct ConversationList {
-    public let found: [Conversation]
-    public let notFound: [QualifiedID]
-    public let failed: [QualifiedID]
+import Foundation
+
+extension Conversation {
+    public struct Member {
+        public let archived: Bool?
+        public let archivedReference: Date?
+        public let conversationRole: String?
+        public let hidden: Bool?
+        public let hiddenReference: String?
+        public let id: UUID?
+        public let mutedReference: Date?
+        public let mutedStatus: Int?
+        public let qualifiedID: QualifiedID?
+        public let qualifiedTarget: QualifiedID?
+        public let service: Service?
+        public let target: UUID?
+    }
 }

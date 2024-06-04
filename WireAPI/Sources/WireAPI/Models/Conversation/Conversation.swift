@@ -19,51 +19,23 @@
 import Foundation
 
 public struct Conversation {
-    var access: [String]?
-    var accessRoles: [String]?
-    var cipherSuite: UInt16?
-    var creator: UUID?
-    var epoch: UInt?
-    var epochTimestamp: Date?
-    var id: UUID?
-    var lastEvent: String?
-    var lastEventTime: String?
-    var legacyAccessRole: String?
-    var members: Members?
-    var messageProtocol: String?
-    var messageTimer: TimeInterval?
-    var mlsGroupID: String?
-    var name: String?
-    var qualifiedID: QualifiedID?
-    var readReceiptMode: Int?
-    var teamID: UUID?
-    var type: Int?
-}
-
-// MARK: -
-
-extension Conversation {
-    struct Members {
-        let others: [Member]
-        let selfMember: Member
-    }
-}
-
-// MARK: -
-
-extension Conversation {
-    struct Member {
-        let archived: Bool?
-        let archivedReference: Date?
-        let conversationRole: String?
-        let hidden: Bool?
-        let hiddenReference: String?
-        let id: UUID?
-        let mutedReference: Date?
-        let mutedStatus: Int?
-        let qualifiedID: QualifiedID?
-        let qualifiedTarget: QualifiedID?
-        let service: Service?
-        let target: UUID?
-    }
+    public var access: [String]?
+    public var accessRoles: [String]?
+    public var cipherSuite: UInt16?
+    public var creator: UUID?
+    public var epoch: UInt?
+    public var epochTimestamp: Date?
+    public var id: UUID?
+    public var lastEvent: String?
+    public var lastEventTime: String?
+    public var legacyAccessRole: String?
+    public var members: Members?
+    public var messageProtocol: String?
+    public var messageTimer: TimeInterval?
+    public var mlsGroupID: String?
+    public var name: String?
+    public var qualifiedID: QualifiedID?
+    public var readReceiptMode: Int?
+    public var teamID: UUID?
+    public var type: Int?
 }
