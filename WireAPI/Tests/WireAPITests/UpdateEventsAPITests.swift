@@ -79,6 +79,36 @@ final class UpdateEventsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - V5
+
+    func testGetLastUpdateEvent_200_V5() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: 200,
+            payloadResourceName: "GetLastEventSuccessResponseV5"
+        )
+
+        let sut = UpdateEventsAPIV5(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
+
+        // Then
+        XCTAssertEqual(result, Scaffolding.updateEventEnvelope)
+    }
+
+    func testGetLastUpdateEvent_404_V5() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let sut = UpdateEventsAPIV5(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+            // When
+            try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
+        }
+    }
+
     // MARK: - Helpers
 
     struct Scaffolding {
