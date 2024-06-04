@@ -18,16 +18,19 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+enum UserEventType: String {
 
-public struct QualifiedID: Codable, Hashable, Equatable {
-
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case clientAdd = "user.client-add"
+    case clientRemove = "user.client-remove"
+    case connection = "user.connection"
+    case contactJoin = "user.contact-join"
+    case delete = "user.delete"
+    case legalholdDisable = "user.legalhold-disable"
+    case legalholdEnable = "user.legalhold-enable"
+    case legalholdRequest = "user.legalhold-request"
+    case propertiesSet = "user.properties-set"
+    case propertiesDelete = "user.properties-delete"
+    case pushRemove = "user.push-remove"
+    case update = "user.update"
 
 }

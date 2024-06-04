@@ -18,16 +18,20 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// Errors originating from `UpdateEventsAPI`.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+public enum UpdateEventsAPIError: Error {
 
-    public let uuid: UUID
-    public let domain: String
+    /// A request path is not invalid.
 
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case invalidPath
+
+    /// A provided client id is not valid.
+
+    case invalidClient
+
+    /// The requested notification(s) was not found.
+
+    case notFound
 
 }

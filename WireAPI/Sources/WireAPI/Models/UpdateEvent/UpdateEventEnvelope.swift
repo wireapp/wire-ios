@@ -18,16 +18,23 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// A container for update events.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+public struct UpdateEventEnvelope: Equatable {
 
-    public let uuid: UUID
-    public let domain: String
+    /// The id of the event.
 
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    public let id: UUID
+
+    /// The event payloads.
+
+    public let payloads: [UpdateEvent]
+
+    /// Whether this event is transient.
+    ///
+    /// If `true`, then the event is not stored on the backend and is
+    /// only sent through the push channel as it occurs.
+
+    public let isTransient: Bool
 
 }

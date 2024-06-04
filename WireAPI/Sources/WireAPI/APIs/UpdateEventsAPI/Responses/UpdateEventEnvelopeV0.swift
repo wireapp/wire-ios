@@ -18,16 +18,18 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+    var id: UUID
+    var payload: [UpdateEvent]?
+    var transient: Bool?
 
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
+    func toAPIModel() -> UpdateEventEnvelope {
+        UpdateEventEnvelope(
+            id: id,
+            payloads: payload ?? [],
+            isTransient: transient ?? false
+        )
     }
 
 }

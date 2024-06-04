@@ -1,0 +1,8 @@
+{
+  "id": "d7f7f946-c4da-4300-998d-5aeba8affeee",
+  "payload": [
+    {
+      "type": "conversation.create"
+    }
+  ]
+}

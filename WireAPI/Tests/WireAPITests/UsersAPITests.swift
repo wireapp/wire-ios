@@ -102,9 +102,9 @@ final class UsersAPITests: XCTestCase {
         let sut = UsersAPIV0(httpClient: httpClient)
 
         // Then
-        await assertAPIError(UsersAPIError.userNotFound) {
+        await XCTAssertThrowsError(UsersAPIError.userNotFound) {
             // When
-            _ = try await sut.getUser(for: Scaffolding.userID)
+            try await sut.getUser(for: Scaffolding.userID)
         }
     }
 
@@ -138,9 +138,9 @@ final class UsersAPITests: XCTestCase {
         let sut = UsersAPIV4(httpClient: httpClient)
 
         // Then
-        await assertAPIError(UsersAPIError.userNotFound) {
+        await XCTAssertThrowsError(UsersAPIError.userNotFound) {
             // When
-            _ = try await sut.getUser(for: Scaffolding.userID)
+            try await sut.getUser(for: Scaffolding.userID)
         }
     }
 

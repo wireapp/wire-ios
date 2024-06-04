@@ -18,16 +18,19 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+extension UpdateEvent {
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+    init(
+        eventType: FederationEventType,
+        from decoder: any Decoder
+    ) throws {
+        switch eventType {
+        case .connectionRemoved:
+            self = .federation(.connectionRemoved)
 
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
+        case .delete:
+            self = .federation(.delete)
+        }
     }
 
 }
