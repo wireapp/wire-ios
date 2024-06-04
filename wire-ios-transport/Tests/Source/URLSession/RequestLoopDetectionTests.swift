@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
+
 @testable import WireTransport
 
-class RequestLoopDetectionTests: XCTestCase {
+final class RequestLoopDetectionTests: XCTestCase {
 
     func testThatItDetectsALoopWithOneRepeatedRequest() {
 
@@ -188,5 +188,87 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // then
         XCTAssertFalse(triggered)
+    }
+
+    // MARK: Excluded URLs
+
+    func testRecordRequest_givenExcludedPathTyping() {
+        // given
+        let mockPath = "/v1/typing"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHash: 0,
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathTypingWithMoreParameters() {
+        // given
+        let mockPath = "/v1/typing?test=1"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHash: 0,
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathEmptySearch() {
+        // given
+        let mockPath = "/v1/search/contacts?q="
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHash: 0,
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathEmptySearchAndMoreParameters() {
+        // given
+        let mockPath = "/v1/search/contacts?q=&size=10"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHash: 0,
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathNonEmptySearch() {
+        // given
+        let mockPath = "/v1/search/contacts?q=abc"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHash: 0,
+            date: nil
+        )
+
+        // then
+        XCTAssertEqual(sut.recordedRequests.first?.path, mockPath)
     }
 }
