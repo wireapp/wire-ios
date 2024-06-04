@@ -141,7 +141,10 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByGroups() {
         // GIVEN
-        let conversationData: [(String, Bool)] = [("iOS Team", false), ("Web Team", false)]
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: false)
+        ]
         let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockGroupConversations = conversations
 
@@ -155,7 +158,10 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByFavourites() {
         // GIVEN
-        let conversationData: [(String, Bool)] = [("iOS Team", true), ("Web Team", false)]
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: true)
+        ]
         let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter { $0.isFavorite }
 
@@ -191,9 +197,6 @@ final class ConversationListViewControllerTests: XCTestCase {
     // MARK: - Helper Methods
 
     private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
-        let modelHelper = ModelHelper()
-        let fixture = CoreDataFixture()
-
         var conversations: [ZMConversation] = []
 
         for (name, isFavorite) in conversationsData {
