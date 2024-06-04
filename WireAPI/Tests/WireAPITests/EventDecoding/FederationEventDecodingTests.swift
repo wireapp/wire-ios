@@ -23,7 +23,7 @@ final class FederationEventDecodingTests: XCTestCase {
 
     func testDecodingFederationConnectionRemovedEvent() async throws {
         // Given event data.
-        let resource = try EventDataResource(name: "FederationConnectionRemoved")
+        let resource = try MockEventDataResource(name: "FederationConnectionRemoved")
 
         // When decode update event.
         let updateEvent = try JSONDecoder.defaultDecoder.decode(
@@ -41,7 +41,7 @@ final class FederationEventDecodingTests: XCTestCase {
 
     func testDecodingFederationDeleteEvent() async throws {
         // Given event data.
-        let resource = try EventDataResource(name: "FederationDelete")
+        let resource = try MockEventDataResource(name: "FederationDelete")
 
         // When decode update event.
         let updateEvent = try JSONDecoder.defaultDecoder.decode(
