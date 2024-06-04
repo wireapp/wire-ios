@@ -175,6 +175,7 @@ extension ConversationListViewController {
         let filterButton = UIButton(type: .system)
         filterButton.setImage(selectedFilterImage, for: .normal)
         filterButton.showsMenuAsPrimaryAction = true
+        filterButton.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterButton.description
         filterButton.menu = filterMenu
 
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
@@ -213,7 +214,32 @@ extension ConversationListViewController {
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
+        action.accessibilityLabel = setAccessibilityLabelForFilterAction(for: filter, isSelected: isSelected)
+
         return action
+    }
+
+    func setAccessibilityLabelForFilterAction(
+        for filter: ConversationFilterType?,
+        isSelected: Bool
+    ) -> String {
+
+        typealias FilterMenuOptionsAccessibilityLocale = L10n.Accessibility.ConversationsList.FilterMenuOptions
+
+        switch filter {
+        case .favorites:
+            return isSelected ? FilterMenuOptionsAccessibilityLocale.Favorites.Selected.description : FilterMenuOptionsAccessibilityLocale.Favorites.description
+
+        case .groups:
+            return isSelected ? FilterMenuOptionsAccessibilityLocale.Groups.Selected.description : FilterMenuOptionsAccessibilityLocale.Groups.description
+
+        case .oneToOneConversations:
+            return isSelected ? FilterMenuOptionsAccessibilityLocale.OneOnOne.Selected.description : FilterMenuOptionsAccessibilityLocale.OneOnOne.description
+
+        case .none:
+            return isSelected ? FilterMenuOptionsAccessibilityLocale.AllConversations.Selected.description : FilterMenuOptionsAccessibilityLocale.AllConversations.description
+
+        }
     }
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
