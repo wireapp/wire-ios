@@ -66,7 +66,7 @@ extension ConversationListViewController {
         stackView.addArrangedSubview(accountView)
 
         // legal hold
-        switch viewModel.selfUser.legalHoldStatus {
+        switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
         case .disabled:
             break
         case .pending:
@@ -322,7 +322,7 @@ extension ConversationListViewController {
 
     @objc
     func presentLegalHoldRequest() {
-        guard case .pending = viewModel.selfUser.legalHoldStatus else {
+        guard case .pending = viewModel.selfUserLegalHoldSubject.legalHoldStatus else {
             return
         }
 
