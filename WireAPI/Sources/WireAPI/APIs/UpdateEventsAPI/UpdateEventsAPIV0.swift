@@ -60,19 +60,3 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
     }
 
 }
-
-struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
-
-    var id: UUID
-    var payload: [UpdateEvent]?
-    var transient: Bool?
-
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            payloads: payload ?? [],
-            isTransient: transient ?? false
-        )
-    }
-
-}
