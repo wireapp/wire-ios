@@ -17,10 +17,10 @@
 //
 
 import WireCommonComponents
+import WireSyncEngineSupport
 import XCTest
 
 @testable import Wire
-import WireSyncEngineSupport
 
 class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
@@ -37,7 +37,6 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
         conversationGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
         viewModel = CreateSecureConversationGuestLinkViewModel(
             delegate: mockDelegate,

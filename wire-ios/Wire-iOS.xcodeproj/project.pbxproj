@@ -1359,7 +1359,6 @@
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
 		E96C8831281706640003245E /* UIViewController+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96C8830281706640003245E /* UIViewController+DynamicType.swift */; };
-		E974572F2AE2EDD400DE9D28 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E974572E2AE2EDD400DE9D28 /* BaseTestCase.swift */; };
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
@@ -1399,7 +1398,6 @@
 		E9D70C892BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D70C882BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
 		E9E20AEA2AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */; };
-		E9E335932A8A27EC00B304F3 /* BaseSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */; };
 		E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */; };
 		E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D128194F2D0058C793 /* FontScheme.swift */; };
 		E9EBE0D428194F890058C793 /* FontScheme+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */; };
@@ -3464,7 +3462,6 @@
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		E96C8830281706640003245E /* UIViewController+DynamicType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DynamicType.swift"; sourceTree = "<group>"; };
-		E974572E2AE2EDD400DE9D28 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureLinkHeaderCell.swift; sourceTree = "<group>"; };
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
@@ -3499,7 +3496,6 @@
 		E9D70C882BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPickerSnapshotTests.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
 		E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewController.swift; sourceTree = "<group>"; };
-		E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTypeCapable.swift; sourceTree = "<group>"; };
 		E9EBE0D128194F2D0058C793 /* FontScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontScheme.swift; sourceTree = "<group>"; };
 		E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FontScheme+DynamicType.swift"; sourceTree = "<group>"; };
@@ -7291,9 +7287,7 @@
 				EE94CA0B25C2E48B005F1155 /* ScreenCurtainWindowTests.swift */,
 				EF2971552099AD3000EFE6A4 /* SelfProfileViewControllerTests.swift */,
 				A9CF740D24891498007A11DC /* Settings+Reset.swift */,
-				E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */,
 				E9D141642AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift */,
-				E974572E2AE2EDD400DE9D28 /* BaseTestCase.swift */,
 				EF36168921E753300041F0CC /* SettingsTableViewControllerSnapshotTests.swift */,
 				EFC0C7F021778FB000380C4B /* SettingsTextCellSnapshotTests.swift */,
 				EFE0439A2149D9C900BC3079 /* ShareContactsViewControllerSnapshotTests.swift */,
@@ -8114,7 +8108,6 @@
 			children = (
 				0637968E2964E2FE00674AAA /* Assets+Generated.swift */,
 				EEA65C2625D27A8300AA7519 /* Strings+Generated.swift */,
-				E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */,
 			);
 			name = Generated;
 			path = "Wire-iOS/Generated";
@@ -10572,7 +10565,6 @@
 				EF29F1BB21271A9A00BE94E6 /* GroupDetailsViewControllerTests.swift in Sources */,
 				EF37C3892256614300EA0C32 /* ConnectRequestsCellSnapshotTests.swift in Sources */,
 				87BEB0E01C734DA60094BFE9 /* MockLoader.m in Sources */,
-				E974572F2AE2EDD400DE9D28 /* BaseTestCase.swift in Sources */,
 				EFDC36DA2257A63000F916F3 /* CollectionViewContainerCellSnapshotTests.swift in Sources */,
 				160DF02F234DCE0400978FCF /* MockConverationDirectory.swift in Sources */,
 				EF883F8C215250B000B440CC /* AddParticipantsViewControllerSnapshotTests.swift in Sources */,
