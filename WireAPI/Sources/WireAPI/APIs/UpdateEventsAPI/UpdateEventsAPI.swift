@@ -20,12 +20,13 @@ import Foundation
 
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning update events.
+
 public protocol UpdateEventsAPI {
 
     /// Get the last (most recent) update event for the self client.
     ///
     /// - Parameter selfClientID: The id of the self client.
-    /// - Returns: An update evelope containing the last update event.
+    /// - Returns: An update envelope containing the last update event.
 
     func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
 
