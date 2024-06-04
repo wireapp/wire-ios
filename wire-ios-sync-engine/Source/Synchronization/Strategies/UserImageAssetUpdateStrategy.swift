@@ -220,7 +220,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
             // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
             request?.addContentDebugInformation("Uploading to /assets/V3: [\(size)]  [\(image)] ")
-            request?.contentHintForRequestLoop = "Uploading to /assets/V3: [\(size)]  [\(image)] "
+            request?.contentHintForRequestLoop += "Uploading to /assets/V3: [\(size)]  [\(image)] "
 
             return request
         } else if sync === deleteRequestSync {

@@ -108,7 +108,7 @@ extension ClientMessageRequestFactory {
         // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
         // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
         request.addContentDebugInformation("Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))")
-        request.contentHintForRequestLoop = "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
+        request.contentHintForRequestLoop += "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
 
         request.forceToBackgroundSession()
         return request
