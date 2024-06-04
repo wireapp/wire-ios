@@ -18,16 +18,18 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning update events.
+struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
 
-public protocol UpdateEventsAPI {
+    var id: UUID
+    var payload: [UpdateEvent]?
+    var transient: Bool?
 
-    /// Get the last (most recent) update event for the self client.
-    ///
-    /// - Parameter selfClientID: The id of the self client.
-    /// - Returns: An update envelope containing the last update event.
-
-    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
+    func toAPIModel() -> UpdateEventEnvelope {
+        UpdateEventEnvelope(
+            id: id,
+            payloads: payload ?? [],
+            isTransient: transient ?? false
+        )
+    }
 
 }

@@ -66,7 +66,7 @@ public enum ConversationEvent {
 
     case messageAdd
 
-    /// A conversations self-deleting-message timer was updated.
+    /// A conversation's self-deleting-message timer was updated.
 
     case messageTimerUpdate
 

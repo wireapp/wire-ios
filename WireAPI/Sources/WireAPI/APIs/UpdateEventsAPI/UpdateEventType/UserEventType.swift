@@ -18,16 +18,19 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning update events.
+enum UserEventType: String {
 
-public protocol UpdateEventsAPI {
-
-    /// Get the last (most recent) update event for the self client.
-    ///
-    /// - Parameter selfClientID: The id of the self client.
-    /// - Returns: An update envelope containing the last update event.
-
-    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
+    case clientAdd = "user.client-add"
+    case clientRemove = "user.client-remove"
+    case connection = "user.connection"
+    case contactJoin = "user.contact-join"
+    case delete = "user.delete"
+    case legalholdDisable = "user.legalhold-disable"
+    case legalholdEnable = "user.legalhold-enable"
+    case legalholdRequest = "user.legalhold-request"
+    case propertiesSet = "user.properties-set"
+    case propertiesDelete = "user.properties-delete"
+    case pushRemove = "user.push-remove"
+    case update = "user.update"
 
 }
