@@ -80,8 +80,12 @@ echo "ℹ️  Fetching submodules..."
 echo ""
 
 echo "ℹ️  Installing bundler and Ruby dependencies..."
-which bundle || gem install bundler
-bundle check || bundle install
+if [[ -n "${CI-}" ]]; then # skip cache bootstrap for CI
+    echo "Skipping install since CI is defined"
+else
+    which bundle || gem install bundler
+    bundle check || bundle install
+fi
 echo ""
 
 echo "ℹ️  Overriding configuration if specified..."
