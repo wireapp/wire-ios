@@ -52,7 +52,7 @@ public final class RequestLoopDetection: NSObject {
         self.recordedRequests = []
     }
 
-    public func recordRequest(path: String, contentHash: UInt, date: Date?) {
+    public func recordRequest(path: String, contentHint: String, date: Date?) {
         purgeOldRequests()
 
         if self.recordedRequests.count == Self.historyLimit {
@@ -63,7 +63,7 @@ public final class RequestLoopDetection: NSObject {
             return
         }
 
-        let identifier = IdentifierDate(path: path, contentHash: contentHash, date: date ?? Date())
+        let identifier = IdentifierDate(path: path, contentHint: contentHint, date: date ?? Date())
         self.insert(identifier: identifier)
 
         triggerIfTooMany(identifier: identifier)
@@ -140,8 +140,8 @@ struct IdentifierDate {
     let date: Date
     let path: String
 
-    init(path: String, contentHash: UInt, date: Date) {
-        self.identifier = "\(path)[\(contentHash)]"
+    init(path: String, contentHint: String, date: Date) {
+        self.identifier = "\(path)[\(contentHint)]"
         self.date = date
         self.path = path
     }

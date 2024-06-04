@@ -396,7 +396,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     [request markStartOfUploadTimestamp];
     [task resume];
-    [self.requestLoopDetection recordRequestWithPath:request.path contentHash:request.contentDebugInformationHash date:nil];
+
+    [self.requestLoopDetection recordRequestWithPath:request.path
+                                         contentHint:request.contentHintForRequestLoop
+                                                date:nil];
 }
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
