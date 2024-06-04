@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 class ConversationsAPIV4: ConversationsAPIV3 {
     override var apiVersion: APIVersion { .v4 }
 }
