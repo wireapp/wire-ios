@@ -18,7 +18,7 @@
 
 @import Foundation;
 
-#import "ZMContextChangeTracker.h"
+#import <WireRequestStrategy/ZMContextChangeTracker.h>
 #import <WireRequestStrategy/ZMRequestGenerator.h>
 
 @protocol ZMTransportData;

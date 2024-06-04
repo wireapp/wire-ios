@@ -19,7 +19,7 @@
 @import Foundation;
 @import CoreData;
 
-#import "NSError+ZMUserSession.h"
+#import <WireSyncEngine/NSError+ZMUserSession.h>
 
 @class UserInfo;
 @class ZMCredentials;

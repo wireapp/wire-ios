@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMMessage+Internal.h"
+#import <WireDataModel/ZMMessage+Internal.h>
 
 @class UserClient;
 @class MessageUpdateResult;

@@ -17,7 +17,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ZMConversationList.h"
+#import <WireDataModel/ZMConversationList.h>
 
 @class NSManagedObjectContext;
 @class NSFetchRequest;
