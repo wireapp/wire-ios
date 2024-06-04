@@ -18,16 +18,16 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning update events.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+public protocol UpdateEventsAPI {
 
-    public let uuid: UUID
-    public let domain: String
+    /// Get the last (most recent) update event for the self client.
+    ///
+    /// - Parameter selfClientID: The id of the self client.
+    /// - Returns: An update envelope containing the last update event.
 
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
 
 }

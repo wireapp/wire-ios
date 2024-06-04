@@ -18,16 +18,8 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+enum FeatureConfigEventType: String {
 
-public struct QualifiedID: Codable, Hashable, Equatable {
-
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case update = "feature-config.update"
 
 }

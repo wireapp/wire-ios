@@ -18,16 +18,34 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// Represents an update event received from the backend
+/// that can be used to incrementaly update the state of
+/// the client.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+public enum UpdateEvent: Equatable {
 
-    public let uuid: UUID
-    public let domain: String
+    /// A conversation event.
 
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case conversation(ConversationEvent)
+
+    /// A feature config event.
+
+    case featureConfig(FeatureConfigEvent)
+
+    /// A federation event.
+
+    case federation(FederationEvent)
+
+    /// A user event.
+
+    case user(UserEvent)
+
+    /// A team event.
+
+    case team(TeamEvent)
+
+    /// An event that is not known by the client.
+
+    case unknown(eventType: String)
 
 }

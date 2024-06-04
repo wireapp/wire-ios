@@ -18,16 +18,13 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+enum TeamEventType: String {
 
-public struct QualifiedID: Codable, Hashable, Equatable {
-
-    public let uuid: UUID
-    public let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case conversationCreate = "team.conversation-create"
+    case conversationDelete = "team.conversation-delete"
+    case create = "team.create"
+    case delete = "team.delete"
+    case memberLeave = "team.member-leave"
+    case memberUpdate = "team.member-update"
 
 }
