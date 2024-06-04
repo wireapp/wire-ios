@@ -18,16 +18,18 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// An event concerning federation between domains.
 
-public struct QualifiedID: Codable, Hashable, Equatable {
+public enum FederationEvent {
 
-    public let uuid: UUID
-    public let domain: String
+    /// Two or more other domains have stopped federating
+    /// with each other.
 
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
+    case connectionRemoved
+
+    /// The self domain has stopped federating with another
+    /// domain.
+
+    case delete
 
 }
