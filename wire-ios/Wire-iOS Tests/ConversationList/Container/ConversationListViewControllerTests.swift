@@ -34,6 +34,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var modelHelper: ModelHelper!
 
     // MARK: - setUp
 
@@ -49,7 +50,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        let modelHelper = ModelHelper()
+        modelHelper = ModelHelper()
 
         let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
         selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
@@ -94,6 +95,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
         coreDataFixture = nil
+        modelHelper = nil
 
         super.tearDown()
     }
@@ -106,7 +108,6 @@ final class ConversationListViewControllerTests: XCTestCase {
     }
 
     func testForEverythingArchived() {
-        let modelHelper = ModelHelper()
         let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
         conversation.isArchived = true
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
@@ -168,17 +169,14 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsFilteredByOneOnOne() throws {
         // GIVEN
-        let modelHelper = ModelHelper()
-        let fixture = CoreDataFixture()
-
-        let user1 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+        let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         user1.name = "Alice"
 
-        let user2 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+        let user2 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         user2.name = "Bob"
 
-        let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: fixture.coreDataStack.viewContext)
-        let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: fixture.coreDataStack.viewContext)
+        let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: coreDataFixture.coreDataStack.viewContext)
+        let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: coreDataFixture.coreDataStack.viewContext)
 
         userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
 
@@ -200,7 +198,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         for (name, isFavorite) in conversationsData {
             let conversation = modelHelper.createGroupConversation(
-                in: fixture.coreDataStack.viewContext
+                in: coreDataFixture.coreDataStack.viewContext
             )
 
             conversation.userDefinedName = name
