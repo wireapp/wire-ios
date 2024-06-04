@@ -224,20 +224,20 @@ extension ConversationListViewController {
         isSelected: Bool
     ) -> String {
 
-        typealias FilterMenuOptionsAccessibilityLocale = L10n.Accessibility.ConversationsList.FilterMenuOptions
+        typealias accessibilityLocale = L10n.Accessibility.ConversationsList.FilterMenuOptions
 
         switch filter {
         case .favorites:
-            return isSelected ? FilterMenuOptionsAccessibilityLocale.Favorites.Selected.description : FilterMenuOptionsAccessibilityLocale.Favorites.description
+            return isSelected ? accessibilityLocale.Favorites.Selected.description : accessibilityLocale.Favorites.description
 
         case .groups:
-            return isSelected ? FilterMenuOptionsAccessibilityLocale.Groups.Selected.description : FilterMenuOptionsAccessibilityLocale.Groups.description
+            return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
 
         case .oneToOneConversations:
-            return isSelected ? FilterMenuOptionsAccessibilityLocale.OneOnOne.Selected.description : FilterMenuOptionsAccessibilityLocale.OneOnOne.description
+            return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne.description
 
         case .none:
-            return isSelected ? FilterMenuOptionsAccessibilityLocale.AllConversations.Selected.description : FilterMenuOptionsAccessibilityLocale.AllConversations.description
+            return isSelected ? accessibilityLocale.AllConversations.Selected.description : accessibilityLocale.AllConversations.description
 
         }
     }
