@@ -119,27 +119,12 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForShowingConversationsWithoutAnyFilterApplied() {
         // GIVEN
-        let conversationData: [(String, Bool)] = [
-            (
-                "iOS Team",
-                false
-            ),
-            (
-                "Web Team",
-                false
-            ),
-            (
-                "QA Team",
-                false
-            ),
-            (
-                "Design Team",
-                false
-            ),
-            (
-                "iOS Bugs & Questions",
-                false
-            )
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: false),
+            (name: "QA Team", isFavorite: false),
+            (name: "Design Team", isFavorite: false),
+            (name: "iOS Bugs & Questions", isFavorite: false)
         ]
 
         let conversations = createConversations(conversationsData: conversationData)
