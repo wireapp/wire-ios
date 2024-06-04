@@ -32,7 +32,7 @@ public struct UpdateEventsAPIBuilder {
         self.httpClient = httpClient
     }
 
-    /// Make a versioned`UpdateEventsAPI`.
+    /// Make a versioned `UpdateEventsAPI`.
     ///
     /// - Parameter version: An api version.
     /// - Returns: A versioned `UpdateEventsAPI`.

@@ -18,16 +18,15 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning update events.
+/// Errors originating from `ConnectionsRepository`.
 
-public protocol UpdateEventsAPI {
+enum ConnectionsRepositoryError: Error {
 
-    /// Get the last (most recent) update event for the self client.
-    ///
-    /// - Parameter selfClientID: The id of the self client.
-    /// - Returns: An update envelope containing the last update event.
+    /// Failed to get receiver id from api response
 
-    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
+    case missingReceiverId
 
+    /// Failed to get conversation id from api response
+
+    case missingConversationId
 }
