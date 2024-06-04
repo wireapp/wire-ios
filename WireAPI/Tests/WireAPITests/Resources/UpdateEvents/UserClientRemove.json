@@ -1,0 +1,6 @@
+{
+    "type": "user.client-remove",
+    "client": {
+        "id": "2a1fd72806d84e26"
+    }
+}

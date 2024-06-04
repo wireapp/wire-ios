@@ -39,6 +39,24 @@ final class UserEventDecodingTests: XCTestCase {
         XCTAssertEqual(payload, Scaffolding.clientAddEvent)
     }
 
+    func testDecodingClientRemoveEvent() async throws {
+        // Given event data.
+        let resource = try MockEventDataResource(name: "UserClientRemove")
+
+        // When decode update event.
+        let updateEvent = try JSONDecoder.defaultDecoder.decode(
+            UpdateEvent.self,
+            from: resource.jsonData
+        )
+
+        // Then it decoded the correct event.
+        guard case .user(.clientRemove(let payload)) = updateEvent else {
+            return XCTFail("unexpected event: \(updateEvent)")
+        }
+
+        XCTAssertEqual(payload, Scaffolding.clientRemoveEvent)
+    }
+
     private enum Scaffolding {
 
         static let clientAddEvent = UserClientAddEvent(
@@ -63,6 +81,8 @@ final class UserEventDecodingTests: XCTestCase {
                 ]
             )
         )
+
+        static let clientRemoveEvent = UserClientRemoveEvent(clientID: "2a1fd72806d84e26")
 
     }
 

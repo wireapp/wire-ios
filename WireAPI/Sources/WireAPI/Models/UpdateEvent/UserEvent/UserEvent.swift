@@ -28,7 +28,7 @@ public enum UserEvent: Equatable {
 
     /// A self user's client was removed.
 
-    case clientRemove
+    case clientRemove(UserClientRemoveEvent)
 
     /// A connection to another user has been updated.
 
