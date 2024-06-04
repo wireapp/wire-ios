@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import XCTest
+import Foundation
 
-class BaseSnapshotTestCase: XCTestCase {
+enum TeamEventType: String {
 
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
-    }
+    case conversationCreate = "team.conversation-create"
+    case conversationDelete = "team.conversation-delete"
+    case create = "team.create"
+    case delete = "team.delete"
+    case memberLeave = "team.member-leave"
+    case memberUpdate = "team.member-update"
 
 }

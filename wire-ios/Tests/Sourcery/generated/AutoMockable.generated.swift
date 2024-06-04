@@ -100,6 +100,29 @@ public class MockAccountSelector: AccountSelector {
 
 }
 
+class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - appStateCalculator
+
+    var appStateCalculatorDidCalculateCompletion_Invocations: [(appStateCalculator: AppStateCalculator, appState: AppState, completion: () -> Void)] = []
+    var appStateCalculatorDidCalculateCompletion_MockMethod: ((AppStateCalculator, AppState, @escaping () -> Void) -> Void)?
+
+    func appStateCalculator(_ appStateCalculator: AppStateCalculator, didCalculate appState: AppState, completion: @escaping () -> Void) {
+        appStateCalculatorDidCalculateCompletion_Invocations.append((appStateCalculator: appStateCalculator, appState: appState, completion: completion))
+
+        guard let mock = appStateCalculatorDidCalculateCompletion_MockMethod else {
+            fatalError("no mock for `appStateCalculatorDidCalculateCompletion`")
+        }
+
+        mock(appStateCalculator, appState, completion)
+    }
+
+}
+
 class MockBackupSource: BackupSource {
 
     // MARK: - Life cycle

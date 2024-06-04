@@ -64,7 +64,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
 
 // MARK: - ConversationOptionsViewControllerTests
 
-final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
+final class ConversationOptionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

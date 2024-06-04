@@ -142,7 +142,7 @@ extension CoreDataStack {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 
-        try context.performGroupedAndWait { context in
+        try context.performGroupedAndWait {
             try migration(context)
             _ = context.makeMetadataPersistent()
             try context.save()

@@ -508,7 +508,10 @@ private extension UIAlertController {
                                                 message: message,
                                                 preferredStyle: .alert)
 
-        alertController.addAction(.ok(style: .cancel))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
                                                 style: .default,
                                                 handler: legalHoldLearnMoreHandler))

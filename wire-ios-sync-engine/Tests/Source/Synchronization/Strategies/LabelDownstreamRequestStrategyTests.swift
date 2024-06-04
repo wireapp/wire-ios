@@ -38,7 +38,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
         sut = LabelDownstreamRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.conversation1 = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation1.remoteIdentifier = UUID()
 
@@ -91,7 +91,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
     // MARK: - Slow Sync
 
     func testThatItRequestsLabels_DuringSlowSync() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLabels
 
@@ -104,7 +104,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
     }
 
     func testThatItRequestsLabels_WhenRefetchingIsNecessary() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).needsToRefetchLabels = true
 
@@ -117,7 +117,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
     }
 
     func testThatItResetsFlag_WhenLabelsExist() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).needsToRefetchLabels = true
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -128,13 +128,13 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(ZMUser.selfUser(in: self.syncMOC).needsToRefetchLabels)
         }
     }
 
     func testThatItResetsFlag_WhenLabelsDontExist() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).needsToRefetchLabels = true
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -145,13 +145,13 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(ZMUser.selfUser(in: self.syncMOC).needsToRefetchLabels)
         }
     }
 
     func testThatItFinishSlowSyncPhase_WhenLabelsExist() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLabels
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -162,13 +162,13 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
         }
     }
 
     func testThatItFinishSlowSyncPhase_WhenLabelsDontExist() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockSyncStatus.mockPhase = .fetchingLabels
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -179,7 +179,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
         }
     }
@@ -192,7 +192,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
         var event: ZMUpdateEvent?
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = conversationId
@@ -206,14 +206,14 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             XCTFail("missing event")
             return
         }
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(conversation.isFavorite)
         }
     }
@@ -224,7 +224,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         let favoriteIdentifier = UUID()
         let responseIdentifier = UUID()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let label = Label.insertNewObject(in: self.syncMOC)
             label.kind = .favorite
@@ -237,7 +237,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let label = Label.fetchFavoriteLabel(in: self.syncMOC)
             XCTAssertEqual(label.remoteIdentifier, favoriteIdentifier)
             XCTAssertEqual(label.conversations, [self.conversation1])
@@ -247,7 +247,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
     func testThatItResetsLocallyModifiedKeys_WhenUpdatingLabel() {
         let folderIdentifier = UUID()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: true, in: self.syncMOC, created: &created)
@@ -262,7 +262,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
             XCTAssertNil(label.modifiedKeys)
@@ -273,7 +273,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         let folderIdentifier = UUID()
         let updatedName = "Folder B"
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: true, in: self.syncMOC, created: &created)
@@ -286,7 +286,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
             XCTAssertEqual(label.name, updatedName)
@@ -297,7 +297,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
     func testThatItItUpdatesFolderConversations() {
         let folderIdentifier = UUID()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: true, in: self.syncMOC, created: &created)
@@ -311,7 +311,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
             XCTAssertEqual(label.conversations, [self.conversation2])
@@ -322,7 +322,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         var label1: Label!
         var label2: Label!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
             label1 = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: self.syncMOC, created: &created)
@@ -341,7 +341,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(label2.isZombieObject)
         }
     }
