@@ -20,4 +20,145 @@ import Foundation
 
 class ConversationsAPIV3: ConversationsAPIV2 {
     override var apiVersion: APIVersion { .v3 }
+
+    override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let resourcePath = "/conversations/list"
+
+        let request = HTTPRequest(
+            path: resourcePath,
+            method: .post,
+            body: body
+        )
+        let response = try await self.httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: 200, type: QualifiedConversationListV3.self) // New change for v3
+            .failure(code: 400, error: ConversationsAPIError.invalidBody)
+            .parse(response)
+    }
+}
+
+// MARK: Decodables
+
+struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case found = "found"
+        case notFound = "not_found"
+        case failed = "failed"
+    }
+
+    let found: [ConversationV3]
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
+
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound,
+            failed: failed
+        )
+    }
+}
+
+// MARK: -
+
+struct ConversationV3: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case access
+        case accessRole = "access_role"
+        case accessRoleV2 = "access_role_v2"
+        case cipherSuite = "cipher_suite"
+        case creator
+        case epoch
+        case epochTimestamp = "epoch_timestamp"
+        case id
+        case lastEvent = "last_event"
+        case lastEventTime = "last_event_time"
+        case members
+        case messageProtocol = "protocol"
+        case messageTimer = "message_timer"
+        case mlsGroupID = "group_id"
+        case name
+        case qualifiedID = "qualified_id"
+        case readReceiptMode = "receipt_mode"
+        case teamID = "team"
+        case type
+    }
+
+    var access: [String]?
+    var accessRoles: [String]?
+    var creator: UUID?
+    var epoch: UInt?
+    var id: UUID?
+    var lastEvent: String?
+    var lastEventTime: String?
+    var legacyAccessRole: String?
+    var members: QualifiedConversationMembers?
+    var messageProtocol: String?
+    var messageTimer: TimeInterval?
+    var mlsGroupID: String?
+    var name: String?
+    var qualifiedID: QualifiedID?
+    var readReceiptMode: Int?
+    var teamID: UUID?
+    var type: Int?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        access = try container.decodeIfPresent([String].self, forKey: .access)
+        creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
+        epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id)
+        lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
+        lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
+        members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
+        messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+        mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
+        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+        teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
+        type = try container.decodeIfPresent(Int.self, forKey: .type)
+
+        // v3 replaces the field "access_role_v2" with "access_role".
+        // However, since the format of update events does not depend on versioning,
+        // we may receive conversations from the `conversation.create` update event
+        // which still have both "access_role_v2" and "access_role" fields
+
+        if container.contains(CodingKeys.accessRoleV2) {
+            legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+        } else {
+            legacyAccessRole = nil
+            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+        }
+    }
+
+    func toAPIModel() -> Conversation {
+        Conversation(
+            access: access,
+            accessRoles: accessRoles,
+            cipherSuite: nil,
+            creator: creator,
+            epoch: epoch,
+            epochTimestamp: nil,
+            id: id,
+            lastEvent: lastEvent,
+            lastEventTime: lastEventTime,
+            legacyAccessRole: legacyAccessRole,
+            members: members.map { $0.toAPIModel() },
+            messageProtocol: messageProtocol,
+            messageTimer: messageTimer,
+            mlsGroupID: mlsGroupID,
+            name: name,
+            qualifiedID: qualifiedID,
+            readReceiptMode: readReceiptMode,
+            teamID: teamID,
+            type: type
+        )
+    }
 }
