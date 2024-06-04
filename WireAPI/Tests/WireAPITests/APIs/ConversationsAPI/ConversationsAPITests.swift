@@ -223,10 +223,14 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             HTTPResponse(code: 200, payload: nil)
         ]
+        let qualifiedID = QualifiedID(
+            uuid: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
+            domain: "wire.com"
+        )
 
         // when
         let api = ConversationsAPIV0(httpClient: httpClient)
-        _ = try? await api.getConversations(for: [])
+        _ = try? await api.getConversations(for: [qualifiedID])
 
         // then
         let request = try XCTUnwrap(httpClient.receivedRequests.first)
