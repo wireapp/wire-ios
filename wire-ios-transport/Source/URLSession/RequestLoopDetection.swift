@@ -55,6 +55,7 @@ public final class RequestLoopDetection: NSObject {
 }
 
 // MARK: - Loop detection
+
 extension RequestLoopDetection: RequestRecorder {
 
     /// Resets the detector, discarding all recorder requests
@@ -105,16 +106,20 @@ extension RequestLoopDetection: RequestRecorder {
 
     /// Check if there are too many occurrences of a given identifier
     private func triggerIfTooMany(identifier: IdentifierDate) {
-        if self.recordedRequests
-            .filter({ $0.identifier == identifier.identifier })
-            .count >= type(of: self).repetitionTriggerThreshold {
-            // this could be slightly faster as we don't need to count, just stop after we found N
-            // (maybe there are N+1000 entries and we don't need to go through the additional 1000)
-            self.triggerCallback(identifier.path)
-            self.recordedRequests = self.recordedRequests.filter { $0.identifier != identifier.identifier }
+        // this could be slightly faster as we don't need to count, just stop after we found N
+        // (maybe there are N+1000 entries and we don't need to go through the additional 1000)
+        let count = recordedRequests
+            .filter { $0.identifier == identifier.identifier }
+            .count
+
+        if count >= Self.repetitionTriggerThreshold {
+            triggerCallback(identifier.path)
+            recordedRequests = recordedRequests.filter { $0.identifier != identifier.identifier }
         }
     }
 }
+
+// MARK: -
 
 private struct IdentifierDate {
     let identifier: String
