@@ -28,7 +28,7 @@ import WireDataModel
 
 protocol TeamRepositoryProtocol {
 
-    /// Pull self team metadata frmo the server and store locally.
+    /// Pull self team metadata from the server and store locally.
 
     func pullSelfTeam() async throws
 

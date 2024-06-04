@@ -18,11 +18,15 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning connections.
-public protocol ConnectionsAPI {
+/// Errors originating from `ConnectionsRepository`.
 
-    /// Fetch all connections .
+enum ConnectionsRepositoryError: Error {
 
-    func getConnections() async throws -> PayloadPager<Connection>
+    /// Failed to get receiver id from api response
+
+    case missingReceiverId
+
+    /// Failed to get conversation id from api response
+
+    case missingConversationId
 }
