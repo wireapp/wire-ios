@@ -214,12 +214,12 @@ extension ConversationListViewController {
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
-        action.accessibilityLabel = setAccessibilityLabelForFilterAction(for: filter, isSelected: isSelected)
+        action.accessibilityLabel = accessibilityLabelForFilterAction(for: filter, isSelected: isSelected)
 
         return action
     }
 
-    func setAccessibilityLabelForFilterAction(
+    func accessibilityLabelForFilterAction(
         for filter: ConversationFilterType?,
         isSelected: Bool
     ) -> String {
