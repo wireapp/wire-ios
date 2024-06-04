@@ -380,4 +380,87 @@ final class ConversationsAPITests: XCTestCase {
             XCTFail("expected error 'FailureResponse'")
         }
     }
+
+    func testGetConversations_givenV3_thenVerifyRequests() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            HTTPResponse(code: 200, payload: nil)
+        ]
+        let qualifiedID = QualifiedID(
+            uuid: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
+            domain: "wire.com"
+        )
+
+        // when
+        let api = ConversationsAPIV3(httpClient: httpClient)
+        _ = try? await api.getConversations(for: [qualifiedID])
+
+        // then
+        let request = try XCTUnwrap(httpClient.receivedRequests.first)
+        await httpRequestSnapshotHelper.verifyRequest(request: request, resourceName: "v3")
+    }
+
+    // TODO: write double test for cases in decoding
+    func testGetConversations_givenV3AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockJSONResource(
+                code: 200,
+                jsonResource: "testGetConversations_givenV3AndSuccessResponse200"
+            )
+        ]
+
+        let api = ConversationsAPIV3(httpClient: httpClient)
+
+        // when
+        // then
+        let list = try await api.getConversations(for: [])
+        XCTAssertEqual(list.found.count, 1)
+        XCTAssertEqual(list.notFound.count, 1)
+        XCTAssertEqual(list.failed.count, 1)
+    }
+
+    func testGetConversations_givenV3AndSuccessResponse400() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockError(code: 400, label: "invalid body")
+        ]
+
+        let api = ConversationsAPIV3(httpClient: httpClient)
+
+        // when
+        // then
+        do {
+            _ = try await api.getConversations(for: [])
+        } catch let error as FailureResponse {
+            XCTAssertEqual(error.code, 400)
+            XCTAssertEqual(error.label, "invalid body")
+        } catch {
+            XCTFail("expected error 'FailureResponse'")
+        }
+    }
+
+    func testGetConversations_givenV3AndSuccessResponse503() async throws {
+        // given
+        let httpClient = MockHTTPResponsesClient()
+        httpClient.httpResponses = [
+            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        ]
+
+        let api = ConversationsAPIV3(httpClient: httpClient)
+
+        // when
+        // then
+        do {
+            _ = try await api.getConversations(for: [])
+        } catch let error as FailureResponse {
+            XCTAssertEqual(error.code, 503)
+            XCTAssertEqual(error.label, "service unavailable")
+        } catch {
+            XCTFail("expected error 'FailureResponse'")
+        }
+    }
 }
