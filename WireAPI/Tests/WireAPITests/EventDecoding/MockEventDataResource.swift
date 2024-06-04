@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct EventDataResource {
+struct MockEventDataResource {
 
     let jsonData: Data
 

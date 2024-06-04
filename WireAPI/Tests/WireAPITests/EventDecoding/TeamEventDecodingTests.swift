@@ -23,7 +23,7 @@ final class TeamEventDecodingTests: XCTestCase {
 
     func testDecodingTeamMemberLeaveEvent() async throws {
         // Given event data.
-        let resource = try EventDataResource(name: "TeamMemberLeave")
+        let resource = try MockEventDataResource(name: "TeamMemberLeave")
 
         // When decode update event.
         let updateEvent = try JSONDecoder.defaultDecoder.decode(
@@ -41,7 +41,7 @@ final class TeamEventDecodingTests: XCTestCase {
 
     func testDecodingTeamMemberUpdateEvent() async throws {
         // Given event data.
-        let resource = try EventDataResource(name: "TeamMemberUpdate")
+        let resource = try MockEventDataResource(name: "TeamMemberUpdate")
 
         // When decode update event.
         let updateEvent = try JSONDecoder.defaultDecoder.decode(
