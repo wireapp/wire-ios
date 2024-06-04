@@ -61,9 +61,9 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // Then
-        await assertAPIError(UpdateEventsAPIError.invalidClient) {
+        await XCTAssertThrowsError(UpdateEventsAPIError.invalidClient) {
             // When
-            _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
+            try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
     }
 
@@ -73,9 +73,9 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // Then
-        await assertAPIError(UpdateEventsAPIError.notFound) {
+        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
             // When
-            _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
+            try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
     }
 
