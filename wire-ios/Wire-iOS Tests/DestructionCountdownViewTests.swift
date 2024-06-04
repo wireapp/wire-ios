@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class DestructionCountdownViewTests: BaseSnapshotTestCase {
+final class DestructionCountdownViewTests: XCTestCase {
 
     // MARK: - Properties
 

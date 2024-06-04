@@ -16,14 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import XCTest
+import Foundation
 
-class BaseSnapshotTestCase: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
-    }
-
+class ConversationsAPIV2: ConversationsAPIV1 {
+    override var apiVersion: APIVersion { .v2 }
 }

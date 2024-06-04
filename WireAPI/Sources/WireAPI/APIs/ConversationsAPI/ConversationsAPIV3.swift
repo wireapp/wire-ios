@@ -18,10 +18,6 @@
 
 import Foundation
 
-public protocol APIBuilder {
-    associatedtype API
-
-    init(httpClient: any HTTPClient)
-
-    func makeAPI(for version: APIVersion) -> API
+class ConversationsAPIV3: ConversationsAPIV2 {
+    override var apiVersion: APIVersion { .v3 }
 }

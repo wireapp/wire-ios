@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class IncomingRequestFooterTests: BaseSnapshotTestCase {
+final class IncomingRequestFooterTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

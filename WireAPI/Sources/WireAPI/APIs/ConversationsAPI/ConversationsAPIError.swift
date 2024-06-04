@@ -16,24 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+/// Errors originating from `ConversationsAPI`.
+public enum ConversationsAPIError: Error {
 
-extension UIAlertController {
-
-    static func historyImportWarning(completion: @escaping () -> Void) -> UIAlertController {
-        let controller = UIAlertController(
-            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.title,
-            message: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.message,
-            alertAction: .cancel()
-        )
-
-        let proceedAction = UIAlertAction(
-            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
-            style: .default,
-            handler: { _ in completion() }
-        )
-        controller.addAction(proceedAction)
-        return controller
-    }
+    /// Failure if functionality has not been implemented.
+    case notImplemented
 
 }

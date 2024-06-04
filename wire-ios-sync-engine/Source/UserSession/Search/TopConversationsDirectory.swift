@@ -47,11 +47,14 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
     public func refreshTopConversations() {
         syncMOC.performGroupedBlock {
             let conversations = self.fetchOneOnOneConversations()
-
-            // Mapping from conversation to message count in the last month
-            let countByConversation = conversations.mapToDictionary { $0.lastMonthMessageCount() }
-            let sorted = countByConversation.filter { $0.1 > 0 }.sorted { $0.1 > $1.1 }.prefix(TopConversationsDirectory.topConversationSize)
-            let identifiers = sorted.compactMap { $0.0.objectID }
+            let countByConversation: [ZMConversation: Int] = conversations.reduce(into: .init()) { partialResult, item in
+                partialResult[item] = item.lastMonthMessageCount()
+            }
+            let identifiers = countByConversation
+                .filter { _, value in value > 0 }
+                .sorted { $0.1 > $1.1 }
+                .prefix(TopConversationsDirectory.topConversationSize)
+                .compactMap { $0.0.objectID }
             self.updateUIList(with: identifiers)
         }
     }

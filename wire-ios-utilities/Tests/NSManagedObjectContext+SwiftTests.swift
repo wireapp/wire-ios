@@ -42,14 +42,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         // given
         let moc = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
         // when & then
-        moc.performGroupedAndWait { _ in }
-    }
-
-    func testThatItPassesSelfInTheClosure() {
-        // when & then
-        sut.performGroupedAndWait { [sut] moc in
-            XCTAssertEqual(moc, sut)
-        }
+        moc.performGroupedAndWait { }
     }
 
     func testThatItReturnsNonOptionalValue() {
@@ -59,7 +52,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         }
 
         // when
-        let result = sut.performGroupedAndWait { _ in
+        let result = sut.performGroupedAndWait {
             closure()
         }
 
@@ -74,7 +67,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         }
 
         // when
-        let result = sut.performGroupedAndWait { _ in
+        let result = sut.performGroupedAndWait {
             closure()
         }
 
@@ -97,7 +90,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
         do {
             // when
-            try sut.performGroupedAndWait { _ in
+            try sut.performGroupedAndWait {
                 try closure()
             }
             XCTFail()
@@ -118,7 +111,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
         do {
             // when
-            try sut.performGroupedAndWait { _ in
+            try sut.performGroupedAndWait {
                 try closure()
             }
             XCTFail()
