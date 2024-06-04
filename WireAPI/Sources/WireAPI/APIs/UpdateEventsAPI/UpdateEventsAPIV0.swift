@@ -41,6 +41,7 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
         components?.queryItems = [URLQueryItem(name: "client", value: selfClientID)]
 
         guard let path = components?.string else {
+            assertionFailure("generated an invalid path")
             throw UpdateEventsAPIError.invalidPath
         }
 
