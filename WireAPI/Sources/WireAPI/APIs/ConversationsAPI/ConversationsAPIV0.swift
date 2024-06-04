@@ -154,10 +154,8 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
         case access
         case accessRole = "access_role"
         case accessRoleV2 = "access_role_v2"
-        case cipherSuite = "cipher_suite"
         case creator
         case epoch
-        case epochTimestamp = "epoch_timestamp"
         case id
         case lastEvent = "last_event"
         case lastEventTime = "last_event_time"
