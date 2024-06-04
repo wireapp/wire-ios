@@ -34,7 +34,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
         let response = try await self.httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV3.self) // New change for v3
+            .success(code: 200, type: QualifiedConversationListV3.self) // Change in v3
             .failure(code: 400, error: ConversationsAPIError.invalidBody)
             .parse(response)
     }
@@ -42,7 +42,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
 
 // MARK: Decodables
 
-struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
+private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case found = "found"
         case notFound = "not_found"
@@ -64,7 +64,7 @@ struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
 
 // MARK: -
 
-struct ConversationV3: Decodable, ToAPIModelConvertible {
+private struct ConversationV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
         case accessRole = "access_role"
