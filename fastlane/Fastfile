@@ -65,6 +65,7 @@ platform :ios do
         options[:upload_app_center] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Development')
         build_and_upload_app(options)
     end
@@ -76,6 +77,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Playground')
         build_and_upload_app(options)
         `export TEMP='BUILD_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
@@ -87,6 +89,7 @@ platform :ios do
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         save_app_name('Testflight Beta')
         build_and_upload_app(options)
@@ -99,6 +102,7 @@ platform :ios do
         options[:upload_dsyms_to_app_center] = true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
+        options[:countly_api_key] = ENV['COUNTLY_PRODUCTION_KEY']
         save_app_name('Public AppStore Production')
         build_and_upload_app(options)
     end
@@ -323,6 +327,7 @@ platform :ios do
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
+            xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
 
             build_app(
                 scheme: "Wire-iOS",
@@ -541,6 +546,7 @@ class Build
     attr_reader :skip_security_tests
     # send to non-default external distribution list
     attr_reader :send_to_externals
+    attr_reader :countly_api_key
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -560,6 +566,7 @@ class Build
             @git_branch = ENV['GITHUB_REF_NAME']
         end
 
+        @countly_api_key = options[:countly_api_key]
         @send_to_externals = ENV['SEND_TO_EXTERNALS'] == "true" || ENV['SEND_TO_EXTERNALS'] == "1"
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
@@ -581,6 +588,10 @@ class Build
     end
 
     # Helpers
+
+    def countly_enabled
+        !@countly_api_key.nil? && !@countly_api_key.empty?
+    end
 
     def playground_build
         @build_type == "Playground"

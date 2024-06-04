@@ -64,18 +64,19 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
-            selfUser: userSession.selfUser,
+            selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
             accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
             account: account,
-            selfUser: userSession.selfUser,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+
 
         colorSchemeController = .init(userSession: userSession)
 
@@ -180,7 +181,7 @@ final class ZClientViewController: UIViewController {
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,
-            selfUser: userSession.selfUser
+            selfUser: userSession.selfUserLegalHoldSubject
         )
 
         mainTabBarController = MainTabBarController(
@@ -603,7 +604,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfUser,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)

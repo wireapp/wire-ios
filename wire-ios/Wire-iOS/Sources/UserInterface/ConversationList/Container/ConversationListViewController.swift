@@ -101,14 +101,14 @@ final class ConversationListViewController: UIViewController {
 
     convenience init(
         account: Account,
-        selfUser: SelfUserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
