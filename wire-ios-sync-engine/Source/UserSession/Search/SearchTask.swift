@@ -620,11 +620,3 @@ extension ZMSearchUser {
     }
 
 }
-
-extension ZMTransportData where Self: NSObject {
-
-    func contentHash() -> Int {
-        hashValue
-    }
-
-}
