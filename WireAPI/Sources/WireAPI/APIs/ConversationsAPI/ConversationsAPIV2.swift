@@ -26,7 +26,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
 
         // New change for v2
-        let resourcePath = "/conversations/list"
+        let resourcePath = "\(pathPrefix)/conversations/list"
 
         let request = HTTPRequest(
             path: resourcePath,

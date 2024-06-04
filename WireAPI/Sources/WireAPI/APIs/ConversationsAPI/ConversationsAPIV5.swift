@@ -24,7 +24,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let resourcePath = "/conversations/list"
+        let resourcePath = "\(pathPrefix)/conversations/list"
 
         let request = HTTPRequest(
             path: resourcePath,
