@@ -18,10 +18,20 @@
 
 import Foundation
 
-public protocol APIBuilder {
-    associatedtype API
+/// Errors originating from `UpdateEventsAPI`.
 
-    init(httpClient: any HTTPClient)
+public enum UpdateEventsAPIError: Error {
 
-    func makeAPI(for version: APIVersion) -> API
+    /// A request path is not invalid.
+
+    case invalidPath
+
+    /// A provided client id is not valid.
+
+    case invalidClient
+
+    /// The requested notification(s) was not found.
+
+    case notFound
+
 }

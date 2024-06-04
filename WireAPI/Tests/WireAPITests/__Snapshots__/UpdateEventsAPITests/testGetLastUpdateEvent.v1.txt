@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v1/notifications/last?client=abcd1234"
+  - method: get
+  - body: none

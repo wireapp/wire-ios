@@ -16,24 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIAlertController {
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning update events.
 
-    static func historyImportWarning(completion: @escaping () -> Void) -> UIAlertController {
-        let controller = UIAlertController(
-            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.title,
-            message: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.message,
-            alertAction: .cancel()
-        )
+public protocol UpdateEventsAPI {
 
-        let proceedAction = UIAlertAction(
-            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
-            style: .default,
-            handler: { _ in completion() }
-        )
-        controller.addAction(proceedAction)
-        return controller
-    }
+    /// Get the last (most recent) update event for the self client.
+    ///
+    /// - Parameter selfClientID: The id of the self client.
+    /// - Returns: An update envelope containing the last update event.
+
+    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
 
 }
