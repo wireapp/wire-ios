@@ -49,7 +49,12 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
+        let modelHelper = ModelHelper()
+
+        let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
+        selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
+        selfUser.accentColor = .red
+
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -177,21 +182,18 @@ final class ConversationListViewControllerTests: XCTestCase {
     }
 
     func testForShowingConversationsFilteredByOneOnOne() throws {
-        throw XCTSkip("We can't really work make this test work until we refactor all of the code we have related to User Types")
-
         // GIVEN
         let modelHelper = ModelHelper()
         let fixture = CoreDataFixture()
 
         let user1 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+        user1.name = "Alice"
+
         let user2 = modelHelper.createUser(in: fixture.coreDataStack.viewContext)
+        user2.name = "Bob"
 
         let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: fixture.coreDataStack.viewContext)
         let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: fixture.coreDataStack.viewContext)
-
-        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(
-            in: coreDataFixture.coreDataStack.viewContext
-        )
 
         userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
 
