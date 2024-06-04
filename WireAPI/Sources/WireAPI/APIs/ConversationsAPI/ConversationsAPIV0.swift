@@ -74,7 +74,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        let parameters = GetConversationsParameters(qualifiedIdentifiers: identifiers)
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let resourcePath = "/conversations/list/v2"
 
@@ -86,10 +86,20 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         let response = try await self.httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationList<ConversationV0>.self)
+            .success(code: 200, type: QualifiedConversationListV0.self)
             .failure(code: 400, error: ConversationsAPIError.invalidBody)
             .parse(response)
     }
+}
+
+// MARK: Encodables
+
+struct GetConversationsParametersV0: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case qualifiedIdentifiers = "qualified_ids"
+    }
+
+    let qualifiedIdentifiers: [QualifiedID]
 }
 
 // MARK: - Decodables
@@ -117,7 +127,29 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 
 // MARK: -
 
-private struct ConversationV0: Decodable, ToAPIModelConvertible {
+struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case found = "found"
+        case notFound = "not_found"
+        case failed = "failed"
+    }
+
+    let found: [ConversationV0]
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
+
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound,
+            failed: failed
+        )
+    }
+}
+
+// MARK: -
+
+struct ConversationV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
         case accessRole = "access_role"
@@ -205,26 +237,4 @@ private struct ConversationV0: Decodable, ToAPIModelConvertible {
             type: type
         )
     }
-}
-
-// MARK: -
-
-extension QualifiedConversationList<ConversationV0>: ToAPIModelConvertible {
-    func toAPIModel() -> ConversationList {
-        ConversationList(
-            found: found.map { $0.toAPIModel() },
-            notFound: notFound,
-            failed: failed
-        )
-    }
-}
-
-// MARK: Encodables
-
-private struct GetConversationsParameters: Encodable {
-    enum CodingKeys: String, CodingKey {
-        case qualifiedIdentifiers = "qualified_ids"
-    }
-
-    let qualifiedIdentifiers: [QualifiedID]
 }
