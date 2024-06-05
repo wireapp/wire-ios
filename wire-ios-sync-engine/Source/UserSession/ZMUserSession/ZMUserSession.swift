@@ -702,8 +702,6 @@ public final class ZMUserSession: NSObject {
 
     func startRequestLoopTracker() {
         transportSession.requestLoopDetectionCallback = { path in
-            guard !path.hasSuffix("/typing") else { return }
-
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {

@@ -22,6 +22,7 @@
 @import UIKit;
 
 #import <WireTransport/WireTransport-Swift.h>
+#import <libkern/OSAtomic.h>
 
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
@@ -34,7 +35,6 @@
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMURLSession.h"
-#import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 #import "NSData+Multipart.h"
 #import "ZMTaskIdentifier.h"
@@ -47,7 +47,6 @@ NSString * const ZMTransportSessionReachabilityIsEnabled = @"ZMTransportSessionR
 static NSString * const TaskTimerKey = @"task";
 static NSString * const SessionTimerKey = @"session";
 static NSInteger const DefaultMaximumRequests = 6;
-
 
 @interface ZMTransportSession () <ZMAccessTokenHandlerDelegate, ZMTimerClient>
 
@@ -79,7 +78,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic, weak) id<ZMNetworkStateDelegate> weakNetworkStateDelegate;
 @property (nonatomic) NSMutableDictionary <NSString *, dispatch_block_t> *completionHandlerBySessionID;
 
-@property (nonatomic) id<RequestRecorder> requestLoopDetection;
+@property (nonatomic) RequestLoopDetection *requestLoopDetection;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
@@ -397,7 +396,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     [request markStartOfUploadTimestamp];
     [task resume];
-    [self.requestLoopDetection recordRequestWithPath:request.path contentHash:request.contentDebugInformationHash date:nil];
+
+    [self.requestLoopDetection recordRequestWithPath:request.path
+                                         contentHint:request.contentHintForRequestLoop
+                                                date:nil];
 }
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
