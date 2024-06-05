@@ -1366,6 +1366,7 @@
 		E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
 		E9ACC8362C10884F0002E608 /* StartUIIconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */; };
+		E9ACC8382C1089D10002E608 /* OpenServicesAdminCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */; };
 		E9B0DED42B5E7151006DC9E4 /* AccentColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B0DED32B5E7151006DC9E4 /* AccentColorPicker.swift */; };
 		E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
 		E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
@@ -3462,6 +3463,7 @@
 		E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftMockConversation+ConversationCreation.swift"; sourceTree = "<group>"; };
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
 		E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartUIIconCell.swift; sourceTree = "<group>"; };
+		E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenServicesAdminCell.swift; sourceTree = "<group>"; };
 		E9B0DED32B5E7151006DC9E4 /* AccentColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorPicker.swift; sourceTree = "<group>"; };
 		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
@@ -6237,6 +6239,7 @@
 				1671D6D0200CDC380022D289 /* InviteTeamMemberCell.swift */,
 				16C02A0F204E964300811912 /* GroupConversationCell.swift */,
 				E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */,
+				E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -9375,6 +9378,7 @@
 				BFE4186D209B6FFA00503C7C /* CallAction.swift in Sources */,
 				F195EB9D1E2F75BC00712118 /* FeedbackOverlayView.swift in Sources */,
 				7C3A82CB20B6E6B800313B4F /* CameraAccess.swift in Sources */,
+				E9ACC8382C1089D10002E608 /* OpenServicesAdminCell.swift in Sources */,
 				87AAE4251E4347F000E1D13A /* ConversationContentViewController+PeekPop.swift in Sources */,
 				EF17B0D9223A8F7C006252A8 /* SketchColorCollectionViewCell.swift in Sources */,
 				D503538C207B5DB900CE34A5 /* BackupRestoreController+Password.swift in Sources */,

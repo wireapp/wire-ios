@@ -18,16 +18,15 @@
 
 import UIKit
 
-final class InviteTeamMemberCell: StartUIIconCell {
+final class OpenServicesAdminCell: StartUIIconCell {
 
     override func setupViews() {
         super.setupViews()
-        icon = .envelope
-        title = PeoplePicker.inviteTeamMembers
+        icon = .bot
+        title = PeoplePicker.QuickAction.adminServices
         isAccessibilityElement = true
         accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.invite_team"
+        accessibilityIdentifier = "button.searchui.open-services"
     }
 
 }
