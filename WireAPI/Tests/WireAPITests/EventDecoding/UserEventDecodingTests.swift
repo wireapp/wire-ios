@@ -78,6 +78,34 @@ final class UserEventDecodingTests: XCTestCase {
             to: .user(.legalholdRequest(Scaffolding.legalholdRequestEvent))
         )
     }
+    
+    func testDecodingUserPropertiesSetEvent_ReadReceipts() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserPropertiesSetReadReceipts",
+            to: .user(.propertiesSet(Scaffolding.readReceiptsPropertiesSetEvent))
+        )
+    }
+
+    func testDecodingUserPropertiesSetEvent_TypingIndicators() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserPropertiesSetTypingIndicators",
+            to: .user(.propertiesSet(Scaffolding.typingIndicatorsPropertiesSetEvent))
+        )
+    }
+
+    func testDecodingUserPropertiesSetEvent_ConversationLabels() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserPropertiesSetConversationLabels",
+            to: .user(.propertiesSet(Scaffolding.conversationLabelsPropertiesSetEvent))
+        )
+    }
+
+    func testDecodingUserPropertiesSetEvent_UnknownProperty() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserPropertiesSetUnknownProperty",
+            to: .user(.propertiesSet(Scaffolding.unknownPropertiesSetEvent))
+        )
+    }
 
     func testDecodingUserPropertiesDeleteEvent() throws {
         try helper.assertEventDecodingFromResource(
@@ -164,6 +192,43 @@ final class UserEventDecodingTests: XCTestCase {
                 id: 12345,
                 base64EncodedKey: "foo"
             )
+        )
+
+        static let readReceiptsPropertiesSetEvent = UserPropertiesSetEvent(
+            property: .areReadRecieptsEnabled(true)
+        )
+
+        static let typingIndicatorsPropertiesSetEvent = UserPropertiesSetEvent(
+            property: .areTypingIndicatorsEnabled(true)
+        )
+
+        static let conversationLabelsPropertiesSetEvent = UserPropertiesSetEvent(
+            property: .conversationLabels(
+                [
+                    ConversationLabel(
+                        id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
+                        name: "Foo",
+                        type: 0,
+                        conversationIDs: [
+                            UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
+                            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
+                        ]
+                    ),
+                    ConversationLabel(
+                        id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE375")!,
+                        name: nil,
+                        type: 1,
+                        conversationIDs: [
+                            UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc")!,
+                            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!
+                        ]
+                    )
+                ]
+            )
+        )
+
+        static let unknownPropertiesSetEvent = UserPropertiesSetEvent(
+            property: .unknown(key: "SOME_UNKNOWN_KEY")
         )
 
         static let propertiesDeleteEvent = UserPropertiesDeleteEvent(key: "foo")

@@ -56,7 +56,7 @@ public enum UserEvent: Equatable {
 
     /// One of the self user's persisted properties was set.
 
-    case propertiesSet
+    case propertiesSet(UserPropertiesSetEvent)
 
     /// One of the self user's persisted properties was deleted.
 

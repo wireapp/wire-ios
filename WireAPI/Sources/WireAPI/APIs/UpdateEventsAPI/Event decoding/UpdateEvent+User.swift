@@ -60,7 +60,8 @@ extension UpdateEvent {
             self = .user(.legalholdRequest(event))
 
         case .propertiesSet:
-            self = .user(.propertiesSet)
+            let event = try container.decodePropertiesSetEvent()
+            self = .user(.propertiesSet(event))
 
         case .propertiesDelete:
             let event = try container.decodePropertiesDeleteEvent()
@@ -86,6 +87,7 @@ private enum UserEventCodingKeys: String, CodingKey {
     case connection = "connection"
     case lastPrekey = "last_prekey"
     case propertyKey = "key"
+    case propertyValue = "value"
 
 }
 
@@ -298,6 +300,59 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
                 base64EncodedKey: lastPrekey.key
             )
         )
+    }
+
+}
+
+// MARK: - User properties set event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodePropertiesSetEvent() throws -> UserPropertiesSetEvent {
+        let property: UserProperty
+        let key = try decode(String.self, forKey: .propertyKey)
+
+        switch key {
+        case "WIRE_RECEIPT_MODE":
+            let value = try decode(Int.self, forKey: .propertyValue)
+            property = .areReadRecieptsEnabled(value == 1)
+
+        case "WIRE_TYPING_INDICATOR_MODE":
+            let value = try decode(Int.self, forKey: .propertyValue)
+            property = .areTypingIndicatorsEnabled(value == 1)
+
+        case "labels":
+            let payload = try decode(LabelsPayload.self, forKey: .propertyValue)
+            let conversationLabels = payload.labels.map {
+                ConversationLabel(
+                    id: $0.id,
+                    name: $0.name,
+                    type: $0.type,
+                    conversationIDs: $0.conversations
+                )
+            }
+            property = .conversationLabels(conversationLabels)
+
+        default:
+            property = .unknown(key: key)
+        }
+
+        return UserPropertiesSetEvent(property: property)
+    }
+
+    private struct LabelsPayload: Decodable {
+
+        let labels: [Label]
+
+    }
+
+    private struct Label: Decodable {
+
+        let id: UUID
+        let type: Int16
+        let name: String?
+        let conversations: [UUID]
+
     }
 
 }
