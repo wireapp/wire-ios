@@ -94,14 +94,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         view = StartUIView(frame: CGRect.zero)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.tintColor = UIColor.accent()
         navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-
     }
 
     private func configGroupSelector() {
