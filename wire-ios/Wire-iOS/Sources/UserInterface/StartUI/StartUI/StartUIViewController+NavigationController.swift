@@ -32,7 +32,7 @@ extension StartUIViewController {
             title: L10n.Localizable.General.cancel,
             style: .plain,
             target: self,
-            action: #selector(onDismissPressed)
+            action: #selector(onDismiss)
         )
 
         cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
@@ -54,7 +54,7 @@ extension StartUIViewController {
     }
 
     @objc
-    func onDismissPressed() {
+    func onDismiss() {
         _ = searchHeader.tokenField.resignFirstResponder()
         navigationController?.dismiss(animated: true)
     }

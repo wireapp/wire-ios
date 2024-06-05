@@ -213,7 +213,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        onDismissPressed()
+        onDismiss()
         return true
     }
 
