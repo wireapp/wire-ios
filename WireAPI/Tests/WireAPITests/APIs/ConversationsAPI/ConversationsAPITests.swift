@@ -23,16 +23,24 @@ import XCTest
 final class ConversationsAPITests: XCTestCase {
 
     private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
+    private var apiSnapshotHelper: APISnapshotHelper<ConversationsAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
+
         httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
+        apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
+            let builder = ConversationsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
     }
 
     override func tearDown() {
+        apiSnapshotHelper = nil
         httpRequestSnapshotHelper = nil
+
         super.tearDown()
     }
 
@@ -43,11 +51,6 @@ final class ConversationsAPITests: XCTestCase {
     func testGetLegacyConversationIdentifiers() async throws {
         // given
         let apiVersions: [APIVersion] = [.v0]
-
-        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
-            let builder = ConversationsAPIBuilder(httpClient: httpClient)
-            return builder.makeAPI(for: apiVersion)
-        }
 
         // when
         // then
@@ -63,11 +66,6 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationIdentifiers() async throws {
         // given
         let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
-
-        let apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
-            let builder = ConversationsAPIBuilder(httpClient: httpClient)
-            return builder.makeAPI(for: apiVersion)
-        }
 
         // when
         // then
@@ -216,6 +214,22 @@ final class ConversationsAPITests: XCTestCase {
     }
 
     // MARK: getConversations
+
+    func testGetConversations_givenAllAPIVersions_thenVerifyRequests() async throws {
+        // given
+        let apiVersions = APIVersion.allCases
+
+        let qualifiedID = QualifiedID(
+            uuid: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
+            domain: "wire.com"
+        )
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            _ = try await sut.getConversations(for: [qualifiedID])
+        }
+    }
 
     func testGetConversations_givenV0_thenVerifyRequests() async throws {
         // given
