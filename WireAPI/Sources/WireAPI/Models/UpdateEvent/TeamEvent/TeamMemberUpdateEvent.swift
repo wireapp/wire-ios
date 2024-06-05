@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a user's team membership metadata was updated.
 
-public struct TeamMemberUpdateEventData: Equatable {
+public struct TeamMemberUpdateEvent: Equatable {
 
     /// The team id.
 

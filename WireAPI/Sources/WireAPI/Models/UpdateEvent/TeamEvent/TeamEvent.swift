@@ -28,10 +28,10 @@ public enum TeamEvent: Equatable {
 
     /// A user has left a team.
 
-    case memberLeave(TeamMemberLeaveEventData)
+    case memberLeave(TeamMemberLeaveEvent)
 
     /// A user's team membership was updated.
 
-    case memberUpdate(TeamMemberUpdateEventData)
+    case memberUpdate(TeamMemberUpdateEvent)
 
 }

@@ -64,13 +64,13 @@ private extension KeyedDecodingContainer<TeamEventCodingKeys> {
 
 private extension KeyedDecodingContainer<TeamEventCodingKeys> {
 
-    func decodeMemberLeaveEvent() throws -> TeamMemberLeaveEventData {
+    func decodeMemberLeaveEvent() throws -> TeamMemberLeaveEvent {
         let payload = try decode(
             TeamMemberLeaveEventPayload.self,
             forKey: .payload
         )
 
-        return try TeamMemberLeaveEventData(
+        return try TeamMemberLeaveEvent(
             teamID: decodeTeamID(),
             userID: payload.userID
         )
@@ -94,13 +94,13 @@ private extension KeyedDecodingContainer<TeamEventCodingKeys> {
 
 private extension KeyedDecodingContainer<TeamEventCodingKeys> {
 
-    func decodeMemberUpdateEvent() throws -> TeamMemberUpdateEventData {
+    func decodeMemberUpdateEvent() throws -> TeamMemberUpdateEvent {
         let payload = try decode(
             TeamMemberUpdateEventPayload.self,
             forKey: .payload
         )
 
-        return try TeamMemberUpdateEventData(
+        return try TeamMemberUpdateEvent(
             teamID: decodeTeamID(),
             membershipID: payload.membershipID
         )
