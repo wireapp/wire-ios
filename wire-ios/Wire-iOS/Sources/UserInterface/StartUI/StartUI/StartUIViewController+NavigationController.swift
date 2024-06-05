@@ -35,7 +35,7 @@ extension StartUIViewController {
             action: #selector(onDismissPressed)
         )
 
-        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CanceButton.description
+        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
         cancelButton.accessibilityIdentifier = "cancel"
 
         navigationItem.rightBarButtonItem = cancelButton
