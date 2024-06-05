@@ -99,16 +99,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         navigationController?.pushViewController(detail, animated: true)
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     wantsToPerformAction action: SearchResultsViewControllerAction) {
-        switch action {
-        case .createGroup:
-            openCreateGroupController()
-        case .createGuestRoom:
-            createGuestRoom()
-        }
-    }
-
     func openCreateGroupController() {
         let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
@@ -122,40 +112,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             let embeddedNavigationController = controller.wrapInNavigationController()
             embeddedNavigationController.modalPresentationStyle = .formSheet
             self.present(embeddedNavigationController, animated: true)
-        }
-    }
-
-    func createGuestRoom() {
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-        // swiftlint:enable todo_requires_jira_link
-        guard let userSession = userSession as? ZMUserSession else {
-            return WireLogger.conversation.error("failed to create guest room: no user session")
-        }
-
-        isLoadingViewVisible = true
-
-        let service = ConversationService(context: userSession.viewContext)
-        service.createGroupConversation(
-            name: L10n.Localizable.General.guestRoomName,
-            users: [],
-            allowGuests: true,
-            allowServices: true,
-            enableReceipts: false,
-            messageProtocol: .proteus
-        ) { [weak self] in
-            switch $0 {
-            case .success(let conversation):
-                guard let self else { return }
-                self.delegate?.startUI(
-                    self,
-                    didSelect: conversation
-                )
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
-            }
-
         }
     }
 }

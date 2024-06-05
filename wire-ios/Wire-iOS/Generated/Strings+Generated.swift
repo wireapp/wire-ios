@@ -3411,8 +3411,6 @@ internal enum L10n {
       internal static let edit = L10n.tr("Localizable", "general.edit", fallback: "Edit")
       /// Something went wrong
       internal static let failure = L10n.tr("Localizable", "general.failure", fallback: "Something went wrong")
-      /// Guest room
-      internal static let guestRoomName = L10n.tr("Localizable", "general.guest-room-name", fallback: "Guest room")
       /// Later
       internal static let later = L10n.tr("Localizable", "general.later", fallback: "Later")
       /// Loading…
@@ -4421,10 +4419,6 @@ internal enum L10n {
       internal enum QuickAction {
         /// Manage Services
         internal static let adminServices = L10n.tr("Localizable", "peoplepicker.quick-action.admin-services", fallback: "Manage Services")
-        /// Create group
-        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.quick-action.create-conversation", fallback: "Create group")
-        /// Create guest room
-        internal static let createGuestRoom = L10n.tr("Localizable", "peoplepicker.quick-action.create-guest-room", fallback: "Create guest room")
         /// Open
         internal static let openConversation = L10n.tr("Localizable", "peoplepicker.quick-action.open-conversation", fallback: "Open")
       }

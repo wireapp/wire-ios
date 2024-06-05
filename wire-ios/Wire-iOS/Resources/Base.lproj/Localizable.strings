@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Invite more people";
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Open";
-"peoplepicker.quick-action.create-conversation" = "Create group";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
