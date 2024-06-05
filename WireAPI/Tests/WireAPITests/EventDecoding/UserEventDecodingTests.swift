@@ -75,6 +75,24 @@ final class UserEventDecodingTests: XCTestCase {
         XCTAssertEqual(payload, Scaffolding.connectionEvent)
     }
 
+    func testDecodingUserContactJoinEvent() async throws {
+        // Given event data.
+        let resource = try MockEventDataResource(name: "UserContactJoin")
+
+        // When decode update event.
+        let updateEvent = try JSONDecoder.defaultDecoder.decode(
+            UpdateEvent.self,
+            from: resource.jsonData
+        )
+
+        // Then it decoded the correct event.
+        guard case .user(.contactJoin(let payload)) = updateEvent else {
+            return XCTFail("unexpected event: \(updateEvent)")
+        }
+
+        XCTAssertEqual(payload, Scaffolding.contactJoinEvent)
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -124,6 +142,8 @@ final class UserEventDecodingTests: XCTestCase {
                 status: .accepted
             )
         )
+
+        static let contactJoinEvent = UserContactJoinEvent(name: "Alice McGee")
 
     }
 

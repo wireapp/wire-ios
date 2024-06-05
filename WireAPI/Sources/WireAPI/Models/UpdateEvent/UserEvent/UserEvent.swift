@@ -36,7 +36,7 @@ public enum UserEvent: Equatable {
 
     /// A contact has joined Wire.
 
-    case contactJoin
+    case contactJoin(UserContactJoinEvent)
 
     /// A user was deleted.
 

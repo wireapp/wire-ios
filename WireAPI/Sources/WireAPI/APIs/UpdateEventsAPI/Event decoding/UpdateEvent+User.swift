@@ -40,7 +40,8 @@ extension UpdateEvent {
             self = .user(.connection(event))
 
         case .contactJoin:
-            self = .user(.contactJoin)
+            let event = try container.decodeContactJoinEvent()
+            self = .user(.contactJoin(event))
 
         case .delete:
             self = .user(.delete)
@@ -158,7 +159,7 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
 
 }
 
-// MARK: - User connectino event
+// MARK: - User connection event
 
 private extension KeyedDecodingContainer<UserEventCodingKeys> {
 
@@ -206,6 +207,17 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
             case status
         }
 
+    }
+
+}
+
+// MARK: - User contact join event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodeContactJoinEvent() throws -> UserContactJoinEvent {
+        let user = try decode(UserPayload.self, forKey: .user)
+        return UserContactJoinEvent(name: user.name)
     }
 
 }
