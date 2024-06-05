@@ -201,6 +201,7 @@
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Double tap to open profile";
 "contactsList.closeButton.description" = "Close contact list";
+"contactsList.canceButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 

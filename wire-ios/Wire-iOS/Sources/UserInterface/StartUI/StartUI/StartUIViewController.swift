@@ -160,12 +160,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         updateActionBar()
         searchResults.searchContactList()
 
-        let closeButton = UIBarButtonItem(icon: .cross, style: UIBarButtonItem.Style.plain, target: self, action: #selector(onDismissPressed))
+        let cancelButton = UIBarButtonItem(title: L10n.Localizable.General.cancel, style: .plain, target: self, action: #selector(onDismissPressed))
 
-        closeButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
-        closeButton.accessibilityIdentifier = "close"
+        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
+        cancelButton.accessibilityIdentifier = "cancel"
 
-        navigationItem.rightBarButtonItem = closeButton
+        navigationItem.rightBarButtonItem = cancelButton
         view.accessibilityViewIsModal = true
     }
 
