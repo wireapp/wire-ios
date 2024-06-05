@@ -21,52 +21,32 @@ import XCTest
 
 final class FederationEventDecodingTests: XCTestCase {
 
-    func testDecodingFederationConnectionRemovedEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "FederationConnectionRemoved")
+    private let helper = EventDecodingAssertionHelper()
 
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingFederationConnectionRemovedEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "FederationConnectionRemoved",
+            to: .federation(.connectionRemoved(Scaffolding.connectionRemovedEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .federation(.connectionRemoved(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.connectionRemovedEventPayload)
     }
 
-    func testDecodingFederationDeleteEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "FederationDelete")
-
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingFederationDeleteEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "FederationDelete",
+            to: .federation(.delete(Scaffolding.deleteEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .federation(.delete(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.deleteEventPayload)
     }
 
     private enum Scaffolding {
 
-        static let connectionRemovedEventPayload = FederationConnectionRemovedEvent(
+        static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
                 "a.com",
                 "b.com"
             ]
         )
 
-        static let deleteEventPayload = FederationDeleteEvent(domain: "foo.com")
+        static let deleteEvent = FederationDeleteEvent(domain: "foo.com")
     }
 
 }

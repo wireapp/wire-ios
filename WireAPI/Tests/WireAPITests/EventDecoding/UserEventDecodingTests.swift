@@ -21,94 +21,41 @@ import XCTest
 
 final class UserEventDecodingTests: XCTestCase {
 
-    func testDecodingClientAddEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "UserClientAdd")
+    private let helper = EventDecodingAssertionHelper()
 
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingClientAddEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserClientAdd",
+            to: .user(.clientAdd(Scaffolding.clientAddEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .user(.clientAdd(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.clientAddEvent)
     }
 
-    func testDecodingClientRemoveEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "UserClientRemove")
-
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingClientRemoveEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserClientRemove",
+            to: .user(.clientRemove(Scaffolding.clientRemoveEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .user(.clientRemove(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.clientRemoveEvent)
     }
 
-    func testDecodingUserConnectionEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "UserConnection")
-
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingUserConnectionEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserConnection",
+            to: .user(.connection(Scaffolding.connectionEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .user(.connection(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.connectionEvent)
     }
 
-    func testDecodingUserContactJoinEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "UserContactJoin")
-
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingUserContactJoinEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserContactJoin",
+            to: .user(.contactJoin(Scaffolding.contactJoinEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .user(.contactJoin(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.contactJoinEvent)
     }
 
-    func testDecodingUserEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "UserDelete")
-
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingUserEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserDelete",
+            to: .user(.delete(Scaffolding.userDeleteEvent))
         )
-
-        // Then it decoded the correct event.
-        guard case .user(.delete(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.userDeleteEvent)
     }
 
     private enum Scaffolding {
