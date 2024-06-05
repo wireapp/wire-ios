@@ -18,8 +18,8 @@
 
 @import WireSystem;
 
-#import "ZMManagedObject.h"
-#import "ZMMessage.h"
+#import <WireDataModel/ZMManagedObject.h>
+#import <WireDataModel/ZMMessage.h>
 
 @class ZMUser;
 @class ZMMessage;

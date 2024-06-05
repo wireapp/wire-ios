@@ -17,7 +17,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ZMRequestGenerator.h"
+#import <WireRequestStrategy/ZMRequestGenerator.h>
 
 @class ZMRemoteIdentifierObjectSync;
 @class ZMTransportRequest;

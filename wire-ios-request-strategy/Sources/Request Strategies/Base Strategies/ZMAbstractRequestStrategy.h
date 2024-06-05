@@ -18,8 +18,8 @@
 
 @import Foundation;
 
-#import "ZMStrategyConfigurationOption.h"
-#import "RequestStrategy.h"
+#import <WireRequestStrategy/ZMStrategyConfigurationOption.h>
+#import <WireRequestStrategy/RequestStrategy.h>
 
 @class ZMTransportRequest;
 @class NSManagedObjectContext;

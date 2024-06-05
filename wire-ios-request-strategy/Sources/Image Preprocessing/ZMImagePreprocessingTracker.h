@@ -19,8 +19,8 @@
 @import Foundation;
 @import WireImages;
 
-#import "ZMContextChangeTracker.h"
-#import "ZMOutstandingItems.h"
+#import <WireRequestStrategy/ZMContextChangeTracker.h>
+#import <WireRequestStrategy/ZMOutstandingItems.h>
 
 @protocol ZMAssetsPreprocessor;
 @class ZMImageMessage;
