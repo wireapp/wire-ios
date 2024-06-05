@@ -44,7 +44,8 @@ extension UpdateEvent {
             self = .user(.contactJoin(event))
 
         case .delete:
-            self = .user(.delete)
+            let event = try container.decodeDeleteEvent()
+            self = .user(.delete(event))
 
         case .legalholdDisable:
             self = .user(.legalholdDisable)
@@ -75,6 +76,7 @@ private enum UserEventCodingKeys: String, CodingKey {
 
     case client = "client"
     case user = "user"
+    case id = "id"
     case qualifiedID = "qualified_id"
     case connection = "connection"
 
@@ -218,6 +220,22 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
     func decodeContactJoinEvent() throws -> UserContactJoinEvent {
         let user = try decode(UserPayload.self, forKey: .user)
         return UserContactJoinEvent(name: user.name)
+    }
+
+}
+
+// MARK: - User delete event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodeDeleteEvent() throws -> UserDeleteEvent {
+        let userID = try decode(UUID.self, forKey: .id)
+        let qualifiedUserID = try decode(QualifiedID.self, forKey: .qualifiedID)
+
+        return UserDeleteEvent(
+            userID: userID,
+            qualifiedUserID: qualifiedUserID
+        )
     }
 
 }

@@ -40,7 +40,7 @@ public enum UserEvent: Equatable {
 
     /// A user was deleted.
 
-    case delete
+    case delete(UserDeleteEvent)
 
     /// Legalhold was disabled for a user.
 

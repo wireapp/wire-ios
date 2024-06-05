@@ -1,0 +1,8 @@
+{
+    "type": "user.delete",
+    "id": "426525d3-81fc-467a-843a-1d1c375ca4b4",
+    "qualified_id": {
+        "domain": "example.com",
+        "id": "426525d3-81fc-467a-843a-1d1c375ca4b4"
+    }
+}
