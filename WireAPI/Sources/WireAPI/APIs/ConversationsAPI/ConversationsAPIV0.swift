@@ -152,8 +152,8 @@ struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
 struct ConversationV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
-        case accessRole = "access_role"
-        case accessRoleV2 = "access_role_v2"
+        case legacyAccessRole = "access_role"
+        case accessRoles = "access_role_v2"
         case creator
         case epoch
         case id
@@ -187,30 +187,6 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
     var readReceiptMode: Int?
     var teamID: UUID?
     var type: Int?
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        access = try container.decodeIfPresent([String].self, forKey: .access)
-        creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
-        epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
-        id = try container.decodeIfPresent(UUID.self, forKey: .id)
-        lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
-        lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
-        members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
-        messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
-        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-        mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
-        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-        teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
-        type = try container.decodeIfPresent(Int.self, forKey: .type)
-
-        // parsing for v0
-        legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-        accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-    }
 
     func toAPIModel() -> Conversation {
         Conversation(
