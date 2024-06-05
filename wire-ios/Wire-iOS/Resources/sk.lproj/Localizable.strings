@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archive";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Konverzácie začínajú tu";
@@ -1041,6 +1043,7 @@
 "self.add_email_password" = "Pridať e-mailovú adresu a heslo";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Podmienky používania";
 "about.privacy.title" = "Zásady ochrany osobných údajov";
 "about.license.title" = "Informácie o licencii";

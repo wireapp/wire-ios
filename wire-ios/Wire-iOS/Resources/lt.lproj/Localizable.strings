@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archyvas";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Pokalbiai prasideda čia";
@@ -1041,6 +1043,7 @@
 "self.add_email_password" = "Pridėkite el. pašto adresą ir slaptažodį";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Naudojimosi sąlygos";
 "about.privacy.title" = "Privatumo politika";
 "about.license.title" = "Licencijos informacija";
