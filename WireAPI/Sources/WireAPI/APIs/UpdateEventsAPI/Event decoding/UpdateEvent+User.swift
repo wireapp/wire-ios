@@ -56,7 +56,8 @@ extension UpdateEvent {
             self = .user(.legalholdEnable(event))
 
         case .legalholdRequest:
-            self = .user(.legalholdRequest)
+            let event = try container.decodeLegalholdRequestEvent()
+            self = .user(.legalholdRequest(event))
 
         case .propertiesSet:
             self = .user(.propertiesSet)
@@ -81,6 +82,7 @@ private enum UserEventCodingKeys: String, CodingKey {
     case id = "id"
     case qualifiedID = "qualified_id"
     case connection = "connection"
+    case lastPrekey = "last_prekey"
 
 }
 
@@ -142,7 +144,6 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
         let capabilities: [UserClientCapability]
 
     }
-
 
 }
 
@@ -260,6 +261,40 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
     func decodeLegalholdEnableEvent() throws -> UserLegalholdEnableEvent {
         let userID = try decode(UUID.self, forKey: .id)
         return UserLegalholdEnableEvent(userID: userID)
+    }
+
+    private struct ClientPayload: Decodable {
+
+        let id: String
+
+    }
+
+    private struct PrekeyPayload: Decodable {
+
+        let id: Int
+        let key: String
+
+    }
+
+}
+
+// MARK: - User legalhold request event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodeLegalholdRequestEvent() throws -> UserLegalholdRequestEvent {
+        let userID = try decode(UUID.self, forKey: .id)
+        let client = try decode(ClientPayload.self, forKey: .client)
+        let lastPrekey = try decode(PrekeyPayload.self, forKey: .lastPrekey)
+
+        return UserLegalholdRequestEvent(
+            userID: userID,
+            clientID: client.id,
+            lastPrekey: Prekey(
+                id: lastPrekey.id,
+                base64EncodedKey: lastPrekey.key
+            )
+        )
     }
 
 }

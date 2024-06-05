@@ -50,9 +50,9 @@ public enum UserEvent: Equatable {
 
     case legalholdEnable(UserLegalholdEnableEvent)
 
-    /// Legalhold has been requested for a user.
+    /// A user has been requested to become a legalhold subject.
 
-    case legalholdRequest
+    case legalholdRequest(UserLegalholdRequestEvent)
 
     /// One of the self user's persisted properties was set.
 
