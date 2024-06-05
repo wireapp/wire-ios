@@ -182,7 +182,7 @@ extension DatadogWrapper: RemoteLogger {
 
 import CryptoKit
 
-extension String {
+private extension String {
 
     var sha256String: String {
         let inputData = Data(self.utf8)
