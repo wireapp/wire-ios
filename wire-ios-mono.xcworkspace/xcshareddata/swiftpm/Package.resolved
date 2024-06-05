@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Datadog",
+        "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "21b62371bdbd40747ef1c3b47ea0f2fd6f154eb1",
+          "version": "1.23.0"
+        }
+      },
+      {
         "package": "DifferenceKit",
         "repositoryURL": "https://github.com/wireapp/DifferenceKit",
         "state": {
@@ -35,6 +44,15 @@
           "branch": null,
           "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
           "version": "1.2.3"
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
+        "state": {
+          "branch": null,
+          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
+          "version": "1.11.2"
         }
       },
       {
