@@ -74,13 +74,21 @@ class StartUIIconCell: UICollectionViewCell {
         iconView.contentMode = .center
         separator.backgroundColor = CellColors.backgroundSeparatorCell
         backgroundColor = CellColors.backgroundUserCell
-        [iconView, titleLabel, separator].forEach(contentView.addSubview)
+        [
+            iconView,
+            titleLabel,
+            separator
+        ].forEach(contentView.addSubview)
     }
 
     func createConstraints() {
         let iconSize: CGFloat = 32.0
 
-        [iconView, titleLabel, separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            iconView,
+            titleLabel,
+            separator
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             iconView.widthAnchor.constraint(equalToConstant: iconSize),
             iconView.heightAnchor.constraint(equalToConstant: iconSize),
