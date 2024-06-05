@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "архив";
+"archived_list.empty_placeholder.headline" = "В архиве пока ничего нет";
+"archived_list.empty_placeholder.subheadline" = "Для поддержания порядка в списке бесед переместите сюда неиспользуемые. Позже их всегда можно будет разархивировать.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Общение начинается здесь";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "Добавить email и пароль";
 
 // About screen
+"about.legal.title" = "Юридическая информация";
 "about.tos.title" = "Условия использования";
 "about.privacy.title" = "Политика конфиденциальности";
 "about.license.title" = "Информация о лицензии";
