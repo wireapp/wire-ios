@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMConversation.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMMessage.h"
-#import "ZMConnection.h"
-#import "ZMConversationSecurityLevel.h"
+#import <WireDataModel/ZMConversation.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
+#import <WireDataModel/ZMMessage.h>
+#import <WireDataModel/ZMConnection.h>
+#import <WireDataModel/ZMConversationSecurityLevel.h>
 
 @import WireImages;
 
