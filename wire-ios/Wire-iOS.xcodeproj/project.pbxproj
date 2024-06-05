@@ -1323,11 +1323,8 @@
 		E6D186D82C106B4200083F9B /* DatadogCore in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186D72C106B4200083F9B /* DatadogCore */; };
 		E6D186DA2C106B4200083F9B /* DatadogCrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186D92C106B4200083F9B /* DatadogCrashReporting */; };
 		E6D186DC2C106B4200083F9B /* DatadogLogs in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DB2C106B4200083F9B /* DatadogLogs */; };
-		E6D186DE2C106B4200083F9B /* DatadogObjc in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DD2C106B4200083F9B /* DatadogObjc */; };
 		E6D186E02C106B4200083F9B /* DatadogRUM in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DF2C106B4200083F9B /* DatadogRUM */; };
-		E6D186E22C106B4200083F9B /* DatadogSessionReplay in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186E12C106B4200083F9B /* DatadogSessionReplay */; };
 		E6D186E42C106B4200083F9B /* DatadogTrace in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186E32C106B4200083F9B /* DatadogTrace */; };
-		E6D186E62C106B4200083F9B /* DatadogWebViewTracking in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186E52C106B4200083F9B /* DatadogWebViewTracking */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
 		E6E557982BBD49A60033E62B /* NetworkQualityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E557972BBD49A60033E62B /* NetworkQualityType.swift */; };
 		E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */; };
@@ -4097,11 +4094,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6D186E62C106B4200083F9B /* DatadogWebViewTracking in Frameworks */,
 				E6D186DC2C106B4200083F9B /* DatadogLogs in Frameworks */,
-				E6D186DE2C106B4200083F9B /* DatadogObjc in Frameworks */,
 				E6D186DA2C106B4200083F9B /* DatadogCrashReporting in Frameworks */,
-				E6D186E22C106B4200083F9B /* DatadogSessionReplay in Frameworks */,
 				E6D186D82C106B4200083F9B /* DatadogCore in Frameworks */,
 				E6D186E02C106B4200083F9B /* DatadogRUM in Frameworks */,
 				EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */,
@@ -8800,11 +8794,8 @@
 				E6D186D72C106B4200083F9B /* DatadogCore */,
 				E6D186D92C106B4200083F9B /* DatadogCrashReporting */,
 				E6D186DB2C106B4200083F9B /* DatadogLogs */,
-				E6D186DD2C106B4200083F9B /* DatadogObjc */,
 				E6D186DF2C106B4200083F9B /* DatadogRUM */,
-				E6D186E12C106B4200083F9B /* DatadogSessionReplay */,
 				E6D186E32C106B4200083F9B /* DatadogTrace */,
-				E6D186E52C106B4200083F9B /* DatadogWebViewTracking */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -11826,30 +11817,15 @@
 			package = E6D186C62C106B2D00083F9B /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogLogs;
 		};
-		E6D186DD2C106B4200083F9B /* DatadogObjc */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E6D186C62C106B2D00083F9B /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
-			productName = DatadogObjc;
-		};
 		E6D186DF2C106B4200083F9B /* DatadogRUM */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E6D186C62C106B2D00083F9B /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogRUM;
 		};
-		E6D186E12C106B4200083F9B /* DatadogSessionReplay */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E6D186C62C106B2D00083F9B /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
-			productName = DatadogSessionReplay;
-		};
 		E6D186E32C106B4200083F9B /* DatadogTrace */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E6D186C62C106B2D00083F9B /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogTrace;
-		};
-		E6D186E52C106B4200083F9B /* DatadogWebViewTracking */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E6D186C62C106B2D00083F9B /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
-			productName = DatadogWebViewTracking;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
