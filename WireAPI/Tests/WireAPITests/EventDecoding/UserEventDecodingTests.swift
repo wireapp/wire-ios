@@ -79,6 +79,13 @@ final class UserEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingUserUpdateEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserUpdate",
+            to: .user(.update(Scaffolding.updateEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -150,6 +157,26 @@ final class UserEventDecodingTests: XCTestCase {
                 id: 12345,
                 base64EncodedKey: "foo"
             )
+        )
+
+        static let updateEvent = UserUpdateEvent(
+            userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!,
+            accentColorID: 2,
+            name: "Alice McGee",
+            handle: "alicemcgee",
+            email: "alice@example.com",
+            isSSOIDDeleted: true,
+            assets: [
+                UserAsset(
+                    key: "abcdefg",
+                    size: .complete,
+                    type: .image
+                )
+            ],
+            supportedProtocols: [
+                .proteus,
+                .mls
+            ]
         )
 
     }

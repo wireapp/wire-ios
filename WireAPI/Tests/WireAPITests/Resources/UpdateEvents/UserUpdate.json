@@ -1,0 +1,22 @@
+{
+    "type": "user.update",
+    "user": {
+        "id": "539d9183-32a5-4fc4-ba5c-4634454e7585",
+        "accent_id": 2,
+        "name": "Alice McGee",
+        "handle": "alicemcgee",
+        "email": "alice@example.com",
+        "sso_id_deleted": true,
+        "assets": [
+            {
+                "key": "abcdefg",
+                "size": "complete",
+                "type": "image"
+            }
+        ],
+        "supported_protocols": [
+            "proteus",
+            "mls"
+        ]
+    }
+}

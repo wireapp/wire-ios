@@ -69,7 +69,8 @@ extension UpdateEvent {
             self = .user(.pushRemove)
 
         case .update:
-            self = .user(.update)
+            let event = try container.decodeUpdateEvent()
+            self = .user(.update(event))
         }
     }
 
@@ -295,6 +296,53 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
                 base64EncodedKey: lastPrekey.key
             )
         )
+    }
+
+}
+
+// MARK: - User update event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodeUpdateEvent() throws -> UserUpdateEvent {
+        let payload = try decode(UserUpdatePayload.self, forKey: .user)
+
+        return UserUpdateEvent(
+            userID: payload.userID,
+            accentColorID: payload.accentColorID,
+            name: payload.name,
+            handle: payload.handle,
+            email: payload.email,
+            isSSOIDDeleted: payload.isSSOIDDeleted,
+            assets: payload.assets,
+            supportedProtocols: payload.supportedProtocols
+        )
+    }
+
+    private struct UserUpdatePayload: Decodable {
+
+        let userID: UUID
+        let accentColorID: Int?
+        let name: String?
+        let handle: String?
+        let email: String?
+        let isSSOIDDeleted: Bool?
+        let assets: [UserAsset]?
+        let supportedProtocols: Set<SupportedProtocol>?
+
+        enum CodingKeys: String, CodingKey {
+
+            case userID = "id"
+            case accentColorID = "accent_id"
+            case name = "name"
+            case handle = "handle"
+            case email = "email"
+            case isSSOIDDeleted = "sso_id_deleted"
+            case assets = "assets"
+            case supportedProtocols = "supported_protocols"
+
+        }
+
     }
 
 }
