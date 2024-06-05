@@ -52,7 +52,8 @@ extension UpdateEvent {
             self = .user(.legalholdDisable(event))
 
         case .legalholdEnable:
-            self = .user(.legalholdEnable)
+            let event = try container.decodeLegalholdEnableEvent()
+            self = .user(.legalholdEnable(event))
 
         case .legalholdRequest:
             self = .user(.legalholdRequest)
@@ -248,6 +249,17 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
     func decodeLegalholdDisableEvent() throws -> UserLegalholdDisableEvent {
         let userID = try decode(UUID.self, forKey: .id)
         return UserLegalholdDisableEvent(userID: userID)
+    }
+
+}
+
+// MARK: - User legalhold enable event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodeLegalholdEnableEvent() throws -> UserLegalholdEnableEvent {
+        let userID = try decode(UUID.self, forKey: .id)
+        return UserLegalholdEnableEvent(userID: userID)
     }
 
 }

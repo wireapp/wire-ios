@@ -48,7 +48,7 @@ public enum UserEvent: Equatable {
 
     /// Legalhold was enabled for a user.
 
-    case legalholdEnable
+    case legalholdEnable(UserLegalholdEnableEvent)
 
     /// Legalhold has been requested for a user.
 
