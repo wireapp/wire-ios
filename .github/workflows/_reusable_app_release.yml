@@ -130,9 +130,7 @@ jobs:
       
     steps:
       - name: Add Masks
-        run: |
-            echo "::add-mask::${{ secrets.CLIENT_NAME_C1_C2_C3 }}"
-            echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
+        run: echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
