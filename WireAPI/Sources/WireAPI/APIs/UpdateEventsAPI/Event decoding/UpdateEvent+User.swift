@@ -63,7 +63,8 @@ extension UpdateEvent {
             self = .user(.propertiesSet)
 
         case .propertiesDelete:
-            self = .user(.propertiesDelete)
+            let event = try container.decodePropertiesDeleteEvent()
+            self = .user(.propertiesDelete(event))
 
         case .pushRemove:
             self = .user(.pushRemove)
@@ -84,6 +85,7 @@ private enum UserEventCodingKeys: String, CodingKey {
     case qualifiedID = "qualified_id"
     case connection = "connection"
     case lastPrekey = "last_prekey"
+    case propertyKey = "key"
 
 }
 
@@ -296,6 +298,17 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
                 base64EncodedKey: lastPrekey.key
             )
         )
+    }
+
+}
+
+// MARK: - User properties delete event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodePropertiesDeleteEvent() throws -> UserPropertiesDeleteEvent {
+        let key = try decode(String.self, forKey: .propertyKey)
+        return UserPropertiesDeleteEvent(key: key)
     }
 
 }

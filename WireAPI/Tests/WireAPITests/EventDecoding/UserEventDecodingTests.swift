@@ -79,6 +79,13 @@ final class UserEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingUserPropertiesDeleteEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserPropertiesDelete",
+            to: .user(.propertiesDelete(Scaffolding.propertiesDeleteEvent))
+        )
+    }
+
     func testDecodingUserUpdateEvent() throws {
         try helper.assertEventDecodingFromResource(
             named: "UserUpdate",
@@ -158,6 +165,8 @@ final class UserEventDecodingTests: XCTestCase {
                 base64EncodedKey: "foo"
             )
         )
+
+        static let propertiesDeleteEvent = UserPropertiesDeleteEvent(key: "foo")
 
         static let updateEvent = UserUpdateEvent(
             userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!,

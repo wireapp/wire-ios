@@ -60,7 +60,7 @@ public enum UserEvent: Equatable {
 
     /// One of the self user's persisted properties was deleted.
 
-    case propertiesDelete
+    case propertiesDelete(UserPropertiesDeleteEvent)
 
     /// One of the self user's push tokens was removed.
 
