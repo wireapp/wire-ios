@@ -58,6 +58,13 @@ final class UserEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingUserLegalholdDisableEvent() throws {
+        try helper.assertEventDecodingFromResource(
+            named: "UserLegalholdDisable",
+            to: .user(.legalholdDisable(Scaffolding.legalholdDisableEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -117,6 +124,8 @@ final class UserEventDecodingTests: XCTestCase {
                 domain: "example.com"
             )
         )
+
+        static let legalholdDisableEvent = UserLegalholdDisableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
 
     }
 
