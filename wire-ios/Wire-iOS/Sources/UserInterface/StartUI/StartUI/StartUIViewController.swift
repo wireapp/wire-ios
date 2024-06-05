@@ -96,10 +96,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = UIColor.accent()
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        setupNavigationBar()
+        setupNavigationBarButtonItems()
     }
 
     private func configGroupSelector() {
@@ -158,19 +156,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         updateActionBar()
         searchResults.searchContactList()
 
-        let cancelButton = UIBarButtonItem(title: L10n.Localizable.General.cancel, style: .plain, target: self, action: #selector(onDismissPressed))
-
-        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CanceButton.description
-        cancelButton.accessibilityIdentifier = "cancel"
-
-        navigationItem.rightBarButtonItem = cancelButton
-
-        let createGroupButton = UIBarButtonItem(title: L10n.Localizable.Peoplepicker.Button.createConversation, style: .plain, target: self, action: #selector(createGroup))
-
-        createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
-        createGroupButton.accessibilityIdentifier = "create_group"
-
-        navigationItem.leftBarButtonItem = createGroupButton
         view.accessibilityViewIsModal = true
     }
 
@@ -195,7 +180,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
             ])
         } else {
             NSLayoutConstraint.activate([
-            searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
+                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
             ])
         }
 
@@ -225,17 +210,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         }
 
         view.setNeedsLayout()
-    }
-
-    @objc
-    private func onDismissPressed() {
-        _ = searchHeader.tokenField.resignFirstResponder()
-        navigationController?.dismiss(animated: true)
-    }
-
-    @objc
-    private func createGroup() {
-        openCreateGroupController()
     }
 
     override func accessibilityPerformEscape() -> Bool {
