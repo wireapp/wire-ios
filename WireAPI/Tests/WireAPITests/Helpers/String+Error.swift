@@ -18,18 +18,4 @@
 
 import Foundation
 
-/// An event concerning federation between domains.
-
-public enum FederationEvent {
-
-    /// Two or more other domains have stopped federating
-    /// with each other.
-
-    case connectionRemoved
-
-    /// The self domain has stopped federating with another
-    /// domain.
-
-    case delete
-
-}
+extension String: Error {}
