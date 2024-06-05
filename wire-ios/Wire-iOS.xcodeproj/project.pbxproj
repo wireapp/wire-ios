@@ -1212,7 +1212,6 @@
 		D550F5772044532D009E09DD /* ConversationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F5762044532D009E09DD /* ConversationAction.swift */; };
 		D550F57920445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F57820445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift */; };
 		D5674610208F39D200DC7F26 /* TintColorCorrectedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D567460F208F39D200DC7F26 /* TintColorCorrectedViewController.swift */; };
-		D5677158202B496700308448 /* CreateGroupSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5677157202B496700308448 /* CreateGroupSection.swift */; };
 		D5694B5220441EE900C84C8F /* UILabel+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5694B5120441EE900C84C8F /* UILabel+Convenience.swift */; };
 		D56A2D44207DFC9E00DB59F5 /* BackupRestoreController+Failed.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D43207DFC9E00DB59F5 /* BackupRestoreController+Failed.swift */; };
 		D58191FD2091CAE8003BA7EC /* CallActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58191FC2091CAE8003BA7EC /* CallActionsView.swift */; };
@@ -3369,7 +3368,6 @@
 		D550F5762044532D009E09DD /* ConversationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAction.swift; sourceTree = "<group>"; };
 		D550F57820445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingGuests.swift"; sourceTree = "<group>"; };
 		D567460F208F39D200DC7F26 /* TintColorCorrectedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TintColorCorrectedViewController.swift; sourceTree = "<group>"; };
-		D5677157202B496700308448 /* CreateGroupSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupSection.swift; sourceTree = "<group>"; };
 		D5694B5120441EE900C84C8F /* UILabel+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Convenience.swift"; sourceTree = "<group>"; };
 		D56A2D43207DFC9E00DB59F5 /* BackupRestoreController+Failed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackupRestoreController+Failed.swift"; sourceTree = "<group>"; };
 		D58191FC2091CAE8003BA7EC /* CallActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallActionsView.swift; sourceTree = "<group>"; };
@@ -6254,7 +6252,6 @@
 				1648EEEC20498E1300CC6B37 /* SearchSectionController.swift */,
 				87DCF4C11D34EA4500BB420F /* GroupConversations */,
 				87DCF4C41D34EA4500BB420F /* Suggestions */,
-				D5677159202B496D00308448 /* Create Group */,
 				16829EE02010D62300F579A0 /* InviteTeamMember */,
 				87DCF4C81D34EA4500BB420F /* TopPeopleLine */,
 				87DCF4CF1D34EA4500BB420F /* Contacts */,
@@ -7621,14 +7618,6 @@
 				7C440E88234CE72F00D91B5F /* ConversationActionController+Folders.swift */,
 			);
 			path = ConversationActions;
-			sourceTree = "<group>";
-		};
-		D5677159202B496D00308448 /* Create Group */ = {
-			isa = PBXGroup;
-			children = (
-				D5677157202B496700308448 /* CreateGroupSection.swift */,
-			);
-			path = "Create Group";
 			sourceTree = "<group>";
 		};
 		D58191FE2091CB01003BA7EC /* Calling */ = {
@@ -10384,7 +10373,6 @@
 				16D74BEE2B5933D000160298 /* AddUsernameStepDescription.swift in Sources */,
 				BFE57B4B1D52335A00CB0806 /* ConversationPreviewViewController.swift in Sources */,
 				5E628021221ED0A60039A8AB /* ProfileActionsFactory.swift in Sources */,
-				D5677158202B496700308448 /* CreateGroupSection.swift in Sources */,
 				EF2D6D43228C741500D8DBF4 /* PhotoPermissionsControllerStrategy.swift in Sources */,
 				5EBF4A2B21B958F30021CFFC /* MessageToolboxDataSource.swift in Sources */,
 				EF32AB0321C15B0E002E4777 /* String+MessageToolBox.swift in Sources */,

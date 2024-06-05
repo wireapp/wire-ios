@@ -4421,10 +4421,6 @@ internal enum L10n {
       internal enum QuickAction {
         /// Manage Services
         internal static let adminServices = L10n.tr("Localizable", "peoplepicker.quick-action.admin-services", fallback: "Manage Services")
-        /// Create group
-        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.quick-action.create-conversation", fallback: "Create group")
-        /// Create guest room
-        internal static let createGuestRoom = L10n.tr("Localizable", "peoplepicker.quick-action.create-guest-room", fallback: "Create guest room")
         /// Open
         internal static let openConversation = L10n.tr("Localizable", "peoplepicker.quick-action.open-conversation", fallback: "Open")
       }

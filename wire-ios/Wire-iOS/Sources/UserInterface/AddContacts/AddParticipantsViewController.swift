@@ -482,10 +482,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction) {
-        // no-op
-    }
-
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
 
         guard case let .add(conversation) = viewModel.context else { return }

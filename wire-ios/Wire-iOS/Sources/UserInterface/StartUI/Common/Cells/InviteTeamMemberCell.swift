@@ -104,34 +104,6 @@ final class InviteTeamMemberCell: StartUIIconCell {
 
 }
 
-final class CreateGroupCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-        icon = .createConversation
-        title = PeoplePicker.QuickAction.createConversation
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.creategroup"
-    }
-
-}
-
-final class CreateGuestRoomCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-        icon = .guest
-        title = PeoplePicker.QuickAction.createGuestRoom
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.createguestroom"
-    }
-
-}
-
 final class OpenServicesAdminCell: StartUIIconCell {
 
     override func setupViews() {
