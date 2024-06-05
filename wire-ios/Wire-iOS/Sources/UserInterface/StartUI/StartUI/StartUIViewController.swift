@@ -99,7 +99,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
+        navigationController?.navigationBar.tintColor = UIColor.accent()
         navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
     }
@@ -162,10 +162,17 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         let cancelButton = UIBarButtonItem(title: L10n.Localizable.General.cancel, style: .plain, target: self, action: #selector(onDismissPressed))
 
-        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
+        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CanceButton.description
         cancelButton.accessibilityIdentifier = "cancel"
 
         navigationItem.rightBarButtonItem = cancelButton
+
+        let createGroupButton = UIBarButtonItem(title: L10n.Localizable.Peoplepicker.Button.createConversation, style: .plain, target: self, action: #selector(createGroup))
+
+        createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
+        createGroupButton.accessibilityIdentifier = "create_group"
+
+        navigationItem.leftBarButtonItem = createGroupButton
         view.accessibilityViewIsModal = true
     }
 
@@ -226,6 +233,11 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     private func onDismissPressed() {
         _ = searchHeader.tokenField.resignFirstResponder()
         navigationController?.dismiss(animated: true)
+    }
+
+    @objc
+    private func createGroup() {
+        openCreateGroupController()
     }
 
     override func accessibilityPerformEscape() -> Bool {
