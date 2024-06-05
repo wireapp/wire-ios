@@ -18,10 +18,16 @@
 
 import Foundation
 
-enum TeamEventType: String {
+/// An event where a user's team membership metadata was updated.
 
-    case delete = "team.delete"
-    case memberLeave = "team.member-leave"
-    case memberUpdate = "team.member-update"
+public struct TeamMemberUpdateEvent: Equatable {
+
+    /// The team id.
+
+    public let teamID: UUID
+
+    /// The membership id.
+
+    public let membershipID: UUID
 
 }
