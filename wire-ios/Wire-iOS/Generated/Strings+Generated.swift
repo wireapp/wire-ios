@@ -3411,8 +3411,6 @@ internal enum L10n {
       internal static let edit = L10n.tr("Localizable", "general.edit", fallback: "Edit")
       /// Something went wrong
       internal static let failure = L10n.tr("Localizable", "general.failure", fallback: "Something went wrong")
-      /// Guest room
-      internal static let guestRoomName = L10n.tr("Localizable", "general.guest-room-name", fallback: "Guest room")
       /// Later
       internal static let later = L10n.tr("Localizable", "general.later", fallback: "Later")
       /// Loading…

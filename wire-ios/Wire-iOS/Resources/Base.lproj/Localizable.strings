@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
