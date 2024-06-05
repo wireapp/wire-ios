@@ -93,7 +93,9 @@ public class MessageSender: MessageSenderInterface {
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        WireLogger.messaging.debug("broadcast message")
+        await context.perform {
+            WireLogger.messaging.debug("broadcast message", attributes: message.logInformation)
+        }
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
@@ -101,13 +103,17 @@ public class MessageSender: MessageSenderInterface {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
-            WireLogger.messaging.warn("broadcast message failed: \(error)")
+            await context.perform {
+                WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: message.logInformation)
+            }
             throw error
         }
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        WireLogger.messaging.debug("send message")
+        await context.perform {
+            WireLogger.messaging.debug("send message", attributes: message.logInformation)
+        }
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
@@ -115,7 +121,9 @@ public class MessageSender: MessageSenderInterface {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
             try await attemptToSend(message: message)
         } catch {
-            WireLogger.messaging.warn("send message failed: \(error)")
+            await context.perform {
+                WireLogger.messaging.warn("send message failed: \(error)", attributes: message.logInformation)
+            }
             throw error
         }
 

@@ -20,11 +20,25 @@ import Foundation
 
 /// A message that can be sent in an mls group.
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {}
+public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {
+    var logInformation: LogAttributes { get }
+}
 
-extension ZMClientMessage: MLSMessage {}
+extension ZMClientMessage: MLSMessage {
+    
+}
 
-extension ZMAssetClientMessage: MLSMessage {}
+extension ZMAssetClientMessage: MLSMessage {
+    public var logInformation: LogAttributes {
+
+        return [
+            LogAttributesKey.nonce.rawValue: self.nonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType.rawValue: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+
+    }
+}
 
 extension GenericMessageEntity: MLSMessage {
 
@@ -32,4 +46,14 @@ extension GenericMessageEntity: MLSMessage {
         return try await message.encryptForTransport(using: encrypt)
     }
 
+    public var logInformation: LogAttributes {
+
+        let logAttibutes: LogAttributes = [
+            LogAttributesKey.nonce.rawValue: self.message.messageID.lowercased().readableHash,
+            LogAttributesKey.messageType.rawValue: self.message.safeTypeForLoggingDescription,
+            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+
+        return logAttibutes
+    }
 }
