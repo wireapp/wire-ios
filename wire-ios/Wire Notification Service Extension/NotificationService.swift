@@ -20,9 +20,6 @@ import Foundation
 import UserNotifications
 import WireCommonComponents
 import WireUtilities
-#if DATADOG_IMPORT
-import Datadog
-#endif
 
 final class NotificationService: UNNotificationServiceExtension {
 
