@@ -32,4 +32,3 @@ public struct UserConnectionEvent: Equatable {
     public let connection: Connection
 
 }
-

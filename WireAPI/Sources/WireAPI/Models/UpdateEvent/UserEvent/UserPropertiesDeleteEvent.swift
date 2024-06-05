@@ -28,4 +28,3 @@ public struct UserPropertiesDeleteEvent: Equatable {
     public let key: String
 
 }
-

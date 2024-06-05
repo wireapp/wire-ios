@@ -78,7 +78,7 @@ final class UserEventDecodingTests: XCTestCase {
             to: .user(.legalholdRequest(Scaffolding.legalholdRequestEvent))
         )
     }
-    
+
     func testDecodingUserPropertiesSetEvent_ReadReceipts() throws {
         try helper.assertEventDecodingFromResource(
             named: "UserPropertiesSetReadReceipts",

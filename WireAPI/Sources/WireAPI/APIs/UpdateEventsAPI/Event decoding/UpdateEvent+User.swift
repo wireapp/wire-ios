@@ -99,7 +99,7 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
         let payload = try decode(UserClientAddEventPayload.self, forKey: .client)
 
         return UserClientAddEvent(
-            client:UserClient(
+            client: UserClient(
                 id: payload.id,
                 type: payload.type,
                 activationDate: payload.activationDate,
@@ -176,7 +176,7 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
     func decodeConnectionEvent() throws -> UserConnectionEvent {
         let user = try decode(UserPayload.self, forKey: .user)
         let connection = try decode(ConnectionPayload.self, forKey: .connection)
-        
+
         return UserConnectionEvent(
             userName: user.name,
             connection: Connection(
