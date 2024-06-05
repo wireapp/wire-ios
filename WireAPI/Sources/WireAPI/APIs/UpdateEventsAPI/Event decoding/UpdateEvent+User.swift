@@ -36,7 +36,8 @@ extension UpdateEvent {
             self = .user(.clientRemove(event))
 
         case .connection:
-            self = .user(.connection)
+            let event = try container.decodeConnectionEvent()
+            self = .user(.connection(event))
 
         case .contactJoin:
             self = .user(.contactJoin)
@@ -74,6 +75,7 @@ private enum UserEventCodingKeys: String, CodingKey {
     case client = "client"
     case user = "user"
     case qualifiedID = "qualified_id"
+    case connection = "connection"
 
 }
 
@@ -151,6 +153,58 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
     private struct UserClientRemoveEventPayload: Decodable {
 
         let id: String
+
+    }
+
+}
+
+// MARK: - User connectino event
+
+private extension KeyedDecodingContainer<UserEventCodingKeys> {
+
+    func decodeConnectionEvent() throws -> UserConnectionEvent {
+        let user = try decode(UserPayload.self, forKey: .user)
+        let connection = try decode(ConnectionPayload.self, forKey: .connection)
+        
+        return UserConnectionEvent(
+            userName: user.name,
+            connection: Connection(
+                senderId: connection.from,
+                receiverId: connection.to,
+                receiverQualifiedId: connection.qualifiedTo,
+                conversationId: connection.conversationID,
+                qualifiedConversationId: connection.qualifiedConversationID,
+                lastUpdate: connection.lastUpdate,
+                status: connection.status
+            )
+        )
+    }
+
+    private struct UserPayload: Decodable {
+
+        let name: String
+
+    }
+
+    private struct ConnectionPayload: Decodable {
+
+        let from: UUID?
+        let to: UUID?
+        let qualifiedTo: QualifiedID?
+        let conversationID: UUID?
+        let qualifiedConversationID: QualifiedID?
+        let lastUpdate: Date
+        let status: ConnectionStatus
+
+        enum CodingKeys: String, CodingKey {
+            case from
+            case to
+            case qualifiedTo = "qualified_to"
+            case conversationID = "conversation"
+            case qualifiedConversationID = "qualified_conversation"
+            case lastUpdate = "last_update"
+            case status
+        }
 
     }
 

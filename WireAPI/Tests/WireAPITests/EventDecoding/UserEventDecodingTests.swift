@@ -57,17 +57,39 @@ final class UserEventDecodingTests: XCTestCase {
         XCTAssertEqual(payload, Scaffolding.clientRemoveEvent)
     }
 
+    func testDecodingUserConnectionEvent() async throws {
+        // Given event data.
+        let resource = try MockEventDataResource(name: "UserConnection")
+
+        // When decode update event.
+        let updateEvent = try JSONDecoder.defaultDecoder.decode(
+            UpdateEvent.self,
+            from: resource.jsonData
+        )
+
+        // Then it decoded the correct event.
+        guard case .user(.connection(let payload)) = updateEvent else {
+            return XCTFail("unexpected event: \(updateEvent)")
+        }
+
+        XCTAssertEqual(payload, Scaffolding.connectionEvent)
+    }
+
     private enum Scaffolding {
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.default.date(from: string)!
+        }
 
         static let clientAddEvent = UserClientAddEvent(
             client: UserClient(
                 id: "2a1fd72806d84e26",
                 type: .permanent,
-                activationDate: ISO8601DateFormatter.default.date(from: "2024-06-04T15:03:07.598Z")!,
+                activationDate: date(from: "2024-06-04T15:03:07.598Z"),
                 label: "Alice's work phone",
                 model: "iPhone 20",
                 deviceClass: .phone,
-                lastActiveDate: ISO8601DateFormatter.default.date(from: "2024-06-04T15:03:07.598Z"),
+                lastActiveDate: date(from: "2024-06-04T15:03:07.598Z"),
                 mlsPublicKeys: MLSPublicKeys(
                     ed25519: "ed25519_key",
                     ed448: "ed448_key",
@@ -83,6 +105,25 @@ final class UserEventDecodingTests: XCTestCase {
         )
 
         static let clientRemoveEvent = UserClientRemoveEvent(clientID: "2a1fd72806d84e26")
+
+        static let connectionEvent = UserConnectionEvent(
+            userName: "Alice McGee",
+            connection: Connection(
+                senderId: UUID(uuidString: "67b39b90-bd3c-41dd-ab58-35905afda19c")!,
+                receiverId: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
+                receiverQualifiedId: QualifiedID(
+                    uuid: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
+                    domain: "example.com"
+                ),
+                conversationId: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
+                qualifiedConversationId: QualifiedID(
+                    uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
+                    domain: "example.com"
+                ),
+                lastUpdate: date(from: "2024-06-05T08:34:21.766Z"),
+                status: .accepted
+            )
+        )
 
     }
 

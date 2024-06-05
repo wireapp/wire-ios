@@ -32,7 +32,7 @@ public enum UserEvent: Equatable {
 
     /// A connection to another user has been updated.
 
-    case connection
+    case connection(UserConnectionEvent)
 
     /// A contact has joined Wire.
 
