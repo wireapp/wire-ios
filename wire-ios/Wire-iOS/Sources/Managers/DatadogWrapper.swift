@@ -24,8 +24,11 @@ import WireTransport
 
 // MARK: - DATADOG ENABLED
 
-import Datadog
+import DatadogCore
 import DatadogCrashReporting
+import DatadogLogs
+import DatadogRUM
+import DatadogTrace
 import UIKit
 
 public final class DatadogWrapper {
@@ -50,9 +53,10 @@ public final class DatadogWrapper {
 
     public var datadogUserId: String
 
+    private let applicationID: String
     private let bundleVersion: String?
 
-    var logger: Logger?
+    var logger: (any DatadogLogs.LoggerProtocol)?
     var defaultLevel: LogLevel
 
     private init(
@@ -61,38 +65,42 @@ public final class DatadogWrapper {
         environment: BackendEnvironmentProvider = BackendEnvironment.shared,
         level: LogLevel = .debug
     ) {
-        Datadog.initialize(
-            appContext: .init(),
-            trackingConsent: .granted,
-            configuration: Datadog.Configuration
-                .builderUsing(
-                    rumApplicationID: appID,
-                    clientToken: clientToken,
-                    environment: environment.title.alphanumericString
-                )
-                .set(endpoint: .eu1)
-                .set(tracingSamplingRate: 100)
-                .set(rumSessionsSamplingRate: 100)
-                .trackUIKitRUMViews()
-                .trackUIKitRUMActions()
-                .trackBackgroundEvents()
-                .trackRUMLongTasks()
-                .enableCrashReporting(using: DDCrashReportingPlugin())
-                .build()
+        // set up datadog
+
+        let configuration = Datadog.Configuration(
+            clientToken: clientToken,
+            env: environment.title.alphanumericString,
+            site: .eu1
         )
+        Datadog.initialize(
+            with: configuration,
+            trackingConsent: .granted
+        )
+
+        CrashReporting.enable()
+
+        let logsConfiguration = Logs.Configuration()
+        Logs.enable(with: logsConfiguration)
+
+        let loggerConfiguration = Logger.Configuration(
+            name: "iOS Wire App",
+            networkInfoEnabled: true,
+            remoteLogThreshold: level,
+            consoleLogFormat: .shortWith(prefix: "[iOS App] ")
+        )
+        logger = Logger.create(with: loggerConfiguration)
+
+        // properties
+
+        applicationID = appID
 
         bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
         defaultLevel = level
-        logger = Logger.builder
-            .sendNetworkInfo(true)
-            .sendLogsToDatadog(true)
-            .set(loggerName: "iOS Wire App")
-            .printLogsToConsole(true, usingFormat: .shortWith(prefix: "[iOS App] "))
-            .set(datadogReportingThreshold: level)
-            .build()
 
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
+
+        // system logger
 
         if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
             aggregatedLogger.addLogger(self)
@@ -102,12 +110,21 @@ public final class DatadogWrapper {
     }
 
     public func startMonitoring() {
-        Global.rum = RUMMonitor.initialize()
-        Global.sharedTracer = Tracer.initialize(
-            configuration: Tracer.Configuration(
-                sendNetworkInfo: true
-            )
+        let traceConfiguration = Trace.Configuration(
+            sampleRate: 100,
+            networkInfoEnabled: true
         )
+        Trace.enable(with: traceConfiguration)
+
+        let rumConfiguration = RUM.Configuration(
+            applicationID: applicationID,
+            sessionSampleRate: 100,
+            uiKitViewsPredicate: DefaultUIKitRUMViewsPredicate(),
+            uiKitActionsPredicate: DefaultUIKitRUMActionsPredicate(),
+            trackBackgroundEvents: true
+        )
+        RUM.enable(with: rumConfiguration)
+
         Datadog.setUserInfo(id: datadogUserId)
         RemoteMonitoring.remoteLogger = self
 
