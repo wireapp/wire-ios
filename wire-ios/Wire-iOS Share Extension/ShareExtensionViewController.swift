@@ -123,7 +123,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func setup() {
         setupObserver()
 
-        if let datadog = DatadogWrapper.shared {
+        if let datadog = DatadogAnalytics.shared {
             datadog.startMonitoring()
         }
     }

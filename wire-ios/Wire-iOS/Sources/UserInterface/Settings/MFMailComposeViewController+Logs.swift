@@ -39,7 +39,7 @@ extension MFMailComposeViewController {
 #if DATADOG_IMPORT
         // datadogId has always a value. NONE by default
         // display only when enabled
-        if let datadogId = DatadogWrapper.shared?.datadogUserId {
+        if let datadogId = DatadogAnalytics.shared?.datadogUserId {
             body.append("\nDatadog ID: \(datadogId)")
         }
 #endif

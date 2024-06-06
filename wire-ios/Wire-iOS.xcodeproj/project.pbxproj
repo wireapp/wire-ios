@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D02940D8990046124D /* DatadogWrapper.swift */; };
+		010497D52940DEAC0046124D /* DatadogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D02940D8990046124D /* DatadogAnalytics.swift */; };
 		010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D62940F4F30046124D /* TextFieldWrapper.swift */; };
 		010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D72940F4F40046124D /* CustomBackendView.swift */; };
 		010497DB2940F4F40046124D /* ProxyCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */; };
@@ -2035,7 +2035,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		010497D02940D8990046124D /* DatadogWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogWrapper.swift; sourceTree = "<group>"; };
+		010497D02940D8990046124D /* DatadogAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogAnalytics.swift; sourceTree = "<group>"; };
 		010497D62940F4F30046124D /* TextFieldWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldWrapper.swift; sourceTree = "<group>"; };
 		010497D72940F4F40046124D /* CustomBackendView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBackendView.swift; sourceTree = "<group>"; };
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
@@ -7857,7 +7857,7 @@
 		E6D186E72C11972E00083F9B /* Datadog */ = {
 			isa = PBXGroup;
 			children = (
-				010497D02940D8990046124D /* DatadogWrapper.swift */,
+				010497D02940D8990046124D /* DatadogAnalytics.swift */,
 				E6D186E82C119A7E00083F9B /* DatadogImplementation.swift */,
 				E6D186EA2C119EF400083F9B /* DatadogVoid.swift */,
 			);
@@ -10936,7 +10936,7 @@
 				5EA952C32260F90A00C83FDB /* StyleKitIconSize.swift in Sources */,
 				F15650AE21DCFCED00210504 /* SettingsPropertyName.swift in Sources */,
 				59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */,
-				010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */,
+				010497D52940DEAC0046124D /* DatadogAnalytics.swift in Sources */,
 				A9730DDC250287360061BF36 /* Bundle+ThirdPartyKeys.swift in Sources */,
 				63F65EFB2464444B00534A69 /* TimedCircularProgressView.swift in Sources */,
 				06E69AB825C9A37700B678BF /* AttributedStringOperators.swift in Sources */,

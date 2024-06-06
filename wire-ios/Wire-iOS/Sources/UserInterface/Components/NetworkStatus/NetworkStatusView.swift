@@ -209,7 +209,7 @@ final class NetworkStatusView: UIView {
     }
 
     func updateUI(animated: Bool) {
-        DatadogWrapper.shared?.log(networkStatus: state)
+        DatadogAnalytics.shared?.log(networkStatus: state)
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
         if application.applicationState == .background {

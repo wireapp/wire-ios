@@ -34,7 +34,7 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        DatadogWrapper.shared?.startMonitoring()
+        DatadogAnalytics.shared?.startMonitoring()
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if DeveloperFlag.nseV2.isOn {
