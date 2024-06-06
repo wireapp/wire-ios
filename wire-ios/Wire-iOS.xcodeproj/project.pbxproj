@@ -1365,6 +1365,9 @@
 		E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
+		E9ACC8362C10884F0002E608 /* StartUIIconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */; };
+		E9ACC8382C1089D10002E608 /* OpenServicesAdminCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */; };
+		E9ACC83A2C108F390002E608 /* StartUIViewController+NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACC8392C108F390002E608 /* StartUIViewController+NavigationController.swift */; };
 		E9B0DED42B5E7151006DC9E4 /* AccentColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B0DED32B5E7151006DC9E4 /* AccentColorPicker.swift */; };
 		E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
 		E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
@@ -3460,6 +3463,9 @@
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
 		E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftMockConversation+ConversationCreation.swift"; sourceTree = "<group>"; };
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
+		E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartUIIconCell.swift; sourceTree = "<group>"; };
+		E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenServicesAdminCell.swift; sourceTree = "<group>"; };
+		E9ACC8392C108F390002E608 /* StartUIViewController+NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StartUIViewController+NavigationController.swift"; sourceTree = "<group>"; };
 		E9B0DED32B5E7151006DC9E4 /* AccentColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorPicker.swift; sourceTree = "<group>"; };
 		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
@@ -6234,6 +6240,8 @@
 				EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */,
 				1671D6D0200CDC380022D289 /* InviteTeamMemberCell.swift */,
 				16C02A0F204E964300811912 /* GroupConversationCell.swift */,
+				E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */,
+				E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -6308,6 +6316,7 @@
 				16325E641EE03CC4000E72EB /* SearchResultsView.swift */,
 				164C29AA1ED33A5F0026562A /* SearchResultsViewController.swift */,
 				8775BF1B2007C6B900A8AD93 /* SearchGroupSelector.swift */,
+				E9ACC8392C108F390002E608 /* StartUIViewController+NavigationController.swift */,
 			);
 			path = StartUI;
 			sourceTree = "<group>";
@@ -9372,6 +9381,7 @@
 				BFE4186D209B6FFA00503C7C /* CallAction.swift in Sources */,
 				F195EB9D1E2F75BC00712118 /* FeedbackOverlayView.swift in Sources */,
 				7C3A82CB20B6E6B800313B4F /* CameraAccess.swift in Sources */,
+				E9ACC8382C1089D10002E608 /* OpenServicesAdminCell.swift in Sources */,
 				87AAE4251E4347F000E1D13A /* ConversationContentViewController+PeekPop.swift in Sources */,
 				EF17B0D9223A8F7C006252A8 /* SketchColorCollectionViewCell.swift in Sources */,
 				D503538C207B5DB900CE34A5 /* BackupRestoreController+Password.swift in Sources */,
@@ -9831,6 +9841,7 @@
 				EFC8E21D212D777A00BE7BBE /* UIColor+TeamCreation.swift in Sources */,
 				F15650E021DD119D00210504 /* OverflowSeparatorView.swift in Sources */,
 				A9C3EDF823DE624E0057B705 /* SwipeMenuCollectionCell.swift in Sources */,
+				E9ACC8362C10884F0002E608 /* StartUIIconCell.swift in Sources */,
 				6328283C24A1100F000748D2 /* IconImageView.swift in Sources */,
 				E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */,
 				EFF3DA452097587F007A3358 /* UIPasteboard+MediaAsset.swift in Sources */,
@@ -10268,6 +10279,7 @@
 				A96A21F123D5B865005B5579 /* ConversationInputBarViewController+Files.swift in Sources */,
 				5E15D31B219DB9060038439D /* ConversationFileMessageCell.swift in Sources */,
 				161ACB3823F6AFB100ABFF33 /* Error+Localization.swift in Sources */,
+				E9ACC83A2C108F390002E608 /* StartUIViewController+NavigationController.swift in Sources */,
 				EEA4F47C2410054100DBEA3D /* HashBox.swift in Sources */,
 				5E8FFC2421F086240052DF03 /* AuthenticationReauthenticateInputHandler.swift in Sources */,
 				BFE277631D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift in Sources */,

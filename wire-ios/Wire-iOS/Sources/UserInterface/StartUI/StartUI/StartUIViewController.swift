@@ -94,14 +94,10 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         view = StartUIView(frame: CGRect.zero)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+        setupNavigationBarButtonItems()
     }
 
     private func configGroupSelector() {
@@ -160,12 +156,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         updateActionBar()
         searchResults.searchContactList()
 
-        let closeButton = UIBarButtonItem(icon: .cross, style: UIBarButtonItem.Style.plain, target: self, action: #selector(onDismissPressed))
-
-        closeButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
-        closeButton.accessibilityIdentifier = "close"
-
-        navigationItem.rightBarButtonItem = closeButton
         view.accessibilityViewIsModal = true
     }
 
@@ -190,7 +180,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
             ])
         } else {
             NSLayoutConstraint.activate([
-            searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
+                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
             ])
         }
 
@@ -222,14 +212,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         view.setNeedsLayout()
     }
 
-    @objc
-    private func onDismissPressed() {
-        _ = searchHeader.tokenField.resignFirstResponder()
-        navigationController?.dismiss(animated: true)
-    }
-
     override func accessibilityPerformEscape() -> Bool {
-        onDismissPressed()
+        onDismiss()
         return true
     }
 

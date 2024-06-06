@@ -276,9 +276,9 @@ internal enum L10n {
       }
     }
     internal enum ContactsList {
-      internal enum CloseButton {
+      internal enum CancelButton {
         /// Close contact list
-        internal static let description = L10n.tr("Accessibility", "contactsList.closeButton.description", fallback: "Close contact list")
+        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close contact list")
       }
       internal enum ExternalIcon {
         /// External

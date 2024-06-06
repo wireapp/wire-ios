@@ -404,12 +404,8 @@ final class ConversationListViewController: UIViewController {
         viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.transitioningDelegate = self
-        navigationController.modalPresentationStyle = .currentContext
-
-        tabBarController?.present(navigationController, animated: true) {
-            viewController.showKeyboardIfNeeded()
-        }
+        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        present(navigationController, animated: true)
     }
 
     /// Show the newsletter subscription dialog if needed
