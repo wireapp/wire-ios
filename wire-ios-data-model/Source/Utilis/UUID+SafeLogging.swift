@@ -23,7 +23,7 @@ import WireUtilities
 extension UUID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        return transportString().readableHash
+        return transportString().redactedAndTruncated(maxVisibleCharacters: 7, length: 10)
     }
 
 }

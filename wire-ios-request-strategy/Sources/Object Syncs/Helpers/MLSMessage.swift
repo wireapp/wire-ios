@@ -49,7 +49,7 @@ extension GenericMessageEntity: MLSMessage {
     public var logInformation: LogAttributes {
 
         let logAttibutes: LogAttributes = [
-            LogAttributesKey.nonce.rawValue: self.message.messageID.lowercased().readableHash,
+            LogAttributesKey.nonce.rawValue: self.message.messageID.lowercased().redactedAndTruncated(maxVisibleCharacters: 7, length: 10),
             LogAttributesKey.messageType.rawValue: self.message.safeTypeForLoggingDescription,
             LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })

@@ -55,7 +55,7 @@ extension ZMOTRMessage {
         let logAttributes: LogAttributes = [
             LogAttributesKey.eventId.rawValue: updateEvent.safeUUID,
             LogAttributesKey.conversationId.rawValue: updateEvent.safeLoggingConversationId,
-            LogAttributesKey.nonce.rawValue: updateEvent.messageNonce.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.nonce.rawValue: updateEvent.messageNonce.safeForLoggingDescription,
             LogAttributesKey.messageType.rawValue: updateEvent.safeType
         ]
         WireLogger.updateEvent.debug("Processing message", attributes: logAttributes)
