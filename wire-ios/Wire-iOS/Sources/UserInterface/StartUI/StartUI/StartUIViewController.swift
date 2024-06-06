@@ -53,6 +53,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
 
     let profilePresenter: ProfilePresenter = ProfilePresenter()
+
     private var emptyResultView: EmptySearchResultsView!
 
     let backgroundColor = SemanticColors.View.backgroundDefault
