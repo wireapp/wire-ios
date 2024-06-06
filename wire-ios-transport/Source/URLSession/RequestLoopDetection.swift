@@ -18,21 +18,10 @@
 
 import Foundation
 
-/// Records the URLs of REST requests sent over the network
-@objc protocol RequestRecorder: NSObjectProtocol {
-
-    /// Records a REST request
-    func recordRequest(path: String, contentHash: UInt, date: Date?)
-
-}
-
 /// Monitors the REST requests that are sent over the network
 /// to detect suspicious request loops
 @objcMembers
 public final class RequestLoopDetection: NSObject {
-
-    /// List of requests
-    fileprivate var recordedRequests: [IdentifierDate] = []
 
     /// After this time, requests are purged from the list
     static let decayTimer: TimeInterval = 60 // 1 minute
@@ -45,36 +34,44 @@ public final class RequestLoopDetection: NSObject {
     /// Hard limit of URLs to keep in the history
     static let historyLimit = 120
 
+    /// List of requests
+    private(set) var recordedRequests: [IdentifierDate] = []
+
     /// Trigger that will be invoked when a loop is detected
     /// The URL passed is the URL that created the loop
-    fileprivate let triggerCallback: (String) -> Void
+    private let triggerCallback: (String) -> Void
 
     public init(triggerCallback: @escaping (String) -> Void) {
         self.triggerCallback = triggerCallback
     }
-}
 
-// MARK: - Loop detection
-extension RequestLoopDetection: RequestRecorder {
+    // MARK: - Loop detection
 
     /// Resets the detector, discarding all recorder requests
     public func reset() {
         self.recordedRequests = []
     }
 
-    public func recordRequest(path: String, contentHash: UInt, date: Date?) {
+    public func recordRequest(path: String, contentHint: String, date: Date?) {
         purgeOldRequests()
-        if self.recordedRequests.count == type(of: self).historyLimit {
+
+        if self.recordedRequests.count == Self.historyLimit {
             self.recordedRequests.remove(at: 0) // note, this would be more efficient with linked list
         }
-        let identifier = IdentifierDate(path: path, contentHash: contentHash, date: date ?? Date())
+
+        if isPathExcluded(path) {
+            return
+        }
+
+        let identifier = IdentifierDate(path: path, contentHint: contentHint, date: date ?? Date())
         self.insert(identifier: identifier)
+
         triggerIfTooMany(identifier: identifier)
     }
 
     /// Removes requests that are too old from the recorded requests
     private func purgeOldRequests() {
-        let purgeDate = Date(timeIntervalSinceNow: -type(of: self).decayTimer)
+        let purgeDate = Date(timeIntervalSinceNow: -Self.decayTimer)
         if let firstNonTooOldIndex = self.recordedRequests.firstIndex(where: {
             $0.date > purgeDate
         }) {
@@ -105,24 +102,46 @@ extension RequestLoopDetection: RequestRecorder {
 
     /// Check if there are too many occurrences of a given identifier
     private func triggerIfTooMany(identifier: IdentifierDate) {
-        if self.recordedRequests
-            .filter({ $0.identifier == identifier.identifier })
-            .count >= type(of: self).repetitionTriggerThreshold {
-            // this could be slightly faster as we don't need to count, just stop after we found N
-            // (maybe there are N+1000 entries and we don't need to go through the additional 1000)
-            self.triggerCallback(identifier.path)
-            self.recordedRequests = self.recordedRequests.filter { $0.identifier != identifier.identifier }
+        // this could be slightly faster as we don't need to count, just stop after we found N
+        // (maybe there are N+1000 entries and we don't need to go through the additional 1000)
+        let count = recordedRequests
+            .filter { $0.identifier == identifier.identifier }
+            .count
+
+        if count >= Self.repetitionTriggerThreshold {
+            triggerCallback(identifier.path)
+            recordedRequests = recordedRequests.filter { $0.identifier != identifier.identifier }
         }
+    }
+
+    func isPathExcluded(_ path: String) -> Bool {
+        guard let urlComponents = URLComponents(string: path) else {
+            return false
+        }
+
+        if urlComponents.path.hasSuffix("/typing") == true {
+            return true
+        }
+
+        if urlComponents.path.hasSuffix("/search/contacts") {
+            if  let query = urlComponents.queryItems?.first(where: { $0.name == "q" }), let value = query.value {
+                return value.isEmpty
+            }
+        }
+
+        return false
     }
 }
 
-private struct IdentifierDate {
+// MARK: -
+
+struct IdentifierDate {
     let identifier: String
     let date: Date
     let path: String
 
-    init(path: String, contentHash: UInt, date: Date) {
-        self.identifier = "\(path)[\(contentHash)]"
+    init(path: String, contentHint: String, date: Date) {
+        self.identifier = "\(path)[\(contentHint)]"
         self.date = date
         self.path = path
     }

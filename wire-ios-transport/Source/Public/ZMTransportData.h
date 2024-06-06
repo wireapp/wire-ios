@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMTransportData <NSObject>
 
+@property(readonly) NSString* contentHintForRequestLoop;
+
 - (nullable NSDictionary *)asDictionary;
 - (nullable NSArray *)asArray;
 - (nullable id)asTransportData;
@@ -29,10 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-
 @interface NSDictionary (ZMTransportData) <ZMTransportData>
 @end
-
 
 
 @interface NSArray (ZMTransportData) <ZMTransportData>
