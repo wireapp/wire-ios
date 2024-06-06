@@ -40,15 +40,19 @@ extension StartUIViewController {
 
         navigationItem.rightBarButtonItem = cancelButton
 
-        let createGroupButton = UIBarButtonItem(
-            title: L10n.Localizable.Peoplepicker.Button.createConversation,
-            style: .plain,
-            target: self,
-            action: #selector(createGroup)
-        )
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.Localizable.Peoplepicker.Button.createConversation, for: .normal)
+        button.titleLabel?.font = UIFont.font(for: .h3)
 
-        createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
-        createGroupButton.accessibilityIdentifier = "create_group"
+        let action = UIAction { _ in
+            self.createGroup()
+        }
+        button.addAction(action, for: .touchUpInside)
+
+        button.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
+        button.accessibilityIdentifier = "create_group"
+
+        let createGroupButton = UIBarButtonItem(customView: button)
 
         navigationItem.leftBarButtonItem = createGroupButton
     }
