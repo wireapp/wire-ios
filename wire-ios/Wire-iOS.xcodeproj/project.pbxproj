@@ -6605,7 +6605,6 @@
 				875060721E5B3D9E005B21C7 /* FileBackupExcluder.swift */,
 				551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */,
 				0665DF7128F01D120094482B /* Image */,
-				010497D02940D8990046124D /* DatadogWrapper.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -7851,6 +7850,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		E6D186E72C11972E00083F9B /* Datadog */ = {
+			isa = PBXGroup;
+			children = (
+				010497D02940D8990046124D /* DatadogWrapper.swift */,
+			);
+			path = Datadog;
+			sourceTree = "<group>";
+		};
 		E6F442FE2B16018D00D2B08A /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
@@ -8601,6 +8608,7 @@
 		F1FEA14B21DCEB1700790A54 /* WireCommonComponents */ = {
 			isa = PBXGroup;
 			children = (
+				E6D186E72C11972E00083F9B /* Datadog */,
 				1E5E0CE71B6B8EDB003B0CAC /* Icons */,
 				EEF37EDF2BE0E7560055C9E1 /* Typography */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
