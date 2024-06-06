@@ -18,9 +18,10 @@
 
 import Foundation
 
-/// Fully qualified identifier in a federated environment
+/// Fully qualified identifier in a federated environment.
 
-public struct QualifiedID: Codable, Equatable {
+public struct QualifiedID: Codable, Hashable, Equatable {
+
     public let uuid: UUID
     public let domain: String
 
@@ -28,4 +29,5 @@ public struct QualifiedID: Codable, Equatable {
         case uuid = "id"
         case domain
     }
+
 }

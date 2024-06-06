@@ -20,8 +20,8 @@
 @import WireDataModel;
 @import WireSystem;
 
-#import "ZMRequestGenerator.h"
-#import "ZMContextChangeTracker.h"
+#import <WireRequestStrategy/ZMRequestGenerator.h>
+#import <WireRequestStrategy/ZMContextChangeTracker.h>
 
 @class ZMTransportRequest;
 @class ZMSyncStrategy;
