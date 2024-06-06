@@ -16,14 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum DatadogAnalytics {
+import WireSystem
 
-    public static let shared: (any DatadogTrackerProtocol)? = {
-        #if DATADOG_IMPORT
-        let builder = DatadogTrackerBuilder()
-        return builder.build()
-        #else
-        return DatadogVoidTracker()
-        #endif
-    }()
+public protocol DatadogTrackerProtocol: LoggerProtocol {
+
+    var datadogUserId: String { get }
+
+    func startMonitoring()
+    func addTag(_ key: LogAttributesKey, value: String?)
 }

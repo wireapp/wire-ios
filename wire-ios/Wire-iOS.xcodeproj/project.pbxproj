@@ -1329,6 +1329,7 @@
 		E6D186EB2C119EF400083F9B /* DatadogVoidTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186EA2C119EF400083F9B /* DatadogVoidTracker.swift */; };
 		E6D186EF2C11F6D600083F9B /* DatadogTrackerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186EE2C11F6D600083F9B /* DatadogTrackerBuilder.swift */; };
 		E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */; };
+		E6D186F32C11F97D00083F9B /* DatadogTrackerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186F22C11F97D00083F9B /* DatadogTrackerProtocol.swift */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
 		E6E557982BBD49A60033E62B /* NetworkQualityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E557972BBD49A60033E62B /* NetworkQualityType.swift */; };
 		E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */; };
@@ -3424,6 +3425,7 @@
 		E6D186EA2C119EF400083F9B /* DatadogVoidTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogVoidTracker.swift; sourceTree = "<group>"; };
 		E6D186EE2C11F6D600083F9B /* DatadogTrackerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogTrackerBuilder.swift; sourceTree = "<group>"; };
 		E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+WireCommonComponents.swift"; sourceTree = "<group>"; };
+		E6D186F22C11F97D00083F9B /* DatadogTrackerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogTrackerProtocol.swift; sourceTree = "<group>"; };
 		E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescription.swift; sourceTree = "<group>"; };
 		E6E557972BBD49A60033E62B /* NetworkQualityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkQualityType.swift; sourceTree = "<group>"; };
 		E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellSnapshotTests.swift; sourceTree = "<group>"; };
@@ -7865,6 +7867,7 @@
 				E6D186E82C119A7E00083F9B /* DatadogTracker.swift */,
 				E6D186EE2C11F6D600083F9B /* DatadogTrackerBuilder.swift */,
 				E6D186EA2C119EF400083F9B /* DatadogVoidTracker.swift */,
+				E6D186F22C11F97D00083F9B /* DatadogTrackerProtocol.swift */,
 			);
 			path = Datadog;
 			sourceTree = "<group>";
@@ -10968,6 +10971,7 @@
 				7C88BB90235F413F0075BCC5 /* Bundle+InfoDict.swift in Sources */,
 				EEF37EDA2BDFD9620055C9E1 /* WireTextStyle.swift in Sources */,
 				F15650AF21DCFE5200210504 /* CircularProgressView.swift in Sources */,
+				E6D186F32C11F97D00083F9B /* DatadogTrackerProtocol.swift in Sources */,
 				F156509E21DCF1DA00210504 /* Dummy.swift in Sources */,
 				165C55C2254B0CB500731CA9 /* UIColor+NamedColors.swift in Sources */,
 				01F5EAE42B712DD7009FD25D /* LogFileDestination.swift in Sources */,
