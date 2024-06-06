@@ -150,24 +150,32 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder.capitalizingFirstCharacterOnly
+        searchController.searchBar.accessibilityIdentifier = "textViewSearch"
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.searchBar.delegate = self
     }
 
     private func createConstraints() {
+
         [groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
-        NSLayoutConstraint.activate([
-            groupSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        if showsGroupSelector {
+            NSLayoutConstraint.activate([
+                groupSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                searchResultsViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+            ])
+        }
 
         NSLayoutConstraint.activate([
-            searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor),
             searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
