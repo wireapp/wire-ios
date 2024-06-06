@@ -81,7 +81,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
-@property (nonatomic, strong) RemoteMonitoring* remoteMonitoring;
 
 @property (nonatomic) NSString *minTLSVersion;
 
@@ -236,14 +235,11 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                         backoff:nil
                                                              initialAccessToken:initialAccessToken];
 
-        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel:LevelInfo];
-
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
             ZM_STRONG(self);
 
-            [self.remoteMonitoring log:[NSString stringWithFormat:@"Request loop detected for %@", path]
-                                 error:nil];
+            [WireLoggerObjc logRequestLoopAtPath:path];
             if(self.requestLoopDetectionCallback != nil) {
                 self.requestLoopDetectionCallback(path);
             }
@@ -417,8 +413,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
-    [self.remoteMonitoring logWithRequest:URLRequest];
-    ZMLogPublic(@"Request: %@", request.safeForLoggingDescription);
+    [WireLoggerObjc logRequest:URLRequest];
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
@@ -475,7 +470,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired payloadLabel:label];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
-    [self.remoteMonitoring logWithResponse:httpResponse];
+    [WireLoggerObjc logHTTPResponse:httpResponse];
 
     ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
     if (response.result == ZMTransportResponseStatusExpired) {
