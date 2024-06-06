@@ -25,7 +25,7 @@ final class StartUIView: UIView { }
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
                                               at indexPath: IndexPath?) {
-        _ = searchHeaderViewController.tokenField.resignFirstResponder()
+        _ = searchController.searchBar.resignFirstResponder()
 
         guard let indexPath,
             let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
@@ -35,7 +35,7 @@ extension StartUIViewController {
                 let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
                 self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
             } else if self.profilePresenter.keyboardPersistedAfterOpeningProfile {
-                    _ = self.searchHeaderViewController.tokenField.becomeFirstResponder()
+                _ = self.searchController.searchBar.becomeFirstResponder()
                     self.profilePresenter.keyboardPersistedAfterOpeningProfile = false
             }
         })
@@ -104,9 +104,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {
-            let avoiding = KeyboardAvoidingViewController(viewController: controller)
-            navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateConversation.BackButton.description
-            self.navigationController?.pushViewController(avoiding, animated: true)
+            self.navigationController?.pushViewController(controller, animated: true)
         } else {
             self.navigationController?.pushViewController(controller, animated: true)
         }

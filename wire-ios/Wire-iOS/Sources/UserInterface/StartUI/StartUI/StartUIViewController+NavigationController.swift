@@ -59,7 +59,7 @@ extension StartUIViewController {
 
     @objc
     func onDismiss() {
-        _ = searchHeader.tokenField.resignFirstResponder()
+        _ = searchController.searchBar.resignFirstResponder()
         navigationController?.dismiss(animated: true)
     }
 

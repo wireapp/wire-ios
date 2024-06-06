@@ -29,7 +29,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     weak var delegate: StartUIDelegate?
 
-    let searchHeaderViewController: SearchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
+    let searchController = UISearchController(searchResultsController: nil)
 
     let groupSelector: SearchGroupSelector = SearchGroupSelector()
 
@@ -81,10 +81,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         setupViews()
     }
 
-    var searchHeader: SearchHeaderViewController {
-        return self.searchHeaderViewController
-    }
-
     var searchResults: SearchResultsViewController {
         return self.searchResultsViewController
     }
@@ -122,19 +118,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
             navigationItem.setupNavigationBarTitle(title: title)
         }
 
-        searchHeader.delegate = self
-        searchHeader.allowsMultipleSelection = false
-        searchHeader.view.backgroundColor = backgroundColor
-
-        addToSelf(searchHeader)
+        setupSearchController()
 
         groupSelector.onGroupSelected = { [weak self] group in
             if .services == group {
-                // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
-                // not going to be added to the new conversation with the bot.
-                self?.searchHeader.clearInput()
+                self?.searchController.searchBar.text = ""
             }
-
             self?.searchResults.searchGroup = group
             self?.performSearch()
         }
@@ -159,32 +148,26 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         view.accessibilityViewIsModal = true
     }
 
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder.capitalizingFirstCharacterOnly
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchBar.delegate = self
+    }
+
     private func createConstraints() {
-        [searchHeaderViewController.view, groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+        [groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            groupSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
-        if showsGroupSelector {
-            NSLayoutConstraint.activate([
-                groupSelector.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
-                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
-            ])
-
-            NSLayoutConstraint.activate([
-                groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
-        } else {
-            NSLayoutConstraint.activate([
-                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
-            ])
-        }
-
         NSLayoutConstraint.activate([
+            searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor),
             searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -198,12 +181,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     func showKeyboardIfNeeded() {
         let conversationCount = userSession.conversationList().count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
-            _ = searchHeader.tokenField.becomeFirstResponder()
+            searchController.searchBar.becomeFirstResponder()
         }
     }
 
     func updateActionBar() {
-        if !searchHeader.query.isEmpty || userSession.selfUser.hasTeam {
+        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
             searchResults.searchResultsView.accessoryView = nil
         } else {
             searchResults.searchResultsView.accessoryView = quickActionsBar
@@ -220,11 +203,11 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     // MARK: - Instance methods
     @objc
     func performSearch() {
-        let searchString = searchHeader.query
+        let searchString = searchController.searchBar.text ?? ""
         zmLog.info("Search for \(searchString)")
 
         if groupSelector.group == .people {
-            if searchString.count == 0 {
+            if searchString.isEmpty {
                 searchResults.mode = .list
                 searchResults.searchContactList()
             } else {
@@ -248,17 +231,23 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
             navigationController?.pushViewController(ContactsViewController(), animated: true)
         }
     }
-
 }
 
-extension StartUIViewController: SearchHeaderViewControllerDelegate {
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
-        searchResults.cancelPreviousSearch()
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performSearch), object: nil)
+extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
+
+    func updateSearchResults(for searchController: UISearchController) {
+
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(performSearch),
+            object: nil
+        )
+
         perform(#selector(performSearch), with: nil, afterDelay: 0.2)
     }
 
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        searchHeaderViewController.resetQuery()
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        performSearch()
     }
 }
