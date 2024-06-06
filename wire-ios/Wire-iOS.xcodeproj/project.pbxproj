@@ -1320,11 +1320,11 @@
 		E6C25FF42B03550A00406A1C /* AppLockModuleInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */; };
 		E6C25FF62B03550A00406A1C /* AppLockModulePresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */; };
 		E6C25FF72B0355AD00406A1C /* AppLockModuleViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */; };
-		E6D186D82C106B4200083F9B /* DatadogCore in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186D72C106B4200083F9B /* DatadogCore */; };
-		E6D186DA2C106B4200083F9B /* DatadogCrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186D92C106B4200083F9B /* DatadogCrashReporting */; };
-		E6D186DC2C106B4200083F9B /* DatadogLogs in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DB2C106B4200083F9B /* DatadogLogs */; };
-		E6D186E02C106B4200083F9B /* DatadogRUM in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DF2C106B4200083F9B /* DatadogRUM */; };
-		E6D186E42C106B4200083F9B /* DatadogTrace in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186E32C106B4200083F9B /* DatadogTrace */; };
+		E6D186D82C106B4200083F9B /* DatadogCore in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186D72C106B4200083F9B /* DatadogCore */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E6D186DA2C106B4200083F9B /* DatadogCrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186D92C106B4200083F9B /* DatadogCrashReporting */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E6D186DC2C106B4200083F9B /* DatadogLogs in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DB2C106B4200083F9B /* DatadogLogs */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E6D186E02C106B4200083F9B /* DatadogRUM in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186DF2C106B4200083F9B /* DatadogRUM */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E6D186E42C106B4200083F9B /* DatadogTrace in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186E32C106B4200083F9B /* DatadogTrace */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E6D186E92C119A7E00083F9B /* DatadogImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186E82C119A7E00083F9B /* DatadogImplementation.swift */; };
 		E6D186EB2C119EF400083F9B /* DatadogVoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186EA2C119EF400083F9B /* DatadogVoid.swift */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
