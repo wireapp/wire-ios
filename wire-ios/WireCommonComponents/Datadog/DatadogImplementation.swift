@@ -24,13 +24,21 @@ import DatadogLogs
 import DatadogRUM
 import DatadogTrace
 import UIKit
+import WireTransport
 
-public final class DatadogImplementation {
+final class DatadogImplementation: DatadogProtocol {
 
-    /// Get shared instance only if Developer Flag is on.
+    /// SHA256 string to identify current Device across app and extensions.
+    public var datadogUserId: String
 
-    public static var shared: DatadogWrapper? = {
-        let bundle = Bundle(for: DatadogWrapper.self)
+    private let applicationID: String
+    private let bundleVersion: String?
+
+    var logger: (any DatadogLogs.LoggerProtocol)?
+    var defaultLevel: LogLevel
+
+    convenience init?() {
+        let bundle = Bundle(for: Self.self)
 
         guard
             let appID = bundle.infoForKey("DatadogAppId"),
@@ -40,24 +48,19 @@ public final class DatadogImplementation {
             return nil
         }
 
-        return DatadogWrapper(appID: appID, clientToken: clientToken)
-    }()
-
-    /// SHA256 string to identify current Device across app and extensions.
-
-    public var datadogUserId: String
-
-    private let applicationID: String
-    private let bundleVersion: String?
-
-    var logger: (any DatadogLogs.LoggerProtocol)?
-    var defaultLevel: LogLevel
+        self.init(
+            appID: appID,
+            clientToken: clientToken,
+            environment: BackendEnvironment.shared,
+            level: .debug
+        )
+    }
 
     private init(
         appID: String,
         clientToken: String,
-        environment: BackendEnvironmentProvider = BackendEnvironment.shared,
-        level: LogLevel = .debug
+        environment: BackendEnvironmentProvider,
+        level: LogLevel
     ) {
         // set up datadog
 
@@ -120,7 +123,8 @@ public final class DatadogImplementation {
         RUM.enable(with: rumConfiguration)
 
         Datadog.setUserInfo(id: datadogUserId)
-        RemoteMonitoring.remoteLogger = self
+
+        // RemoteMonitoring.remoteLogger = self
 
         log(
             level: defaultLevel,
@@ -128,7 +132,33 @@ public final class DatadogImplementation {
         )
     }
 
-    public func log(
+    // MARK: Logging
+
+    func debug(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
+
+    }
+
+    func info(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
+
+    }
+
+    func notice(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
+
+    }
+
+    func warn(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
+
+    }
+
+    func error(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
+
+    }
+
+    func critical(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
+
+    }
+
+    func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
@@ -145,7 +175,7 @@ public final class DatadogImplementation {
         )
     }
 
-    public func addTag(_ key: LogAttributesKey, value: String?) {
+    func addTag(_ key: LogAttributesKey, value: String?) {
         if let value {
             logger?.addAttribute(forKey: key.rawValue, value: value)
         } else {
@@ -154,25 +184,7 @@ public final class DatadogImplementation {
     }
 }
 
-extension DatadogWrapper: RemoteLogger {
-
-    public func log(
-        message: String,
-        error: Error?,
-        attributes: [String: Encodable]?,
-        level: RemoteMonitoring.Level
-    ) {
-        log(
-            level: level.logLevel,
-            message: message,
-            error: error,
-            attributes: attributes
-        )
-    }
-
-}
-
-// MARK: Crypto helper
+// MARK: - Crypto helper
 
 import CryptoKit
 

@@ -23,6 +23,7 @@ struct DatadogVoid: DatadogProtocol {
     var datadogUserId: String = "NONE"
 
     func startMonitoring() { }
+
     func addTag(_ key: LogAttributesKey, value: String?) { }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes?) { }

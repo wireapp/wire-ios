@@ -26,7 +26,7 @@ public protocol DatadogProtocol: LoggerProtocol {
     func addTag(_ key: LogAttributesKey, value: String?)
 }
 
-public final class DatadogWrapper {
+enum DatadogWrapper {
 
     public static let shared: (any DatadogProtocol)? = {
         #if DATADOG_IMPORT
