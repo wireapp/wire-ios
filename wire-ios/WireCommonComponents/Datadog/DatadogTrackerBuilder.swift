@@ -18,13 +18,26 @@
 
 #if DATADOG_IMPORT
 
-import Foundation
+import DatadogLogs
 import WireTransport
 
 struct DatadogTrackerBuilder {
-    func build() -> DatadogTracker? {
-        let bundle = Bundle.wireCommonComponents
 
+    private let bundle: Bundle
+    private let environment: BackendEnvironment
+    private let level: LogLevel
+
+    init(
+        bundle: Bundle = .wireCommonComponents,
+        environment: BackendEnvironment = .shared,
+        level: LogLevel = .debug
+    ) {
+        self.bundle = bundle
+        self.environment = environment
+        self.level = level
+    }
+
+    func build() -> DatadogTracker? {
         guard
             let appID = bundle.infoForKey("DatadogAppId"),
             let clientToken = bundle.infoForKey("DatadogClientToken")
@@ -36,8 +49,8 @@ struct DatadogTrackerBuilder {
         return DatadogTracker(
             appID: appID,
             clientToken: clientToken,
-            environment: BackendEnvironment.shared,
-            level: .debug
+            environment: environment,
+            level: level
         )
     }
 }
