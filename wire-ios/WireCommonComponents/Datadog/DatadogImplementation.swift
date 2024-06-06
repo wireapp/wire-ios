@@ -29,7 +29,7 @@ import WireTransport
 final class DatadogImplementation: DatadogProtocol {
 
     /// SHA256 string to identify current Device across app and extensions.
-    public var datadogUserId: String
+    var datadogUserId: String
 
     private let applicationID: String
     private let bundleVersion: String?
@@ -106,7 +106,7 @@ final class DatadogImplementation: DatadogProtocol {
         }
     }
 
-    public func startMonitoring() {
+    func startMonitoring() {
         let traceConfiguration = Trace.Configuration(
             sampleRate: 100,
             networkInfoEnabled: true
@@ -124,7 +124,7 @@ final class DatadogImplementation: DatadogProtocol {
 
         Datadog.setUserInfo(id: datadogUserId)
 
-        // RemoteMonitoring.remoteLogger = self
+        RemoteMonitoring.remoteLogger = self
 
         log(
             level: defaultLevel,
@@ -134,35 +134,67 @@ final class DatadogImplementation: DatadogProtocol {
 
     // MARK: Logging
 
-    func debug(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
-
+    func addTag(_ key: LogAttributesKey, value: String?) {
+        if let value {
+            logger?.addAttribute(forKey: key.rawValue, value: value)
+        } else {
+            logger?.removeAttribute(forKey: key.rawValue)
+        }
     }
 
-    func info(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
-
+    func debug(_ message: any LogConvertible, attributes: LogAttributes?) {
+        log(
+            level: .debug,
+            message: message.logDescription,
+            attributes: attributes
+        )
     }
 
-    func notice(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
-
+    func info(_ message: any LogConvertible, attributes: LogAttributes?) {
+        log(
+            level: .info,
+            message: message.logDescription,
+            attributes: attributes
+        )
     }
 
-    func warn(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
-
+    func notice(_ message: any LogConvertible, attributes: LogAttributes?) {
+        log(
+            level: .notice,
+            message: message.logDescription,
+            attributes: attributes
+        )
     }
 
-    func error(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
-
+    func warn(_ message: any LogConvertible, attributes: LogAttributes?) {
+        log(
+            level: .warn,
+            message: message.logDescription,
+            attributes: attributes
+        )
     }
 
-    func critical(_ message: any WireSystem.LogConvertible, attributes: WireSystem.LogAttributes?) {
-
+    func error(_ message: any LogConvertible, attributes: LogAttributes?) {
+        log(
+            level: .error,
+            message: message.logDescription,
+            attributes: attributes
+        )
     }
 
-    func log(
+    func critical(_ message: any LogConvertible, attributes: LogAttributes?) {
+        log(
+            level: .critical,
+            message: message.logDescription,
+            attributes: attributes
+        )
+    }
+
+    private func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
-        attributes: [String: Encodable]? = nil
+        attributes: [String: any Encodable]? = nil
     ) {
         var attributes = attributes ?? .init()
         attributes["build_number"] = bundleVersion
@@ -174,13 +206,30 @@ final class DatadogImplementation: DatadogProtocol {
             attributes: attributes
         )
     }
+}
 
-    func addTag(_ key: LogAttributesKey, value: String?) {
-        if let value {
-            logger?.addAttribute(forKey: key.rawValue, value: value)
-        } else {
-            logger?.removeAttribute(forKey: key.rawValue)
+extension DatadogImplementation: WireTransport.RemoteLogger {
+    func log(
+        message: String,
+        error: (any Error)?,
+        attributes: [String: any Encodable]?,
+        level: WireTransport.RemoteMonitoring.Level
+    ) {
+        let logLevel: DatadogLogs.LogLevel = switch level {
+            case .debug: .debug
+            case .info: .info
+            case .notice: .notice
+            case .warn: .warn
+            case .error: .error
+            case .critical: .critical
         }
+
+        log(
+            level: logLevel,
+            message: message,
+            error: error,
+            attributes: attributes
+        )
     }
 }
 
