@@ -16,48 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSystem
-import WireTransport
 
-public enum LogLevel {
-
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
-}
-
-// MARK: - RemoteMonitoring.Level
-
-extension RemoteMonitoring.Level {
-
-    var logLevel: LogLevel {
-        switch self {
-        case .debug:
-            return .debug
-
-        case .info:
-            return .info
-
-        case .notice:
-            return .notice
-
-        case .warn:
-            return .warn
-
-        case .error:
-            return .error
-
-        case .critical:
-            return .critical
-        }
-    }
-}
-
-public protocol DatadogProtocol: WireSystem.LoggerProtocol {
+public protocol DatadogProtocol: LoggerProtocol {
 
     var datadogUserId: String { get }
 
