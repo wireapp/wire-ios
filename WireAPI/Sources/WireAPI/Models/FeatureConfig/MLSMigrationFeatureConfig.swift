@@ -18,12 +18,20 @@
 
 import Foundation
 
-/// An event concerning feature configs.
+/// A configuration for the *MLS Migration* feature.
 
-public enum FeatureConfigEvent {
+public struct MLSMigrationFeatureConfig: Equatable {
 
-    /// A feature config was updated.
+    /// The feature's status.
 
-    case update
+    public let status: FeatureConfigStatus
+
+    /// The starting time of the migration.
+
+    public let startTime: Date?
+
+    /// The date until the migration has to finalise.
+
+    public let finaliseRegardlessAfter: Date?
 
 }
