@@ -250,7 +250,7 @@ private struct LogInfo: Encodable {
     var status: String
 }
 
-private extension DatadogProtocol {
+private extension DatadogTrackerProtocol {
 
     func log(networkStatus: NetworkStatusViewState) {
         do {

@@ -26,7 +26,7 @@ import DatadogTrace
 import UIKit
 import WireTransport
 
-final class DatadogImplementation: DatadogProtocol {
+final class DatadogImplementation: DatadogTrackerProtocol {
 
     /// SHA256 string to identify current Device across app and extensions.
     var datadogUserId: String

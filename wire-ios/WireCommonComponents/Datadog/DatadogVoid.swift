@@ -18,7 +18,7 @@
 
 import WireSystem
 
-struct DatadogVoid: DatadogProtocol {
+struct DatadogVoid: DatadogTrackerProtocol {
 
     var datadogUserId: String = "NONE"
 

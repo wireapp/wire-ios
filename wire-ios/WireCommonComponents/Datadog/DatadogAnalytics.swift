@@ -18,7 +18,7 @@
 
 import WireSystem
 
-public protocol DatadogProtocol: LoggerProtocol {
+public protocol DatadogTrackerProtocol: LoggerProtocol {
 
     var datadogUserId: String { get }
 
@@ -28,7 +28,7 @@ public protocol DatadogProtocol: LoggerProtocol {
 
 public enum DatadogAnalytics {
 
-    public static let shared: (any DatadogProtocol)? = {
+    public static let shared: (any DatadogTrackerProtocol)? = {
         #if DATADOG_IMPORT
         return DatadogImplementation()
         #else
