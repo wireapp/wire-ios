@@ -129,3 +129,48 @@ public extension String {
         return result + "*".repeat(fillCount)
     }
 }
+
+extension WireLogger {
+    func log(request: NSURLRequest) {
+        let info = RequestLog(request)
+
+        do {
+            let data = try JSONEncoder().encode(info)
+            let jsonString = String(data: data, encoding: .utf8)
+            let message = "REQUEST: \(jsonString ?? request.description)"
+            self.info(message, attributes: .safePublic)
+        } catch {
+            let message = "REQUEST: \(request.description)"
+            self.error(message, attributes: .safePublic)
+        }
+    }
+
+    func log(response: HTTPURLResponse) {
+        guard let info = ResponseLog(response) else { return }
+
+        do {
+            let data = try JSONEncoder().encode(info)
+            let jsonString = String(data: data, encoding: .utf8)
+            let message = "RESPONSE: \(jsonString ?? response.description)"
+            self.info(message, attributes: .safePublic)
+        } catch {
+            let message = "RESPONSE: \(response.description)"
+            self.error(message, attributes: .safePublic)
+        }
+    }
+}
+
+extension WireLoggerObjc {
+    static func logRequest(_ request: NSURLRequest) {
+        WireLogger.network.log(request: request)
+    }
+
+    static func logHTTPResponse(_ response: HTTPURLResponse) {
+        WireLogger.network.log(response: response)
+    }
+
+    @objc(logRequestLoopAtPath:)
+    static func logRequestLoop(at path: String) {
+        WireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
+    }
+}

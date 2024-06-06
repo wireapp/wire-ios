@@ -44,7 +44,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
             systemSaveFilePresenter.presentSystemPromptToSave(file: fileURL, completed: finishedSaving)
             pendingSaveURL = fileURL
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
         }
     }
 
@@ -60,7 +60,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
         do {
             try deleteFilesInTemporyDirectory()
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
         }
     }
 }

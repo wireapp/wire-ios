@@ -109,7 +109,6 @@ public final class DatadogWrapper {
             )
         )
         Datadog.setUserInfo(id: datadogUserId)
-        RemoteMonitoring.remoteLogger = self
 
         log(
             level: defaultLevel,
@@ -121,16 +120,17 @@ public final class DatadogWrapper {
         level: LogLevel,
         message: String,
         error: Error? = nil,
-        attributes: [String: Encodable]? = nil
+        attributes: [LogAttributes] = []
     ) {
-        var attributes = attributes ?? .init()
-        attributes["build_number"] = bundleVersion
+        let mergedAttributes = self.flattenArray(attributes)
+        var plainAttributes = mergedAttributes.mapKeys({ key  in key.rawValue })
+        plainAttributes["build_number"] = bundleVersion
 
         logger?.log(
             level: level,
             message: message,
             error: error,
-            attributes: attributes
+            attributes: plainAttributes
         )
     }
 
@@ -141,24 +141,6 @@ public final class DatadogWrapper {
             logger?.removeAttribute(forKey: key.rawValue)
         }
     }
-}
-
-extension DatadogWrapper: RemoteLogger {
-
-    public func log(
-        message: String,
-        error: Error?,
-        attributes: [String: Encodable]?,
-        level: RemoteMonitoring.Level
-    ) {
-        log(
-            level: level.logLevel,
-            message: message,
-            error: error,
-            attributes: attributes
-        )
-    }
-
 }
 
 // MARK: Crypto helper
@@ -203,7 +185,7 @@ public final class DatadogWrapper {
         level: LogLevel,
         message: String,
         error: Error? = nil,
-        attributes: [String: Encodable]? = nil
+        attributes: [LogAttributes] = []
     ) {}
 
     public func startMonitoring() {}
@@ -215,53 +197,28 @@ public final class DatadogWrapper {
 
 // MARK: - COMMON
 
-extension RemoteMonitoring.Level {
-
-    var logLevel: LogLevel {
-        switch self {
-        case .debug:
-            return .debug
-
-        case .info:
-            return .info
-
-        case .notice:
-            return .notice
-
-        case .warn:
-            return .warn
-
-        case .error:
-            return .error
-
-        case .critical:
-            return .critical
-        }
-    }
-}
-
 extension DatadogWrapper: WireSystem.LoggerProtocol {
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(level: .info, message: message.logDescription, attributes: attributes)
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(level: .notice, message: message.logDescription, attributes: attributes)
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(level: .warn, message: message.logDescription, attributes: attributes)
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(level: .error, message: message.logDescription, attributes: attributes)
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(level: .critical, message: message.logDescription, attributes: attributes)
     }
 }
