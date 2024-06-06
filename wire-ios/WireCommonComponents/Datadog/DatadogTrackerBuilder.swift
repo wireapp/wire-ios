@@ -16,24 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
+#if DATADOG_IMPORT
 
-public protocol DatadogTrackerProtocol: LoggerProtocol {
+import Foundation
+import WireTransport
 
-    var datadogUserId: String { get }
+struct DatadogTrackerBuilder {
+    func build() -> DatadogTracker? {
+        let bundle = Bundle.wireCommonComponents
 
-    func startMonitoring()
-    func addTag(_ key: LogAttributesKey, value: String?)
+        guard
+            let appID = bundle.infoForKey("DatadogAppId"),
+            let clientToken = bundle.infoForKey("DatadogClientToken")
+        else {
+            assertionFailure("missing Datadog appID and clientToken - logging disabled")
+            return nil
+        }
+
+        return DatadogTracker(
+            appID: appID,
+            clientToken: clientToken,
+            environment: BackendEnvironment.shared,
+            level: .debug
+        )
+    }
 }
 
-public enum DatadogAnalytics {
-
-    public static let shared: (any DatadogTrackerProtocol)? = {
-        #if DATADOG_IMPORT
-        let builder = DatadogTrackerBuilder()
-        return builder.build()
-        #else
-        return DatadogVoidTracker()
-        #endif
-    }()
-}
+#endif

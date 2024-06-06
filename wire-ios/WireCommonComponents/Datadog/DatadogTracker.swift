@@ -37,26 +37,7 @@ final class DatadogTracker: DatadogTrackerProtocol {
     var logger: (any DatadogLogs.LoggerProtocol)?
     var defaultLevel: LogLevel
 
-    convenience init?() {
-        let bundle = Bundle(for: Self.self)
-
-        guard
-            let appID = bundle.infoForKey("DatadogAppId"),
-            let clientToken = bundle.infoForKey("DatadogClientToken")
-        else {
-            print("missing Datadog appID and clientToken - logging disabled")
-            return nil
-        }
-
-        self.init(
-            appID: appID,
-            clientToken: clientToken,
-            environment: BackendEnvironment.shared,
-            level: .debug
-        )
-    }
-
-    private init(
+    init(
         appID: String,
         clientToken: String,
         environment: BackendEnvironmentProvider,

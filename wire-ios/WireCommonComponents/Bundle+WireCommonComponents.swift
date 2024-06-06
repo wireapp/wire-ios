@@ -16,24 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
+import Foundation
 
-public protocol DatadogTrackerProtocol: LoggerProtocol {
-
-    var datadogUserId: String { get }
-
-    func startMonitoring()
-    func addTag(_ key: LogAttributesKey, value: String?)
+extension Bundle {
+    /// Provides access to the Bundle 'WireCommonComponents'.
+    static let wireCommonComponents = Bundle(for: WireCommonComponentsBundle.self)
 }
 
-public enum DatadogAnalytics {
-
-    public static let shared: (any DatadogTrackerProtocol)? = {
-        #if DATADOG_IMPORT
-        let builder = DatadogTrackerBuilder()
-        return builder.build()
-        #else
-        return DatadogVoidTracker()
-        #endif
-    }()
-}
+private final class WireCommonComponentsBundle { }

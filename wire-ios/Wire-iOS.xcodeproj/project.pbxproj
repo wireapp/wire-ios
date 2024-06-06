@@ -1327,6 +1327,8 @@
 		E6D186E42C106B4200083F9B /* DatadogTrace in Frameworks */ = {isa = PBXBuildFile; productRef = E6D186E32C106B4200083F9B /* DatadogTrace */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E6D186E92C119A7E00083F9B /* DatadogTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186E82C119A7E00083F9B /* DatadogTracker.swift */; };
 		E6D186EB2C119EF400083F9B /* DatadogVoidTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186EA2C119EF400083F9B /* DatadogVoidTracker.swift */; };
+		E6D186EF2C11F6D600083F9B /* DatadogTrackerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186EE2C11F6D600083F9B /* DatadogTrackerBuilder.swift */; };
+		E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
 		E6E557982BBD49A60033E62B /* NetworkQualityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E557972BBD49A60033E62B /* NetworkQualityType.swift */; };
 		E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */; };
@@ -3420,6 +3422,8 @@
 		E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModulePresenterTests.swift; sourceTree = "<group>"; };
 		E6D186E82C119A7E00083F9B /* DatadogTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogTracker.swift; sourceTree = "<group>"; };
 		E6D186EA2C119EF400083F9B /* DatadogVoidTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogVoidTracker.swift; sourceTree = "<group>"; };
+		E6D186EE2C11F6D600083F9B /* DatadogTrackerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogTrackerBuilder.swift; sourceTree = "<group>"; };
+		E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+WireCommonComponents.swift"; sourceTree = "<group>"; };
 		E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescription.swift; sourceTree = "<group>"; };
 		E6E557972BBD49A60033E62B /* NetworkQualityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkQualityType.swift; sourceTree = "<group>"; };
 		E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellSnapshotTests.swift; sourceTree = "<group>"; };
@@ -7859,6 +7863,7 @@
 			children = (
 				010497D02940D8990046124D /* DatadogAnalytics.swift */,
 				E6D186E82C119A7E00083F9B /* DatadogTracker.swift */,
+				E6D186EE2C11F6D600083F9B /* DatadogTrackerBuilder.swift */,
 				E6D186EA2C119EF400083F9B /* DatadogVoidTracker.swift */,
 			);
 			path = Datadog;
@@ -8621,6 +8626,7 @@
 				06F9864825CC1518005572C5 /* AccessoryTextField.swift */,
 				EF1EB850235F008F00575DD9 /* Bundle+InfoDict.swift */,
 				5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */,
+				E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */,
 				CE8E4FAA1DF066750009F437 /* FilePreviewGenerator.swift */,
 				16BBEC852469941D00801AEC /* UIColor+NamedColors.swift */,
 				CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */,
@@ -10930,6 +10936,7 @@
 				E6D186E92C119A7E00083F9B /* DatadogTracker.swift in Sources */,
 				F15650C321DD0A9B00210504 /* Bundle+Backend.swift in Sources */,
 				F15650B221DD018700210504 /* Bundle+Identifiers.swift in Sources */,
+				E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */,
 				F15650B021DCFF5300210504 /* AutomationHelper.swift in Sources */,
 				F15650A421DCF66600210504 /* AudioProcessing.swift in Sources */,
 				F15650A121DCF3E700210504 /* ExtensionSettings.swift in Sources */,
@@ -10946,6 +10953,7 @@
 				5E3E1B732260DA200053AC59 /* StyleKitIcons.generated.swift in Sources */,
 				F15650C621DD0C5500210504 /* CGFloat+Hairline.swift in Sources */,
 				F15650A321DCF63300210504 /* FilePreviewGenerator.swift in Sources */,
+				E6D186EF2C11F6D600083F9B /* DatadogTrackerBuilder.swift in Sources */,
 				5E39FC6F2260BAEC00C682B8 /* UIImage+StyleKit.swift in Sources */,
 				E9EBE0D9281958BE0058C793 /* FontSpec.swift in Sources */,
 				A92E731E2407F587007C1FFE /* String+Localized.swift in Sources */,
