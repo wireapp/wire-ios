@@ -18,7 +18,6 @@
 		EE67F711296F0BB5001D7C88 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE67F710296F0BB5001D7C88 /* ViewController.swift */; };
 		EE67F714296F0BB5001D7C88 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE67F712296F0BB5001D7C88 /* Main.storyboard */; };
 		EE67F716296F0BB5001D7C88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE67F715296F0BB5001D7C88 /* Assets.xcassets */; };
-		EE67F724296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */; };
 		EE9AEC9C2BD15A0C00F7853F /* WireCanvas.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */; };
 /* End PBXBuildFile section */
 
@@ -79,7 +78,6 @@
 		EE67F713296F0BB5001D7C88 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EE67F715296F0BB5001D7C88 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EE67F71A296F0BB5001D7C88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = ../Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
 		EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireCanvas.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,7 +101,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE67F724296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,7 +158,6 @@
 		166390D71DC8E5EF00D7BF1C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
