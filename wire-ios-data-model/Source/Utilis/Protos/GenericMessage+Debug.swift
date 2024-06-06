@@ -85,12 +85,18 @@ extension GenericMessage: CustomStringConvertible {
 extension GenericMessage: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        return "[\(safeTypeForLoggingDescription) \(messageID.readableHash)]"
+        return "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
+    }
+
+    public var safeIdForLoggingDescription: String {
+        UUID(uuidString: messageID)?.safeForLoggingDescription ?? "<nil>"
     }
 
     public var safeTypeForLoggingDescription: String {
         return content?.safeForLoggingDescription ?? "unknown"
     }
+
+
 
 }
 
