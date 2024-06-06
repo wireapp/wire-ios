@@ -23,6 +23,9 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
 final class StartUIViewController: UIViewController, SpinnerCapable {
+
+    // MARK: - Properties
+
     var dismissSpinner: SpinnerCompletion?
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
@@ -31,7 +34,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let searchController = UISearchController(searchResultsController: nil)
 
-    let groupSelector: SearchGroupSelector = SearchGroupSelector()
+    let groupSelector = SearchGroupSelector()
 
     let searchResultsViewController: SearchResultsViewController
 
@@ -52,12 +55,17 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     let profilePresenter: ProfilePresenter = ProfilePresenter()
     private var emptyResultView: EmptySearchResultsView!
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    let backgroundColor = SemanticColors.View.backgroundDefault
+
+    var searchResults: SearchResultsViewController {
+        return self.searchResultsViewController
     }
 
-    let backgroundColor = SemanticColors.View.backgroundDefault
+    var showsGroupSelector: Bool {
+        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+    }
+
+    // MARK: - Init
 
     /// init method for injecting mock addressBookHelper
     ///
@@ -81,11 +89,13 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         setupViews()
     }
 
-    var searchResults: SearchResultsViewController {
-        return self.searchResultsViewController
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Overloaded methods
+    // MARK: - Override methods
+
     override func loadView() {
         view = StartUIView(frame: CGRect.zero)
     }
@@ -96,10 +106,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         setupNavigationBarButtonItems()
     }
 
-    private func configGroupSelector() {
-        groupSelector.translatesAutoresizingMaskIntoConstraints = false
-        groupSelector.backgroundColor = backgroundColor
+    override func accessibilityPerformEscape() -> Bool {
+        onDismiss()
+        return true
     }
+
+    // MARK: - Setup and configure views
 
     func setupViews() {
         configGroupSelector()
@@ -119,14 +131,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         }
 
         setupSearchController()
-
-        groupSelector.onGroupSelected = { [weak self] group in
-            if .services == group {
-                self?.searchController.searchBar.text = ""
-            }
-            self?.searchResults.searchGroup = group
-            self?.performSearch()
-        }
 
         if showsGroupSelector {
             view.addSubview(groupSelector)
@@ -154,11 +158,23 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchController.searchBar.accessibilityIdentifier = "textViewSearch"
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.searchBar.delegate = self
     }
 
-    private func createConstraints() {
+    private func configGroupSelector() {
+        groupSelector.translatesAutoresizingMaskIntoConstraints = false
+        groupSelector.backgroundColor = backgroundColor
+        groupSelector.onGroupSelected = { [weak self] group in
+            if .services == group {
+                self?.searchController.searchBar.text = ""
+            }
+            self?.searchResults.searchGroup = group
+            self?.performSearch()
+        }
+    }
 
+    // MARK: - Setup constraints
+
+    private func createConstraints() {
         [groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         if showsGroupSelector {
@@ -182,10 +198,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         ])
     }
 
-    var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
-    }
-
     func showKeyboardIfNeeded() {
         let conversationCount = userSession.conversationList().count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
@@ -193,22 +205,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    func updateActionBar() {
-        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
-            searchResults.searchResultsView.accessoryView = nil
-        } else {
-            searchResults.searchResultsView.accessoryView = quickActionsBar
-        }
-
-        view.setNeedsLayout()
-    }
-
-    override func accessibilityPerformEscape() -> Bool {
-        onDismiss()
-        return true
-    }
-
     // MARK: - Instance methods
+
     @objc
     func performSearch() {
         let searchString = searchController.searchBar.text ?? ""
@@ -239,7 +237,20 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
             navigationController?.pushViewController(ContactsViewController(), animated: true)
         }
     }
+
+    func updateActionBar() {
+        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
+            searchResults.searchResultsView.accessoryView = nil
+        } else {
+            searchResults.searchResultsView.accessoryView = quickActionsBar
+        }
+
+        view.setNeedsLayout()
+    }
+
 }
+
+// MARK: - UISearchResultsUpdating, UISearchBarDelegate
 
 extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
 
