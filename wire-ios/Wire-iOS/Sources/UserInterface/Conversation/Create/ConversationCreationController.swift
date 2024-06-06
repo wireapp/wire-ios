@@ -41,8 +41,6 @@ final class ConversationCreationController: UIViewController {
 
     private let collectionViewController = SectionCollectionViewController()
 
-    fileprivate var navBarBackgroundView = UIView()
-
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
 
@@ -154,15 +152,18 @@ final class ConversationCreationController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
-        setupNavigationBar()
         setupViews()
 
         // try to overtake the first responder from the other view
         if UIResponder.currentFirst != nil {
             nameSection.becomeFirstResponder()
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -206,22 +207,15 @@ final class ConversationCreationController: UIViewController {
             collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
         }
 
-        navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
-        view.addSubview(navBarBackgroundView)
-
-        navBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
-            navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
-        ])
     }
 
     private func setupNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
+        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
+
+        navigationController?.navigationBar.barTintColor = SemanticColors.View.backgroundDefault
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.tintColor = UIColor.accent()
+        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = navigationController?.closeItem()
@@ -237,7 +231,6 @@ final class ConversationCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
         navigationItem.rightBarButtonItem = nextButtonItem
-
     }
 
     func proceedWith(value: SimpleTextField.Value) {
