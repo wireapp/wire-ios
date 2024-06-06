@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		165EA0D41DB67C3B008ECC60 /* Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 165EA0C61DB67C3B008ECC60 /* Canvas.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0DD1DB67C6C008ECC60 /* Canvas.swift */; };
 		1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */; };
 		16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A301DBA5B7300B5BC47 /* Stroke.swift */; };
@@ -17,7 +16,6 @@
 
 /* Begin PBXFileReference section */
 		165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCanvas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		165EA0C61DB67C3B008ECC60 /* Canvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Canvas.h; sourceTree = "<group>"; };
 		165EA0C71DB67C3B008ECC60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		165EA0DD1DB67C6C008ECC60 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Trimmed.swift"; sourceTree = "<group>"; };
@@ -78,7 +76,6 @@
 				16CB8A301DBA5B7300B5BC47 /* Stroke.swift */,
 				16CB8A321DBA5BB800B5BC47 /* Image.swift */,
 				1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */,
-				165EA0C61DB67C3B008ECC60 /* Canvas.h */,
 				165EA0C71DB67C3B008ECC60 /* Info.plist */,
 			);
 			path = Sources;
@@ -132,7 +129,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				165EA0D41DB67C3B008ECC60 /* Canvas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
