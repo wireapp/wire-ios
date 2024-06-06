@@ -26,7 +26,7 @@ import DatadogTrace
 import UIKit
 import WireTransport
 
-final class DatadogImplementation: DatadogTrackerProtocol {
+final class DatadogTracker: DatadogTrackerProtocol {
 
     /// SHA256 string to identify current Device across app and extensions.
     var datadogUserId: String
@@ -208,7 +208,7 @@ final class DatadogImplementation: DatadogTrackerProtocol {
     }
 }
 
-extension DatadogImplementation: WireTransport.RemoteLogger {
+extension DatadogTracker: WireTransport.RemoteLogger {
     func log(
         message: String,
         error: (any Error)?,
@@ -216,12 +216,12 @@ extension DatadogImplementation: WireTransport.RemoteLogger {
         level: WireTransport.RemoteMonitoring.Level
     ) {
         let logLevel: DatadogLogs.LogLevel = switch level {
-            case .debug: .debug
-            case .info: .info
-            case .notice: .notice
-            case .warn: .warn
-            case .error: .error
-            case .critical: .critical
+        case .debug: .debug
+        case .info: .info
+        case .notice: .notice
+        case .warn: .warn
+        case .error: .error
+        case .critical: .critical
         }
 
         log(

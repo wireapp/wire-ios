@@ -30,7 +30,7 @@ public enum DatadogAnalytics {
 
     public static let shared: (any DatadogTrackerProtocol)? = {
         #if DATADOG_IMPORT
-        return DatadogImplementation()
+        return DatadogTracker()
         #else
         return DatadogVoidTracker()
         #endif
