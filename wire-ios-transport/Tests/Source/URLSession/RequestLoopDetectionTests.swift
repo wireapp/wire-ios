@@ -16,14 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<< HEAD
-import Foundation
-=======
 import XCTest
 
->>>>>>> 2606a03253 (fix: request loop add to group [WPB-7392] (#1530))
 @testable import WireTransport
-import XCTest
 
 final class RequestLoopDetectionTests: XCTestCase {
 
