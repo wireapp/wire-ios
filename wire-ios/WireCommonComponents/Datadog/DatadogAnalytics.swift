@@ -32,7 +32,7 @@ public enum DatadogAnalytics {
         #if DATADOG_IMPORT
         return DatadogImplementation()
         #else
-        return DatadogVoid()
+        return DatadogVoidTracker()
         #endif
     }()
 }
