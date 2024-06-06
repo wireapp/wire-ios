@@ -60,7 +60,11 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         super.setUp()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(
+            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUser,
+            editableSelfUser: selfUser
+        )
     }
 
     // MARK: - tearDown
