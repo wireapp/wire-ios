@@ -18,18 +18,20 @@
 
 import Foundation
 
-/// An event concerning federation between domains.
+/// An event concerning teams.
 
-public enum FederationEvent {
+public enum TeamEvent: Equatable {
 
-    /// Two or more other domains have stopped federating
-    /// with each other.
-
-    case connectionRemoved
-
-    /// The self domain has stopped federating with another
-    /// domain.
+    /// The self team was deleted.
 
     case delete
+
+    /// A user has left a team.
+
+    case memberLeave(TeamMemberLeaveEvent)
+
+    /// A user's team membership was updated.
+
+    case memberUpdate(TeamMemberUpdateEvent)
 
 }

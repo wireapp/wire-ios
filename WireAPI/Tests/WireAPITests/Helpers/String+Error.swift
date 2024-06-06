@@ -18,32 +18,4 @@
 
 import Foundation
 
-/// An event concerning teams.
-
-public enum TeamEvent {
-
-    /// A team conversation was created.
-
-    case conversationCreate
-
-    /// A team conversation was deleted.
-
-    case conversationDelete
-
-    /// A team was created.
-
-    case create
-
-    /// The self team was deleted.
-
-    case delete
-
-    /// A user has left the self team.
-
-    case memberLeave
-
-    /// A member of the self team has updated their metadata.
-
-    case memberUpdate
-
-}
+extension String: Error {}
