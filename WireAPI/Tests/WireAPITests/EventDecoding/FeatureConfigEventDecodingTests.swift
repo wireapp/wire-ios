@@ -202,7 +202,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 )
             )
         )
-        
+
         static let selfDeletingMessagesUpdateEvent = FeatureConfigUpdateEvent(
             featureConfig: .selfDeletingMessages(
                 SelfDeletingMessagesFeatureConfig(
@@ -215,4 +215,3 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
     }
 
 }
-
