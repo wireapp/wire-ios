@@ -18,16 +18,18 @@
 
 public enum WireAnalytics { }
 
-#if DATADOG_IMPORT
+#if true
 
-import WireDatadogTracker
+import WireAnalyticsTracker
 
 extension WireAnalytics {
-    public static let shared: (any DatadogTrackerProtocol)? = {
-        let builder = DatadogTrackerBuilder()
+    public static let shared: (any WireAnalyticsTracking)? = {
+        let builder = WireAnalyticsTrackerBuilder()
         return builder.build()
     }()
 }
+
+extension WireAnalyticsTracker: WireAnalyticsTracking { }
 
 #else
 

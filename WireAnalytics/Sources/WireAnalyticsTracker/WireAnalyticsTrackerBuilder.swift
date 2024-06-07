@@ -19,7 +19,7 @@
 import DatadogLogs
 import Foundation
 
-public struct DatadogTrackerBuilder {
+public struct WireAnalyticsTrackerBuilder {
 
     private let bundle: Bundle
     // private let environment: BackendEnvironment
@@ -35,7 +35,7 @@ public struct DatadogTrackerBuilder {
         self.level = level
     }
 
-    public func build() -> DatadogTracker? {
+    public func build() -> WireAnalyticsTracker? {
 //        guard
 //            let appID = bundle.infoForKey("DatadogAppId"),
 //            let clientToken = bundle.infoForKey("DatadogClientToken")
@@ -44,7 +44,7 @@ public struct DatadogTrackerBuilder {
 //            return nil
 //        }
 
-        return DatadogTracker(
+        return WireAnalyticsTracker(
             appID: "",
             clientToken: "",
             // environment: environment,

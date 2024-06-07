@@ -22,9 +22,8 @@ import DatadogLogs
 import DatadogRUM
 import DatadogTrace
 import UIKit
-import WireDatadogUtility
 
-public final class DatadogTracker: DatadogTrackerProtocol {
+public final class WireAnalyticsTracker {
 
     /// SHA256 string to identify current Device across app and extensions.
     public var datadogUserId: String
@@ -105,88 +104,90 @@ public final class DatadogTracker: DatadogTrackerProtocol {
 
         // RemoteMonitoring.remoteLogger = self
 
-//        log(
-//            level: defaultLevel,
-//            message: "Datadog startMonitoring for device: \(datadogUserId)"
-//        )
+        //        log(
+        //            level: defaultLevel,
+        //            message: "Datadog startMonitoring for device: \(datadogUserId)"
+        //        )
     }
+
+    // MARK: Logging
+
+    public func addTag(_ key: String, value: String?) {
+        if let value {
+            logger?.addAttribute(forKey: key, value: value)
+        } else {
+            logger?.removeAttribute(forKey: key)
+        }
+    }
+
+    //
+    //    func debug(_ message: any LogConvertible, attributes: LogAttributes?) {
+    //        log(
+    //            level: .debug,
+    //            message: message.logDescription,
+    //            attributes: attributes
+    //        )
+    //    }
+    //
+    //    func info(_ message: any LogConvertible, attributes: LogAttributes?) {
+    //        log(
+    //            level: .info,
+    //            message: message.logDescription,
+    //            attributes: attributes
+    //        )
+    //    }
+    //
+    //    func notice(_ message: any LogConvertible, attributes: LogAttributes?) {
+    //        log(
+    //            level: .notice,
+    //            message: message.logDescription,
+    //            attributes: attributes
+    //        )
+    //    }
+    //
+    //    func warn(_ message: any LogConvertible, attributes: LogAttributes?) {
+    //        log(
+    //            level: .warn,
+    //            message: message.logDescription,
+    //            attributes: attributes
+    //        )
+    //    }
+    //
+    //    func error(_ message: any LogConvertible, attributes: LogAttributes?) {
+    //        log(
+    //            level: .error,
+    //            message: message.logDescription,
+    //            attributes: attributes
+    //        )
+    //    }
+    //
+    //    func critical(_ message: any LogConvertible, attributes: LogAttributes?) {
+    //        log(
+    //            level: .critical,
+    //            message: message.logDescription,
+    //            attributes: attributes
+    //        )
+    //    }
+    //
+    //    private func log(
+    //        level: LogLevel,
+    //        message: String,
+    //        error: Error? = nil,
+    //        attributes: [String: any Encodable]? = nil
+    //    ) {
+    //        var attributes = attributes ?? .init()
+    //        attributes["build_number"] = bundleVersion
+    //
+    //        logger?.log(
+    //            level: level,
+    //            message: message,
+    //            error: error,
+    //            attributes: attributes
+    //        )
+    //    }
+    // }
 }
 
-//    // MARK: Logging
-//
-//    func addTag(_ key: LogAttributesKey, value: String?) {
-//        if let value {
-//            logger?.addAttribute(forKey: key.rawValue, value: value)
-//        } else {
-//            logger?.removeAttribute(forKey: key.rawValue)
-//        }
-//    }
-//
-//    func debug(_ message: any LogConvertible, attributes: LogAttributes?) {
-//        log(
-//            level: .debug,
-//            message: message.logDescription,
-//            attributes: attributes
-//        )
-//    }
-//
-//    func info(_ message: any LogConvertible, attributes: LogAttributes?) {
-//        log(
-//            level: .info,
-//            message: message.logDescription,
-//            attributes: attributes
-//        )
-//    }
-//
-//    func notice(_ message: any LogConvertible, attributes: LogAttributes?) {
-//        log(
-//            level: .notice,
-//            message: message.logDescription,
-//            attributes: attributes
-//        )
-//    }
-//
-//    func warn(_ message: any LogConvertible, attributes: LogAttributes?) {
-//        log(
-//            level: .warn,
-//            message: message.logDescription,
-//            attributes: attributes
-//        )
-//    }
-//
-//    func error(_ message: any LogConvertible, attributes: LogAttributes?) {
-//        log(
-//            level: .error,
-//            message: message.logDescription,
-//            attributes: attributes
-//        )
-//    }
-//
-//    func critical(_ message: any LogConvertible, attributes: LogAttributes?) {
-//        log(
-//            level: .critical,
-//            message: message.logDescription,
-//            attributes: attributes
-//        )
-//    }
-//
-//    private func log(
-//        level: LogLevel,
-//        message: String,
-//        error: Error? = nil,
-//        attributes: [String: any Encodable]? = nil
-//    ) {
-//        var attributes = attributes ?? .init()
-//        attributes["build_number"] = bundleVersion
-//
-//        logger?.log(
-//            level: level,
-//            message: message,
-//            error: error,
-//            attributes: attributes
-//        )
-//    }
-// }
 //
 // extension DatadogTracker: WireTransport.RemoteLogger {
 //    func log(
