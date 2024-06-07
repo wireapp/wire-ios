@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 
@@ -61,7 +62,7 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Computed Properties
 
-    private var state: EmptySearchResultsViewState = .initialSearch {
+    fileprivate var state: EmptySearchResultsViewState = .initialSearch {
         didSet {
             updateUIForCurrentEmptySearchResultState()
         }
@@ -235,4 +236,36 @@ final class EmptySearchResultsView: UIView {
             actionButton.isHidden = true
         }
     }
+}
+
+// MARK: - Previews
+
+struct EmptySearchResultsViewRepresentable: UIViewRepresentable {
+    typealias UIViewType = EmptySearchResultsView
+
+    var isSelfUserAdmin: Bool
+    var isFederationEnabled: Bool
+    fileprivate var initialState: EmptySearchResultsViewState
+
+    func makeUIView(context: Context) -> EmptySearchResultsView {
+        let view = EmptySearchResultsView(
+            isSelfUserAdmin: isSelfUserAdmin,
+            isFederationEnabled: isFederationEnabled
+        )
+        view.updateStatus(searchingForServices: false, hasFilter: false)
+        view.state = initialState
+        return view
+    }
+
+    func updateUIView(_ uiView: EmptySearchResultsView, context: Context) {
+        // You can update the view with new parameters here if needed
+    }
+}
+
+#Preview {
+    EmptySearchResultsViewRepresentable(
+        isSelfUserAdmin: true,
+        isFederationEnabled: false,
+        initialState: .noServicesEnabled
+    )
 }
