@@ -21,7 +21,4 @@ public protocol WireAnalyticsTracking {
     var datadogUserId: String { get }
 
     func startMonitoring()
-
-    // TODO: log attribute?
-    func addTag(_ key: String, value: String?)
 }

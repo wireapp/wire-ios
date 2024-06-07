@@ -1301,6 +1301,8 @@
 		E666EDD62B73E62800C03E2B /* BackupSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDD52B73E62800C03E2B /* BackupSource.swift */; };
 		E666EDDA2B73E9C400C03E2B /* BackupStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */; };
 		E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */; };
+		E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D42C13375700F82F88 /* WireAnalytics.swift */; };
+		E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E66C51D62C13395400F82F88 /* WireAnalytics */; };
 		E66D4E822BE525DF00C7F374 /* AVSVideoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
@@ -3402,6 +3404,7 @@
 		E666EDD52B73E62800C03E2B /* BackupSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSource.swift; sourceTree = "<group>"; };
 		E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStatusCell.swift; sourceTree = "<group>"; };
 		E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupActionCell.swift; sourceTree = "<group>"; };
+		E66C51D42C13375700F82F88 /* WireAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalytics.swift; sourceTree = "<group>"; };
 		E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSVideoContainerView.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4089,6 +4092,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */,
 				EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8625,6 +8629,7 @@
 				A9730DDB250287360061BF36 /* Bundle+ThirdPartyKeys.swift */,
 				01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */,
 				59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */,
+				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
@@ -8781,6 +8786,7 @@
 			);
 			name = WireCommonComponents;
 			packageProductDependencies = (
+				E66C51D62C13395400F82F88 /* WireAnalytics */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -10928,6 +10934,7 @@
 				7C88BB90235F413F0075BCC5 /* Bundle+InfoDict.swift in Sources */,
 				EEF37EDA2BDFD9620055C9E1 /* WireTextStyle.swift in Sources */,
 				F15650AF21DCFE5200210504 /* CircularProgressView.swift in Sources */,
+				E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */,
 				F156509E21DCF1DA00210504 /* Dummy.swift in Sources */,
 				165C55C2254B0CB500731CA9 /* UIColor+NamedColors.swift in Sources */,
 				01F5EAE42B712DD7009FD25D /* LogFileDestination.swift in Sources */,
@@ -11777,6 +11784,10 @@
 		595D304A2BF923B30064A018 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		E66C51D62C13395400F82F88 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

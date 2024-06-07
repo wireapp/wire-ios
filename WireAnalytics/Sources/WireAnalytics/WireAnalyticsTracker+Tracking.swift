@@ -18,23 +18,10 @@
 
 public enum WireAnalytics { }
 
-#if true
+#if canImport(WireAnalyticsTracker)
 
 import WireAnalyticsTracker
 
-extension WireAnalytics {
-    public static let shared: (any WireAnalyticsTracking)? = {
-        let builder = WireAnalyticsTrackerBuilder()
-        return builder.build()
-    }()
-}
-
 extension WireAnalyticsTracker: WireAnalyticsTracking { }
-
-#else
-
-extension WireAnalytics {
-    public static let shared: (any WireAnalyticsTracking)? = WireAnalyticsVoidTracker()
-}
 
 #endif
