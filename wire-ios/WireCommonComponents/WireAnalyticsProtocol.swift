@@ -16,9 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol WireAnalyticsTracking {
+import WireAnalytics
+import WireSystem
+import WireTransport
 
-    var datadogUserId: String { get }
+public protocol WireAnalyticsProtocol: WireAnalyticsTracking, LoggerProtocol, RemoteLogger {
+    func setupRemoteMonitoring()
+}
 
-    func enable()
+extension WireAnalyticsProtocol {
+    public func setupRemoteMonitoring() {
+        RemoteMonitoring.remoteLogger = self
+
+        log(
+            message: "Datadog startMonitoring for device: \(datadogUserId)",
+            error: nil,
+            attributes: nil,
+            level: .info
+        )
+    }
 }

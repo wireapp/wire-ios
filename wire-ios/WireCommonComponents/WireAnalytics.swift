@@ -18,56 +18,30 @@
 
 import WireAnalytics
 import WireSystem
+import WireTransport
 
 public enum WireAnalytics { }
-
-// TODO: find better name
-public typealias WireAnalyticsImpl = any WireAnalyticsTracking & LoggerProtocol
 
 #if canImport(WireAnalyticsTracker)
 
 import WireAnalyticsTracker
+import WireTransport
 
 extension WireAnalytics {
-    public static let shared: WireAnalyticsImpl? = {
+    public static let shared: WireAnalyticsProtocol? = {
         let builder = WireAnalyticsTrackerBuilder()
         return builder.build()
     }()
 }
 
-extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        addTag(key.rawValue, value: value)
-    }
-}
+extension WireAnalyticsTracker: WireAnalyticsProtocol { }
 
 #else
 
 extension WireAnalytics {
-    public static let shared: WireAnalyticsImpl? = WireAnalyticsVoidTracker()
+    public static let shared: WireAnalyticsProtocol? = WireAnalyticsVoidTracker()
 }
 
-extension WireAnalyticsVoidTracker: WireSystem.LoggerProtocol {
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) { }
-
-    public func addTag(_ key: LogAttributesKey, value: String?) { }
-}
+extension WireAnalyticsVoidTracker: WireAnalyticsProtocol { }
 
 #endif

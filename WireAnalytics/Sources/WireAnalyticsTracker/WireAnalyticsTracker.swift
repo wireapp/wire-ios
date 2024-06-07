@@ -31,8 +31,7 @@ public final class WireAnalyticsTracker {
     private let applicationID: String
     private let bundleVersion: String?
 
-    var logger: (any DatadogLogs.LoggerProtocol)?
-    var defaultLevel: LogLevel
+    public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
     init(
         appID: String,
@@ -71,10 +70,9 @@ public final class WireAnalyticsTracker {
 
         bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
-        defaultLevel = level
-
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
 
+        // TODO: this
         // system logger
 
         //        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
@@ -84,7 +82,7 @@ public final class WireAnalyticsTracker {
         //        }
     }
 
-    public func startMonitoring() {
+    public func enable() {
         let traceConfiguration = Trace.Configuration(
             sampleRate: 100,
             networkInfoEnabled: true
@@ -101,23 +99,6 @@ public final class WireAnalyticsTracker {
         RUM.enable(with: rumConfiguration)
 
         Datadog.setUserInfo(id: datadogUserId)
-
-        // RemoteMonitoring.remoteLogger = self
-
-        //        log(
-        //            level: defaultLevel,
-        //            message: "Datadog startMonitoring for device: \(datadogUserId)"
-        //        )
-    }
-
-    // MARK: Logging
-
-    public func addTag(_ key: String, value: String?) {
-        if let value {
-            logger?.addAttribute(forKey: key, value: value)
-        } else {
-            logger?.removeAttribute(forKey: key)
-        }
     }
 }
 

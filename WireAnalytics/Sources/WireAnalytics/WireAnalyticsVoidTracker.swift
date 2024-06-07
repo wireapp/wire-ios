@@ -22,7 +22,5 @@ public struct WireAnalyticsVoidTracker: WireAnalyticsTracking {
 
     public var datadogUserId: String = "NONE"
 
-    public func startMonitoring() { }
-
-    public func addTag(_ key: String, value: String?) { }
+    public func enable() { }
 }
