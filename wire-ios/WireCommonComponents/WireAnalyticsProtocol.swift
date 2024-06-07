@@ -21,11 +21,11 @@ import WireSystem
 import WireTransport
 
 public protocol WireAnalyticsProtocol: WireAnalyticsTracking, LoggerProtocol, RemoteLogger {
-    func setupRemoteMonitoring()
+    func startRemoteMonitoring()
 }
 
 extension WireAnalyticsProtocol {
-    public func setupRemoteMonitoring() {
+    public func startRemoteMonitoring() {
         RemoteMonitoring.remoteLogger = self
 
         log(

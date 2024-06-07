@@ -124,7 +124,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         setupObserver()
 
         if let datadog = WireAnalytics.shared {
-            datadog.startMonitoring()
+            datadog.enable()
+            datadog.startRemoteMonitoring()
         }
     }
 

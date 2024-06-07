@@ -112,7 +112,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
-        WireAnalytics.shared?.startMonitoring()
+        WireAnalytics.shared?.enable()
+        WireAnalytics.shared?.startRemoteMonitoring()
         WireAnalytics.shared?.info("start app", attributes: nil)
 
         // Initial log line to indicate the client version and build

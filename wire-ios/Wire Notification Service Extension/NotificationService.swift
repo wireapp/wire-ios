@@ -34,7 +34,8 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        WireAnalytics.shared?.startMonitoring()
+        WireAnalytics.shared?.enable()
+        WireAnalytics.shared?.startRemoteMonitoring()
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if DeveloperFlag.nseV2.isOn {
