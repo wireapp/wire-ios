@@ -21,75 +21,155 @@ import XCTest
 
 final class FeatureConfigEventDecodingTests: XCTestCase {
 
-    private let helper = EventDecodingAssertionHelper()
+    private var decoder: JSONDecoder!
+
+    override func setUp() {
+        super.setUp()
+        decoder = .defaultDecoder
+    }
+
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
+    }
 
     func testDecodingFeatureConfigUpdateAppLockEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateAppLock",
-            to: .featureConfig(.update(Scaffolding.appLockUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateAppLock")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.appLockUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateClassfiedDomainsEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateClassfiedDomains",
-            to: .featureConfig(.update(Scaffolding.classifiedDomainsUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateClassifiedDomains")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.classifiedDomainsUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateConferenceCallingEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateConferenceCalling",
-            to: .featureConfig(.update(Scaffolding.conferenceCallingUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateConferenceCalling")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.conferenceCallingUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateConversationGuestLinksEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateConversationGuestLinks",
-            to: .featureConfig(.update(Scaffolding.conversationGuestLinksUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateConversationGuestLinks")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.conversationGuestLinksUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateDigitalSignatureEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateDigitalSignature",
-            to: .featureConfig(.update(Scaffolding.digitalSignatureUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateDigitalSignature")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.digitalSignatureUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateEndToEndIdentityEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateEndToEndIdentity",
-            to: .featureConfig(.update(Scaffolding.endToEndIdentityUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateEndToEndIdentity")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.endToEndIdentityUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateFileSharingEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateFileSharing",
-            to: .featureConfig(.update(Scaffolding.fileSharingUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateFileSharing")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.fileSharingUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateMLSEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateMLS",
-            to: .featureConfig(.update(Scaffolding.mlsUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateMLS")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.mlsUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateMLSMigrationEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateMLSMigration",
-            to: .featureConfig(.update(Scaffolding.mlsMigrationUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateMLSMigration")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.mlsMigrationUpdateEvent))
         )
     }
 
     func testDecodingFeatureConfigUpdateSelfDeletingMessagesEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FeatureConfigUpdateSelfDeletingMessages",
-            to: .featureConfig(.update(Scaffolding.selfDeletingMessagesUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateSelfDeletingMessages")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.selfDeletingMessagesUpdateEvent))
         )
     }
 
