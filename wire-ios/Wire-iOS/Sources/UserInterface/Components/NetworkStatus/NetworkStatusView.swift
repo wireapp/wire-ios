@@ -209,7 +209,7 @@ final class NetworkStatusView: UIView {
     }
 
     func updateUI(animated: Bool) {
-        DatadogAnalytics.shared?.log(networkStatus: state)
+        log(networkStatus: state)
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
         if application.applicationState == .background {
@@ -232,6 +232,29 @@ final class NetworkStatusView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return state == .offlineExpanded
     }
+
+    // MARK: - Helper Logging
+
+    func log(networkStatus: NetworkStatusViewState) {
+        let tracker = WireAnalytics.shared
+
+        do {
+            let status = String(describing: networkStatus)
+            let logInfo = LogInfo(status: status)
+            let data = try JSONEncoder().encode(logInfo)
+            let jsonString = String(data: data, encoding: .utf8)
+
+            tracker?.debug(
+                "NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")",
+                attributes: nil
+            )
+        } catch {
+            tracker?.error(
+                "NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)",
+                attributes: nil
+            )
+        }
+    }
 }
 
 extension NetworkStatusView: BreathLoadingBarDelegate {
@@ -248,19 +271,4 @@ extension NetworkStatusView: BreathLoadingBarDelegate {
 
 private struct LogInfo: Encodable {
     var status: String
-}
-
-private extension DatadogTrackerProtocol {
-
-    func log(networkStatus: NetworkStatusViewState) {
-        do {
-            let data = try JSONEncoder().encode(LogInfo(status: String(describing: networkStatus)))
-            let jsonString = String(data: data, encoding: .utf8)
-            let message = "NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")"
-            self.debug(message, attributes: nil)
-        } catch {
-            let message = "NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)"
-            self.error(message, attributes: nil)
-        }
-    }
 }
