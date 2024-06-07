@@ -14,7 +14,6 @@ else
     rm -rf "$BUILT_PRODUCTS_DIR/DatadogTrace.o"
     rm -rf "$BUILT_PRODUCTS_DIR/DatadogRUM.o"
     
-    
     rm -rf "$BUILT_PRODUCTS_DIR/DatadogCore.swiftmodule"
     rm -rf "$BUILT_PRODUCTS_DIR/DatadogCrashReporting.swiftmodule"
     rm -rf "$BUILT_PRODUCTS_DIR/DatadogLogs.swiftmodule"
