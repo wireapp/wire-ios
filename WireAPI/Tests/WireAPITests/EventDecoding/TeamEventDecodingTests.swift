@@ -21,19 +21,43 @@ import XCTest
 
 final class TeamEventDecodingTests: XCTestCase {
 
-    private let helper = EventDecodingAssertionHelper()
+    private var decoder: JSONDecoder!
+
+    override func setUp() {
+        super.setUp()
+        decoder = .defaultDecoder
+    }
+
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
+    }
 
     func testDecodingTeamMemberLeaveEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "TeamMemberLeave",
-            to: .team(.memberLeave(Scaffolding.memberLeaveEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "TeamMemberLeave")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .team(.memberLeave(Scaffolding.memberLeaveEvent))
         )
     }
 
     func testDecodingTeamMemberUpdateEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "TeamMemberUpdate",
-            to: .team(.memberUpdate(Scaffolding.memberUpdateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "TeamMemberUpdate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .team(.memberUpdate(Scaffolding.memberUpdateEvent))
         )
     }
 

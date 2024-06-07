@@ -21,19 +21,43 @@ import XCTest
 
 final class FederationEventDecodingTests: XCTestCase {
 
-    private let helper = EventDecodingAssertionHelper()
+    private var decoder: JSONDecoder!
+
+    override func setUp() {
+        super.setUp()
+        decoder = .defaultDecoder
+    }
+
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
+    }
 
     func testDecodingFederationConnectionRemovedEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FederationConnectionRemoved",
-            to: .federation(.connectionRemoved(Scaffolding.connectionRemovedEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FederationConnectionRemoved")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .federation(.connectionRemoved(Scaffolding.connectionRemovedEvent))
         )
     }
 
     func testDecodingFederationDeleteEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "FederationDelete",
-            to: .federation(.delete(Scaffolding.deleteEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FederationDelete")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .federation(.delete(Scaffolding.deleteEvent))
         )
     }
 

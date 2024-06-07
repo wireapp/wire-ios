@@ -21,103 +21,211 @@ import XCTest
 
 final class UserEventDecodingTests: XCTestCase {
 
-    private let helper = EventDecodingAssertionHelper()
+    private var decoder: JSONDecoder!
+
+    override func setUp() {
+        super.setUp()
+        decoder = .defaultDecoder
+    }
+
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
+    }
 
     func testDecodingClientAddEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserClientAdd",
-            to: .user(.clientAdd(Scaffolding.clientAddEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserClientAdd")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.clientAdd(Scaffolding.clientAddEvent))
         )
     }
 
     func testDecodingClientRemoveEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserClientRemove",
-            to: .user(.clientRemove(Scaffolding.clientRemoveEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserClientRemove")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.clientRemove(Scaffolding.clientRemoveEvent))
         )
     }
 
     func testDecodingUserConnectionEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserConnection",
-            to: .user(.connection(Scaffolding.connectionEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserConnection")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.connection(Scaffolding.connectionEvent))
         )
     }
 
     func testDecodingUserContactJoinEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserContactJoin",
-            to: .user(.contactJoin(Scaffolding.contactJoinEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserContactJoin")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.contactJoin(Scaffolding.contactJoinEvent))
         )
     }
 
     func testDecodingUserEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserDelete",
-            to: .user(.delete(Scaffolding.userDeleteEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserDelete")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.delete(Scaffolding.userDeleteEvent))
         )
     }
 
     func testDecodingUserLegalholdDisableEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserLegalholdDisable",
-            to: .user(.legalholdDisable(Scaffolding.legalholdDisableEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserLegalholdDisable")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.legalholdDisable(Scaffolding.legalholdDisableEvent))
         )
     }
 
     func testDecodingUserLegalholdEnableEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserLegalholdEnable",
-            to: .user(.legalholdEnable(Scaffolding.legalholdEnableEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserLegalholdEnable")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.legalholdEnable(Scaffolding.legalholdEnableEvent))
         )
     }
 
     func testDecodingUserLegalholdRequestEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserLegalholdRequest",
-            to: .user(.legalholdRequest(Scaffolding.legalholdRequestEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserLegalholdRequest")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.legalholdRequest(Scaffolding.legalholdRequestEvent))
         )
     }
 
     func testDecodingUserPropertiesSetEvent_ReadReceipts() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserPropertiesSetReadReceipts",
-            to: .user(.propertiesSet(Scaffolding.readReceiptsPropertiesSetEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetReadReceipts")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.propertiesSet(Scaffolding.readReceiptsPropertiesSetEvent))
         )
     }
 
     func testDecodingUserPropertiesSetEvent_TypingIndicators() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserPropertiesSetTypingIndicators",
-            to: .user(.propertiesSet(Scaffolding.typingIndicatorsPropertiesSetEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetTypingIndicators")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.propertiesSet(Scaffolding.typingIndicatorsPropertiesSetEvent))
         )
     }
 
     func testDecodingUserPropertiesSetEvent_ConversationLabels() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserPropertiesSetConversationLabels",
-            to: .user(.propertiesSet(Scaffolding.conversationLabelsPropertiesSetEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetConversationLabels")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.propertiesSet(Scaffolding.conversationLabelsPropertiesSetEvent))
         )
     }
 
     func testDecodingUserPropertiesSetEvent_UnknownProperty() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserPropertiesSetUnknownProperty",
-            to: .user(.propertiesSet(Scaffolding.unknownPropertiesSetEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetUnknownProperty")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.propertiesSet(Scaffolding.unknownPropertiesSetEvent))
         )
     }
 
     func testDecodingUserPropertiesDeleteEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserPropertiesDelete",
-            to: .user(.propertiesDelete(Scaffolding.propertiesDeleteEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserPropertiesDelete")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.propertiesDelete(Scaffolding.propertiesDeleteEvent))
         )
     }
 
     func testDecodingUserUpdateEvent() throws {
-        try helper.assertEventDecodingFromResource(
-            named: "UserUpdate",
-            to: .user(.update(Scaffolding.updateEvent))
+        // Given
+        let mockEventData = try MockEventDataResource(name: "UserUpdate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .user(.update(Scaffolding.updateEvent))
         )
     }
 
