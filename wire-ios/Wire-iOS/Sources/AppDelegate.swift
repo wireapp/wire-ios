@@ -112,8 +112,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
-        DatadogAnalytics.shared?.startMonitoring()
-        DatadogAnalytics.shared?.info("start app", attributes: nil)
+        WireAnalytics.shared?.startMonitoring()
+        WireAnalytics.shared?.info("start app", attributes: nil)
 
         // Initial log line to indicate the client version and build
         WireLogger.appDelegate.info(

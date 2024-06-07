@@ -180,7 +180,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             ))
         }
 
-        if let dataDogUserId = DatadogAnalytics.shared?.datadogUserId {
+        if let dataDogUserId = WireAnalytics.shared?.datadogUserId {
             sections.append(Section(
                 header: "Datadog",
                 items: [
