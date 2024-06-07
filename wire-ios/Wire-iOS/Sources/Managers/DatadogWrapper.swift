@@ -88,7 +88,6 @@ public final class DatadogWrapper {
             .sendNetworkInfo(true)
             .sendLogsToDatadog(true)
             .set(loggerName: "iOS Wire App")
-            .printLogsToConsole(true, usingFormat: .shortWith(prefix: "[iOS App] "))
             .set(datadogReportingThreshold: level)
             .build()
 
