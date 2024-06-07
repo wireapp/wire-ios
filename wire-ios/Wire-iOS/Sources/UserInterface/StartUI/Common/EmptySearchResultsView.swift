@@ -240,32 +240,13 @@ final class EmptySearchResultsView: UIView {
 
 // MARK: - Previews
 
-struct EmptySearchResultsViewRepresentable: UIViewRepresentable {
-    typealias UIViewType = EmptySearchResultsView
-
-    var isSelfUserAdmin: Bool
-    var isFederationEnabled: Bool
-    fileprivate var initialState: EmptySearchResultsViewState
-
-    func makeUIView(context: Context) -> EmptySearchResultsView {
-        let view = EmptySearchResultsView(
-            isSelfUserAdmin: isSelfUserAdmin,
-            isFederationEnabled: isFederationEnabled
-        )
-        view.updateStatus(searchingForServices: false, hasFilter: false)
-        view.state = initialState
-        return view
-    }
-
-    func updateUIView(_ uiView: EmptySearchResultsView, context: Context) {
-        // You can update the view with new parameters here if needed
-    }
-}
-
+@available(iOS 17, *)
 #Preview {
-    EmptySearchResultsViewRepresentable(
+    let view = EmptySearchResultsView(
         isSelfUserAdmin: true,
-        isFederationEnabled: false,
-        initialState: .noServicesEnabled
+        isFederationEnabled: false
     )
+
+    view.state = .noServicesEnabled
+    return view
 }
