@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDatadogUtility
+public protocol WireAnalyticsTracking {
 
-public struct DatadogVoidTracker: DatadogTrackerProtocol {
+    var datadogUserId: String { get }
 
-    public init() {
-        print("yay")
-    }
+    func startMonitoring()
 
-    public var datadogUserId: String = "NONE"
-
-    public func startMonitoring() { }
+    // TODO: log attribute?
+    func addTag(_ key: String, value: String?)
 }

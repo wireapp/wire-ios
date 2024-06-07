@@ -16,23 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireAnalytics { }
+public struct WireAnalyticsVoidTracker: WireAnalyticsTracking {
 
-#if DATADOG_IMPORT
+    public init() { }
 
-import WireDatadogTracker
+    public var datadogUserId: String = "NONE"
 
-extension WireAnalytics {
-    public static let shared: (any DatadogTrackerProtocol)? = {
-        let builder = DatadogTrackerBuilder()
-        return builder.build()
-    }()
+    public func startMonitoring() { }
+
+    public func addTag(_ key: String, value: String?) { }
 }
-
-#else
-
-extension WireAnalytics {
-    public static let shared: (any WireAnalyticsTracking)? = WireAnalyticsVoidTracker()
-}
-
-#endif
