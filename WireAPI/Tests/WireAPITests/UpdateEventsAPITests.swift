@@ -118,7 +118,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
         static let updateEventEnvelope = UpdateEventEnvelope(
             id: eventID,
-            payloads: [.conversation(.create)],
+            events: [.conversation(.create)],
             isTransient: false
         )
 

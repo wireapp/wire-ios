@@ -247,13 +247,17 @@
                                 @"id" : @"5cc1ab91-45f4-49ec-bb7a-a5517b7a4173",
                                 @"payload" : @[payload1, payload2, payload3],
                                 };
-    
+
     NSMutableArray *expectedEvents = [NSMutableArray array];
     [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:eventData]];
     XCTAssertGreaterThan(expectedEvents.count, 0u);
-    
+
     // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventData];
+    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
+                                                              options:0
+                                                                error:nil];
+
+    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -296,7 +300,11 @@
     XCTAssertGreaterThan(expectedEvents.count, 0u);
 
     // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventData];
+    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
+                                                              options:0
+                                                                error:nil];
+
+    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
@@ -306,7 +314,7 @@
 - (void)testThatProcessSyncDataIsNotForwardedToAllSyncObjectsIfItIsNotAnArray
 {
     // given
-    NSDictionary *eventdata = @{
+    NSDictionary *eventData = @{
                                 @"id" : @"16be010d-c284-4fc0-b636-837bcebed654",
                                 @"payload" : @{
                                         @"type" : @"yyy",
@@ -315,8 +323,12 @@
                                 };
     
     // when
+    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
+                                                              options:0
+                                                                error:nil];
+
     [self performIgnoringZMLogError:^{
-        [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventdata];
+        [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
     
@@ -327,11 +339,15 @@
 - (void)testThatProcessSyncDataIsNotForwardedToAllSyncObjectsIfEventsAreInvalid
 {
     // given
-    NSArray *eventdata = @[ @{ @"id" : @"16be010d-c284-4fc0-b636-837bcebed654" } ];
-    
+    NSArray *eventData = @[ @{ @"id" : @"16be010d-c284-4fc0-b636-837bcebed654" } ];
+
     // when
+    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
+                                                              options:0
+                                                                error:nil];
+
     [self performIgnoringZMLogError:^{
-        [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventdata];
+        [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
     
