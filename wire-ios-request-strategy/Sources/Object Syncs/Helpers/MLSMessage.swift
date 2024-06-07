@@ -24,9 +24,7 @@ public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {
     var logInformation: LogAttributes { get }
 }
 
-extension ZMClientMessage: MLSMessage {
-    
-}
+extension ZMClientMessage: MLSMessage {}
 
 extension ZMAssetClientMessage: MLSMessage {
     public var logInformation: LogAttributes {

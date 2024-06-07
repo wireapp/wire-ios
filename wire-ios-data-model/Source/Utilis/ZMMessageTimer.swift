@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMMessageTimer {
-    
     /// Starts a new timer if there is no existing one
     /// - Parameters:
     ///   - message: message passed to the timer's fireMethod

@@ -239,6 +239,6 @@ public final class WireLoggerObjc: NSObject {
 
     @objc(logSaveCoreDataError:)
     static func logSaveCoreData(error: Error) {
-        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic);
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
     }
 }

@@ -34,6 +34,5 @@ extension ZMClientMessage: ProteusMessage {
 
     }
 }
-extension ZMAssetClientMessage: ProteusMessage {
 
-}
+extension ZMAssetClientMessage: ProteusMessage {}

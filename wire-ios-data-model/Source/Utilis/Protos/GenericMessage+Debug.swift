@@ -95,9 +95,6 @@ extension GenericMessage: SafeForLoggingStringConvertible {
     public var safeTypeForLoggingDescription: String {
         return content?.safeForLoggingDescription ?? "unknown"
     }
-
-
-
 }
 
 extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
