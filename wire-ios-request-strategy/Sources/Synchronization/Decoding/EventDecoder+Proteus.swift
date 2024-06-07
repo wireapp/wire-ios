@@ -32,8 +32,7 @@ extension EventDecoder {
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
     ) async -> ZMUpdateEvent? {
-        let eventAttributes: LogAttributes = [LogAttributesKey.eventId.rawValue: event.safeUUID].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
-        WireLogger.updateEvent.info("decrypting proteus event...", attributes: eventAttributes)
+        WireLogger.updateEvent.info("decrypting proteus event...", attributes: event.logAttributes)
 
         guard !event.wasDecrypted else {
             return event
@@ -59,7 +58,7 @@ extension EventDecoder {
                     LogAttributesKey.recipientID.rawValue: event.recipientID?.readableHash ?? "<nil>",
                     LogAttributesKey.selfClientId.rawValue: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     LogAttributesKey.selfUserId.rawValue: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
-                ].merging(eventAttributes, uniquingKeysWith: { _, new in new })
+                ].merging(event.logAttributes, uniquingKeysWith: { _, new in new })
                 WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...)", attributes: additionalInfo)
                 return (UserClient?.none, ProteusSessionID?.none)
             }
@@ -69,7 +68,7 @@ extension EventDecoder {
         }
 
         guard let senderClient, let senderClientSessionId else {
-            WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...", attributes: eventAttributes)
+            WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...", attributes: event.logAttributes)
             return nil
         }
 
@@ -93,7 +92,7 @@ extension EventDecoder {
                 using: decryptFunction
             ) else {
                 fail()
-                WireLogger.updateEvent.error("decrypting proteus event... failed: could not decrypt, dropping...", attributes: eventAttributes)
+                WireLogger.updateEvent.error("decrypting proteus event... failed: could not decrypt, dropping...", attributes: event.logAttributes)
                 return nil
             }
 
@@ -102,18 +101,18 @@ extension EventDecoder {
         } catch let error as CBoxResult {
             let proteusError = ProteusError(cboxResult: error)
             fail(error: proteusError)
-            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")", attributes: eventAttributes)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")", attributes: event.logAttributes)
             return nil
 
         } catch let error as ProteusService.DecryptionError {
             let proteusError = error.proteusError
             fail(error: proteusError)
-            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)", attributes: eventAttributes)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)", attributes: event.logAttributes)
             return nil
 
         } catch {
             fail(error: nil)
-            WireLogger.updateEvent.error("decrypting proteus event... failed with unkown error: \(error.localizedDescription)", attributes: eventAttributes)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with unkown error: \(error.localizedDescription)", attributes: event.logAttributes)
             return nil
         }
 
@@ -166,10 +165,9 @@ extension EventDecoder {
         sender: UserClient,
         in context: NSManagedObjectContext
     ) {
-        var attributes: LogAttributes = .safePublic
+        var attributes: LogAttributes = event.logAttributes
         attributes.merge(
             [
-                LogAttributesKey.eventId.rawValue: event.safeUUID,
                 LogAttributesKey.senderUserId.rawValue: sender.safeRemoteIdentifier.value
             ],
             uniquingKeysWith: { _, new in new }
