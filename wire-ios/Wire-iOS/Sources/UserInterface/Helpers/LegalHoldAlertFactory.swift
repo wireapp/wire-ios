@@ -26,7 +26,7 @@ typealias SuggestedStateChangeHandler = (LegalHoldDisclosureController.Disclosur
 enum LegalHoldAlertFactory {
 
     static func makeLegalHoldDeactivatedAlert(
-        for user: SelfUserType,
+        for user: SelfUserLegalHoldable,
         suggestedStateChangeHandler: SuggestedStateChangeHandler?
     ) -> UIAlertController {
         let alert = UIAlertController(
@@ -47,7 +47,7 @@ enum LegalHoldAlertFactory {
     }
 
     static func makeLegalHoldActivatedAlert(
-        for user: SelfUserType,
+        for user: SelfUserLegalHoldable,
         suggestedStateChangeHandler: SuggestedStateChangeHandler?
     ) -> UIAlertController {
         let alert = UIAlertController(
@@ -70,7 +70,7 @@ enum LegalHoldAlertFactory {
     static func makeLegalHoldActivationAlert(
         for legalHoldRequest: LegalHoldRequest,
         fingerprint: String,
-        user: SelfUserType,
+        user: SelfUserLegalHoldable,
         suggestedStateChangeHandler: SuggestedStateChangeHandler?
     ) -> UIAlertController {
 

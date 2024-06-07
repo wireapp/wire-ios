@@ -150,12 +150,10 @@ jobs:
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
-      - name: Restore Bundler Cache
-        uses: actions/cache@v4
-        id: cache-bundler
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+          bundler-cache: true
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials

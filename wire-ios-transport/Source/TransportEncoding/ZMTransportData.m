@@ -20,6 +20,10 @@
 
 @implementation NSDictionary (ZMTransportData)
 
+- (NSString *)contentHintForRequestLoop {
+    return [NSString stringWithFormat:@"%lu", self.hash];
+}
+
 - (NSDictionary *)asDictionary;
 {
     return self;
@@ -38,6 +42,10 @@
 
 @implementation NSArray (ZMTransportData)
 
+- (NSString *)contentHintForRequestLoop {
+    return [NSString stringWithFormat:@"%lu", self.hash];
+}
+
 - (NSDictionary *)asDictionary;
 {
     return nil;
@@ -55,6 +63,10 @@
 @end
 
 @implementation NSString (ZMTransportData)
+
+- (NSString *)contentHintForRequestLoop {
+    return [NSString stringWithFormat:@"%lu", self.hash];
+}
 
 - (NSDictionary *)asDictionary
 {
