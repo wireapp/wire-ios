@@ -111,23 +111,43 @@ extension ConversationViewController {
     }
 
     var backButton: UIBarButtonItem {
-        let hasUnreadInOtherConversations = self.conversation.hasUnreadMessagesInOtherConversations
-        let arrowIcon: StyleKitIcon = view.isRightToLeft
-        ? (hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow)
-        : (hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow)
 
-        let icon: StyleKitIcon = (self.parent?.wr_splitViewController?.layoutSize == .compact) ? arrowIcon : .hamburger
+        let icon = backButtonIcon(hasUnreadInOtherConversations: false)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
+
         let button = UIBarButtonItem(icon: icon, target: self, action: action)
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
 
-        if hasUnreadInOtherConversations {
-            button.tintColor = UIColor.accent()
-            button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
+        // `ZMConversation.hasUnreadMessageInOtherConversations` is expensive because it performs a fetch request,
+        // so we call it from a Task to reduce the load on the UI.
+        // If `true` we update the button icon, If `false` we already have set it up above
+        Task {
+            if self.conversation.hasUnreadMessagesInOtherConversations {
+                await MainActor.run {
+                    button.setIcon(backButtonIcon(hasUnreadInOtherConversations: true))
+                    button.tintColor = UIColor.accent()
+                    button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
+                }
+            }
         }
 
         return button
+    }
+
+    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
+        var arrowIcon: StyleKitIcon
+
+        if view.isRightToLeft {
+            arrowIcon = hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+        } else {
+            arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+        }
+
+        let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
+        let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
+
+        return icon
     }
 
     var shouldShowCollectionsButton: Bool {
