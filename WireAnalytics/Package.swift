@@ -41,10 +41,14 @@ let package = Package(
 )
 
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
-    // if ProcessInfo.processInfo.environment["DATADOG_IMPORT"] != nil {
-    if false {
+//    if hasEnvironmentVariable("DATADOG_IMPORT") {
+    if true {
         return ["WireAnalyticsTracker"]
     } else {
         return []
     }
+}
+
+func hasEnvironmentVariable(_ name: String) -> Bool {
+    ProcessInfo.processInfo.environment[name] != nil
 }
