@@ -227,7 +227,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             )
         case .headless:
             showLaunchScreen(completion: completion)
-        case .loading(account: let toAccount, from: let fromAccount):
+        case .loading:
             completion()
         case let .locked(userSession):
             screenCurtain.userSession = userSession
@@ -417,7 +417,7 @@ extension AppRootRouter {
             return
         }
 
-        TrackingManager.shared.disableCrashSharing = true
+        TrackingManager.shared.disableCrashSharing = false
         TrackingManager.shared.disableAnalyticsSharing = false
         Analytics.shared.provider?.selfUser = selfUser
     }
