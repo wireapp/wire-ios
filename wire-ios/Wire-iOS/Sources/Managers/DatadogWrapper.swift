@@ -122,9 +122,12 @@ public final class DatadogWrapper {
         error: Error? = nil,
         attributes: [LogAttributes] = []
     ) {
-        let mergedAttributes = self.flattenArray(attributes)
-        var plainAttributes = mergedAttributes.mapKeys({ key  in key.rawValue })
-        plainAttributes["build_number"] = bundleVersion
+        var plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, attribute in
+            attribute.forEach { item in
+                partialResult[item.key.rawValue] = item.value
+            }
+        }
+        plainAttributes["build_number"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
         logger?.log(
             level: level,
