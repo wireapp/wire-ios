@@ -67,7 +67,7 @@ private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
 private struct ConversationV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
-        // Change: replace "access_role_v2" with "access_role".
+        // Changed: replace "access_role_v2" with "access_role".
         case accessRoles = "access_role"
         case creator
         case epoch
@@ -114,7 +114,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
             id: id,
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
-            legacyAccessRole: nil, // Remove: `var legacyAccessRole`
+            legacyAccessRole: nil, // Removed: `var legacyAccessRole`
             members: members.map { $0.toAPIModel() },
             messageProtocol: messageProtocol,
             messageTimer: messageTimer,
