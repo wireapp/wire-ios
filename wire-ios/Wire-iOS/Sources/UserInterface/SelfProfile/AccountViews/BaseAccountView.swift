@@ -23,6 +23,8 @@ import WireSyncEngine
 /// otherwise `init?(account: Account, user: ZMUser? = nil)` returns nil
 class BaseAccountView: UIView {
 
+    // MARK: - Properties
+
     var autoUpdateSelection = true
 
     let imageViewContainer = UIView()
@@ -70,6 +72,8 @@ class BaseAccountView: UIView {
         return result
     }
 
+    // MARK: - Init
+
     init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         self.account = account
 
@@ -85,8 +89,6 @@ class BaseAccountView: UIView {
 
         [imageViewContainer, outlineView, selectionView].forEach(addSubview)
 
-        let containerInset: CGFloat = 6
-
         let iconWidth: CGFloat
 
         switch displayContext {
@@ -95,6 +97,37 @@ class BaseAccountView: UIView {
         case .accountSelector:
             iconWidth = CGFloat.AccountView.iconWidth
         }
+
+        setupConstraints(iconWidth: iconWidth)
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
+        self.addGestureRecognizer(tapGesture)
+
+        self.unreadCountToken = NotificationCenter.default.addObserver(forName: .AccountUnreadCountDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateAppearance()
+        }
+
+        updateAppearance()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Override methods
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+    }
+
+    // MARK: - Setup constraints
+
+    func setupConstraints(iconWidth: CGFloat) {
+        let containerInset: CGFloat = 6
 
         [self, selectionView, imageViewContainer].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -115,28 +148,9 @@ class BaseAccountView: UIView {
                 imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
                 widthAnchor.constraint(lessThanOrEqualToConstant: 128)
             ])
-
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
-        self.addGestureRecognizer(tapGesture)
-
-        self.unreadCountToken = NotificationCenter.default.addObserver(forName: .AccountUnreadCountDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.updateAppearance()
-        }
-
-        updateAppearance()
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: - Actions
 
     func update() {
         if self.autoUpdateSelection {
@@ -144,7 +158,8 @@ class BaseAccountView: UIView {
         }
     }
 
-    @objc func didTap(_ sender: UITapGestureRecognizer) {
+    @objc
+    func didTap(_ sender: UITapGestureRecognizer) {
         onTap(account)
     }
 }
