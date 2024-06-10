@@ -39,7 +39,7 @@ extension UIBarButtonItem {
 
     func setIcon(_ icon: StyleKitIcon) {
         image = icon.makeImage(
-            size: .tiny, 
+            size: .tiny,
             color: IconColors.foregroundDefaultBlack
         )
     }
