@@ -25,27 +25,51 @@ import WireAnalyticsTracker
 
 extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(level: .debug, message: message, attributes: attributes)
+        log(
+            level: .debug,
+            message: message,
+            attributes: attributes
+        )
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(level: .info, message: message, attributes: attributes)
+        log(
+            level: .info,
+            message: message,
+            attributes: attributes
+        )
     }
 
     public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(level: .notice, message: message, attributes: attributes)
+        log(
+            level: .notice,
+            message: message,
+            attributes: attributes
+        )
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(level: .warn, message: message, attributes: attributes)
+        log(
+            level: .warn,
+            message: message,
+            attributes: attributes
+        )
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(level: .error, message: message, attributes: attributes)
+        log(
+            level: .error,
+            message: message,
+            attributes: attributes
+        )
     }
 
     public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(level: .critical, message: message, attributes: attributes)
+        log(
+            level: .critical,
+            message: message,
+            attributes: attributes
+        )
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
