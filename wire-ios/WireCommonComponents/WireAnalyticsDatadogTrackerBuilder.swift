@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#if canImport(WireAnalyticsTracker)
+#if canImport(WireDatadogTracker)
 
 import CryptoKit
 import UIKit
-import WireAnalyticsTracker
+import WireDatadogTracker
 import class WireTransport.BackendEnvironment
 
 struct WireAnalyticsDatadogTrackerBuilder {

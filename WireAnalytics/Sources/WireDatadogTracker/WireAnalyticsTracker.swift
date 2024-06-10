@@ -25,10 +25,11 @@ import UIKit
 
 public final class WireAnalyticsTracker {
 
-    public let datadogUserIdentifier: String
-
     private let applicationID: String
     private let logLevel: DatadogLogs.LogLevel = .debug
+    private let userIdentifier: String
+
+    public var datadogUserIdentifier: String? { userIdentifier }
 
     public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
@@ -39,7 +40,7 @@ public final class WireAnalyticsTracker {
         environmentName: String
     ) {
         applicationID = appID
-        datadogUserIdentifier = datadogUserID
+        userIdentifier = datadogUserID
 
         // set up datadog
 
@@ -83,11 +84,11 @@ public final class WireAnalyticsTracker {
         )
         RUM.enable(with: rumConfiguration)
 
-        Datadog.setUserInfo(id: datadogUserIdentifier)
+        Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
             level: logLevel,
-            message: "Datadog startMonitoring for device: \(datadogUserIdentifier)",
+            message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
         )

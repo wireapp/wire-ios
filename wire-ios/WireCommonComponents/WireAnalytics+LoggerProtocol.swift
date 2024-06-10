@@ -21,10 +21,10 @@ import WireSystem
 
 // MARK: - WireAnalyticsTracker
 
-#if canImport(WireAnalyticsTracker)
+#if canImport(WireDatadogTracker)
 
 import DatadogLogs
-import WireAnalyticsTracker
+import WireDatadogTracker
 
 extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {

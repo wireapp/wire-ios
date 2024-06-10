@@ -15,8 +15,8 @@ let package = Package(
             targets: ["WireAnalytics"]
         ),
         .library(
-            name: "WireAnalyticsTracker",
-            targets: ["WireAnalyticsTracker"]
+            name: "WireDatadogTracker",
+            targets: ["WireDatadogTracker"]
         )
     ],
     dependencies: [
@@ -28,7 +28,7 @@ let package = Package(
             dependencies: resolveWireAnalyticsDependencies()
         ),
         .target(
-            name: "WireAnalyticsTracker",
+            name: "WireDatadogTracker",
             dependencies: [
                 .product(name: "DatadogCore", package: "dd-sdk-ios"),
                 .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
@@ -43,7 +43,7 @@ let package = Package(
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
 //    if hasEnvironmentVariable("DATADOG_IMPORT") {
     if true {
-        return ["WireAnalyticsTracker"]
+        return ["WireDatadogTracker"]
     } else {
         return []
     }

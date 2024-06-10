@@ -18,9 +18,9 @@
 
 public enum WireAnalytics { }
 
-#if canImport(WireAnalyticsTracker)
+#if canImport(WireDatadogTracker)
 
-import WireAnalyticsTracker
+import WireDatadogTracker
 
 extension WireAnalyticsTracker: WireAnalyticsTracking { }
 

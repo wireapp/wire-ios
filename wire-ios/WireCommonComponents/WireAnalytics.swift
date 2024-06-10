@@ -27,10 +27,10 @@ public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
 
 // MARK: - Singleton
 
-#if canImport(WireAnalyticsTracker)
+#if canImport(WireDatadogTracker)
 
 import UIKit
-import WireAnalyticsTracker
+import WireDatadogTracker
 import WireTransport
 
 extension WireAnalytics {
