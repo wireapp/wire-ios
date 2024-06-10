@@ -29,7 +29,8 @@ public final class WireAnalyticsTracker {
     public var datadogUserId: String
 
     private let applicationID: String
-    private let bundleVersion: String?
+
+    public let bundleVersion: String?
 
     public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 

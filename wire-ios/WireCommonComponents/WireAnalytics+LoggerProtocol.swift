@@ -20,31 +20,32 @@ import WireSystem
 
 #if canImport(WireAnalyticsTracker)
 
+import DatadogLogs
 import WireAnalyticsTracker
 
 extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message: message.logDescription, attributes: attributes, level: .debug)
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(level: .debug, message: message, attributes: attributes)
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message: message.logDescription, attributes: attributes, level: .info)
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(level: .info, message: message, attributes: attributes)
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message: message.logDescription, attributes: attributes, level: .notice)
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(level: .notice, message: message, attributes: attributes)
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message: message.logDescription, attributes: attributes, level: .warn)
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(level: .warn, message: message, attributes: attributes)
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message: message.logDescription, attributes: attributes, level: .error)
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(level: .error, message: message, attributes: attributes)
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message: message.logDescription, attributes: attributes, level: .critical)
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(level: .critical, message: message, attributes: attributes)
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
@@ -54,17 +55,40 @@ extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
             logger?.removeAttribute(forKey: key.rawValue)
         }
     }
+
+    // MARK: Helpers
+
+    private func log(
+        level: LogLevel,
+        message: any LogConvertible,
+        error: Error? = nil,
+        attributes: [LogAttributes] = []
+    ) {
+        var plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, logAttribute in
+            logAttribute.forEach { item in
+                partialResult[item.key.rawValue] = item.value
+            }
+        }
+        plainAttributes["build_number"] = bundleVersion
+
+        logger?.log(
+            level: level,
+            message: message.logDescription,
+            error: error,
+            attributes: plainAttributes
+        )
+    }
 }
 
 #else
 
 extension WireAnalyticsVoidTracker: WireSystem.LoggerProtocol {
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) { }
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) { }
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) { }
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) { }
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) { }
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) { }
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) { }
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) { }
 
     public func addTag(_ key: LogAttributesKey, value: String?) { }
 }
