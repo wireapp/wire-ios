@@ -425,7 +425,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.extendDestructionTimer(to: Date(timeIntervalSinceNow: 15))
 
         // force a wait so timer map is updated
-        wait(for: [InvertedTestExpectation()], timeout: 0.5)
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.5)
 
         // then a new timer was created
         let newTimer = self.deletionTimer?.timer(for: message)
@@ -457,7 +457,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.extendDestructionTimer(to: Date(timeIntervalSinceNow: 5))
 
         // force a wait so timer map is updated
-        wait(for: [InvertedTestExpectation()], timeout: 0.5)
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.5)
 
         // then a new timer was created
         let newTimer = self.deletionTimer?.timer(for: message)

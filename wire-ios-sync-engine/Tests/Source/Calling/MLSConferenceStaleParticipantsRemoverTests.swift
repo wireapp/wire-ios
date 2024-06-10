@@ -152,7 +152,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         }
 
         // set expectations
-        let expectation = InvertedTestExpectation()
+        let expectation = XCTestExpectation().inverted()
 
         // fulfill expectation
         mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
@@ -186,7 +186,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         }
 
         // mock remove members
-        let expectation = InvertedTestExpectation()
+        let expectation = XCTestExpectation().inverted()
         mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
             expectation.fulfill()
         }
@@ -221,7 +221,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             case .connecting:
                 expectation = XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
             default:
-                expectation = InvertedTestExpectation(description: "did not remove participant (\(participant.mlsClientID))")
+                expectation = XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
             }
 
             expectations[participant.mlsClientID] = expectation

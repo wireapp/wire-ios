@@ -18,12 +18,10 @@
 
 import XCTest
 
-public func InvertedTestExpectation(description: String? = nil) -> XCTestExpectation {
-    let expectation = if let description {
-        XCTestExpectation(description: description)
-    } else {
-        XCTestExpectation()
+extension XCTestExpectation {
+
+    public func inverted() -> Self {
+        isInverted = true
+        return self
     }
-    expectation.isInverted = true
-    return expectation
 }

@@ -77,7 +77,7 @@ final class OperationStatusTests: MessagingTest {
 
         // when
         sut.finishBackgroundTask(withTaskResult: .finished)
-        wait(for: [InvertedTestExpectation()], timeout: 0.05)
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
 
         // then
         XCTAssertEqual(sut.operationState, .background)
@@ -96,11 +96,11 @@ final class OperationStatusTests: MessagingTest {
 
         // then
         XCTAssertEqual(sut.operationState, .backgroundFetch)
-        wait(for: [InvertedTestExpectation()], timeout: 0.05)
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
 
         // when
         sut.finishBackgroundFetch(withFetchResult: .noData)
-        wait(for: [InvertedTestExpectation()], timeout: 0.05)
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
 
         // then
         XCTAssertEqual(sut.operationState, .background)
