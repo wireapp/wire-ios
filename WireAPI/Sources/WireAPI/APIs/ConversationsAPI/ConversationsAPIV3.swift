@@ -67,8 +67,8 @@ private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
 private struct ConversationV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
+        // Change: replace "access_role_v2" with "access_role".
         case accessRole = "access_role"
-        case accessRoleV2 = "access_role_v2"
         case creator
         case epoch
         case id
@@ -86,13 +86,13 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
     }
 
     var access: [String]?
+
     var accessRoles: [String]?
     var creator: UUID?
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
     var lastEventTime: String?
-    var legacyAccessRole: String?
     var members: QualifiedConversationMembers?
     var messageProtocol: String?
     var messageTimer: TimeInterval?
@@ -107,6 +107,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         access = try container.decodeIfPresent([String].self, forKey: .access)
+        accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
         creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
         epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
         id = try container.decodeIfPresent(UUID.self, forKey: .id)
@@ -121,19 +122,6 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
         readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
         teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
         type = try container.decodeIfPresent(Int.self, forKey: .type)
-
-        // v3 replaces the field "access_role_v2" with "access_role".
-        // However, since the format of update events does not depend on versioning,
-        // we may receive conversations from the `conversation.create` update event
-        // which still have both "access_role_v2" and "access_role" fields
-
-        if container.contains(CodingKeys.accessRoleV2) {
-            legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-        } else {
-            legacyAccessRole = nil
-            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
-        }
     }
 
     func toAPIModel() -> Conversation {
@@ -147,7 +135,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
             id: id,
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
-            legacyAccessRole: legacyAccessRole,
+            legacyAccessRole: nil, // Remove: `var legacyAccessRole`
             members: members.map { $0.toAPIModel() },
             messageProtocol: messageProtocol,
             messageTimer: messageTimer,

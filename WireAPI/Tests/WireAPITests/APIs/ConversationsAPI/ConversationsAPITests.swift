@@ -355,37 +355,13 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversations_givenV3AndSuccessResponse200AndAccessRoleV2_thenVerifyResponse() async throws {
+    func testGetConversations_givenV3AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV3AndSuccessResponse200AndAccessRoleV2"
-            )
-        ]
-
-        let api = ConversationsAPIV3(httpClient: httpClient)
-
-        // when
-        // then
-        let list = try await api.getConversations(for: [])
-        XCTAssertEqual(list.found.count, 1)
-        XCTAssertEqual(list.notFound.count, 1)
-        XCTAssertEqual(list.failed.count, 1)
-
-        let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.accessRoles, ["team_member"])
-        XCTAssertEqual(conversation.legacyAccessRole, "private")
-    }
-
-    func testGetConversations_givenV3AndSuccessResponse200AndNoAccessRoleV2_thenVerifyResponse() async throws {
-        // given
-        let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(
-                code: 200,
-                jsonResource: "testGetConversations_givenV3AndSuccessResponse200AndNoAccessRoleV2"
+                jsonResource: "testGetConversations_givenV3AndSuccessResponse200"
             )
         ]
 

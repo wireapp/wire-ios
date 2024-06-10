@@ -68,7 +68,6 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
         case accessRole = "access_role"
-        case accessRoleV2 = "access_role_v2"
         case cipherSuite = "cipher_suite"
         case creator
         case epoch
@@ -89,14 +88,13 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
 
     var access: [String]?
     var accessRoles: [String]?
-    var cipherSuite: UInt16?
+    var cipherSuite: UInt16? // New field
     var creator: UUID?
     var epoch: UInt?
-    var epochTimestamp: Date?
+    var epochTimestamp: Date? // New field
     var id: UUID?
     var lastEvent: String?
     var lastEventTime: String?
-    var legacyAccessRole: String?
     var members: QualifiedConversationMembers?
     var messageProtocol: String?
     var messageTimer: TimeInterval?
@@ -111,8 +109,11 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         access = try container.decodeIfPresent([String].self, forKey: .access)
+        accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+        cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
         creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
         epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+        epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
         id = try container.decodeIfPresent(UUID.self, forKey: .id)
         lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
         lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
@@ -125,23 +126,6 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
         readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
         teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
         type = try container.decodeIfPresent(Int.self, forKey: .type)
-
-        // v3 replaces the field "access_role_v2" with "access_role".
-        // However, since the format of update events does not depend on versioning,
-        // we may receive conversations from the `conversation.create` update event
-        // which still have both "access_role_v2" and "access_role" fields
-
-        if container.contains(CodingKeys.accessRoleV2) {
-            legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-        } else {
-            legacyAccessRole = nil
-            accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
-        }
-
-        // New in v5
-        cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
-        epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
     }
 
     func toAPIModel() -> Conversation {
@@ -155,7 +139,7 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
             id: id,
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
-            legacyAccessRole: legacyAccessRole,
+            legacyAccessRole: nil,
             members: members.map { $0.toAPIModel() },
             messageProtocol: messageProtocol,
             messageTimer: messageTimer,
