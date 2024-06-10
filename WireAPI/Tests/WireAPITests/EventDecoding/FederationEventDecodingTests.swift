@@ -21,52 +21,56 @@ import XCTest
 
 final class FederationEventDecodingTests: XCTestCase {
 
-    func testDecodingFederationConnectionRemovedEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "FederationConnectionRemoved")
+    private var decoder: JSONDecoder!
 
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
-        )
-
-        // Then it decoded the correct event.
-        guard case .federation(.connectionRemoved(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.connectionRemovedEventPayload)
+    override func setUp() {
+        super.setUp()
+        decoder = .defaultDecoder
     }
 
-    func testDecodingFederationDeleteEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "FederationDelete")
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
+    }
 
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingFederationConnectionRemovedEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FederationConnectionRemoved")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .federation(.connectionRemoved(Scaffolding.connectionRemovedEvent))
         )
+    }
 
-        // Then it decoded the correct event.
-        guard case .federation(.delete(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
+    func testDecodingFederationDeleteEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "FederationDelete")
 
-        XCTAssertEqual(payload, Scaffolding.deleteEventPayload)
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .federation(.delete(Scaffolding.deleteEvent))
+        )
     }
 
     private enum Scaffolding {
 
-        static let connectionRemovedEventPayload = FederationConnectionRemovedEvent(
+        static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
                 "a.com",
                 "b.com"
             ]
         )
 
-        static let deleteEventPayload = FederationDeleteEvent(domain: "foo.com")
+        static let deleteEvent = FederationDeleteEvent(domain: "foo.com")
     }
 
 }

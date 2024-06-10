@@ -18,16 +18,13 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// Capabilities of a user client.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum UserClientCapability: String, Codable {
 
-    /// The Proetus messaging protocol.
+    /// The client consents to being subject legalhold
+    /// (directly or indirectly).
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    case legalholdConsent = "legalhold-implicit-consent"
 
 }

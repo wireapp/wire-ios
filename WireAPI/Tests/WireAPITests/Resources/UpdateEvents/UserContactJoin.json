@@ -1,0 +1,6 @@
+{
+    "type": "user.contact-join",
+    "user": {
+        "name": "Alice McGee"
+    }
+}

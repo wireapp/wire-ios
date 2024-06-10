@@ -18,16 +18,25 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A persisted property stored on the server used to
+/// share self user settings across devices.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum UserProperty: Equatable {
 
-    /// The Proetus messaging protocol.
+    /// Whether the self user has enabled read receipts.
 
-    case proteus
+    case areReadRecieptsEnabled(Bool)
 
-    /// The Messaging Layer Security protocol.
+    /// Whether the self user has enabled typing indicators.
 
-    case mls
+    case areTypingIndicatorsEnabled(Bool)
+
+    /// The conversation labels setting.
+
+    case conversationLabels([ConversationLabel])
+
+    /// An unknown property.
+
+    case unknown(key: String)
 
 }

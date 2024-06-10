@@ -1,0 +1,25 @@
+{
+    "type": "user.client-add",
+    "client": {
+        "id": "2a1fd72806d84e26",
+        "class": "phone",
+        "label": "Alice's work phone",
+        "model": "iPhone 20",
+        "time": "2024-06-04T15:03:07.598Z",
+        "last_active": "2024-06-04T15:03:07.598Z",
+        "type": "permanent",
+        "cookie": "cookieData",
+        "mls_public_keys": {
+            "ed25519": "ed25519_key",
+            "ed448": "ed448_key",
+            "ecdsa_secp256r1_sha256": "p256_key",
+            "ecdsa_secp384r1_sha384": "p384_key",
+            "ecdsa_secp512r1_sha512": "p512_key"
+        },
+        "capabilities": {
+            "capabilities": [
+                "legalhold-implicit-consent"
+            ]
+        }
+    }
+}

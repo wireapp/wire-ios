@@ -18,16 +18,13 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where one of the self user's persisted
+/// properties was set.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserPropertiesSetEvent: Equatable {
 
-    /// The Proetus messaging protocol.
+    /// The updated user property.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    public let property: UserProperty
 
 }

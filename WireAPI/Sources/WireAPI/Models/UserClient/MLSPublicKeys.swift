@@ -18,16 +18,38 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A container of MLS public keys.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct MLSPublicKeys: Equatable, Codable {
 
-    /// The Proetus messaging protocol.
+    /// The key for the ed25519 ciphersuite.
 
-    case proteus
+    public let ed25519: String?
 
-    /// The Messaging Layer Security protocol.
+    /// The key for the ed448 ciphersuite.
 
-    case mls
+    public let ed448: String?
+
+    /// The key for the p256 ciphersuite.
+
+    public let p256: String?
+
+    /// The key for the p384 ciphersuite.
+
+    public let p384: String?
+
+    /// The key for the p512 ciphersuite.
+
+    public let p512: String?
+
+    enum CodingKeys: String, CodingKey {
+
+        case ed25519
+        case ed448
+        case p256 = "ecdsa_secp256r1_sha256"
+        case p384 = "ecdsa_secp384r1_sha384"
+        case p512 = "ecdsa_secp512r1_sha512"
+
+    }
 
 }

@@ -18,16 +18,24 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A label used to categorize conversations.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct ConversationLabel: Equatable {
 
-    /// The Proetus messaging protocol.
+    /// The label's id.
 
-    case proteus
+    public let id: UUID
 
-    /// The Messaging Layer Security protocol.
+    /// The label's name.
 
-    case mls
+    public let name: String?
+
+    /// The label's raw type.
+
+    public let type: Int16
+
+    /// The conversation ids associated with the label.
+
+    public let conversationIDs: [UUID]
 
 }

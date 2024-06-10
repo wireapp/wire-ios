@@ -21,50 +21,54 @@ import XCTest
 
 final class TeamEventDecodingTests: XCTestCase {
 
-    func testDecodingTeamMemberLeaveEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "TeamMemberLeave")
+    private var decoder: JSONDecoder!
 
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
-        )
-
-        // Then it decoded the correct event.
-        guard case .team(.memberLeave(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
-
-        XCTAssertEqual(payload, Scaffolding.memberLeaveEventPayload)
+    override func setUp() {
+        super.setUp()
+        decoder = .defaultDecoder
     }
 
-    func testDecodingTeamMemberUpdateEvent() async throws {
-        // Given event data.
-        let resource = try MockEventDataResource(name: "TeamMemberUpdate")
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
+    }
 
-        // When decode update event.
-        let updateEvent = try JSONDecoder.defaultDecoder.decode(
-            UpdateEvent.self,
-            from: resource.jsonData
+    func testDecodingTeamMemberLeaveEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "TeamMemberLeave")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .team(.memberLeave(Scaffolding.memberLeaveEvent))
         )
+    }
 
-        // Then it decoded the correct event.
-        guard case .team(.memberUpdate(let payload)) = updateEvent else {
-            return XCTFail("unexpected event: \(updateEvent)")
-        }
+    func testDecodingTeamMemberUpdateEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "TeamMemberUpdate")
 
-        XCTAssertEqual(payload, Scaffolding.memberUpdateEventPayload)
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .team(.memberUpdate(Scaffolding.memberUpdateEvent))
+        )
     }
 
     private enum Scaffolding {
 
-        static let memberLeaveEventPayload = TeamMemberLeaveEvent(
+        static let memberLeaveEvent = TeamMemberLeaveEvent(
             teamID: UUID(uuidString: "6f96e56c-8b3b-4821-925a-457f62f9de32")!,
             userID: UUID(uuidString: "d6344976-f86c-4010-afe2-bc07447ab412")!
         )
 
-        static let memberUpdateEventPayload = TeamMemberUpdateEvent(
+        static let memberUpdateEvent = TeamMemberUpdateEvent(
             teamID: UUID(uuidString: "6f96e56c-8b3b-4821-925a-457f62f9de32")!,
             membershipID: UUID(uuidString: "d6344976-f86c-4010-afe2-bc07447ab412")!
         )

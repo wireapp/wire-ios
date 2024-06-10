@@ -1,0 +1,21 @@
+{
+    "type": "user.connection",
+    "user": {
+        "name": "Alice McGee"
+    },
+    "connection": {
+        "from": "67b39b90-bd3c-41dd-ab58-35905afda19c",
+        "to": "7fdaac60-68cc-4c3b-b337-8202506a2db6",
+        "qualified_to": {
+            "domain": "example.com",
+            "id": "7fdaac60-68cc-4c3b-b337-8202506a2db6"
+        },
+        "conversation": "ef84379d-9bd6-432f-b2d6-ff636343596b",
+        "qualified_conversation": {
+            "domain": "example.com",
+            "id": "ef84379d-9bd6-432f-b2d6-ff636343596b"
+        },
+        "status": "accepted",
+        "last_update": "2024-06-05T08:34:21.766Z"
+    }
+}

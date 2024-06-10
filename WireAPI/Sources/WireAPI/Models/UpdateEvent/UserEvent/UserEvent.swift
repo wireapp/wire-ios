@@ -20,47 +20,47 @@ import Foundation
 
 /// An event concerning users.
 
-public enum UserEvent {
+public enum UserEvent: Equatable {
 
     /// The self user has added a new client.
 
-    case clientAdd
+    case clientAdd(UserClientAddEvent)
 
     /// A self user's client was removed.
 
-    case clientRemove
+    case clientRemove(UserClientRemoveEvent)
 
     /// A connection to another user has been updated.
 
-    case connection
+    case connection(UserConnectionEvent)
 
     /// A contact has joined Wire.
 
-    case contactJoin
+    case contactJoin(UserContactJoinEvent)
 
     /// A user was deleted.
 
-    case delete
+    case delete(UserDeleteEvent)
 
     /// Legalhold was disabled for a user.
 
-    case legalholdDisable
+    case legalholdDisable(UserLegalholdDisableEvent)
 
     /// Legalhold was enabled for a user.
 
-    case legalholdEnable
+    case legalholdEnable(UserLegalholdEnableEvent)
 
-    /// Legalhold has been requested for a user.
+    /// A user has been requested to become a legalhold subject.
 
-    case legalholdRequest
+    case legalholdRequest(UserLegalholdRequestEvent)
 
     /// One of the self user's persisted properties was set.
 
-    case propertiesSet
+    case propertiesSet(UserPropertiesSetEvent)
 
     /// One of the self user's persisted properties was deleted.
 
-    case propertiesDelete
+    case propertiesDelete(UserPropertiesDeleteEvent)
 
     /// One of the self user's push tokens was removed.
 
@@ -68,6 +68,6 @@ public enum UserEvent {
 
     /// A user's metadata was updated.
 
-    case update
+    case update(UserUpdateEvent)
 
 }

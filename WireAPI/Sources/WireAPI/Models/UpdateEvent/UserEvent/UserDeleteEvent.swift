@@ -18,16 +18,17 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where the account of a user (either the
+/// self user or another user) was deleted.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserDeleteEvent: Equatable {
 
-    /// The Proetus messaging protocol.
+    /// The user's id.
 
-    case proteus
+    public let userID: UUID
 
-    /// The Messaging Layer Security protocol.
+    /// The user's qualified id.
 
-    case mls
+    public let qualifiedUserID: QualifiedID
 
 }
