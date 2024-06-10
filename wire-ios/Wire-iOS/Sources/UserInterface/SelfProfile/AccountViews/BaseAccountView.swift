@@ -138,10 +138,6 @@ class BaseAccountView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func createDotConstraints() -> [NSLayoutConstraint] {
-        return []
-    }
-
     func update() {
         if self.autoUpdateSelection {
             self.selected = SessionManager.shared?.accountManager.selectedAccount == self.account
