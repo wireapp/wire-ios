@@ -21,7 +21,23 @@ import WireSystem
 
 // MARK: - Types
 
-public enum WireAnalytics { }
+public enum WireAnalytics {
+    public static func enable() {
+        let tracker = WireAnalytics.shared
+
+        #if canImport(WireDatadogTracker)
+        if let datadogTracker = tracker as? WireDatadogTracker {
+            datadogTracker.enable()
+        }
+        #endif
+
+        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
+            aggregatedLogger.addLogger(tracker)
+        } else {
+            WireLogger.provider = tracker
+        }
+    }
+}
 
 public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
 
@@ -29,7 +45,6 @@ public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
 
 #if canImport(WireDatadogTracker)
 
-import UIKit
 import WireDatadogTracker
 import WireTransport
 
@@ -40,12 +55,6 @@ extension WireAnalytics {
         guard let tracker = builder.build() else {
             assertionFailure("building WireAnalyticsDatadogTracker failed - logging disabled")
             return WireAnalyticsVoidTracker()
-        }
-
-        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
-            aggregatedLogger.addLogger(tracker)
-        } else {
-            WireLogger.provider = tracker
         }
 
         return tracker

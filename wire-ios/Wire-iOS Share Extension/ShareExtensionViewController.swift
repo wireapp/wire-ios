@@ -122,7 +122,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setup() {
         setupObserver()
-        WireAnalytics.shared.enable()
+        WireAnalytics.enable()
     }
 
     private func setupObserver() {

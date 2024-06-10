@@ -21,6 +21,4 @@ public struct WireAnalyticsVoidTracker: WireAnalyticsTracking {
     public init() { }
 
     public let datadogUserIdentifier: String? = nil
-
-    public func enable() { }
 }

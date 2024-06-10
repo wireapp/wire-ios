@@ -20,6 +20,4 @@ public protocol WireAnalyticsTracking {
 
     /// SHA256 string to identify current device across app and extensions.
     var datadogUserIdentifier: String? { get }
-
-    func enable()
 }
