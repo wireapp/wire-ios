@@ -17,6 +17,8 @@
 //
 
 extension Conversation {
+
+    /// Represents all conversation's members including self.
     public struct Members {
         public let others: [Member]
         public let selfMember: Member

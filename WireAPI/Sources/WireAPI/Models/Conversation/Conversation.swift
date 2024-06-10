@@ -18,6 +18,7 @@
 
 import Foundation
 
+/// Represents the conversation's meta data and configuration.
 public struct Conversation {
     public var access: [String]?
     public var accessRoles: [String]?

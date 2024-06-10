@@ -19,6 +19,8 @@
 import Foundation
 
 extension Conversation {
+
+    /// Represents a conversation's member.
     public struct Member {
         public let archived: Bool?
         public let archivedReference: Date?

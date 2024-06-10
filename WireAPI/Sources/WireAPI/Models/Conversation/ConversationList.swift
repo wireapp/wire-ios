@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// A list of conversations categorized by status.
 public struct ConversationList {
+
+    /// Representing objects of resolved conversations.
     public let found: [Conversation]
+
+    /// Identifies not resolved conversations and thus miss the representing objects.
     public let notFound: [QualifiedID]
+
+    /// Identifies conversations that failed to resolve and thus miss the representing objects.
     public let failed: [QualifiedID]
 }
