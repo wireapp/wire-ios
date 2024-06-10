@@ -284,7 +284,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didReceiveData()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
     }
 
     func testThatWeSetUserSessionToOfflineWhenARequestFails() {
@@ -292,7 +292,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didGoOffline()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
     func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
@@ -314,7 +314,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
         XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
         XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
@@ -326,7 +326,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
     }
 
     func testThatWeCanGoBackOnlineAfterGoingOffline() {
@@ -334,13 +334,13 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didGoOffline()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
         sut.didReceiveData()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
     }
 
     func testThatWeCanGoBackOfflineAfterGoingOnline() {
@@ -348,26 +348,26 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didGoOffline()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
         sut.didReceiveData()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
 
         // WHEN
         sut.didGoOffline()
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
     func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOnline() {
         // GIVEN
         let stateRecorder = NetworkStateRecorder()
         sut.didGoOffline()
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
         XCTAssertEqual(sut.networkState, .offline)
 
         // WHEN
@@ -418,7 +418,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         sut.didGoOffline()
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 0.5)
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
         let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)

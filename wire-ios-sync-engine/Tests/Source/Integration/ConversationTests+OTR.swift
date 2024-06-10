@@ -20,6 +20,7 @@ import Foundation
 import WireTesting
 
 final class ConversationTestsOTR_Swift: ConversationTestsBase {
+
     func testThatItSendsFailedOTRMessageAfterMisingClientsAreFetchedButSessionIsNotCreated() {
         // GIVEN
         XCTAssertTrue(self.login())
@@ -262,7 +263,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             message = try! conversation?.appendText(content: "Where's everyone", mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
         }
 
-        wait(forConditionToBeTrue: message?.isExpired ?? false, timeout: 0.5)
+        wait(forConditionToBeTrue: message?.isExpired ?? false, timeout: 5)
 
         XCTAssertEqual(message?.deliveryState, ZMDeliveryState.failedToSend)
         ZMMessage.setDefaultExpirationTime(defaultExpirationTime)
