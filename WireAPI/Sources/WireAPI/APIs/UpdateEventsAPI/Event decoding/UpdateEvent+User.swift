@@ -237,13 +237,9 @@ private extension KeyedDecodingContainer<UserEventCodingKeys> {
 private extension KeyedDecodingContainer<UserEventCodingKeys> {
 
     func decodeDeleteEvent() throws -> UserDeleteEvent {
-        let userID = try decode(UUID.self, forKey: .id)
         let qualifiedUserID = try decode(QualifiedID.self, forKey: .qualifiedID)
 
-        return UserDeleteEvent(
-            userID: userID,
-            qualifiedUserID: qualifiedUserID
-        )
+        return UserDeleteEvent(qualifiedUserID: qualifiedUserID)
     }
 
 }

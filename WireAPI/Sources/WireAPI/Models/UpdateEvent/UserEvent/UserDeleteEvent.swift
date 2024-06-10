@@ -23,10 +23,6 @@ import Foundation
 
 public struct UserDeleteEvent: Equatable {
 
-    /// The user's id.
-
-    public let userID: UUID
-
     /// The user's qualified id.
 
     public let qualifiedUserID: QualifiedID
