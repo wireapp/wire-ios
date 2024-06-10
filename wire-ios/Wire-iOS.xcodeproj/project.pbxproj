@@ -3560,7 +3560,6 @@
 		EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FLAnimatedImage.xcframework; path = ../Carthage/Build/FLAnimatedImage.xcframework; sourceTree = "<group>"; };
 		EE67F6DA296F06C2001D7C88 /* FormatterKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FormatterKit.xcframework; path = ../Carthage/Build/FormatterKit.xcframework; sourceTree = "<group>"; };
 		EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libcmark.xcframework; path = ../Carthage/Build/libcmark.xcframework; sourceTree = "<group>"; };
-		EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = ../Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
 		EE67F735296F0DE4001D7C88 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F73D296F0E7D001D7C88 /* Ziphy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Ziphy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5551,7 +5550,6 @@
 				EE67F73D296F0E7D001D7C88 /* Ziphy.framework */,
 				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
 				EE67F735296F0DE4001D7C88 /* WireDataModel.framework */,
-				EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */,
 				EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */,
 				EE67F6DA296F06C2001D7C88 /* FormatterKit.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,

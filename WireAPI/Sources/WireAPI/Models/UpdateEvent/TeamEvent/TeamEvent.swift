@@ -16,14 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <UIKit/UIKit.h>
+import Foundation
 
-//! Project version number for Canvas.
-FOUNDATION_EXPORT double WireCanvasVersionNumber;
+/// An event concerning teams.
 
-//! Project version string for Canvas.
-FOUNDATION_EXPORT const unsigned char WireCanvasVersionString[];
+public enum TeamEvent: Equatable {
 
-// In this header, you should import all the public headers of your framework using statements like #import <Canvas/PublicHeader.h>
+    /// The self team was deleted.
 
+    case delete
 
+    /// A user has left a team.
+
+    case memberLeave(TeamMemberLeaveEvent)
+
+    /// A user's team membership was updated.
+
+    case memberUpdate(TeamMemberUpdateEvent)
+
+}
