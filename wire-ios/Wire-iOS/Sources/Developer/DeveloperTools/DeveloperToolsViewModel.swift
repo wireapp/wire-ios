@@ -180,11 +180,11 @@ final class DeveloperToolsViewModel: ObservableObject {
             ))
         }
 
-        let dataDogUserId = WireAnalytics.shared.datadogUserId
+        let datadogUserIdentifier = WireAnalytics.shared.datadogUserIdentifier
         sections.append(Section(
             header: "Datadog",
             items: [
-                .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
+                .text(TextItem(title: "User ID", value: String(describing: datadogUserIdentifier))),
                 .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
             ]
         ))

@@ -20,7 +20,7 @@ public struct WireAnalyticsVoidTracker: WireAnalyticsTracking {
 
     public init() { }
 
-    public var datadogUserId: String = "NONE"
+    public let datadogUserIdentifier: String? = nil
 
     public func enable() { }
 }
