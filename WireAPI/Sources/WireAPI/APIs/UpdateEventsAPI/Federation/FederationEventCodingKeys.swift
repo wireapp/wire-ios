@@ -18,23 +18,8 @@
 
 import Foundation
 
-extension UpdateEvent {
+enum FederationEventCodingKeys: String, CodingKey {
 
-    init(
-        eventType: FederationEventType,
-        from decoder: any Decoder
-    ) throws {
-        let container = try decoder.container(keyedBy: FederationEventCodingKeys.self)
-
-        switch eventType {
-        case .connectionRemoved:
-            let event = try FederationConnectionRemovedEventDecoder().decode(from: container)
-            self = .federation(.connectionRemoved(event))
-
-        case .delete:
-            let event = try FederationDeleteEventDecoder().decode(from: container)
-            self = .federation(.delete(event))
-        }
-    }
+    case payload = "data"
 
 }

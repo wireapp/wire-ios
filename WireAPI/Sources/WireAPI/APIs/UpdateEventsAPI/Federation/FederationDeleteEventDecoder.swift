@@ -18,23 +18,23 @@
 
 import Foundation
 
-extension UpdateEvent {
+struct FederationDeleteEventDecoder {
 
-    init(
-        eventType: FederationEventType,
-        from decoder: any Decoder
-    ) throws {
-        let container = try decoder.container(keyedBy: FederationEventCodingKeys.self)
+    func decode(
+        from container: KeyedDecodingContainer<FederationEventCodingKeys>
+    ) throws -> FederationDeleteEvent {
+        let payload = try container.decode(
+            Payload.self,
+            forKey: .payload
+        )
 
-        switch eventType {
-        case .connectionRemoved:
-            let event = try FederationConnectionRemovedEventDecoder().decode(from: container)
-            self = .federation(.connectionRemoved(event))
+        return FederationDeleteEvent(domain: payload.domain)
+    }
 
-        case .delete:
-            let event = try FederationDeleteEventDecoder().decode(from: container)
-            self = .federation(.delete(event))
-        }
+    private struct Payload: Decodable {
+
+        let domain: String
+
     }
 
 }
