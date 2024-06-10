@@ -23,7 +23,7 @@ import UIKit
 import WireDatadogTracker
 import class WireTransport.BackendEnvironment
 
-struct WireAnalyticsDatadogTrackerBuilder {
+struct WireDatadogTrackerBuilder {
 
     private enum Constants {
         static let keyAppId = "DatadogAppId"
@@ -35,7 +35,7 @@ struct WireAnalyticsDatadogTrackerBuilder {
 
     // MARK: - Build
 
-    func build() -> WireAnalyticsTracker? {
+    func build() -> WireDatadogTracker? {
         guard
             let appID = bundle.infoForKey(Constants.keyAppId),
             let clientToken = bundle.infoForKey(Constants.keyClientToken)
@@ -43,7 +43,7 @@ struct WireAnalyticsDatadogTrackerBuilder {
             return nil
         }
 
-        return WireAnalyticsTracker(
+        return WireDatadogTracker(
             appID: appID,
             clientToken: clientToken,
             datadogUserID: datadogUserIdentifier(),

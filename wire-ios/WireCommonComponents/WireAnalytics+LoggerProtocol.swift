@@ -26,7 +26,7 @@ import WireSystem
 import DatadogLogs
 import WireDatadogTracker
 
-extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
+extension WireDatadogTracker: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(
             level: .debug,

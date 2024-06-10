@@ -35,7 +35,7 @@ import WireTransport
 
 extension WireAnalytics {
     public static let shared: any WireAnalyticsProtocol = {
-        let builder = WireAnalyticsDatadogTrackerBuilder()
+        let builder = WireDatadogTrackerBuilder()
 
         guard let tracker = builder.build() else {
             assertionFailure("building WireAnalyticsDatadogTracker failed - logging disabled")

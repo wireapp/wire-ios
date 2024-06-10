@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireAnalytics { }
-
 #if canImport(WireDatadogTracker)
 
 import WireDatadogTracker
 
-extension WireAnalyticsTracker: WireAnalyticsTracking { }
+extension WireDatadogTracker: WireAnalyticsTracking { }
 
 #endif
