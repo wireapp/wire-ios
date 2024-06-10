@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where one of the self user's contacts has joined Wire.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserContactJoinEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The contact's name.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    public let name: String
 
 }

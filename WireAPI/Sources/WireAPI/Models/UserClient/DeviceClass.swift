@@ -18,16 +18,24 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// Classes of user client devices.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum DeviceClass: String, Codable {
 
-    /// The Proteus messaging protocol.
+    /// The client is a phone.
 
-    case proteus
+    case phone
 
-    /// The Messaging Layer Security protocol.
+    /// The client is a tablet.
 
-    case mls
+    case tablet
+
+    /// The client is a desktop computer.
+
+    case desktop
+
+    /// The client is a legalhold device.
+
+    case legalhold
 
 }

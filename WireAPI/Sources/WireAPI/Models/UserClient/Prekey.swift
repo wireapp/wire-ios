@@ -18,16 +18,16 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A Proteus client prekey used to establish a Proteus session.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct Prekey: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The prekey id.
 
-    case proteus
+    public let id: Int
 
-    /// The Messaging Layer Security protocol.
+    /// The base64-encoded prekey key.
 
-    case mls
+    public let base64EncodedKey: String
 
 }

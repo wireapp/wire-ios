@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where an existing self user client was removed.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserClientRemoveEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The id of the removed client.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    public let clientID: UserClient.ID
 
 }
