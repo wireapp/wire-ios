@@ -148,7 +148,8 @@ class BaseAccountView: UIView {
     }
 
     func createDotConstraints() -> [NSLayoutConstraint] {
-        fatalError("Subclasses must override this method!")
+        // fatalError("Subclasses must override this method!")
+        return []
     }
 
     func update() {

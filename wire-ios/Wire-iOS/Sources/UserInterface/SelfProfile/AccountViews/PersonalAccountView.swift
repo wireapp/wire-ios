@@ -74,18 +74,6 @@ final class PersonalAccountView: BaseAccountView {
             userImageView.avatar = .text(personName.initials)
         }
     }
-
-    override func createDotConstraints() -> [NSLayoutConstraint] {
-        let dotSize: CGFloat = 9
-        dotView.translatesAutoresizingMaskIntoConstraints = false
-        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        return [
-            dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -3),
-            dotView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor, constant: -6),
-            dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-            dotView.widthAnchor.constraint(equalToConstant: dotSize)
-        ]
-    }
 }
 
 extension PersonalAccountView {
