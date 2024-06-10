@@ -35,7 +35,15 @@ import WireTransport
 extension WireAnalytics {
     public static let shared: WireAnalyticsProtocol? = {
         let builder = WireAnalyticsTrackerBuilder()
-        return builder.build()
+        let tracker = builder.build()
+
+        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
+            aggregatedLogger.addLogger(tracker)
+        } else {
+            WireLogger.provider = tracker
+        }
+
+        return tracker
     }()
 }
 

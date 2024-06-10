@@ -72,15 +72,6 @@ public final class WireAnalyticsTracker {
         bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
-
-        // TODO: this
-        // system logger
-
-        //        if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
-        //            aggregatedLogger.addLogger(self)
-        //        } else {
-        //            WireLogger.provider = self
-        //        }
     }
 
     public func enable() {

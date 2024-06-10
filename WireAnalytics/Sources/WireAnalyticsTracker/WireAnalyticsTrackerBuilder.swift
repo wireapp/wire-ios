@@ -35,7 +35,7 @@ public struct WireAnalyticsTrackerBuilder {
         self.level = level
     }
 
-    public func build() -> WireAnalyticsTracker? {
+    public func build() -> WireAnalyticsTracker {
 //        guard
 //            let appID = bundle.infoForKey("DatadogAppId"),
 //            let clientToken = bundle.infoForKey("DatadogClientToken")
