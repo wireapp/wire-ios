@@ -25,11 +25,9 @@ struct QualifiedConversationMember: Decodable, ToAPIModelConvertible {
         let provider: UUID
 
         func toAPIModel() -> WireAPI.Service {
-            // TODO: in WireRequestStrategy the object had also UUIDs
-            // but we want to unify the model classes. So does it work with Strings like that?
             .init(
-                id: id.uuidString,
-                provider: provider.uuidString
+                id: id,
+                provider: provider
             )
         }
     }
