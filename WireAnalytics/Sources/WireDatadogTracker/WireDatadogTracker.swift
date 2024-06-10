@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CryptoKit
 import DatadogCore
 import DatadogCrashReporting
 import DatadogLogs
@@ -26,7 +27,7 @@ import UIKit
 public final class WireDatadogTracker {
 
     private let applicationID: String
-    private let logLevel: DatadogLogs.LogLevel = .debug
+    private let logLevel: LogLevel = .debug
     private let userIdentifier: String
 
     public var datadogUserIdentifier: String? { userIdentifier }
@@ -36,17 +37,22 @@ public final class WireDatadogTracker {
     public init(
         appID: String,
         clientToken: String,
-        datadogUserID: String,
+        identifierForVendor: UUID?,
         environmentName: String
     ) {
         applicationID = appID
-        userIdentifier = datadogUserID
+
+        if let identifierForVendor {
+            userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
+        } else {
+            userIdentifier = "none"
+        }
 
         // set up datadog
 
         let configuration = Datadog.Configuration(
             clientToken: clientToken,
-            env: environmentName,
+            env: Self.sanitizedEnvironmentName(environmentName),
             site: .eu1
         )
         Datadog.initialize(
@@ -91,6 +97,24 @@ public final class WireDatadogTracker {
             message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
+        )
+    }
+
+    // MARK: Static Helpers
+
+    private static func hashedDatadogUserIdentifier(_ uuid: UUID) -> String {
+        let data = Data(uuid.uuidString.utf8)
+
+        return SHA256.hash(data: data)
+            .compactMap { String(format: "%02x", $0) }
+            .joined()
+    }
+
+    private static func sanitizedEnvironmentName(_ name: String) -> String {
+        name.replacingOccurrences(
+            of: "[^A-Za-z0-9]+",
+            with: "",
+            options: [.regularExpression]
         )
     }
 }

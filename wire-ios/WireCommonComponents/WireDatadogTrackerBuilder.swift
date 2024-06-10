@@ -18,7 +18,6 @@
 
 #if canImport(WireDatadogTracker)
 
-import CryptoKit
 import UIKit
 import WireDatadogTracker
 import class WireTransport.BackendEnvironment
@@ -46,30 +45,8 @@ struct WireDatadogTrackerBuilder {
         return WireDatadogTracker(
             appID: appID,
             clientToken: clientToken,
-            datadogUserID: datadogUserIdentifier(),
-            environmentName: environmentName()
-        )
-    }
-
-    // MARK: - Helpers
-
-    private func datadogUserIdentifier() -> String {
-        guard let identifier = UIDevice.current.identifierForVendor?.uuidString else {
-            return "none"
-        }
-
-        let data = Data(identifier.utf8)
-
-        return SHA256.hash(data: data)
-            .compactMap { String(format: "%02x", $0) }
-            .joined()
-    }
-
-    private func environmentName() -> String {
-        environment.title.replacingOccurrences(
-            of: "[^A-Za-z0-9]+",
-            with: "",
-            options: [.regularExpression]
+            identifierForVendor: UIDevice.current.identifierForVendor,
+            environmentName: environment.title
         )
     }
 }
