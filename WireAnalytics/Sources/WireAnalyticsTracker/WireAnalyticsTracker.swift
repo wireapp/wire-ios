@@ -29,6 +29,7 @@ public final class WireAnalyticsTracker {
     public var datadogUserId: String
 
     private let applicationID: String
+    private let logLevel: DatadogLogs.LogLevel = .debug
 
     public let bundleVersion: String?
 
@@ -36,9 +37,8 @@ public final class WireAnalyticsTracker {
 
     init(
         appID: String,
-        clientToken: String,
-        // environment: BackendEnvironmentProvider,
-        level: LogLevel
+        clientToken: String
+        // environment: BackendEnvironmentProvider
     ) {
         // set up datadog
 
@@ -60,7 +60,7 @@ public final class WireAnalyticsTracker {
         let loggerConfiguration = Logger.Configuration(
             name: "iOS Wire App",
             networkInfoEnabled: true,
-            remoteLogThreshold: level,
+            remoteLogThreshold: logLevel,
             consoleLogFormat: .shortWith(prefix: "[iOS App] ")
         )
         logger = Logger.create(with: loggerConfiguration)
@@ -93,7 +93,7 @@ public final class WireAnalyticsTracker {
         Datadog.setUserInfo(id: datadogUserId)
 
         logger?.log(
-            level: .info,
+            level: logLevel,
             message: "Datadog startMonitoring for device: \(datadogUserId)",
             error: nil,
             attributes: nil
