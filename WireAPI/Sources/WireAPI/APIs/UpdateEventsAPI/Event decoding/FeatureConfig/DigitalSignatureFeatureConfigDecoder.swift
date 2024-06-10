@@ -18,13 +18,17 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct DigitalSignatureFeatureConfigDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> DigitalSignatureFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithoutConfig.self,
+            forKey: .payload
+        )
 
-    /// The user's qualified id.
-
-    public let qualifiedUserID: QualifiedID
+        return DigitalSignatureFeatureConfig(status: payload.status)
+    }
 
 }

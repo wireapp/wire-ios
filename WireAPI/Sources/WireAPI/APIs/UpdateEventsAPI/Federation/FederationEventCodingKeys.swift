@@ -18,13 +18,8 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+enum FederationEventCodingKeys: String, CodingKey {
 
-public struct UserDeleteEvent: Equatable {
-
-    /// The user's qualified id.
-
-    public let qualifiedUserID: QualifiedID
+    case payload = "data"
 
 }

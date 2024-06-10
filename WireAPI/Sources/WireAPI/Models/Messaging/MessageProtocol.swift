@@ -18,13 +18,17 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// A message protocol to use in end to end
+/// encrypted communication.
 
-public struct UserDeleteEvent: Equatable {
+public enum MessageProtocol: String, Codable {
 
-    /// The user's qualified id.
+    /// The Proetus messaging protocol.
 
-    public let qualifiedUserID: QualifiedID
+    case proteus
+
+    /// The Messaging Layer Security protocol.
+
+    case mls
 
 }

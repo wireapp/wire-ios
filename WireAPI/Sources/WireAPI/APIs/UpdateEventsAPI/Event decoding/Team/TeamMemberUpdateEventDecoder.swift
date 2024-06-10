@@ -18,13 +18,37 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct TeamMemberUpdateEventDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<TeamEventCodingKeys>
+    ) throws -> TeamMemberUpdateEvent {
+        let teamID = try container.decode(
+            UUID.self,
+            forKey: .teamID
+        )
 
-    /// The user's qualified id.
+        let payload = try container.decode(
+            Payload.self,
+            forKey: .payload
+        )
 
-    public let qualifiedUserID: QualifiedID
+        return TeamMemberUpdateEvent(
+            teamID: teamID,
+            membershipID: payload.membershipID
+        )
+    }
+
+    private struct Payload: Decodable {
+
+        let membershipID: UUID
+
+        enum CodingKeys: String, CodingKey {
+
+            case membershipID = "user"
+
+        }
+
+    }
 
 }

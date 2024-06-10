@@ -18,13 +18,12 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// An event concerning feature configs.
 
-public struct UserDeleteEvent: Equatable {
+public enum FeatureConfigEvent: Equatable {
 
-    /// The user's qualified id.
+    /// A feature config was updated.
 
-    public let qualifiedUserID: QualifiedID
+    case update(FeatureConfigUpdateEvent)
 
 }

@@ -18,13 +18,22 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// Available cipher suites in the MLS protocol.
 
-public struct UserDeleteEvent: Equatable {
+public enum MLSCipherSuite: Int, Codable {
 
-    /// The user's qualified id.
+    case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
 
-    public let qualifiedUserID: QualifiedID
+    case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
+
+    case MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519 = 3
+
+    case MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448 = 4
+
+    case MLS_256_DHKEMP521_AES256GCM_SHA512_P521 = 5
+
+    case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
+
+    case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
 
 }

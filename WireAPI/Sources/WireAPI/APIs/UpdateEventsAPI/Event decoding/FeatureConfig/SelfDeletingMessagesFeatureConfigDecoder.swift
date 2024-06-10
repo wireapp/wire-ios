@@ -18,13 +18,26 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct SelfDeletingMessagesFeatureConfigDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> SelfDeletingMessagesFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The user's qualified id.
+        return SelfDeletingMessagesFeatureConfig(
+            status: payload.status,
+            enforcedTimeoutSeconds: payload.config.enforcedTimeoutSeconds
+        )
+    }
 
-    public let qualifiedUserID: QualifiedID
+    private struct Payload: Decodable {
+
+        let enforcedTimeoutSeconds: UInt
+
+    }
 
 }

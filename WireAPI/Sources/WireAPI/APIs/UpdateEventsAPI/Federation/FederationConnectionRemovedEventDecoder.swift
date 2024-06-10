@@ -18,13 +18,23 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct FederationConnectionRemovedEventDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<FederationEventCodingKeys>
+    ) throws -> FederationConnectionRemovedEvent {
+        let payload = try container.decode(
+            Payload.self,
+            forKey: .payload
+        )
 
-    /// The user's qualified id.
+        return FederationConnectionRemovedEvent(domains: payload.domains)
+    }
 
-    public let qualifiedUserID: QualifiedID
+    private struct Payload: Decodable {
+
+        let domains: Set<String>
+
+    }
 
 }

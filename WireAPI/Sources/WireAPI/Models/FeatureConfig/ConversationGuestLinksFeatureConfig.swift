@@ -18,13 +18,12 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// A configuration for the *Conversation Guest Links* feature.
 
-public struct UserDeleteEvent: Equatable {
+public struct ConversationGuestLinksFeatureConfig: Codable, Equatable {
 
-    /// The user's qualified id.
+    /// The feature's status.
 
-    public let qualifiedUserID: QualifiedID
+    public let status: FeatureConfigStatus
 
 }

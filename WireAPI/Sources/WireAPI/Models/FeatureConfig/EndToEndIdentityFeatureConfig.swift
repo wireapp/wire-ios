@@ -18,13 +18,20 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// A configuration for the *End To End Identity* feature.
 
-public struct UserDeleteEvent: Equatable {
+public struct EndToEndIdentityFeatureConfig: Equatable {
 
-    /// The user's qualified id.
+    /// The feature's status.
 
-    public let qualifiedUserID: QualifiedID
+    public let status: FeatureConfigStatus
+
+    /// The URL of the ACME server directory service.
+
+    public let acmeDiscoveryURL: String?
+
+    /// The login grace period for OAUTH/OpenID Connect authentication.
+
+    public let verificationExpiration: UInt
 
 }

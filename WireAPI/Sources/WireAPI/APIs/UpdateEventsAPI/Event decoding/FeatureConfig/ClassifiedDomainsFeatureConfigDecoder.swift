@@ -18,13 +18,26 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct ClassifiedDomainsFeatureConfigDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> ClassifiedDomainsFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The user's qualified id.
+        return ClassifiedDomainsFeatureConfig(
+            status: payload.status,
+            domains: payload.config.domains
+        )
+    }
 
-    public let qualifiedUserID: QualifiedID
+    private struct Payload: Decodable {
+
+        let domains: Set<String>
+
+    }
 
 }

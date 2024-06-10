@@ -18,13 +18,21 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// A configuration for the *App Lock* feature.
 
-public struct UserDeleteEvent: Equatable {
+public struct AppLockFeatureConfig: Codable, Equatable {
 
-    /// The user's qualified id.
+    /// The feature's status.
 
-    public let qualifiedUserID: QualifiedID
+    public let status: FeatureConfigStatus
+
+    /// Whether the app lock is mandatorily enabled.
+
+    public let isMandatory: Bool
+
+    /// The number of seconds in the background before
+    /// the app should relock.
+
+    public let inactivityTimeoutInSeconds: UInt
 
 }

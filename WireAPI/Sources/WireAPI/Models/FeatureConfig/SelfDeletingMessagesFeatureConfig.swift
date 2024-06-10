@@ -18,13 +18,19 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// A configuration for the *Self Deleting Messages* feature.
 
-public struct UserDeleteEvent: Equatable {
+public struct SelfDeletingMessagesFeatureConfig: Equatable {
 
-    /// The user's qualified id.
+    /// The feature's status.
 
-    public let qualifiedUserID: QualifiedID
+    public let status: FeatureConfigStatus
+
+    /// The number of seconds after which all enforced self-deleting messages
+    /// will delete.
+    ///
+    /// A value of 0 indicates that the self-deleting messages are not mandatory.
+
+    public let enforcedTimeoutSeconds: UInt
 
 }

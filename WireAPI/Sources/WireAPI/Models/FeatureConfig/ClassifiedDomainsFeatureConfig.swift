@@ -18,13 +18,18 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// A configuration for the *Classified Domains* feature.
 
-public struct UserDeleteEvent: Equatable {
+public struct ClassifiedDomainsFeatureConfig: Equatable {
 
-    /// The user's qualified id.
+    /// The feature's status.
 
-    public let qualifiedUserID: QualifiedID
+    public let status: FeatureConfigStatus
+
+    /// The list of domains that are trusted by the 
+    /// self backend and are considered to be safe
+    /// for classified communication.
+
+    public let domains: Set<String>
 
 }

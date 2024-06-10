@@ -18,13 +18,17 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct UserPropertiesDeleteEventDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<UserEventCodingKeys>
+    ) throws -> UserPropertiesDeleteEvent {
+        let key = try container.decode(
+            String.self,
+            forKey: .propertyKey
+        )
 
-    /// The user's qualified id.
-
-    public let qualifiedUserID: QualifiedID
+        return UserPropertiesDeleteEvent(key: key)
+    }
 
 }

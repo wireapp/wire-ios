@@ -18,13 +18,18 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+/// The status of a feature.
+///
+/// The semantics of these cases may differ from
+/// feature to feature. For instance, in some cases
+/// `enabled` may mean that the feature is available
+/// to the self user, but not necessarily turned on.
+/// In other cases, `enabled` may mean that the feature 
+/// is turned on, because it is always available.
 
-public struct UserDeleteEvent: Equatable {
+public enum FeatureConfigStatus: String, Codable {
 
-    /// The user's qualified id.
-
-    public let qualifiedUserID: QualifiedID
+    case enabled
+    case disabled
 
 }

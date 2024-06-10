@@ -18,13 +18,28 @@
 
 import Foundation
 
-/// An event where the account of a user (either the
-/// self user or another user) was deleted.
+struct MLSMigrationFeatureConfigDecoder {
 
-public struct UserDeleteEvent: Equatable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> MLSMigrationFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The user's qualified id.
+        return MLSMigrationFeatureConfig(
+            status: payload.status,
+            startTime: payload.config.startTime,
+            finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter
+        )
+    }
 
-    public let qualifiedUserID: QualifiedID
+    private struct Payload: Decodable {
+
+        let startTime: Date?
+        let finaliseRegardlessAfter: Date?
+
+    }
 
 }
