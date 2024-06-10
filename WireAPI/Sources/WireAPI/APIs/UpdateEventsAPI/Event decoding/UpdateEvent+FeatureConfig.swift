@@ -307,7 +307,7 @@ private extension KeyedDecodingContainer<FeatureConfigEventCodingKeys> {
 
 }
 
-// MARK: - SelfDeletingMessagesn update
+// MARK: - Self deleting msessages update
 
 private extension KeyedDecodingContainer<FeatureConfigEventCodingKeys> {
 
