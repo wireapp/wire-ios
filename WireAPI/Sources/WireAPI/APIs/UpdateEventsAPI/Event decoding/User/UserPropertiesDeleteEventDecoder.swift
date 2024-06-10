@@ -18,16 +18,17 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct UserPropertiesDeleteEventDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<UserEventCodingKeys>
+    ) throws -> UserPropertiesDeleteEvent {
+        let key = try container.decode(
+            String.self,
+            forKey: .propertyKey
+        )
 
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+        return UserPropertiesDeleteEvent(key: key)
+    }
 
 }

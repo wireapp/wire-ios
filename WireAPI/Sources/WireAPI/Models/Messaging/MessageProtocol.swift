@@ -18,11 +18,12 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A message protocol to use in end to end
+/// encrypted communication.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum MessageProtocol: String, Codable {
 
-    /// The Proteus messaging protocol.
+    /// The Proetus messaging protocol.
 
     case proteus
 

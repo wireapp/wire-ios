@@ -18,16 +18,18 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A configuration for the *Classified Domains* feature.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct ClassifiedDomainsFeatureConfig: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The feature's status.
 
-    case proteus
+    public let status: FeatureConfigStatus
 
-    /// The Messaging Layer Security protocol.
+    /// The list of domains that are trusted by the 
+    /// self backend and are considered to be safe
+    /// for classified communication.
 
-    case mls
+    public let domains: Set<String>
 
 }

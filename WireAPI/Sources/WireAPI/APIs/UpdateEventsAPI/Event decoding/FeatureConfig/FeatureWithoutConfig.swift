@@ -18,16 +18,9 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct FeatureWithConfig<Config: Decodable>: Decodable {
 
-public enum SupportedProtocol: String, Equatable, Codable {
-
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    let status: FeatureConfigStatus
+    let config: Config
 
 }

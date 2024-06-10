@@ -18,16 +18,26 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct ClassifiedDomainsFeatureConfigDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> ClassifiedDomainsFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The Proteus messaging protocol.
+        return ClassifiedDomainsFeatureConfig(
+            status: payload.status,
+            domains: payload.config.domains
+        )
+    }
 
-    case proteus
+    private struct Payload: Decodable {
 
-    /// The Messaging Layer Security protocol.
+        let domains: Set<String>
 
-    case mls
+    }
 
 }

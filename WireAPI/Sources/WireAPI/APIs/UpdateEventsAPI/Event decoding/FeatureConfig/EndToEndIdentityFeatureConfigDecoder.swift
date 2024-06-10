@@ -18,16 +18,28 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct EndToEndIdentityFeatureConfigDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> EndToEndIdentityFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The Proteus messaging protocol.
+        return EndToEndIdentityFeatureConfig(
+            status: payload.status,
+            acmeDiscoveryURL: payload.config.acmeDiscoveryUrl,
+            verificationExpiration: payload.config.verificationExpiration
+        )
+    }
 
-    case proteus
+    private struct Payload: Decodable {
 
-    /// The Messaging Layer Security protocol.
+        let acmeDiscoveryUrl: String?
+        let verificationExpiration: UInt
 
-    case mls
+    }
 
 }

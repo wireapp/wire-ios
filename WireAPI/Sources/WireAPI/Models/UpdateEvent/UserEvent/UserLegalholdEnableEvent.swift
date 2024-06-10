@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where legalhold was enabled for a user.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserLegalholdEnableEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The user id for whom legalhold was enabled.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    public let userID: UUID
 
 }

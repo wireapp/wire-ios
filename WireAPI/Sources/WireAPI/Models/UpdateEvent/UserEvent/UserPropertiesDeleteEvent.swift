@@ -18,16 +18,13 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where one of the self user's persisted
+/// properties was deleted.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserPropertiesDeleteEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The property key that was deleted.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    public let key: String
 
 }

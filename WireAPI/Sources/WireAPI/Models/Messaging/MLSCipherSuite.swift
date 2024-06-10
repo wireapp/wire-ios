@@ -18,16 +18,22 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// Available cipher suites in the MLS protocol.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum MLSCipherSuite: Int, Codable {
 
-    /// The Proteus messaging protocol.
+    case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
 
-    case proteus
+    case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
 
-    /// The Messaging Layer Security protocol.
+    case MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519 = 3
 
-    case mls
+    case MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448 = 4
+
+    case MLS_256_DHKEMP521_AES256GCM_SHA512_P521 = 5
+
+    case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
+
+    case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
 
 }

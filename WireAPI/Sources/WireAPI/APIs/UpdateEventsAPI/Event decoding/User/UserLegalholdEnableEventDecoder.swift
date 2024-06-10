@@ -18,16 +18,17 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct UserLegalholdEnableEventDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<UserEventCodingKeys>
+    ) throws -> UserLegalholdEnableEvent {
+        let userID = try container.decode(
+            UUID.self,
+            forKey: .id
+        )
 
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+        return UserLegalholdEnableEvent(userID: userID)
+    }
 
 }

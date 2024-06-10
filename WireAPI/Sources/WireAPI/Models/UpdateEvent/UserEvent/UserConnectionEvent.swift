@@ -18,16 +18,17 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where a connection between the self user and
+/// another user was updated.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserConnectionEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The name of the other user.
 
-    case proteus
+    public let userName: String
 
-    /// The Messaging Layer Security protocol.
+    /// The connection to the other user.
 
-    case mls
+    public let connection: Connection
 
 }

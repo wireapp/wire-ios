@@ -18,16 +18,21 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A configuration for the *App Lock* feature.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct AppLockFeatureConfig: Codable, Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The feature's status.
 
-    case proteus
+    public let status: FeatureConfigStatus
 
-    /// The Messaging Layer Security protocol.
+    /// Whether the app lock is mandatorily enabled.
 
-    case mls
+    public let isMandatory: Bool
+
+    /// The number of seconds in the background before
+    /// the app should relock.
+
+    public let inactivityTimeoutInSeconds: UInt
 
 }

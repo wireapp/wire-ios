@@ -18,16 +18,28 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct MLSMigrationFeatureConfigDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> MLSMigrationFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The Proteus messaging protocol.
+        return MLSMigrationFeatureConfig(
+            status: payload.status,
+            startTime: payload.config.startTime,
+            finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter
+        )
+    }
 
-    case proteus
+    private struct Payload: Decodable {
 
-    /// The Messaging Layer Security protocol.
+        let startTime: Date?
+        let finaliseRegardlessAfter: Date?
 
-    case mls
+    }
 
 }

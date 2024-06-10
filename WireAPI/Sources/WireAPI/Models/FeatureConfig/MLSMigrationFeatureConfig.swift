@@ -18,16 +18,20 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A configuration for the *MLS Migration* feature.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct MLSMigrationFeatureConfig: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The feature's status.
 
-    case proteus
+    public let status: FeatureConfigStatus
 
-    /// The Messaging Layer Security protocol.
+    /// The starting time of the migration.
 
-    case mls
+    public let startTime: Date?
+
+    /// The date until the migration has to finalise.
+
+    public let finaliseRegardlessAfter: Date?
 
 }

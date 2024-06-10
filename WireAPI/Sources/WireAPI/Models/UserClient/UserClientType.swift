@@ -18,16 +18,24 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// Types of a user client.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum UserClientType: String, Codable {
 
-    /// The Proteus messaging protocol.
+    /// A client intended to be used for long periods of time,
+    /// such as a mobile device or web application.
 
-    case proteus
+    case permanent
 
-    /// The Messaging Layer Security protocol.
+    /// A client intended to be used for a short period of time,
+    /// such as a web application when the user chooses not to be
+    /// remembered.
 
-    case mls
+    case temporary
+
+    /// A special type of client which is used to store a copy of
+    /// all messages you send or receive.
+
+    case legalhold
 
 }

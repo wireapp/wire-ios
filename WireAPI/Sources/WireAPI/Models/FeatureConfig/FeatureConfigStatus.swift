@@ -18,16 +18,18 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// The status of a feature.
+///
+/// The semantics of these cases may differ from
+/// feature to feature. For instance, in some cases
+/// `enabled` may mean that the feature is available
+/// to the self user, but not necessarily turned on.
+/// In other cases, `enabled` may mean that the feature 
+/// is turned on, because it is always available.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum FeatureConfigStatus: String, Codable {
 
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    case enabled
+    case disabled
 
 }

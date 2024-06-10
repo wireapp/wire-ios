@@ -18,16 +18,37 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct TeamMemberLeaveEventDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<TeamEventCodingKeys>
+    ) throws -> TeamMemberLeaveEvent {
+        let teamID = try container.decode(
+            UUID.self,
+            forKey: .teamID
+        )
 
-    /// The Proteus messaging protocol.
+        let payload = try container.decode(
+            Payload.self,
+            forKey: .payload
+        )
 
-    case proteus
+        return TeamMemberLeaveEvent(
+            teamID: teamID,
+            userID: payload.userID
+        )
+    }
 
-    /// The Messaging Layer Security protocol.
+    private struct Payload: Decodable {
 
-    case mls
+        let userID: UUID
+
+        enum CodingKeys: String, CodingKey {
+
+            case userID = "user"
+
+        }
+
+    }
 
 }

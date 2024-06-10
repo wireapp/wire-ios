@@ -18,16 +18,20 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A configuration for the *End To End Identity* feature.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct EndToEndIdentityFeatureConfig: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The feature's status.
 
-    case proteus
+    public let status: FeatureConfigStatus
 
-    /// The Messaging Layer Security protocol.
+    /// The URL of the ACME server directory service.
 
-    case mls
+    public let acmeDiscoveryURL: String?
+
+    /// The login grace period for OAUTH/OpenID Connect authentication.
+
+    public let verificationExpiration: UInt
 
 }

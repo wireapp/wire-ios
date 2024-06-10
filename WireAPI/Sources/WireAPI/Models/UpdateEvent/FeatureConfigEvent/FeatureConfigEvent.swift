@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event concerning feature configs.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public enum FeatureConfigEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// A feature config was updated.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    case update(FeatureConfigUpdateEvent)
 
 }

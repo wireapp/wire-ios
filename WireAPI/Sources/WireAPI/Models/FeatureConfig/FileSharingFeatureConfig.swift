@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A configuration for the *File Sharing* feature.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct FileSharingFeatureConfig: Codable, Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The feature's status.
 
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    public let status: FeatureConfigStatus
 
 }

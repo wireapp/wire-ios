@@ -18,16 +18,26 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct SelfDeletingMessagesFeatureConfigDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> SelfDeletingMessagesFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The Proteus messaging protocol.
+        return SelfDeletingMessagesFeatureConfig(
+            status: payload.status,
+            enforcedTimeoutSeconds: payload.config.enforcedTimeoutSeconds
+        )
+    }
 
-    case proteus
+    private struct Payload: Decodable {
 
-    /// The Messaging Layer Security protocol.
+        let enforcedTimeoutSeconds: UInt
 
-    case mls
+    }
 
 }

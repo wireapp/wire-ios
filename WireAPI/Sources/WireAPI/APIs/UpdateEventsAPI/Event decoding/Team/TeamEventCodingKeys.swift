@@ -18,16 +18,9 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+enum TeamEventCodingKeys: String, CodingKey {
 
-public enum SupportedProtocol: String, Equatable, Codable {
-
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    case teamID = "team"
+    case payload = "data"
 
 }

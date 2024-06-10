@@ -18,16 +18,40 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// An event where a user's metadata was updated.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct UserUpdateEvent: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The updated user's id.
 
-    case proteus
+    public let userID: UUID
 
-    /// The Messaging Layer Security protocol.
+    /// The new accent color id.
 
-    case mls
+    public let accentColorID: Int?
+
+    /// The new user name.
+
+    public let name: String?
+
+    /// The new user handle.
+
+    public let handle: String?
+
+    /// The new email address.
+
+    public let email: String?
+
+    /// Whether the user's sso id was deleted.
+
+    public let isSSOIDDeleted: Bool?
+
+    /// The new user assets.
+
+    public let assets: [UserAsset]?
+
+    /// The new supported protocols.
+
+    public let supportedProtocols: Set<SupportedProtocol>?
 
 }

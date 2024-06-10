@@ -18,16 +18,8 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+enum FederationEventCodingKeys: String, CodingKey {
 
-public enum SupportedProtocol: String, Equatable, Codable {
-
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    case payload = "data"
 
 }

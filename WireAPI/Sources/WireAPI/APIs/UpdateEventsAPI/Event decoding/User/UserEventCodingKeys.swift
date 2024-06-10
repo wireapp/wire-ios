@@ -18,16 +18,15 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+enum UserEventCodingKeys: String, CodingKey {
 
-public enum SupportedProtocol: String, Equatable, Codable {
-
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    case client = "client"
+    case user = "user"
+    case id = "id"
+    case qualifiedID = "qualified_id"
+    case connection = "connection"
+    case lastPrekey = "last_prekey"
+    case propertyKey = "key"
+    case propertyValue = "value"
 
 }

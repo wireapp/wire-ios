@@ -18,16 +18,19 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+/// A configuration for the *Self Deleting Messages* feature.
 
-public enum SupportedProtocol: String, Equatable, Codable {
+public struct SelfDeletingMessagesFeatureConfig: Equatable {
 
-    /// The Proteus messaging protocol.
+    /// The feature's status.
 
-    case proteus
+    public let status: FeatureConfigStatus
 
-    /// The Messaging Layer Security protocol.
+    /// The number of seconds after which all enforced self-deleting messages
+    /// will delete.
+    ///
+    /// A value of 0 indicates that the self-deleting messages are not mandatory.
 
-    case mls
+    public let enforcedTimeoutSeconds: UInt
 
 }

@@ -18,16 +18,28 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct AppLockFeatureConfigDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> AppLockFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithConfig<Payload>.self,
+            forKey: .payload
+        )
 
-    /// The Proteus messaging protocol.
+        return AppLockFeatureConfig(
+            status: payload.status,
+            isMandatory: payload.config.enforceAppLock,
+            inactivityTimeoutInSeconds: payload.config.inactivityTimeoutSecs
+        )
+    }
 
-    case proteus
+    private struct Payload: Decodable {
 
-    /// The Messaging Layer Security protocol.
+        let enforceAppLock: Bool
+        let inactivityTimeoutSecs: UInt
 
-    case mls
+    }
 
 }

@@ -18,16 +18,23 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct UserClientRemoveEventDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<UserEventCodingKeys>
+    ) throws -> UserClientRemoveEvent {
+        let payload = try container.decode(
+            Payload.self,
+            forKey: .client
+        )
 
-    /// The Proteus messaging protocol.
+        return UserClientRemoveEvent(clientID: payload.id)
+    }
 
-    case proteus
+    private struct Payload: Decodable {
 
-    /// The Messaging Layer Security protocol.
+        let id: String
 
-    case mls
+    }
 
 }

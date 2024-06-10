@@ -18,16 +18,17 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+struct ConferenceCallingFeatureConfigDecoder {
 
-public enum SupportedProtocol: String, Equatable, Codable {
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> ConferenceCallingFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithoutConfig.self,
+            forKey: .payload
+        )
 
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+        return ConferenceCallingFeatureConfig(status: payload.status)
+    }
 
 }
