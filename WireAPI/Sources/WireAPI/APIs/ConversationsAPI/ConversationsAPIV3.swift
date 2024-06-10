@@ -68,7 +68,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
         // Change: replace "access_role_v2" with "access_role".
-        case accessRole = "access_role"
+        case accessRoles = "access_role"
         case creator
         case epoch
         case id
@@ -102,27 +102,6 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
     var readReceiptMode: Int?
     var teamID: UUID?
     var type: Int?
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        access = try container.decodeIfPresent([String].self, forKey: .access)
-        accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
-        creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
-        epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
-        id = try container.decodeIfPresent(UUID.self, forKey: .id)
-        lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
-        lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
-        members = try container.decodeIfPresent(QualifiedConversationMembers.self, forKey: .members)
-        messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
-        messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-        mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
-        readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-        teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
-        type = try container.decodeIfPresent(Int.self, forKey: .type)
-    }
 
     func toAPIModel() -> Conversation {
         Conversation(
