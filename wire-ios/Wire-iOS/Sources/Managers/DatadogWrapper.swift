@@ -127,7 +127,7 @@ public final class DatadogWrapper {
                 partialResult[item.key.rawValue] = item.value
             }
         }
-        plainAttributes["build_number"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        plainAttributes["build_number"] = bundleVersion
 
         logger?.log(
             level: level,
