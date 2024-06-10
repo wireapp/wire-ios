@@ -435,7 +435,9 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
     NOT_USED(session);
     NOT_USED(task);
     if (nil != metrics.transactionMetrics.firstObject) {
-        ZMLogInfo(@"Reused connection: %d", metrics.transactionMetrics.firstObject.reusedConnection);
+
+        NSLog(@"protocol: %@ resused: %i", metrics.transactionMetrics.firstObject.networkProtocolName, metrics.transactionMetrics.firstObject.reusedConnection);
+        //ZMLogInfo(@"Reused connection: %d", metrics.transactionMetrics.firstObject.reusedConnection);
     }
 }
 

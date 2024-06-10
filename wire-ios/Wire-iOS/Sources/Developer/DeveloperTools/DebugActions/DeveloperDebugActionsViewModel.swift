@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
 import WireSyncEngine
 
@@ -45,6 +46,91 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus)
         ]
+
+        if #available(iOS 16.0, *) {
+            buttons.append(.init(title: "Sync contacts using in batch", action: fetchContactsInBatch))
+            buttons.append(.init(title: "Sync contacts using in parallel", action: fetchContactsInParallel))
+        }
+    }
+
+    // MARK: Fetch users
+
+    @available(iOS 16.0, *)
+    private func fetchContactsInParallel() {
+        fetchContactsInParallel(count: 30)
+    }
+
+    @available(iOS 16.0, *)
+    private func fetchContactsInParallel(count: Int) {
+        let usersAPI = ZMUserSession.shared()!.makeUsersAPI()
+        let context = ZMUserSession.shared()!.viewContext
+
+        let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+        let users = try! context.fetch(fetchRequest)
+        let userIDs = users.compactMap { $0.qualifiedID }.prefix(upTo: count)
+
+        Task {
+            let clock = ContinuousClock()
+            let duration = await clock.measure {
+                await withThrowingTaskGroup(of: User.self) { group in
+                    for userID in userIDs {
+                        group.addTask {
+                            try await usersAPI.getUser(for: WireAPI.UserID(
+                                uuid: userID.uuid,
+                                domain: userID.domain
+                            ))
+                        }
+                    }
+                    do {
+                        let names: [String] = try await group.reduce(into: [], { $0.append($1.name) })
+                        WireLogger.sync.info("synced: \(names)")
+                    } catch {
+                        WireLogger.sync.error("failed: \(error)")
+                    }
+                }
+            }
+            let message = "It took \(duration) to fetch \(userIDs.count) contacts in a parallel"
+            WireLogger.sync.info(message)
+
+            await MainActor.run {
+                DebugAlert.showGeneric(message: message)
+            }
+        }
+    }
+
+    @available(iOS 16.0, *)
+    private func fetchContactsInBatch() {
+        fetchContactsInBatch(count: 30)
+    }
+
+    @available(iOS 16.0, *)
+    private func fetchContactsInBatch(count: Int) {
+        let usersAPI = ZMUserSession.shared()!.makeUsersAPI()
+        let context = ZMUserSession.shared()!.viewContext
+
+        let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+        let users = try! context.fetch(fetchRequest)
+        let userIDs = users.compactMap { $0.qualifiedID }.prefix(upTo: count)
+
+        Task {
+            let clock = ContinuousClock()
+            let duration = await clock.measure {
+                do {
+                    let result = try await usersAPI.getUsers(userIDs: userIDs.map {
+                        WireAPI.UserID(uuid: $0.uuid, domain: $0.domain)
+                    })
+                    WireLogger.sync.info("synced: \(result.found.map(\.name))")
+                } catch {
+                    WireLogger.sync.error("failed: \(error)")
+                }
+            }
+            let message = "It took \(duration) to fetch \(userIDs.count) contacts in a batch"
+            WireLogger.sync.info(message)
+
+            await MainActor.run {
+                DebugAlert.showGeneric(message: message)
+            }
+        }
     }
 
     // MARK: Send Logs
@@ -114,7 +200,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-    private func qualifiedIDOfFirstGroupConversation(of userClient: UserClient, in context: NSManagedObjectContext) async -> QualifiedID? {
+    private func qualifiedIDOfFirstGroupConversation(of userClient: UserClient, in context: NSManagedObjectContext) async -> WireDataModel.QualifiedID? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
