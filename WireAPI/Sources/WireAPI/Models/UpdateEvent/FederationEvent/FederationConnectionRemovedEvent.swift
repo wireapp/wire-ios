@@ -18,32 +18,14 @@
 
 import Foundation
 
-/// An event concerning teams.
+/// An event where the two or more other backends stopped federating
+/// with each other.
 
-public enum TeamEvent {
+public struct FederationConnectionRemovedEvent: Equatable {
 
-    /// A team conversation was created.
+    /// The domains of the backends that are no longer
+    /// federating with each other.
 
-    case conversationCreate
-
-    /// A team conversation was deleted.
-
-    case conversationDelete
-
-    /// A team was created.
-
-    case create
-
-    /// The self team was deleted.
-
-    case delete
-
-    /// A user has left the self team.
-
-    case memberLeave
-
-    /// A member of the self team has updated their metadata.
-
-    case memberUpdate
+    public let domains: Set<String>
 
 }

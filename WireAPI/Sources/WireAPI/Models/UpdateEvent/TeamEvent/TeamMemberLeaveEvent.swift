@@ -16,6 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-final class ViewController: UIViewController {}
+/// An event where a team member left the team.
+
+public struct TeamMemberLeaveEvent: Equatable {
+
+    /// The team id.
+
+    public let teamID: UUID
+
+    /// The id of the member who left.
+
+    public let userID: UUID
+
+}

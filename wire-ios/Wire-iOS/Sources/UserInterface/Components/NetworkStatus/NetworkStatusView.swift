@@ -244,15 +244,9 @@ final class NetworkStatusView: UIView {
             let data = try JSONEncoder().encode(logInfo)
             let jsonString = String(data: data, encoding: .utf8)
 
-            tracker?.debug(
-                "NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")",
-                attributes: nil
-            )
+            tracker?.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")")
         } catch {
-            tracker?.error(
-                "NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)",
-                attributes: nil
-            )
+            tracker?.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
         }
     }
 }
