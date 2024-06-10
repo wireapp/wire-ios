@@ -18,12 +18,26 @@
 
 import Foundation
 
-/// An event concerning feature configs.
+extension UpdateEvent {
 
-public enum FeatureConfigEvent {
+    init(
+        eventType: TeamEventType,
+        from decoder: any Decoder
+    ) throws {
+        let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
 
-    /// A feature config was updated.
+        switch eventType {
+        case .delete:
+            self = .team(.delete)
 
-    case update
+        case .memberLeave:
+            let event = try TeamMemberLeaveEventDecoder().decode(from: container)
+            self = .team(.memberLeave(event))
+
+        case .memberUpdate:
+            let event = try TeamMemberUpdateEventDecoder().decode(from: container)
+            self = .team(.memberUpdate(event))
+        }
+    }
 
 }

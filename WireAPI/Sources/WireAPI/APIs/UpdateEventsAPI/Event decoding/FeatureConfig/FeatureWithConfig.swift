@@ -18,16 +18,8 @@
 
 import Foundation
 
-extension UpdateEvent {
+struct FeatureWithoutConfig: Decodable {
 
-    init(
-        eventType: FeatureConfigEventType,
-        from decoder: any Decoder
-    ) throws {
-        switch eventType {
-        case .update:
-            self = .featureConfig(.update)
-        }
-    }
+    let status: FeatureConfigStatus
 
 }

@@ -1,0 +1,15 @@
+{
+    "type": "feature-config.update",
+    "name": "classifiedDomains",
+    "data": {
+        "config": {
+            "domains": [
+                "a.com",
+                "b.com"
+            ]
+        },
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}

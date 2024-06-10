@@ -1,0 +1,13 @@
+{
+    "type": "feature-config.update",
+    "name": "mlsMigration",
+    "data": {
+        "config": {
+            "startTime": "2024-06-04T15:03:07.598Z",
+            "finaliseRegardlessAfter": "2025-06-04T15:03:07.598Z"
+        },
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}
