@@ -8632,8 +8632,8 @@
 				01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */,
 				59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */,
 				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
-				E6F0F90A2C170C0A0019297F /* WireDatadogTrackerBuilder.swift */,
 				E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */,
+				E6F0F90A2C170C0A0019297F /* WireDatadogTrackerBuilder.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";

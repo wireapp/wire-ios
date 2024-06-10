@@ -58,6 +58,4 @@ extension WireAnalytics {
     public static let shared: any WireAnalyticsProtocol = WireAnalyticsVoidTracker()
 }
 
-extension WireAnalyticsVoidTracker: WireAnalyticsProtocol { }
-
 #endif
