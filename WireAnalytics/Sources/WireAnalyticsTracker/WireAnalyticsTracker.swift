@@ -100,6 +100,13 @@ public final class WireAnalyticsTracker {
         RUM.enable(with: rumConfiguration)
 
         Datadog.setUserInfo(id: datadogUserId)
+
+        logger?.log(
+            level: .info,
+            message: "Datadog startMonitoring for device: \(datadogUserId)",
+            error: nil,
+            attributes: nil
+        )
     }
 }
 

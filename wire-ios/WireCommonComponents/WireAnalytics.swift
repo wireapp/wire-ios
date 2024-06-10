@@ -18,9 +18,14 @@
 
 import WireAnalytics
 import WireSystem
-import WireTransport
+
+// MARK: - Types
 
 public enum WireAnalytics { }
+
+public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
+
+// MARK: - Singleton
 
 #if canImport(WireAnalyticsTracker)
 
@@ -33,8 +38,6 @@ extension WireAnalytics {
         return builder.build()
     }()
 }
-
-extension WireAnalyticsTracker: WireAnalyticsProtocol { }
 
 #else
 
