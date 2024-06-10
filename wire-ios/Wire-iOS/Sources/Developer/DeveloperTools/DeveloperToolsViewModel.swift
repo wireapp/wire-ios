@@ -180,14 +180,15 @@ final class DeveloperToolsViewModel: ObservableObject {
             ))
         }
 
-        let datadogUserIdentifier = WireAnalytics.shared.datadogUserIdentifier
-        sections.append(Section(
-            header: "Datadog",
-            items: [
-                .text(TextItem(title: "User ID", value: String(describing: datadogUserIdentifier))),
-                .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
-            ]
-        ))
+        if let datadogUserIdentifier = WireAnalytics.shared.datadogUserIdentifier {
+            sections.append(Section(
+                header: "Datadog",
+                items: [
+                    .text(TextItem(title: "User ID", value: datadogUserIdentifier)),
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
+                ]
+            ))
+        }
     }
 
     private lazy var backendInfoSection: Section = {
