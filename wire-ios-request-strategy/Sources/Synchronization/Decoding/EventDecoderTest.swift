@@ -563,7 +563,7 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-        wait(for: { !self.mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty }, timeout: 3)
+        wait(forConditionToBeTrue: !self.mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty, timeout: 3)
         XCTAssertEqual(1, mockMLSService.commitPendingProposalsIfNeeded_Invocations.count)
     }
 
