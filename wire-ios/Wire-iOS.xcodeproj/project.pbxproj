@@ -1305,7 +1305,6 @@
 		E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E66C51D62C13395400F82F88 /* WireAnalytics */; };
 		E66C51D92C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */; };
 		E66C51DB2C13499800F82F88 /* WireAnalyticsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51DA2C13499800F82F88 /* WireAnalyticsProtocol.swift */; };
-		E66C51DD2C134A2D00F82F88 /* WireAnalytics+RemoteLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51DC2C134A2D00F82F88 /* WireAnalytics+RemoteLogger.swift */; };
 		E66D4E822BE525DF00C7F374 /* AVSVideoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
@@ -3410,7 +3409,6 @@
 		E66C51D42C13375700F82F88 /* WireAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalytics.swift; sourceTree = "<group>"; };
 		E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+LoggerProtocol.swift"; sourceTree = "<group>"; };
 		E66C51DA2C13499800F82F88 /* WireAnalyticsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalyticsProtocol.swift; sourceTree = "<group>"; };
-		E66C51DC2C134A2D00F82F88 /* WireAnalytics+RemoteLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+RemoteLogger.swift"; sourceTree = "<group>"; };
 		E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSVideoContainerView.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8636,7 +8634,6 @@
 				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
 				E66C51DA2C13499800F82F88 /* WireAnalyticsProtocol.swift */,
 				E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */,
-				E66C51DC2C134A2D00F82F88 /* WireAnalytics+RemoteLogger.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
@@ -10900,7 +10897,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E66C51DD2C134A2D00F82F88 /* WireAnalytics+RemoteLogger.swift in Sources */,
 				EEF37EDC2BDFD9970055C9E1 /* Font+WireTextStyle.swift in Sources */,
 				63495DB423EB2D7B002A7C59 /* AutomationHelper+BackendEnvironment.swift in Sources */,
 				7CCFC111228B1E8E007C365B /* WireStyleKit.swift in Sources */,

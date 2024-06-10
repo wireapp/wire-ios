@@ -20,19 +20,13 @@ import WireAnalytics
 import WireSystem
 import WireTransport
 
-public protocol WireAnalyticsProtocol: WireAnalyticsTracking, LoggerProtocol, RemoteLogger {
+public protocol WireAnalyticsProtocol: WireAnalyticsTracking, LoggerProtocol {
     func startRemoteMonitoring()
 }
 
 extension WireAnalyticsProtocol {
     public func startRemoteMonitoring() {
-        RemoteMonitoring.remoteLogger = self
-
-        log(
-            message: "Datadog startMonitoring for device: \(datadogUserId)",
-            error: nil,
-            attributes: nil,
-            level: .info
-        )
+        // TODO: move loggin elsewhere
+        info("Datadog startMonitoring for device: \(datadogUserId)")
     }
 }
