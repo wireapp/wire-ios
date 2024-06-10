@@ -39,9 +39,7 @@ extension MFMailComposeViewController {
 #if DATADOG_IMPORT
         // datadogId has always a value. NONE by default
         // display only when enabled
-        if let datadogId = WireAnalytics.shared?.datadogUserId {
-            body.append("\nDatadog ID: \(datadogId)")
-        }
+        body.append("\nDatadog ID: \(WireAnalytics.shared.datadogUserId)")
 #endif
         body.append("\n---------------\n")
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody

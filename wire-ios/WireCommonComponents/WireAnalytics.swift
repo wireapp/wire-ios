@@ -34,7 +34,7 @@ import WireAnalyticsTracker
 import WireTransport
 
 extension WireAnalytics {
-    public static let shared: (any WireAnalyticsProtocol)? = {
+    public static let shared: any WireAnalyticsProtocol = {
         let builder = WireAnalyticsDatadogTrackerBuilder()
 
         guard let tracker = builder.build() else {
@@ -55,7 +55,7 @@ extension WireAnalytics {
 #else
 
 extension WireAnalytics {
-    public static let shared: (any WireAnalyticsProtocol)? = WireAnalyticsVoidTracker()
+    public static let shared: any WireAnalyticsProtocol = WireAnalyticsVoidTracker()
 }
 
 extension WireAnalyticsVoidTracker: WireAnalyticsProtocol { }
