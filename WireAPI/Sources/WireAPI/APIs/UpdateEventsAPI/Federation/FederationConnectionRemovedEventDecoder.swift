@@ -27,7 +27,7 @@ struct FederationConnectionRemovedEventDecoder {
             Payload.self,
             forKey: .payload
         )
-        
+
         return FederationConnectionRemovedEvent(domains: payload.domains)
     }
 
