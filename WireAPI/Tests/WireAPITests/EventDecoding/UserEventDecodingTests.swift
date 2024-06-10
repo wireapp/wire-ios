@@ -282,7 +282,6 @@ final class UserEventDecodingTests: XCTestCase {
         static let contactJoinEvent = UserContactJoinEvent(name: "Alice McGee")
 
         static let userDeleteEvent = UserDeleteEvent(
-            userID: UUID(uuidString: "426525d3-81fc-467a-843a-1d1c375ca4b4")!,
             qualifiedUserID: QualifiedID(
                 uuid: UUID(uuidString: "426525d3-81fc-467a-843a-1d1c375ca4b4")!,
                 domain: "example.com"
