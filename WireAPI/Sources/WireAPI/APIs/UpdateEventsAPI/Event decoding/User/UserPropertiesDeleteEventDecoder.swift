@@ -18,37 +18,17 @@
 
 import Foundation
 
-struct TeamMemberUpdateEventDecoder {
+struct UserPropertiesDeleteEventDecoder {
 
     func decode(
-        from container: KeyedDecodingContainer<TeamEventCodingKeys>
-    ) throws -> TeamMemberUpdateEvent {
-        let teamID = try container.decode(
-            UUID.self,
-            forKey: .teamID
+        from container: KeyedDecodingContainer<UserEventCodingKeys>
+    ) throws -> UserPropertiesDeleteEvent {
+        let key = try container.decode(
+            String.self,
+            forKey: .propertyKey
         )
 
-        let payload = try container.decode(
-            Payload.self,
-            forKey: .payload
-        )
-
-        return TeamMemberUpdateEvent(
-            teamID: teamID,
-            membershipID: payload.membershipID
-        )
-    }
-
-    private struct Payload: Decodable {
-
-        let membershipID: UUID
-
-        enum CodingKeys: String, CodingKey {
-
-            case membershipID = "user"
-
-        }
-
+        return UserPropertiesDeleteEvent(key: key)
     }
 
 }
