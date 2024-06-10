@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `ConversationsAPI`.
-public enum ConversationsAPIError: Error {
+extension Conversation {
 
-    /// Failure if functionality has not been implemented.
-    case notImplemented
-
-    /// Failure if http body is invalid.
-    case invalidBody
-
+    /// Represents all conversation's members including self.
+    public struct Members {
+        public let others: [Member]
+        public let selfMember: Member
+    }
 }

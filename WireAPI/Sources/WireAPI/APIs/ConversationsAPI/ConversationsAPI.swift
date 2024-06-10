@@ -26,4 +26,8 @@ public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
     func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID>
+
+    /// Fetch conversation list with qualified identifiers.
+    func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
+
 }

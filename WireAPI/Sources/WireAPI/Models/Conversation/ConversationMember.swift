@@ -16,13 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `ConversationsAPI`.
-public enum ConversationsAPIError: Error {
+import Foundation
 
-    /// Failure if functionality has not been implemented.
-    case notImplemented
+extension Conversation {
 
-    /// Failure if http body is invalid.
-    case invalidBody
-
+    /// Represents a conversation's member.
+    public struct Member {
+        public let archived: Bool?
+        public let archivedReference: Date?
+        public let conversationRole: String?
+        public let hidden: Bool?
+        public let hiddenReference: String?
+        public let id: UUID?
+        public let mutedReference: Date?
+        public let mutedStatus: Int?
+        public let qualifiedID: QualifiedID?
+        public let qualifiedTarget: QualifiedID?
+        public let service: Service?
+        public let target: UUID?
+    }
 }

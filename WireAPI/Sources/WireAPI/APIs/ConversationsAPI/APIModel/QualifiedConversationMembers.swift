@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `ConversationsAPI`.
-public enum ConversationsAPIError: Error {
+import Foundation
 
-    /// Failure if functionality has not been implemented.
-    case notImplemented
+struct QualifiedConversationMembers: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case others
+        case selfMember = "self"
+    }
 
-    /// Failure if http body is invalid.
-    case invalidBody
+    let others: [QualifiedConversationMember]
+    let selfMember: QualifiedConversationMember
 
+    func toAPIModel() -> Conversation.Members {
+        Conversation.Members(
+            others: others.map { $0.toAPIModel() },
+            selfMember: selfMember.toAPIModel()
+        )
+    }
 }

@@ -131,8 +131,8 @@ extension ListUsersResponseV0: ToAPIModelConvertible {
 
 struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
 
-    let id: String
-    let provider: String
+    let id: UUID
+    let provider: UUID
 
     func toAPIModel() -> Service {
         Service(id: id, provider: provider)

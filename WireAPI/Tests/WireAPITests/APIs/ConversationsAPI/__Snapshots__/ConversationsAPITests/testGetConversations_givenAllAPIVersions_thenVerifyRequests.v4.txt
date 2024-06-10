@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v4/conversations/list"
+  - method: post
+  - body: {"qualified_ids":[{"domain":"wire.com","id":"213248A1-5499-418F-8173-5010D1C1E506"}]}

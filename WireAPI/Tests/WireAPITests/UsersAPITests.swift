@@ -183,8 +183,8 @@ final class UsersAPITests: XCTestCase {
             email: "john.doe@example.com",
             expiresAt: "2021-05-12T10:52:02.671Z",
             service: Service(
-                id: "99db9768-04e3-4b5d-9268-831b6a25c4ab",
-                provider: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
             legalholdStatus: .enabled
