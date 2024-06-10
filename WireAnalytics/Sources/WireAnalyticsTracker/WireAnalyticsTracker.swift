@@ -26,25 +26,27 @@ import UIKit
 public final class WireAnalyticsTracker {
 
     /// SHA256 string to identify current Device across app and extensions.
-    public var datadogUserId: String
+    public let datadogUserId: String
 
     private let applicationID: String
     private let logLevel: DatadogLogs.LogLevel = .debug
 
-    public let bundleVersion: String?
-
     public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
-    init(
+    public init(
         appID: String,
-        clientToken: String
-        // environment: BackendEnvironmentProvider
+        clientToken: String,
+        datadogUserID: String,
+        environmentName: String
     ) {
+        applicationID = appID
+        datadogUserId = datadogUserID
+
         // set up datadog
 
         let configuration = Datadog.Configuration(
             clientToken: clientToken,
-            env: "environment.title.alphanumericString",
+            env: environmentName,
             site: .eu1
         )
         Datadog.initialize(
@@ -64,14 +66,6 @@ public final class WireAnalyticsTracker {
             consoleLogFormat: .shortWith(prefix: "[iOS App] ")
         )
         logger = Logger.create(with: loggerConfiguration)
-
-        // properties
-
-        applicationID = appID
-
-        bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
-
-        datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
     }
 
     public func enable() {
@@ -98,21 +92,5 @@ public final class WireAnalyticsTracker {
             error: nil,
             attributes: nil
         )
-    }
-}
-
-import CryptoKit
-
-private extension String {
-
-    var sha256String: String {
-        let inputData = Data(self.utf8)
-        let hashed = SHA256.hash(data: inputData)
-        return hashed.compactMap { String(format: "%02x", $0) }.joined()
-    }
-
-    var alphanumericString: String {
-        let pattern = "[^A-Za-z0-9]+"
-        return self.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
     }
 }

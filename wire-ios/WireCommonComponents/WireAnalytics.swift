@@ -29,13 +29,18 @@ public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
 
 #if canImport(WireAnalyticsTracker)
 
+import UIKit
 import WireAnalyticsTracker
 import WireTransport
 
 extension WireAnalytics {
-    public static let shared: WireAnalyticsProtocol? = {
-        let builder = WireAnalyticsTrackerBuilder()
-        let tracker = builder.build()
+    public static let shared: (any WireAnalyticsProtocol)? = {
+        let builder = WireAnalyticsDatadogTrackerBuilder()
+
+        guard let tracker = builder.build() else {
+            assertionFailure("building WireAnalyticsDatadogTracker failed - logging disabled")
+            return WireAnalyticsVoidTracker()
+        }
 
         if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
             aggregatedLogger.addLogger(tracker)
@@ -50,7 +55,7 @@ extension WireAnalytics {
 #else
 
 extension WireAnalytics {
-    public static let shared: WireAnalyticsProtocol? = WireAnalyticsVoidTracker()
+    public static let shared: (any WireAnalyticsProtocol)? = WireAnalyticsVoidTracker()
 }
 
 extension WireAnalyticsVoidTracker: WireAnalyticsProtocol { }

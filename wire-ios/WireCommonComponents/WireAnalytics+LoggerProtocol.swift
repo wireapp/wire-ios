@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAnalytics
 import WireSystem
+
+// MARK: - WireAnalyticsTracker
 
 #if canImport(WireAnalyticsTracker)
 
@@ -93,7 +96,7 @@ extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
                 partialResult[item.key.rawValue] = item.value
             }
         }
-        plainAttributes["build_number"] = bundleVersion
+        plainAttributes["build_number"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
         logger?.log(
             level: level,
@@ -104,7 +107,9 @@ extension WireAnalyticsTracker: WireSystem.LoggerProtocol {
     }
 }
 
-#else
+#endif
+
+// MARK: - WireAnalyticsVoidTracker
 
 extension WireAnalyticsVoidTracker: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) { }
@@ -116,5 +121,3 @@ extension WireAnalyticsVoidTracker: WireSystem.LoggerProtocol {
 
     public func addTag(_ key: LogAttributesKey, value: String?) { }
 }
-
-#endif
