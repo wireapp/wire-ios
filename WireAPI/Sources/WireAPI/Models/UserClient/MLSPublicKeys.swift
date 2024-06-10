@@ -22,23 +22,23 @@ import Foundation
 
 public struct MLSPublicKeys: Equatable, Codable {
 
-    /// The key for the ed25519 ciphersuite.
+    /// The ed25519 signature key.
 
     public let ed25519: String?
 
-    /// The key for the ed448 ciphersuite.
+    /// The ed448 signature key.
 
     public let ed448: String?
 
-    /// The key for the p256 ciphersuite.
+    /// The p256 signature key.
 
     public let p256: String?
 
-    /// The key for the p384 ciphersuite.
+    /// The p384 signature key.
 
     public let p384: String?
 
-    /// The key for the p512 ciphersuite.
+    /// The p512 signature key.
 
     public let p512: String?
 
