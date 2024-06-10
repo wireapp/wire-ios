@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class AudioRecordKeyboardViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

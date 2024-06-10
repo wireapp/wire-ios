@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
 import SnapshotTesting
+import XCTest
+
 @testable import Wire
 
-final class AppLockModuleViewTests: BaseSnapshotTestCase {
+final class AppLockModuleViewTests: XCTestCase {
 
     private var sut: AppLockModule.View!
     private var presenter: AppLockModule.MockPresenter!

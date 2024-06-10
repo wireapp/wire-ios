@@ -369,34 +369,71 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
-        handleEventInContext("active-speakers-change") {
-            guard let data = data.data(using: .utf8) else {
-                zmLog.safePublic("Invalid active speakers data")
-                return
-            }
+        guard let data = data.data(using: .utf8) else {
+            WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
+            return
+        }
 
-            // Example of `data`
-            //  {
-            //      "audio_levels": [
-            //          {
-            //              "userid": "3f49da1d-0d52-4696-9ef3-0dd181383e8a",
-            //              "clientid": "24cc758f602fb1f4",
-            //              "audio_level": 100,
-            //              "audio_level_now": 100
-            //          }
-            //      ]
-            // }
+        // Example of `data`
+        //  {
+        //      "audio_levels": [
+        //          {
+        //              "userid": "3f49da1d-0d52-4696-9ef3-0dd181383e8a",
+        //              "clientid": "24cc758f602fb1f4",
+        //              "audio_level": 100,
+        //              "audio_level_now": 100
+        //          }
+        //      ]
+        // }
 
-            do {
-                let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
-                if let call = self.callSnapshots[conversationId] {
-                    self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
+        do {
+            let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
+
+            if let call = self.callSnapshots[conversationId] {
+
+                self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
+
+                guard self.isSignificantActiveSpeakersChange(
+                    change: change,
+                    in: call
+                ) else {
+                    return
+                }
+
+                handleEventInContext("active-speakers-change") {
                     WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
                 }
-            } catch {
-                zmLog.safePublic("Cannot decode active speakers change JSON")
+            }
+        } catch {
+            WireLogger.calling.error("Cannot decode active speakers change JSON", attributes: .safePublic)
+        }
+    }
+
+    private func isSignificantActiveSpeakersChange(
+        change: AVSActiveSpeakersChange,
+        in call: CallSnapshot
+    ) -> Bool {
+        let currentSpeakers = Set(call.activeSpeakers)
+        let newSpeakers = Set(change.activeSpeakers)
+
+        var isSignificant = false
+
+        for newSpeaker in newSpeakers {
+            let currentSpeaker = currentSpeakers.first {
+                $0.client.avsIdentifier == newSpeaker.client.avsIdentifier
+            }
+
+            if let currentSpeaker {
+                let stoppedTalking = currentSpeaker.audioLevelNow > 0 && newSpeaker.audioLevelNow == 0
+                let startedTalking = currentSpeaker.audioLevelNow == 0 && newSpeaker.audioLevelNow > 0
+
+                isSignificant = stoppedTalking || startedTalking
+            } else {
+                isSignificant = newSpeaker.audioLevelNow > 0
             }
         }
+
+        return isSignificant
     }
 
     func handleNewEpochRequest(conversationID: AVSIdentifier) {

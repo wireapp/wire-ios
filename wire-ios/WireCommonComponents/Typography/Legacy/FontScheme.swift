@@ -25,6 +25,8 @@ public enum FontTextStyle: String {
     case inputText
 }
 
+// MARK: -
+
 public enum FontSize: String {
     case large
     case normal
@@ -38,6 +40,8 @@ public enum FontSize: String {
     case buttonSmall
     case buttonBig
 }
+
+// MARK: -
 
 public enum FontWeight: String, CaseIterable {
     case ultraLight
@@ -92,11 +96,15 @@ extension FontWeight {
     }
 }
 
+// MARK: -
+
 extension UIFont {
     public static func systemFont(ofSize size: CGFloat, contentSizeCategory: UIContentSizeCategory, weight: FontWeight) -> UIFont {
         return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
     }
 }
+
+// MARK: -
 
 public struct FontSpec: Hashable {
     let size: FontSize
@@ -116,7 +124,7 @@ public struct FontSpec: Hashable {
     }
 
     public var font: UIFont? {
-        return FontScheme.font(for: self)
+        FontScheme.shared.font(for: self)
     }
 
     public var swiftUIFont: Font {
@@ -140,36 +148,26 @@ extension FontSpec: CustomStringConvertible {
     }
 }
 
-public enum FontScheme {
+// MARK: -
 
-    private typealias FontsByFontSpec = [FontSpec: UIFont]
+public final class FontScheme {
+
+    public static let shared: FontScheme = {
+        let fontScheme = FontScheme()
+        fontScheme.configure(with: .large)
+        return fontScheme
+    }()
+
     private typealias FontSizeAndPoint = (size: FontSize, point: CGFloat)
 
-    private static var fontsByFontSpec = FontsByFontSpec()
+    private var fontsByFontSpec: [FontSpec: UIFont] = [:]
 
-    private static func mapFontTextStyleAndFontSizeAndPoint(fontSizeTuples allFontSizes: [FontSizeAndPoint],
-                                                            mapping: inout [FontSpec: UIFont],
-                                                            fontTextStyle: FontTextStyle,
-                                                            contentSizeCategory: UIContentSizeCategory) {
+    private init() { }
 
-        for weight in FontWeight.allCases {
-            for (size, point) in allFontSizes {
-                let nonWeightedSpec = FontSpec(size, .none, fontTextStyle)
-                let weightedSpec = FontSpec(size, weight, fontTextStyle)
+    // MARK: - Configuration
 
-                mapping[nonWeightedSpec] = .systemFont(ofSize: point,
-                                                       contentSizeCategory: contentSizeCategory,
-                                                       weight: .light)
-
-                mapping[weightedSpec] = .systemFont(ofSize: point,
-                                                    contentSizeCategory: contentSizeCategory,
-                                                    weight: weight)
-            }
-        }
-    }
-
-    public static func configure(with contentSizeCategory: UIContentSizeCategory) {
-        fontsByFontSpec = FontsByFontSpec()
+    public func configure(with contentSizeCategory: UIContentSizeCategory) {
+        fontsByFontSpec = [:]
 
         // The ratio is following 11:12:16:24, same as default case
         let largeTitleFontSizeTuples: [FontSizeAndPoint] = [
@@ -252,10 +250,40 @@ public enum FontScheme {
         fontsByFontSpec[FontSpec(.buttonBig, .semibold, .none)] = .systemFont(ofSize: 20, contentSizeCategory: contentSizeCategory, weight: .semibold)
     }
 
-    public static func font(for fontType: FontSpec) -> UIFont? {
-        if FontScheme.fontsByFontSpec[fontType] == nil {
-           assertionFailure("missing uifont for fontspec \(fontType), got: \(FontScheme.fontsByFontSpec)")
+    private func mapFontTextStyleAndFontSizeAndPoint(
+        fontSizeTuples allFontSizes: [FontSizeAndPoint],
+        mapping: inout [FontSpec: UIFont],
+        fontTextStyle: FontTextStyle,
+        contentSizeCategory: UIContentSizeCategory
+    ) {
+        for weight in FontWeight.allCases {
+            for (size, point) in allFontSizes {
+                let nonWeightedSpec = FontSpec(size, .none, fontTextStyle)
+                let weightedSpec = FontSpec(size, weight, fontTextStyle)
+
+                mapping[nonWeightedSpec] = .systemFont(
+                    ofSize: point,
+                    contentSizeCategory: contentSizeCategory,
+                    weight: .light
+                )
+
+                mapping[weightedSpec] = .systemFont(
+                    ofSize: point,
+                    contentSizeCategory: contentSizeCategory,
+                    weight: weight
+                )
+            }
         }
-        return FontScheme.fontsByFontSpec[fontType]
+    }
+
+    // MARK: - Access
+
+    fileprivate func font(for fontType: FontSpec) -> UIFont? {
+        guard let font = fontsByFontSpec[fontType] else {
+            assertionFailure("missing uifont for fontspec: \(fontType)")
+            return nil
+        }
+
+        return font
     }
 }

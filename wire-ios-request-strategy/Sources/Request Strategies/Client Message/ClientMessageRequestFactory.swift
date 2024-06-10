@@ -104,7 +104,12 @@ extension ClientMessageRequestFactory {
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
 
         let request = ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
+
+        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+        // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
         request.addContentDebugInformation("Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))")
+        request.contentHintForRequestLoop += "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
+
         request.forceToBackgroundSession()
         return request
     }

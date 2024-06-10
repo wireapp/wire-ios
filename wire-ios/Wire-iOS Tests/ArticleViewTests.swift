@@ -93,7 +93,7 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
 
 // MARK: - ArticleViewTests
 
-final class ArticleViewTests: BaseSnapshotTestCase {
+final class ArticleViewTests: XCTestCase {
 
     // MARK: - Properties
 

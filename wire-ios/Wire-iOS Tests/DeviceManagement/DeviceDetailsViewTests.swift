@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SwiftUI
 import WireSyncEngineSupport
 import WireRequestStrategySupport
+import XCTest
 
-final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+@testable import Wire
+
+final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()

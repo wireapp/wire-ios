@@ -19,7 +19,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class TokenTextAttachmentTests: BaseSnapshotTestCase {
+final class TokenTextAttachmentTests: XCTestCase {
     var sut: TokenTextAttachment!
 
     override func setUp() {
