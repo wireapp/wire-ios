@@ -1531,6 +1531,10 @@ extension SessionManager {
     private func requestCertificateEnrollmentIfNeeded() async {
         guard let userSession = activeUserSession else { return }
 
+        let isEnabled = await userSession.viewContext.perform {
+            userSession.e2eiFeature.isEnabled
+        }
+        guard isEnabled else { return }
         do {
             let isE2EICertificateEnrollmentRequired = try await userSession.isE2EICertificateEnrollmentRequired.invoke()
             if isE2EICertificateEnrollmentRequired {
