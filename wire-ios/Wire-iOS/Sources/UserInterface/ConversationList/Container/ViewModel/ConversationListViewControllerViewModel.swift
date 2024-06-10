@@ -199,10 +199,6 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    private var isComingFromRegistration: Bool {
-        return ZClientViewController.shared?.isComingFromRegistration ?? false
-    }
-
     /// show PushPermissionDeniedDialog when necessary
     ///
     /// - Returns: true if PushPermissionDeniedDialog is shown
@@ -211,7 +207,6 @@ extension ConversationListViewController.ViewModel {
         // and is not coming from the registration flow (where we alreday ask for permissions).
         guard
             selfUserLegalHoldSubject.handle != nil,
-            !isComingFromRegistration,
             !AutomationHelper.sharedHelper.skipFirstLoginAlerts
         else { return }
 

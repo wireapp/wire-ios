@@ -141,12 +141,6 @@
 "conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archive";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Help us make Wire better";
-"conversation_list.data_usage_permission_alert.message" = "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.";
-"conversation_list.data_usage_permission_alert.disagree" = "No";
-"conversation_list.data_usage_permission_alert.agree" = "I Agree";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
 

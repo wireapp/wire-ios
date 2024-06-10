@@ -172,7 +172,6 @@ final class ConversationListViewController: UIViewController {
 
             tabBarController?.delegate = self
 
-            ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }

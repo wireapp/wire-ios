@@ -252,14 +252,12 @@ final class LandingViewController: AuthenticationStepViewController {
         configureAccessibilityElements()
 
         updateBarButtonItem()
-        disableTrackingIfNeeded()
         updateCustomBackendLabels()
 
         NotificationCenter.default.addObserver(forName: AccountManagerDidUpdateAccountsNotificationName,
                                                object: SessionManager.shared?.accountManager,
                                                queue: .main) { _ in
             self.updateBarButtonItem()
-            self.disableTrackingIfNeeded()
         }
 
         NotificationCenter.default.addObserver(forName: BackendEnvironment.backendSwitchNotification,
@@ -478,13 +476,6 @@ final class LandingViewController: AuthenticationStepViewController {
             customBackendView.setBackendUrl(url)
         default:
             customBackendView.isHidden = true
-        }
-    }
-
-    private func disableTrackingIfNeeded() {
-        if SessionManager.shared?.firstAuthenticatedAccount == nil {
-            TrackingManager.shared.disableCrashSharing = true
-            TrackingManager.shared.disableAnalyticsSharing = true
         }
     }
 
