@@ -23,20 +23,12 @@ struct UserDeleteEventDecoder {
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserDeleteEvent {
-        let userID = try container.decode(
-            UUID.self,
-            forKey: .id
-        )
-
         let qualifiedUserID = try container.decode(
             QualifiedID.self,
             forKey: .qualifiedID
         )
 
-        return UserDeleteEvent(
-            userID: userID,
-            qualifiedUserID: qualifiedUserID
-        )
+        return UserDeleteEvent(qualifiedUserID: qualifiedUserID)
     }
 
 }
