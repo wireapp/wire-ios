@@ -18,26 +18,9 @@
 
 import Foundation
 
-extension UpdateEvent {
+enum TeamEventCodingKeys: String, CodingKey {
 
-    init(
-        eventType: TeamEventType,
-        from decoder: any Decoder
-    ) throws {
-        let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
-
-        switch eventType {
-        case .delete:
-            self = .team(.delete)
-
-        case .memberLeave:
-            let event = try TeamMemberLeaveEventDecoder().decode(from: container)
-            self = .team(.memberLeave(event))
-
-        case .memberUpdate:
-            let event = try TeamMemberUpdateEventDecoder().decode(from: container)
-            self = .team(.memberUpdate(event))
-        }
-    }
+    case teamID = "team"
+    case payload = "data"
 
 }

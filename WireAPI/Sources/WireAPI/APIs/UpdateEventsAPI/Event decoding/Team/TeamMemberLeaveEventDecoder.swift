@@ -18,26 +18,37 @@
 
 import Foundation
 
-extension UpdateEvent {
+struct TeamMemberLeaveEventDecoder {
 
-    init(
-        eventType: TeamEventType,
-        from decoder: any Decoder
-    ) throws {
-        let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
+    func decode(
+        from container: KeyedDecodingContainer<TeamEventCodingKeys>
+    ) throws -> TeamMemberLeaveEvent {
+        let teamID = try container.decode(
+            UUID.self,
+            forKey: .teamID
+        )
 
-        switch eventType {
-        case .delete:
-            self = .team(.delete)
+        let payload = try container.decode(
+            Payload.self,
+            forKey: .payload
+        )
 
-        case .memberLeave:
-            let event = try TeamMemberLeaveEventDecoder().decode(from: container)
-            self = .team(.memberLeave(event))
+        return TeamMemberLeaveEvent(
+            teamID: teamID,
+            userID: payload.userID
+        )
+    }
 
-        case .memberUpdate:
-            let event = try TeamMemberUpdateEventDecoder().decode(from: container)
-            self = .team(.memberUpdate(event))
+    private struct Payload: Decodable {
+
+        let userID: UUID
+
+        enum CodingKeys: String, CodingKey {
+
+            case userID = "user"
+
         }
+
     }
 
 }
