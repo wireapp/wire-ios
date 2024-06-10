@@ -61,7 +61,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         self.sut.objectsDidChange(messageSet)
-        wait(for: { message.isExpired }, timeout: 2)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
         self.checkExpiration(of: message)
@@ -74,7 +74,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         self.sut.objectsDidChange(messageSet)
-        wait(for: { message.isExpired }, timeout: 2)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
         XCTAssertEqual(self.localNotificationDispatcher.failedToSend, [message])
@@ -144,7 +144,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers([self.sut!], on: self.uiMOC)
-        wait(for: { message.isExpired }, timeout: 2)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
         self.checkExpiration(of: message)
@@ -161,7 +161,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         self.sut.objectsDidChange(messageSet)
-        wait(for: { message.isExpired }, timeout: 2)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -179,7 +179,7 @@ extension MessageExpirationTimerTests {
 
         // THEN
         XCTAssertTrue(self.sut.hasMessageTimersRunning)
-        wait(for: { message.isExpired }, timeout: 2)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
     }
 }
 

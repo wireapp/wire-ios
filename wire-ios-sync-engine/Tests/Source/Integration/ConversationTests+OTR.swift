@@ -262,7 +262,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             message = try! conversation?.appendText(content: "Where's everyone", mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
         }
 
-        wait(for: { message?.isExpired ?? false }, timeout: 0.5)
+        wait(forConditionToBeTrue: message?.isExpired ?? false, timeout: 0.5)
 
         XCTAssertEqual(message?.deliveryState, ZMDeliveryState.failedToSend)
         ZMMessage.setDefaultExpirationTime(defaultExpirationTime)

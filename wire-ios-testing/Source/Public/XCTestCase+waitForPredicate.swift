@@ -21,7 +21,7 @@ import XCTest
 extension XCTestCase {
 
     public func wait(
-        for predicate: @escaping () -> Bool,
+        forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
         timeout seconds: TimeInterval
     ) {
         let expectation = XCTNSPredicateExpectation(

@@ -354,7 +354,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             expectation.fulfill()
         })
 
-        wait(for: { self.sessionManager!.activeUserSession != nil }, timeout: 0.1)
+        wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 0.1)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
@@ -394,7 +394,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
                                                    completionHandler: {})
         }
 
-        wait(for: { self.sessionManager!.activeUserSession != nil }, timeout: 0.1)
+        wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 0.1)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
