@@ -47,20 +47,6 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
     }
 }
 
-private let zmLog = ZMSLog(tag: "Network")
-
-fileprivate extension ZMTransportRequest {
-    func log() {
-        zmLog.debug("[Unauthenticated] ----> Request: \(description)")
-    }
-}
-
-fileprivate extension ZMTransportResponse {
-    func log() {
-        zmLog.debug("[Unauthenticated] <---- Response: \(description)")
-    }
-}
-
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
 /// until a user has been authenticated. Consumers should set themselves as delegate to 
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
@@ -75,8 +61,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     private let userAgent: ZMUserAgent
     public var environment: BackendEnvironmentProvider
     fileprivate let reachability: ReachabilityProvider
-
-    private let remoteMonitoring: RemoteMonitoring
 
     /// Property to accept requests
     public let readyForRequests: Bool
@@ -93,7 +77,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         self.environment = environment
         self.reachability = reachability
         self.userAgent = ZMUserAgent()
-        self.remoteMonitoring = RemoteMonitoring(level: .debug)
         self.readyForRequests = readyForRequests
 
         super.init()
@@ -146,21 +129,19 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     private func enqueueRequest(_ request: ZMTransportRequest) {
         guard readyForRequests else {
-            zmLog.info("Dropping request \(request) as networkTransportSession not ready")
+            WireLogger.network.info("Dropping request \(request) as networkTransportSession not ready", attributes: .safePublic)
             return
         }
         guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init) else { preconditionFailure() }
         urlRequest.configure(with: request)
-        remoteMonitoring.log(request: urlRequest)
-
-        request.log()
+        WireLogger.network.log(request: urlRequest)
 
         let task = session.task(with: urlRequest as URLRequest) { [weak self] data, response, error in
 
             var transportResponse: ZMTransportResponse!
 
             if let response = response as? HTTPURLResponse {
-                self?.remoteMonitoring.log(response: response)
+                WireLogger.network.log(response: response)
                 transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
             } else if let error {
                 transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
@@ -169,8 +150,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
             if transportResponse == nil {
                 preconditionFailure()
             }
-
-            transportResponse?.log()
 
             request.complete(with: transportResponse)
             self?.decrement(notify: true)
