@@ -54,9 +54,19 @@ final class BackupRestoreController: NSObject {
     // MARK: - Flow
 
     func startBackupFlow() {
-        let controller = UIAlertController.historyImportWarning { [showFilePicker] in
-            showFilePicker()
-        }
+        let controller = UIAlertController(
+            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.title,
+            message: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.message,
+            preferredStyle: .alert
+        )
+        controller.addAction(.cancel())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
+            style: .default,
+            handler: { [showFilePicker] _ in
+                showFilePicker()
+            }
+        ))
 
         target.present(controller, animated: true)
     }
@@ -131,7 +141,7 @@ final class BackupRestoreController: NSObject {
     // MARK: - Alerts
 
     private func requestPassword(completion: @escaping (String) -> Void) {
-        let controller = UIAlertController.requestRestorePassword { password in
+        let controller = requestRestorePassword { password in
             password.map(completion)
         }
 
@@ -139,17 +149,16 @@ final class BackupRestoreController: NSObject {
     }
 
     private func showWrongPasswordAlert(completion: @escaping (UIAlertAction) -> Void) {
-        let controller = UIAlertController.importWrongPasswordError(completion: completion)
+        let controller = importWrongPasswordError(completion: completion)
         target.present(controller, animated: true, completion: nil)
     }
 
     private func showRestoreError(_ error: Error) {
-        let controller = UIAlertController.restoreBackupFailed(with: error) { [unowned self] action in
-            switch action {
-            case .tryAgain: self.showFilePicker()
-            case .cancel: self.delegate?.backupResoreControllerDidFinishRestoring(self)
-            }
-        }
+        let controller = restoreBackupFailed(
+            error: error,
+            onTryAgain: { [unowned self] in self.showFilePicker() },
+            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self) }
+        )
 
         target.present(controller, animated: true)
     }
@@ -158,10 +167,11 @@ final class BackupRestoreController: NSObject {
 extension BackupRestoreController: UIDocumentPickerDelegate {
     func documentPicker(
         _ controller: UIDocumentPickerViewController,
-        didPickDocumentAt url: URL) {
-            WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-            zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
+        didPickDocumentAt url: URL
+    ) {
+        WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+        zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
-            self.restore(with: url)
-        }
+        self.restore(with: url)
+    }
 }
