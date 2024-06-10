@@ -141,7 +141,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -158,12 +158,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             patchApplied = true
         }
         // this will bump last patched version to current version, which hopefully is less than 10000000.32.32
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -180,12 +180,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             patchApplied = true
         }
         // this will bump last patched version to current version, which is greater than 0.0.1
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -199,7 +199,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         var selfClient: UserClient!
         var newClient: UserClient!
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
             let newUser = ZMUser.insertNewObject(in: self.syncMOC)
             newUser.remoteIdentifier = UUID.create()
@@ -211,7 +211,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         let didEstablishSession = await selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey)
         XCTAssertTrue(didEstablishSession)
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
             // swiftlint:enable todo_requires_jira_link
@@ -244,7 +244,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     func testThatItMigratesDegradedConversationsWithSecureWithIgnored() {
         // GIVEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let notSecureConversation = ZMConversation.insertNewObject(in: self.syncMOC)
             notSecureConversation.conversationType = .oneOnOne
             notSecureConversation.securityLevel = .notSecure
@@ -269,7 +269,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItDeletesLocalTeamsAndMembers() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let moc = self.syncMOC
             let conversation = ZMConversation.insertNewObject(in: moc)
@@ -295,7 +295,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItMigratesUserRemoteIdentifiersToTheirMembers() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let moc = self.syncMOC
             let userId1 = UUID.create(), userId2 = UUID.create()
@@ -321,7 +321,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItRefetchesSelfUserDomain() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // Given
             let context = self.syncMOC
 
@@ -363,7 +363,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         var selfClient: UserClient!
         var otherUserClient: UserClient!
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             otherUser = ZMUser.insertNewObject(in: self.syncMOC)
@@ -381,7 +381,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         )
         XCTAssertTrue(didEstablishSession)
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
             self.syncMOC.saveOrRollback()
 

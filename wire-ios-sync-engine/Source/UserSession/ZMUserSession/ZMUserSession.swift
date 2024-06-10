@@ -398,13 +398,13 @@ public final class ZMUserSession: NSObject {
         coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
-        self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
-        self.earService.delegate = self
+        earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
+        earService.delegate = self
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        syncManagedObjectContext.performGroupedBlockAndWait { [self] in
+        syncManagedObjectContext.performGroupedAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
 
@@ -571,8 +571,6 @@ public final class ZMUserSession: NSObject {
 
     func startRequestLoopTracker() {
         transportSession.requestLoopDetectionCallback = { path in
-            guard !path.hasSuffix("/typing") else { return }
-
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {
@@ -658,7 +656,7 @@ public final class ZMUserSession: NSObject {
 
     @objc(performChanges:)
     public func perform(_ changes: @escaping () -> Void) {
-        managedObjectContext.performGroupedBlockAndWait { [weak self] in
+        managedObjectContext.performGroupedAndWait { [weak self] in
             changes()
             self?.saveOrRollbackChanges()
         }

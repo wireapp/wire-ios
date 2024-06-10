@@ -30,34 +30,35 @@ public class LegacyLogger: LoggerProtocol {
         return loggers[tag]!
     }
 
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warn)
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warn)
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    private func log(_ message: LogConvertible, attributes: LogAttributes?, level: ZMLogLevel_t) {
+    private func log(_ message: LogConvertible, attributes: [LogAttributes], level: ZMLogLevel_t) {
+        let mergedAttributes = flattenArray(attributes)
+
         let entry = SanitizedString(value: message.logDescription)
-
-        if let tag = attributes?["tag"] as? String {
+        if let tag = mergedAttributes[.tag] as? String {
 
             self[tag].safePublic(entry, level: level, osLogOn: false)
         } else {

@@ -35,8 +35,6 @@
 		3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */; };
 		3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */; };
 		3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */; };
-		54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54024FE51DF81C8E009BF6A0 /* Dictionary.swift */; };
-		54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */; };
 		54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54181A4F1F594E4100155ABC /* FileManager+Move.swift */; };
 		54181A521F594E6F00155ABC /* FileManager+MoveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54181A511F594E6F00155ABC /* FileManager+MoveTests.swift */; };
 		54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54181A531F594F6B00155ABC /* FileManager+Protection.swift */; };
@@ -267,8 +265,6 @@
 		3E88BF3E1B1F66B100232589 /* NSUUID+Data.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+Data.m"; sourceTree = "<group>"; };
 		3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
 		3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ZMAdditions.m"; sourceTree = "<group>"; };
-		54024FE51DF81C8E009BF6A0 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
-		54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		54181A4F1F594E4100155ABC /* FileManager+Move.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+Move.swift"; sourceTree = "<group>"; };
 		54181A511F594E6F00155ABC /* FileManager+MoveTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+MoveTests.swift"; sourceTree = "<group>"; };
 		54181A531F594F6B00155ABC /* FileManager+Protection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+Protection.swift"; sourceTree = "<group>"; };
@@ -652,7 +648,6 @@
 				54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */,
 				097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */,
 				BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */,
-				54024FE51DF81C8E009BF6A0 /* Dictionary.swift */,
 				54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */,
 				54CA31201B74F36B00B820C0 /* UnownedObject.swift */,
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
@@ -831,7 +826,6 @@
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
 				BFA2F03720C9484E00EBE97C /* FunctionOperatorTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
-				54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */,
 				BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */,
 				EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */,
 				BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */,
@@ -1139,7 +1133,6 @@
 				54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */,
 				EF2AFC9D228176C3008C921A /* UUID+Data.swift in Sources */,
 				BFA2F03620C9480A00EBE97C /* FunctionOperators.swift in Sources */,
-				54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */,
 				54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */,
 				EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */,
 				636F70472A65AD7900E086B6 /* TimerManager.swift in Sources */,
@@ -1208,7 +1201,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */,
 				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
 				EF2AFCA022817AC0008C921A /* UUID+DataTests.swift in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,

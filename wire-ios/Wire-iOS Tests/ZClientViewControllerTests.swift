@@ -20,7 +20,6 @@ import WireDataModelSupport
 import XCTest
 
 @testable import Wire
-@testable import WireCommonComponents
 
 final class ZClientViewControllerTests: XCTestCase {
 
@@ -31,8 +30,6 @@ final class ZClientViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
-        FontScheme.configure(with: .large)
 
         coreDataFixture = .init()
         imageTransformer = .init()

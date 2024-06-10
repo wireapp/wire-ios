@@ -17,10 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

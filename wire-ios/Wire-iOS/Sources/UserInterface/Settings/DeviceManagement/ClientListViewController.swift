@@ -28,40 +28,42 @@ final class ClientListViewController: UIViewController,
                                 ClientUpdateObserver,
                                 ClientColorVariantProtocol,
                                 SpinnerCapable {
+
     // MARK: SpinnerCapable
+
     var dismissSpinner: SpinnerCompletion?
 
     var removalObserver: ClientRemovalObserver?
 
-    var clientsTableView: UITableView?
-    let topSeparator = OverflowSeparatorView()
-    weak var delegate: ClientListViewControllerDelegate?
+    private var clientsTableView: UITableView?
+    private let topSeparator = OverflowSeparatorView()
+    private weak var delegate: ClientListViewControllerDelegate?
 
-    var editingList: Bool = false {
+    private var editingList: Bool = false {
         didSet {
             guard !clients.isEmpty else {
-                self.navigationItem.rightBarButtonItem = nil
-                self.navigationItem.setHidesBackButton(false, animated: true)
+                navigationItem.rightBarButtonItem = nil
+                navigationItem.setHidesBackButton(false, animated: true)
                 return
             }
 
             createRightBarButtonItem()
 
-            self.navigationItem.setHidesBackButton(self.editingList, animated: true)
+            navigationItem.setHidesBackButton(editingList, animated: true)
 
-            self.clientsTableView?.setEditing(self.editingList, animated: true)
+            clientsTableView?.setEditing(editingList, animated: true)
         }
     }
 
-    var clients: [UserClient] = [] {
+    private var clients: [UserClient] = [] {
         didSet {
-            self.sortedClients = self.clients.filter(clientFilter).sorted(by: clientSorter)
-            self.clientsTableView?.reloadData()
+            sortedClients = clients.filter(clientFilter).sorted(by: clientSorter)
+            clientsTableView?.reloadData()
 
             if !clients.isEmpty {
                 createRightBarButtonItem()
             } else {
-                self.editingList = false
+                editingList = false
             }
         }
     }
@@ -72,15 +74,15 @@ final class ClientListViewController: UIViewController,
     private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
-    var sortedClients: [UserClient] = []
+    private var sortedClients: [UserClient] = []
 
-    var selfClient: UserClient?
-    let detailedView: Bool
-    var credentials: ZMEmailCredentials?
-    var clientsObserverToken: NSObjectProtocol?
-    var userObserverToken: NSObjectProtocol?
+    private var selfClient: UserClient?
+    private let detailedView: Bool
+    private var credentials: ZMEmailCredentials?
+    private var clientsObserverToken: NSObjectProtocol?
+    private var userObserverToken: NSObjectProtocol?
 
-    var leftBarButtonItem: UIBarButtonItem? {
+    private var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {
             return UIBarButtonItem.createNavigationRightBarButtonItem(
                 systemImage: true,
@@ -310,14 +312,16 @@ final class ClientListViewController: UIViewController,
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
-    func deleteUserClient(_ userClient: UserClient,
-                          credentials: ZMEmailCredentials?) {
-        removalObserver = nil
+    func deleteUserClient(
+        _ userClient: UserClient,
+        credentials: ZMEmailCredentials?
+    ) {
 
-        removalObserver = ClientRemovalObserver(userClientToDelete: userClient,
-                                                delegate: self,
-                                                credentials: credentials)
-
+        removalObserver = ClientRemovalObserver(
+            userClientToDelete: userClient,
+            delegate: self,
+            credentials: credentials
+        )
         removalObserver?.startRemoval()
 
         delegate?.finishedDeleting(self)
@@ -339,7 +343,17 @@ final class ClientListViewController: UIViewController,
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
-        presentAlertWithOKButton(message: L10n.Localizable.Error.User.unkownError)
+        let alert = UIAlertController(
+            title: title,
+            message: L10n.Localizable.Error.User.unkownError,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        present(alert, animated: true)
     }
 
     func finishedDeleting(_ remainingClients: [UserClient]) {
