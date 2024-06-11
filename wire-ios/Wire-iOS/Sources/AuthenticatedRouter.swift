@@ -60,7 +60,6 @@ final class AuthenticatedRouter: NSObject {
         rootViewController: RootViewController,
         account: Account,
         userSession: UserSession,
-        needToShowDataUsagePermissionDialog: Bool,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -70,9 +69,7 @@ final class AuthenticatedRouter: NSObject {
 
         builder = AuthenticatedWireFrame(
             account: account,
-            userSession: userSession,
-            isComingFromRegistration: needToShowDataUsagePermissionDialog,
-            needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog
+            userSession: userSession
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
@@ -171,25 +168,17 @@ struct AuthenticatedWireFrame {
 
     private var account: Account
     private var userSession: UserSession
-    private var isComingFromRegistration: Bool
-    private var needToShowDataUsagePermissionDialog: Bool
 
     init(
         account: Account,
-        userSession: UserSession,
-        isComingFromRegistration: Bool,
-        needToShowDataUsagePermissionDialog: Bool
+        userSession: UserSession
     ) {
         self.account = account
         self.userSession = userSession
-        self.isComingFromRegistration = isComingFromRegistration
-        self.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(account: account, userSession: userSession)
-        viewController.isComingFromRegistration = isComingFromRegistration
-        viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router
         return viewController
     }

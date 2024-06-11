@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 final class ConversationsAPIV6: ConversationsAPIV5 {
     override var apiVersion: APIVersion { .v6 }
 }

@@ -31,8 +31,6 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    var isComingFromRegistration = false
-    var needToShowDataUsagePermissionDialog = false
     let wireSplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
@@ -48,8 +46,6 @@ final class ZClientViewController: UIViewController {
     private var topOverlayViewController: UIViewController?
     private var contentTopRegularConstraint: NSLayoutConstraint!
     private var contentTopCompactConstraint: NSLayoutConstraint!
-    // init value = false which set to true, set to false after data usage permission dialog is displayed
-    var dataUsagePermissionDialogDisplayed = false
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
@@ -86,8 +82,6 @@ final class ZClientViewController: UIViewController {
             name: "conversationMedia",
             userSession: userSession
         )
-        dataUsagePermissionDialogDisplayed = false
-        needToShowDataUsagePermissionDialog = false
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: [
             "media": "external "

@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-final class ConversationListViewController: UIViewController {
+final class ConversationListViewController: UIViewController, UITabBarControllerDelegate {
 
     // MARK: - Properties
 
@@ -197,7 +197,8 @@ final class ConversationListViewController: UIViewController {
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
 
-            ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
+            tabBarController?.delegate = self
+
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }
