@@ -117,6 +117,18 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupSections() {
+
+        if let actions = ConversationUserClientDetailsDebugActions(
+            userClient: DeveloperToolsContext.currentUserClient
+        ) {
+            sections.append(
+                Section(
+                    header: "Contextual Actions",
+                    items: actions.getActionItems()
+                )
+            )
+        }
+
         sections.append(Section(
             header: "Actions",
             items: [

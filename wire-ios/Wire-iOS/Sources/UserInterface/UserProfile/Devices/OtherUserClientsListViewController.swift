@@ -208,9 +208,7 @@ final class OtherUserClientsListViewController: UIViewController,
             mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: true,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: Bundle.developerModeEnabled
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 }

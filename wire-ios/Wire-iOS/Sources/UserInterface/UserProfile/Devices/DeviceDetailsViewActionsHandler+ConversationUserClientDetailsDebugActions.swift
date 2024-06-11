@@ -19,13 +19,32 @@
 import Foundation
 import WireDataModel
 
-protocol ConversationUserClientDetailsDebugActions {
+protocol ConversationUserClientDetailsDebugActionable {
     func deleteDevice() async
     func corruptSession() async
     func duplicateClient()
 }
 
-extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugActions {
+struct ConversationUserClientDetailsDebugActions: ConversationUserClientDetailsDebugActionable {
+    
+    let userClient: UserClient
+    let logger = WireLogger.environment // TODO: change
+
+    init?(userClient: UserClient?) {
+        guard let userClient = userClient else {
+            return nil
+        }
+        self.userClient = userClient
+    }
+
+    func getActionItems() -> [DeveloperToolsViewModel.Item] {
+        typealias ButtonItem = DeveloperToolsViewModel.ButtonItem
+        return [
+            .button(ButtonItem(title: "Delete Device", action: { Task { await deleteDevice() } })),
+            .button(ButtonItem(title: "Duplicate Session", action: { Task { await duplicateClient() } })),
+            .button(ButtonItem(title: "Corrupt Session", action: { Task { await corruptSession() } }))
+        ]
+    }
 
     @MainActor
     func deleteDevice() async {

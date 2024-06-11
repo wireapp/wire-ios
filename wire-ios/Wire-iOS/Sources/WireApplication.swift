@@ -22,7 +22,7 @@ import WireSyncEngine
 struct DeveloperToolsContext {
 //    var currentConversation: ZMConversation?
 //    var currentUser: ZMUser?
-    static var currentUserClient: UserClientType?
+    static var currentUserClient: UserClient?
 }
 
 final class WireApplication: UIApplication {
