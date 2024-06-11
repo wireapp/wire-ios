@@ -66,7 +66,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     private var isEditingTextField: Bool = false {
         didSet {
-            guard let style = style else {
+            guard let style else {
                 return
             }
             layer.borderColor = isEditingTextField
@@ -319,7 +319,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     private func updateConfirmButton() {
-        if let boundTextField = boundTextField {
+        if let boundTextField {
             confirmButton.isEnabled = boundTextField.isInputValid && self.isInputValid
         } else {
             confirmButton.isEnabled = isInputValid

@@ -20,7 +20,7 @@ import Foundation
 
 extension ZMConversation {
     public class func existingConversation(in moc: NSManagedObjectContext, service: ServiceUser, team: Team?) -> ZMConversation? {
-        guard let team = team else { return nil }
+        guard let team else { return nil }
         guard let serviceID = service.serviceIdentifier else { return nil }
         let sameTeam = predicateForConversations(in: team)
         let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)

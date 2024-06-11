@@ -33,7 +33,7 @@ extension ZMMessageTests {
         let from = senderID ?? UUID()
 
         if let remoteIdentifier = conversation?.remoteIdentifier?.transportString(),
-           let data = data {
+           let data {
 
             updateEvent.payload = [
                 "conversation": remoteIdentifier,

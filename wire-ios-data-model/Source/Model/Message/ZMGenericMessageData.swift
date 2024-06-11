@@ -119,7 +119,7 @@ import WireCryptobox
     }
 
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
-        guard let nonce = nonce else { return data }
+        guard let nonce else { return data }
 
         do {
             return try moc.decryptData(data: data, nonce: nonce)
@@ -179,7 +179,7 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
         in context: NSManagedObjectContext,
         key: VolatileData
     ) throws {
-        guard let nonce = nonce else {
+        guard let nonce else {
             return
         }
 

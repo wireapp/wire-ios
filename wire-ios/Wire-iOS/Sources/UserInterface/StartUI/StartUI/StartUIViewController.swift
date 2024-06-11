@@ -121,9 +121,9 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         if let title = userSession.selfUser.membership?.team?.name {
-            navigationItem.setupNavigationBarTitle(title: title.capitalized)
+            navigationItem.setupNavigationBarTitle(title: title)
         } else if let title = userSession.selfUser.name {
-            navigationItem.setupNavigationBarTitle(title: title.capitalized)
+            navigationItem.setupNavigationBarTitle(title: title)
         }
 
         searchHeader.delegate = self

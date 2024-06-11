@@ -130,7 +130,7 @@ extension Notification.Name {
 
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in
-            guard let `self` = self else {
+            guard let self else {
                 continuation.resume()
                 return
             }
@@ -211,7 +211,7 @@ extension SyncStatus {
     }
 
     public func persistLastUpdateEventID() {
-        guard let lastUpdateEventID = lastUpdateEventID else { return }
+        guard let lastUpdateEventID else { return }
         WireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
         lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }
@@ -246,7 +246,7 @@ extension SyncStatus {
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
             // If the push channel disconnected in between we'll fetch the stream again
-            if pushChannelEstablishedDate > fetchBeganAt {
+            if let pushChannelEstablishedDate, let fetchBeganAt, pushChannelEstablishedDate > fetchBeganAt {
                 needsToRestartQuickSync = true
             }
 
@@ -291,10 +291,10 @@ extension SyncStatus {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "SYNC_STATUS: \(jsonString ?? self.description)"
-            WireLogger.sync.info(message)
+            WireLogger.sync.info(message, attributes: .safePublic)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"
-            WireLogger.sync.error(message)
+            WireLogger.sync.error(message, attributes: .safePublic)
         }
     }
 }

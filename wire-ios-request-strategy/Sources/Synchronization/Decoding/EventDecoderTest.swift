@@ -37,7 +37,7 @@ class EventDecoderTest: MessagingTestBase {
         super.setUp()
         sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
             self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -706,7 +706,7 @@ extension EventDecoderTest {
 
     func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
         var payload: ZMTransportData
-        if let user = user {
+        if let user {
             payload = payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
         } else {
             payload = payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!
@@ -760,7 +760,7 @@ extension EventDecoderTest {
     }
 
     func insert(_ events: [ZMUpdateEvent], startIndex: Int64 = 0) {
-        eventMOC.performGroupedBlockAndWait {
+        eventMOC.performGroupedAndWait {
             events.enumerated().forEach { index, event  in
                 _ = StoredUpdateEvent.encryptAndCreate(event, context: self.eventMOC, index: Int64(startIndex) + Int64(index))
             }

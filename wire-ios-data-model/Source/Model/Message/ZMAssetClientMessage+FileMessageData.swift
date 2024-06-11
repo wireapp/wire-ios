@@ -146,8 +146,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     public func temporaryURLToDecryptedFile() -> URL? {
         guard
             let assetURL = asset?.fileURL,
-            let temporaryDirectoryURL = temporaryDirectoryURL,
-            let filename = filename,
+            let temporaryDirectoryURL,
+            let filename,
             !(filename as NSString).lastPathComponent.isEmpty
         else {
             return nil
@@ -312,7 +312,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     public func signPDFDocument(observer: SignatureObserver) -> Any? {
         guard
-            let managedObjectContext = managedObjectContext,
+            let managedObjectContext,
             let syncContext = managedObjectContext.zm_sync,
             let fileURL = temporaryURLToDecryptedFile(),
             let PDFData = try? Data(contentsOf: fileURL)
@@ -337,7 +337,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     public func retrievePDFSignature() {
         guard
-            let managedObjectContext = managedObjectContext,
+            let managedObjectContext,
             let syncContext = managedObjectContext.zm_sync
         else {
             return

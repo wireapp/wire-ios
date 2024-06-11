@@ -44,7 +44,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
         var quotedMessage: ZMClientMessage?
 
-        if let quotedUser = quotedUser {
+        if let quotedUser {
             quotedMessage = try! conversation.appendText(content: "Don't quote me on this...") as? ZMClientMessage
             quotedMessage?.sender = quotedUser
             quotedMessage?.serverTimestamp = conversation.lastReadServerTimeStamp!.addingTimeInterval(10)

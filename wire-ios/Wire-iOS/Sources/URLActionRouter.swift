@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
 
@@ -149,9 +150,10 @@ extension URLActionRouter: PresentationDelegate {
         switch action {
         case .connectBot:
             presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
-        case .accessBackend(configurationURL: let configurationURL):
-            guard SecurityFlags.customBackend.isEnabled else { return }
-            presentCustomBackendAlert(with: configurationURL)
+        case .accessBackend(let url):
+            // Switching backend is handled below, so pass false here.
+            decisionHandler(false)
+            switchBackend(configURL: url)
         default:
             decisionHandler(true)
         }
@@ -204,35 +206,44 @@ extension URLActionRouter: PresentationDelegate {
         presentAlert(alert)
     }
 
-    private func presentCustomBackendAlert(with configurationURL: URL) {
-        let alert = UIAlertController(title: L10n.Localizable.UrlAction.SwitchBackend.title,
-                                      message: L10n.Localizable.UrlAction.SwitchBackend.message(configurationURL.absoluteString),
-                                      preferredStyle: .alert)
-
-        let agreeAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak self] _ in
-            self?.rootViewController.isLoadingViewVisible = true
-            self?.switchBackend(with: configurationURL)
+    private func switchBackend(configURL: URL) {
+        guard
+            SecurityFlags.customBackend.isEnabled,
+            let sessionManager
+        else {
+            return
         }
-        alert.addAction(agreeAction)
 
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel)
-        alert.addAction(cancelAction)
+        sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
+            guard let self else { return }
 
-        presentAlert(alert)
-    }
-
-    private func switchBackend(with configurationURL: URL) {
-        sessionManager?.switchBackend(configuration: configurationURL) { [weak self] result in
-            self?.rootViewController.isLoadingViewVisible = false
             switch result {
-            case let .success(environment):
-                BackendEnvironment.shared = environment
-            case let .failure(error):
-                guard let strongSelf = self else { return }
-                let localizedError = strongSelf.mapToLocalizedError(error)
-                strongSelf.presentLocalizedErrorAlert(localizedError)
+            case .success(let backendEnvironment):
+                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
+                    guard didConfirm else { return }
+                    sessionManager.switchBackend(to: backendEnvironment)
+                    BackendEnvironment.shared = backendEnvironment
+                }
+
+            case .failure(let error):
+                let localizedError = self.mapToLocalizedError(error)
+                self.presentLocalizedErrorAlert(localizedError)
             }
         }
+    }
+
+    private func requestUserConfirmationToSwitchBackend(
+        _ environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
+        let viewModel = SwitchBackendConfirmationViewModel(
+            environment: environment,
+            didConfirm: didConfirm
+        )
+
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
+        rootViewController.present(hostingController, animated: true)
     }
 
 }
@@ -304,7 +315,10 @@ private extension URLActionRouter {
         let title = error.errorDescription
         let message = error.failureReason ?? L10n.Localizable.Error.User.unkownError
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(.ok(style: .cancel))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         switch error {
         case URLActionError.conversationLinkIsDisabled:

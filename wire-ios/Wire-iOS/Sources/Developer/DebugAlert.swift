@@ -79,7 +79,7 @@ final class DebugAlert {
             alert.addAction(alertAction)
         }
 
-        if let cancelText = cancelText {
+        if let cancelText {
             let cancelAction = UIAlertAction(title: cancelText, style: .cancel) { _ in
                 isShown = false
             }
@@ -93,9 +93,12 @@ final class DebugAlert {
                                                   email: String,
                                                   from controller: UIViewController,
                                                   sourceView: UIView? = nil) {
-        let alert = UIAlertController(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
-                                      message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
-                                      alertAction: .cancel())
+        let alert = UIAlertController(
+            title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
+            message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
+            preferredStyle: .alert
+        )
+        alert.addAction(.cancel())
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)

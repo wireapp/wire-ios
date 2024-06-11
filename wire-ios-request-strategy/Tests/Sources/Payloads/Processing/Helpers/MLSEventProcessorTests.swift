@@ -55,7 +55,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
         staleKeyMaterialDetectorMock = .init()
         staleKeyMaterialDetectorMock.keyingMaterialUpdatedFor_MockMethod = { _ in }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.remoteIdentifier = self.qualifiedID.uuid

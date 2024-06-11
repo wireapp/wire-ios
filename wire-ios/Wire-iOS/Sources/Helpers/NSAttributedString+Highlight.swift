@@ -153,7 +153,7 @@ extension NSAttributedString {
 
         let allRanges = (self.string as NSString).allRanges(of: query, options: [.caseInsensitive, .diacriticInsensitive])
 
-        if let totalMatches = totalMatches {
+        if let totalMatches {
             totalMatches.pointee = allRanges.map { $1.count }.reduce(0, +)
         }
 

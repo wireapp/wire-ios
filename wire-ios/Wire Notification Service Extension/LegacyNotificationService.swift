@@ -35,7 +35,7 @@ final class CallEventHandler: CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
         WireLogger.calling.info("waking up main app to handle call event")
         CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
-            if let error = error {
+            if let error {
                 WireLogger.calling.error("failed to wake up main app: \(error.localizedDescription)")
             }
         }
@@ -113,16 +113,18 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         _ notification: ZMLocalNotification?,
         unreadConversationCount: Int
     ) {
-        guard let notification = notification else {
+        guard let notification else {
             WireLogger.notifications.info("session did not generate a notification")
             return finishWithoutShowingNotification()
         }
+
+        removeNotification(withSameMessageId: notification.messageNonce)
 
         WireLogger.notifications.info("session did generate a notification")
 
         defer { tearDown() }
 
-        guard let contentHandler = contentHandler else { return }
+        guard let contentHandler else { return }
 
         guard let content = notification.content as? UNMutableNotificationContent else {
             WireLogger.notifications.error("generated notification is not mutable")
@@ -138,6 +140,19 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
         WireLogger.notifications.info("showing notification to user")
         contentHandler(content)
+    }
+
+    private func removeNotification(withSameMessageId messageNonce: UUID?) {
+        guard let messageNonce else { return }
+
+        let notificationCenter = UNUserNotificationCenter.current()
+
+        notificationCenter.getDeliveredNotifications { notifications in
+            let matched = notifications.first(where: { $0.userInfo.messageNonce == messageNonce })
+            if let id = matched?.request.identifier {
+                notificationCenter.removeDeliveredNotifications(withIdentifiers: [id])
+            }
+        }
     }
 
     func reportCallEvent(
@@ -189,7 +204,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
   }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
-        guard let session = session else {
+        guard let session else {
             return nil
         }
         let account = self.accountManager.account(with: session.accountIdentifier)

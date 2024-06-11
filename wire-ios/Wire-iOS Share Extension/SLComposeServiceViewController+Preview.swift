@@ -60,22 +60,24 @@ extension SLComposeServiceViewController {
             let defaultDisplayMode: PreviewDisplayMode? = numberOfAttachments > 1 ? .mixed(numberOfAttachments, nil) : nil
 
             switch attachmentType {
+
             case .walletPass, .image:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
-                    completeTask(image, defaultDisplayMode.combine(with: preferredDisplayMode))
+                    completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode))
                 }
 
             case .video:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
-                    completeTask(image, defaultDisplayMode.combine(with: preferredDisplayMode) ?? .video)
+                    completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode) ?? .video)
                 }
 
             case .rawFile,
                  .fileUrl:
                 let fallbackIcon = self.fallbackIcon(forAttachment: attachment, ofType: .rawFile)
-                completeTask(.placeholder(fallbackIcon), defaultDisplayMode.combine(with: .placeholder))
+                completeTask(.placeholder(fallbackIcon), .combined(defaultDisplayMode, .placeholder))
+
             case .url:
-                let displayMode = defaultDisplayMode.combine(with: .placeholder)
+                let displayMode = PreviewDisplayMode.combined(defaultDisplayMode, .placeholder)
 
                 attachment.fetchURL {
                     if let url = $0 {
@@ -161,6 +163,49 @@ extension SLComposeServiceViewController {
         case .url:
             return .paperclip
         }
+    }
+}
+
+// MARK: - PreviewDisplayMode.combined
+
+extension PreviewDisplayMode {
+
+    /// Combines the current display mode with the current one if they're compatible.
+    fileprivate static func combined(
+        _ defaultDisplayMode: PreviewDisplayMode?,
+        _ preferredDisplayMode: PreviewDisplayMode?
+    ) -> Self? {
+
+        guard let defaultDisplayMode else { return preferredDisplayMode }
+        guard case .mixed(let count, _) = defaultDisplayMode else { return defaultDisplayMode }
+        return .mixed(count, preferredDisplayMode)
+    }
+}
+
+// MARK: - Attachment Main
+
+private extension Dictionary where Key == AttachmentType, Value == [NSItemProvider] {
+
+    /**
+     * Determines the main preview item for the post.
+     *
+     * We determine this using the following rules:
+     * - media = video AND/OR photo
+     * - passes OR media OR file
+     * - passes OR media OR file > URL
+     * - video > photo
+     */
+
+    var main: (AttachmentType, NSItemProvider)? {
+        let sortedAttachments = self
+
+        for attachmentType in AttachmentType.allCases {
+            if let item = sortedAttachments[attachmentType]?.first {
+                return (attachmentType, item)
+            }
+        }
+
+        return nil
     }
 
 }

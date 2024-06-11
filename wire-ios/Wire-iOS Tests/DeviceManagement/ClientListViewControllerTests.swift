@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 
-final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+@testable import Wire
+
+final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
-    var sut: ClientListViewController!
-    var mockUser: MockUserType!
-    var client: UserClient!
-    var selfClient: UserClient!
-
-    weak var clientRemovalObserver: ClientRemovalObserver!
+    private var sut: ClientListViewController!
+    private var mockUser: MockUserType!
+    private var client: UserClient!
+    private var selfClient: UserClient!
+    private weak var clientRemovalObserver: ClientRemovalObserver!
 
     override func setUp() {
         super.setUp()

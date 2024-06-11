@@ -92,7 +92,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Back Button
 
     private func updateBackButton() {
-        guard navigationController?.viewControllers.count > 1 else {
+        guard let count = navigationController?.viewControllers.count, count > 1 else {
             return
         }
 

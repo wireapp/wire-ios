@@ -281,7 +281,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         dispatchGroup.enter()
         loadMessagesStore { error in
-            if let error = error {
+            if let error {
                 WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
             loadingStoreError = loadingStoreError ?? error
@@ -290,7 +290,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         dispatchGroup.enter()
         loadEventStore { error in
-            if let error = error {
+            if let error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
             }
             loadingStoreError = loadingStoreError ?? error
@@ -369,7 +369,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func configureViewContext(_ context: NSManagedObjectContext) {
         context.markAsUIContext()
         context.createDispatchGroups()
-        dispatchGroup.apply(context.add)
+        dispatchGroup.map(context.add)
         context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
         ZMUser.selfUser(in: context)
         Label.fetchOrCreateFavoriteLabel(in: context, create: true)
@@ -388,7 +388,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         context.markAsSyncContext()
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.apply(context.add)
+            dispatchGroup.map(context.add)
             context.setupLocalCachedSessionAndSelfUser()
 
             context.accountDirectoryURL = accountContainer
@@ -419,7 +419,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         context.markAsSearch()
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.apply(context.add)
+            dispatchGroup.map(context.add)
             context.setupLocalCachedSessionAndSelfUser()
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
@@ -430,15 +430,14 @@ public class CoreDataStack: NSObject, ContextProvider {
     func configureEventContext(_ context: NSManagedObjectContext) {
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.apply(context.add)
+            dispatchGroup.map(context.add)
         }
     }
 
     public func linkContexts() {
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             self.syncContext.zm_userInterface = self.viewContext
         }
-
         viewContext.zm_sync = syncContext
     }
 
@@ -487,7 +486,7 @@ class PersistentContainer: NSPersistentContainer {
     }
 
     var storeExists: Bool {
-        guard let storeURL = storeURL else {
+        guard let storeURL else {
             return false
         }
 
@@ -495,7 +494,7 @@ class PersistentContainer: NSPersistentContainer {
     }
 
     var needsMigration: Bool {
-        guard let storeURL = storeURL, storeExists else {
+        guard let storeURL, storeExists else {
             return false
         }
 

@@ -112,4 +112,10 @@
    <FileRef
       location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:WireAPI">
+   </FileRef>
+   <FileRef
+      location = "group:SourceryPlugin">
+   </FileRef>
 </Workspace>

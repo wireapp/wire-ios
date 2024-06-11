@@ -91,12 +91,17 @@ enum ProfileAction: Equatable {
 
 }
 
+// sourcery: AutoMockable
+protocol ProfileActionsFactoryProtocol {
+    func makeActionsList(completion: @escaping ([ProfileAction]) -> Void)
+}
+
 /**
  * An object that returns the actions that a user can perform in the scope
  * of a conversation.
  */
 
-final class ProfileActionsFactory {
+final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     // MARK: - Environmemt
 
@@ -150,12 +155,26 @@ final class ProfileActionsFactory {
         }
 
         Task {
-            let isOneOnOneReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+            let isOneOnOneReady = await isOneOnOneReady(userID: userID)
 
             await MainActor.run {
                 let actionsList = makeActionsList(isOneOnOneReady: isOneOnOneReady)
                 completion(actionsList)
             }
+        }
+    }
+
+    private func isOneOnOneReady(userID: QualifiedID) async -> Bool {
+        do {
+            return try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+        } catch {
+            // We assume the conversation is not ready and we log the error
+            //
+            // Note: It could be that the user wasn't found,
+            // which is to be expected if it's an unconnected search user
+
+            WireLogger.conversation.warn("failed to check 1:1 conversation readiness: \(error)")
+            return false
         }
     }
 
@@ -201,7 +220,7 @@ final class ProfileActionsFactory {
             }
 
             // Notifications, Archive, Delete Contents if available for every 1:1
-            if let conversation = conversation {
+            if let conversation {
                 let notificationAction: ProfileAction = viewer.isTeamMember ? .manageNotifications : .mute(isMuted: conversation.mutedMessageTypes != .none)
                 actions.append(contentsOf: [notificationAction, .archive, .deleteContents])
             }
@@ -243,7 +262,7 @@ final class ProfileActionsFactory {
             }
 
             // Only non-guests and non-partners are allowed to remove
-            if let conversation = conversation, viewer.canRemoveUser(from: conversation) {
+            if let conversation, viewer.canRemoveUser(from: conversation) {
                 actions.append(.removeFromGroup)
             }
 

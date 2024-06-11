@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -446,6 +446,33 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
+public class MockSecurityClassificationProviding: SecurityClassificationProviding {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - classification
+
+    public var classificationUsersConversationDomain_Invocations: [(users: [UserType], conversationDomain: String?)] = []
+    public var classificationUsersConversationDomain_MockMethod: (([UserType], String?) -> SecurityClassification?)?
+    public var classificationUsersConversationDomain_MockValue: SecurityClassification??
+
+    public func classification(users: [UserType], conversationDomain: String?) -> SecurityClassification? {
+        classificationUsersConversationDomain_Invocations.append((users: users, conversationDomain: conversationDomain))
+
+        if let mock = classificationUsersConversationDomain_MockMethod {
+            return mock(users, conversationDomain)
+        } else if let mock = classificationUsersConversationDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `classificationUsersConversationDomain`")
+        }
+    }
+
+}
+
 public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
 
     // MARK: - Life cycle
@@ -825,28 +852,28 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
+public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - createResolveOneOnOneUseCase
+    // MARK: - calculateSupportedProtocols
 
-    public var createResolveOneOnOneUseCase_Invocations: [Void] = []
-    public var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
-    public var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
+    public var calculateSupportedProtocols_Invocations: [Void] = []
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
 
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
-        createResolveOneOnOneUseCase_Invocations.append(())
+    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+        calculateSupportedProtocols_Invocations.append(())
 
-        if let mock = createResolveOneOnOneUseCase_MockMethod {
+        if let mock = calculateSupportedProtocols_MockMethod {
             return mock()
-        } else if let mock = createResolveOneOnOneUseCase_MockValue {
+        } else if let mock = calculateSupportedProtocols_MockValue {
             return mock
         } else {
-            fatalError("no mock for `createResolveOneOnOneUseCase`")
+            fatalError("no mock for `calculateSupportedProtocols`")
         }
     }
 
@@ -1039,6 +1066,33 @@ public class MockUserProfile: UserProfile {
             return mock
         } else {
             fatalError("no mock for `addObserver`")
+        }
+    }
+
+}
+
+public class MockUserRepositoryProtocol: UserRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchSelfUser
+
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
+
+    public func fetchSelfUser() -> ZMUser {
+        fetchSelfUser_Invocations.append(())
+
+        if let mock = fetchSelfUser_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfUser`")
         }
     }
 

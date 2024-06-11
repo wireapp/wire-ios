@@ -120,7 +120,7 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
     private func updateFooter(_ newFooter: UIView?) {
         footer?.removeFromSuperview()
         footerSeparator.isHidden = newFooter == nil
-        guard let newFooter = newFooter else { return }
+        guard let newFooter else { return }
         footerContainer.addSubview(newFooter)
         [footerContainer, newFooter].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([

@@ -116,7 +116,11 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: SelfUserType { get }
+    var selfUser: any UserType { get }
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable { get }
+
+    var editableSelfUser: any UserType & EditableUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -223,6 +227,10 @@ public protocol UserSession: AnyObject {
         completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     )
 
+    // MARK: MLS
+
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)? { get }
+
     // MARK: Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
@@ -236,8 +244,6 @@ public protocol UserSession: AnyObject {
     var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
-
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
 
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol { get }
 

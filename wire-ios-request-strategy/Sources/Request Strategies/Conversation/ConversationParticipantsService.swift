@@ -156,13 +156,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             try await mlsParticipantsService.addParticipants(users, to: conversation)
         } catch MLSConversationParticipantsError.failedToClaimKeyPackages(users: let failedUsers) {
 
-            guard failedUsers.isNonEmpty else {
-                Flow.addParticipants.checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
-                return
+            guard !failedUsers.isEmpty else {
+                return Flow.addParticipants.checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
             }
 
             let users = Set(users)
-
             if failedUsers != users {
 
                 // Operation was aborted because some users didn't have key packages

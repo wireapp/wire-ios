@@ -38,11 +38,11 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let databasePath: String
 
     public convenience init(path: String, key: String) async throws {
-        // NOTE: the ciphersuites argument is not used here and will eventually be removed. WPB-8921
         let coreCrypto = try await coreCryptoDeferredInit(
             path: path,
             key: key,
-            ciphersuites: [1], nbKeyPackage: nil
+            ciphersuites: [],
+            nbKeyPackage: nil
         )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())

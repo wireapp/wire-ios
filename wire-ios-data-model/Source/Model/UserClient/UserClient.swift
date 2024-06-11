@@ -426,9 +426,9 @@ public extension UserClient {
         let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
         let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let mlsEd448 = mlsPublicKeys?.optionalString(forKey: "ed448")
-        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "p256")
-        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "p384")
-        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "p521")
+        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp256r1_sha256")
+        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp384r1_sha384")
+        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp521r1_sha512")
 
         client.label = label
         client.type = DeviceType(rawValue: type)
@@ -437,11 +437,7 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
-                                             ed448: mlsEd448,
-                                             p256: mlsP256,
-                                             p384: mlsP384,
-                                             p521: mlsP521)
+
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
 
@@ -452,6 +448,14 @@ public extension UserClient {
         if client.isLegalHoldDevice, isNewClient {
             selfUser.legalHoldRequest = nil
             selfUser.needsToAcknowledgeLegalHoldStatus = true
+        }
+
+        if !client.isSelfClient() {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
+                                                 ed448: mlsEd448,
+                                                 p256: mlsP256,
+                                                 p384: mlsP384,
+                                                 p521: mlsP521)
         }
 
         if let selfClient = selfUser.selfClient() {
@@ -535,7 +539,7 @@ public extension UserClient {
 public extension UserClient {
 
     @objc func isSelfClient() -> Bool {
-        guard let managedObjectContext = managedObjectContext,
+        guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return self == selfClient
@@ -868,7 +872,7 @@ extension UserClient {
 
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
         guard
-            let user = user,
+            let user,
             let domain = user.domain ?? BackendInfo.domain,
             let userIdentifier = user.remoteIdentifier,
             let clientIdentifier = remoteIdentifier
@@ -885,7 +889,7 @@ extension UserClient {
 
     public func migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
-            let sessionIdentifier_V1 = sessionIdentifier_V1,
+            let sessionIdentifier_V1,
             let sessionIdentifier = sessionIdentifier_V2
         else {
             return
@@ -897,7 +901,7 @@ extension UserClient {
 
     public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
-            let sessionIdentifier_V2 = sessionIdentifier_V2,
+            let sessionIdentifier_V2,
             let sessionIdentifier = sessionIdentifier_V3
         else {
             return
@@ -941,7 +945,7 @@ extension UserClient {
 
     private var proteusSessionID_V3: ProteusSessionID? {
         guard
-            let user = user,
+            let user,
             let domain = user.domain ?? BackendInfo.domain,
             let userID = user.remoteIdentifier,
             let clientID = remoteIdentifier

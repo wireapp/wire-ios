@@ -108,7 +108,7 @@ final class SearchResultsView: UIView {
 
             oldValue?.removeFromSuperview()
 
-            if let accessoryView = accessoryView {
+            if let accessoryView {
                 accessoryContainer.addSubview(accessoryView)
                 accessoryView.translatesAutoresizingMaskIntoConstraints = false
                 accessoryContainerHeightConstraint?.isActive = false
@@ -133,7 +133,7 @@ final class SearchResultsView: UIView {
 
             oldValue?.removeFromSuperview()
 
-            if let emptyResultView = emptyResultView {
+            if let emptyResultView {
                 emptyResultContainer.addSubview(emptyResultView)
                 emptyResultView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -151,7 +151,7 @@ final class SearchResultsView: UIView {
 
     @objc
     private func keyboardFrameDidChange(notification: Notification) {
-        if let parentViewController = parentViewController, parentViewController.isContainedInPopover() {
+        if let parentViewController, parentViewController.isContainedInPopover() {
             return
         }
 
@@ -159,11 +159,11 @@ final class SearchResultsView: UIView {
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
         UIView.animate(withKeyboardNotification: notification, in: self, animations: { [weak self] keyboardFrameInView in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            weakSelf.accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
-            weakSelf.layoutIfNeeded()
+            accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
+            layoutIfNeeded()
         })
     }
 

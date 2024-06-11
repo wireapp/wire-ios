@@ -26,16 +26,6 @@ protocol SimpleTextFieldDelegate: AnyObject {
     func textFieldDidBeginEditing(_ textField: SimpleTextField)
 }
 
-extension Optional where Wrapped == String {
-    var value: SimpleTextField.Value? {
-        guard let value = self else { return nil }
-        if let error = SimpleTextFieldValidator().validate(text: value) {
-            return .error(error)
-        }
-        return .valid(value)
-    }
-}
-
 final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - Properties
@@ -51,7 +41,13 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     weak var textFieldDelegate: SimpleTextFieldDelegate?
 
     var value: Value? {
-        return text.value
+        let validator = SimpleTextFieldValidator()
+        guard let text else { return nil }
+        return if let error = validator.validate(text: text) {
+            .error(error)
+        } else {
+            .valid(text)
+        }
     }
 
     // MARK: - UI constants
@@ -136,7 +132,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         }
 
         set {
-            if let newValue = newValue {
+            if let newValue {
                 attributedPlaceholder = attributedPlaceholderString(placeholder: newValue)
             }
         }
@@ -144,7 +140,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     override var accessibilityValue: String? {
         get {
-            guard let text = text,
+            guard let text,
                   !text.isEmpty else {
                       return super.accessibilityValue ?? placeholder
                   }
@@ -163,8 +159,18 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
 // MARK: SimpleTextField Extension
 extension SimpleTextField: SimpleTextFieldValidatorDelegate {
-    func textFieldValueChanged(_ value: String?) {
-        textFieldDelegate?.textField(self, valueChanged: value.value ?? .error(.empty))
+
+    func textFieldValueChanged(_ text: String?) {
+        let validator = SimpleTextFieldValidator()
+        let newValue = { () -> SimpleTextField.Value in
+            guard let text else { return .error(.empty) }
+            if let error = validator.validate(text: text) {
+                return .error(error)
+            } else {
+                return .valid(text)
+            }
+        }()
+        textFieldDelegate?.textField(self, valueChanged: newValue)
     }
 
     func textFieldValueSubmitted(_ value: String) {
@@ -178,5 +184,4 @@ extension SimpleTextField: SimpleTextFieldValidatorDelegate {
     func textFieldDidBeginEditing() {
         textFieldDelegate?.textFieldDidBeginEditing(self)
     }
-
 }

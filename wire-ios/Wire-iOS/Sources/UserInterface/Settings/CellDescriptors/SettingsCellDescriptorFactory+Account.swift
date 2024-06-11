@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
@@ -104,7 +105,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func appearanceSection() -> SettingsSectionDescriptorType {
+    private func appearanceSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [pictureElement(), colorElement()],
             header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title
@@ -255,7 +256,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsCopyButtonCellDescriptor()
     }
 
-    func pictureElement() -> SettingsCellDescriptorType {
+    private func pictureElement() -> SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
             guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
@@ -273,18 +274,36 @@ extension SettingsCellDescriptorFactory {
             presentationAction: presentationAction)
     }
 
-    func colorElement() -> SettingsCellDescriptorType {
-        return SettingsAppearanceCellDescriptor(
+    private func colorElement() -> SettingsCellDescriptorType {
+        SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
-            previewGenerator: { _ in
-                guard let selfUser = ZMUser.selfUser() else {
-                    assertionFailure("ZMUser.selfUser() is nil")
-                    return .none
-                }
-                return .color((selfUser.accentColor ?? .default).uiColor)
-            },
+            previewGenerator: colorElementPreviewGenerator,
             presentationStyle: .navigation,
-            presentationAction: AccentColorPickerController.init)
+            presentationAction: colorElementPresentationAction
+        )
+    }
+
+    private func colorElementPreviewGenerator(cellDescriptorType: any SettingsCellDescriptorType) -> SettingsCellPreview {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return .none
+        }
+        return SettingsCellPreview.color((selfUser.accentColor ?? .default).uiColor)
+    }
+
+    private func colorElementPresentationAction() -> UIViewController {
+        guard
+            let selfUser = ZMUser.selfUser(),
+            let userSession = ZMUserSession.shared()
+        else {
+            assertionFailure("misses prerequisites to present color elements!")
+            return UIViewController()
+        }
+
+        return AccentColorPickerController(
+            selfUser: selfUser,
+            userSession: userSession
+        )
     }
 
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {

@@ -38,9 +38,9 @@ import Foundation
     }
 
     public var isBlacklisted: Bool {
-        if let permanentURL = permanentURL {
+        if let permanentURL {
             return PreviewBlacklist.isBlacklisted(permanentURL)
-        } else if let resolvedURL = resolvedURL {
+        } else if let resolvedURL {
             return PreviewBlacklist.isBlacklisted(resolvedURL)
         } else {
             return false
@@ -50,7 +50,7 @@ import Foundation
     func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: @escaping DownloadCompletion) {
         guard let imageURL = imageURLs.first else { return completion(false) }
         downloader.downloadImage(fromURL: imageURL) { [weak self] imageData in
-            guard let `self` = self, let data = imageData else { return completion(false) }
+            guard let self, let data = imageData else { return completion(false) }
             self.imageData.append(data)
             completion(imageData != nil)
         }

@@ -60,7 +60,7 @@ final class LegalHoldDisclosureController: UserObserving {
     // MARK: - Properties
 
     /// The self user, that can become under legal hold.
-    let selfUser: SelfUserType
+    let selfUserLegalHoldSubject: any SelfUserLegalHoldable
 
     /// The block that presents view controllers when requested.
     let presenter: ViewControllerPresenter
@@ -80,8 +80,12 @@ final class LegalHoldDisclosureController: UserObserving {
 
     // MARK: - Initialization
 
-    init(selfUser: SelfUserType, userSession: UserSession, presenter: @escaping ViewControllerPresenter) {
-        self.selfUser = selfUser
+    init(
+        selfUserLegalHoldSubject: SelfUserLegalHoldable,
+        userSession: UserSession,
+        presenter: @escaping ViewControllerPresenter
+    ) {
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
         self.presenter = presenter
 
         configureObservers(userSession: userSession)
@@ -89,7 +93,7 @@ final class LegalHoldDisclosureController: UserObserving {
 
     private func configureObservers(userSession: UserSession) {
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
-        userObserverToken = userSession.addUserObserver(self, for: selfUser)
+        userObserverToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
     }
 
     // MARK: - Notifications
@@ -112,7 +116,7 @@ final class LegalHoldDisclosureController: UserObserving {
 
     /// Present the current legal hold state.
     func discloseCurrentState(cause: DisclosureCause) {
-        switch selfUser.legalHoldStatus {
+        switch selfUserLegalHoldSubject.legalHoldStatus {
         case .enabled:
             discloseEnabledStateIfPossible()
 
@@ -132,7 +136,7 @@ final class LegalHoldDisclosureController: UserObserving {
             return
         default:
             // If there is a current alert, replace it with the latest disclosure
-            if selfUser.needsToAcknowledgeLegalHoldStatus {
+            if selfUserLegalHoldSubject.needsToAcknowledgeLegalHoldStatus {
                 currentState = .warningAboutEnabled
             }
         }
@@ -144,7 +148,7 @@ final class LegalHoldDisclosureController: UserObserving {
         if case .acceptingRequest = currentState { return }
 
         Task {
-            let fingerprint = await selfUser.fingerprint ?? "<fingerprint unavailable>"
+            let fingerprint = await selfUserLegalHoldSubject.fingerprint ?? "<fingerprint unavailable>"
             await MainActor.run(body: { currentState = .warningAboutPendingRequest(request, fingerprint) })
         }
 
@@ -165,7 +169,7 @@ final class LegalHoldDisclosureController: UserObserving {
         }
 
         // Do not show the alert for a remote change unless it requires attention
-        if selfUser.needsToAcknowledgeLegalHoldStatus {
+        if selfUserLegalHoldSubject.needsToAcknowledgeLegalHoldStatus {
             currentState = .warningAboutDisabled
         }
     }
@@ -191,14 +195,14 @@ final class LegalHoldDisclosureController: UserObserving {
 
         switch state {
         case .warningAboutDisabled:
-            alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUser, suggestedStateChangeHandler: assignState)
+            alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
         case .warningAboutEnabled:
-            alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUser, suggestedStateChangeHandler: assignState)
+            alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
         case .warningAboutPendingRequest(let request, let fingerprint):
             alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
                 for: request,
                 fingerprint: fingerprint,
-                user: selfUser,
+                user: selfUserLegalHoldSubject,
                 suggestedStateChangeHandler: assignState
             )
         case .warningAboutAcceptationResult(let alert):
@@ -208,7 +212,7 @@ final class LegalHoldDisclosureController: UserObserving {
         }
 
         dismissAlertIfNeeded(presentedAlertController) {
-            if let alertController = alertController {
+            if let alertController {
                 self.presentedAlertController = alertController
                 self.presenter(alertController, true, nil)
             } else {

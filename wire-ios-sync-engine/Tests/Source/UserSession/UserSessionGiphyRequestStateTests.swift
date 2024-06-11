@@ -19,7 +19,7 @@
 @testable import WireSyncEngine
 import XCTest
 
-class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
+final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
 
     func testThatMakingRequestAddsPendingRequest() {
 

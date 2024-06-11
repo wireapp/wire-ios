@@ -32,7 +32,7 @@ extension UINavigationItem {
     func setDynamicFontLabel(title: String) {
         titleView = DynamicFontLabel(
             text: title,
-            style: .headline,
+            style: .h3,
             color: SemanticColors.Label.textDefault
         )
     }

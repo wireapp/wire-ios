@@ -1022,6 +1022,10 @@ internal enum L10n {
         /// © Wire Swiss GmbH
         internal static let title = L10n.tr("Localizable", "about.copyright.title", fallback: "© Wire Swiss GmbH")
       }
+      internal enum Legal {
+        /// Legal
+        internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
+      }
       internal enum License {
         /// Acknowledgements
         internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
@@ -1102,6 +1106,12 @@ internal enum L10n {
     internal enum ArchivedList {
       /// archive
       internal static let title = L10n.tr("Localizable", "archived_list.title", fallback: "archive")
+      internal enum EmptyPlaceholder {
+        /// Nothing archived yet
+        internal static let headline = L10n.tr("Localizable", "archived_list.empty_placeholder.headline", fallback: "Nothing archived yet")
+        /// To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.
+        internal static let subheadline = L10n.tr("Localizable", "archived_list.empty_placeholder.subheadline", fallback: "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.")
+      }
     }
     internal enum Availability {
       /// Available
@@ -1266,6 +1276,14 @@ internal enum L10n {
               internal static func user(_ p1: Any) -> String {
                 return L10n.tr("Localizable", "call.degraded.ended.alert.message.user", String(describing: p1), fallback: "The call was disconnected because %@ is no longer a verified contact.")
               }
+            }
+          }
+        }
+        internal enum Incoming {
+          internal enum Alert {
+            internal enum Action {
+              /// Join anyway
+              internal static let `continue` = L10n.tr("Localizable", "call.degraded.incoming.alert.action.continue", fallback: "Join anyway")
             }
           }
         }
@@ -2664,16 +2682,6 @@ internal enum L10n {
           /// Folders
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.folders.title", fallback: "Folders")
         }
-      }
-      internal enum DataUsagePermissionAlert {
-        /// I Agree
-        internal static let agree = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.agree", fallback: "I Agree")
-        /// No
-        internal static let disagree = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.disagree", fallback: "No")
-        /// I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.
-        internal static let message = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.message", fallback: "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.")
-        /// Help us make Wire better
-        internal static let title = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.title", fallback: "Help us make Wire better")
       }
       internal enum Empty {
         internal enum AllArchived {
@@ -5891,13 +5899,6 @@ internal enum L10n {
         }
       }
       internal enum SwitchBackend {
-        /// This configuration will connect the app to a third-party server:
-        /// %@
-        internal static func message(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "url_action.switch_backend.message", String(describing: p1), fallback: "This configuration will connect the app to a third-party server:\n%@")
-        }
-        /// Connect to server
-        internal static let title = L10n.tr("Localizable", "url_action.switch_backend.title", fallback: "Connect to server")
         internal enum Error {
           /// Please check your internet connection, verify the link and try again.
           internal static let invalidBackend = L10n.tr("Localizable", "url_action.switch_backend.error.invalid_backend", fallback: "Please check your internet connection, verify the link and try again.")
@@ -5912,6 +5913,28 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "url_action.switch_backend.error.logged_in.title", fallback: "Can’t switch servers")
           }
         }
+      }
+      internal enum SwitchBackendConfirmation {
+        /// Accounts URL:
+        internal static let accountsUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.accounts_url", fallback: "Accounts URL:")
+        /// Backend name:
+        internal static let backendName = L10n.tr("Localizable", "url_action.switch_backend_confirmation.backend_name", fallback: "Backend name:")
+        /// Backend URL:
+        internal static let backendUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.backend_url", fallback: "Backend URL:")
+        /// Backend websocket URL:
+        internal static let backendWsurl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.backend_wsurl", fallback: "Backend websocket URL:")
+        /// Blacklist URL:
+        internal static let blacklistUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.blacklist_url", fallback: "Blacklist URL:")
+        /// If you proceed, you will be redirected to the following on-premises backend to log in:
+        internal static let message = L10n.tr("Localizable", "url_action.switch_backend_confirmation.message", fallback: "If you proceed, you will be redirected to the following on-premises backend to log in:")
+        /// Proceed
+        internal static let proceed = L10n.tr("Localizable", "url_action.switch_backend_confirmation.proceed", fallback: "Proceed")
+        /// Teams URL:
+        internal static let teamsUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.teams_url", fallback: "Teams URL:")
+        /// Redirect to an on-premises backend?
+        internal static let title = L10n.tr("Localizable", "url_action.switch_backend_confirmation.title", fallback: "Redirect to an on-premises backend?")
+        /// Website URL:
+        internal static let websiteUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.website_url", fallback: "Website URL:")
       }
     }
     internal enum UserCell {

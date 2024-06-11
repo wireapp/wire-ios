@@ -47,7 +47,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatLastClearedUpdatesInSelfConversationDontExpire() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.remoteIdentifier = UUID()
             self.syncConversation.clearedTimeStamp = Date()
@@ -65,7 +65,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatClearingMessageHistoryDeletesAllMessages() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             self.syncConversation.remoteIdentifier = UUID()
             let message1 = try! self.syncConversation.appendText(content: "B") as! ZMMessage

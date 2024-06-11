@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arşiv";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Konuşmalar buradan başlıyor";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ yeni bir cihaz kullanmaya başladı.";
 "call.degraded.alert.message.unknown" = "Birisi yeni bir cihaz kullanmaya başladı.";
 "call.degraded.alert.action.continue" = "Yine de ara";
+"call.degraded.incoming.alert.action.continue" = "Yine de katıl";
 
 "call.degraded.ended.alert.title" = "Arama sona erdi";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "ENGELLENDİ";
 "profile.create_conversation_button_title" = "Grup oluştur";
 "profile.open_conversation_button_title" = "Konuşma aç";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "OKUNDU BİLGİLERİNİ ETKİNLEŞTİRDİNİZ";
 "profile.read_receipts_disabled_memo.header" = "OKUNDU BİLGİLERİNİ DEVRE DIŞI BIRAKTINIZ";
 "profile.read_receipts_memo.body" = "Her iki taraf da okundu bilgisini açarsa, mesajların ne zaman okunduğunu görebilirsiniz.\n\nBu seçeneği hesap ayarlarınızdan değiştirebilirsiniz.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "E-posta adresi ve parola ekleyin";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Kullanım Şartları";
 "about.privacy.title" = "Gizlilik Politikası";
 "about.license.title" = "Lisans Bilgileri";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "İsim";
 "self.settings.account_section.email.title" = "E-posta";
-"self.settings.account_section.phone.title" = "Telefon";
 "self.settings.account_section.handle.title" = "Kullanıcı Adı";
 "self.settings.account_section.add_handle.title" = "Kullanıcı adı ekle";
 "self.settings.account_section.team.title" = "Takım";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Maili tekrar gönder";
 "self.settings.account_section.email.change.resend.message" = "Doğrulama e-postası %@'a tekrar gönderildi. Gelen kutunuzu kontrol edin ve talimatları takip edin.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Telefon";
-"self.settings.account_section.phone_number.change.save" = "Kaydet";
-"self.settings.account_section.phone_number.change.remove" = "Telefon Numarasını Kaldır";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Telefon Numarasını Kaldır";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Kaydet";
-"self.settings.account_section.phone_number.change.verify.title" = "Doğrula";
-"self.settings.account_section.phone_number.change.verify.description" = "%@'a gönderdiğimiz doğrulama kodunuzu girin.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Kodu gir";
-"self.settings.account_section.phone_number.change.verify.resend" = "Kodu Tekrar Gönder";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Kod gelmedi mi?\nHer 30 saniyede bir yeni kod isteğinde bulunabilirsiniz.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Kodu tekrar gönder";
-"self.settings.account_section.phone_number.change.resend.message" = "Doğrulama %@'a tekrar gönderildi.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Bildirimler";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Parola";
 "password.guidance.toolong" = "Çok fazla karakter";
 
-"phone.guidance.invalid" = "Geçersiz telefon numarası";
-"phone.guidance.tooshort" = "Telefon numarası çok kısa";
-"phone.guidance.toolong" = "Çok fazla karakter";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "%@'a gönderdiğimiz doğrulama kodunu girin.";
 "team.activation_code.button.resend" = "Kodu yeniden gönder";
 "team.activation_code.button.change_email" = "E-postayı değiştir";
-"team.activation_code.button.change_phone" = "Telefon numarasını değiştir";
 
 "team.full_name.headline" = "Adınız";
 "team.full_name.textfield.placeholder" = "Tam adınız";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Kayıt";
 "registration.close_email_invitation_button.email_title" = "Başka bir e-posta kullanın";
-"registration.close_email_invitation_button.phone_title" = "Telefon ile kaydol";
 "registration.close_phone_invitation_button.email_title" = "E-posta ile kaydol";
-"registration.close_phone_invitation_button.phone_title" = "Başka bir telefon kullan";
 
-"registration.register_by_phone" = "Telefon";
 "registration.register_by_email" = "E-posta";
-
-"registration.enter_phone_number.title" = "Telefon numarası edüzenleyin";
-"registration.enter_phone_number.placeholder" = "Telefon numarası";
-
-"registration.verify_phone_number.instructions" = "%@'na gönderdiğimiz doğrulama kodunu girin";
-"registration.verify_phone_number.resend" = "Yeniden gönder";
-"registration.verify_phone_number.resend_placeholder" = "Görünürde kod yok mu?\n%.0f saniye içerisinde yenisini isteyebilirsin";
 
 "registration.verify_email.instructions" = "%@ adresine e-posta gönderdik. \n Adresi doğrulamak için bağlantıyı takip edin.";
 "registration.verify_email.resend.instructions" = "E-posta gelmedi mi?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Yedekten geri yükle";
 
 "registration.alert.account_exists.title" = "Hesap Zaten Var";
-"registration.alert.account_exists.message_phone" = "Kayıt için kullandığınız telefon numarası zaten bir hesaba bağlanmış.\n\nBaşka bir telefon numarası kullanın veya bu hesaba sahipseniz giriş yapmayı deneyin.";
 "registration.alert.account_exists.message_email" = "Kayıt için kullandığınız e-posta adresi zaten bir hesaba bağlı.\n\n Başka bir e-posta adresi kullanın veya bu hesaba sahipseniz giriş yapmayı deneyin.";
 "registration.alert.change_email_action" = "Başka Bir E-posta ile Kayıt Olun";
-"registration.alert.change_phone_action" = "Başka Bir Telefon Numarası ile Kayıt Olun";
 "registration.alert.change_signin_action" = "Oturum Aç";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Cihazları yönet";
 "registration.signin.too_many_devices.sign_out_button.title" = "Çıkış yap";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Bir Cihazı Kaldır";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Parola gerekli";
 "registration.signin.alert.password_needed.message" = "Giriş yapmak için lütfen şifrenizi giriniz.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "E-posta ile Giriş Yap";
-"signin.use_phone.label" = "Telefon ile giriş yap";
 "signin.forgot_password" = "Şifrenizi mi unuttunuz?";
 "signin.use_one_password.label" = "1Password ile giriş yap";
 "signin.use_one_password.hint" = "Şifrenizi 1Password ile doldurmak için iki kez hafifçe vurun";
 "signin.confirm" = "Oturum Aç";
 "signin.company_idp.button.title" = "Şirketler İçin";
 
-"signin_logout.subheadline" = "Oturumunuzun süresi doldu. Devam etmek için tekrar giriş yapmanız gerekiyor.";
 "signin_logout.email.subheadline" = "Oturumunuzun süresi doldu. Devam etmek için e-posta adresinizi ve şifrenizi girin.";
-"signin_logout.phone.subheadline" = "Oturumunuzun süresi doldu. Devam etmek için telefon numaranızı girin.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Devam etmek için e-posta adresinizi ve şifrenizi girin.";
-"signin.phone.missing_password.subtitle" = "Devam etmek için telefon numaranızı girin.";
-
-"registration.phone_country" = "Ülke";
-"registration.phone_code" = "Ülke Kodu";
-"registration.phone_country.hint" = "Başka bir ülke seçmek için iki kez dokunun.";
-"registration.phone_code.hint" = "Başka bir ülke kodu seçmek için iki kez dokunun.";
-"registration.phone.verify.label" = "Telefon numarasını doğrula";
-"registration.phone.verify_field.label" = "Doğrulama Kodu";
-
-"registration.add_phone_number.hero.title" = "Telefon numarası ekleyin";
-"registration.add_phone_number.hero.paragraph" = "Bu bildiğiniz insanlar bulmamıza yardımcı olur. Asla paylaşmayız.";
-"registration.add_phone_number.skip_button.title" = "Şimdi değil";
 
 "registration.add_email_password.hero.title" = "E-posta adresinizi ve parolanızı ekleyin";
 "registration.add_email_password.hero.paragraph" = "Birden çok cihazda Wire kullanmanıza imkan tanır.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Merhaba, %@";
 "registration.email_invitation.hero.paragraph" = "Hesabınızı oluşturmak için bir parola seçin.";
 
-"registration.phone_invitation.title" = "Davetiye";
-"registration.phone_invitation.hero.title" = "Merhaba, %@";
-"registration.phone_invitation.hero.paragraph" = "Hesabınızı oluşturmanıza bir adım kaldı.";
-
 "registration.confirm" = "Üye ol";
-"registration.phone.country_code.hint" = "Bu ülkeden bir telefon numarası kullanmak için iki kez hafifçe vurun.";
 
 "error.name_and_email" = "Lütfen tam adınız ile geçerli bir e-posta adresi giriniz";
 "error.full_name" = "Lütfen tam adınızı girin";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "Lütfen geçerli bir e-posta adresi girin";
-"error.phone.invalid" = "Lütfen geçerli bir telefon numarası girin";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Ulaşmaya çalıştığınız hesap aktivosyan beklemesindedir. Lütfen bilgilerinizi doğrulayınız.";
 "error.user.network_error" = "Ağınızda problem var gibi gözüküyor. Lütfen daha sonra yeniden deneyin.";
 "error.user.email_is_taken" = "Yazdığınız e-posta adresi zaten kayıtlı. Lütfen tekrar deneyin.";
-"error.user.phone_is_taken" = "Verdiğiniz telefon numarası zaten kayıtlı görünüyor. Lütfen yeniden deneyin.";
-"error.user.phone_code_invalid" = "Lütfen geçerli bir kod girin";
-"error.user.phone_code_too_many" = "Size SMS ile bir kod zaten gönderdik. Yenisini almak için 10 dakika sonra Yeniden Gönder'e basın.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Bir şeyler ters gitti, lütfen tekrar deneyin.";
 "error.user.device_deleted_remotely" = "Başka bir cihaz tarafından oturumunuz kapatıldı.";
-"error.user.last_identity_cant_be_deleted" = "E-posta adresinizden veya telefon numaranızdan en az biri gerekli.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Bu hesap artık giriş yapmak için yeterli yetkiye sahip değil.";
 "error.user.account_limit_reached" = "3'ten fazla hesap ekleyemezsiniz.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Katılımcının kaldırılması başarısız oldu";
 "error.conversation.too_many_members" = "Sohbet dolu";
 "error.conversation.offline" = "İnternet bağlantınızla ilgili bir sorun var gibi görünüyor. Lütfen çalıştığından emin olun.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "URL işlemini onayla";
 "url_action.connect_to_bot.message" = "Bot ile bağlanmak ister misiniz?";
 
-"url_action.switch_backend.title" = "Sunucuya bağlan";
-"url_action.switch_backend.message" = "Bu yapılandırma, uygulamayı üçüncü taraf bir sunucuya bağlayacaktır:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Sunucu değiştirilemiyor";
 "url_action.switch_backend.error.logged_in" = "Zaten giriş yaptınız. Bu sunucuya geçmek için tüm hesaplardan çıkış yapıp tekrar deneyin.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

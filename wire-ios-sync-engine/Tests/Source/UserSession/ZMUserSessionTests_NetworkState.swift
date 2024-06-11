@@ -53,12 +53,10 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             flowManager: flowManagerMock,
             mediaManager: mediaManager,
             mlsService: mockMLSService,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: mockUseCaseFactory,
             userId: userId
         )
         let testSession = builder.build()

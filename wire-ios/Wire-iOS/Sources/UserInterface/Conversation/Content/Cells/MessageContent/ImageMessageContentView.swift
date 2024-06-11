@@ -59,7 +59,7 @@ final class ImageContentView: UIView {
 
     private func updateAspectRatio(for resource: PreviewableImageResource) {
         let contentSize = resource.contentSize
-        imageAspectConstraint.apply(imageView.removeConstraint)
+        imageAspectConstraint.map(imageView.removeConstraint)
         let imageAspectMultiplier = contentSize.width == 0 ? 1 : (contentSize.height / contentSize.width)
         imageAspectConstraint = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: imageAspectMultiplier)
         imageAspectConstraint?.isActive = true

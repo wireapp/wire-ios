@@ -73,9 +73,6 @@ public final class ZMUserSession: NSObject {
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
-    let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
-    let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
-    public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
@@ -83,8 +80,6 @@ public final class ZMUserSession: NSObject {
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
-
-    let useCaseFactory: UseCaseFactoryProtocol
 
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
@@ -94,6 +89,8 @@ public final class ZMUserSession: NSObject {
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
+
+    public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     // MARK: Computed Properties
 
@@ -169,22 +166,8 @@ public final class ZMUserSession: NSObject {
             accountId: account.userIdentifier)
     }()
 
-    lazy var cRLsChecker: CertificateRevocationListsChecker = {
-        return CertificateRevocationListsChecker(
-            userID: userId,
-            crlAPI: CertificateRevocationListAPI(),
-            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
-            selfClientCertificateProvider: selfClientCertificateProvider,
-            coreCryptoProvider: coreCryptoProvider,
-            context: coreDataStack.syncContext
-        )
-    }()
-
-    lazy var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver = {
-        return CRLsDistributionPointsObserver(
-            cRLsChecker: self.cRLsChecker
-        )
-    }()
+    var cRLsChecker: CertificateRevocationListsChecker?
+    var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
         return coreDataStack.viewContext
@@ -276,7 +259,8 @@ public final class ZMUserSession: NSObject {
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
 
-        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+        assert(cRLsDistributionPointsObserver != nil, "requires to execute 'setupCertificateRevocationLists' first. this is a workaround and should be refactored.")
+        cRLsDistributionPointsObserver?.startObservingNewCRLsDistributionPoints(
             from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
         )
 
@@ -362,16 +346,12 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
-        useCaseFactory: any UseCaseFactoryProtocol,
-        observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         lastEventIDRepository: any LastEventIDRepositoryInterface,
         lastE2EIUpdateDateRepository: any LastE2EIdentityUpdateDateRepositoryInterface,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
-        mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies
@@ -401,10 +381,6 @@ public final class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
-        self.useCaseFactory = useCaseFactory
-        self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatusUseCase
-        self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
-        self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
@@ -422,13 +398,13 @@ public final class ZMUserSession: NSObject {
         coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
-        self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
-        self.earService.delegate = self
+        earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
+        earService.delegate = self
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        syncManagedObjectContext.performGroupedBlockAndWait { [self] in
+        syncManagedObjectContext.performGroupedAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
 
@@ -454,16 +430,15 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
-
-            self.observeMLSGroupVerificationStatus.invoke()
-            self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-                from: self.mlsService.onNewCRLsDistributionPoints()
-            )
         }
+
+        setupMLSGroupVerification()
+        setupCertificateRevocationLists()
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
+
         enableBackgroundFetch()
         observeChangesOnShareExtension()
         startEphemeralTimers()
@@ -485,6 +460,8 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !tornDown else { return }
+
+        tearDownMLSGroupVerification()
 
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)
@@ -519,7 +496,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
-        return StrategyDirectory(
+        StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
             cookieStorage: transportSession.cookieStorage,
@@ -533,7 +510,6 @@ public final class ZMUserSession: NSObject {
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: useCaseFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
@@ -595,8 +571,6 @@ public final class ZMUserSession: NSObject {
 
     func startRequestLoopTracker() {
         transportSession.requestLoopDetectionCallback = { path in
-            guard !path.hasSuffix("/typing") else { return }
-
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {
@@ -682,7 +656,7 @@ public final class ZMUserSession: NSObject {
 
     @objc(performChanges:)
     public func perform(_ changes: @escaping () -> Void) {
-        managedObjectContext.performGroupedBlockAndWait { [weak self] in
+        managedObjectContext.performGroupedAndWait { [weak self] in
             changes()
             self?.saveOrRollbackChanges()
         }
@@ -861,8 +835,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WaitingGroupTask(context: syncContext) { [self] in
             do {
                 var getFeatureConfigAction = GetFeatureConfigsAction()
+                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+
                 try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+                try await resolveOneOnOneUseCase.invoke()
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
             }
@@ -870,13 +846,22 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         recurringActionService.performActionsIfNeeded()
 
-        Task {
-            await self.cRLsChecker.checkExpiredCRLs()
-        }
+        checkExpiredCertificateRevocationLists()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.checkE2EICertificateExpiryStatus()
         }
+    }
+
+    private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        let supportedProtocolService = SupportedProtocolsService(context: context)
+        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
+        return ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: resolver
+        )
     }
 
     func processEvents() {

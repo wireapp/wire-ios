@@ -34,7 +34,7 @@ extension ContextMenuDelegate {
     }
 
     private func actionController(view: UIView) -> ConversationMessageActionController? {
-        guard let message = message else {
+        guard let message else {
             return nil
         }
 
@@ -48,7 +48,7 @@ extension ContextMenuDelegate {
 
 extension ContextMenuDelegate where Self: LinkViewDelegate {
     func linkPreviewContextMenu(view: UIView) -> UIContextMenuConfiguration? {
-        guard let url = url else {
+        guard let url else {
             return nil
         }
 

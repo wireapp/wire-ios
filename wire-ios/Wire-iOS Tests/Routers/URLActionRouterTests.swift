@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class URLActionRouterTests: XCTestCase {
 
@@ -25,7 +26,16 @@ final class URLActionRouterTests: XCTestCase {
 
     func testThatAlertIsPresented_WhenCanDisplayAlertsReturnsTrue() {
         // GIVEN
-        let alert = UIAlertController.alertWithOKButton(message: "Hello World")
+        let alert = UIAlertController(
+            title: nil,
+            message: "Hello World",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
         let viewController = RootViewController()
         let delegate = MockURLActionRouterDelegate()
         let router = TestableURLActionRouter(viewController: viewController)
@@ -40,7 +50,15 @@ final class URLActionRouterTests: XCTestCase {
 
     func testThatAlertIsNotPresented_WhenCanDisplayAlertsReturnsFalse() {
         // GIVEN
-        let alert = UIAlertController.alertWithOKButton(message: "Hello World")
+        let alert = UIAlertController(
+            title: nil,
+            message: "Hello World",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         let viewController = RootViewController()
         let delegate = MockURLActionRouterDelegate()
         delegate.canDisplayAlerts = false
@@ -56,7 +74,15 @@ final class URLActionRouterTests: XCTestCase {
 
     func testThatPendingAlertIsPresented_WhenPerformPendingActionsIsCalled() {
         // GIVEN
-        let alert = UIAlertController.alertWithOKButton(message: "Hello World")
+        let alert = UIAlertController(
+            title: nil,
+            message: "Hello World",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         let viewController = RootViewController()
         let delegate = MockURLActionRouterDelegate()
         delegate.canDisplayAlerts = false

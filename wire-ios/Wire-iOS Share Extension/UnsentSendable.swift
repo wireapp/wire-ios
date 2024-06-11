@@ -106,7 +106,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
             completion(message)
@@ -197,7 +197,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.imageData.flatMap(self.conversation.appendImage))
         }
     }
@@ -231,13 +231,13 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
         if typeURL {
             attachment.fetchURL { [weak self] url in
-                guard let weakSelf = self else { return }
-                if (url != nil && !url!.isFileURL) || !weakSelf.typeData {
-                    weakSelf.error = .unsupportedAttachment
+                guard let self else { return }
+                if (url != nil && !url!.isFileURL) || !typeData {
+                    error = .unsupportedAttachment
                     return completion()
                 }
 
-                weakSelf.prepareAsFileData(name: url?.lastPathComponent, completion: completion)
+                prepareAsFileData(name: url?.lastPathComponent, completion: completion)
             }
         } else if typePass {
             prepareAsWalletPass(name: nil, completion: completion)
@@ -248,7 +248,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.metadata.flatMap(self.conversation.appendFile))
         }
     }
@@ -269,7 +269,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             }
 
             let prepareColsure: SendingCompletion = { url, error in
-                guard let url = url, error == nil else {
+                guard let url, error == nil else {
                     error?.log(message: "Unable to prepare file attachment for sending")
                     return completion()
                 }

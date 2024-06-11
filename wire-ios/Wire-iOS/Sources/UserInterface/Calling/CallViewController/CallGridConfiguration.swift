@@ -82,7 +82,7 @@ extension VoiceChannel {
     func arrangeStreams(for selfStream: Stream?, participantsStreams: [Stream]) -> StreamArrangment {
         let streamsExcludingSelf = participantsStreams.filter { $0.streamId != selfStreamId }
         let sortedStreamsList = sortByVideo(streamData: streamsExcludingSelf)
-        guard let selfStream = selfStream else {
+        guard let selfStream else {
             return (nil, sortedStreamsList)
         }
         if callHasTwoParticipants && sortedStreamsList.count == 1 {

@@ -1,0 +1,12 @@
+{
+    "type": "feature-config.update",
+    "name": "selfDeletingMessages",
+    "data": {
+        "config": {
+            "enforcedTimeoutSeconds": 123
+        },
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}

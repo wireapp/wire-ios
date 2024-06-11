@@ -29,7 +29,7 @@ extension VoiceChannel {
                 .establishedDataChannel,
                 .outgoing:
             guard !videoState.isSending,
-                  let initiator = initiator
+                  let initiator
             else { return .none }
             return .avatar(HashBox(value: initiator))
         case .unknown,
@@ -75,7 +75,7 @@ extension VoiceChannel {
         )
 
         guard permissions.canAcceptVideoCalls else { return .notSendingVideo(speakerState: speakerState) }
-        guard !videoState.isSending else { return .sendingVideo }
+        guard !videoState.isSending else { return .sendingVideo(speakerState: speakerState) }
         return .notSendingVideo(speakerState: speakerState)
     }
 
@@ -222,7 +222,7 @@ fileprivate extension VoiceChannel {
             return true
         }
 
-        guard let conversation = conversation, conversation.conversationType != .oneOnOne else {
+        guard let conversation, conversation.conversationType != .oneOnOne else {
             return true
         }
 
@@ -240,9 +240,7 @@ fileprivate extension VoiceChannel {
     }
 
     func sortedParticipants() -> [CallParticipant] {
-        return participants.sorted { lhs, rhs in
-            lhs.user.name?.lowercased() < rhs.user.name?.lowercased()
-        }
+        participants.sortedAscendingPrependingNil { $0.user.name?.lowercased() }
     }
 
     private var isIncomingVideoCall: Bool {
@@ -278,7 +276,7 @@ extension VoiceChannel {
     }
 
     private var hashboxFirstDegradedUser: HashBoxUser? {
-        guard let firstDegradedUser = firstDegradedUser else {
+        guard let firstDegradedUser else {
             return nil
         }
 
@@ -297,7 +295,7 @@ extension VoiceChannel {
     }
 
     var isLegacyGroupVideoParticipantLimitReached: Bool {
-        guard let conversation = conversation else { return false }
+        guard let conversation else { return false }
         return conversation.localParticipants.count > ZMConversation.legacyGroupVideoParticipantLimit
     }
 }

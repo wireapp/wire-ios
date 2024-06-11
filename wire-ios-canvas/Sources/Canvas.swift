@@ -84,7 +84,7 @@ public final class Canvas: UIView {
     public var referenceImage: UIImage? {
 
         didSet {
-            if let referenceImage = referenceImage, let cgImage = referenceImage.cgImage {
+            if let referenceImage, let cgImage = referenceImage.cgImage {
                 let retinaImage = UIImage(cgImage: cgImage, scale: 2, orientation: referenceImage.imageOrientation)
                 let image = Image(image: retinaImage, at: CGPoint.zero)
                 image.sizeToFit(inRect: bounds)
@@ -157,7 +157,7 @@ public final class Canvas: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
 
-        if let referenceObject = referenceObject {
+        if let referenceObject {
             referenceObject.sizeToFit(inRect: bounds)
         }
     }
@@ -169,7 +169,7 @@ public final class Canvas: UIView {
             flatten(upTo: 1)
         }
 
-        if let bufferImage = bufferImage {
+        if let bufferImage {
             bufferImage.draw(at: CGPoint.zero)
         }
 
@@ -290,7 +290,7 @@ public final class Canvas: UIView {
                 selection?.selected = true
             }
 
-            if let referenceObject = referenceObject {
+            if let referenceObject {
 
                 let drawBounds = self.bounds.intersection(self.drawBounds)
                 let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
@@ -359,7 +359,7 @@ public final class Canvas: UIView {
 
         guard mode == .draw else { return }
 
-        if let location = touches.first?.location(in: self), let stroke = stroke {
+        if let location = touches.first?.location(in: self), let stroke {
             setNeedsDisplay(stroke.move(to: location))
         }
     }
@@ -414,7 +414,7 @@ extension Canvas: UIGestureRecognizerDelegate {
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
             initialOrienation.position = selection.position
         case .changed:
-            guard let selection = selection else { break }
+            guard let selection else { break }
             let translation = gestureRecognizer.translation(in: self)
             selection.position = CGPoint(x: initialOrienation.position.x + translation.x, y: initialOrienation.position.y + translation.y)
         default:
@@ -428,7 +428,7 @@ extension Canvas: UIGestureRecognizerDelegate {
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
             initialOrienation.scale = selection.scale
         case .changed:
-            guard let selection = selection else { break }
+            guard let selection else { break }
             selection.scale = min(max(initialOrienation.scale * gestureRecognizer.scale, minimumScale), maximumScale)
         default:
             break
@@ -441,7 +441,7 @@ extension Canvas: UIGestureRecognizerDelegate {
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
             initialOrienation.rotation = selection.rotation
         case .changed:
-            guard let selection = selection else { break }
+            guard let selection else { break }
             selection.rotation = initialOrienation.rotation + gestureRecognizer.rotation
         default:
             break

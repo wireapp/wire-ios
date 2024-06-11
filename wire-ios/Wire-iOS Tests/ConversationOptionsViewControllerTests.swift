@@ -17,12 +17,14 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+
     var allowGuests: Bool
     var guestLinkFeatureStatus: GuestLinkFeatureStatus
     var setAllowGuests: SetHandler?
@@ -46,11 +48,11 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 
     func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
-        createResult.apply(completion)
+        createResult.map(completion)
     }
 
     func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {
-        linkResult.apply(completion)
+        linkResult.map(completion)
     }
 
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -58,7 +60,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 }
 
-final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
+final class ConversationOptionsViewControllerTests: XCTestCase {
 
     // MARK: Renders Guests Screen when AllowGuests is either enabled or disabled
 

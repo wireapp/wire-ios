@@ -286,7 +286,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     private func forwardSelectedPhotoAsset(_ asset: PHAsset) {
         let completeBlock = { (data: Data?, uti: String?) in
-            guard let data = data else { return }
+            guard let data else { return }
 
             let returnData: Data
             if (uti == "public.heif") ||
@@ -317,7 +317,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
             options.isSynchronous = false
 
             self.imageManagerType.defaultInstance.requestImage(for: asset, targetSize: CGSize(width: limit, height: limit), contentMode: .aspectFit, options: options, resultHandler: { image, info in
-                if let image = image {
+                if let image {
                     let data = image.jpegData(compressionQuality: 0.9)
                     completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                 } else {
@@ -331,7 +331,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                             self.isLoadingViewVisible = false
                         })
 
-                        if let image = image {
+                        if let image {
                             let data = image.jpegData(compressionQuality: 0.9)
                             completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                         } else {
@@ -349,7 +349,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
             self.imageManagerType.defaultInstance.requestImageData(for: asset, options: options, resultHandler: { data, uti, _, _ in
 
-                guard let data = data else {
+                guard let data else {
                     options.isNetworkAccessAllowed = true
                     DispatchQueue.main.async(execute: {
                         self.isLoadingViewVisible = true
@@ -359,7 +359,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                         DispatchQueue.main.async(execute: {
                             self.isLoadingViewVisible = false
                         })
-                        guard let data = data else {
+                        guard let data else {
                             zmLog.error("Failure: cannot fetch image")
                             return
                         }
@@ -384,7 +384,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                 self.isLoadingViewVisible = false
             })
 
-            guard let url = url else { return }
+            guard let url else { return }
 
             DispatchQueue.main.async(execute: {
                 self.isLoadingViewVisible = true
@@ -399,8 +399,8 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                 })
 
                 guard error == nil,
-                      let resultURL = resultURL,
-                      let asset = asset else { return }
+                      let resultURL,
+                      let asset else { return }
 
                 DispatchQueue.main.async(execute: {
                     self.delegate?.cameraKeyboardViewController(
@@ -437,7 +437,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         case .camera:
             return 1
         case .photos:
-            guard let assetLibrary = assetLibrary else {
+            guard let assetLibrary else {
                 return 1
             }
             return permissions.isPhotoLibraryAuthorized ? Int(assetLibrary.count) : 1

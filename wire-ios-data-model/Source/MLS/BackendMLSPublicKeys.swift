@@ -26,9 +26,22 @@ public struct BackendMLSPublicKeys: Equatable {
         self.removal = removal
     }
 
-    var externalSenderKeys: [Data] {
-        return [removal.ed25519, removal.ed448, removal.p256, removal.p384, removal.p521]
-            .compactMap(\.self)
+    func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [Data] {
+        let externalSender = switch ciphersuite.signature {
+        case .ed25519:
+            removal.ed25519
+        case .ed448:
+            removal.ed448
+        case .p256:
+            removal.p256
+        case .p384:
+            removal.p384
+        case .p521:
+            removal.p521
+        }
+
+        return [externalSender]
+            .compactMap { $0 }
     }
 
     public struct MLSPublicKeys: Equatable {

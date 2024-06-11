@@ -480,7 +480,7 @@ extension SearchTask {
             tasksRemaining -= 1
         }
 
-        if let searchResult = searchResult {
+        if let searchResult {
             result = result.union(withDirectoryResult: searchResult)
         }
     }
@@ -506,9 +506,18 @@ extension SearchTask {
     static func fetchTeamMembershipRequest(teamID: UUID, teamMemberIDs: [UUID], apiVersion: APIVersion) -> ZMTransportRequest {
 
         let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
-        let payload = ["user_ids": teamMemberIDs.map { $0.transportString() }]
+        let payload = [
+            "user_ids": teamMemberIDs.map { $0.transportString() }
+        ]
 
-        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
+        request.contentHintForRequestLoop = "\(payload.hashValue)"
+        return request
     }
 
 }
@@ -672,7 +681,7 @@ extension SearchTask {
 extension ZMSearchUser {
 
     public var hasEmptyName: Bool {
-        guard let name = name else {
+        guard let name else {
             return true
         }
         return name.isEmpty

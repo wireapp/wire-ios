@@ -51,7 +51,7 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
 
     func downloadImages(fromURLs urls: [URL], completion: @escaping ([URL: ImageData]) -> Void) {
         workerQueue.addOperation { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             var result = [URL: ImageData]()
             let group = DispatchGroup()
 

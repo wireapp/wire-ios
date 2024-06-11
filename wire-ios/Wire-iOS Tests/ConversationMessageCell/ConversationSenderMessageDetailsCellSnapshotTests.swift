@@ -20,7 +20,7 @@ import SnapshotTesting
 @testable import Wire
 import XCTest
 
-final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestCase {
+final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

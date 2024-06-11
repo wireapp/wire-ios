@@ -76,7 +76,7 @@ import Foundation
     // MARK: - Background Actions
 
     public func ignoreCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "IgnoreCall Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "IgnoreCall Action Handler") else {
             return
         }
 
@@ -90,7 +90,7 @@ import Foundation
     }
 
     public func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "Mute Conversation Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Mute Conversation Action Handler") else {
             return
         }
 
@@ -110,12 +110,12 @@ import Foundation
             let conversation = userInfo.conversation(in: managedObjectContext)
             else { return completionHandler() }
 
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "DirectReply Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "DirectReply Action Handler") else {
             return
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.messageReplyObserver = nil
             self.syncManagedObjectContext.performGroupedBlock {
@@ -176,7 +176,7 @@ import Foundation
 
         self.syncManagedObjectContext.performGroupedBlock { [weak self] in
             guard
-                let `self` = self,
+                let self,
                 let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 else { return }
 
@@ -190,12 +190,12 @@ import Foundation
             let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext)
             else { return completionHandler() }
 
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "Like Message Activity") else {
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity") else {
             return
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.likeMesssageObserver = nil
             if result == .failed {

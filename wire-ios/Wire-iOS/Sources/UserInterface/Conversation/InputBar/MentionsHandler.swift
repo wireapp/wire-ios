@@ -35,7 +35,7 @@ final class MentionsHandler: NSObject {
     let searchQueryMatchRange: NSRange
 
     init?(text: String?, cursorPosition: Int) {
-        guard let text = text, !text.isEmpty else { return nil }
+        guard let text, !text.isEmpty else { return nil }
 
         let matches = mentionRegex.matches(in: text, range: text.wholeRange)
         // Cursor is a separator between characters, we are interested in the character before the cursor
@@ -54,7 +54,7 @@ final class MentionsHandler: NSObject {
     }
 
     func searchString(in text: String?) -> String? {
-        guard let text = text else { return nil }
+        guard let text else { return nil }
         guard let range = Range(searchQueryMatchRange, in: text) else { return nil }
         return String(text[range])
     }

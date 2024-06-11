@@ -88,12 +88,10 @@ open class AuthenticatedSessionFactory {
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: nil,
             userId: account.userIdentifier
         )
 

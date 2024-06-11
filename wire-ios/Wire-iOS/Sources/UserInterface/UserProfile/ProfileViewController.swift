@@ -47,25 +47,16 @@ extension ZMConversationType {
 }
 
 final class ProfileViewController: UIViewController {
-    let viewModel: ProfileViewControllerViewModel
     weak var viewControllerDismisser: ViewControllerDismisser?
+    weak var delegate: ProfileViewControllerDelegate?
 
+    private let viewModel: ProfileViewControllerViewModeling
     private let profileFooterView = ProfileFooterView()
     private let incomingRequestFooter = IncomingRequestFooterView()
     private let securityLevelView = SecurityLevelView()
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
-
     private var tabsController: TabBarController?
-
-    var delegate: ProfileViewControllerDelegate? {
-        get {
-            return viewModel.delegate
-        }
-        set {
-            viewModel.delegate = newValue
-        }
-    }
 
     // MARK: - init
 
@@ -79,11 +70,19 @@ final class ProfileViewController: UIViewController {
         userSession: UserSession
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
-        if let context = context {
+        if let context {
             profileViewControllerContext = context
         } else {
             profileViewControllerContext = conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
         }
+
+        let profileActionsFactory = ProfileActionsFactory(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            context: profileViewControllerContext,
+            userSession: userSession
+        )
 
         let viewModel = ProfileViewControllerViewModel(
             user: user,
@@ -91,7 +90,8 @@ final class ProfileViewController: UIViewController {
             viewer: viewer,
             context: profileViewControllerContext,
             classificationProvider: classificationProvider,
-            userSession: userSession
+            userSession: userSession,
+            profileActionsFactory: profileActionsFactory
         )
 
         self.init(viewModel: viewModel)
@@ -101,9 +101,13 @@ final class ProfileViewController: UIViewController {
         self.viewControllerDismisser = viewControllerDismisser
     }
 
-    required init(viewModel: ProfileViewControllerViewModel) {
+    required init(viewModel: any ProfileViewControllerViewModeling) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.setConversationTransitionClosure { [weak self] conversation in
+            self?.delegate?.profileViewController(self, wantsToNavigateTo: conversation)
+        }
 
         let user = viewModel.user
 
@@ -154,8 +158,7 @@ final class ProfileViewController: UIViewController {
 
     override func loadView() {
         super.loadView()
-
-        viewModel.viewModelDelegate = self
+        viewModel.setDelegate(self)
     }
 
     override func viewDidLoad() {
@@ -226,7 +229,7 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(
+            let userClientListViewController = OtherUserClientsListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
                 contextProvider: viewModel.userSession as? ContextProvider,
@@ -236,7 +239,10 @@ final class ProfileViewController: UIViewController {
         }
 
         tabsController = TabBarController(viewControllers: viewControllers)
-        if viewModel.context == .deviceList, tabsController?.viewControllers.count > 1 {
+
+        if viewModel.context == .deviceList,
+           let count = tabsController?.viewControllers.count,
+           count > 1 {
             tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
         }
         addToSelf(tabsController!)
@@ -375,7 +381,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     private func openSelfProfile() {
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
-        if let presentingViewController = presentingViewController {
+        if let presentingViewController {
             leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
         } else {
             leftViewControllerRevealed = true
@@ -383,7 +389,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.topBarViewController.presentSettings()
+                ZClientViewController.shared?.conversationListViewController.presentSettings()
             }
         }
     }
@@ -529,14 +535,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
 }
 
-extension ProfileViewController: ProfileViewControllerDelegate {
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
-    }
-
-}
-
 extension ProfileViewController: ConversationCreationControllerDelegate {
 
     func conversationCreationController(
@@ -544,7 +542,7 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         didCreateConversation conversation: ZMConversation
     ) {
         controller.dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
 
             delegate?.profileViewController(
                 self,
@@ -597,13 +595,31 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func presentError(_ error: LocalizedError) {
         typealias Strings = L10n.Localizable.Error.Connection
 
-        if let connectionError = error as? ConnectToUserError,
-           connectionError == .federationDenied {
-            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
-            UIAlertController.showErrorAlert(title: "", message: message)
+        let title: String?
+        let message: String?
+        let style: UIAlertAction.Style
+
+        if let connectionError = error as? ConnectToUserError, connectionError == .federationDenied {
+            title = nil
+            message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            style = .cancel
         } else {
-            presentLocalizedErrorAlert(error)
+            title = error.localizedDescription
+            message = error.failureReason
+            style = .default
         }
+
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: style
+        ))
+
+        present(alertController, animated: true)
     }
 
     func presentConversationCreationError(username: String) {
@@ -612,8 +628,13 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let alertController = UIAlertController(
             title: "",
             message: ConversationError.cannotStart(username, username),
-            alertAction: .ok()
+            preferredStyle: .alert
         )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
+
         present(alertController, animated: true, completion: nil)
     }
 
@@ -624,4 +645,5 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func stopAnimatingActivity() {
         activityIndicator.stopAnimating()
     }
+
 }

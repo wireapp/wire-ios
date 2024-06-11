@@ -1,3 +1,18 @@
+# potential rules to enable:
+# unhandled_throwing_task !
+# trailing_closure
+# self_in_property_initialization
+# prefer_self_in_static_references
+# prefer_self_type_over_type_of_self
+# redundant_self_in_closure
+# direct_return
+# implicit_return
+# redundant_nil_coalescing
+# redundant_type_annotation
+# unneeded_parentheses_in_closure_argument
+# untyped_error_in_catch
+# unused_capture_list
+# TODO: also check disabled_rules
 opt_in_rules:
   - closure_spacing
   - file_header
@@ -5,8 +20,11 @@ opt_in_rules:
   - multiline_parameters
   - operator_usage_whitespace
   - reduce_into
+  - self_binding
+  - shorthand_optional_binding
   - sorted_imports
   - unneeded_parentheses_in_closure_argument
+  - unused_optional_binding
   - yoda_condition
 
 disabled_rules:
@@ -59,13 +77,13 @@ custom_rules:
     severity: warning
 
 excluded:
+  - "**/*/Package.swift"
   - Carthage
   - DerivedData
   - fastlane
   - sourcery
   - vendor
   - wire-ios/Templates
-  - "scripts/Package.swift"
   - "wire-ios-data-model/Support/Sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-protos/Protos/messages.pb.swift"
   - "wire-ios-protos/Protos/mls.pb.swift"
@@ -74,8 +92,6 @@ excluded:
   - "wire-ios-request-strategy/Support/Sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-sync-engine/sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-sync-engine/sourcery/generated/AutoMockable.manual.swift"
-  - "wire-ios/Scripts/updateLicenses/Package.swift"
-  - "wire-ios/Scripts/updateStylekit/Package.swift"
   - "wire-ios/Wire-iOS Share Extension/Generated/Strings+Generated.swift"
   - "wire-ios/Wire-iOS/Generated/Assets+Generated.swift"
   - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"

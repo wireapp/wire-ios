@@ -105,7 +105,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 $0.value == nil)
         })
 
-        if let previewAssetRequest = previewAssetRequest,
+        if let previewAssetRequest,
            let assetKeys = previewAssetRequest.value,
            let request = request(for: assetKeys, size: .preview, user: previewAssetRequest.key, apiVersion: apiVersion) {
             requestedPreviewAssetsInProgress.insert(previewAssetRequest.key)
@@ -122,7 +122,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 $0.value == nil)
         })
 
-        if let completeAssetRequest = completeAssetRequest,
+        if let completeAssetRequest,
            let assetKeys = completeAssetRequest.value,
            let request = request(for: assetKeys, size: .complete, user: completeAssetRequest.key, apiVersion: apiVersion) {
             requestedCompleteAssetsInProgress.insert(completeAssetRequest.key)
@@ -140,21 +140,20 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
     func request(for assetKeys: SearchUserAssetKeys, size: ProfileImageSize, user: UUID, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let key = size == .preview ? assetKeys.preview : assetKeys.complete {
             let path: String
-
             switch apiVersion {
+
             case .v0:
                 path = "/assets/v3/\(key)"
+
             case .v1:
-                guard let domain = requestedUserDomain[user].nonEmptyValue ?? BackendInfo.domain else {
-                    return nil
-                }
+                let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo.domain
+                guard let domain else { return nil }
 
                 path = "/assets/v4/\(domain)/\(key)"
 
             case .v2, .v3, .v4, .v5, .v6:
-                guard let domain = requestedUserDomain[user].nonEmptyValue ?? BackendInfo.domain else {
-                    return nil
-                }
+                let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo.domain
+                guard let domain else { return nil }
 
                 path = "/assets/\(domain)/\(key)"
             }

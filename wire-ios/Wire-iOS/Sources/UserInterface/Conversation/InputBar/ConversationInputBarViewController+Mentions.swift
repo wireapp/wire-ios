@@ -25,14 +25,14 @@ extension ConversationInputBarViewController {
     }
 
     var canInsertMention: Bool {
-        guard isInMentionsFlow, let mentionsView = mentionsView, mentionsView.users.count > 0 else {
+        guard isInMentionsFlow, let mentionsView, mentionsView.users.count > 0 else {
             return false
         }
         return true
     }
 
     func insertBestMatchMention() {
-        guard canInsertMention, let mentionsView = mentionsView else {
+        guard canInsertMention, let mentionsView else {
             fatal("Cannot insert best mention")
         }
 

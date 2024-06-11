@@ -31,7 +31,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
     init(
         text: String = "",
-        style: UIFont.FontStyle = .body,
+        style: WireTextStyle = .body1,
         color: UIColor
     ) {
         // Not needed when we use a font style.

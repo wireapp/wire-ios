@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class CanvasViewControllerTests: BaseSnapshotTestCase {
+final class CanvasViewControllerTests: XCTestCase {
 
     var sut: CanvasViewController!
 
