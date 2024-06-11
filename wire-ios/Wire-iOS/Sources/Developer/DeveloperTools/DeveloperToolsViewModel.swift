@@ -23,7 +23,20 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
 
+struct DeveloperToolsContext {
+//    var currentConversation: ZMConversation?
+//    var currentUser: ZMUser?
+    var currentUserClient: UserClient?
+}
+
+protocol DeveloperToolsContextActionsProvider {
+    init?(context: DeveloperToolsContext)
+    func getActionItems() -> [DeveloperToolsViewModel.Item]
+}
+
 final class DeveloperToolsViewModel: ObservableObject {
+
+    static var context: DeveloperToolsContext = DeveloperToolsContext()
 
     // MARK: - Models
 
@@ -116,19 +129,24 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupSections()
     }
 
-    private func setupSections() {
+    private func setupContextualActions() {
+        var actionsProviders: [DeveloperToolsContextActionsProvider?] = [
+            ConversationUserClientDetailsDebugActions(context: Self.context)
+            // add new builder here
+        ]
 
-        if let actions = ConversationUserClientDetailsDebugActions(
-            userClient: DeveloperToolsContext.currentUserClient
-        ) {
-            sections.append(
-                Section(
-                    header: "Contextual Actions",
-                    items: actions.getActionItems()
-                )
+        let actions = actionsProviders.reduce([], { $0 + ($1?.getActionItems() ?? []) })
+        guard !actions.isEmpty else { return }
+
+        sections.append(
+            Section(
+                header: "Contextual Actions",
+                items: actions
             )
-        }
+        )
+    }
 
+    fileprivate func setupActions() {
         sections.append(Section(
             header: "Actions",
             items: [
@@ -149,6 +167,13 @@ final class DeveloperToolsViewModel: ObservableObject {
                 }))
             ]
         ))
+    }
+
+    private func setupSections() {
+
+        setupContextualActions()
+
+        setupActions()
 
         sections.append(Section(
             header: "App info",

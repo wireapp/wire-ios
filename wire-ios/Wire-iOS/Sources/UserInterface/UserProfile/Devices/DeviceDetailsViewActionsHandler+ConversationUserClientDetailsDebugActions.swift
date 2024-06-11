@@ -19,19 +19,13 @@
 import Foundation
 import WireDataModel
 
-protocol ConversationUserClientDetailsDebugActionable {
-    func deleteDevice() async
-    func corruptSession() async
-    func duplicateClient()
-}
+struct ConversationUserClientDetailsDebugActions: DeveloperToolsContextActionsProvider {
 
-struct ConversationUserClientDetailsDebugActions: ConversationUserClientDetailsDebugActionable {
-    
     let userClient: UserClient
     let logger = WireLogger.environment // TODO: change
 
-    init?(userClient: UserClient?) {
-        guard let userClient = userClient else {
+    init?(context: DeveloperToolsContext) {
+        guard let userClient = context.currentUserClient else {
             return nil
         }
         self.userClient = userClient

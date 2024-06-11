@@ -19,12 +19,6 @@
 import WireCommonComponents
 import WireSyncEngine
 
-struct DeveloperToolsContext {
-//    var currentConversation: ZMConversation?
-//    var currentUser: ZMUser?
-    static var currentUserClient: UserClient?
-}
-
 final class WireApplication: UIApplication {
 
     private let presenter = DeveloperToolsPresenter()

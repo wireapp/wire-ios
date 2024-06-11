@@ -62,7 +62,7 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     deinit {
-        DeveloperToolsContext.currentUserClient = nil
+        DeveloperToolsViewModel.context.currentUserClient = nil
     }
 
     @available(*, unavailable)
@@ -196,7 +196,7 @@ final class OtherUserClientsListViewController: UIViewController,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
-        DeveloperToolsContext.currentUserClient = client
+        DeveloperToolsViewModel.context.currentUserClient = client
 
         return DeviceInfoViewModel(
             title: title,
