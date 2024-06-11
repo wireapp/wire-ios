@@ -19,6 +19,7 @@
 @import WireTransport;
 @import WireUtilities;
 @import WireDataModel;
+@class UserCredentials;
 
 #import "ZMAuthenticationStatus.h"
 #import "ZMCredentials+Internal.h"
@@ -63,7 +64,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     [self stopLoginTimer];
 }
 
-- (ZMCredentials *)loginCredentials
+- (UserCredentials *)loginCredentials
 {
     return self.internalLoginCredentials;
 }
@@ -91,7 +92,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     self.isWaitingForBackupImport = NO;
 }
 
-- (void)setLoginCredentials:(ZMCredentials *)credentials
+- (void)setLoginCredentials:(UserCredentials *)credentials
 {
     if(credentials != self.internalLoginCredentials) {
         self.internalLoginCredentials = credentials;
@@ -170,7 +171,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     }];
 }
 
-- (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials
+- (void)prepareForLoginWithCredentials:(UserCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
     self.authenticationCookieData = nil;
@@ -228,7 +229,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
-- (void)didTimeoutLoginForCredentials:(ZMCredentials *)credentials
+- (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
     if((self.currentPhase == ZMAuthenticationPhaseLoginWithEmail || self.currentPhase == ZMAuthenticationPhaseLoginWithPhone)
@@ -389,24 +390,26 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 @end
 
 
-@implementation ZMAuthenticationStatus (CredentialProvider)
+//@implementation ZMAuthenticationStatus (CredentialProvider)
+//
+//- (void)credentialsMayBeCleared
+//{
+//    if (self.currentPhase == ZMAuthenticationPhaseAuthenticated) {
+//        [self resetLoginAndRegistrationStatus];
+//    }
+//}
 
-- (void)credentialsMayBeCleared
-{
-    if (self.currentPhase == ZMAuthenticationPhaseAuthenticated) {
-        [self resetLoginAndRegistrationStatus];
-    }
-}
+//- (UserEmailCredentials *)emailCredentials
+//{
+//    if (self.loginCredentials.credentialWithEmail) {
+//        return [UserEmailCredentials.credentialsWithEmail:self.loginCredentials.email
+//                                   password:self.loginCredentials.password
+//                                   emailVerificationCode:self.loginCredentials.emailVerificationCode];
+//    }
+//    return nil;
+//}
 
-- (ZMEmailCredentials *)emailCredentials
-{
-    if (self.loginCredentials.credentialWithEmail) {
-        return [ZMEmailCredentials credentialsWithEmail:self.loginCredentials.email
-                                   password:self.loginCredentials.password
-                                   emailVerificationCode:self.loginCredentials.emailVerificationCode];
-    }
-    return nil;
-}
+//@end
 
-@end
+
 

@@ -136,7 +136,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     if (authenticationStatus.currentPhase == ZMAuthenticationPhaseAuthenticated) {
         return nil;
     }
-    ZMCredentials *credentials = authenticationStatus.loginCredentials;
+    UserCredentials *credentials = authenticationStatus.loginCredentials;
     if(credentials == nil) {
         return nil;
     }
