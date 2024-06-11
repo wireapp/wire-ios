@@ -19,10 +19,11 @@
 import Foundation
 import WireDataModel
 
-struct ConversationUserClientDetailsDebugActions: DeveloperToolsContextActionsProvider {
+/// Provides debug actions for UserClientDetails
+struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
 
     let userClient: UserClient
-    let logger = WireLogger.environment // TODO: change
+    let logger = WireLogger.system
 
     init?(context: DeveloperToolsContext) {
         guard let userClient = context.currentUserClient else {
