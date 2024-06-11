@@ -19,6 +19,12 @@
 import WireCommonComponents
 import WireSyncEngine
 
+struct DeveloperToolsContext {
+//    var currentConversation: ZMConversation?
+//    var currentUser: ZMUser?
+    static var currentUserClient: UserClientType?
+}
+
 final class WireApplication: UIApplication {
 
     private let presenter = DeveloperToolsPresenter()
@@ -30,7 +36,7 @@ final class WireApplication: UIApplication {
 
         guard motion == .motionShake else { return }
 
-        presenter.presentIfNotDisplayed(with: AppDelegate.shared.appRootRouter, from: self.topmostViewController())
+        presenter.presentIfNotDisplayed(with: AppDelegate.shared.appRootRouter, from: self.topmostViewController(onlyFullScreen: false))
     }
 }
 

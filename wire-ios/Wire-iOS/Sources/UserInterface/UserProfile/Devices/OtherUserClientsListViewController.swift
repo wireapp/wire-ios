@@ -61,6 +61,10 @@ final class OtherUserClientsListViewController: UIViewController,
         }
     }
 
+    deinit {
+        DeveloperToolsContext.currentUserClient = nil
+    }
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -192,6 +196,8 @@ final class OtherUserClientsListViewController: UIViewController,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
+        DeveloperToolsContext.currentUserClient = client
+
         return DeviceInfoViewModel(
             title: title,
             addedDate: "",
