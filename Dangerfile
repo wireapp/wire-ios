@@ -19,3 +19,15 @@ elsif warnings_count == max_warnings
 else 
     fail "#{warnings_count - max_warnings} warnings introduced - please fix them"
 end
+
+# Generate report
+report = xcov.produce_report(
+  scheme: 'Wire-iOS',
+  workspace: 'wire-ios-mono.xcworkspace',
+  minimum_coverage_percentage: 50
+)
+
+# Do some custom filtering with the report here
+
+# Post markdown report
+xcov.output_report(report)
