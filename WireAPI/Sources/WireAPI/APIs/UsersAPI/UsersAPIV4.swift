@@ -63,10 +63,10 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 
     /// List of user IDs for which a user couldn't be retrieved.
     ///
-    let failed: [UserID]
+    let failed: [UserID]?
 
     func toAPIModel() -> UserList {
-        UserList(found: found.map { $0.toAPIModel() }, failed: failed)
+        UserList(found: found.map { $0.toAPIModel() }, failed: failed ?? [])
     }
 }
 
