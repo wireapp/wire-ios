@@ -1,6 +1,9 @@
 require 'json'
 
 xcode_summary.inline_mode = true
+xcode_summary.report 'WireiOS.xcresult'
+
+# add extra warning
 result = xcode_summary.warning_error_count 'WireiOS.xcresult'
 json_hash = JSON.parse(result, symbolize_names: true)
 
