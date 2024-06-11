@@ -18,13 +18,13 @@
 
 import Foundation
 
-@objc
+@objcMembers
 public class UserCredentials: NSObject {
-    @objc public var email: String?
-    @objc public var password: String?
-    @objc public var phoneNumber: String?
-    @objc public var phoneNumberVerificationCode: String?
-    @objc public var emailVerificationCode: String?
+    public var email: String?
+    public var password: String?
+    public var phoneNumber: String?
+    public var phoneNumberVerificationCode: String?
+    public var emailVerificationCode: String?
 
     public init(
         email: String? = nil,
@@ -60,8 +60,10 @@ public class UserCredentials: NSObject {
     }
 }
 
+@objcMembers
 public class UserPhoneCredentials: UserCredentials {
-    static func credentials(phoneNumber: String, verificationCode: String) -> UserPhoneCredentials {
+    @objc(credentialsWithPhoneNumber:verificationCode:)
+    public static func credentials(phoneNumber: String, verificationCode: String) -> UserPhoneCredentials {
         let validatedPhoneNumber = ZMPhoneNumberValidator.validatePhoneNumber(phoneNumber)
         return UserPhoneCredentials(phoneNumber: validatedPhoneNumber, phoneNumberVerificationCode: verificationCode)
     }
@@ -70,13 +72,18 @@ public class UserPhoneCredentials: UserCredentials {
 @objcMembers
 public class UserEmailCredentials: UserCredentials {
     @objc(credentialsWithEmail:password:)
-    static func credentials(email: String, password: String) -> UserEmailCredentials {
+    public static func credentials(email: String, password: String) -> UserEmailCredentials {
         return UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
     }
 
     @objc(credentialsWithEmail:password:emailVerificationCode:)
-    static func credentials(email: String, password: String, emailVerificationCode: String?) -> UserEmailCredentials {
+    public static func credentials(email: String, password: String, emailVerificationCode: String?) -> UserEmailCredentials {
         return UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
+    }
+
+    @objc(testForAgisWithEmail:password:)
+    public static func testForAgis(email: String, password: String) -> UserEmailCredentials {
+        return UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
     }
 }
 

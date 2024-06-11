@@ -23,7 +23,6 @@
 
 @class UserInfo;
 @class UserCredentials;
-@class ZMCredentials;
 @class UserEmailCredentials;
 @class ZMEmailCredentials;
 @class ZMPhoneCredentials;
@@ -118,8 +117,8 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 @end
 
-@interface ZMAuthenticationStatus (CredentialProvider) <ZMCredentialProvider>
-
-- (void)credentialsMayBeCleared;
-
-@end
+//@interface ZMAuthenticationStatus (CredentialProvider) <ZMCredentialProvider>
+//
+//- (void)credentialsMayBeCleared;
+//
+//@end

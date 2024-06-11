@@ -22,7 +22,11 @@ extension ZMAuthenticationStatus: NotificationContext {}
 
 extension ZMAuthenticationStatus: ZMCredentialProvider {
 
-    func emailCredentials() -> UserEmailCredentials? {
+    public func credentialsMayBeCleared() {
+        // no op for now we need to implement it
+    }
+
+    public func emailCredentials() -> UserEmailCredentials! {
         if let loginCredentials = self.loginCredentials, loginCredentials.credentialWithEmail {
             return UserEmailCredentials.credentials(
                 email: loginCredentials.email ?? "",
