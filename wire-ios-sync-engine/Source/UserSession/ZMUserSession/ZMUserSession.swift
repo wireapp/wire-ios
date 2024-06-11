@@ -222,15 +222,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    /// - Note: this is safe if coredataStack and proteus are ready
-    public var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
-        GetUserClientFingerprintUseCase(
-            syncContext: coreDataStack.syncContext,
-            transportSession: transportSession,
-            proteusProvider: proteusProvider
-        )
-    }
-
     lazy var e2eiRepository: E2EIRepositoryInterface = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)

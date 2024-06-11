@@ -233,8 +233,6 @@ public protocol UserSession: AnyObject {
 
     // MARK: Use Cases
 
-    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
-
     var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
 
     var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }

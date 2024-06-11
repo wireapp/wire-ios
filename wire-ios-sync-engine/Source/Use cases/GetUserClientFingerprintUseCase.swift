@@ -26,11 +26,21 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
 
 public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
 
-    let proteusProvider: ProteusProviding
-    let context: NSManagedObjectContext
-    let sessionEstablisher: SessionEstablisherInterface
+    private let proteusProvider: ProteusProviding
+    private let context: NSManagedObjectContext
+    private let sessionEstablisher: SessionEstablisherInterface
 
     // MARK: - Initialization
+
+    // Instead of the user session being responsible for creating the use case
+    // we provide an initializer so we can create the use case where needed.
+    public init(userSession: ZMUserSession) {
+        self.init(
+            syncContext: userSession.coreDataStack.syncContext,
+            transportSession: userSession.transportSession,
+            proteusProvider: userSession.proteusProvider
+        )
+    }
 
     init(
         syncContext: NSManagedObjectContext,

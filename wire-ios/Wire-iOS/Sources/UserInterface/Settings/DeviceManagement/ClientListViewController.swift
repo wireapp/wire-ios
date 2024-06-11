@@ -235,12 +235,17 @@ final class ClientListViewController: UIViewController,
         contextProvider: ContextProvider
     ) -> DeviceInfoViewModel {
         let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+
+        // If ZMuserSession only has primary dependecies, we wouldn't need to have the `UserSession`
+        // protocol.
+        let getFingerprintUseCase = GetUserClientFingerprintUseCase(userSession: userSession as! ZMUserSession)
+
         let deviceActionsHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
             userSession: userSession,
             credentials: credentials,
             saveFileManager: saveFileManager,
-            getProteusFingerprint: userSession.getUserClientFingerprint,
+            getProteusFingerprint: getFingerprintUseCase,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
