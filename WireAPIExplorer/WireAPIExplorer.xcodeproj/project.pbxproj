@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6302BDE72C187D680068D7A8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6302BDE62C187D680068D7A8 /* LoginView.swift */; };
+		6302BDE92C187FD30068D7A8 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6302BDE82C187FD30068D7A8 /* HttpClient.swift */; };
+		6302BDEB2C1883520068D7A8 /* BackendAPIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6302BDEA2C1883520068D7A8 /* BackendAPIView.swift */; };
 		EEA540662C1875B10053D48E /* WireAPIExplorerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA540652C1875B10053D48E /* WireAPIExplorerApp.swift */; };
 		EEA540682C1875B10053D48E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA540672C1875B10053D48E /* ContentView.swift */; };
 		EEA5406A2C1875B20053D48E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEA540692C1875B20053D48E /* Assets.xcassets */; };
@@ -15,6 +18,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6302BDE62C187D680068D7A8 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		6302BDE82C187FD30068D7A8 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		6302BDEA2C1883520068D7A8 /* BackendAPIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAPIView.swift; sourceTree = "<group>"; };
 		EEA540622C1875B10053D48E /* WireAPIExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireAPIExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA540652C1875B10053D48E /* WireAPIExplorerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAPIExplorerApp.swift; sourceTree = "<group>"; };
 		EEA540672C1875B10053D48E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -55,7 +61,10 @@
 			isa = PBXGroup;
 			children = (
 				EEA540652C1875B10053D48E /* WireAPIExplorerApp.swift */,
+				6302BDE62C187D680068D7A8 /* LoginView.swift */,
 				EEA540672C1875B10053D48E /* ContentView.swift */,
+				6302BDEA2C1883520068D7A8 /* BackendAPIView.swift */,
+				6302BDE82C187FD30068D7A8 /* HttpClient.swift */,
 				EEA540692C1875B20053D48E /* Assets.xcassets */,
 				EEA5406B2C1875B20053D48E /* WireAPIExplorer.entitlements */,
 				EEA5406C2C1875B20053D48E /* Preview Content */,
@@ -147,7 +156,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6302BDEB2C1883520068D7A8 /* BackendAPIView.swift in Sources */,
+				6302BDE72C187D680068D7A8 /* LoginView.swift in Sources */,
 				EEA540682C1875B10053D48E /* ContentView.swift in Sources */,
+				6302BDE92C187FD30068D7A8 /* HttpClient.swift in Sources */,
 				EEA540662C1875B10053D48E /* WireAPIExplorerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,7 +290,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WireAPIExplorer/Preview Content\"";
-				DEVELOPMENT_TEAM = WAPLF5F36A;
+				DEVELOPMENT_TEAM = E8ALGG4LVX;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -302,6 +314,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -316,7 +329,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WireAPIExplorer/Preview Content\"";
-				DEVELOPMENT_TEAM = WAPLF5F36A;
+				DEVELOPMENT_TEAM = E8ALGG4LVX;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -340,6 +353,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
