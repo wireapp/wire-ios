@@ -19,8 +19,6 @@
 import Foundation
 
 enum TeamEventCodingKeys: String, CodingKey {
-
     case teamID = "team"
     case payload = "data"
-
 }

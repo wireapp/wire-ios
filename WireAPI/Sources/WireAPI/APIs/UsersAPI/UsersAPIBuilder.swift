@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `UsersAPI`.
 
 public struct UsersAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.
@@ -55,5 +54,4 @@ public struct UsersAPIBuilder {
             UsersAPIV6(httpClient: httpClient)
         }
     }
-
 }

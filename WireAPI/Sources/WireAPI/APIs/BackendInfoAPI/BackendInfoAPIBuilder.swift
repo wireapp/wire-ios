@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `BackendInfoAPI`.
 
 public struct BackendInfoAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.
@@ -55,5 +54,4 @@ public struct BackendInfoAPIBuilder {
             BackendInfoAPIV6(httpClient: httpClient)
         }
     }
-
 }

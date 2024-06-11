@@ -19,8 +19,6 @@
 import Foundation
 
 enum FederationEventType: String {
-
     case connectionRemoved = "federation.connectionRemoved"
     case delete = "federation.delete"
-
 }

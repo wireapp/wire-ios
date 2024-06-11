@@ -19,7 +19,6 @@
 import Foundation
 
 extension JSONDecoder {
-
     /// The default decoder to use when parsing http response payloads.
 
     static var defaultDecoder: JSONDecoder {
@@ -41,5 +40,4 @@ extension JSONDecoder {
 
         return decoder
     }
-
 }

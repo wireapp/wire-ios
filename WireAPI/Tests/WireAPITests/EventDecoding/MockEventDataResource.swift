@@ -19,7 +19,6 @@
 import Foundation
 
 struct MockEventDataResource {
-
     let jsonData: Data
 
     init(name: String) throws {
@@ -36,5 +35,4 @@ struct MockEventDataResource {
             throw "unable to load data from resource: \(error)"
         }
     }
-
 }

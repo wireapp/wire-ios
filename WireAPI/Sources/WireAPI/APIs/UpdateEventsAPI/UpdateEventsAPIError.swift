@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `UpdateEventsAPI`.
 
 public enum UpdateEventsAPIError: Error {
-
     /// A request path is not invalid.
 
     case invalidPath
@@ -33,5 +32,4 @@ public enum UpdateEventsAPIError: Error {
     /// The requested notification(s) was not found.
 
     case notFound
-
 }

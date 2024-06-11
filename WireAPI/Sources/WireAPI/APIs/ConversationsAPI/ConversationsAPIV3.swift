@@ -31,7 +31,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             method: .post,
             body: body
         )
-        let response = try await self.httpClient.executeRequest(request)
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationListV3.self) // Change in v3
@@ -44,9 +44,9 @@ class ConversationsAPIV3: ConversationsAPIV2 {
 
 private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found = "found"
+        case found
         case notFound = "not_found"
-        case failed = "failed"
+        case failed
     }
 
     let found: [ConversationV3]

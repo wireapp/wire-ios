@@ -22,9 +22,7 @@ import Foundation
 /// self user or another user) was deleted.
 
 public struct UserDeleteEvent: Equatable {
-
     /// The user's qualified id.
 
     public let qualifiedUserID: QualifiedID
-
 }

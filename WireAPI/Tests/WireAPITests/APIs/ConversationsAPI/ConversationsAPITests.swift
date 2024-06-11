@@ -21,7 +21,6 @@ import XCTest
 @testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {
-
     private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
     private var apiSnapshotHelper: APISnapshotHelper<ConversationsAPI>!
 
@@ -81,8 +80,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         // when
@@ -102,12 +101,12 @@ final class ConversationsAPITests: XCTestCase {
     func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
-        let expectedIDs: [UUID] = [
-            try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483"))
+        let expectedIDs: [UUID] = try [
+            XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483"))
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -125,8 +124,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetLegacyConversationIdentifiers_givenV0AndErrorResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -148,8 +147,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
         // when
@@ -169,13 +168,13 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
-        let expectedIDs: [QualifiedID] = [
+        let expectedIDs: [QualifiedID] = try [
             QualifiedID(
-                uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
+                uuid: XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
             )
         ]
@@ -195,8 +194,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationIdentifiers_givenV1AndErrorResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
         let api = ConversationsAPIV1(httpClient: httpClient)
@@ -219,8 +218,8 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let apiVersions = APIVersion.allCases
 
-        let qualifiedID = QualifiedID(
-            uuid: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
+        let qualifiedID = try QualifiedID(
+            uuid: XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
             domain: "wire.com"
         )
 
@@ -234,8 +233,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(
                 code: 200,
                 jsonResource: "testGetConversations_givenV0AndSuccessResponse200"
             )
@@ -254,8 +253,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV0AndSuccessResponse400() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 400, label: "invalid body")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 400, label: "invalid body")
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -275,8 +274,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV0AndSuccessResponse503() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -296,8 +295,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV2AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(
                 code: 200,
                 jsonResource: "testGetConversations_givenV2AndSuccessResponse200"
             )
@@ -316,8 +315,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV2AndSuccessResponse400() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 400, label: "invalid body")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 400, label: "invalid body")
         ]
 
         let api = ConversationsAPIV2(httpClient: httpClient)
@@ -337,8 +336,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV2AndSuccessResponse503() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
         let api = ConversationsAPIV2(httpClient: httpClient)
@@ -358,8 +357,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV3AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(
                 code: 200,
                 jsonResource: "testGetConversations_givenV3AndSuccessResponse200"
             )
@@ -382,8 +381,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV3AndSuccessResponse400() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 400, label: "invalid body")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 400, label: "invalid body")
         ]
 
         let api = ConversationsAPIV3(httpClient: httpClient)
@@ -403,8 +402,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV3AndSuccessResponse503() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
         let api = ConversationsAPIV3(httpClient: httpClient)
@@ -424,8 +423,8 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV5AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(
+        httpClient.httpResponses = try [
+            HTTPResponse.mockJSONResource(
                 code: 200,
                 jsonResource: "testGetConversations_givenV5AndSuccessResponse200"
             )
@@ -441,15 +440,15 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(list.failed.count, 1)
 
         let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
+        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1_620_816_722.671))
         XCTAssertEqual(conversation.cipherSuite, 0)
     }
 
     func testGetConversations_givenV5AndSuccessResponse503() async throws {
         // given
         let httpClient = MockHTTPResponsesClient()
-        httpClient.httpResponses = [
-            try HTTPResponse.mockError(code: 503, label: "service unavailable")
+        httpClient.httpResponses = try [
+            HTTPResponse.mockError(code: 503, label: "service unavailable")
         ]
 
         let api = ConversationsAPIV5(httpClient: httpClient)

@@ -19,7 +19,6 @@
 import Foundation
 
 struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
-
     var id: UUID
     var payload: [UpdateEvent]?
     var transient: Bool?
@@ -31,5 +30,4 @@ struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
             isTransient: transient ?? false
         )
     }
-
 }

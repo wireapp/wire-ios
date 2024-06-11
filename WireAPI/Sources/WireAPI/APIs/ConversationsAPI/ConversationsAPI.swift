@@ -20,7 +20,6 @@ import Foundation
 
 /// Access to conversations API.
 public protocol ConversationsAPI {
-
     /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID>
 
@@ -29,5 +28,4 @@ public protocol ConversationsAPI {
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
-
 }

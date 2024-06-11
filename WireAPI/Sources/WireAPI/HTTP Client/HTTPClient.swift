@@ -21,7 +21,6 @@ import Foundation
 /// A object responsible for executing http requests.
 
 public protocol HTTPClient {
-
     /// Executes the given request.
     ///
     /// - Parameters:
@@ -31,5 +30,4 @@ public protocol HTTPClient {
     /// - Returns: The response from the server.
 
     func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse
-
 }

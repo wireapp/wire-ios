@@ -20,7 +20,6 @@
 import XCTest
 
 final class BackendInfoAPITests: XCTestCase {
-
     private var httpClient: HTTPClient!
 
     // MARK: - V0
@@ -105,5 +104,4 @@ final class BackendInfoAPITests: XCTestCase {
             )
         )
     }
-
 }

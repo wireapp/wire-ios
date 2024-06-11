@@ -19,7 +19,6 @@
 import Foundation
 
 class TeamsAPIV4: TeamsAPIV3 {
-
     override var apiVersion: APIVersion {
         .v4
     }
@@ -64,7 +63,7 @@ class TeamsAPIV4: TeamsAPIV3 {
 
     override func getTeamMembers(
         for teamID: Team.ID,
-        maxResults: UInt
+        maxResults _: UInt
     ) async throws -> [TeamMember] {
         var components = URLComponents(string: "\(basePath(for: teamID))/members")
         components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
@@ -109,5 +108,4 @@ class TeamsAPIV4: TeamsAPIV3 {
             .failure(code: 404, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
     }
-
 }

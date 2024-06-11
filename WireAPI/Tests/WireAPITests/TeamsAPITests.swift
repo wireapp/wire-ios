@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPI
 
 final class TeamsAPITests: XCTestCase {
-
     private var apiSnapshotHelper: APISnapshotHelper<TeamsAPI>!
 
     // MARK: - Setup
@@ -190,11 +189,11 @@ final class TeamsAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             result,
-            [
+            try [
                 TeamMember(
-                    userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
-                    creationDate: try XCTUnwrap(ISO8601DateFormatter.default.date(from: "2024-05-14T08:55:04.779Z")),
-                    creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
+                    userID: XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
+                    creationDate: XCTUnwrap(ISO8601DateFormatter.default.date(from: "2024-05-14T08:55:04.779Z")),
+                    creatorID: XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
                     legalholdStatus: .pending,
                     permissions: TeamMemberPermissions(
                         copyPermissions: 123,
@@ -321,10 +320,10 @@ final class TeamsAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             result,
-            Team(
+            try Team(
                 id: teamID,
                 name: "teamName",
-                creatorID: try XCTUnwrap(UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")),
+                creatorID: XCTUnwrap(UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")),
                 logoID: "iconID",
                 logoKey: "iconKey",
                 splashScreenID: "splashScreen"
@@ -416,5 +415,4 @@ final class TeamsAPITests: XCTestCase {
             )
         }
     }
-
 }

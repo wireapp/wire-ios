@@ -19,7 +19,6 @@
 import Foundation
 
 enum UpdateEventType {
-
     case conversation(ConversationEventType)
     case featureConfig(FeatureConfigEventType)
     case federation(FederationEventType)
@@ -42,5 +41,4 @@ enum UpdateEventType {
             self = .unknown(string)
         }
     }
-
 }

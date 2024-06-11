@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `TeamsAPI`.
 
 public struct TeamsAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.
@@ -55,5 +54,4 @@ public struct TeamsAPIBuilder {
             TeamsAPIV6(httpClient: httpClient)
         }
     }
-
 }

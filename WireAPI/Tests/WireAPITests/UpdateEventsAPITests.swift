@@ -21,7 +21,6 @@ import SnapshotTesting
 import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
-
     // MARK: - Request generation
 
     func testGetLastUpdateEvent() async throws {
@@ -111,8 +110,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     // MARK: - Helpers
 
-    struct Scaffolding {
-
+    enum Scaffolding {
         static let selfClientID = "abcd1234"
         static let eventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
 
@@ -121,7 +119,5 @@ final class UpdateEventsAPITests: XCTestCase {
             payloads: [.conversation(.create)],
             isTransient: false
         )
-
     }
-
 }

@@ -19,11 +19,9 @@
 import Foundation
 
 extension UUID {
-
     /// Creates a string suitable for transport to the server.
 
     func transportString() -> String {
         uuidString.lowercased()
     }
-
 }

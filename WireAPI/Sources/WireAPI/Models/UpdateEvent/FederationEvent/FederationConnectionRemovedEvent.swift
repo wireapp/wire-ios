@@ -22,10 +22,8 @@ import Foundation
 /// with each other.
 
 public struct FederationConnectionRemovedEvent: Equatable {
-
     /// The domains of the backends that are no longer
     /// federating with each other.
 
     public let domains: Set<String>
-
 }

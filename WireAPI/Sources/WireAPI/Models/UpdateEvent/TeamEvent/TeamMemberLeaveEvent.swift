@@ -21,7 +21,6 @@ import Foundation
 /// An event where a team member left the team.
 
 public struct TeamMemberLeaveEvent: Equatable {
-
     /// The team id.
 
     public let teamID: UUID
@@ -29,5 +28,4 @@ public struct TeamMemberLeaveEvent: Equatable {
     /// The id of the member who left.
 
     public let userID: UUID
-
 }

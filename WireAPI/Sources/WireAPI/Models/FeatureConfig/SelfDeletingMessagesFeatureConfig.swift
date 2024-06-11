@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *Self Deleting Messages* feature.
 
 public struct SelfDeletingMessagesFeatureConfig: Equatable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus
@@ -32,5 +31,4 @@ public struct SelfDeletingMessagesFeatureConfig: Equatable {
     /// A value of 0 indicates that the self-deleting messages are not mandatory.
 
     public let enforcedTimeoutSeconds: UInt
-
 }

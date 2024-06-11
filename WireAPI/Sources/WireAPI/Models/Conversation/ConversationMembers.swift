@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension Conversation {
-
+public extension Conversation {
     /// Represents all conversation's members including self.
-    public struct Members {
+    struct Members {
         public let others: [Member]
         public let selfMember: Member
     }

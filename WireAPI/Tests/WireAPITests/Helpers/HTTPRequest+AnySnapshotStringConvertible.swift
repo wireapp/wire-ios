@@ -21,10 +21,9 @@ import SnapshotTesting
 @testable import WireAPI
 
 extension HTTPRequest: AnySnapshotStringConvertible {
-
     public var snapshotDescription: String {
         let bodyAsString = body.map {
-            String.init(bytes: $0, encoding: .utf8) ?? $0.base64EncodedString()
+            String(bytes: $0, encoding: .utf8) ?? $0.base64EncodedString()
         }
 
         return """
@@ -34,5 +33,4 @@ extension HTTPRequest: AnySnapshotStringConvertible {
           - body: \(bodyAsString ?? "none")
         """
     }
-
 }

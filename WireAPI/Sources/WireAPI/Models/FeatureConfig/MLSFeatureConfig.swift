@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *MLS* feature.
 
 public struct MLSFeatureConfig: Equatable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus
@@ -45,5 +44,4 @@ public struct MLSFeatureConfig: Equatable {
     /// The list of supported message protocols.
 
     public let supportedProtocols: Set<MessageProtocol>
-
 }

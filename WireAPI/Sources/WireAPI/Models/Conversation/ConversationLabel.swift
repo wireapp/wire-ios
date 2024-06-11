@@ -21,7 +21,6 @@ import Foundation
 /// A label used to categorize conversations.
 
 public struct ConversationLabel: Equatable {
-
     /// The label's id.
 
     public let id: UUID
@@ -37,5 +36,4 @@ public struct ConversationLabel: Equatable {
     /// The conversation ids associated with the label.
 
     public let conversationIDs: [UUID]
-
 }

@@ -19,7 +19,6 @@
 import Foundation
 
 public struct Connection: Equatable {
-
     /// Remote identifier of the sender
 
     public let senderId: UUID?

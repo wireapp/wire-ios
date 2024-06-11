@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPI
 
 final class UsersAPITests: XCTestCase {
-
     private var apiSnapshotHelper: APISnapshotHelper<UsersAPI>!
 
     // MARK: - Setup
@@ -74,7 +73,6 @@ final class UsersAPITests: XCTestCase {
         XCTAssertEqual(
             result,
             Scaffolding.user
-
         )
     }
 
@@ -128,7 +126,6 @@ final class UsersAPITests: XCTestCase {
         XCTAssertEqual(
             result,
             Scaffolding.user
-
         )
     }
 
@@ -162,7 +159,7 @@ final class UsersAPITests: XCTestCase {
         )
     }
 
-    struct Scaffolding {
+    enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
         static let userID = UserID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
@@ -190,5 +187,4 @@ final class UsersAPITests: XCTestCase {
             legalholdStatus: .enabled
         )
     }
-
 }

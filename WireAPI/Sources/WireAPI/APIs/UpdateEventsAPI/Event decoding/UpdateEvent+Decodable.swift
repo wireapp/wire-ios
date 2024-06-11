@@ -19,36 +19,32 @@
 import Foundation
 
 extension UpdateEvent: Decodable {
-
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let eventType = try container.decode(String.self, forKey: .eventType)
 
         switch UpdateEventType(eventType) {
-        case .conversation(let eventType):
+        case let .conversation(eventType):
             try self.init(eventType: eventType, from: decoder)
 
-        case .featureConfig(let eventType):
+        case let .featureConfig(eventType):
             try self.init(eventType: eventType, from: decoder)
 
-        case .federation(let eventType):
+        case let .federation(eventType):
             try self.init(eventType: eventType, from: decoder)
 
-        case .user(let eventType):
+        case let .user(eventType):
             try self.init(eventType: eventType, from: decoder)
 
-        case .team(let eventType):
+        case let .team(eventType):
             try self.init(eventType: eventType, from: decoder)
 
-        case .unknown(let eventType):
+        case let .unknown(eventType):
             self = .unknown(eventType: eventType)
         }
     }
 
     private enum CodingKeys: String, CodingKey {
-
         case eventType = "type"
-
     }
-
 }

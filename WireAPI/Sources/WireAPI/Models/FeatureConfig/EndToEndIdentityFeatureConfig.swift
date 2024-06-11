@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *End To End Identity* feature.
 
 public struct EndToEndIdentityFeatureConfig: Equatable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus
@@ -33,5 +32,4 @@ public struct EndToEndIdentityFeatureConfig: Equatable {
     /// The login grace period for OAUTH/OpenID Connect authentication.
 
     public let verificationExpiration: UInt
-
 }

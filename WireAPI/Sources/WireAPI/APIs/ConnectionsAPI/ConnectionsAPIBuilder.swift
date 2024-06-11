@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `ConnectionsAPI`.
 
 public struct ConnectionsAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.
@@ -55,5 +54,4 @@ public struct ConnectionsAPIBuilder {
             ConnectionsAPIV6(httpClient: httpClient)
         }
     }
-
 }

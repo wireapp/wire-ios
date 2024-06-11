@@ -19,7 +19,6 @@
 import Foundation
 
 extension UpdateEvent {
-
     init(
         eventType: FeatureConfigEventType,
         from decoder: any Decoder
@@ -90,5 +89,4 @@ extension UpdateEvent {
             }
         }
     }
-
 }

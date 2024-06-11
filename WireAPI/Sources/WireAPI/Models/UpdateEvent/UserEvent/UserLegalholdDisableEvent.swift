@@ -21,9 +21,7 @@ import Foundation
 /// An event where legalhold was disabled for a user.
 
 public struct UserLegalholdDisableEvent: Equatable {
-
     /// The user id for whom legalhold was disabled.
 
     public let userID: UUID
-
 }

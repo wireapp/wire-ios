@@ -19,8 +19,6 @@
 import Foundation
 
 struct FeatureWithConfig<Config: Decodable>: Decodable {
-
     let status: FeatureConfigStatus
     let config: Config
-
 }

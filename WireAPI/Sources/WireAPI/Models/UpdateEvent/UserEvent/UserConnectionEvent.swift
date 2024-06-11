@@ -22,7 +22,6 @@ import Foundation
 /// another user was updated.
 
 public struct UserConnectionEvent: Equatable {
-
     /// The name of the other user.
 
     public let userName: String
@@ -30,5 +29,4 @@ public struct UserConnectionEvent: Equatable {
     /// The connection to the other user.
 
     public let connection: Connection
-
 }

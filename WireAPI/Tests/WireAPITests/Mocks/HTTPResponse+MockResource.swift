@@ -20,7 +20,6 @@ import WireAPI
 import XCTest
 
 extension HTTPResponse {
-
     // MARK: Error
 
     static func mockError(code: Int, label: String, message: String? = nil) throws -> HTTPResponse {
@@ -42,9 +41,9 @@ extension HTTPResponse {
     // MARK: JSON
 
     static func mockJSONResource(code: Int, jsonResource: String) throws -> HTTPResponse {
-        HTTPResponse(
+        try HTTPResponse(
             code: code,
-            payload: try data(jsonContentsOf: jsonResource)
+            payload: data(jsonContentsOf: jsonResource)
         )
     }
 

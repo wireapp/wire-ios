@@ -21,7 +21,6 @@ import Foundation
 /// An event where a user's metadata was updated.
 
 public struct UserUpdateEvent: Equatable {
-
     /// The updated user's id.
 
     public let userID: UUID
@@ -53,5 +52,4 @@ public struct UserUpdateEvent: Equatable {
     /// The new supported protocols.
 
     public let supportedProtocols: Set<SupportedProtocol>?
-
 }

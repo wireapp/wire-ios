@@ -21,9 +21,7 @@ import Foundation
 /// An event where an existing self user client was removed.
 
 public struct UserClientRemoveEvent: Equatable {
-
     /// The id of the removed client.
 
     public let clientID: UserClient.ID
-
 }

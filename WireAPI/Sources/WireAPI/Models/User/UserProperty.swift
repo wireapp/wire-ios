@@ -22,7 +22,6 @@ import Foundation
 /// share self user settings across devices.
 
 public enum UserProperty: Equatable {
-
     /// Whether the self user has enabled read receipts.
 
     case areReadRecieptsEnabled(Bool)
@@ -38,5 +37,4 @@ public enum UserProperty: Equatable {
     /// An unknown property.
 
     case unknown(key: String)
-
 }

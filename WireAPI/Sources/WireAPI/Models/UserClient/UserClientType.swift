@@ -21,7 +21,6 @@ import Foundation
 /// Types of a user client.
 
 public enum UserClientType: String, Codable {
-
     /// A client intended to be used for long periods of time,
     /// such as a mobile device or web application.
 
@@ -37,5 +36,4 @@ public enum UserClientType: String, Codable {
     /// all messages you send or receive.
 
     case legalhold
-
 }

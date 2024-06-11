@@ -21,7 +21,6 @@ import Foundation
 /// Classes of user client devices.
 
 public enum DeviceClass: String, Codable {
-
     /// The client is a phone.
 
     case phone
@@ -37,5 +36,4 @@ public enum DeviceClass: String, Codable {
     /// The client is a legalhold device.
 
     case legalhold
-
 }

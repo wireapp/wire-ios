@@ -24,12 +24,10 @@ import Foundation
 /// feature to feature. For instance, in some cases
 /// `enabled` may mean that the feature is available
 /// to the self user, but not necessarily turned on.
-/// In other cases, `enabled` may mean that the feature 
+/// In other cases, `enabled` may mean that the feature
 /// is turned on, because it is always available.
 
 public enum FeatureConfigStatus: String, Codable {
-
     case enabled
     case disabled
-
 }

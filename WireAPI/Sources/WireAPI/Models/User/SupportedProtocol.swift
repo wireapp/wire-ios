@@ -21,7 +21,6 @@ import Foundation
 /// The protocols which a user can support.
 
 public enum SupportedProtocol: String, Equatable, Codable {
-
     /// The Proteus messaging protocol.
 
     case proteus
@@ -29,5 +28,4 @@ public enum SupportedProtocol: String, Equatable, Codable {
     /// The Messaging Layer Security protocol.
 
     case mls
-
 }

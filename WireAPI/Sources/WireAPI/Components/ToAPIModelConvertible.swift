@@ -21,9 +21,7 @@ import Foundation
 /// A type that can be converted to an associated api model.
 
 protocol ToAPIModelConvertible {
-
     associatedtype APIModel
 
     func toAPIModel() -> APIModel
-
 }

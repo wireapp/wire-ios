@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `UpdateEventsAPI`.
 
 public struct UpdateEventsAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.
@@ -55,5 +54,4 @@ public struct UpdateEventsAPIBuilder {
             UpdateEventsAPIV6(httpClient: httpClient)
         }
     }
-
 }

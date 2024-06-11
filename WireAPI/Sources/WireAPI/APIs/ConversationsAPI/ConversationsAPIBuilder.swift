@@ -20,7 +20,6 @@ import Foundation
 
 /// Builder for the conversations API.
 public struct ConversationsAPIBuilder {
-
     private let httpClient: any HTTPClient
 
     /// Create a new builder for the conversations API.
@@ -52,5 +51,4 @@ public struct ConversationsAPIBuilder {
             ConversationsAPIV6(httpClient: httpClient)
         }
     }
-
 }

@@ -19,7 +19,6 @@
 import Foundation
 
 struct UserPropertiesSetEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserPropertiesSetEvent {
@@ -71,18 +70,13 @@ struct UserPropertiesSetEventDecoder {
     }
 
     private struct LabelsPayload: Decodable {
-
         let labels: [Label]
-
     }
 
     private struct Label: Decodable {
-
         let id: UUID
         let type: Int16
         let name: String?
         let conversations: [UUID]
-
     }
-
 }

@@ -21,7 +21,6 @@ import Foundation
 /// Represents the membership of a user to a particular team.
 
 public struct TeamMember: Equatable {
-
     /// The id of the member.
 
     public let userID: UUID
@@ -64,5 +63,4 @@ public struct TeamMember: Equatable {
         self.legalholdStatus = legalholdStatus
         self.permissions = permissions
     }
-
 }

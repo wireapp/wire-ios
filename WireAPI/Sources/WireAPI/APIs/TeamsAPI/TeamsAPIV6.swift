@@ -19,9 +19,7 @@
 import Foundation
 
 class TeamsAPIV6: TeamsAPIV5 {
-
     override var apiVersion: APIVersion {
         .v6
     }
-
 }

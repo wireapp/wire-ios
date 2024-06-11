@@ -21,7 +21,6 @@ import Foundation
 /// A Proteus client prekey used to establish a Proteus session.
 
 public struct Prekey: Equatable {
-
     /// The prekey id.
 
     public let id: Int
@@ -29,5 +28,4 @@ public struct Prekey: Equatable {
     /// The base64-encoded prekey key.
 
     public let base64EncodedKey: String
-
 }
