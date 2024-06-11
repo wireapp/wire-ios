@@ -17,37 +17,22 @@
 //
 
 import SwiftUI
-import WireAPI
 
-@MainActor
 struct BackendAPIView: View {
 
-    @State private var backendInfo: String = ""
-
     var body: some View {
-        VStack {
-            Button("Get backend info", action: executeRequest)
-            Text(backendInfo)
-        }
-    }
-
-    private func executeRequest() {
-        Task {
-            let builder = BackendInfoAPIBuilder(httpClient: HttpClient())
-            let backendAPI = builder.makeAPI(for: .v0)
-
-            do {
-                let backendInfo = try await backendAPI.getBackendInfo()
-                self.backendInfo = String(describing: backendInfo)
-                print("result: \(backendInfo)")
-            } catch {
-                print("error: \(error)")
+        List {
+            NavigationLink("Get backend info") {
+                GetBackendInfoView()
             }
         }
+        .navigationTitle("BackendAPI")
     }
 
 }
 
 #Preview {
-    BackendAPIView().frame(width: 400, height: 200)
+    NavigationStack {
+        BackendAPIView()
+    }
 }

@@ -21,13 +21,15 @@ import SwiftUI
 struct ContentView: View {
 
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            List {
+                NavigationLink("BackendAPI") {
+                    BackendAPIView()
+                }
+            }
+            .navigationTitle("APIs")
         }
-        .padding()
+        .frame(minWidth: 400, minHeight: 200)
     }
 
 }
