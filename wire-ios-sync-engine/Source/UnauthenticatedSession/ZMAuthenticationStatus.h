@@ -24,8 +24,6 @@
 @class UserInfo;
 @class UserCredentials;
 @class UserEmailCredentials;
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
 @class UserPhoneCredentials;
 @class ZMPersistentCookieStorage;
 @class ZMTransportResponse;
