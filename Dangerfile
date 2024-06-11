@@ -1,0 +1,1 @@
+xcode_summary.report 'WireiOS.xcresult'
