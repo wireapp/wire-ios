@@ -7,7 +7,9 @@ errors_count = result["errors"]
 max_warnings = 359
 # set current branch warnings count
 if warnings_count < max_warnings 
-    warn "change max_warnings limit before merging"
+    warn " You removed #{max_warnings - warnings_count} warnings !! please change max_warnings limit before merging"
+elsif warnings_count == max_warnings 
+    message "The whole team congratulates you, you did not make it worse, thanks!"
 else 
-    fail "#{max_warnings - warnings_count} warnings introduced - please fix them"
+    fail "#{warnings_count - max_warnings} warnings introduced - please fix them"
 end
