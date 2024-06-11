@@ -1,7 +1,7 @@
 require 'json'
 
 xcode_summary.inline_mode = true
-result = xcode_summary.warning_error_count 'MyWireiOS.xcresult'
+result = xcode_summary.warning_error_count 'WireiOS.xcresult'
 json_hash = JSON.parse(result, symbolize_names: true)
 
 warnings_count = json_hash[:warnings]
