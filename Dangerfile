@@ -1,8 +1,11 @@
+require 'json'
+
 xcode_summary.inline_mode = true
 result = xcode_summary.warning_error_count 'MyWireiOS.xcresult'
+json_hash = JSON.parse(result, symbolize_names: true)
 
-warnings_count = result["warnings"]
-errors_count = result["errors"]
+warnings_count = json_hash[:warnings]
+errors_count = json_hash[:errors]
 
 max_warnings = 359
 # set current branch warnings count
