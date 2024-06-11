@@ -22,7 +22,6 @@
 @class UserCredentials;
 
 #import "ZMAuthenticationStatus.h"
-#import "ZMCredentials+Internal.h"
 #import "NSError+ZMUserSession.h"
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMUserSessionRegistrationNotification.h"

@@ -24,7 +24,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"
 
-#import "ZMCredentials.h"
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 
 extern NSTimeInterval DebugLoginFailureTimerOverride;

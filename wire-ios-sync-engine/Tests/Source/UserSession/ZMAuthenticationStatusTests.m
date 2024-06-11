@@ -19,11 +19,9 @@
 @import WireTransport;
 @import WireDataModel;
 @import WireTransport;
-@import WireSyncEngine;
 
 #import "MessagingTest.h"
 #import "ZMUserSessionRegistrationNotification.h"
-//#import "ZMCredentials.h"
 #import "NSError+ZMUserSessionInternal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"

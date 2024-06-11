@@ -20,7 +20,6 @@
 
 #import "MessagingTest.h"
 #import "ZMLoginTranscoder+Internal.h"
-#import "ZMCredentials.h"
 #import "ZMAuthenticationStatus.h"
 #import "NSError+ZMUserSession.h"
 #import "ZMUserSessionRegistrationNotification.h"
