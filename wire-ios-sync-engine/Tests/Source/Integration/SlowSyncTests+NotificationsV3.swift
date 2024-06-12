@@ -17,11 +17,12 @@
 //
 
 import WireMockTransport
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
 
-class SlowSyncTests_NotificationsV3: IntegrationTest {
+@testable import WireSyncEngine
+
+final class SlowSyncTests_NotificationsV3: IntegrationTest {
 
     override func _setUp() {
         setCurrentAPIVersion(.v3)
@@ -60,9 +61,7 @@ class SlowSyncTests_NotificationsV3: IntegrationTest {
         self.performQuickSync()
 
         // THEN
-        let result = wait(withTimeout: 1) {
-            self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true
-        }
-        XCTAssertTrue(result, "it should perform slow sync")
+        // ensure it performs slow sync
+        wait(forConditionToBeTrue: self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true, timeout: 5)
     }
 }
