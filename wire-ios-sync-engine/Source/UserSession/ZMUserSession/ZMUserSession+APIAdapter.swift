@@ -19,6 +19,31 @@
 import Foundation
 import WireAPI
 
+extension ZMUserSession {
+
+    public func writeContinouslyToCoreCrypto() {
+        Task {
+            guard let sessionID = await managedObjectContext.perform({
+                let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+                let selfClient = selfUser.selfClient()
+                let otherClient = selfUser.clients.first(where: { $0 != selfClient })
+                return otherClient?.proteusSessionID
+            }) else {
+                return
+            }
+
+            let cc = try await coreCryptoProvider.coreCrypto()
+
+            try await cc.perform { cc in
+                while true {
+                    try await cc.proteusSessionSave(sessionId: sessionID.rawValue)
+                }
+            }
+        }
+    }
+
+}
+
 // Note: this is just a tempory helper for debugging
 // purposes and should eventually be removed.
 
