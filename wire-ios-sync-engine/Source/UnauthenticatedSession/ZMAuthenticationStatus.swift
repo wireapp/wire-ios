@@ -23,7 +23,9 @@ extension ZMAuthenticationStatus: NotificationContext {}
 extension ZMAuthenticationStatus: ZMCredentialProvider {
 
     public func credentialsMayBeCleared() {
-        // no op for now we need to implement it
+        if self.currentPhase == ZMAuthenticationPhase.authenticated {
+            self.resetLoginAndRegistrationStatus()
+        }
     }
 
     public func emailCredentials() -> UserEmailCredentials! {

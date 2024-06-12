@@ -387,28 +387,3 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 }
 
 @end
-
-
-//@implementation ZMAuthenticationStatus (CredentialProvider)
-//
-//- (void)credentialsMayBeCleared
-//{
-//    if (self.currentPhase == ZMAuthenticationPhaseAuthenticated) {
-//        [self resetLoginAndRegistrationStatus];
-//    }
-//}
-
-//- (UserEmailCredentials *)emailCredentials
-//{
-//    if (self.loginCredentials.credentialWithEmail) {
-//        return [UserEmailCredentials.credentialsWithEmail:self.loginCredentials.email
-//                                   password:self.loginCredentials.password
-//                                   emailVerificationCode:self.loginCredentials.emailVerificationCode];
-//    }
-//    return nil;
-//}
-
-//@end
-
-
-
