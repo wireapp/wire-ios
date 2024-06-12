@@ -48,10 +48,11 @@ extension UpdateEvent {
             self = .conversation(.memberJoin(event))
 
         case .memberLeave:
-            self = .conversation(.memberLeave)
+            let event = try ConversationMemberLeaveEventDecoder().decode(from: container)
+            self = .conversation(.memberLeave(event))
 
         case .memberUpdate:
-            self = .conversation(.memberLeave)
+            self = .conversation(.memberUpdate)
 
         case .messageAdd:
             self = .conversation(.messageAdd)

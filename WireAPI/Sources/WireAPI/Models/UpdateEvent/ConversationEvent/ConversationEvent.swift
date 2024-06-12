@@ -44,7 +44,7 @@ public enum ConversationEvent: Equatable {
 
     /// One or more users were removed from a conversation.
 
-    case memberLeave
+    case memberLeave(ConversationMemberLeaveEvent)
 
     /// One or more users have updated metadata in a conversation.
 
