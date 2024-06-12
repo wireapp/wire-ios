@@ -233,7 +233,7 @@ extension String {
 
         var number: Any? = self as Any?
         do {
-            // try ZMPhoneNumberValidator.validateValue(&number)
+            try ZMPhoneNumberValidator.validateValue(&number)
             return number as? String
         } catch {
             return nil

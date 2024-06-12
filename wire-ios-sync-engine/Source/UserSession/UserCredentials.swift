@@ -64,7 +64,7 @@ public class UserCredentials: NSObject {
 public class UserPhoneCredentials: UserCredentials {
     @objc(credentialsWithPhoneNumber:verificationCode:)
     public static func credentials(phoneNumber: String, verificationCode: String) -> UserPhoneCredentials {
-        let validatedPhoneNumber = ZMPhoneNumberValidator.validatePhoneNumber(phoneNumber)
+        let validatedPhoneNumber = ZMPhoneNumberValidator.validate(phoneNumber: phoneNumber)
         return UserPhoneCredentials(phoneNumber: validatedPhoneNumber, phoneNumberVerificationCode: verificationCode)
     }
 }
@@ -81,16 +81,4 @@ public class UserEmailCredentials: UserCredentials {
         return UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
     }
 
-    @objc(testForAgisWithEmail:password:)
-    public static func testForAgis(email: String, password: String) -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
-    }
-}
-
-// Assuming ZMPhoneNumberValidator exists and has a method validatePhoneNumber(_:)
-class ZMPhoneNumberValidator {
-    static func validatePhoneNumber(_ phoneNumber: String) -> String {
-        // Add your phone number validation logic here
-        return phoneNumber
-    }
 }
