@@ -60,7 +60,8 @@ extension UpdateEvent {
             self = .conversation(.messageTimerUpdate(event))
 
         case .mlsMessageAdd:
-            self = .conversation(.mlsMessageAdd)
+            let event = try ConversationMLSMessageAddEventDecoder().decode(from: container)
+            self = .conversation(.mlsMessageAdd(event))
 
         case .mlsWelcome:
             self = .conversation(.mlsWelcome)

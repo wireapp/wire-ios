@@ -56,7 +56,7 @@ public enum ConversationEvent: Equatable {
 
     /// An MLS message was added to a conversation.
 
-    case mlsMessageAdd
+    case mlsMessageAdd(ConversationMLSMessageAddEvent)
 
     /// The self user has been added to an MLS group.
 
