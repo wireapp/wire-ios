@@ -40,13 +40,25 @@ public class UserCredentials: NSObject {
         self.emailVerificationCode = emailVerificationCode
     }
 
-    public static func == (lhs: UserCredentials, rhs: UserCredentials) -> Bool {
-        let emailsEqual = lhs.email == rhs.email
-        let passwordsEqual = lhs.password == rhs.password
-        let phoneNumbersEqual = lhs.phoneNumber == rhs.phoneNumber
-        let phoneNumberCodesEqual = lhs.phoneNumberVerificationCode == rhs.phoneNumberVerificationCode
-        let emailVerificationCodesEqual = lhs.emailVerificationCode == rhs.emailVerificationCode
-        return emailsEqual && passwordsEqual && phoneNumbersEqual && phoneNumberCodesEqual && emailVerificationCodesEqual
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? UserCredentials else {
+            return false
+        }
+        return self.email == other.email &&
+        self.password == other.password &&
+        self.phoneNumber == other.phoneNumber &&
+        self.phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
+        self.emailVerificationCode == other.emailVerificationCode
+    }
+
+    public override var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(email)
+        hasher.combine(password)
+        hasher.combine(phoneNumber)
+        hasher.combine(phoneNumberVerificationCode)
+        hasher.combine(emailVerificationCode)
+        return hasher.finalize()
     }
 
     @objc
