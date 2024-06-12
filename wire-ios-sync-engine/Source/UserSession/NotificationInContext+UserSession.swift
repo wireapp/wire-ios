@@ -39,7 +39,7 @@ extension ZMUserSession {
     ) -> NSObjectProtocol {
         NotificationInContext.addObserver(
             name: initialSyncCompletionNotificationName,
-            context: notificationContext
+            context: managedObjectContext.notificationContext
         ) { [managedObjectContext] _ in
             managedObjectContext.performGroupedBlock {
                 completion()
