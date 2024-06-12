@@ -28,7 +28,7 @@ public enum ConversationEvent: Equatable {
 
     /// A conversation's guest link code was updated.
 
-    case codeUpdate
+    case codeUpdate(ConversationCodeUpdateEvent)
 
     /// A new conversation was created.
 

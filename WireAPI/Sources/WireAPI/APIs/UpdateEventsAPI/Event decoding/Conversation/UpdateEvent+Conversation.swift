@@ -32,7 +32,8 @@ extension UpdateEvent {
             self = .conversation(.accessUpdate(event))
 
         case .codeUpdate:
-            self = .conversation(.codeUpdate)
+            let event = try ConversationCodeUpdateEventDecoder().decode(from: container)
+            self = .conversation(.codeUpdate(event))
 
         case .create:
             self = .conversation(.create)
