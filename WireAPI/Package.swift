@@ -53,7 +53,8 @@ let package = Package(
                 )
             ],
             resources: [
-                .process("Resources")
+                .process("Resources"),
+                .process("APIs/ConversationsAPI/Resources")
             ]
         )
     ]

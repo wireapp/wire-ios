@@ -2717,16 +2717,6 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.settings.title", fallback: "Settings")
         }
       }
-      internal enum DataUsagePermissionAlert {
-        /// I Agree
-        internal static let agree = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.agree", fallback: "I Agree")
-        /// No
-        internal static let disagree = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.disagree", fallback: "No")
-        /// I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.
-        internal static let message = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.message", fallback: "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.")
-        /// Help us make Wire better
-        internal static let title = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.title", fallback: "Help us make Wire better")
-      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived
