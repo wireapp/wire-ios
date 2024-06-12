@@ -131,6 +131,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationMessageTimerUpdateEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationMessageTimerUpdate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.messageTimerUpdate(Scaffolding.messageTimerUpdateEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -284,6 +298,13 @@ final class ConversationEventDecodingTests: XCTestCase {
                 newArchivedStatus: true,
                 archivedStatusReferenceDate: timestamp
             )
+        )
+
+        static let messageTimerUpdateEvent = ConversationMessageTimerUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            newTimer: 123
         )
 
     }

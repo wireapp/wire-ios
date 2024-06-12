@@ -52,7 +52,7 @@ public enum ConversationEvent: Equatable {
 
     /// A conversation's self-deleting-message timer was updated.
 
-    case messageTimerUpdate
+    case messageTimerUpdate(ConversationMessageTimerUpdateEvent)
 
     /// An MLS message was added to a conversation.
 
