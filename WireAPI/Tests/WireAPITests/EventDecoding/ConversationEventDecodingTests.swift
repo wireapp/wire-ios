@@ -89,6 +89,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationMemberJoinEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationMemberJoin")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.memberJoin(Scaffolding.memberJoinEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -193,6 +207,31 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: date(from: "2024-06-04T15:03:07.598Z")
+        )
+
+        static let memberJoinEvent = ConversationMemberJoinEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: date(from: "2024-06-04T15:03:07.598Z"),
+            members: [
+                Conversation.Member(
+                    qualifiedID: QualifiedID(
+                        uuid: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
+                        domain: "example.com"
+                    ),
+                    id: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
+                    qualifiedTarget: nil,
+                    target: nil,
+                    conversationRole: "member",
+                    service: nil,
+                    archived: nil,
+                    archivedReference: nil,
+                    hidden: nil,
+                    hiddenReference: nil,
+                    mutedStatus: nil,
+                    mutedReference: nil
+                )
+            ]
         )
 
     }

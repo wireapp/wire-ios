@@ -40,7 +40,7 @@ public enum ConversationEvent: Equatable {
 
     /// One or more users were added to a conversation.
 
-    case memberJoin
+    case memberJoin(ConversationMemberJoinEvent)
 
     /// One or more users were removed from a conversation.
 

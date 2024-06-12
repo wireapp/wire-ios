@@ -44,7 +44,8 @@ extension UpdateEvent {
             self = .conversation(.delete(event))
 
         case .memberJoin:
-            self = .conversation(.memberJoin)
+            let event = try ConversationMemberJoinEventDecoder().decode(from: container)
+            self = .conversation(.memberJoin(event))
 
         case .memberLeave:
             self = .conversation(.memberLeave)
