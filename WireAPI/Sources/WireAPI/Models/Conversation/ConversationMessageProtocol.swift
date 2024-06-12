@@ -18,26 +18,21 @@
 
 import Foundation
 
-/// Which users are allowed to be participants in a conversation.
+/// The current message protocol used in a conversation.
 
-public enum ConversationAccessRoleLegacy: String, Codable {
+public enum ConversationMessageProtocol: String, Codable {
 
-    /// Used in one-to-one and self conversations.
+    /// The Proteus messaging protocol.
 
-    case `private`
+    case proteus
 
-    /// Members of the owning team.
+    /// The conversation is in the process of migrating from
+    /// Proteus to MLS.
 
-    case team
+    case mixed
 
-    /// Users that have confirmed their email/phone.
-    ///
-    /// This excludes services.
+    /// The Messaging Layer Security protocol.
 
-    case activated
-
-    /// Any user, including services.
-
-    case nonActivated = "non_activated"
+    case mls
 
 }

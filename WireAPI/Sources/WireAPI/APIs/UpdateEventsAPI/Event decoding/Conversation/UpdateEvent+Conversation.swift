@@ -36,7 +36,8 @@ extension UpdateEvent {
             self = .conversation(.codeUpdate(event))
 
         case .create:
-            self = .conversation(.create)
+            let event = try ConversationCreateEventDecoder().decode(from: container)
+            self = .conversation(.create(event))
 
         case .delete:
             self = .conversation(.delete)

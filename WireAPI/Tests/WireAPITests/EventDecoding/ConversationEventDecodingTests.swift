@@ -61,7 +61,25 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationCreateEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationCreate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.create(Scaffolding.createEvent))
+        )
+    }
+
     private enum Scaffolding {
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.default.date(from: string)!
+        }
 
         static let conversationID = ConversationID(
             uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
@@ -88,6 +106,73 @@ final class ConversationEventDecodingTests: XCTestCase {
             key: "key",
             code: "123",
             isPasswordProtected: true
+        )
+
+        static let createEvent = ConversationCreateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: date(from: "2024-06-04T15:03:07.598Z"),
+            conversation: Conversation(
+                id: conversationID.uuid,
+                qualifiedID: conversationID,
+                teamID: UUID(uuidString: "acfb3399-5be5-4cee-b896-1230576c94a2")!,
+                type: .group,
+                messageProtocol: .proteus,
+                mlsGroupID: "group_id",
+                cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                epoch: 123,
+                epochTimestamp: date(from: "2024-06-04T15:03:07.598Z"),
+                creator: UUID(uuidString: "6d88b1b9-f882-4990-ade5-86643fc6006e")!,
+                members: Conversation.Members(
+                    others: [
+                        Conversation.Member(
+                            qualifiedID: QualifiedID(
+                                uuid: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
+                                domain: "example.com"
+                            ),
+                            id: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
+                            qualifiedTarget: nil,
+                            target: nil,
+                            conversationRole: "member",
+                            service: nil,
+                            archived: nil,
+                            archivedReference: nil,
+                            hidden: nil,
+                            hiddenReference: nil,
+                            mutedStatus: nil,
+                            mutedReference: nil
+                        )
+                    ],
+                    selfMember: Conversation.Member(
+                        qualifiedID: QualifiedID(
+                            uuid: UUID(uuidString: "04162d93-2e13-4787-87b5-60ac601fb3b3")!,
+                            domain: "example.com"
+                        ),
+                        id: UUID(uuidString: "04162d93-2e13-4787-87b5-60ac601fb3b3")!,
+                        qualifiedTarget: nil,
+                        target: nil,
+                        conversationRole: "admin",
+                        service: Service(
+                            id: UUID(uuidString: "a728282b-795d-4087-a1b5-c79ca0b56cd0")!,
+                            provider: UUID(uuidString: "69322b27-4fb8-41b6-add4-7b4ecc9e0c73")!
+                        ),
+                        archived: true,
+                        archivedReference: date(from: "2024-06-04T15:03:07.598Z"),
+                        hidden: true,
+                        hiddenReference: "hidden_ref",
+                        mutedStatus: 0,
+                        mutedReference: date(from: "2024-06-04T15:03:07.598Z")
+                    )
+                ),
+                name: "Foo Bar",
+                messageTimer: 123456,
+                readReceiptMode: 1,
+                access: [.invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .nonActivated,
+                lastEvent: "lastEvent",
+                lastEventTime: date(from: "1970-01-01T00:00:00.000Z")
+            )
         )
 
     }

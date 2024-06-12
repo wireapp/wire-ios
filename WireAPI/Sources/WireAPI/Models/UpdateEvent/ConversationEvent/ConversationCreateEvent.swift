@@ -18,26 +18,24 @@
 
 import Foundation
 
-/// Which users are allowed to be participants in a conversation.
+/// An event where a new conversation was created.
 
-public enum ConversationAccessRoleLegacy: String, Codable {
+public struct ConversationCreateEvent: Equatable {
 
-    /// Used in one-to-one and self conversations.
+    /// The id of the conversation.
 
-    case `private`
+    public let conversationID: ConversationID
 
-    /// Members of the owning team.
+    /// The id of the user who created the conversation.
 
-    case team
+    public let senderID: UserID
 
-    /// Users that have confirmed their email/phone.
-    ///
-    /// This excludes services.
+    /// When the conversation was created.
 
-    case activated
+    public let timestamp: Date
 
-    /// Any user, including services.
+    /// The conversation metadata.
 
-    case nonActivated = "non_activated"
+    public let conversation: Conversation
 
 }

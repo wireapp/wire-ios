@@ -18,26 +18,25 @@
 
 import Foundation
 
-/// Which users are allowed to be participants in a conversation.
+/// The various types of conversations.
 
-public enum ConversationAccessRoleLegacy: String, Codable {
+public enum ConversationType: Int, Codable {
 
-    /// Used in one-to-one and self conversations.
+    /// A conversation with many participants.
 
-    case `private`
+    case group = 0
 
-    /// Members of the owning team.
+    /// A conversation with only the self user.
 
-    case team
+    case `self` = 1
 
-    /// Users that have confirmed their email/phone.
-    ///
-    /// This excludes services.
+    /// A conversation between the two users.
 
-    case activated
+    case oneOnOne = 2
 
-    /// Any user, including services.
+    /// A placeholder conversation for a pending connection
+    /// to another user.
 
-    case nonActivated = "non_activated"
+    case connection = 3
 
 }

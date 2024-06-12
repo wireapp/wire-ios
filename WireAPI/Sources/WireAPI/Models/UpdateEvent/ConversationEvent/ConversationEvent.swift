@@ -32,7 +32,7 @@ public enum ConversationEvent: Equatable {
 
     /// A new conversation was created.
 
-    case create
+    case create(ConversationCreateEvent)
 
     /// An existing conversation was deleted.
 
