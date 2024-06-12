@@ -34,20 +34,17 @@ extension ZMUserSession {
         NotificationInContext(name: initialSyncCompletionNotificationName, context: context.notificationContext).post()
     }
 
-    public func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver) -> Any {
-        return ZMUserSession.addInitialSyncCompletionObserver(observer, context: managedObjectContext)
-    }
-
-    @objc public static func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: initialSyncCompletionNotificationName, context: context.notificationContext) { [weak observer] _ in
-            context.performGroupedBlock {
-                observer?.initialSyncCompleted()
+    public func addInitialSyncCompletion(
+        _ completion: @escaping () -> Void
+    ) -> NSObjectProtocol {
+        NotificationInContext.addObserver(
+            name: initialSyncCompletionNotificationName,
+            context: notificationContext
+        ) { [managedObjectContext] _ in
+            managedObjectContext.performGroupedBlock {
+                completion()
             }
         }
-    }
-
-    @objc public static func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver, userSession: ZMUserSession) -> Any {
-        return self.addInitialSyncCompletionObserver(observer, context: userSession.managedObjectContext)
     }
 }
 

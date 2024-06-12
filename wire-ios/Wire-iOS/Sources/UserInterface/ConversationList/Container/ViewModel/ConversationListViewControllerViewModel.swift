@@ -75,7 +75,7 @@ extension ConversationListViewController {
 
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
-        private var initialSyncObserverToken: Any?
+        private var initialSyncObserverToken: (any NSObjectProtocol)?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
@@ -123,7 +123,9 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
+            initialSyncObserverToken = userSession.addInitialSyncCompletion { [weak self] in
+                self?.requestMarketingConsentIfNeeded()
+            }
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
         }
 
@@ -249,12 +251,5 @@ extension ConversationListViewController.ViewModel: UserObserving {
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }
-    }
-}
-
-extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
-
-    func initialSyncCompleted() {
-        requestMarketingConsentIfNeeded()
     }
 }

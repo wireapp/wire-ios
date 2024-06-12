@@ -48,21 +48,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     // MARK: Helpers
 
-    final class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {
-
-        var didNotify: Bool = false
-        var initialSyncToken: Any?
-
-        init(context: NSManagedObjectContext) {
-            super.init()
-            initialSyncToken = ZMUserSession.addInitialSyncCompletionObserver(self, context: context)
-        }
-
-        func initialSyncCompleted() {
-            didNotify = true
-        }
-    }
-
     func startQuickSync() {
         sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
         sut.applicationStatusDirectory.syncStatus.pushChannelDidOpen()
@@ -139,17 +124,19 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     func testThatItNotifiesObserverWhenInitialIsSyncCompleted() {
         // given
-        let observer = InitialSyncObserver(context: uiMOC)
+        var didNotify: Bool = false
+        var token = sut.addInitialSyncCompletion { didNotify = true }
+
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertFalse(observer.didNotify)
+        XCTAssertFalse(didNotify)
 
         // when
         finishSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(observer.didNotify)
+        XCTAssertTrue(didNotify)
     }
 
     func testThatPerformingSyncIsStillOngoingAfterSlowSync() {
