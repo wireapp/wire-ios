@@ -22,7 +22,7 @@ import WireAPI
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
     public func pushChannelDidReceive(_ data: Data) {
-        // TODO: WPB-9612 remove event decoding monitoring.
+        // TODO: [WPB-9612] remove event decoding monitoring.
         // Since update event models aren't documented, we aren't yet completely sure
         // that the new type-safe UpdateEvent model can successfully decode all event
         // types. To test correctness, we try to decode every update event received
