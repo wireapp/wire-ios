@@ -21,7 +21,6 @@ import Foundation
 enum ConversationEventType: String {
 
     case accessUpdate = "conversation.access-update"
-    case clientMessageAdd = "conversation.client-message-add"
     case codeUpdate = "conversation.code-update"
     case create = "conversation.create"
     case delete = "conversation.delete"

@@ -26,10 +26,6 @@ public enum ConversationEvent: Equatable {
 
     case accessUpdate(ConversationAccessUpdateEvent)
 
-    /// An unencrypted client message was added to a conversation.
-
-    case clientMessageAdd
-
     /// A conversation's guest link code was updated.
 
     case codeUpdate

@@ -31,9 +31,6 @@ extension UpdateEvent {
             let event = try ConversationAccessUpdateEventDecoder().decode(from: container)
             self = .conversation(.accessUpdate(event))
 
-        case .clientMessageAdd:
-            self = .conversation(.clientMessageAdd)
-
         case .codeUpdate:
             self = .conversation(.codeUpdate)
 
