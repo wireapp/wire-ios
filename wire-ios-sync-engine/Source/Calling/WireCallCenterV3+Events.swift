@@ -369,7 +369,7 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
-        // TODO: - refactor to avoid processing call data on the UI context https://wearezeta.atlassian.net/browse/WPB-9604
+        // TODO: - refactor to avoid processing call data on the UI context [WPB-9604]
         handleEventInContext("active-speakers-change") {
 
             guard let data = data.data(using: .utf8) else {
