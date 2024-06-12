@@ -38,10 +38,6 @@ public enum ConversationEvent: Equatable {
 
     case delete(ConversationDeleteEvent)
 
-    /// A knock (aka ping) message was added to a conversation.
-
-    case knock
-
     /// One or more users were added to a conversation.
 
     case memberJoin

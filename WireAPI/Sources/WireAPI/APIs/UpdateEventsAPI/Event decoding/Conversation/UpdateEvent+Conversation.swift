@@ -43,9 +43,6 @@ extension UpdateEvent {
             let event = try ConversationDeleteEventDecoder().decode(from: container)
             self = .conversation(.delete(event))
 
-        case .knock:
-            self = .conversation(.knock)
-
         case .memberJoin:
             self = .conversation(.memberJoin)
 
