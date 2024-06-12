@@ -32,7 +32,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
             let decoder = JSONDecoder.defaultDecoder
             _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
         } catch {
-            WireLogger.updateEvent.error("failed to deserialize UpdateEventEnvelope: \(error)")
+            WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
         }
 
         guard let transportData = try? JSONSerialization.jsonObject(
