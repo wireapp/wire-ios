@@ -231,6 +231,11 @@ public protocol UserSession: AnyObject {
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)? { get }
 
+    // MARK: Notifications
+
+    /// Provides a unique context to bind notifications this user session.
+    var notificationContext: any NotificationContext { get }
+
     // MARK: Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
