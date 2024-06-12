@@ -128,7 +128,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
         let token = NotificationInContext.addObserver(
             name: .initialSync,
-            context: sut.managedObjectContext.notificationContext
+            context: uiMOC.notificationContext
         ) { _ in
             didNotify = true
         }
