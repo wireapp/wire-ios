@@ -20,11 +20,11 @@ import Foundation
 
 /// An event concerning conversations.
 
-public enum ConversationEvent {
+public enum ConversationEvent: Equatable {
 
     /// A conversation's access settings were updated.
 
-    case accessUpdate
+    case accessUpdate(ConversationAccessUpdateEvent)
 
     /// An unencrypted client message was added to a conversation.
 

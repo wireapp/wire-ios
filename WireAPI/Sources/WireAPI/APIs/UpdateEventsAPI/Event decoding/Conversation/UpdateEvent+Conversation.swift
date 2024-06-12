@@ -24,9 +24,12 @@ extension UpdateEvent {
         eventType: ConversationEventType,
         from decoder: any Decoder
     ) throws {
+        let container = try decoder.container(keyedBy: ConversationEventCodingKeys.self)
+
         switch eventType {
         case .accessUpdate:
-            self = .conversation(.accessUpdate)
+            let event = try ConversationAccessUpdateEventDecoder().decode(from: container)
+            self = .conversation(.accessUpdate(event))
 
         case .clientMessageAdd:
             self = .conversation(.clientMessageAdd)
