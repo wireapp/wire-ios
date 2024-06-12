@@ -126,9 +126,10 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         // given
         var didNotify: Bool = false
 
-        let token = NotificationInContext.addObserver(
-            name: .initialSync,
-            context: uiMOC.notificationContext
+        let token = NotificationCenter.default.addObserver(
+            forName: .initialSync,
+            object: uiMOC.notificationContext,
+            queue: nil
         ) { _ in
             didNotify = true
         }
