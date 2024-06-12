@@ -155,15 +155,11 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         }
 
         Task {
-            do {
-                let isOneOnOneReady = await isOneOnOneReady(userID: userID)
+            let isOneOnOneReady = await isOneOnOneReady(userID: userID)
 
-                await MainActor.run {
-                    let actionsList = makeActionsList(isOneOnOneReady: isOneOnOneReady)
-                    completion(actionsList)
-                }
-            } catch {
-                WireLogger.mls.error("failed to update MLS migration status: \(error)")
+            await MainActor.run {
+                let actionsList = makeActionsList(isOneOnOneReady: isOneOnOneReady)
+                completion(actionsList)
             }
         }
     }
