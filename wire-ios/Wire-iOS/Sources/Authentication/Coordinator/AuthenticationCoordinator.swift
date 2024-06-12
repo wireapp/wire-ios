@@ -883,8 +883,8 @@ extension AuthenticationCoordinator {
                     executeAction(.presentAlert(alert))
                 }
             } catch {
-                #warning("TODO: handle this error")
                 WireLogger.authentication.error("failed to update MLS migration status: \(error)")
+                assertionFailure(String(reflecting: error))
             }
         }
     }

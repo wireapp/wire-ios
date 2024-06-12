@@ -92,7 +92,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
 
     func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() async throws {
         // given
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             // make conversatio sync a dependency
             groupConversation.needsToBeUpdatedFromBackend = true
             groupConversation.legalHoldStatus = .pendingApproval

@@ -70,8 +70,8 @@ extension ZMUserSession {
                     completion(.failure(error))
                 }
             } catch {
-                #warning("TODO: handle this error!")
                 WireLogger.mls.error("creating team 1:1 conversation failed: \(error))")
+                assertionFailure(String(reflecting: error))
             }
         }
     }
