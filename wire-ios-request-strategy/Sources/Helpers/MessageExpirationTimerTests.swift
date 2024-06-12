@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 import WireRequestStrategy
+import WireTesting
 import XCTest
 
-class MessageExpirationTimerTests: MessagingTestBase {
+final class MessageExpirationTimerTests: MessagingTestBase {
 
     var sut: MessageExpirationTimer!
     var localNotificationDispatcher: MockPushMessageHandler!
@@ -61,7 +61,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         self.sut.objectsDidChange(messageSet)
-        self.waitForExpiration(of: message)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
         self.checkExpiration(of: message)
@@ -74,7 +74,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         self.sut.objectsDidChange(messageSet)
-        self.waitForExpiration(of: message)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
         XCTAssertEqual(self.localNotificationDispatcher.failedToSend, [message])
@@ -144,7 +144,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers([self.sut!], on: self.uiMOC)
-        self.waitForExpiration(of: message)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
         self.checkExpiration(of: message)
@@ -161,7 +161,7 @@ extension MessageExpirationTimerTests {
 
         // WHEN
         self.sut.objectsDidChange(messageSet)
-        self.waitForExpiration(of: message)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -179,7 +179,7 @@ extension MessageExpirationTimerTests {
 
         // THEN
         XCTAssertTrue(self.sut.hasMessageTimersRunning)
-        self.waitForExpiration(of: message)
+        wait(forConditionToBeTrue: message.isExpired, timeout: 2)
     }
 }
 
@@ -232,10 +232,5 @@ extension MessageExpirationTimerTests {
         XCTAssertFalse(message.hasChanges, file: file, line: line)
         XCTAssertNil(message.expirationDate, file: file, line: line)
         XCTAssertTrue(message.isExpired, file: file, line: line)
-    }
-
-    /// Wait for a message to expire. Asserts if it doesn't.
-    fileprivate func waitForExpiration(of message: ZMMessage, file: StaticString = #file, line: UInt = #line) {
-        XCTAssertTrue(self.waitOnMainLoop(until: { return message.isExpired }, timeout: 2), file: file, line: line)
     }
 }

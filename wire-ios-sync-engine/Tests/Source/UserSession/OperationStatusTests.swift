@@ -20,7 +20,7 @@ import Foundation
 
 @testable import WireSyncEngine
 
-class OperationStatusTests: MessagingTest {
+final class OperationStatusTests: MessagingTest {
 
     fileprivate var sut: OperationStatus!
 
@@ -77,7 +77,7 @@ class OperationStatusTests: MessagingTest {
 
         // when
         sut.finishBackgroundTask(withTaskResult: .finished)
-        OperationStatusTests.performRunLoopTick()
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
 
         // then
         XCTAssertEqual(sut.operationState, .background)
@@ -96,11 +96,11 @@ class OperationStatusTests: MessagingTest {
 
         // then
         XCTAssertEqual(sut.operationState, .backgroundFetch)
-        OperationStatusTests.performRunLoopTick()
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
 
         // when
         sut.finishBackgroundFetch(withFetchResult: .noData)
-        OperationStatusTests.performRunLoopTick()
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
 
         // then
         XCTAssertEqual(sut.operationState, .background)

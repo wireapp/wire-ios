@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireTesting
+
 @testable import WireDataModel
 
 class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
@@ -423,7 +425,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.extendDestructionTimer(to: Date(timeIntervalSinceNow: 15))
 
         // force a wait so timer map is updated
-        _ = wait(withTimeout: 0.5, verificationBlock: { return false })
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.5)
 
         // then a new timer was created
         let newTimer = self.deletionTimer?.timer(for: message)
@@ -455,7 +457,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.extendDestructionTimer(to: Date(timeIntervalSinceNow: 5))
 
         // force a wait so timer map is updated
-        _ = wait(withTimeout: 0.5, verificationBlock: { return false })
+        wait(for: [XCTestExpectation().inverted()], timeout: 0.5)
 
         // then a new timer was created
         let newTimer = self.deletionTimer?.timer(for: message)

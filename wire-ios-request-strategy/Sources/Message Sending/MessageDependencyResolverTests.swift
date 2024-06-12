@@ -32,9 +32,12 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "action is done within 500ms")
+        Task {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() throws {
@@ -55,9 +58,12 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "action is done within 500ms")
+        Task {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() throws {
@@ -86,14 +92,17 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         }
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "action is done within 500ms")
+        Task {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
-    func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() async throws {
+    func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() throws {
         // given
-        await syncMOC.perform { [self] in
+        syncMOC.performAndWait {
             // make conversatio sync a dependency
             groupConversation.needsToBeUpdatedFromBackend = true
             groupConversation.legalHoldStatus = .pendingApproval
@@ -108,16 +117,18 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "action is done within 500ms")
+        Task {
             do {
                 try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-                XCTFail()
+                XCTFail("unexpected success")
             } catch MessageDependencyResolverError.legalHoldPendingApproval {
-                // should pass here
+                expectation.fulfill()
             } catch {
                 XCTFail()
             }
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
     struct Arrangement {
@@ -137,5 +148,4 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             )
         }
     }
-
 }
