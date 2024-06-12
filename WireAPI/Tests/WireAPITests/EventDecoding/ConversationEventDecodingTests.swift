@@ -75,6 +75,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationDeleteEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationDelete")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.delete(Scaffolding.deleteEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -173,6 +187,12 @@ final class ConversationEventDecodingTests: XCTestCase {
                 lastEvent: "lastEvent",
                 lastEventTime: date(from: "1970-01-01T00:00:00.000Z")
             )
+        )
+
+        static let deleteEvent = ConversationDeleteEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: date(from: "2024-06-04T15:03:07.598Z")
         )
 
     }

@@ -36,7 +36,7 @@ public enum ConversationEvent: Equatable {
 
     /// An existing conversation was deleted.
 
-    case delete
+    case delete(ConversationDeleteEvent)
 
     /// A knock (aka ping) message was added to a conversation.
 
