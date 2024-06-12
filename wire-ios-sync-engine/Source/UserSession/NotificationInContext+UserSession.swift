@@ -26,8 +26,6 @@ import WireDataModel
 
 private let initialSyncCompletionNotificationName = Notification.Name(rawValue: "ZMInitialSyncCompletedNotification")
 
-extension ZMUserSession: NotificationContext { } // Mark ZMUserSession as valid notification context
-
 extension ZMUserSession {
 
     @objc public static func notifyInitialSyncCompleted(context: NSManagedObjectContext) {
