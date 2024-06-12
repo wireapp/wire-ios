@@ -20,10 +20,6 @@ import WireDataModel
 
 // MARK: - Initial sync
 
-@objc public protocol ZMInitialSyncCompletionObserver: NSObjectProtocol {
-    func initialSyncCompleted()
-}
-
 private let initialSyncCompletionNotificationName = Notification.Name(rawValue: "ZMInitialSyncCompletedNotification")
 
 extension ZMUserSession: NotificationContext { } // Mark ZMUserSession as valid notification context
