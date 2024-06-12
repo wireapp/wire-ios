@@ -125,7 +125,13 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     func testThatItNotifiesObserverWhenInitialIsSyncCompleted() {
         // given
         var didNotify: Bool = false
-        var token = sut.addInitialSyncCompletion { didNotify = true }
+
+        let token = NotificationInContext.addObserver(
+            name: .initialSync,
+            context: sut.managedObjectContext.notificationContext
+        ) { _ in
+            didNotify = true
+        }
 
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

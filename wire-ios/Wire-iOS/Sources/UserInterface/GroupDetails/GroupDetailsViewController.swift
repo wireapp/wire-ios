@@ -64,9 +64,16 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 if session.hasCompletedInitialSync {
                     didCompleteInitialSync = true
                 } else {
-                    initialSyncToken = session.addInitialSyncCompletion { [weak self] in
-                        self?.didCompleteInitialSync = true
-                        self?.initialSyncToken = nil
+                    let context = session.managedObjectContext
+
+                    initialSyncToken = NotificationInContext.addObserver(
+                        name: .initialSync,
+                        context: context.notificationContext
+                    ) { [weak self] _ in
+                        context.performGroupedBlock {
+                            self?.didCompleteInitialSync = true
+                            self?.initialSyncToken = nil
+                        }
                     }
                 }
             }
