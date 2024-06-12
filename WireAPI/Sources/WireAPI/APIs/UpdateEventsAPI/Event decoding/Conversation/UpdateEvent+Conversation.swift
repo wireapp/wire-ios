@@ -52,7 +52,8 @@ extension UpdateEvent {
             self = .conversation(.memberLeave(event))
 
         case .memberUpdate:
-            self = .conversation(.memberUpdate)
+            let event = try ConversationMemberUpdateEventDecoder().decode(from: container)
+            self = .conversation(.memberUpdate(event))
 
         case .messageAdd:
             self = .conversation(.messageAdd)

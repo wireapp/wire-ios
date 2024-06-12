@@ -117,6 +117,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationMemberUpdateEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationMemberUpdate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.memberUpdate(Scaffolding.memberUpdateEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -132,6 +146,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             uuid: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
             domain: "example.com"
         )
+
+        static let timestamp = date(from: "2024-06-04T15:03:07.598Z")
 
         static let accessUpdateEvent = ConversationAccessUpdateEvent(
             conversationID: conversationID,
@@ -153,7 +169,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         static let createEvent = ConversationCreateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: date(from: "2024-06-04T15:03:07.598Z"),
+            timestamp: timestamp,
             conversation: Conversation(
                 id: conversationID.uuid,
                 qualifiedID: conversationID,
@@ -163,7 +179,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                 mlsGroupID: "group_id",
                 cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 epoch: 123,
-                epochTimestamp: date(from: "2024-06-04T15:03:07.598Z"),
+                epochTimestamp: timestamp,
                 creator: UUID(uuidString: "6d88b1b9-f882-4990-ade5-86643fc6006e")!,
                 members: Conversation.Members(
                     others: [
@@ -199,11 +215,11 @@ final class ConversationEventDecodingTests: XCTestCase {
                             provider: UUID(uuidString: "69322b27-4fb8-41b6-add4-7b4ecc9e0c73")!
                         ),
                         archived: true,
-                        archivedReference: date(from: "2024-06-04T15:03:07.598Z"),
+                        archivedReference: timestamp,
                         hidden: true,
                         hiddenReference: "hidden_ref",
                         mutedStatus: 0,
-                        mutedReference: date(from: "2024-06-04T15:03:07.598Z")
+                        mutedReference: timestamp
                     )
                 ),
                 name: "Foo Bar",
@@ -220,13 +236,13 @@ final class ConversationEventDecodingTests: XCTestCase {
         static let deleteEvent = ConversationDeleteEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: date(from: "2024-06-04T15:03:07.598Z")
+            timestamp: timestamp
         )
 
         static let memberJoinEvent = ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: date(from: "2024-06-04T15:03:07.598Z"),
+            timestamp: timestamp,
             members: [
                 Conversation.Member(
                     qualifiedID: QualifiedID(
@@ -251,9 +267,23 @@ final class ConversationEventDecodingTests: XCTestCase {
         static let memberLeaveEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: date(from: "2024-06-04T15:03:07.598Z"),
+            timestamp: timestamp,
             removedUserIDs: [senderID],
             reason: .userDeleted
+        )
+
+        static let memberUpdateEvent = ConversationMemberUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            memberChange: ConversationMemberChange(
+                id: senderID,
+                newRoleName: "admin",
+                newMuteStatus: 1,
+                muteStatusReferenceDate: timestamp,
+                newArchivedStatus: true,
+                archivedStatusReferenceDate: timestamp
+            )
         )
 
     }

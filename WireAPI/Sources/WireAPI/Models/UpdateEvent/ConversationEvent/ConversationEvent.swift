@@ -48,7 +48,7 @@ public enum ConversationEvent: Equatable {
 
     /// One or more users have updated metadata in a conversation.
 
-    case memberUpdate
+    case memberUpdate(ConversationMemberUpdateEvent)
 
     /// An unencrypted message was added to a conversation.
 
