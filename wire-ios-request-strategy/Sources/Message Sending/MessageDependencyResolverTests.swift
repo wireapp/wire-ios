@@ -32,9 +32,12 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "action is done within 500ms")
+        Task {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() throws {
@@ -55,9 +58,12 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "action is done within 500ms")
+        Task {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() async throws {
@@ -131,5 +137,4 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             )
         }
     }
-
 }

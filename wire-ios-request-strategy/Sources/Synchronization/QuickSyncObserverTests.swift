@@ -20,16 +20,19 @@ import XCTest
 
 final class QuickSyncObserverTests: MessagingTestBase {
 
-    func testThatSynchronisationStateIsOnline_thenDontWait() async {
+    func testThatSynchronisationStateIsOnline_thenDontWait() {
         // given
         let (_, quickSyncObserver) = Arrangement(coreDataStack: coreDataStack)
             .withSynchronizationState(.online)
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "sync is done within 500ms")
+        Task {
             await quickSyncObserver.waitForQuickSyncToFinish()
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
     }
 
     func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() async throws {
@@ -46,8 +49,6 @@ final class QuickSyncObserverTests: MessagingTestBase {
     }
 
     struct Arrangement {
-
-        struct Scaffolding {}
 
         let coreDataStack: CoreDataStack
         let applicationStatus = MockApplicationStatus()
@@ -66,5 +67,4 @@ final class QuickSyncObserverTests: MessagingTestBase {
             )
         }
     }
-
 }
