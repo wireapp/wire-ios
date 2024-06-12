@@ -27,7 +27,6 @@ enum ConversationEventType: String {
     case memberJoin = "conversation.member-join"
     case memberLeave = "conversation.member-leave"
     case memberUpdate = "conversation.member-update"
-    case messageAdd = "conversation.message-add"
     case messageTimerUpdate = "conversation.message-timer-update"
     case mlsMessageAdd = "conversation.mls-message-add"
     case mlsWelcome = "conversation.mls-welcome"

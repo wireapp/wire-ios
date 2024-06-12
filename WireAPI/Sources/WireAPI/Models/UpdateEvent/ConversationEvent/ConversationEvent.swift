@@ -50,10 +50,6 @@ public enum ConversationEvent: Equatable {
 
     case memberUpdate(ConversationMemberUpdateEvent)
 
-    /// An unencrypted message was added to a conversation.
-
-    case messageAdd
-
     /// A conversation's self-deleting-message timer was updated.
 
     case messageTimerUpdate

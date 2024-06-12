@@ -55,9 +55,6 @@ extension UpdateEvent {
             let event = try ConversationMemberUpdateEventDecoder().decode(from: container)
             self = .conversation(.memberUpdate(event))
 
-        case .messageAdd:
-            self = .conversation(.messageAdd)
-
         case .messageTimerUpdate:
             self = .conversation(.messageTimerUpdate)
 
