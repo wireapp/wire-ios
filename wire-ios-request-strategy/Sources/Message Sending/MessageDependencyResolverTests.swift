@@ -21,7 +21,7 @@ import XCTest
 
 final class MessageDependencyResolverTests: MessagingTestBase {
 
-    func testThatGivenMessageWithoutDependencies_thenDontWait() throws {
+    func testThatGivenMessageWithoutDependencies_thenDontWait() async throws {
         // given
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -32,17 +32,14 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        let expectation = XCTestExpectation(description: "action is done within 500ms")
-        Task {
-            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 0.5)
+        let before = Date.now
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5)
     }
 
-    func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() throws {
+    func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() async throws {
         // given
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             groupConversation.messageProtocol = .mls
             groupConversation.mlsVerificationStatus = .degraded
         }
@@ -58,12 +55,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        let expectation = XCTestExpectation(description: "action is done within 500ms")
-        Task {
-            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 0.5)
+        let before = Date.now
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5)
     }
 
     func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() async throws {
@@ -131,7 +125,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         let coreDataStack: CoreDataStack
 
         func arrange() -> (Arrangement, MessageDependencyResolver) {
-            return (
+            (
                 self,
                 MessageDependencyResolver(context: coreDataStack.syncContext)
             )
