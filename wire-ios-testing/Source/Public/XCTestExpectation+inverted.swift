@@ -16,24 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMTBaseTest {
+import XCTest
 
-    public func wait(timeout: TimeInterval = 0.5,
-                     file: StaticString = #filePath,
-                     line: UInt = #line,
-                     forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.customExpectation(description: "isDone")
+extension XCTestExpectation {
 
-        Task {
-            do {
-                try await block()
-            } catch {
-                XCTFail("test failed: \(String(describing: error))", file: file, line: line)
-            }
-
-            expectation.fulfill()
-        }
-
-        XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
+    public func inverted() -> Self {
+        isInverted = true
+        return self
     }
 }
