@@ -28,16 +28,19 @@ private let initialSyncCompletionNotificationName = Notification.Name(rawValue: 
 
 extension ZMUserSession {
 
-    @objc public static func notifyInitialSyncCompleted(context: NSManagedObjectContext) {
-        NotificationInContext(name: initialSyncCompletionNotificationName, context: context.notificationContext).post()
+    func notifyInitialSyncCompleted() {
+        NotificationInContext(
+            name: initialSyncCompletionNotificationName,
+            context: notificationContext
+        ).post()
     }
 
     public func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver) -> Any {
-        return ZMUserSession.addInitialSyncCompletionObserver(observer, context: managedObjectContext)
+        ZMUserSession.addInitialSyncCompletionObserver(observer, context: managedObjectContext)
     }
 
     @objc public static func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: initialSyncCompletionNotificationName, context: context.notificationContext) { [weak observer] _ in
+        NotificationInContext.addObserver(name: initialSyncCompletionNotificationName, context: context.notificationContext) { [weak observer] _ in
             context.performGroupedBlock {
                 observer?.initialSyncCompleted()
             }
