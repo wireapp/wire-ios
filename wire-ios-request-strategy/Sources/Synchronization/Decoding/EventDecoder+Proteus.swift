@@ -55,7 +55,7 @@ extension EventDecoder {
                 selfClient?.remoteIdentifier == recipientID
             else {
                 let additionalInfo: LogAttributes = [
-                    LogAttributesKey.recipientID.rawValue: event.recipientID?.readableHash ?? "<nil>",
+                    LogAttributesKey.recipientID.rawValue: event.recipientID?.redactedAndTruncated() ?? "<nil>",
                     LogAttributesKey.selfClientId.rawValue: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     LogAttributesKey.selfUserId.rawValue: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
                 ].merging(event.logAttributes, uniquingKeysWith: { _, new in new })
