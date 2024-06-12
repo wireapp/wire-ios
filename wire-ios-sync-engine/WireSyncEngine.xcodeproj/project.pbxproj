@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		01300E62296838CE00D18B2E /* SessionManagerTests+Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */; };
 		0145AE842B1154010097E3B8 /* WireSyncEngineSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0145AE882B11551C0097E3B8 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014C7AA42ADD4DEA00CDEC45 /* AutoMockable.generated.swift */; };
-		0145AE892B11551C0097E3B8 /* AutoMockable.manual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA78702B04D98A006D8CCF /* AutoMockable.manual.swift */; };
 		0145AE8B2B1155690097E3B8 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549815931A43232400A7CE2E /* WireSyncEngine.framework */; };
 		0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
 		017ABBB62995278C0004C243 /* SlowSyncTests+NotificationsV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */; };
@@ -396,6 +394,8 @@
 		5996E8932C19CB28007A52F0 /* WireSystemSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */; };
 		5996E8962C19CB36007A52F0 /* WireUtilitiesSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5996E89E2C19CF54007A52F0 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5996E89B2C19CF54007A52F0 /* AutoMockable.generated.swift */; };
+		5996E89F2C19CF54007A52F0 /* AutoMockable.manual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5996E89C2C19CF54007A52F0 /* AutoMockable.manual.swift */; };
 		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59DA04A32BD25486003F9195 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
@@ -815,7 +815,6 @@
 		01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Proxy.swift"; sourceTree = "<group>"; };
 		0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSyncEngineSupport.h; sourceTree = "<group>"; };
-		014C7AA42ADD4DEA00CDEC45 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SlowSyncTests+NotificationsV3.swift"; sourceTree = "<group>"; };
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1002,7 +1001,6 @@
 		16A764601F3E0B0B00564F21 /* CallKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallKitManager.swift; sourceTree = "<group>"; };
 		16A86B8322A7E57100A674F8 /* ConversationTests+LegalHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationTests+LegalHold.swift"; sourceTree = "<group>"; };
 		16AD86B71F7292EB00E4C797 /* TypingChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingChange.swift; sourceTree = "<group>"; };
-		16BA78702B04D98A006D8CCF /* AutoMockable.manual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoMockable.manual.swift; sourceTree = "<group>"; };
 		16C4BD9F20A309CD00BCDB17 /* CallParticipantSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallParticipantSnapshot.swift; sourceTree = "<group>"; };
 		16D0A118234B999600A83F87 /* LabelUpstreamRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelUpstreamRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16D0A11C234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelUpstreamRequestStrategy.swift; sourceTree = "<group>"; };
@@ -1157,6 +1155,8 @@
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
 		598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5996E89B2C19CF54007A52F0 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
+		5996E89C2C19CF54007A52F0 /* AutoMockable.manual.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.manual.swift; sourceTree = "<group>"; };
 		59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringAction.swift; sourceTree = "<group>"; };
 		59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringActionServiceInterface.swift; sourceTree = "<group>"; };
@@ -1641,31 +1641,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0145AE822B1154010097E3B8 /* WireSyncEngineSupport */ = {
+		0145AE822B1154010097E3B8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				5996E8992C19CCE1007A52F0 /* Sourcery */,
+				5996E89A2C19CD2A007A52F0 /* Sources */,
 				0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */,
-				59E6A9112B4EE57000DBCC6B /* Synchronization */,
-				25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */,
 			);
-			path = WireSyncEngineSupport;
-			sourceTree = "<group>";
-		};
-		014C7AA02ADD4DC300CDEC45 /* sourcery */ = {
-			isa = PBXGroup;
-			children = (
-				014C7AA12ADD4DC300CDEC45 /* generated */,
-			);
-			path = sourcery;
-			sourceTree = "<group>";
-		};
-		014C7AA12ADD4DC300CDEC45 /* generated */ = {
-			isa = PBXGroup;
-			children = (
-				014C7AA42ADD4DEA00CDEC45 /* AutoMockable.generated.swift */,
-				16BA78702B04D98A006D8CCF /* AutoMockable.manual.swift */,
-			);
-			path = generated;
+			path = Support;
 			sourceTree = "<group>";
 		};
 		018A3DBD2B0799CA00EB3D6B /* Use cases */ = {
@@ -2001,11 +1984,10 @@
 				EEDDB6A32BCFC5E4009ECF97 /* WireSyncEngine.docc */,
 				09284B6A1B8272C300EEE10E /* WireSyncEngine Test Host.entitlements */,
 				3E18605F191A4F6A000FE027 /* README.md */,
-				014C7AA02ADD4DC300CDEC45 /* sourcery */,
 				5423B98C191A49CD0044347D /* Source */,
 				3E18605E191A4F4F000FE027 /* Resources */,
 				5423B997191A4A1B0044347D /* Tests */,
-				0145AE822B1154010097E3B8 /* WireSyncEngineSupport */,
+				0145AE822B1154010097E3B8 /* Support */,
 				540029B61918CA8500578793 /* Frameworks */,
 				540029B51918CA8500578793 /* Products */,
 			);
@@ -2489,6 +2471,32 @@
 				70355A7227AAE62D00F02C76 /* ZMUserSession+SecurityClassificationProviding.swift */,
 			);
 			path = SecurityClassification;
+			sourceTree = "<group>";
+		};
+		5996E8992C19CCE1007A52F0 /* Sourcery */ = {
+			isa = PBXGroup;
+			children = (
+				5996E89D2C19CF54007A52F0 /* generated */,
+			);
+			path = Sourcery;
+			sourceTree = "<group>";
+		};
+		5996E89A2C19CD2A007A52F0 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */,
+				59E6A9112B4EE57000DBCC6B /* Synchronization */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		5996E89D2C19CF54007A52F0 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				5996E89B2C19CF54007A52F0 /* AutoMockable.generated.swift */,
+				5996E89C2C19CF54007A52F0 /* AutoMockable.manual.swift */,
+			);
+			path = generated;
 			sourceTree = "<group>";
 		};
 		59E6A9112B4EE57000DBCC6B /* Synchronization */ = {
@@ -3087,6 +3095,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0145AE872B1154010097E3B8 /* Build configuration list for PBXNativeTarget "WireSyncEngineSupport" */;
 			buildPhases = (
+				5996E8972C19CC3E007A52F0 /* Run Sourcery */,
 				0145AE7C2B1154010097E3B8 /* Headers */,
 				0145AE7D2B1154010097E3B8 /* Sources */,
 				0145AE7E2B1154010097E3B8 /* Frameworks */,
@@ -3171,7 +3180,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 549815A61A43232500A7CE2E /* Build configuration list for PBXNativeTarget "WireSyncEngine-ios" */;
 			buildPhases = (
-				0145AE9C2B11580B0097E3B8 /* Run Sourcery */,
 				549815901A43232400A7CE2E /* Headers */,
 				5498158E1A43232400A7CE2E /* Sources */,
 				5498158F1A43232400A7CE2E /* Frameworks */,
@@ -3351,7 +3359,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0145AE9C2B11580B0097E3B8 /* Run Sourcery */ = {
+		5996E8972C19CC3E007A52F0 /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -3368,7 +3376,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-sourcery.sh --config ./sourcery/config.yml\n";
+			shellScript = "../scripts/run-sourcery.sh --config ./Support/Sourcery/config.yml\n";
 		};
 		667FC69E27356C3F00E82FEF /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3398,9 +3406,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */,
-				0145AE882B11551C0097E3B8 /* AutoMockable.generated.swift in Sources */,
 				25CCE9DC2BA4A943002AB21F /* String+Mocks.swift in Sources */,
-				0145AE892B11551C0097E3B8 /* AutoMockable.manual.swift in Sources */,
+				5996E89E2C19CF54007A52F0 /* AutoMockable.generated.swift in Sources */,
+				5996E89F2C19CF54007A52F0 /* AutoMockable.manual.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4233,7 +4241,6 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -4326,7 +4333,6 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

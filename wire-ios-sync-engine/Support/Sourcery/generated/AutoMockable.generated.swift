@@ -489,7 +489,7 @@ public class MockSelfClientCertificateProviderProtocol: SelfClientCertificatePro
     public var hasCertificate: Bool {
         get async {
             hasCertificateCallsCount += 1
-            if let hasCertificateClosure = hasCertificateClosure {
+            if let hasCertificateClosure {
                 return await hasCertificateClosure()
             } else {
                 return underlyingHasCertificate

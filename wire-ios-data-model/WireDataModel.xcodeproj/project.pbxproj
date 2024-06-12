@@ -2169,8 +2169,8 @@
 		59D1C3012B1DE6FF0016F6B2 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				0125F7392B28A31C00D989AB /* Sources */,
 				594EB2FE2B1E31D30022A5CD /* Sourcery */,
+				0125F7392B28A31C00D989AB /* Sources */,
 				59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */,
 			);
 			path = Support;
