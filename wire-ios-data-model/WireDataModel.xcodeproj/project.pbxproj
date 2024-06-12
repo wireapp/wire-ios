@@ -286,6 +286,10 @@
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
 		5980C7012BE4E17100278363 /* E2EINotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5980C7002BE4E17100278363 /* E2EINotifications.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
+		5996E8B42C19F482007A52F0 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B32C19F482007A52F0 /* WireTesting.framework */; };
+		5996E8B52C19F482007A52F0 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B32C19F482007A52F0 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5996E8B82C19F485007A52F0 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B72C19F485007A52F0 /* OCMock.xcframework */; };
+		5996E8B92C19F485007A52F0 /* OCMock.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B72C19F485007A52F0 /* OCMock.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
@@ -900,6 +904,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5996E8B62C19F482007A52F0 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5996E8B52C19F482007A52F0 /* WireTesting.framework in Embed Frameworks */,
+				5996E8B92C19F485007A52F0 /* OCMock.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EE67F72A296F0C6A001D7C88 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1204,6 +1220,8 @@
 		597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolAction.swift; sourceTree = "<group>"; };
 		5980C7002BE4E17100278363 /* E2EINotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EINotifications.swift; sourceTree = "<group>"; };
 		5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+allTypes.swift"; sourceTree = "<group>"; };
+		5996E8B32C19F482007A52F0 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5996E8B72C19F485007A52F0 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = "/Users/christoph/Developer/Repositories/wireapp/wire-ios6/wire-ios-testing/../Carthage/Build/OCMock.xcframework"; sourceTree = "<absolute>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireDataModelSupport.h; sourceTree = "<group>"; };
@@ -1867,6 +1885,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */,
+				5996E8B82C19F485007A52F0 /* OCMock.xcframework in Frameworks */,
+				5996E8B42C19F482007A52F0 /* WireTesting.framework in Frameworks */,
 				F9C9A5071CAD5DF10039E10C /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3500,6 +3520,8 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5996E8B72C19F485007A52F0 /* OCMock.xcframework */,
+				5996E8B32C19F482007A52F0 /* WireTesting.framework */,
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
 				EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */,
@@ -3769,6 +3791,7 @@
 				F9C9A5021CAD5DF10039E10C /* Sources */,
 				F9C9A5031CAD5DF10039E10C /* Frameworks */,
 				F9C9A5041CAD5DF10039E10C /* Resources */,
+				5996E8B62C19F482007A52F0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
