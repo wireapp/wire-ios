@@ -22,10 +22,6 @@ import Foundation
 
 public enum ConversationEvent {
 
-    /// A new asset was added to a conversation.
-
-    case assetAdd
-
     /// A conversation's access settings were updated.
 
     case accessUpdate

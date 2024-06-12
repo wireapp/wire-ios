@@ -25,9 +25,6 @@ extension UpdateEvent {
         from decoder: any Decoder
     ) throws {
         switch eventType {
-        case .assetAdd:
-            self = .conversation(.assetAdd)
-
         case .accessUpdate:
             self = .conversation(.accessUpdate)
 
