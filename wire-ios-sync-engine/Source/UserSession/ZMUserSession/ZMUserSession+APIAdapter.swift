@@ -23,6 +23,8 @@ extension ZMUserSession {
 
     public func writeContinouslyToCoreCrypto() {
         Task {
+            let backgroundTaskManager = BackgroundActivityFactory.shared
+            guard let activity = backgroundTaskManager.startBackgroundActivity(name: "Writing To CoreCrypto") else { return }
             guard let sessionID = await managedObjectContext.perform({
                 let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
                 let selfClient = selfUser.selfClient()
@@ -34,11 +36,12 @@ extension ZMUserSession {
 
             let cc = try await coreCryptoProvider.coreCrypto()
 
-            try await cc.perform { cc in
+             try await cc.perform { cc in
                 while true {
                     try await cc.proteusSessionSave(sessionId: sessionID.rawValue)
                 }
             }
+            backgroundTaskManager.endBackgroundActivity(activity)
         }
     }
 
