@@ -59,15 +59,28 @@ extension ZMUserSession {
 
     private static let stateKey = "networkState"
 
-    public static func addNetworkAvailabilityObserver(_ observer: ZMNetworkAvailabilityObserver, userSession: ZMUserSession) -> Any {
-        return NotificationInContext.addObserver(name: name,
-                                                 context: userSession) { [weak observer] note in
-            observer?.didChangeAvailability(newState: note.userInfo[stateKey] as! ZMNetworkState)
+    public static func addNetworkAvailabilityObserver(
+        _ observer: ZMNetworkAvailabilityObserver,
+        userSession: ZMUserSession
+    ) -> Any {
+        return NotificationInContext.addObserver(
+            name: name,
+            context: userSession.managedObjectContext.notificationContext
+        ) { [weak observer] note in
+            let networkState = note.userInfo[stateKey] as! ZMNetworkState
+            observer?.didChangeAvailability(newState: networkState)
         }
     }
 
-    public static func notify(networkState: ZMNetworkState, userSession: ZMUserSession) {
-        NotificationInContext(name: name, context: userSession, userInfo: [stateKey: networkState]).post()
+    public static func notify(
+        networkState: ZMNetworkState,
+        userSession: ZMUserSession
+    ) {
+        NotificationInContext(
+            name: name,
+            context: userSession.managedObjectContext.notificationContext,
+            userInfo: [stateKey: networkState]
+        ).post()
     }
 
 }
