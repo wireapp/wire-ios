@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+
+@testable import WireDataModel
 
 final class MessageDependencyResolverTests: MessagingTestBase {
 
@@ -34,7 +35,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         // then test completes
         let before = Date.now
         try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-        XCTAssert(Date.now.timeIntervalSince(before) < 0.5)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "duration > 500ms")
     }
 
     func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() async throws {
@@ -57,7 +58,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         // then test completes
         let before = Date.now
         try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-        XCTAssert(Date.now.timeIntervalSince(before) < 0.5)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "duration > 500ms")
     }
 
     func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() async throws {
@@ -84,12 +85,14 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
 
         // then test completes
+        let before = Date.now
         try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "duration > 500ms")
     }
 
     func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() async throws {
         // given
-        await syncMOC.perform { [self] in
+        syncMOC.performAndWait {
             // make conversatio sync a dependency
             groupConversation.needsToBeUpdatedFromBackend = true
             groupConversation.legalHoldStatus = .pendingApproval
