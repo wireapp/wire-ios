@@ -111,7 +111,7 @@ extension ZMUserSession: UserSession {
     public func unlockDatabase() throws {
         try earService.unlockDatabase()
 
-        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
+        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
 
         processEvents()
     }
