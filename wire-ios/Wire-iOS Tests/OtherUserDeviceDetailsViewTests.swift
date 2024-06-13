@@ -83,7 +83,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
             certificate = .mockInvalid
         }
 
-        let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        let emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         let deviceActions = MockDeviceDetailsViewActions()
         deviceActions.getProteusFingerPrint_MockValue = proteusKeyFingerPrint
         let viewModel = DeviceInfoViewModel(title: "some title",

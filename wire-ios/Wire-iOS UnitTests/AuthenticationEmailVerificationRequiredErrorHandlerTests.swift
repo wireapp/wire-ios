@@ -28,7 +28,7 @@ class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
         // GIVEN
         let email = "test@email.com"
         let password = "12345678"
-        let credentials = ZMEmailCredentials(email: email, password: password)
+        let credentials = UserEmailCredentials(email: email, password: password)
         let step = AuthenticationFlowStep.authenticateEmailCredentials(credentials)
         let error = NSError.userSessionErrorWith(.accountIsPendingVerification, userInfo: nil)
 
@@ -51,7 +51,7 @@ class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
 
     func testThatItDoesntHandleTheEventWhenErrorIsNotCorrect() {
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "test@example.com", password: "12345678")
+        let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         let step = AuthenticationFlowStep.registerEmailCredentials(credentials, isResend: false)
         let error = NSError.userSessionErrorWith(.accessTokenExpired, userInfo: nil)
 

@@ -18,7 +18,6 @@
 
 #import "NSError+ZMUserSession.h"
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMCredentials.h"
 
 @interface UserProfileTests : IntegrationTest
 

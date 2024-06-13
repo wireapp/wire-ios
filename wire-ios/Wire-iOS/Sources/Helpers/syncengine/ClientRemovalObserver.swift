@@ -33,7 +33,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     var userClientToDelete: UserClient
     private weak var delegate: ClientRemovalObserverDelegate?
     private let completion: ((Error?) -> Void)?
-    private var credentials: ZMEmailCredentials?
+    private var credentials: UserEmailCredentials?
     private lazy var requestPasswordController: RequestPasswordController = {
         return RequestPasswordController(context: .removeDevice,
                                          callback: {[weak self] password in
@@ -43,7 +43,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
                 return
             }
 
-            self?.credentials = ZMEmailCredentials(email: "", password: password)
+            self?.credentials = UserEmailCredentials(email: "", password: password)
             self?.startRemoval()
             self?.passwordIsNecessaryForDelete = true
         })
@@ -53,7 +53,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
 
     init(userClientToDelete: UserClient,
          delegate: ClientRemovalObserverDelegate,
-         credentials: ZMEmailCredentials?,
+         credentials: UserEmailCredentials?,
          completion: ((Error?) -> Void)? = nil) {
         self.userClientToDelete = userClientToDelete
         self.delegate = delegate

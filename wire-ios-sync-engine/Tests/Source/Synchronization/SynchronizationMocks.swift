@@ -104,7 +104,7 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
         coreCryptoProvider: CoreCryptoProviderProtocol!
     ) {
         super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
-        self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
+        self.emailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
     }
 
     override var currentPhase: ClientRegistrationPhase {
@@ -138,9 +138,9 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var mockPhase: ClientUpdatePhase?
     var deleteCallCount: Int = 0
     var fetchCallCount: Int = 0
-    var mockCredentials: ZMEmailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
+    var mockCredentials: UserEmailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
 
-    override var credentials: ZMEmailCredentials? {
+    override var credentials: UserEmailCredentials? {
         return mockCredentials
     }
 
@@ -166,8 +166,8 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     var email = "hello@example.com"
     var password = "verySafePassword"
 
-    func emailCredentials() -> ZMEmailCredentials! {
-        return ZMEmailCredentials(email: email, password: password)
+    func emailCredentials() -> UserEmailCredentials {
+        return UserEmailCredentials(email: email, password: password)
     }
 
     func credentialsMayBeCleared() {

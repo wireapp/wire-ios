@@ -37,7 +37,7 @@ final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
         }
 
         // Get the signed-in user credentials
-        let authenticationCredentials: ZMCredentials?
+        let authenticationCredentials: UserCredentials?
 
         switch currentStep {
         case .authenticateEmailCredentials(let credentials):

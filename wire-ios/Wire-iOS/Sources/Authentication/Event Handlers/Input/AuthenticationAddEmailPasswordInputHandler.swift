@@ -38,7 +38,7 @@ final class AuthenticationAddEmailPasswordInputHandler: AuthenticationEventHandl
             return nil
         }
 
-        let credentials = ZMEmailCredentials(email: email, password: password)
+        let credentials = UserEmailCredentials(email: email, password: password)
         return [.addEmailAndPassword(credentials)]
     }
 

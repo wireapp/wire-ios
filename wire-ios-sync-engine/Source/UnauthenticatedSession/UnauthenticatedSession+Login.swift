@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-extension ZMCredentials {
+extension UserCredentials {
     var isInvalid: Bool {
         let noEmail = email?.isEmpty ?? true
         let noPassword = password?.isEmpty ?? true
@@ -37,7 +37,7 @@ extension UnauthenticatedSession {
 
     /// Attempt to log in with the given credentials
     @objc(loginWithCredentials:)
-    public func login(with credentials: ZMCredentials) {
+    public func login(with credentials: UserCredentials) {
         let updatedCredentialsInUserSession = delegate?.session(session: self, updatedCredentials: credentials) ?? false
 
         guard !updatedCredentialsInUserSession else { return }

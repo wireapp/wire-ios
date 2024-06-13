@@ -50,7 +50,7 @@ enum AuthenticationCoordinatorAction {
     case startSSOFlow
     case startBackupFlow
     case signOut(warn: Bool)
-    case addEmailAndPassword(ZMEmailCredentials)
+    case addEmailAndPassword(UserEmailCredentials)
     case configureDevicePermissions
     case startE2EIEnrollment
     case completeE2EIEnrollment

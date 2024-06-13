@@ -68,7 +68,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
 
-        let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        let emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 
         let deviceActionsHandler = DeviceDetailsViewActionsHandler(
             userClient: client,

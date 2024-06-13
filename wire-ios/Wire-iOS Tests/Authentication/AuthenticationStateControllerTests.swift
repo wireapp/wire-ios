@@ -68,7 +68,7 @@ class AuthenticationStateControllerTests: XCTestCase {
 
     func testThatItAdvancesStateWithNonUIStep() {
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "test@example.com", password: "testtest")
+        let credentials = UserEmailCredentials(email: "test@example.com", password: "testtest")
         let emailStep = AuthenticationFlowStep.authenticateEmailCredentials(credentials)
 
         // WHEN

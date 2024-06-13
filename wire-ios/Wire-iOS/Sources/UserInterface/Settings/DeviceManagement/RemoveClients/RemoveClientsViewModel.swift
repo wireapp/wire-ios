@@ -22,11 +22,11 @@ import WireSyncEngine
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
         private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
-        private let credentials: ZMEmailCredentials?
+        private let credentials: UserEmailCredentials?
         private(set) var clients: [UserClient] = []
 
         init(clientsList: [UserClient],
-             credentials: ZMEmailCredentials?) {
+             credentials: UserEmailCredentials?) {
             self.credentials = credentials
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
@@ -60,7 +60,7 @@ extension RemoveClientsViewController {
     }
 }
 
-private extension ZMEmailCredentials {
+private extension UserEmailCredentials {
     var emailCredentials: EmailCredentials? {
         guard let email,
               let password

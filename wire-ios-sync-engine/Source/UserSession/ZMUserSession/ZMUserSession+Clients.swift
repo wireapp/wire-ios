@@ -51,7 +51,7 @@ extension ZMUserSession {
     /// Deletes selfUser clients from the backend
 
     @objc(deleteClient:withCredentials:)
-    public func deleteClient(_ client: UserClient, credentials: ZMEmailCredentials?) {
+    public func deleteClient(_ client: UserClient, credentials: UserEmailCredentials?) {
         client.markForDeletion()
         client.managedObjectContext?.saveOrRollback()
 
