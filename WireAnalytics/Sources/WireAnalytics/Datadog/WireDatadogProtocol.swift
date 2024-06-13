@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireAnalyticsVoidTracker: WireAnalyticsTracking {
+public protocol WireDatadogProtocol {
 
-    public init() { }
-
-    public let datadogUserIdentifier: String? = nil
+    /// SHA256 string to identify current device across app and extensions.
+    var datadogUserIdentifier: String? { get }
 }

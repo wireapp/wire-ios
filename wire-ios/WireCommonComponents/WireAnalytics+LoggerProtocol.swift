@@ -111,7 +111,7 @@ extension WireDatadog: WireSystem.LoggerProtocol {
 
 // MARK: - WireAnalyticsVoidTracker
 
-extension WireAnalyticsVoidTracker: WireSystem.LoggerProtocol {
+extension WireDatadogVoid: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) { }
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) { }
     public func notice(_ message: any LogConvertible, attributes: LogAttributes...) { }

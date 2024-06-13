@@ -39,7 +39,7 @@ public enum WireAnalytics {
     }
 }
 
-public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
+public typealias WireAnalyticsProtocol = WireDatadogProtocol & LoggerProtocol
 
 // MARK: - Singleton
 
@@ -64,7 +64,7 @@ extension WireAnalytics {
 #else
 
 extension WireAnalytics {
-    public static let shared: any WireAnalyticsProtocol = WireAnalyticsVoidTracker()
+    public static let shared: any WireAnalyticsProtocol = WireDatadogVoid()
 }
 
 #endif
