@@ -125,6 +125,30 @@ public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneC
 
 }
 
+public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationGuestLinkUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) {
+        invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
+
+        guard let mock = invokeConversationPasswordCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationPasswordCompletion`")
+        }
+
+        mock(conversation, password, completion)
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -800,6 +824,30 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         }
 
         mock(session)
+    }
+
+}
+
+public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServicesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void)] = []
+    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) {
+        invokeConversationAllowGuestsAllowServicesCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowServices: allowServices, completion: completion))
+
+        guard let mock = invokeConversationAllowGuestsAllowServicesCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowServicesCompletion`")
+        }
+
+        mock(conversation, allowGuests, allowServices, completion)
     }
 
 }
