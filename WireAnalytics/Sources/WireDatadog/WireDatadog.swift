@@ -28,9 +28,9 @@ public final class WireDatadog {
 
     private let applicationID: String
     private let logLevel: LogLevel = .debug
-    private let userIdentifier: String
+    private let _userIdentifier: String
 
-    public var datadogUserIdentifier: String? { userIdentifier }
+    public var userIdentifier: String? { _userIdentifier }
 
     public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
@@ -43,9 +43,9 @@ public final class WireDatadog {
         applicationID = appID
 
         if let identifierForVendor {
-            userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
+            _userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
         } else {
-            userIdentifier = "none"
+            _userIdentifier = "none"
         }
 
         // set up datadog
@@ -89,11 +89,11 @@ public final class WireDatadog {
         )
         RUM.enable(with: rumConfiguration)
 
-        Datadog.setUserInfo(id: userIdentifier)
+        Datadog.setUserInfo(id: _userIdentifier)
 
         logger?.log(
             level: logLevel,
-            message: "Datadog startMonitoring for device: \(userIdentifier)",
+            message: "Datadog startMonitoring for device: \(_userIdentifier)",
             error: nil,
             attributes: nil
         )

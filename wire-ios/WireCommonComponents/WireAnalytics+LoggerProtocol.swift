@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
-import WireSystem
-
-// MARK: - WireDatadog Implementation
-
 #if canImport(WireDatadog)
 
 import DatadogLogs
+import WireAnalytics
 import WireDatadog
+import WireSystem
 
 extension WireDatadog: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -105,21 +102,6 @@ extension WireDatadog: WireSystem.LoggerProtocol {
             attributes: plainAttributes
         )
     }
-}
-
-#else
-
-// MARK: - WireDatadog Void
-
-extension WireDatadogVoid: WireSystem.LoggerProtocol {
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) { }
-    public func info(_ message: any LogConvertible, attributes: LogAttributes...) { }
-    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) { }
-    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) { }
-    public func error(_ message: any LogConvertible, attributes: LogAttributes...) { }
-    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) { }
-
-    public func addTag(_ key: LogAttributesKey, value: String?) { }
 }
 
 #endif
