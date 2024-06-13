@@ -955,10 +955,10 @@ public class MockUserProfile: UserProfile {
 
     // MARK: - requestPhoneNumberChange
 
-    public var requestPhoneNumberChangeCredentials_Invocations: [ZMPhoneCredentials] = []
-    public var requestPhoneNumberChangeCredentials_MockMethod: ((ZMPhoneCredentials) -> Void)?
+    public var requestPhoneNumberChangeCredentials_Invocations: [UserPhoneCredentials] = []
+    public var requestPhoneNumberChangeCredentials_MockMethod: ((UserPhoneCredentials) -> Void)?
 
-    public func requestPhoneNumberChange(credentials: ZMPhoneCredentials) {
+    public func requestPhoneNumberChange(credentials: UserPhoneCredentials) {
         requestPhoneNumberChangeCredentials_Invocations.append(credentials)
 
         guard let mock = requestPhoneNumberChangeCredentials_MockMethod else {
@@ -1005,11 +1005,11 @@ public class MockUserProfile: UserProfile {
 
     // MARK: - requestSettingEmailAndPassword
 
-    public var requestSettingEmailAndPasswordCredentials_Invocations: [ZMEmailCredentials] = []
+    public var requestSettingEmailAndPasswordCredentials_Invocations: [UserEmailCredentials] = []
     public var requestSettingEmailAndPasswordCredentials_MockError: Error?
-    public var requestSettingEmailAndPasswordCredentials_MockMethod: ((ZMEmailCredentials) throws -> Void)?
+    public var requestSettingEmailAndPasswordCredentials_MockMethod: ((UserEmailCredentials) throws -> Void)?
 
-    public func requestSettingEmailAndPassword(credentials: ZMEmailCredentials) throws {
+    public func requestSettingEmailAndPassword(credentials: UserEmailCredentials) throws {
         requestSettingEmailAndPasswordCredentials_Invocations.append(credentials)
 
         if let error = requestSettingEmailAndPasswordCredentials_MockError {
