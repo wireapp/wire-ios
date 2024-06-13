@@ -1,0 +1,13 @@
+{
+    "type": "feature-config.update",
+    "name": "appLock",
+    "data": {
+        "config": {
+            "enforceAppLock": true,
+            "inactivityTimeoutSecs": 60
+        },
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}

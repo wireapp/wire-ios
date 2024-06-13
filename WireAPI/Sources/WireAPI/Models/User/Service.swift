@@ -21,6 +21,6 @@ import Foundation
 /// Service Information for a bot
 
 public struct Service: Equatable {
-    public let id: String
-    public let provider: String
+    public let id: UUID
+    public let provider: UUID
 }
