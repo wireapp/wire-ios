@@ -81,6 +81,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     // MARK: - Non re-entrant
 
+    // maybe it makes sense to test performNonReentrant directly instead
     func test_TwoOperationsOnSameGroupAreExecutedSerially() async throws {
         // Given
         let groupID = MLSGroupID.random()
@@ -97,7 +98,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         let sendCommitExpectation = XCTestExpectation(description: "send commit")
-        let decryptMessageExpectation = XCTestExpectation(description: "decrypted message")
+        let decryptMessageExpectations = [
+            XCTestExpectation(description: "not yet decrypting message").inverted(),
+            XCTestExpectation(description: "decrypted message")
+        ]
         var sendCommitContinuation: CheckedContinuation<Void, Never>?
 
         // Mock Update key material.
@@ -117,7 +121,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
-            decryptMessageExpectation.fulfill()
+            decryptMessageExpectations.forEach { $0.fulfill() }
             return DecryptedMessage(
                 message: nil,
                 proposals: [],
@@ -139,27 +143,32 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 XCTFail(String(reflecting: error))
             }
         }
+
+        // the decrypt message operation should wait for update key material to finish
+        await fulfillment(of: [sendCommitExpectation])
+        // the `updateKeyMaterial` is blocked/suspended, now ensure that no other call using the same groupID can enter
+
+        let beforeDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has been started/is running")
         Task {
             do {
-                try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+                beforeDecryptMessageExpectation.fulfill()
                 try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
             } catch {
                 XCTFail(String(reflecting: error))
             }
         }
-
-        // the decrypt message operation should wait for update key material to finish
-        await fulfillment(of: [sendCommitExpectation])
-        try await Task.sleep(nanoseconds: 1_000_000_000)
+        await fulfillment(of: [beforeDecryptMessageExpectation], timeout: 1)
+        await fulfillment(of: [decryptMessageExpectations[0]], timeout: 0.1)
+        // assuming the second task is now supsended by `performNonReentrant
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 0)
 
         // allow update key material to finish
         sendCommitContinuation?.resume()
-        await fulfillment(of: [decryptMessageExpectation])
-
+        await fulfillment(of: [decryptMessageExpectations[1]], timeout: 0.5)
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
 
+    // maybe it makes sense to test performNonReentrant directly instead
     func test_TwoOperationsOnDifferentGroupsAreExecutedConcurrently() async throws {
         // Given
         let groupID1 = MLSGroupID.random()
@@ -220,9 +229,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 XCTFail(String(reflecting: error))
             }
         }
+
+        // ensure we entered via sendCommit, block further execution
+        await fulfillment(of: [sendCommitExpectation], timeout: .tenSeconds)
+
         Task {
             do {
-                try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
                 try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
             } catch {
                 XCTFail(String(reflecting: error))
@@ -230,7 +242,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // the update key material operation shouldn't block the decrypt message
-        await fulfillment(of: [sendCommitExpectation, decryptMessageExpectation], timeout: .tenSeconds)
+        await fulfillment(of: [decryptMessageExpectation], timeout: .tenSeconds)
+
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
         sendCommitContinuation?.resume()
     }
