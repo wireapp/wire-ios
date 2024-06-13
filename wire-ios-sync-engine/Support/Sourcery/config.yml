@@ -1,5 +1,5 @@
 sources:
-  - ../Source
+  - ../../Source
 templates:
   - ./AutoMockable.stencil
 output:
