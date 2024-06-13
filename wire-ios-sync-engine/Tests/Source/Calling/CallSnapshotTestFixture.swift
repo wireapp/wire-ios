@@ -47,7 +47,13 @@ struct CallSnapshotTestFixture {
         )
     }
 
-    static func callSnapshot(conversationId: AVSIdentifier, callCenter: WireCallCenterV3, clients: [AVSClient], state: CallState = .established) -> CallSnapshot {
+    static func callSnapshot(
+        conversationId: AVSIdentifier,
+        callCenter: WireCallCenterV3,
+        clients: [AVSClient],
+        state: CallState = .established,
+        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = []
+    ) -> CallSnapshot {
 
         let callParticipantsSnapshot = CallParticipantsSnapshot(
             conversationId: conversationId,
@@ -66,7 +72,7 @@ struct CallSnapshotTestFixture {
             networkQuality: .normal,
             conversationType: .conference,
             degradedUser: nil,
-            activeSpeakers: [],
+            activeSpeakers: activeSpeakers,
             videoGridPresentationMode: .allVideoStreams,
             conversationObserverToken: nil
         )
