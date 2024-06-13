@@ -62,7 +62,6 @@ final class AccountSelectorView: UIView {
         }
         accounts.forEach { account in
             let accountView = AccountViewBuilder(account: account, displayContext: .accountSelector).build()
-            accountView.unreadCountStyle = .current
             accountView.onTap = { [weak self] account in
                 self?.delegate?.accountSelectorView(self!, didSelect: account)
             }

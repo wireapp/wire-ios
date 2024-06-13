@@ -2763,12 +2763,8 @@ internal enum L10n {
             return L10n.tr("Localizable", "conversation_list.header.self_team.accessibility_value", String(describing: p1), fallback: "%@ account.")
           }
           internal enum AccessibilityValue {
-            /// Active now.
-            internal static let active = L10n.tr("Localizable", "conversation_list.header.self_team.accessibility_value.active", fallback: "Active now.")
             /// Has new messages.
             internal static let hasNewMessages = L10n.tr("Localizable", "conversation_list.header.self_team.accessibility_value.has_new_messages", fallback: "Has new messages.")
-            /// Tap to activate.
-            internal static let inactive = L10n.tr("Localizable", "conversation_list.header.self_team.accessibility_value.inactive", fallback: "Tap to activate.")
           }
         }
       }

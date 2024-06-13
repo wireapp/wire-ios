@@ -29,48 +29,11 @@ class BaseAccountView: UIView {
 
     let imageViewContainer = UIView()
     private let outlineView = UIView()
-    let selectionView = ShapeView()
-    private var unreadCountToken: Any?
     private var selfUserObserver: NSObjectProtocol!
     let account: Account
-
-    var unreadCountStyle: AccountUnreadCountStyle = .none {
-        didSet { updateAppearance() }
-    }
-
-    var selected: Bool = true {
-        didSet { updateAppearance() }
-    }
-
-    var hasUnreadMessages: Bool {
-        switch unreadCountStyle {
-        case .none:
-            return false
-        case .current:
-            return account.unreadConversationCount > 0
-        case .others:
-            return ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
-        }
-    }
-
-    func updateAppearance() {
-        selectionView.isHidden = !selected
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-        layoutSubviews()
-    }
+    // availability status
 
     var onTap: (Account) -> Void = { _ in }
-
-    var accessibilityState: String {
-        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
-        var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
-
-        if hasUnreadMessages {
-            result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
-        }
-
-        return result
-    }
 
     // MARK: - Init
 
@@ -79,18 +42,10 @@ class BaseAccountView: UIView {
 
         super.init(frame: .zero)
 
-        if let userSession = SessionManager.shared?.activeUserSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
-        }
-
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-        selectionView.hostedLayer.fillColor = UIColor.clear.cgColor
-        selectionView.hostedLayer.lineWidth = 1.5
-
-        [imageViewContainer, outlineView, selectionView].forEach(addSubview)
+        addSubview(imageViewContainer)
+        addSubview(outlineView)
 
         let iconWidth: CGFloat
-
         switch displayContext {
         case .conversationListHeader:
             iconWidth = CGFloat.ConversationListHeader.avatarSize
@@ -102,39 +57,20 @@ class BaseAccountView: UIView {
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
         self.addGestureRecognizer(tapGesture)
-
-        self.unreadCountToken = NotificationCenter.default.addObserver(forName: .AccountUnreadCountDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.updateAppearance()
-        }
-
-        updateAppearance()
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Override methods
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+        fatalError("init(coder:) is not supported")
     }
 
     // MARK: - Setup constraints
 
     func setupConstraints(iconWidth: CGFloat) {
+
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
+
         let containerInset: CGFloat = 6
-
-        [self, selectionView, imageViewContainer].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
         NSLayoutConstraint.activate(
-            selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
             [
                 imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
                 imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -147,15 +83,8 @@ class BaseAccountView: UIView {
                 imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
                 imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
                 widthAnchor.constraint(lessThanOrEqualToConstant: 128)
-            ])
-    }
-
-    // MARK: - Actions
-
-    func update() {
-        if self.autoUpdateSelection {
-            self.selected = SessionManager.shared?.accountManager.selectedAccount == self.account
-        }
+            ]
+        )
     }
 
     @objc
@@ -166,43 +95,10 @@ class BaseAccountView: UIView {
 
 // MARK: - Nested Types
 
-enum AccountUnreadCountStyle {
-    /// Do not display an unread count.
-    case none
-    /// Display unread count only considering current account.
-    case current
-    /// Display unread count only considering other accounts.
-    case others
-}
-
 /// For controlling size of BaseAccountView
 enum DisplayContext {
     case conversationListHeader
     case accountSelector
-}
-
-// MARK: - ZMConversationListObserver Conformance
-
-extension BaseAccountView: ZMConversationListObserver {
-
-    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
-        updateAppearance()
-    }
-
-    func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
-        updateAppearance()
-    }
-}
-
-// MARK: - UserObserving Conformance
-
-extension BaseAccountView: UserObserving {
-
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.accentColorValueChanged {
-            updateAppearance()
-        }
-    }
 }
 
 // MARK: - TeamType Extension
@@ -210,7 +106,7 @@ extension BaseAccountView: UserObserving {
 extension TeamType {
 
     var teamImageViewContent: TeamImageView.Content? {
-        return TeamImageView.Content(imageData: imageData, name: name)
+        .init(imageData: imageData, name: name)
     }
 
 }
@@ -220,6 +116,6 @@ extension TeamType {
 extension Account {
 
     var teamImageViewContent: TeamImageView.Content? {
-        return TeamImageView.Content(imageData: teamImageData, name: teamName)
+        .init(imageData: teamImageData, name: teamName)
     }
 }
