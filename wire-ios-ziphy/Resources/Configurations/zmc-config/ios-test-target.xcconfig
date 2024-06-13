@@ -18,7 +18,3 @@
 
 #include "ios.xcconfig"
 #include "tests.xcconfig"
-
-// Linking
-//
-FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited)

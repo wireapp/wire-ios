@@ -142,8 +142,6 @@
 		EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
-		EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; };
-		EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */; };
 		EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */; };
 		EEAD28FD2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */; };
@@ -211,7 +209,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */,
-				EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -371,7 +368,6 @@
 		EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccessTokenHandler.swift; sourceTree = "<group>"; };
 		EE67F6ED296F074C001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F0296F079E001D7C88 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE7F3DEA29548F88000D247D /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSVersion.swift; sourceTree = "<group>"; };
 		EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTransport.docc; sourceTree = "<group>"; };
 		EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+SafeForLogging.swift"; sourceTree = "<group>"; };
@@ -404,7 +400,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */,
 				EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */,
 				BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */,
 			);
@@ -507,7 +502,6 @@
 			children = (
 				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
 				EE67F6ED296F074C001D7C88 /* WireTesting.framework */,
-				EE7F3DEA29548F88000D247D /* WireUtilities.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
