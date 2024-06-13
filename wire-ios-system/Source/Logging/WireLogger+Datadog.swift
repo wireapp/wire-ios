@@ -16,34 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
-import WireSystem
-
-// MARK: - Types
-
-/// Namespace for analytics tools.
-public enum WireAnalytics { }
-
-/// Composes the requirements for Datadog in Wire Analytics.
-public typealias WireAnalyticsDatadogProtocol = WireDatadogProtocol & LoggerProtocol
-
-// MARK: - Singleton
-
-#if canImport(WireDatadog)
-
-import WireDatadog
-
-extension WireAnalytics {
-    public static let shared: any WireAnalyticsDatadogProtocol = {
-        let builder = WireDatadogBuilder()
-        return builder.build()
-    }()
+extension WireLogger {
+    public static func addDatadog(_ datadog: LoggerProtocol) {
+        if let aggregatedLogger = Self.provider as? AggregatedLogger {
+            aggregatedLogger.addLogger(datadog)
+        } else {
+            Self.provider = datadog
+        }
+    }
 }
-
-#else
-
-extension WireAnalytics {
-    public static let shared: any WireAnalyticsDatadogProtocol = WireDatadogVoid()
-}
-
-#endif

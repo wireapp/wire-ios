@@ -110,10 +110,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-        WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+        // Set up Datadog as logger
+        WireAnalytics.shared.enable()
+        WireLogger.addDatadog(WireAnalytics.shared)
 
-        WireAnalytics.enable()
-        WireAnalytics.shared.info("start app")
+        WireLogger.appDelegate.info(
+            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))"
+        )
 
         // Initial log line to indicate the client version and build
         WireLogger.appDelegate.info(

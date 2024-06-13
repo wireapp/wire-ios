@@ -34,7 +34,7 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        WireAnalytics.enable()
+        setUpDatadog()
 
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
@@ -59,4 +59,10 @@ final class NotificationService: UNNotificationServiceExtension {
         }
     }
 
+    // MARK: Datadog
+
+    private func setUpDatadog() {
+        WireAnalytics.shared.enable()
+        WireLogger.addDatadog(WireAnalytics.shared)
+    }
 }
