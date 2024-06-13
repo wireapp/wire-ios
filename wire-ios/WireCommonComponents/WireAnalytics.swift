@@ -23,17 +23,15 @@ import WireSystem
 import WireDatadog
 #endif
 
-/// Composes the requirements for Datadog in Wire Analytics.
-public typealias WireAnalyticsDatadogProtocol = WireDatadogProtocol & LoggerProtocol
-
 /// Namespace for analytics tools.
 public enum WireAnalytics { }
 
-/// Namespace for Datadog analytics.
 extension WireAnalytics {
+
+    /// Namespace for Datadog analytics.
     public enum Datadog {
 
-        private static let shared: (any WireAnalyticsDatadogProtocol)? = {
+        private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
 #if canImport(WireDatadog)
             let builder = WireDatadogBuilder()
             return builder.build()
