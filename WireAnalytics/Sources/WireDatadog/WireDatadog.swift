@@ -24,7 +24,7 @@ import DatadogRUM
 import DatadogTrace
 import UIKit
 
-public final class WireDatadogTracker {
+public final class WireDatadog {
 
     private let applicationID: String
     private let logLevel: LogLevel = .debug

@@ -26,7 +26,7 @@ public enum WireAnalytics {
         let tracker = WireAnalytics.shared
 
         #if canImport(WireDatadog)
-        if let datadogTracker = tracker as? WireDatadogTracker {
+        if let datadogTracker = tracker as? WireDatadog {
             datadogTracker.enable()
         }
         #endif

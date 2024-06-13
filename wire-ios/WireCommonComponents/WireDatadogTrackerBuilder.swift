@@ -19,7 +19,7 @@
 #if canImport(WireDatadogTracker)
 
 import UIKit
-import WireDatadogTracker
+import WireDatadog
 import class WireTransport.BackendEnvironment
 
 struct WireDatadogTrackerBuilder {
@@ -34,7 +34,7 @@ struct WireDatadogTrackerBuilder {
 
     // MARK: - Build
 
-    func build() -> WireDatadogTracker? {
+    func build() -> WireDatadog? {
         guard
             let appID = bundle.infoForKey(Constants.keyAppId),
             let clientToken = bundle.infoForKey(Constants.keyClientToken)
@@ -42,7 +42,7 @@ struct WireDatadogTrackerBuilder {
             return nil
         }
 
-        return WireDatadogTracker(
+        return WireDatadog(
             appID: appID,
             clientToken: clientToken,
             identifierForVendor: UIDevice.current.identifierForVendor,

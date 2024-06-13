@@ -18,8 +18,8 @@
 
 #if canImport(WireDatadog)
 
-import WireDatadogTracker
+import WireDatadog
 
-extension WireDatadogTracker: WireAnalyticsTracking { }
+extension WireDatadog: WireAnalyticsTracking { }
 
 #endif
