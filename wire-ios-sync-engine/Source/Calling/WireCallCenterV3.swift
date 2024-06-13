@@ -707,7 +707,7 @@ extension WireCallCenterV3 {
                 } catch {
                     Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
                     self.onMLSConferenceFailure(id: conversationID)
-                    throw error
+                    assertionFailure(String(reflecting: error))
                 }
             }
         }

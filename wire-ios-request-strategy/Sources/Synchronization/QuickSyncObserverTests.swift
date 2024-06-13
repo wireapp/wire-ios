@@ -20,22 +20,19 @@ import XCTest
 
 final class QuickSyncObserverTests: MessagingTestBase {
 
-    func testThatSynchronisationStateIsOnline_thenDontWait() {
+    func testThatSynchronisationStateIsOnline_thenDontWait() async {
         // given
         let (_, quickSyncObserver) = Arrangement(coreDataStack: coreDataStack)
             .withSynchronizationState(.online)
             .arrange()
 
         // then test completes
-        let expectation = XCTestExpectation(description: "sync is done within 500ms")
-        Task {
-            await quickSyncObserver.waitForQuickSyncToFinish()
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 0.5)
+        let before = Date.now
+        await quickSyncObserver.waitForQuickSyncToFinish()
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "sync duration > 500ms")
     }
 
-    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() throws {
+    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() {
         // given
         let (_, quickSyncObserver) = Arrangement(coreDataStack: coreDataStack)
             .withSynchronizationState(.quickSyncing)
@@ -43,7 +40,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         Task {
             // Sleeping in order to hit the code path where we start observing .quickSyncCompletedNotification
-            try await Task.sleep(nanoseconds: 250_000_000)
+            try? await Task.sleep(nanoseconds: 250_000_000)
             NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
         }
 
@@ -67,10 +64,11 @@ final class QuickSyncObserverTests: MessagingTestBase {
         }
 
         func arrange() -> (Arrangement, QuickSyncObserver) {
-            return (self, QuickSyncObserver(
-                context: coreDataStack.syncContext,
-                applicationStatus: applicationStatus,
-                notificationContext: coreDataStack.syncContext.notificationContext
+            (
+                self, QuickSyncObserver(
+                    context: coreDataStack.syncContext,
+                    applicationStatus: applicationStatus,
+                    notificationContext: coreDataStack.syncContext.notificationContext
                 )
             )
         }
