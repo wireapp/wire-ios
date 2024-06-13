@@ -1,0 +1,9 @@
+{
+    "type": "feature-config.update",
+    "name": "fileSharing",
+    "data": {
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}

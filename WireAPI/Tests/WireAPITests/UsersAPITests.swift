@@ -17,21 +17,39 @@
 //
 
 import SnapshotTesting
-@testable import WireAPI
 import XCTest
 
+@testable import WireAPI
+
 final class UsersAPITests: XCTestCase {
+
+    private var apiSnapshotHelper: APISnapshotHelper<UsersAPI>!
+
+    // MARK: - Setup
+
+    override func setUp() {
+        super.setUp()
+        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
+            let builder = UsersAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
+    }
+
+    override func tearDown() {
+        apiSnapshotHelper = nil
+        super.tearDown()
+    }
 
     // MARK: - Request generation
 
     func testGetUserRequest() async throws {
-        try await RequestSnapshotHelper<UsersAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getUser(for: .mockID1)
         }
     }
 
     func testGetUsersRequest() async throws {
-        try await RequestSnapshotHelper<UsersAPIBuilder>().verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3])
         }
     }
@@ -84,9 +102,9 @@ final class UsersAPITests: XCTestCase {
         let sut = UsersAPIV0(httpClient: httpClient)
 
         // Then
-        await assertAPIError(UsersAPIError.userNotFound) {
+        await XCTAssertThrowsError(UsersAPIError.userNotFound) {
             // When
-            _ = try await sut.getUser(for: Scaffolding.userID)
+            try await sut.getUser(for: Scaffolding.userID)
         }
     }
 
@@ -120,9 +138,9 @@ final class UsersAPITests: XCTestCase {
         let sut = UsersAPIV4(httpClient: httpClient)
 
         // Then
-        await assertAPIError(UsersAPIError.userNotFound) {
+        await XCTAssertThrowsError(UsersAPIError.userNotFound) {
             // When
-            _ = try await sut.getUser(for: Scaffolding.userID)
+            try await sut.getUser(for: Scaffolding.userID)
         }
     }
 
@@ -165,8 +183,8 @@ final class UsersAPITests: XCTestCase {
             email: "john.doe@example.com",
             expiresAt: "2021-05-12T10:52:02.671Z",
             service: Service(
-                id: "99db9768-04e3-4b5d-9268-831b6a25c4ab",
-                provider: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
             legalholdStatus: .enabled

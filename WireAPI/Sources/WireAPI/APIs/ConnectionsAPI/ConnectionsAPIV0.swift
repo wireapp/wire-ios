@@ -25,16 +25,9 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     let httpClient: HTTPClient
-    let fetchLimit: Int
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
-    convenience init(httpClient: HTTPClient) {
-        self.init(httpClient: httpClient, batchSize: Constants.batchSize)
-    }
-
-    init(httpClient: HTTPClient, batchSize: Int) {
+    init(httpClient: HTTPClient) {
         self.httpClient = httpClient
-        self.fetchLimit = Constants.batchSize
     }
 
     var apiVersion: APIVersion {
@@ -60,17 +53,10 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             )
             let response = try await self.httpClient.executeRequest(request)
 
-            // Parse response
-            let responsePayload = try ResponseParser()
+            return try ResponseParser()
                 .success(code: 200, type: PaginatedConnectionListV0.self)
                 .failure(code: 400, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
-
-            return PayloadPager<Connection>.Page(
-                element: responsePayload.connections.map { $0.toAPIModel() },
-                hasMore: responsePayload.hasMore,
-                nextStart: responsePayload.pagingState
-            )
         }
 
         return pager
@@ -93,8 +79,12 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
     let pagingState: String
     let hasMore: Bool
 
-    func toAPIModel() -> PaginatedConnectionListV0 {
-        self
+    func toAPIModel() -> PayloadPager<Connection>.Page {
+        PayloadPager<Connection>.Page(
+            element: connections.map { $0.toAPIModel() },
+            hasMore: hasMore,
+            nextStart: pagingState
+        )
     }
 }
 

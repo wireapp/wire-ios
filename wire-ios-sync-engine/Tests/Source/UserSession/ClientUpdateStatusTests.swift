@@ -67,7 +67,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
     func insertNewClient(_ isSelfClient: Bool) -> UserClient! {
         var client: UserClient!
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             client = UserClient.insertNewObject(in: syncMOC)
             client.remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
             client.user = ZMUser.selfUser(in: syncMOC)
@@ -76,7 +76,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
             syncMOC.performAndWait {
-                self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
+                syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
             }
         }
         return client
@@ -97,7 +97,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([selfClient, otherClient])
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -125,7 +125,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([client, selfClient])
         }
 
@@ -183,7 +183,7 @@ class ClientUpdateStatusTests: MessagingTest {
         self.sut.deleteClients(withCredentials: credentials)
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.deletingClients)
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didDeleteClient()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -209,7 +209,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([otherClient])
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -233,7 +233,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([otherClient])
         }
 
@@ -259,7 +259,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([client, selfClient])
         }
 

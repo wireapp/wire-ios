@@ -20,11 +20,31 @@ import Foundation
 
 public enum ConnectionStatus: String, Decodable, Equatable {
 
+    /// The connection is complete and the conversation is in its normal state
+
     case accepted = "accepted"
+
+    /// The user has been blocked
+
     case blocked = "blocked"
+
+    /// The other user has sent a connection request to this one
+
     case pending = "pending"
+
+    /// The connection has been ignored
+
     case ignored = "ignored"
+
+    /// This user has sent a connection request to another user
+
     case sent = "sent"
+
+    /// The connection has been cancelled
+
     case cancelled = "cancelled"
+
+    /// The connection is missing legal hold consent
+
     case missingLegalholdConsent = "missing-legalhold-consent"
 }

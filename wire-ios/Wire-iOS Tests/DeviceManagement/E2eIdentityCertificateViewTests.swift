@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
-@testable import Wire
 import XCTest
 
-final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class E2eIdentityCertificateViewTests: XCTestCase {
 
     // MARK: - Properties
 

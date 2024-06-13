@@ -21,36 +21,21 @@ import Foundation
 class BackendInfoAPIV2: BackendInfoAPIV1 {
 
     override func getBackendInfo() async throws -> BackendInfo {
+
         let request = HTTPRequest(
             path: path,
             method: .get
         )
 
         let response = try await httpClient.executeRequest(request)
-
-        switch response.code {
-        case 200:
-            // New: decode V2 payload.
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: BackendInfoResponseV2.self
-            )
-
-            return payload.toAPIModel()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            throw failure
-        }
+        return try ResponseParser()
+            .success(code: 200, type: BackendInfoResponseV2.self)
+            .parse(response)
     }
 
 }
 
-private struct BackendInfoResponseV2: Decodable {
+private struct BackendInfoResponseV2: Decodable, ToAPIModelConvertible {
 
     var domain: String
     var federation: Bool

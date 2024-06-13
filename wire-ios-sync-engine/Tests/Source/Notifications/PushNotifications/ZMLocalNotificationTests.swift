@@ -133,7 +133,7 @@ class ZMLocalNotificationTests: MessagingTest {
 
     func noteWithPayload(_ data: NSDictionary?, fromUserID: UUID?, in conversation: ZMConversation, type: String) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
-        uiMOC.performGroupedBlockAndWait {
+        uiMOC.performGroupedAndWait {
             let payload = self.payloadForEvent(in: conversation, type: type, data: data, from: fromUserID)
             if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                 note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: self.uiMOC)

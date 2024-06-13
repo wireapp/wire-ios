@@ -17,10 +17,11 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class ConversationReactionMessageTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ConversationReactionMessageTests: XCTestCase {
 
     // MARK: - Properties
 

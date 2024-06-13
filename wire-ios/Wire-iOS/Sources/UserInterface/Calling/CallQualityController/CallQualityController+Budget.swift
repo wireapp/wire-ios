@@ -19,7 +19,7 @@
 import Foundation
 
 let UserDefaultLastCallSurveyDate = "LastCallSurveyDate"
-let CallSurveyMuteInterval: TimeInterval = Calendar.secondsInDays(10)
+let CallSurveyMuteInterval: TimeInterval = Calendar.secondsInDays(3)
 
 extension CallQualityController {
 
