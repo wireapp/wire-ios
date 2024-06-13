@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireSystem
 
 enum NetworkStatusViewState {
     case online
