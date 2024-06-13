@@ -19,31 +19,40 @@
 import WireAnalytics
 import WireSystem
 
-// MARK: - Types
-
-/// Namespace for analytics tools.
-public enum WireAnalytics { }
+#if canImport(WireDatadog)
+import WireDatadog
+#endif
 
 /// Composes the requirements for Datadog in Wire Analytics.
 public typealias WireAnalyticsDatadogProtocol = WireDatadogProtocol & LoggerProtocol
 
-// MARK: - Singleton
+/// Namespace for analytics tools.
+public enum WireAnalytics { }
 
+/// Namespace for Datadog analytics.
+extension WireAnalytics {
+    public enum Datadog {
+
+        private static let shared: (any WireAnalyticsDatadogProtocol)? = {
 #if canImport(WireDatadog)
-
-import WireDatadog
-
-extension WireAnalytics {
-    public static let shared: any WireAnalyticsDatadogProtocol = {
-        let builder = WireDatadogBuilder()
-        return builder.build()
-    }()
-}
-
+            let builder = WireDatadogBuilder()
+            return builder.build()
 #else
-
-extension WireAnalytics {
-    public static let shared: any WireAnalyticsDatadogProtocol = WireDatadogVoid()
-}
-
+            return nil
 #endif
+        }()
+
+        /// SHA256 string to identify current device across app and extensions.
+        public static var userIdentifier: String? {
+            shared?.datadogUserIdentifier
+        }
+
+        /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available, the function just returns.
+        public static func enable() {
+            guard let shared else { return }
+
+            shared.enable()
+            WireLogger.addDatadog(shared)
+        }
+    }
+}

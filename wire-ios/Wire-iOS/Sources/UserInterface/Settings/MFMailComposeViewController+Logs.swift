@@ -36,7 +36,7 @@ extension MFMailComposeViewController {
         Date: \(date.transportString())
         """
 
-        if let datadogUserIdentifier = WireAnalytics.shared.datadogUserIdentifier {
+        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
