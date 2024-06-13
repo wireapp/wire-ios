@@ -90,7 +90,11 @@ extension AddParticipantsViewController.Context {
     }
 }
 
-final class AddParticipantsViewController: UIViewController, SpinnerCapable {
+final class AddParticipantsViewController: UIViewController, SpinnerCapable, UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let query = searchController.searchBar.text else { return }
+            performSearch(query)
+    }
 
     enum CreateAction {
         case updatedUsers(UserSet)
@@ -106,7 +110,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     private let searchResultsViewController: SearchResultsViewController
     private let searchGroupSelector: SearchGroupSelector
-    private let searchHeaderViewController: SearchHeaderViewController
+    // private let searchHeaderViewController: SearchHeaderViewController
+    let searchController = UISearchController(searchResultsController: nil)
     let userSelection: UserSelection = UserSelection()
     private let collectionView: UICollectionView
     private let collectionViewLayout: UICollectionViewFlowLayout
@@ -149,7 +154,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        _ = searchHeaderViewController.tokenField.resignFirstResponder()
+        _ = searchController.resignFirstResponder()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -185,8 +190,6 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         confirmButton.layer.cornerRadius = 16
         confirmButton.layer.masksToBounds = true
 
-        searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
-
         searchGroupSelector = SearchGroupSelector()
 
         searchResultsViewController = SearchResultsViewController(userSelection: userSelection,
@@ -208,7 +211,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
         updateValues()
 
-        confirmButton.addTarget(self, action: #selector(searchHeaderViewControllerDidConfirmAction(_:)), for: .touchUpInside)
+//        confirmButton.addTarget(self, action: #selector(searchHeaderViewControllerDidConfirmAction(_:)), for: .touchUpInside)
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
@@ -224,14 +227,14 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
             if group == .services {
-                self.searchHeaderViewController.clearInput()
+                self.searchController.searchBar.text = ""
                 self.confirmButton.isHidden = true
             } else {
                 self.confirmButton.isHidden = false
             }
 
             self.searchResultsViewController.searchGroup = group
-            self.performSearch()
+            self.performSearch(searchController.searchBar.text ?? "")
         }
 
         viewModel.selectedUsers.forEach(userSelection.add)
@@ -244,10 +247,10 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             view.addSubview(searchGroupSelector)
         }
 
-        searchHeaderViewController.delegate = self
-        addChild(searchHeaderViewController)
-        view.addSubview(searchHeaderViewController.view)
-        searchHeaderViewController.didMove(toParent: self)
+        searchController.searchResultsUpdater = self
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchBar.placeholder = "Search for participants"
+        navigationItem.searchController = searchController
 
         addChild(searchResultsViewController)
         view.addSubview(searchResultsViewController.view)
@@ -269,24 +272,19 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     private func createConstraints() {
         let searchMargin: CGFloat = confirmButton.isHidden ? 0 : (confirmButtonHeight + bottomMargin * 2)
-        guard let searchHeaderView = searchHeaderViewController.view,
+        guard
               let searchResultsView = searchResultsViewController.view,
               let margin = (searchResultsView as? SearchResultsView)?.accessoryViewMargin else {
                   return
               }
 
         [
-            searchHeaderView,
             searchResultsView,
             confirmButton,
             searchGroupSelector
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
-            searchHeaderView.topAnchor.constraint(equalTo: view.topAnchor),
-            searchHeaderView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            searchHeaderView.rightAnchor.constraint(equalTo: view.rightAnchor),
-
             searchResultsView.leftAnchor.constraint(equalTo: view.leftAnchor),
             searchResultsView.rightAnchor.constraint(equalTo: view.rightAnchor),
             searchResultsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -searchMargin),
@@ -299,14 +297,14 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
         if viewModel.botCanBeAdded {
             constraints.append(contentsOf: [
-                searchGroupSelector.topAnchor.constraint(equalTo: searchHeaderView.bottomAnchor),
+                searchGroupSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 searchGroupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 searchGroupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 searchResultsView.topAnchor.constraint(equalTo: searchGroupSelector.bottomAnchor)
             ])
         } else {
             constraints.append(
-                searchResultsView.topAnchor.constraint(equalTo: searchHeaderView.bottomAnchor)
+                searchResultsView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
             )
         }
 
@@ -398,22 +396,22 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         })
     }
 
-    private func performSearch() {
+    private func performSearch(_ query: String) {
         let searchingForServices = searchResultsViewController.searchGroup == .services
-        let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
+        let hasFilter = !((searchController.searchBar.text?.isEmpty) != nil)
 
         emptyResultView.updateStatus(searchingForServices: searchingForServices, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
         case (.services, _):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForServices(withQuery: query)
         case (.people, false):
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
         case (.people, true):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForLocalUsers(withQuery: query)
         }
     }
 
@@ -436,23 +434,6 @@ extension AddParticipantsViewController: UserSelectionObserver {
 
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {
         updateSelectionValues()
-    }
-
-}
-
-extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
-
-    @objc func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        if case .add(let conversation) = viewModel.context {
-            self.dismiss(animated: true) {
-                self.addSelectedParticipants(to: conversation)
-            }
-
-        }
-    }
-
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
-        self.performSearch()
     }
 
 }
