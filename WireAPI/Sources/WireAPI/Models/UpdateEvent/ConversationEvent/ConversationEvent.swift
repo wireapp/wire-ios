@@ -62,10 +62,6 @@ public enum ConversationEvent: Equatable {
 
     case mlsWelcome(ConversationMLSWelcomeEvent)
 
-    /// An encrypted Proteus asset message was added to a conversation.
-
-    case proteusAssetAdd
-
     /// An encrypted Proteus message was added to a conversation.
 
     case proteusMessageAdd

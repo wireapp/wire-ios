@@ -30,7 +30,6 @@ enum ConversationEventType: String {
     case messageTimerUpdate = "conversation.message-timer-update"
     case mlsMessageAdd = "conversation.mls-message-add"
     case mlsWelcome = "conversation.mls-welcome"
-    case otrAssetAdd = "conversation.otr-asset-add"
     case otrMessageAdd = "conversation.otr-message-add"
     case protocolUpdate = "conversation.protocol-update"
     case receiptModeUpdate = "conversation.receipt-mode-update"

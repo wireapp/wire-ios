@@ -67,9 +67,6 @@ extension UpdateEvent {
             let event = try ConversationMLSWelcomeEventDecoder().decode(from: container)
             self = .conversation(.mlsWelcome(event))
 
-        case .otrAssetAdd:
-            self = .conversation(.proteusAssetAdd)
-
         case .otrMessageAdd:
             self = .conversation(.proteusMessageAdd)
 
