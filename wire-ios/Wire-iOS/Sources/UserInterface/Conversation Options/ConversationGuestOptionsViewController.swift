@@ -20,6 +20,12 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+enum ConversationGuestLink {
+    static let didCreateSecureGuestLinkNotification = Notification.Name(
+        "Conversation.didCreateSecureGuestLink"
+    )
+}
+
 final class ConversationGuestOptionsViewController: UIViewController,
                                                     UITableViewDelegate,
                                                     UITableViewDataSource,
@@ -28,6 +34,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
+    private var guestLinkObserver: NSObjectProtocol?
 
     var dismissSpinner: SpinnerCompletion?
 
@@ -41,7 +48,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
             userSession: userSession
         )
         self.init(
-            viewModel: .init(configuration: configuration)
+            viewModel: .init(
+                configuration: configuration,
+                conversation: conversation,
+                createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase()
+            )
         )
     }
 
@@ -53,9 +64,29 @@ final class ConversationGuestOptionsViewController: UIViewController,
         viewModel.delegate = self
     }
 
+    deinit {
+        if let observer = guestLinkObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        guestLinkObserver = NotificationCenter.default.addObserver(
+            forName: ConversationGuestLink.didCreateSecureGuestLinkNotification,
+            object: nil,
+            queue: .main) { [weak self] notification in
+                self?.handleGuestLinkNotification(notification)
+            }
+
         setupNavigationBar()
+    }
+
+    private func handleGuestLinkNotification(_ notification: Notification) {
+        if let link = notification.userInfo?["link"] as? String {
+            viewModel.securedLink = link
+        }
     }
 
     @available(*, unavailable)
@@ -132,6 +163,19 @@ final class ConversationGuestOptionsViewController: UIViewController,
         return alertController
     }
 
+    func viewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        sourceView: UIView? = nil,
+        presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
+    ) {
+        let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
+            completion(guestLinkType)
+        }
+        present(alertController, animated: true)
+
+        alertController.configPopover(pointToView: sourceView ?? view)
+    }
+
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRevokingLink completion: @escaping (Bool) -> Void) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
         present(alertController, animated: true)
@@ -144,6 +188,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         present(activityController, animated: true)
 
         activityController.configPopover(pointToView: sourceView ?? view)
+    }
+
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+        present(viewController, animated: animated)
     }
 
     // MARK: – UITableViewDelegate & UITableViewDataSource

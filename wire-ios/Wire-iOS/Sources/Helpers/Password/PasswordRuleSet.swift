@@ -22,7 +22,7 @@ import Foundation
  * A set of password rules that can be used to check if a password is valid.
  */
 
-struct PasswordRuleSet: Decodable {
+public struct PasswordRuleSet: Decodable, Equatable {
 
     /// The minimum length of the password.
     let minimumLength: UInt
@@ -84,7 +84,7 @@ struct PasswordRuleSet: Decodable {
         case requiredCharacters = "new_password_required_characters"
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let minimumLength = try container.decode(UInt.self, forKey: .minimumLength)
         let maximumLength = try container.decode(UInt.self, forKey: .maximumLength)

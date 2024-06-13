@@ -16,30 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import UIKit
-import WireCommonComponents
 
-final class InviteButton: IconButton {
-    init() {
-        super.init()
+extension UIAlertController {
 
-        clipsToBounds = true
-        titleLabel?.font = FontSpec.normalSemiboldFont.font!
-        applyStyle(.secondaryTextButtonStyle)
-        layer.cornerRadius = 12
-        contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
-    }
+    typealias UIAlertControllerLocale = L10n.Localizable.General
 
-    convenience init(fontSpec: FontSpec, insets: UIEdgeInsets) {
-        self.init()
+    static func presentPasswordCopiedAlert(
+        on viewController: UIViewController,
+        title: String,
+        message: String
+    ) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        titleLabel?.font = fontSpec.font
-        self.contentEdgeInsets = insets
-    }
+        alertController.addAction(UIAlertAction(title: UIAlertControllerLocale.ok, style: .default) { _ in
+            viewController.dismiss(animated: true, completion: nil)
+        })
 
-    override var isHighlighted: Bool {
-        didSet {
-            applyStyle(.secondaryTextButtonStyle)
-        }
+        viewController.present(alertController, animated: true, completion: nil)
     }
 }

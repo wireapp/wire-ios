@@ -315,6 +315,14 @@ extension ZMUserSession: UserSession {
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        return CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+    }
+
+    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        return SetAllowGuestAndServicesUseCase()
+    }
+
     @MainActor
     public func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
         return await syncContext.perform {

@@ -25,6 +25,7 @@ public protocol AccountSelector {
 
     func switchTo(account: Account)
     func switchTo(account: Account, completion: ((UserSession?) -> Void)?)
+
 }
 
 extension AccountSelector {
@@ -32,4 +33,5 @@ extension AccountSelector {
     public func switchTo(account: Account) {
         switchTo(account: account, completion: .none)
     }
+
 }

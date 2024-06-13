@@ -52,7 +52,7 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
 class EmailPasswordTextField: UIView, MagicTappable {
 
     let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
-    let passwordField = ValidatedTextField(kind: .password(isNew: false), cornerRadius: 12, setNewColors: true, style: .default)
+    let passwordField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), cornerRadius: 12, setNewColors: true, style: .default)
     let contentStack = UIStackView()
 
     var hasPrefilledValue: Bool = false

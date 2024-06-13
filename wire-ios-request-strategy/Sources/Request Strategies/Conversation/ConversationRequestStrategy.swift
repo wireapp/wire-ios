@@ -145,7 +145,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 context: managedObjectContext,
                 removeLocalConversationUseCase: removeLocalConversation
             ),
-            UpdateConversationProtocolActionHandler(context: managedObjectContext)
+            UpdateConversationProtocolActionHandler(context: managedObjectContext),
+            CreateConversationGuestLinkActionHandler(context: managedObjectContext),
+            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext)
         ])
 
         super.init(
