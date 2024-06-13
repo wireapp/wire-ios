@@ -199,5 +199,6 @@ extension URLQueryItem.Key {
 
     static let conversationKey = "key"
     static let conversationCode = "code"
+    static let password = "password"
 
 }
