@@ -76,10 +76,6 @@ import WireUtilities
         NotificationCenter.default.post(self.notification)
     }
 
-    public func post(on notificationQueue: NotificationQueue) {
-        notificationQueue.enqueue(self.notification, postingStyle: .whenIdle, coalesceMask: [.onName, .onSender], forModes: nil)
-    }
-
     /// Register for observer
     public static func addObserver(
         name: Notification.Name,
