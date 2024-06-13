@@ -1,0 +1,13 @@
+{
+    "type": "feature-config.update",
+    "name": "e2ei",
+    "data": {
+        "config": {
+            "acmeDiscoveryUrl": "www.example.com",
+            "verificationExpiration": 123
+        },
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}

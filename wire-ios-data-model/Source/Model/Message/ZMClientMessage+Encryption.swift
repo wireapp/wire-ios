@@ -841,7 +841,7 @@ extension GenericMessage {
         guard await !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(await client.loggedId)", attributes: nil)
+            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(await client.loggedId)")
             return await client.proteusClientEntry(with: data)
         }
 
@@ -867,7 +867,7 @@ extension GenericMessage {
            guard !client.failedToEstablishSession else {
                // If the session is corrupted, we will send a special payload.
                let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-               WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: " + String(describing: client.remoteIdentifier), attributes: nil)
+               WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: " + String(describing: client.remoteIdentifier))
                return Proteus_ClientEntry(withClientId: client.clientId, data: data)
            }
 
@@ -937,7 +937,7 @@ extension GenericMessage {
 
             guard let sender = message.sender else {
                 zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
-                WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)", attributes: nil)
+                WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
                 return [selfUser]
             }
 

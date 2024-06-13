@@ -20,4 +20,24 @@ import Foundation
 
 class ConversationsAPIV2: ConversationsAPIV1 {
     override var apiVersion: APIVersion { .v2 }
+
+    override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+
+        // New change for v2
+        let resourcePath = "\(pathPrefix)/conversations/list"
+
+        let request = HTTPRequest(
+            path: resourcePath,
+            method: .post,
+            body: body
+        )
+        let response = try await self.httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: 200, type: QualifiedConversationListV0.self)
+            .failure(code: 400, error: ConversationsAPIError.invalidBody)
+            .parse(response)
+    }
 }
