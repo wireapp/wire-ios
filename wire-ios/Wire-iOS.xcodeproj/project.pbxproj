@@ -7687,6 +7687,16 @@
 			path = Colors;
 			sourceTree = "<group>";
 		};
+		E63C65642C1B456900354BB4 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
+				E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */,
+				E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 		E644B7982B7CBBA3005D0BFD /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
@@ -8591,6 +8601,7 @@
 		F1FEA14B21DCEB1700790A54 /* WireCommonComponents */ = {
 			isa = PBXGroup;
 			children = (
+				E63C65642C1B456900354BB4 /* Analytics */,
 				1E5E0CE71B6B8EDB003B0CAC /* Icons */,
 				EEF37EDF2BE0E7560055C9E1 /* Typography */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
@@ -8626,9 +8637,6 @@
 				A9730DDB250287360061BF36 /* Bundle+ThirdPartyKeys.swift */,
 				01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */,
 				59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */,
-				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
-				E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */,
-				E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
