@@ -786,10 +786,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self.notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
 
-            NotificationCenter.default.post(
+            NotificationInContext(
                 name: .initialSync,
-                object: managedObjectContext.notificationContext
-            )
+                context: managedObjectContext.notificationContext
+            ).post()
         }
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()

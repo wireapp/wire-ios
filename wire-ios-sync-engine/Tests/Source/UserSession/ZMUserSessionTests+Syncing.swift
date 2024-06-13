@@ -126,13 +126,11 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         // given
         var didNotify: Bool = false
 
-        let token = NotificationCenter.default.addObserver(
-            forName: .initialSync,
-            object: uiMOC.notificationContext,
-            queue: nil
-        ) { _ in
-            didNotify = true
-        }
+        let token = NotificationInContext.addObserver(
+            name: .initialSync,
+            context: uiMOC.notificationContext) { _ in
+                didNotify = true
+            }
 
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -143,7 +141,9 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(didNotify)
+        withExtendedLifetime(token) {
+            XCTAssertTrue(didNotify)
+        }
     }
 
     func testThatPerformingSyncIsStillOngoingAfterSlowSync() {

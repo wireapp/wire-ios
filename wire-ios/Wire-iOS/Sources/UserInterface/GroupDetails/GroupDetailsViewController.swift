@@ -66,10 +66,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 } else {
                     let context = session.managedObjectContext
 
-                    initialSyncToken = NotificationCenter.default.addObserver(
-                        forName: .initialSync,
-                        object: context.notificationContext,
-                        queue: nil
+                    initialSyncToken = NotificationInContext.addObserver(
+                        name: .initialSync,
+                        context: context.notificationContext
                     ) { [weak self] _ in
                         context.performGroupedBlock {
                             self?.didCompleteInitialSync = true
