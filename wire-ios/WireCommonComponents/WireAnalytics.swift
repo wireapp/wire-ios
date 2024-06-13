@@ -25,7 +25,7 @@ public enum WireAnalytics {
     public static func enable() {
         let tracker = WireAnalytics.shared
 
-        #if canImport(WireDatadogTracker)
+        #if canImport(WireDatadog)
         if let datadogTracker = tracker as? WireDatadogTracker {
             datadogTracker.enable()
         }
@@ -43,9 +43,9 @@ public typealias WireAnalyticsProtocol = WireAnalyticsTracking & LoggerProtocol
 
 // MARK: - Singleton
 
-#if canImport(WireDatadogTracker)
+#if canImport(WireDatadog)
 
-import WireDatadogTracker
+import WireDatadog
 import WireTransport
 
 extension WireAnalytics {
