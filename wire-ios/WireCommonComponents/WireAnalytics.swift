@@ -25,12 +25,7 @@ import WireSystem
 public enum WireAnalytics {
     public static func enable() {
         let tracker = WireAnalytics.shared
-
-        #if canImport(WireDatadog)
-        if let datadogTracker = tracker as? WireDatadog {
-            datadogTracker.enable()
-        }
-        #endif
+        tracker.enable()
 
         if let aggregatedLogger = WireLogger.provider as? AggregatedLogger {
             aggregatedLogger.addLogger(tracker)

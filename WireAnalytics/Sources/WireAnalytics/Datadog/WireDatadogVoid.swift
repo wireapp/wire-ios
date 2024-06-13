@@ -21,4 +21,6 @@ public struct WireDatadogVoid: WireDatadogProtocol {
     public init() { }
 
     public let datadogUserIdentifier: String? = nil
+
+    public func enable() { }
 }
