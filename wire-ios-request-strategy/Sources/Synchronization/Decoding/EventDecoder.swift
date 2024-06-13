@@ -161,38 +161,57 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
-        var decryptedEvents = [ZMUpdateEvent]()
+        var decryptedEvents: [ZMUpdateEvent] = []
 
-        decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
-            switch event.type {
-            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    try await proteusService.decrypt(
-                        data: encryptedData,
-                        forSession: sessionID
-                    )
-                }
-                return proteusEvent.map { [$0] } ?? []
-
-            case .conversationMLSWelcome:
-                await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                return [event]
-
-            case .conversationMLSMessageAdd:
-                return await self.decryptMlsMessage(from: event, context: self.syncMOC)
-
-            default:
-                return [event]
-            }
-        }.joined())
-
-        // This call has to be synchronous to ensure that we close the
-        // encryption context only if we stored all events in the database.
-        await eventMOC.perform {
-            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+        var index = startIndex
+        for event in events {
+            await decryptedEvents += decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
+            index += 1
         }
 
         return decryptedEvents
+    }
+
+    private func decryptAndStoreEvent(
+        event: ZMUpdateEvent,
+        at index: Int64,
+        publicKeys: EARPublicKeys?,
+        proteusService: ProteusServiceInterface
+    ) async -> [ZMUpdateEvent] {
+        let decryptedEvents = await decryptEvent(event: event, publicKeys: publicKeys, proteusService: proteusService)
+
+        await eventMOC.perform {
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: index, publicKeys: publicKeys)
+        }
+
+        return decryptedEvents
+    }
+
+    private func decryptEvent(
+        event: ZMUpdateEvent,
+        publicKeys: EARPublicKeys?,
+        proteusService: ProteusServiceInterface
+    ) async -> [ZMUpdateEvent] {
+        switch event.type {
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+            let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                try await proteusService.decrypt(
+                    data: encryptedData,
+                    forSession: sessionID
+                )
+            }
+            return proteusEvent.map { [$0] } ?? []
+
+        case .conversationMLSWelcome:
+            await self.processWelcomeMessage(from: event, context: self.syncMOC)
+            return [event]
+
+        case .conversationMLSMessageAdd:
+            return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+        default:
+            return [event]
+        }
     }
 
     private func legacyDecryptAndStoreEvents(
