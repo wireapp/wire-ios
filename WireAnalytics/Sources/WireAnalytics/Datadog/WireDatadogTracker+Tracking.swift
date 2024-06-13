@@ -20,6 +20,6 @@
 
 import WireDatadog
 
-extension WireDatadog: WireAnalyticsTracking { }
+extension WireDatadog: WireDatadogProtocol { }
 
 #endif

@@ -21,6 +21,7 @@ import WireSystem
 
 // MARK: - Types
 
+/// Namespace for analytics tools.
 public enum WireAnalytics {
     public static func enable() {
         let tracker = WireAnalytics.shared
@@ -39,7 +40,8 @@ public enum WireAnalytics {
     }
 }
 
-public typealias WireAnalyticsProtocol = WireDatadogProtocol & LoggerProtocol
+/// Composes the requirements for Datadog in Wire Analytics.
+public typealias WireAnalyticsDatadogProtocol = WireDatadogProtocol & LoggerProtocol
 
 // MARK: - Singleton
 
@@ -49,7 +51,7 @@ import WireDatadog
 import WireTransport
 
 extension WireAnalytics {
-    public static let shared: any WireAnalyticsProtocol = {
+    public static let shared: any WireAnalyticsDatadogProtocol = {
         let builder = WireDatadogTrackerBuilder()
 
         guard let tracker = builder.build() else {
@@ -64,7 +66,7 @@ extension WireAnalytics {
 #else
 
 extension WireAnalytics {
-    public static let shared: any WireAnalyticsProtocol = WireDatadogVoid()
+    public static let shared: any WireAnalyticsDatadogProtocol = WireDatadogVoid()
 }
 
 #endif
