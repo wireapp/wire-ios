@@ -68,8 +68,7 @@ public final class WireDatadogTracker {
         let loggerConfiguration = Logger.Configuration(
             name: "iOS Wire App",
             networkInfoEnabled: true,
-            remoteLogThreshold: logLevel,
-            consoleLogFormat: .shortWith(prefix: "[iOS App] ")
+            remoteLogThreshold: logLevel
         )
         logger = Logger.create(with: loggerConfiguration)
     }
