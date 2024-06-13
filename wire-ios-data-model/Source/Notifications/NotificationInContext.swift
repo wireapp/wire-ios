@@ -76,17 +76,13 @@ import WireUtilities
         NotificationCenter.default.post(self.notification)
     }
 
-    public func post(on notificationQueue: NotificationQueue) {
-        notificationQueue.enqueue(self.notification, postingStyle: .whenIdle, coalesceMask: [.onName, .onSender], forModes: nil)
-    }
-
     /// Register for observer
     public static func addObserver(
         name: Notification.Name,
         context: NotificationContext,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (NotificationInContext) -> Void) -> NSObjectProtocol {
+        using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
         return addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
     }
 
@@ -95,7 +91,7 @@ import WireUtilities
         context: NotificationContext?,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (NotificationInContext) -> Void) -> NSObjectProtocol {
+        using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
         return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: name,
                                                                                                object: context,
                                                                                                queue: queue) { note in

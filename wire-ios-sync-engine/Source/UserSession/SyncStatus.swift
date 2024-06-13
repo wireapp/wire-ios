@@ -20,7 +20,9 @@ private let zmLog = ZMSLog(tag: "SyncStatus")
 
 extension Notification.Name {
 
+    public static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
     public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
+
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
 
 }
