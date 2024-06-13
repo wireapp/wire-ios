@@ -236,17 +236,15 @@ final class NetworkStatusView: UIView {
     // MARK: - Helper Logging
 
     func log(networkStatus: NetworkStatusViewState) {
-        let tracker = WireAnalytics.shared
-
         do {
             let status = String(describing: networkStatus)
             let logInfo = LogInfo(status: status)
             let data = try JSONEncoder().encode(logInfo)
             let jsonString = String(data: data, encoding: .utf8)
 
-            tracker.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")")
+            WireLogger.network.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")")
         } catch {
-            tracker.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
+            WireLogger.network.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
         }
     }
 }
