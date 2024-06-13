@@ -60,7 +60,7 @@ public enum ConversationEvent: Equatable {
 
     /// The self user has been added to an MLS group.
 
-    case mlsWelcome
+    case mlsWelcome(ConversationMLSWelcomeEvent)
 
     /// An encrypted Proteus asset message was added to a conversation.
 

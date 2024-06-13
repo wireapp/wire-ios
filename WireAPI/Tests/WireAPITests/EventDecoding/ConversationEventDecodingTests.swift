@@ -159,6 +159,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationMLSWelcomeEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationMLSWelcome")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.mlsWelcome(Scaffolding.mlsWelcomeEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -326,6 +340,12 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             subconversation: "subconversation",
             message: "message"
+        )
+
+        static let mlsWelcomeEvent = ConversationMLSWelcomeEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            welcomeMessage: "message"
         )
 
     }
