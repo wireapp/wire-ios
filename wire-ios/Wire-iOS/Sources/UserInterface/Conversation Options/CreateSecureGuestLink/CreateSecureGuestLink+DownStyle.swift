@@ -16,14 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Down
+import Foundation
+import UIKit
 
-//! Project version number for WireSyncEngineSupport.
-FOUNDATION_EXPORT double WireSyncEngineSupportVersionNumber;
+// MARK: - DownStyle
 
-//! Project version string for WireSyncEngineSupport.
-FOUNDATION_EXPORT const unsigned char WireSyncEngineSupportVersionString[];
+extension DownStyle {
 
-// In this header, you should import all the public headers of your framework using statements like #import <WireSyncEngineSupport/PublicHeader.h>
+    static var warningLabelStyle: DownStyle {
+        let paragraphStyle = NSMutableParagraphStyle()
+        let style = DownStyle()
+        style.baseFont = .preferredFont(forTextStyle: .caption1)
+        style.baseFontColor = SemanticColors.Label.textDefault
+        paragraphStyle.lineBreakMode = .byWordWrapping
+        paragraphStyle.lineHeightMultiple = 0.98
+        style.baseParagraphStyle = paragraphStyle
+        return style
+    }
 
-
+}
