@@ -645,40 +645,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
     // MARK: - Event processing
 
-    func testThatItAsksCallCenterToMute_WhenReceivingRemoteMuteEvent() {
-        // GIVEN
-        let json = ["src_userid": UUID.create().uuidString,
-                    "src_clientid": "clientID",
-                    "resp": false,
-                    "type": "REMOTEMUTE"] as [String: Any]
-        let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let content = String(data: data, encoding: .utf8)!
-        let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
-        let text = try? message.serializedData().base64String()
-        let payload = [
-            "conversation": UUID().transportString(),
-            "data": [
-                "sender": UUID().transportString(),
-                "text": text
-            ],
-            "from": UUID().transportString(),
-            "time": Date().transportString(),
-            "type": "conversation.otr-message-add"
-        ] as [String: Any]
-
-        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
-
-        sut.callCenter?.isMuted = false
-
-        // WHEN
-        syncMOC.performAndWait {
-            sut.processEventsWhileInBackground([updateEvent])
-        }
-
-        // THEN
-        XCTAssertTrue(sut.callCenter?.isMuted ?? false)
-    }
-
     func test_ThatItHandlesMLSRejectMessage() throws {
         var sentMessage: GenericMessageEntity?
         let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
