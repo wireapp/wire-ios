@@ -28,15 +28,15 @@ extension ZMAuthenticationStatus: ZMCredentialProvider {
         }
     }
 
-    public func emailCredentials() -> UserEmailCredentials! {
-        if let loginCredentials = self.loginCredentials, loginCredentials.credentialWithEmail {
-            return UserEmailCredentials.credentials(
-                email: loginCredentials.email ?? "",
-                password: loginCredentials.password ?? "",
-                emailVerificationCode: loginCredentials.emailVerificationCode
-            )
+    public func emailCredentials() -> UserEmailCredentials? {
+        guard let loginCredentials = self.loginCredentials, loginCredentials.credentialWithEmail else {
+            return nil
         }
-        return nil
+        return UserEmailCredentials.credentials(
+            email: loginCredentials.email ?? "",
+            password: loginCredentials.password ?? "",
+            emailVerificationCode: loginCredentials.emailVerificationCode
+        )
     }
 
 }

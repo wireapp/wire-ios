@@ -166,7 +166,7 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     var email = "hello@example.com"
     var password = "verySafePassword"
 
-    func emailCredentials() -> UserEmailCredentials! {
+    func emailCredentials() -> UserEmailCredentials {
         return UserEmailCredentials(email: email, password: password)
     }
 
