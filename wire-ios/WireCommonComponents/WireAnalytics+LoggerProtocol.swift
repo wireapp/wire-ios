@@ -107,7 +107,7 @@ extension WireDatadog: WireSystem.LoggerProtocol {
     }
 }
 
-#endif
+#else
 
 // MARK: - WireAnalyticsVoidTracker
 
@@ -121,3 +121,5 @@ extension WireDatadogVoid: WireSystem.LoggerProtocol {
 
     public func addTag(_ key: LogAttributesKey, value: String?) { }
 }
+
+#endif

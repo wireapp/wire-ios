@@ -29,6 +29,7 @@ struct WireDatadogTrackerBuilder {
         static let keyClientToken = "DatadogClientToken"
     }
 
+    private let device: UIDevice = .current
     private let environment: BackendEnvironment = .shared
     private let bundle: Bundle = .wireCommonComponents
 
@@ -45,7 +46,7 @@ struct WireDatadogTrackerBuilder {
         return WireDatadog(
             appID: appID,
             clientToken: clientToken,
-            identifierForVendor: UIDevice.current.identifierForVendor,
+            identifierForVendor: device.identifierForVendor,
             environmentName: environment.title
         )
     }

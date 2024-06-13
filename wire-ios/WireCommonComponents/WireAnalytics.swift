@@ -48,15 +48,13 @@ public typealias WireAnalyticsDatadogProtocol = WireDatadogProtocol & LoggerProt
 #if canImport(WireDatadog)
 
 import WireDatadog
-import WireTransport
 
 extension WireAnalytics {
     public static let shared: any WireAnalyticsDatadogProtocol = {
         let builder = WireDatadogTrackerBuilder()
 
         guard let tracker = builder.build() else {
-            assertionFailure("building WireAnalyticsDatadogTracker failed - logging disabled")
-            return WireAnalyticsVoidTracker()
+            preconditionFailure("Building WireDatadog failed, probably the 'Bundle' misses required input.")
         }
 
         return tracker
