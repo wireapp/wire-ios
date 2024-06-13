@@ -1325,7 +1325,7 @@
 		E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
 		E6E557982BBD49A60033E62B /* NetworkQualityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E557972BBD49A60033E62B /* NetworkQualityType.swift */; };
-		E6F0F90B2C170C0A0019297F /* WireDatadogTrackerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F0F90A2C170C0A0019297F /* WireDatadogTrackerBuilder.swift */; };
+		E6F0F90B2C170C0A0019297F /* WireDatadogBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */; };
 		E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */; };
 		E6F443032B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F443022B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
@@ -3417,7 +3417,7 @@
 		E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+WireCommonComponents.swift"; sourceTree = "<group>"; };
 		E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescription.swift; sourceTree = "<group>"; };
 		E6E557972BBD49A60033E62B /* NetworkQualityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkQualityType.swift; sourceTree = "<group>"; };
-		E6F0F90A2C170C0A0019297F /* WireDatadogTrackerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireDatadogTrackerBuilder.swift; sourceTree = "<group>"; };
+		E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireDatadogBuilder.swift; sourceTree = "<group>"; };
 		E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellSnapshotTests.swift; sourceTree = "<group>"; };
 		E6F443022B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescriptionTests.swift; sourceTree = "<group>"; };
 		E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUIButton+HapticFeedback.swift"; sourceTree = "<group>"; };
@@ -8628,7 +8628,7 @@
 				59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */,
 				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
 				E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */,
-				E6F0F90A2C170C0A0019297F /* WireDatadogTrackerBuilder.swift */,
+				E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
@@ -10896,7 +10896,7 @@
 				06E69AB825C9A37700B678BF /* AttributedStringOperators.swift in Sources */,
 				F15650AD21DCFC8700210504 /* AppLock.swift in Sources */,
 				A98370BC2488101500515687 /* URL+FileSize.swift in Sources */,
-				E6F0F90B2C170C0A0019297F /* WireDatadogTrackerBuilder.swift in Sources */,
+				E6F0F90B2C170C0A0019297F /* WireDatadogBuilder.swift in Sources */,
 				E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */,
 				5E3E1B732260DA200053AC59 /* StyleKitIcons.generated.swift in Sources */,
 				F15650C621DD0C5500210504 /* CGFloat+Hairline.swift in Sources */,

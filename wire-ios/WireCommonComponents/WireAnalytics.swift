@@ -51,13 +51,8 @@ import WireDatadog
 
 extension WireAnalytics {
     public static let shared: any WireAnalyticsDatadogProtocol = {
-        let builder = WireDatadogTrackerBuilder()
-
-        guard let tracker = builder.build() else {
-            preconditionFailure("Building WireDatadog failed, probably the 'Bundle' misses required input.")
-        }
-
-        return tracker
+        let builder = WireDatadogBuilder()
+        return builder.build()
     }()
 }
 

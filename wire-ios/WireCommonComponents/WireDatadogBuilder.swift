@@ -22,7 +22,7 @@ import UIKit
 import WireDatadog
 import class WireTransport.BackendEnvironment
 
-struct WireDatadogTrackerBuilder {
+struct WireDatadogBuilder {
 
     private enum Constants {
         static let keyAppId = "DatadogAppId"
@@ -35,12 +35,12 @@ struct WireDatadogTrackerBuilder {
 
     // MARK: - Build
 
-    func build() -> WireDatadog? {
+    func build() -> WireDatadog {
         guard
             let appID = bundle.infoForKey(Constants.keyAppId),
             let clientToken = bundle.infoForKey(Constants.keyClientToken)
         else {
-            return nil
+            preconditionFailure("Datadog is enabled, but the 'Bundle' misses required input.")
         }
 
         return WireDatadog(

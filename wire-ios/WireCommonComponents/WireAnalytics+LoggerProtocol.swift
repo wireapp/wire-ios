@@ -19,7 +19,7 @@
 import WireAnalytics
 import WireSystem
 
-// MARK: - WireAnalyticsTracker
+// MARK: - WireDatadog Implementation
 
 #if canImport(WireDatadog)
 
@@ -109,7 +109,7 @@ extension WireDatadog: WireSystem.LoggerProtocol {
 
 #else
 
-// MARK: - WireAnalyticsVoidTracker
+// MARK: - WireDatadog Void
 
 extension WireDatadogVoid: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) { }
