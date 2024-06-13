@@ -24,7 +24,7 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class MLSActionExecutorTests: ZMBaseManagedObjectTest {
+class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
@@ -116,11 +116,6 @@ final class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             return []
         }
 
-        // When
-        _ = try await sut.updateKeyMaterial(for: groupID)
-        try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
-        try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
-
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
             decryptMessageExpectation.fulfill()
             return DecryptedMessage(
@@ -134,6 +129,23 @@ final class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
+        }
+
+        // When
+        Task {
+            do {
+                _ = try await sut.updateKeyMaterial(for: groupID)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
+        }
+        Task {
+            do {
+                try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
 
         // the decrypt message operation should wait for update key material to finish
@@ -201,9 +213,21 @@ final class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        _ = try await sut.updateKeyMaterial(for: groupID1)
-        try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
-        try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+        Task {
+            do {
+                _ = try await sut.updateKeyMaterial(for: groupID1)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
+        }
+        Task {
+            do {
+                try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
+        }
 
         // the update key material operation shouldn't block the decrypt message
         await fulfillment(of: [sendCommitExpectation, decryptMessageExpectation], timeout: .tenSeconds)
