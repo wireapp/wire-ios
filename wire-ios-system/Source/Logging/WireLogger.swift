@@ -19,16 +19,19 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
+    public var logFiles: [URL]
+
     public func addTag(_ key: LogAttributesKey, value: String?) {
         Self.provider?.addTag(key, value: value)
     }
 
-    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
+    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
 
     public let tag: String
 
     public init(tag: String = "") {
         self.tag = tag
+        self.logFiles = []
     }
 
     public func debug(
@@ -155,6 +158,7 @@ public protocol LoggerProtocol {
     func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
     func persist(fileDestination: FileLoggerDestination) async
+    var logFiles: [URL] { get }
 
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)

@@ -17,22 +17,22 @@
 //
 
 import Foundation
+import CocoaLumberjackSwift
 
-/// Logger to write logs to fileSystem via ZMSLog
-public class LegacyLogger: LoggerProtocol {
+/// Logger to write logs to fileSystem via CocoaLumberjack
+public class CocoaLumberjackLogger: LoggerProtocol {
 
-    public var logFiles: [URL] {
-        return []
+    private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+ 
+    init() {
+        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
+        fileLogger.maximumFileSize = 100_000_000 // 100Mb
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+        DDLog.add(fileLogger)
     }
 
-
-    private var loggers = [String: ZMSLog]()
-
-    subscript(tag: String) -> ZMSLog {
-        if loggers[tag] == nil {
-            loggers[tag] = ZMSLog(tag: tag)
-        }
-        return loggers[tag]!
+    public var logFiles: [URL] {
+        fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
     public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
@@ -44,11 +44,11 @@ public class LegacyLogger: LoggerProtocol {
     }
 
     public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message, attributes: attributes, level: .warn)
+        log(message, attributes: attributes, level: .info)
     }
 
     public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
-        log(message, attributes: attributes, level: .warn)
+        log(message, attributes: attributes, level: .warning)
     }
 
     public func error(_ message: LogConvertible, attributes: LogAttributes?) {
@@ -59,15 +59,16 @@ public class LegacyLogger: LoggerProtocol {
         log(message, attributes: attributes, level: .error)
     }
 
-    private func log(_ message: LogConvertible, attributes: LogAttributes?, level: ZMLogLevel_t) {
-        let entry = SanitizedString(value: message.logDescription)
+    private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
+        var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"
+
 
         if let tag = attributes?["tag"] as? String {
-
-            self[tag].safePublic(entry, level: level, osLogOn: false)
-        } else {
-            self["legacy"].safePublic(entry, level: level, osLogOn: false)
+            entry = "[\(tag)] - \(entry)"
         }
+
+        let formatedMessage = DDLogMessage(DDLogMessageFormat(stringLiteral: entry), level: level, flag: .from(level))
+        DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
@@ -77,4 +78,12 @@ public class LegacyLogger: LoggerProtocol {
     public func persist(fileDestination: FileLoggerDestination) async {
         // do nothing
     }
+}
+
+private func attributesDescription(from attributes: LogAttributes?) -> String {
+    var logAttributes = attributes
+    // drop attributes used for visibility and category
+    logAttributes?.removeValue(forKey: "public")
+    logAttributes?.removeValue(forKey: "tag")
+    return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
 }

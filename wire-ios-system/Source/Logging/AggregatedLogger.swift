@@ -25,6 +25,10 @@ public class AggregatedLogger: LoggerProtocol {
         self.loggers = loggers
     }
 
+    public var logFiles: [URL] {
+        return loggers.reduce(into: [], { $0 += $1.logFiles })
+    }
+
     public func addLogger(_ logger: LoggerProtocol) {
         self.loggers.append(logger)
     }
