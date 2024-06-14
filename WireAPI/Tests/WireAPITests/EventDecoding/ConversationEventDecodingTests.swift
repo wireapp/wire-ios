@@ -215,6 +215,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationRenameEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationRename")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.rename(Scaffolding.renameEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -410,6 +424,13 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             newRecieptMode: 1
+        )
+
+        static let renameEvent = ConversationRenameEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            newName: "foo"
         )
 
     }

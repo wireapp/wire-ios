@@ -76,7 +76,7 @@ public enum ConversationEvent: Equatable {
 
     /// A conversation's name was updated.
 
-    case rename
+    case rename(ConversationRenameEvent)
 
     /// One or more users are typing in a conversation.
 

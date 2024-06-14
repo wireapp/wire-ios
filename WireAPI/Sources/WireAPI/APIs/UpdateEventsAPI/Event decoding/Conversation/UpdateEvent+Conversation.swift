@@ -80,7 +80,8 @@ extension UpdateEvent {
             self = .conversation(.receiptModeUpdate(event))
 
         case .rename:
-            self = .conversation(.rename)
+            let event = try ConversationRenameEventDecoder().decode(from: container)
+            self = .conversation(.rename(event))
 
         case .typing:
             self = .conversation(.typing)
