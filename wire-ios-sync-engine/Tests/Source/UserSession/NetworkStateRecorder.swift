@@ -30,28 +30,22 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
 
     var observerToken: Any?
 
-    public override init() {
-        super.init()
+    public func observe() {
+        observerToken = NotificationCenter.default.addObserver(
+            forName: ZMNetworkAvailabilityChangeNotification.name,
+            object: nil,
+            queue: nil
+        ) { [weak self] notification in
+            let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! ZMNetworkState
+            self?.didChangeAvailability(newState: networkState)
+        }
     }
 
-    init(notificationContext: NotificationContext?) {
-        super.init()
-
-        if let notificationContext {
-            observerToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
-                self,
-                notificationContext: notificationContext
-            )
-        } else {
-            observerToken = NotificationCenter.default.addObserver(
-                forName: ZMNetworkAvailabilityChangeNotification.name,
-                object: nil,
-                queue: nil
-            ) { [weak self] notification in
-                let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! ZMNetworkState
-                self?.didChangeAvailability(newState: networkState)
-            }
-        }
+    public func observe(in notificationContext: NotificationContext) {
+        observerToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            self,
+            notificationContext: notificationContext
+        )
     }
 
     public func didChangeAvailability(newState: ZMNetworkState) {

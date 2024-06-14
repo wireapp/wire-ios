@@ -162,7 +162,8 @@
 
 - (void)testThatTheUIIsNotifiedWhenTheSyncIsComplete
 {
-    NetworkStateRecorder *stateRecoder = [[NetworkStateRecorder alloc] initWithNotificationContext:nil];
+    NetworkStateRecorder *stateRecoder = [[NetworkStateRecorder alloc] init];
+    [stateRecoder observe];
 
     // when
     XCTAssertTrue([self login]);
