@@ -23,29 +23,21 @@ import XCTest
 
 final class BackendInfoAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<BackendInfoAPI>!
-
-    // MARK: - Setup
-
-    override func setUp() {
-        super.setUp()
-        apiSnapshotHelper = APISnapshotHelper { httpClient, _ in
-            let builder = BackendInfoAPIBuilder(httpClient: httpClient)
-            return builder.makeAPI()
-        }
-    }
-
-    override func tearDown() {
-        apiSnapshotHelper = nil
-        super.tearDown()
-    }
+    private let snapshotter = HTTPRequestSnapshotHelper()
 
     // MARK: - Request generation
 
     func testGetBackendInfoRequest() async throws {
-        try await apiSnapshotHelper.verifyRequest(for: [.v0]) { sut in
-            _ = try await sut.getBackendInfo()
-        }
+        // Given
+        let httpClient = HTTPClientMock()
+        let sut = BackendInfoAPIImpl(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getBackendInfo()
+
+        // Then
+        let request = try XCTUnwrap(httpClient.receivedRequest)
+        await snapshotter.verifyRequest(request: request)
     }
 
     // MARK: - Response handling
