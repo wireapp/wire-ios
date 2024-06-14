@@ -27,25 +27,26 @@ import UIKit
 public final class WireDatadog {
 
     private let applicationID: String
+    private let buildNumber: String
     private let logLevel: LogLevel = .debug
-    private let _userIdentifier: String
 
-    public var userIdentifier: String? { _userIdentifier }
-
+    public private(set) var userIdentifier: String
     public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
     public init(
-        appID: String,
+        applicationID: String,
+        buildNumber: String,
         clientToken: String,
         identifierForVendor: UUID?,
         environmentName: String
     ) {
-        applicationID = appID
+        self.applicationID = applicationID
+        self.buildNumber = buildNumber
 
         if let identifierForVendor {
-            _userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
+            userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
         } else {
-            _userIdentifier = "none"
+            userIdentifier = "none"
         }
 
         // set up datadog
@@ -89,13 +90,30 @@ public final class WireDatadog {
         )
         RUM.enable(with: rumConfiguration)
 
-        Datadog.setUserInfo(id: _userIdentifier)
+        Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
             level: logLevel,
-            message: "Datadog startMonitoring for device: \(_userIdentifier)",
+            message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
+        )
+    }
+
+    public func log(
+        level: LogLevel,
+        message: String,
+        error: Error? = nil,
+        attributes: [String: any Encodable]
+    ) {
+        var finalAttributes = attributes
+        finalAttributes["build_number"] = buildNumber
+
+        logger?.log(
+            level: level,
+            message: message,
+            error: error,
+            attributes: finalAttributes
         )
     }
 
