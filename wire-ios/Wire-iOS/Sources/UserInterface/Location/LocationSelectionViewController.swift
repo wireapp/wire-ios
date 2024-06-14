@@ -109,10 +109,13 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - Configuration
 
     private func configureViews() {
+        addChild(mapViewController)
+        mapViewController.didMove(toParent: self)
+
         addChild(sendViewController)
         sendViewController.didMove(toParent: self)
 
-        view.addSubview(mapViewController.mapView)
+        view.addSubview(mapViewController.view)
         view.addSubview(sendViewController.view)
         view.addSubview(toolBar)
         view.addSubview(locationButton)
@@ -127,12 +130,12 @@ final class LocationSelectionViewController: UIViewController {
         pointAnnotation.coordinate = mapViewController.mapView.centerCoordinate
 
         mapViewController.mapView.addSubview(annotationView)
-
     }
+
     private func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
-        [mapViewController.mapView, sendController, annotationView, toolBar, locationButton].forEach {
+        [mapViewController.view, sendController, annotationView, toolBar, locationButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -143,18 +146,18 @@ final class LocationSelectionViewController: UIViewController {
         sendControllerHeightConstraint?.isActive = false
 
         NSLayoutConstraint.activate([
-            mapViewController.mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapViewController.mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mapViewController.mapView.topAnchor.constraint(equalTo: view.topAnchor),
-            mapViewController.mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            mapViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mapViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mapViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            mapViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             sendController.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sendController.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             sendController.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolBar.topAnchor.constraint(equalTo: view.topAnchor),
             toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            annotationView.centerXAnchor.constraint(equalTo: mapViewController.mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
-            annotationView.bottomAnchor.constraint(equalTo: mapViewController.mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
+            annotationView.centerXAnchor.constraint(equalTo: mapViewController.view.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
+            annotationView.bottomAnchor.constraint(equalTo: mapViewController.view.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
             annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
             annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
 
