@@ -38,7 +38,11 @@ final class MapViewController: UIViewController {
     let mapView = MKMapView()
     weak var delegate: MapViewControllerDelegate?
     private let pointAnnotation = MKPointAnnotation()
-    private lazy var annotationView: MKPinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: String(describing: type(of: self)))
+    private lazy var annotationView: MKPinAnnotationView = MKPinAnnotationView(
+        annotation: pointAnnotation,
+        reuseIdentifier: String(describing: type(of: self)
+        )
+    )
 
     enum LayoutConstants {
         static let annotationViewCenterXOffset: CGFloat = 8.5
@@ -96,6 +100,12 @@ final class MapViewController: UIViewController {
         mapView.removeAnnotations(mapView.annotations) // Remove existing annotations
         mapView.addAnnotation(annotation)
     }
+
+    func setRegion(to coordinate: CLLocationCoordinate2D, latitudinalMeters: Double, longitudinalMeters: Double, animated: Bool) {
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: latitudinalMeters, longitudinalMeters: longitudinalMeters)
+        mapView.setRegion(region, animated: animated)
+    }
+
 }
 
 // MARK: - MKMapViewDelegate

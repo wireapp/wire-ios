@@ -22,8 +22,10 @@ import UIKit
 import WireDataModel
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
+
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)
     func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
+
 }
 
 final class LocationSelectionViewController: UIViewController {
@@ -157,7 +159,7 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - User Actions
 
     private func locationButtonTapped() {
-        zoomToUserLocation(true)
+        mapViewController.zoomToUserLocation(animated: true)
     }
 
     // MARK: - Helpers
@@ -167,12 +169,6 @@ final class LocationSelectionViewController: UIViewController {
         if appLocationManager.userLocationAuthorized {
             appLocationManager.startUpdatingLocation()
         }
-    }
-
-    private func zoomToUserLocation(_ animated: Bool) {
-        guard appLocationManager.userLocationAuthorized else { return presentUnauthorizedAlert() }
-        let region = MKCoordinateRegion(center: mapViewController.mapView.userLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
-        mapViewController.mapView.setRegion(region, animated: animated)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -282,8 +278,7 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
 
         if !userShowedInitially {
             userShowedInitially = true
-            let region = MKCoordinateRegion(center: newLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
-            mapViewController.mapView.setRegion(region, animated: true)
+            mapViewController.setRegion(to: newLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50, animated: true)
         }
     }
 
