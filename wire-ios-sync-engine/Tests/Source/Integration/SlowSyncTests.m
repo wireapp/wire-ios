@@ -162,13 +162,11 @@
 
 - (void)testThatTheUIIsNotifiedWhenTheSyncIsComplete
 {
-    // given
-    NetworkStateRecorder *stateRecoder = [[NetworkStateRecorder alloc] init];
-    id token = [ZMNetworkAvailabilityChangeNotification addNetworkAvailabilityObserver:stateRecoder userSession:self.userSession];
-    
+    NetworkStateRecorder *stateRecoder = [[NetworkStateRecorder alloc] initWithNotificationContext:nil];
+
     // when
     XCTAssertTrue([self login]);
-    
+
     // then
     XCTAssertEqual(stateRecoder.stateChanges_objc.count, 2u);
     ZMNetworkState state1 = (ZMNetworkState)[stateRecoder.stateChanges_objc.firstObject intValue];
@@ -177,8 +175,6 @@
     XCTAssertEqual(state1, ZMNetworkStateOnlineSynchronizing);
     XCTAssertEqual(state2, ZMNetworkStateOnline);
     XCTAssertEqual(self.userSession.networkState, ZMNetworkStateOnline);
-    
-    token = nil;
 }
 
 - (void)testThatItHasTheSelfUserEmailAfterTheSlowSync
