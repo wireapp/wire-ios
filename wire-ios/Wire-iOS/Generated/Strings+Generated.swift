@@ -3891,12 +3891,10 @@ internal enum L10n {
     internal enum Location {
       internal enum Error {
         internal enum Alert {
-          /// Failed to obtain location: %@
-          internal static func description(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "location.error.alert.description", String(describing: p1), fallback: "Failed to obtain location: %@")
-          }
-          /// Location Error
-          internal static let title = L10n.tr("Localizable", "location.error.alert.title", fallback: "Location Error")
+          /// Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.
+          internal static let description = L10n.tr("Localizable", "location.error.alert.description", fallback: "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.")
+          /// Location can’t be sent.
+          internal static let title = L10n.tr("Localizable", "location.error.alert.title", fallback: "Location can’t be sent.")
         }
       }
       internal enum SendButton {

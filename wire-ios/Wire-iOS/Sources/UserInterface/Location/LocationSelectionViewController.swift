@@ -285,7 +285,7 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
 
         let alertController = UIAlertController(
             title: L10n.Localizable.Location.Error.Alert.title,
-            message: L10n.Localizable.Location.Error.Alert.description(error.localizedDescription),
+            message: L10n.Localizable.Location.Error.Alert.description,
             preferredStyle: .alert
         )
 
