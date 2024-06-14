@@ -23,7 +23,7 @@ import CocoaLumberjackSwift
 public class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
- 
+
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
