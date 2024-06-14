@@ -442,7 +442,7 @@ public final class MLSService: MLSServiceInterface {
         parentGroupID: MLSGroupID? = nil
     ) async throws -> MLSCipherSuite {
         let useCase = CreateMLSGroupUseCase(
-            parentGroupID: nil,
+            parentGroupID: parentGroupID,
             defaultCipherSuite: await featureRepository.fetchMLS().config.defaultCipherSuite,
             coreCrypto: try await coreCrypto,
             staleKeyMaterialDetector: staleKeyMaterialDetector,
