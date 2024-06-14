@@ -32,10 +32,6 @@ final class LocationSelectionViewController: UIViewController {
 
     enum LayoutConstants {
         static let sendControllerHeight: CGFloat = 56
-        static let annotationViewCenterXOffset: CGFloat = 8.5
-        static let annotationViewBottomOffset: CGFloat = 5
-        static let annotationViewHeight: CGFloat = 39
-        static let annotationViewWidth: CGFloat = 32
         static let locationButtonLeadingOffset: CGFloat = 16
         static let locationButtonBottomOffset: CGFloat = -16
         static let locationButtonWidth: CGFloat = 28
@@ -67,8 +63,6 @@ final class LocationSelectionViewController: UIViewController {
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
     private let sendViewController = LocationSendViewController()
-    private let pointAnnotation = MKPointAnnotation()
-    private lazy var annotationView: MKPinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: String(describing: type(of: self)))
     private var userShowedInitially = false
     private var mapDidRender = false
 
@@ -127,15 +121,12 @@ final class LocationSelectionViewController: UIViewController {
         locationButton.addAction(action, for: .touchUpInside)
 
         toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: safeTopAnchor)
-        pointAnnotation.coordinate = mapViewController.mapView.centerCoordinate
-
-        mapViewController.mapView.addSubview(annotationView)
     }
 
     private func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
-        [mapViewController.view, sendController, annotationView, toolBar, locationButton].forEach {
+        [mapViewController.view, sendController, toolBar, locationButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -156,11 +147,6 @@ final class LocationSelectionViewController: UIViewController {
             toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolBar.topAnchor.constraint(equalTo: view.topAnchor),
             toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            annotationView.centerXAnchor.constraint(equalTo: mapViewController.view.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
-            annotationView.bottomAnchor.constraint(equalTo: mapViewController.view.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
-            annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
-            annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
-
             locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.locationButtonLeadingOffset),
             locationButton.bottomAnchor.constraint(equalTo: sendController.topAnchor, constant: LayoutConstants.locationButtonBottomOffset),
             locationButton.widthAnchor.constraint(equalToConstant: LayoutConstants.locationButtonWidth),

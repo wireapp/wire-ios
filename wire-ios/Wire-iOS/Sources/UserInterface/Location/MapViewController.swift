@@ -19,13 +19,13 @@
 import MapKit
 import UIKit
 
-// MARK: - MapManagerDelegate
+// MARK: - MapViewControllerDelegate
 
 protocol MapViewControllerDelegate: AnyObject {
 
-    func mapViewController(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
-    func mapViewController(_ viewController: MapViewController, regionDidChangeAnimated animated: Bool)
-    func mapViewControllerDidFinishRenderingMap(_ viewController: MapViewController, fullyRendered: Bool)
+    func mapViewController(_ controller: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
+    func mapViewController(_ controller: MapViewController, regionDidChangeAnimated animated: Bool)
+    func mapViewControllerDidFinishRenderingMap(_ controller: MapViewController, fullyRendered: Bool)
 
 }
 
@@ -37,6 +37,15 @@ final class MapViewController: UIViewController {
 
     let mapView = MKMapView()
     weak var delegate: MapViewControllerDelegate?
+    private let pointAnnotation = MKPointAnnotation()
+    private lazy var annotationView: MKPinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: String(describing: type(of: self)))
+
+    enum LayoutConstants {
+        static let annotationViewCenterXOffset: CGFloat = 8.5
+        static let annotationViewBottomOffset: CGFloat = 5
+        static let annotationViewHeight: CGFloat = 39
+        static let annotationViewWidth: CGFloat = 32
+    }
 
     // MARK: - Init
 
@@ -46,6 +55,7 @@ final class MapViewController: UIViewController {
         mapView.frame = view.bounds
         mapView.delegate = self
         configureMapView()
+        setupAnnotationView()
     }
 
     // MARK: - Methods
@@ -59,6 +69,18 @@ final class MapViewController: UIViewController {
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+
+    private func setupAnnotationView() {
+        pointAnnotation.coordinate = mapView.centerCoordinate
+        mapView.addSubview(annotationView)
+        annotationView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
+            annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
+            annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
+            annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth)
         ])
     }
 
