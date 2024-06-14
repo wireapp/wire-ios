@@ -60,8 +60,8 @@ extension ZMUserSession {
     public static func addNetworkAvailabilityObserver(
         _ observer: ZMNetworkAvailabilityObserver,
         notificationContext: NotificationContext
-    ) -> Any {
-        return NotificationInContext.addObserver(
+    ) -> SelfUnregisteringNotificationCenterToken {
+        NotificationInContext.addObserver(
             name: name,
             context: notificationContext
         ) { [weak observer] note in

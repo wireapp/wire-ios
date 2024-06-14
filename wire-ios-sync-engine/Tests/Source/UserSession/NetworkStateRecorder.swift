@@ -23,15 +23,16 @@ import Foundation
 @objcMembers
 public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
 
-    var stateChanges: [ZMNetworkState] = []
+    private(set) var stateChanges: [ZMNetworkState] = []
     var stateChanges_objc: [NSNumber] {
         stateChanges.map { NSNumber(value: $0.rawValue) }
     }
 
-    var observerToken: Any?
+    private let notificationCenter: NotificationCenter = .default
+    private var selfUnregisteringToken: SelfUnregisteringNotificationCenterToken?
 
     public func observe() {
-        observerToken = NotificationCenter.default.addObserver(
+        let token = notificationCenter.addObserver(
             forName: ZMNetworkAvailabilityChangeNotification.name,
             object: nil,
             queue: nil
@@ -39,10 +40,11 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
             let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! ZMNetworkState
             self?.didChangeAvailability(newState: networkState)
         }
+        selfUnregisteringToken = .init(token, notificationCenter: notificationCenter)
     }
 
     public func observe(in notificationContext: NotificationContext) {
-        observerToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+        selfUnregisteringToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
             self,
             notificationContext: notificationContext
         )
