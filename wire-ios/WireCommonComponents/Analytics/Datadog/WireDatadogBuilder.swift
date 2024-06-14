@@ -26,25 +26,30 @@ struct WireDatadogBuilder {
 
     private enum Constants {
         static let keyAppId = "DatadogAppId"
+        static let keyBundleVersion = "CFBundleVersion"
         static let keyClientToken = "DatadogClientToken"
     }
 
     private let device: UIDevice = .current
     private let environment: BackendEnvironment = .shared
     private let bundle: Bundle = .wireCommonComponents
+    private let mainBundle: Bundle = .main
 
     // MARK: - Build
 
     func build() -> WireDatadog {
         guard
-            let appID = bundle.infoForKey(Constants.keyAppId),
+            let applicationID = bundle.infoForKey(Constants.keyAppId),
+            // can bundleVersion be also be refactored to use `infoForKey`?
+            let bundleVersion = mainBundle.object(forInfoDictionaryKey: Constants.keyBundleVersion) as? String,
             let clientToken = bundle.infoForKey(Constants.keyClientToken)
         else {
-            preconditionFailure("Datadog is enabled, but the 'Bundle' misses required input.")
+            preconditionFailure("Datadog is enabled, but the bundle misses required input.")
         }
 
         return WireDatadog(
-            appID: appID,
+            applicationID: applicationID,
+            buildNumber: "",
             clientToken: clientToken,
             identifierForVendor: device.identifierForVendor,
             environmentName: environment.title

@@ -19,7 +19,7 @@
 public protocol WireDatadogProtocol {
 
     /// Unique obfuscated identifier of the current device across app and extensions.
-    var userIdentifier: String? { get }
+    var userIdentifier: String { get }
 
     func enable()
 }

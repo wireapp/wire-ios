@@ -88,14 +88,13 @@ extension WireDatadog: WireSystem.LoggerProtocol {
         error: Error? = nil,
         attributes: [LogAttributes] = []
     ) {
-        var plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, logAttribute in
+        let plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, logAttribute in
             logAttribute.forEach { item in
                 partialResult[item.key.rawValue] = item.value
             }
         }
-        plainAttributes["build_number"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
-        logger?.log(
+        log(
             level: level,
             message: message.logDescription,
             error: error,

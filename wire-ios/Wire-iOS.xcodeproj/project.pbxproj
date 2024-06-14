@@ -1302,9 +1302,10 @@
 		E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */; };
 		E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D42C13375700F82F88 /* WireAnalytics.swift */; };
 		E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E66C51D62C13395400F82F88 /* WireAnalytics */; };
-		E66C51D92C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */; };
+		E66C51D92C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */; };
 		E66D4E822BE525DF00C7F374 /* AVSVideoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
+		E68C005C2C1C533000747C9E /* WireAnalytics+Datadog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
 		E6C25FCA2AFFABD700406A1C /* UITextView+ReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */; };
@@ -3402,9 +3403,10 @@
 		E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStatusCell.swift; sourceTree = "<group>"; };
 		E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupActionCell.swift; sourceTree = "<group>"; };
 		E66C51D42C13375700F82F88 /* WireAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalytics.swift; sourceTree = "<group>"; };
-		E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+LoggerProtocol.swift"; sourceTree = "<group>"; };
+		E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireDatadog+LoggerProtocol.swift"; sourceTree = "<group>"; };
 		E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSVideoContainerView.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
+		E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+Datadog.swift"; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Attachments.swift"; sourceTree = "<group>"; };
@@ -5491,10 +5493,7 @@
 				EEE25B4F29719D2F0008B894 /* avs.xcframework */,
 				EEE25B2629719A730008B894 /* Clibsodium.xcframework */,
 				EE67F6CE296F067F001D7C88 /* Countly.xcframework */,
-				EE9A857529896B4D00064A9C /* CrashReporter.xcframework */,
 				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
-				EE82971229719FC400F12CAA /* Datadog.xcframework */,
-				EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */,
 				EE67F6D4296F06A3001D7C88 /* Down.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
 				EEE25B5529719D840008B894 /* HTMLString.xcframework */,
@@ -7651,9 +7650,8 @@
 		E63C65642C1B456900354BB4 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				E68C005D2C1C536900747C9E /* Datadog */,
 				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
-				E66C51D82C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift */,
-				E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -7784,6 +7782,16 @@
 				E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		E68C005D2C1C536900747C9E /* Datadog */ = {
+			isa = PBXGroup;
+			children = (
+				E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */,
+				E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */,
+				E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */,
+			);
+			path = Datadog;
 			sourceTree = "<group>";
 		};
 		E6C25FCC2AFFAC1C00406A1C /* Fixture */ = {
@@ -10873,13 +10881,14 @@
 				F15650C321DD0A9B00210504 /* Bundle+Backend.swift in Sources */,
 				F15650B221DD018700210504 /* Bundle+Identifiers.swift in Sources */,
 				E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */,
+				E68C005C2C1C533000747C9E /* WireAnalytics+Datadog.swift in Sources */,
 				F15650B021DCFF5300210504 /* AutomationHelper.swift in Sources */,
 				F15650A421DCF66600210504 /* AudioProcessing.swift in Sources */,
 				F15650A121DCF3E700210504 /* ExtensionSettings.swift in Sources */,
 				5EA952C32260F90A00C83FDB /* StyleKitIconSize.swift in Sources */,
 				F15650AE21DCFCED00210504 /* SettingsPropertyName.swift in Sources */,
 				59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */,
-				E66C51D92C13434B00F82F88 /* WireAnalytics+LoggerProtocol.swift in Sources */,
+				E66C51D92C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift in Sources */,
 				A9730DDC250287360061BF36 /* Bundle+ThirdPartyKeys.swift in Sources */,
 				63F65EFB2464444B00534A69 /* TimedCircularProgressView.swift in Sources */,
 				06E69AB825C9A37700B678BF /* AttributedStringOperators.swift in Sources */,
