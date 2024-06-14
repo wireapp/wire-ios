@@ -17,6 +17,7 @@
 //
 
 @import WireImages;
+@import WireUtilities;
 
 #import <WireDataModel/ZMUser.h>
 #import <WireDataModel/ZMEditableUserType.h>
