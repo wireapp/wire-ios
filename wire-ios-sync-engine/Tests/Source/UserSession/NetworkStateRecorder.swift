@@ -18,8 +18,10 @@
 
 import Foundation
 
+@testable import WireSyncEngine
+
 @objcMembers
-public class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
+public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
 
     var stateChanges: [ZMNetworkState] = []
     var stateChanges_objc: [NSNumber] {
@@ -32,10 +34,24 @@ public class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
         super.init()
     }
 
-    init(userSession: ZMUserSession) {
+    init(notificationContext: NotificationContext?) {
         super.init()
 
-        observerToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(self, userSession: userSession)
+        if let notificationContext {
+            observerToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+                self,
+                notificationContext: notificationContext
+            )
+        } else {
+            observerToken = NotificationCenter.default.addObserver(
+                forName: ZMNetworkAvailabilityChangeNotification.name,
+                object: nil,
+                queue: nil
+            ) { [weak self] notification in
+                let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! ZMNetworkState
+                self?.didChangeAvailability(newState: networkState)
+            }
+        }
     }
 
     public func didChangeAvailability(newState: ZMNetworkState) {
