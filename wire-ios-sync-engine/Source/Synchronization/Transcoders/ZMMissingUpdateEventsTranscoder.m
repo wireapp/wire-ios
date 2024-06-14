@@ -190,15 +190,23 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     NSDate *fetchDate = self.listPaginator.lastResetFetchDate;
     NSArray<ZMSDispatchGroup *> *groups = [self.managedObjectContext enterAllGroupsExceptSecondary];
     self.isProcessingEvents = YES;
+    SyncStatus *syncStatus = self.syncStatus;
 
     NSLog(@"ZMMissingUpdateEventsTranscoder process %lu events", (unsigned long)parsedEvents.count);
     [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
         NOT_USED(error);
         [self.managedObjectContext performBlock:^{
+            if (error != nil) {
+                [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:NO];
+                self.isProcessingEvents = NO;
+                [self.managedObjectContext leaveAllGroups:groups];
+                return;
+            }
+
             [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
-            
+
             if (finished) {
-                [self.syncStatus completedFetchingNotificationStreamFetchBeganAt:fetchDate];
+                [syncStatus completedFetchingNotificationStreamFetchBeganAt:fetchDate];
 
                 if (self.operationStatus.operationState == SyncEngineOperationStateBackgroundFetch) {
                     [self updateBackgroundFetchResultWithResponse:response];

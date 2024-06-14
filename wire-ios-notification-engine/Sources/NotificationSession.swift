@@ -395,8 +395,8 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
-    ) async {
-        let decodedEvents = await eventDecoder.decryptAndStoreEvents(
+    ) async throws {
+        let decodedEvents = try await eventDecoder.decryptAndStoreEvents(
             events,
             publicKeys: try? earService.fetchPublicKeys()
         )

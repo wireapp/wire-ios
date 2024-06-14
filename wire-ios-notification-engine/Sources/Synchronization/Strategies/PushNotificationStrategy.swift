@@ -21,7 +21,7 @@ import Foundation
 
 protocol PushNotificationStrategyDelegate: AnyObject {
 
-    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async
+    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async throws
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 
 }
@@ -101,14 +101,20 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
         }
 
         Task {
-            await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
-            await managedObjectContext.perform {
-                self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
-            }
+            do {
+                try await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
+                await managedObjectContext.perform {
+                    self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+                }
 
-            if !hasMoreToFetch {
+                if !hasMoreToFetch {
+                    delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
+                }
+            } catch {
+                // TODO we must enqueue the decryption 
                 delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
             }
+
         }
 
     }

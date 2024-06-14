@@ -83,7 +83,7 @@ extension EventDecoder {
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
-    ) async -> [ZMUpdateEvent] {
+    ) async throws -> [ZMUpdateEvent] {
         let (filteredEvents, lastIndex) = await eventMOC.perform {
             self.storeReceivedPushEventIDs(from: events)
             let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
@@ -98,9 +98,9 @@ extension EventDecoder {
             return []
         }
 
-        let decryptedEvents: [ZMUpdateEvent] = await proteusProvider.performAsync(
+        let decryptedEvents: [ZMUpdateEvent] = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return await self.decryptAndStoreEvents(
+                return try await self.decryptAndStoreEvents(
                     filteredEvents,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
@@ -145,6 +145,59 @@ extension EventDecoder {
         )
     }
 
+    func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
+        let manager = ExpiringActivityManager()
+        try await manager.withExpiringActivity(reason: reason, block: block)
+    }
+
+    actor ExpiringActivityManager {
+        var task: Task<Void, Error>?
+
+        func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
+            try await withCheckedThrowingContinuation { continuation in
+                ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { expiring in
+                    if !expiring {
+                        let semaphore = DispatchSemaphore(value: 0)
+                        Task {
+                            do {
+                                try await self.startWork(block: block, semaphore: semaphore).value
+                                WireLogger.backgroundActivity.debug("Expiring activity completed")
+                                continuation.resume()
+                            } catch {
+                                WireLogger.backgroundActivity.debug("Expiring activity ended with an error: \(error)")
+                                continuation.resume(throwing: error)
+                            }
+
+                        }
+                        semaphore.wait()
+                    } else {
+                        WireLogger.backgroundActivity.warn("Backgrond activity is expiring: \(reason)")
+                        Task {
+                            await self.stopWork()
+                        }
+                    }
+                }
+            }
+        }
+
+        func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, Error> {
+            let task = Task {
+                defer {
+                    WireLogger.backgroundActivity.debug("Releasing semaphore")
+                    semaphore.signal()
+                }
+                try await block()
+            }
+            self.task = task
+            return task
+        }
+
+        func stopWork() {
+            self.task?.cancel()
+            self.task = nil
+        }
+    }
+
     /// Decrypts and stores the decrypted events as `StoreUpdateEvent` in the event database.
     /// The encryption context is only closed after the events have been stored, which ensures
     /// they can be decrypted again in case of a crash.
@@ -160,13 +213,17 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
-    ) async -> [ZMUpdateEvent] {
+    ) async throws -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        var index = startIndex
-        for event in events {
-            await decryptedEvents += decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
-            index += 1
+        try await withExpiringActivity(reason: "Decrypting & storing event") {
+            var index = startIndex
+            for event in events {
+                try Task.checkCancellation()
+                try await Task.sleep(nanoseconds: 3_000_000_000)
+                await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
+                index += 1
+            }
         }
 
         return decryptedEvents

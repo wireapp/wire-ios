@@ -67,7 +67,7 @@ actor EventProcessor: UpdateEventProcessor {
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
             let publicKeys = try? self.earService.fetchPublicKeys()
-            let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
+            let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             await self.processBackgroundEvents(decryptedEvents)
 
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
