@@ -113,6 +113,9 @@
       location = "group:WireUI">
    </FileRef>
    <FileRef
+      location = "group:WireAnalytics">
+   </FileRef>
+   <FileRef
       location = "group:WireAPI">
    </FileRef>
    <FileRef
