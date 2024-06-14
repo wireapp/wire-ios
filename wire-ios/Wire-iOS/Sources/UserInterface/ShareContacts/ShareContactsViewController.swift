@@ -19,36 +19,35 @@
 import UIKit
 import WireCommonComponents
 
-// MARK: - ShareContactsViewControllerDelegate
-protocol ShareContactsViewControllerDelegate: AnyObject {
-    func shareDidSkip(_ viewController: UIViewController)
-    func shareDidFinish(_ viewController: UIViewController)
-}
-
 // MARK: - String Extension
+
 extension String {
+
     func withCustomParagraphSpacing() -> NSMutableAttributedString {
+
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 10
 
-        let attributedText = NSMutableAttributedString(string: self,
-                                                       attributes: [
-                                                        NSAttributedString.Key.paragraphStyle: paragraphStyle])
-
-        return attributedText
+        return .init(
+            string: self,
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
     }
 }
 
 // MARK: - ShareContactsViewController
+
 final class ShareContactsViewController: UIViewController {
 
     // MARK: - Properties
+
     typealias RegistrationShareContacts = L10n.Localizable.Registration.ShareContacts
 
     weak var delegate: ShareContactsViewControllerDelegate?
-    var uploadAddressBookImmediately = false
-    var backgroundBlurDisabled = false
-    var notNowButtonHidden = false
+
+    private var uploadAddressBookImmediately = false
+    private var backgroundBlurDisabled = false
+    private var notNowButtonHidden = false
     private(set) var showingAddressBookAccessDeniedViewController = false
 
     private lazy var notNowButton = {
@@ -58,8 +57,7 @@ final class ShareContactsViewController: UIViewController {
             fontSpec: .normalSemiboldFont
         )
         notNowButton.setTitle(RegistrationShareContacts.SkipButton.title.capitalized, for: .normal)
-        notNowButton.addTarget(self, action: #selector(shareContactsLater(_:)), for: .touchUpInside)
-
+        notNowButton.addTarget(self, action: #selector(shareContactsLater), for: .primaryActionTriggered)
         return notNowButton
     }()
 
@@ -69,7 +67,6 @@ final class ShareContactsViewController: UIViewController {
         heroLabel.numberOfLines = 0
         heroLabel.font = FontSpec.largeSemiboldFont.font!
         heroLabel.attributedText = ShareContactsViewController.attributedHeroText
-
         return heroLabel
     }()
 
@@ -84,7 +81,7 @@ final class ShareContactsViewController: UIViewController {
         return shareContactsButton
     }()
 
-    private let shareContactsContainerView: UIView = UIView()
+    private let shareContactsContainerView = UIView()
     private let addressBookAccessDeniedViewController = PermissionDeniedViewController.addressBookAccessDeniedViewController()
 
     private static var attributedHeroText: NSAttributedString {
@@ -104,6 +101,7 @@ final class ShareContactsViewController: UIViewController {
     }
 
     // MARK: - Override methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -126,7 +124,7 @@ final class ShareContactsViewController: UIViewController {
         notNowButton.isHidden = notNowButtonHidden
         shareContactsContainerView.addSubview(notNowButton)
 
-        shareContactsButton.addTarget(self, action: #selector(shareContacts(_:)), for: .touchUpInside)
+        shareContactsButton.addTarget(self, action: #selector(shareContacts), for: .primaryActionTriggered)
 
         shareContactsContainerView.addSubview(shareContactsButton)
 
@@ -136,20 +134,17 @@ final class ShareContactsViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [
-            shareContactsContainerView,
-            addressBookAccessDeniedViewController.view,
-            heroLabel,
-            shareContactsButton
-        ].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
 
-        let constraints: [NSLayoutConstraint] = [
-            shareContactsContainerView.topAnchor.constraint(equalTo: shareContactsContainerView.superview!.topAnchor),
-            shareContactsContainerView.bottomAnchor.constraint(equalTo: shareContactsContainerView.superview!.bottomAnchor),
-            shareContactsContainerView.leadingAnchor.constraint(equalTo: shareContactsContainerView.superview!.leadingAnchor),
-            shareContactsContainerView.trailingAnchor.constraint(equalTo: shareContactsContainerView.superview!.trailingAnchor),
+        shareContactsContainerView.translatesAutoresizingMaskIntoConstraints = false
+        addressBookAccessDeniedViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        heroLabel.translatesAutoresizingMaskIntoConstraints = false
+        shareContactsButton.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            shareContactsContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            shareContactsContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            shareContactsContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            shareContactsContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
             addressBookAccessDeniedViewController.view.topAnchor.constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.topAnchor),
             addressBookAccessDeniedViewController.view.bottomAnchor.constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.bottomAnchor),
@@ -165,19 +160,17 @@ final class ShareContactsViewController: UIViewController {
             shareContactsButton.bottomAnchor.constraint(equalTo: shareContactsButton.superview!.bottomAnchor, constant: -28),
             shareContactsButton.leadingAnchor.constraint(equalTo: shareContactsButton.superview!.leadingAnchor, constant: 28),
             shareContactsButton.trailingAnchor.constraint(equalTo: shareContactsButton.superview!.trailingAnchor, constant: -28)
-        ]
-
-        NSLayoutConstraint.activate(constraints)
+        ])
     }
 
     // MARK: - Actions
 
     @objc
-    private func shareContacts(_ sender: Any?) {
+    private func shareContacts() {
         AddressBookHelper.sharedHelper.requestPermissions { [weak self] success in
             guard let self else { return }
             if success {
-                delegate?.shareDidFinish(self)
+                delegate?.shareContactsViewControllerDidFinish(self)
             } else {
                 displayContactsAccessDeniedMessage(animated: true)
             }
@@ -185,8 +178,8 @@ final class ShareContactsViewController: UIViewController {
     }
 
     @objc
-    private func shareContactsLater(_ sender: Any?) {
-        delegate?.shareDidSkip(self)
+    private func shareContactsLater() {
+        delegate?.shareContactsViewControllerDidSkip(self)
     }
 
     // MARK: - AddressBook Access Denied ViewController
@@ -197,10 +190,12 @@ final class ShareContactsViewController: UIViewController {
         showingAddressBookAccessDeniedViewController = true
 
         if animated {
-            UIView.transition(from: shareContactsContainerView,
-                              to: addressBookAccessDeniedViewController.view,
-                              duration: 0.35,
-                              options: [.showHideTransitionViews, .transitionCrossDissolve])
+            UIView.transition(
+                from: shareContactsContainerView,
+                to: addressBookAccessDeniedViewController.view,
+                duration: 0.35,
+                options: [.showHideTransitionViews, .transitionCrossDissolve]
+            )
         } else {
             shareContactsContainerView.isHidden = true
             addressBookAccessDeniedViewController.view.isHidden = false
@@ -213,7 +208,7 @@ final class ShareContactsViewController: UIViewController {
 extension ShareContactsViewController: PermissionDeniedViewControllerDelegate {
 
     func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController) {
-        delegate?.shareDidSkip(self)
+        delegate?.shareContactsViewControllerDidSkip(self)
     }
 
     func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController) {

@@ -994,7 +994,7 @@
     // (2) selfUser deletes remote selfUser client
     {
         [self.userSession performChanges:^{
-            [self.userSession deleteClient:otherSelfClient withCredentials:[ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
+            [self.userSession deleteClient:otherSelfClient withCredentials:[UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
         }];
         WaitForAllGroupsToBeEmpty(0.5);
         
@@ -1179,7 +1179,7 @@
     WaitForAllGroupsToBeEmpty(1.0);
     
     [self.userSession performChanges:^{
-        [self.userSession deleteClient:notSelfClient withCredentials:[ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
+        [self.userSession deleteClient:notSelfClient withCredentials:[UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
     }];
     WaitForAllGroupsToBeEmpty(1.0);
     

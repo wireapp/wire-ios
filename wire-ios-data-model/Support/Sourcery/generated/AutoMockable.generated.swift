@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -3943,30 +3943,6 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
-public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerificationStatusUpdating {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - updateAllStatuses
-
-    public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockMethod: (() async -> Void)?
-
-    public func updateAllStatuses() async {
-        updateAllStatuses_Invocations.append(())
-
-        guard let mock = updateAllStatuses_MockMethod else {
-            fatalError("no mock for `updateAllStatuses`")
-        }
-
-        await mock()
-    }
-
-}
-
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -4086,6 +4062,75 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
         } else {
             fatalError("no mock for `encryptMessageFor`")
         }
+    }
+
+}
+
+public class MockMLSGroupVerificationProtocol: MLSGroupVerificationProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - startObserving
+
+    public var startObserving_Invocations: [Void] = []
+    public var startObserving_MockMethod: (() -> Void)?
+
+    public func startObserving() {
+        startObserving_Invocations.append(())
+
+        guard let mock = startObserving_MockMethod else {
+            fatalError("no mock for `startObserving`")
+        }
+
+        mock()
+    }
+
+    // MARK: - updateConversation
+
+    public var updateConversationBy_Invocations: [MLSGroupID] = []
+    public var updateConversationBy_MockMethod: ((MLSGroupID) async -> Void)?
+
+    public func updateConversation(by groupID: MLSGroupID) async {
+        updateConversationBy_Invocations.append(groupID)
+
+        guard let mock = updateConversationBy_MockMethod else {
+            fatalError("no mock for `updateConversationBy`")
+        }
+
+        await mock(groupID)
+    }
+
+    // MARK: - updateConversation
+
+    public var updateConversationWith_Invocations: [(conversation: ZMConversation, groupID: MLSGroupID)] = []
+    public var updateConversationWith_MockMethod: ((ZMConversation, MLSGroupID) async -> Void)?
+
+    public func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async {
+        updateConversationWith_Invocations.append((conversation: conversation, groupID: groupID))
+
+        guard let mock = updateConversationWith_MockMethod else {
+            fatalError("no mock for `updateConversationWith`")
+        }
+
+        await mock(conversation, groupID)
+    }
+
+    // MARK: - updateAllConversations
+
+    public var updateAllConversations_Invocations: [Void] = []
+    public var updateAllConversations_MockMethod: (() async -> Void)?
+
+    public func updateAllConversations() async {
+        updateAllConversations_Invocations.append(())
+
+        guard let mock = updateAllConversations_MockMethod else {
+            fatalError("no mock for `updateAllConversations`")
+        }
+
+        await mock()
     }
 
 }
@@ -4687,30 +4732,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `encryptMessageFor`")
         }
-    }
-
-}
-
-public class MockObserveMLSGroupVerificationStatusUseCaseProtocol: ObserveMLSGroupVerificationStatusUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() -> Void)?
-
-    public func invoke() {
-        invoke_Invocations.append(())
-
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
-        }
-
-        mock()
     }
 
 }

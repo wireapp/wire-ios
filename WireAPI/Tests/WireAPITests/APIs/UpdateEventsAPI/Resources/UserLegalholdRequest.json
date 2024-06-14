@@ -1,0 +1,11 @@
+{
+    "type": "user.legalhold-request",
+    "id": "539d9183-32a5-4fc4-ba5c-4634454e7585",
+    "client": {
+        "id": "abcd1234"
+    },
+    "last_prekey": {
+        "id": 12345,
+        "key": "foo"
+    }
+}

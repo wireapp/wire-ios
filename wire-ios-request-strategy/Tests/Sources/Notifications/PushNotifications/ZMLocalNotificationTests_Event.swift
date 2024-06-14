@@ -91,7 +91,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - Group Conversation Created
 
     func testThatItCreatesConversationCreateNotification() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // "push.notification.conversation.create" = "%1$@ created a group conversation with you"
 
             // when
@@ -104,7 +104,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesConversationCreateNotification_NoUsername() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // "push.notification.conversation.create.nousername" = "Someone created a group conversation with you"
 
             // when
@@ -117,7 +117,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesntCreateConversationCreateNotification_OneToOne() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // We don't want to create a notification for fake team one-to-one conversations
 
             // when
@@ -131,7 +131,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - Group conversation deleted
 
     func testThatItCreatesConversationDeletedNotification() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // "push.notification.conversation.delete" = "%1$@ deleted the group"
 
             // when
@@ -144,7 +144,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesConversationDeletedNotification_NoUsername() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // "push.notification.conversation.delete.nousername" = "Someone deleted the group"
 
             // when
@@ -161,7 +161,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesNewConnectionNotification() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let senderID = UUID.create()
             let payload = [
                 "user": ["id": senderID.transportString(), "name": "Stimpy"],
@@ -192,7 +192,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         //    "push.notification.connection.accepted.nousername" = "Your connection request was accepted"
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let accepted = "accepted"
             let pending = "pending"
 
@@ -222,7 +222,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItDoesNotCreateAConnectionAcceptedNotificationForAWrongStatus() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let status = "blablabla"
 
             // when
@@ -237,7 +237,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400000, timestamp: Date())
 
             // when
@@ -251,7 +251,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoUserName() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 2419200000, timestamp: Date())
 
@@ -266,7 +266,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 10000, timestamp: Date())
 
             // when
@@ -280,7 +280,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoUserName_NoConversationName() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 300000, timestamp: Date())
 
@@ -295,7 +295,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_Off() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
 
             // when
@@ -309,7 +309,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoUserName_Off() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
 
@@ -324,7 +324,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName_Off() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
 
             // when
@@ -338,7 +338,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoUserName_NoConversationName_Off() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
             let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
 
@@ -355,7 +355,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesATextNotification() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire")))
             var note: ZMLocalNotification?
 
@@ -371,7 +371,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItDoesNotCreateANotificationWhenConversationIsForceReadonly() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.oneOnOneConversation.isForcedReadOnly = true
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire")))
             var note: ZMLocalNotification?
@@ -386,7 +386,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItDoesNotCreateANotificationForConfirmationEvents() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let confirmation = GenericMessage(content: Confirmation(messageId: .create()))
             let event = self.createUpdateEvent(.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, genericMessage: confirmation)
 
@@ -400,7 +400,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesATextNotification_NoConversation() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let genericMessage = GenericMessage(content: Text(content: "123"))
 
             // when
@@ -422,7 +422,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesASystemLocalNotificationForRemovingTheSelfUserEvent() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMemberLeaveUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, users: [self.selfUser])
             var note: ZMLocalNotification?
 
@@ -438,7 +438,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesASystemLocalNotificationForAddingTheSelfUserEvent() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMemberJoinUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, users: [self.selfUser])
             var note: ZMLocalNotification?
 
@@ -454,7 +454,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesASystemLocalNotificationForMessageTimerUpdateEvent() {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMessageTimerUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!)
             var note: ZMLocalNotification?
 

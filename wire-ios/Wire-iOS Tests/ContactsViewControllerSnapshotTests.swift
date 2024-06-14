@@ -17,10 +17,11 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ContactsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

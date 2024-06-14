@@ -27,7 +27,12 @@ struct HTTPClientMockError: Error {
 
 final class HTTPClientMock: HTTPClient {
 
-    var receivedRequest: HTTPRequest?
+    private(set) var receivedRequests: [HTTPRequest] = []
+
+    var receivedRequest: HTTPRequest? {
+        receivedRequests.first
+    }
+
     var executeRequestMock: (HTTPRequest) async throws -> HTTPResponse
 
     convenience init() {
@@ -40,23 +45,11 @@ final class HTTPClientMock: HTTPClient {
         code: Int,
         payloadResourceName: String
     ) throws {
-        guard let url = Bundle.module.url(
-            forResource: payloadResourceName,
-            withExtension: "json"
-        ) else {
-            throw HTTPClientMockError(message: "payload resource \(payloadResourceName).json not found")
-        }
-
-        let payload: Data
-        do {
-            payload = try Data(contentsOf: url)
-        } catch {
-            throw HTTPClientMockError(message: "unable to load data from resource: \(error)")
-        }
+        let response = PredefinedResponse(resourceName: payloadResourceName)
 
         self.init(
             code: code,
-            payload: payload
+            payload: try response.data()
         )
     }
 
@@ -107,8 +100,33 @@ final class HTTPClientMock: HTTPClient {
     }
 
     func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
-        receivedRequest = request
+        receivedRequests.append(request)
         return try await executeRequestMock(request)
     }
+}
 
+// MARK: - Predefined responses
+
+extension HTTPClientMock {
+
+    struct PredefinedResponse {
+        var resourceName: String
+
+        func data() throws -> Data {
+            guard let url = Bundle.module.url(
+                forResource: resourceName,
+                withExtension: "json"
+            ) else {
+                throw HTTPClientMockError(message: "payload resource \(resourceName).json not found")
+            }
+
+            let payload: Data
+            do {
+                payload = try Data(contentsOf: url)
+            } catch {
+                throw HTTPClientMockError(message: "unable to load data from resource: \(error)")
+            }
+            return payload
+        }
+    }
 }

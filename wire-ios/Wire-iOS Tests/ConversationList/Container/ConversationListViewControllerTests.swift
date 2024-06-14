@@ -24,7 +24,7 @@ import XCTest
 
 // MARK: - ConversationListViewControllerTests
 
-final class ConversationListViewControllerTests: BaseSnapshotTestCase {
+final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -53,7 +53,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )

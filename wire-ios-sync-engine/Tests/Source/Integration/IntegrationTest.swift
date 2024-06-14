@@ -80,7 +80,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
@@ -166,17 +165,17 @@ extension IntegrationTest {
 
     func setupTimers() {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
-            $0.zm_createMessageObfuscationTimer()
+            userSession?.syncManagedObjectContext.zm_createMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.zm_createMessageDeletionTimer()
     }
 
     func destroyTimers() {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
-            $0.zm_teardownMessageObfuscationTimer()
+            userSession?.syncManagedObjectContext.zm_teardownMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.performGroupedAndWait {
-            $0.zm_teardownMessageDeletionTimer()
+            userSession?.managedObjectContext.zm_teardownMessageDeletionTimer()
         }
     }
 
@@ -223,7 +222,7 @@ extension IntegrationTest {
     @objc
     func destroySessionManager() {
         destroyTimers()
-        userSession?.managedObjectContext.performGroupedAndWait { _ in
+        userSession?.managedObjectContext.performGroupedAndWait {
             self.userSession?.tearDown()
         }
         userSession = nil
@@ -473,18 +472,18 @@ extension IntegrationTest {
 
     @objc
     func login() -> Bool {
-        let credentials = ZMEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
         return login(withCredentials: credentials, ignoreAuthenticationFailures: false)
     }
 
     @objc(loginAndIgnoreAuthenticationFailures:)
     func login(ignoreAuthenticationFailures: Bool) -> Bool {
-        let credentials = ZMEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
         return login(withCredentials: credentials, ignoreAuthenticationFailures: ignoreAuthenticationFailures)
     }
 
     @objc
-    func login(withCredentials credentials: ZMCredentials, ignoreAuthenticationFailures: Bool = false) -> Bool {
+    func login(withCredentials credentials: UserCredentials, ignoreAuthenticationFailures: Bool = false) -> Bool {
         sessionManager?.unauthenticatedSession?.login(with: credentials)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         sessionManager?.unauthenticatedSession?.continueAfterBackupImportStep()
@@ -505,7 +504,7 @@ extension IntegrationTest {
 
     @objc(userForMockUser:)
     func user(for mockUser: MockUser) -> ZMUser? {
-        let uuid = mockUser.managedObjectContext!.performGroupedAndWait { _ in
+        let uuid = mockUser.managedObjectContext!.performGroupedAndWait {
             return UUID(transportString: mockUser.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
@@ -522,7 +521,7 @@ extension IntegrationTest {
 
     @objc(conversationForMockConversation:)
     func conversation(for mockConversation: MockConversation) -> ZMConversation? {
-        let uuid = mockConversation.managedObjectContext!.performGroupedAndWait { _ in
+        let uuid = mockConversation.managedObjectContext!.performGroupedAndWait {
             return UUID(transportString: mockConversation.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
