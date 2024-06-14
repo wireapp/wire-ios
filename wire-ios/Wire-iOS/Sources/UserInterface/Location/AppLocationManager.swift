@@ -28,7 +28,22 @@ protocol AppLocationManagerDelegate: AnyObject {
 
 }
 
-final class AppLocationManager: NSObject {
+protocol AppLocationManagerProtocol: AnyObject {
+
+    var delegate: AppLocationManagerDelegate? { get set }
+
+    var authorizationStatus: CLAuthorizationStatus { get }
+
+    var userLocationAuthorized: Bool { get }
+
+    func requestLocationAuthorization()
+
+    func startUpdatingLocation()
+
+    func stopUpdatingLocation()
+}
+
+final class AppLocationManager: NSObject, AppLocationManagerProtocol {
 
     // MARK: - Properties
 

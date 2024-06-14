@@ -24,8 +24,8 @@ import WireDataModel
 protocol LocationSelectionViewControllerDelegate: AnyObject {
 
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)
-    func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
 
+    func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
 }
 
 final class LocationSelectionViewController: UIViewController {
@@ -62,13 +62,12 @@ final class LocationSelectionViewController: UIViewController {
 
     private let mapViewController = MapViewController()
     private let toolBar = ModalTopBar()
-    private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
     private let sendViewController = LocationSendViewController()
     private var userShowedInitially = false
     private var mapDidRender = false
 
-    lazy var appLocationManager: AppLocationManager = {
+    lazy var appLocationManager: AppLocationManagerProtocol = {
         let manager = AppLocationManager()
         manager.delegate = self
         return manager
