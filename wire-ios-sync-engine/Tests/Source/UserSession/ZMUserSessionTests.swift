@@ -371,7 +371,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(sut.networkState, .offline)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            stateRecorder,
+            notificationContext: sut.managedObjectContext.notificationContext
+        )
         sut.didReceiveData()
 
         // THEN
@@ -387,7 +390,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            stateRecorder,
+            notificationContext: sut.managedObjectContext.notificationContext
+        )
         sut.didReceiveData()
 
         // THEN
@@ -402,7 +408,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            stateRecorder,
+            notificationContext: sut.managedObjectContext.notificationContext
+        )
         sut.didGoOffline()
 
         // THEN
@@ -421,7 +430,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            stateRecorder,
+            notificationContext: sut.managedObjectContext.notificationContext
+        )
         sut.didGoOffline()
 
         // THEN

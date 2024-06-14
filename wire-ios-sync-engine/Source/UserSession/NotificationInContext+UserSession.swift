@@ -53,17 +53,17 @@ extension ZMUserSession {
 
 @objcMembers public class ZMNetworkAvailabilityChangeNotification: NSObject {
 
-    private static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
+    static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
 
-    private static let stateKey = "networkState"
+    static let stateKey = "networkState"
 
     public static func addNetworkAvailabilityObserver(
         _ observer: ZMNetworkAvailabilityObserver,
-        userSession: ZMUserSession
+        notificationContext: NotificationContext
     ) -> Any {
         return NotificationInContext.addObserver(
             name: name,
-            context: userSession.managedObjectContext.notificationContext
+            context: notificationContext
         ) { [weak observer] note in
             let networkState = note.userInfo[stateKey] as! ZMNetworkState
             observer?.didChangeAvailability(newState: networkState)
@@ -72,11 +72,11 @@ extension ZMUserSession {
 
     public static func notify(
         networkState: ZMNetworkState,
-        userSession: ZMUserSession
+        notificationContext: NotificationContext
     ) {
         NotificationInContext(
             name: name,
-            context: userSession.managedObjectContext.notificationContext,
+            context: notificationContext,
             userInfo: [stateKey: networkState]
         ).post()
     }

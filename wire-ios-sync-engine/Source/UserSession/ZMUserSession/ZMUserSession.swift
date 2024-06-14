@@ -204,7 +204,10 @@ public final class ZMUserSession: NSObject {
     public private(set) var networkState: ZMNetworkState = .online {
         didSet {
             if oldValue != networkState {
-                ZMNetworkAvailabilityChangeNotification.notify(networkState: networkState, userSession: self)
+                ZMNetworkAvailabilityChangeNotification.notify(
+                    networkState: networkState,
+                    notificationContext: managedObjectContext.notificationContext
+                )
             }
         }
     }

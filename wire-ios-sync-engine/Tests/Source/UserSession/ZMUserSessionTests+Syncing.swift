@@ -201,7 +201,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         startQuickSync()
         finishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let networkStateRecorder = NetworkStateRecorder(userSession: sut)
+        let networkStateRecorder = NetworkStateRecorder(notificationContext: sut.managedObjectContext.notificationContext)
 
         // when
         sut.processEvents()
