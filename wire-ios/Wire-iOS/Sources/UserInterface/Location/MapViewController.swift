@@ -17,6 +17,7 @@
 //
 
 import MapKit
+import UIKit
 
 // MARK: - MapManagerDelegate
 
@@ -30,7 +31,7 @@ protocol MapViewControllerDelegate: AnyObject {
 
 // MARK: - MapViewController
 
-final class MapViewController: NSObject {
+final class MapViewController: UIViewController {
 
     // MARK: - Properties
 
@@ -39,8 +40,10 @@ final class MapViewController: NSObject {
 
     // MARK: - Init
 
-    override init() {
-        super.init()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.addSubview(mapView)
+        mapView.frame = view.bounds
         mapView.delegate = self
         configureMapView()
     }
