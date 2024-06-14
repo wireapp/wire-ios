@@ -16,47 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
+import SnapshotTesting
 import XCTest
+
+@testable import WireAPI
 
 final class BackendInfoAPITests: XCTestCase {
 
-    private var httpClient: HTTPClient!
+    private var apiSnapshotHelper: APISnapshotHelper<BackendInfoAPI>!
 
-    // MARK: - V0
+    // MARK: - Setup
 
-    func testGetBackendInfoRequestV0() async throws {
-        // Given
-        let httpClient = HTTPClientMock()
-        let sut = BackendInfoAPIV0(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getBackendInfo()
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/api-version",
-                method: .get
-            )
-        )
+    override func setUp() {
+        super.setUp()
+        apiSnapshotHelper = APISnapshotHelper { httpClient, _ in
+            let builder = BackendInfoAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI()
+        }
     }
 
-    func testGetBackendInfoResponseV0() async throws {
+    override func tearDown() {
+        apiSnapshotHelper = nil
+        super.tearDown()
+    }
+
+    // MARK: - Request generation
+
+    func testGetBackendInfoRequest() async throws {
+        try await apiSnapshotHelper.verifyRequest(for: [.v0]) { sut in
+            _ = try await sut.getBackendInfo()
+        }
+    }
+
+    // MARK: - Response handling
+
+    func testGetBackendInfoResponseWithoutDevelopmentVersions() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "domain": "example.com",
-                "federation": true,
-                "supported": [0, 1, 2]
-            }
-            """
+            payloadResourceName: "GetBackendInfoSuccessResponse1"
         )
 
-        let sut = BackendInfoAPIV0(httpClient: httpClient)
+        let sut = BackendInfoAPIImpl(httpClient: httpClient)
 
         // When
         let result = try await sut.getBackendInfo()
@@ -73,23 +74,14 @@ final class BackendInfoAPITests: XCTestCase {
         )
     }
 
-    // MARK: - V2
-
-    func testGetBackendInfoResponseV2() async throws {
+    func testGetBackendInfoResponseWithDevelopmentVersions() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "domain": "example.com",
-                "federation": true,
-                "supported": [0, 1, 2],
-                "development": [3]
-            }
-            """
+            payloadResourceName: "GetBackendInfoSuccessResponse2"
         )
 
-        let sut = BackendInfoAPIV2(httpClient: httpClient)
+        let sut = BackendInfoAPIImpl(httpClient: httpClient)
 
         // When
         let result = try await sut.getBackendInfo()
