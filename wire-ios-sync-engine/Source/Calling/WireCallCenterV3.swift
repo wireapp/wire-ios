@@ -417,7 +417,7 @@ extension WireCallCenterV3 {
             return []
         }
 
-        guard let limit = limit else {
+        guard let limit else {
             return activeSpeakers
         }
 
@@ -644,7 +644,7 @@ extension WireCallCenterV3 {
 
         syncContext.perform { [weak self] in
             guard
-                let self = self,
+                let self,
                 let mlsService = syncContext.mlsService
             else {
                 self?.onMLSConferenceFailure(id: conversationID)
@@ -707,7 +707,7 @@ extension WireCallCenterV3 {
                 } catch {
                     Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
                     self.onMLSConferenceFailure(id: conversationID)
-                    throw error
+                    assertionFailure(String(reflecting: error))
                 }
             }
         }
@@ -878,7 +878,7 @@ extension WireCallCenterV3 {
     func requestCallConfig() {
         zmLog.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
         transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
-            guard let `self` = self else { return }
+            guard let self else { return }
             zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
             self.avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
         })
@@ -1047,7 +1047,7 @@ extension WireCallCenterV3 {
             clearSnapshot(conversationId: conversationId)
         }
 
-        if let context = uiMOC, let callerId = callerId {
+        if let context = uiMOC, let callerId {
             let notification = WireCallCenterCallStateNotification(context: context,
                                                                    callState: callState,
                                                                    conversationId: conversationId,

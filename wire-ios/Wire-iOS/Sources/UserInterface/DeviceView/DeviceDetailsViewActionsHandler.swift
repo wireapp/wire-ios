@@ -25,7 +25,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var userClient: UserClient
     var userSession: UserSession
     var clientRemovalObserver: ClientRemovalObserver?
-    var credentials: ZMEmailCredentials?
+    var credentials: UserEmailCredentials?
     let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     private let contextProvider: ContextProvider
     private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
@@ -41,7 +41,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     init(
         userClient: UserClient,
         userSession: UserSession,
-        credentials: ZMEmailCredentials?,
+        credentials: UserEmailCredentials?,
         saveFileManager: SaveFileActions,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         contextProvider: ContextProvider,
@@ -61,7 +61,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await startE2EIdentityEnrollment()
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
             throw error
         }
     }

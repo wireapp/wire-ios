@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archief";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Gesprekken beginnen hier";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ is een ander apparaat gaan gebruiken.";
 "call.degraded.alert.message.unknown" = "Iemand begon met een nieuw apparaat.";
 "call.degraded.alert.action.continue" = "Toch bellen";
+"call.degraded.incoming.alert.action.continue" = "Toch aanmelden";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "GEBLOKKEERD";
 "profile.create_conversation_button_title" = "Groep creëren";
 "profile.open_conversation_button_title" = "Open gesprek";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
 "profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Voeg e-mailadres en wachtwoord toe";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Gebruikersvoorwaarden";
 "about.privacy.title" = "Privacybeleid";
 "about.license.title" = "Licentie-informatie";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "Naam";
 "self.settings.account_section.email.title" = "E-mail";
-"self.settings.account_section.phone.title" = "Telefoonnummer";
 "self.settings.account_section.handle.title" = "Gebruikersnaam";
 "self.settings.account_section.add_handle.title" = "Voeg gebruikersnaam toe";
 "self.settings.account_section.team.title" = "Team";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Email opnieuw verstuurd";
 "self.settings.account_section.email.change.resend.message" = "Een bevestigings email is opnieuw verstuurd naar %@. Je vind verdere instructies in deze email.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Telefoonnummer";
-"self.settings.account_section.phone_number.change.save" = "Opslaan";
-"self.settings.account_section.phone_number.change.remove" = "Verwijder Telefoon Nummer";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Verwijder Telefoon Nummer";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Opslaan";
-"self.settings.account_section.phone_number.change.verify.title" = "Verifiëer";
-"self.settings.account_section.phone_number.change.verify.description" = "Voer de verificatiecode die we naar %@ hebben gestuurd.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Voer code in";
-"self.settings.account_section.phone_number.change.verify.resend" = "Code opnieuw verzenden";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Krijg je geen code?\nJe kan elke 30 seconde een nieuwe aanvragen.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Verstuur code opnieuw";
-"self.settings.account_section.phone_number.change.resend.message" = "Verificatie code was opnieuw verstuurd naar %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Meldingen";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Wachtwoord";
 "password.guidance.toolong" = "Te veel tekens";
 
-"phone.guidance.invalid" = "Ongeldig telefoonnummer";
-"phone.guidance.tooshort" = "Telefoonnummer is te kort";
-"phone.guidance.toolong" = "Te veel tekens";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Voer de verificatiecode in die we naar %@ gestuurde hebben.";
 "team.activation_code.button.resend" = "Code opnieuw verzenden";
 "team.activation_code.button.change_email" = "E-mailadres wijzigen";
-"team.activation_code.button.change_phone" = "Telefoonnummer wijzigen";
 
 "team.full_name.headline" = "Jouw naam";
 "team.full_name.textfield.placeholder" = "Volledige naam";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Registratie";
 "registration.close_email_invitation_button.email_title" = "Gebruik een ander e-mailadres";
-"registration.close_email_invitation_button.phone_title" = "Registreer telefonisch";
 "registration.close_phone_invitation_button.email_title" = "Registreer via e-mail";
-"registration.close_phone_invitation_button.phone_title" = "Gebruik een andere telefoon";
 
-"registration.register_by_phone" = "Telefoonnummer";
 "registration.register_by_email" = "E-mail";
-
-"registration.enter_phone_number.title" = "Bewerk telefoonnummer";
-"registration.enter_phone_number.placeholder" = "Telefoonnummer";
-
-"registration.verify_phone_number.instructions" = "Voer de verificatiecode in die we naar %@ gestuurd hebben";
-"registration.verify_phone_number.resend" = "Opnieuw sturen";
-"registration.verify_phone_number.resend_placeholder" = "Krijg je geen code?\nJe kunt een nieuwe aanvragen over %.0f seconden";
 
 "registration.verify_email.instructions" = "We hebben een e-mail verstuurd naar %@.\nKlik op de link om je e-mailadres te bevestigen.";
 "registration.verify_email.resend.instructions" = "Bericht niet ontvangen?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Herstellen vanuit backup";
 
 "registration.alert.account_exists.title" = "Dit account bestaat al";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Registreer met een ander e-mail";
-"registration.alert.change_phone_action" = "Registreren met ander mobiel nummer";
 "registration.alert.change_signin_action" = "Inloggen";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Beheer apparaten";
 "registration.signin.too_many_devices.sign_out_button.title" = "Uitloggen";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Wachtwoord is nodig";
 "registration.signin.alert.password_needed.message" = "Vul je wachtwoord in om in te loggen.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Login met Email";
-"signin.use_phone.label" = "Aanmelden met telefoon nummer";
 "signin.forgot_password" = "Wachtwoord vergeten?";
 "signin.use_one_password.label" = "Log in met 1Password";
 "signin.use_one_password.hint" = "Klik twee keer om je wachtwoord in te laten vullen door 1Password";
 "signin.confirm" = "Inloggen";
 "signin.company_idp.button.title" = "Voor bedrijven";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
-"signin_logout.phone.subheadline" = "Your session expired. Enter your phone number to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
-"signin.phone.missing_password.subtitle" = "Enter your phone number to continue.";
-
-"registration.phone_country" = "Land";
-"registration.phone_code" = "Landcode";
-"registration.phone_country.hint" = "Dubbel tap om een ander land te selecteren.";
-"registration.phone_code.hint" = "Dubbel tap om een ander land nummer te selecteren.";
-"registration.phone.verify.label" = "Verifieer telefoonnummer";
-"registration.phone.verify_field.label" = "Verificatie code";
-
-"registration.add_phone_number.hero.title" = "Voeg telefoonnummer toe";
-"registration.add_phone_number.hero.paragraph" = "Dit helpt ons mensen te vinden die je misschien kent. Wij delen deze gegevens nooit.";
-"registration.add_phone_number.skip_button.title" = "Niet nu";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "Dit zorgt ervoor dat je Wire op meerdere apparaten kunt gebruiken.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Hallo, %@";
 "registration.email_invitation.hero.paragraph" = "Kies een wachtwoord om je account aan te maken.";
 
-"registration.phone_invitation.title" = "Uitnodiging";
-"registration.phone_invitation.hero.title" = "Hallo, %@";
-"registration.phone_invitation.hero.paragraph" = "Je bent nog maar één stap verwijderd van het maken van je account.";
-
 "registration.confirm" = "Registreren";
-"registration.phone.country_code.hint" = "Double tap to use a phone number from this country.";
 
 "error.name_and_email" = "Vul je naam en een geldig e-mailadres in";
 "error.full_name" = "Vul je volledige naam in a.u.b.";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "Vul een geldig e-mailadres in a.u.b.";
-"error.phone.invalid" = "Voer een geldig telefoonnummer in";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Het account dat je probeert te bereiken is nog niet geactiveerd. Verifieer je gegevens.";
 "error.user.network_error" = "Er lijkt een probleem te zijn met het netwerk. Probeer het later opnieuw.";
 "error.user.email_is_taken" = "Dit e-mailadres is al geregistreerd. Controleer de invoer en probeer het nogmaals.";
-"error.user.phone_is_taken" = "Dit telefoonnummer is al geregistreerd. Controleer de invoer en probeer het nogmaals.";
-"error.user.phone_code_invalid" = "Voer een geldige code in";
-"error.user.phone_code_too_many" = "We hebben je al een code via SMS verstuurd. Klik op Opnieuw sturen na 10 minuten om een nieuwe code te krijgen.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Er ging iets mis. Probeer het nogmaals.";
 "error.user.device_deleted_remotely" = "Je bent uitgelogd door een ander apparaat.";
-"error.user.last_identity_cant_be_deleted" = "Een email adres of een telefoon nummer is verplicht.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Dit account is niet langer geautoriseerd om in te loggen.";
 "error.user.account_limit_reached" = "Je kan niet meer dan 3 accounts toevoegen.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Removing the participant failed";
 "error.conversation.too_many_members" = "Het gesprek is vol";
 "error.conversation.offline" = "Er lijkt een probleem te zijn met je internetverbinding. Controleer of deze werkt.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Bevestig deze URL";
 "url_action.connect_to_bot.message" = "Wil je met deze bot connecten?";
 
-"url_action.switch_backend.title" = "Verbinden met server";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

@@ -129,13 +129,13 @@ extension ZMConversation {
 
         switch error {
         case ConversationAddParticipantsError.tooManyMembers:
-            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.tooManyMembers)
+            showErrorAlert(title: ErrorString.title, message: ErrorString.tooManyMembers)
         case ConversationError.offline:
-            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
+            showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
         case ConversationAddParticipantsError.missingLegalHoldConsent:
-            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.missingLegalholdConsent)
+            showErrorAlert(title: ErrorString.title, message: ErrorString.missingLegalholdConsent)
         default:
-            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.cannotAdd)
+            showErrorAlert(title: ErrorString.title, message: ErrorString.cannotAdd)
         }
     }
 
@@ -144,9 +144,27 @@ extension ZMConversation {
 
         switch error {
         case ConversationError.offline:
-            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
+            showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
         default:
-            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.cannotRemove)
+            showErrorAlert(title: ErrorString.title, message: ErrorString.cannotRemove)
         }
+    }
+
+    private func showErrorAlert(
+        title: String,
+        message: String
+    ) {
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        let viewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        viewController?.present(alertController, animated: true)
     }
 }

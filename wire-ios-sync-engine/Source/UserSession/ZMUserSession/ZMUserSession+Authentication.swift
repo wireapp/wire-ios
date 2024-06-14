@@ -28,7 +28,7 @@ extension ZMUserSession {
     }
 
     @objc(setEmailCredentials:)
-    func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
+    func setEmailCredentials(_ emailCredentials: UserEmailCredentials?) {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
@@ -88,7 +88,7 @@ extension ZMUserSession {
         }
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
@@ -107,13 +107,13 @@ extension ZMUserSession {
         let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
-            guard let strongSelf = self else { return }
+            guard let self else { return }
 
             if response.httpStatus == 200 {
-                self?.delegate?.userDidLogout(accountId: accountID)
+                delegate?.userDidLogout(accountId: accountID)
                 completion(.success(()))
             } else {
-                completion(.failure(strongSelf.errorFromFailedDeleteResponse(response)))
+                completion(.failure(errorFromFailedDeleteResponse(response)))
             }
         }))
 

@@ -35,7 +35,7 @@ extension ZMManagedObject {
 
     /// Returns a map of [classIdentifier : [affectedObject: changedKeys]]
     func byInsertOrDeletionAffectedKeys(for object: ZMManagedObject?, keyStore: DependencyKeyStore, affectedKey: String) -> ObjectAndChanges {
-        guard let object = object else { return [:] }
+        guard let object else { return [:] }
         let classIdentifier = type(of: object).entityName()
         return [object: Changes(changedKeys: keyStore.observableKeysAffectedByValue(classIdentifier, key: affectedKey))]
     }
@@ -46,7 +46,7 @@ extension ZMManagedObject {
                               keyStore: DependencyKeyStore,
                               originalChangeKey: String? = nil,
                               keyMapping: ((String) -> String)) -> ObjectAndChanges {
-        guard let object = object else { return [:]}
+        guard let object else { return [:]}
         let classIdentifier = type(of: object).entityName()
 
         var changes = changedValues()
@@ -71,7 +71,7 @@ extension ZMManagedObject {
         }
 
         var originalChanges = [String: NSObject?]()
-        if let originalChangeKey = originalChangeKey {
+        if let originalChangeKey {
             let requiredKeys = keyStore.requiredKeysForIncludingRawChanges(classIdentifier: classIdentifier, for: self)
             knownKeys.forEach {
                 if changes[$0] == nil {
@@ -145,8 +145,12 @@ extension ZMUser: SideEffectSource {
 
         let classIdentifier = ZMConversation.entityName()
         let affectedKeys = keyStore.observableKeysAffectedByValue(classIdentifier, key: #keyPath(ZMConversation.localParticipantRoles))
-        return Dictionary(keys: conversations,
-                                            repeatedValue: Changes(changedKeys: affectedKeys))
+
+        var dictionary = [ZMConversation: Changes]()
+        for conversation in conversations {
+            dictionary.updateValue(Changes(changedKeys: affectedKeys), forKey: conversation)
+        }
+        return dictionary
     }
 }
 
@@ -202,7 +206,7 @@ extension ZMConnection: SideEffectSource {
             keyMapping: { "\(#keyPath(ZMUser.connection)).\($0)" }
         )
 
-        return conversationChanges.updated(other: userChanges)
+        return conversationChanges.merging(userChanges) { _, new in new }
     }
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {

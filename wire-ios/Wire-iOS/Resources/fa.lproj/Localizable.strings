@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archive";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "گفتگوها از اینجا شروع می‌شوند";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ started using a new device.";
 "call.degraded.alert.message.unknown" = "شخصی شروع به استفاده از Wire روی یک دستگاه جدید کرد.";
 "call.degraded.alert.action.continue" = "به هر حال تماس بگیر";
+"call.degraded.incoming.alert.action.continue" = "Join anyway";
 
 "call.degraded.ended.alert.title" = "تماس پایان یافت";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "BLOCKED";
 "profile.create_conversation_button_title" = "ایجاد گروه";
 "profile.open_conversation_button_title" = "بار کردن گفتگو";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
 "profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "ایمیل آدرس خود و رمز عبور جدیدی را وارد کنید";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "شرایط و مقررات استفاده";
 "about.privacy.title" = "سیاست حفظ از حریم خصوصی";
 "about.license.title" = "اطلاعات مجوز";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "نام";
 "self.settings.account_section.email.title" = "ایمیل";
-"self.settings.account_section.phone.title" = "تلفن";
 "self.settings.account_section.handle.title" = "نام کاربری";
 "self.settings.account_section.add_handle.title" = "اضافه کردن نام کاربری";
 "self.settings.account_section.team.title" = "تیم";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Email resent";
 "self.settings.account_section.email.change.resend.message" = "Confirmation email was resent to %@. Check your email inbox and follow the instructions.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "تلفن";
-"self.settings.account_section.phone_number.change.save" = "ذخيره";
-"self.settings.account_section.phone_number.change.remove" = "Remove Phone Number";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Remove Phone Number";
-
-"self.settings.account_section.phone_number.change.verify.save" = "ذخيره";
-"self.settings.account_section.phone_number.change.verify.title" = "تایید";
-"self.settings.account_section.phone_number.change.verify.description" = "Enter the verification code we sent to: %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Enter code";
-"self.settings.account_section.phone_number.change.verify.resend" = "Resend Code";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "No code showing up?\nYou can request a new one every 30 seconds.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Code resent";
-"self.settings.account_section.phone_number.change.resend.message" = "Verification code was resent to %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "آگاه‌سازی‌ها";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "پسورد";
 "password.guidance.toolong" = "تعداد کاراکترها زیاد است";
 
-"phone.guidance.invalid" = "شماره تلفن معتبر نیست";
-"phone.guidance.tooshort" = "Phone number is too short";
-"phone.guidance.toolong" = "تعداد کاراکترها زیاد است";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Enter the verification code we sent to %@.";
 "team.activation_code.button.resend" = "دوباره کد را ارسال کنید";
 "team.activation_code.button.change_email" = "تغییر ایمیل";
-"team.activation_code.button.change_phone" = "تغییر شماره تلفن";
 
 "team.full_name.headline" = "نام شما";
 "team.full_name.textfield.placeholder" = "Full name";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Registration";
 "registration.close_email_invitation_button.email_title" = "Use another email";
-"registration.close_email_invitation_button.phone_title" = "Register by phone";
 "registration.close_phone_invitation_button.email_title" = "Register by email";
-"registration.close_phone_invitation_button.phone_title" = "Use another phone";
 
-"registration.register_by_phone" = "تلفن";
 "registration.register_by_email" = "ایمیل";
-
-"registration.enter_phone_number.title" = "Edit phone number";
-"registration.enter_phone_number.placeholder" = "Phone number";
-
-"registration.verify_phone_number.instructions" = "Enter the verification code we sent to %@";
-"registration.verify_phone_number.resend" = "ارسال مجدد";
-"registration.verify_phone_number.resend_placeholder" = "No code showing up?\nYou can request a new one in %.0f seconds";
 
 "registration.verify_email.instructions" = "We sent an email to %@.\n Follow the link to verify your address.";
 "registration.verify_email.resend.instructions" = "Didn’t get the message?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "بازیابی نسخه های پشتیبان";
 
 "registration.alert.account_exists.title" = "Account Exists";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
-"registration.alert.change_phone_action" = "Register with Another Number";
 "registration.alert.change_signin_action" = "وارد شدن";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "مدیریت دستگاه‌ها";
 "registration.signin.too_many_devices.sign_out_button.title" = "خروج";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Login with Email";
-"signin.use_phone.label" = "Login with Phone";
 "signin.forgot_password" = "گذرواژه را فراموش کرده‌اید؟";
 "signin.use_one_password.label" = "Log in with 1Password";
 "signin.use_one_password.hint" = "Double tap to fill your password with 1Password";
 "signin.confirm" = "وارد شدن";
 "signin.company_idp.button.title" = "For Companies";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
-"signin_logout.phone.subheadline" = "Your session expired. Enter your phone number to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
-"signin.phone.missing_password.subtitle" = "Enter your phone number to continue.";
-
-"registration.phone_country" = "کشور";
-"registration.phone_code" = "کد کشور";
-"registration.phone_country.hint" = "Double tap to select another country.";
-"registration.phone_code.hint" = "Double tap to select another country code.";
-"registration.phone.verify.label" = "تایید کردن شماره تلفن";
-"registration.phone.verify_field.label" = "Verification Code";
-
-"registration.add_phone_number.hero.title" = "اضافه کردن شماره تلفن";
-"registration.add_phone_number.hero.paragraph" = "This helps us find people you may know. We never share it.";
-"registration.add_phone_number.skip_button.title" = "اکنون نه";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "این به شما کمک می‌کند تا در دستگاه‌های مختلف از Wire استفاده کنید.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Hello, %@";
 "registration.email_invitation.hero.paragraph" = "یک رمزعبور برای حساب کاربری خود انتخاب کنید.";
 
-"registration.phone_invitation.title" = "Invitation";
-"registration.phone_invitation.hero.title" = "Hello, %@";
-"registration.phone_invitation.hero.paragraph" = "تنها یک قدم تا ایجاد یک حساب کاربری جدید فاصله دارید.";
-
 "registration.confirm" = "Sign Up";
-"registration.phone.country_code.hint" = "Double tap to use a phone number from this country.";
 
 "error.name_and_email" = "Please enter your full name and a valid email address";
 "error.full_name" = "Please enter your full name";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "لطفا یک آدرس ایمیل معتبر وارد کنید";
-"error.phone.invalid" = "لطفا یک شماره تلفن معتبر وارد کنید";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "The account you are trying access is pending activation. Please verify your details.";
 "error.user.network_error" = "There seems to be a problem with your network. Please try again later.";
 "error.user.email_is_taken" = "The email address you provided has already been registered. Please try again.";
-"error.user.phone_is_taken" = "این شماره تلفن قبلا در سیستم ثبت شده است. لطفا شماره تلفن دیگری را امتحان کنید.";
-"error.user.phone_code_invalid" = "لطفا کد معتبری که برای شما ارسال شده است را وارد کنید";
-"error.user.phone_code_too_many" = "با برای شما یک کد پیامک کردیم. اگر بعد از ۱۰ دقیقه چیزی دریافت نکردین، روی ارسال مجدد بزنید تا کد جدیدی ارسال شود.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Something went wrong. Please try again.";
 "error.user.device_deleted_remotely" = "You have been logged out from another device.";
-"error.user.last_identity_cant_be_deleted" = "Either an email address or a phone number is required.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "این حساب کاربری برای ورود به سیستم مجاز نیست.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Removing the participant failed";
 "error.conversation.too_many_members" = "The conversation is full";
 "error.conversation.offline" = "There seems to be a problem with your Internet connection. Please make sure it’s working.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Confirm URL action";
 "url_action.connect_to_bot.message" = "Would you like to connect to the bot?";
 
-"url_action.switch_backend.title" = "اتصال به سرور";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

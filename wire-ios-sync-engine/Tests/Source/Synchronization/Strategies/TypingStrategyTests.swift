@@ -80,7 +80,7 @@ final class TypingStrategyTests: MessagingTest {
 
         self.sut = TypingStrategy(applicationStatus: mockApplicationStatus, syncContext: syncMOC, uiContext: uiMOC, typing: typing)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.conversationA = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversationA.remoteIdentifier = UUID.create()
             self.userA = ZMUser.insertNewObject(in: self.syncMOC)
@@ -139,7 +139,7 @@ final class TypingStrategyTests: MessagingTest {
         let expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/typing"
         let expectedPayload = ["status": isTyping ? "started" : "stopped"]
 
-        if let request = request, (request.path == expectedPath) && (request.method == .post) {
+        if let request, (request.path == expectedPath) && (request.method == .post) {
             if let payload = request.payload as? [String: String] {
                 XCTAssertEqual(payload, expectedPayload)
             } else {

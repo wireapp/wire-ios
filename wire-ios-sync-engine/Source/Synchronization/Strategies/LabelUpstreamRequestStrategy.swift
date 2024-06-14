@@ -93,7 +93,7 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         }
 
         for (label, updatedKeys) in updatedKeys {
-            guard let updatedKeys = updatedKeys else { continue }
+            guard let updatedKeys else { continue }
 
             if updatedKeys.contains(#keyPath(Label.markedForDeletion)) {
                 managedObjectContext.delete(label)

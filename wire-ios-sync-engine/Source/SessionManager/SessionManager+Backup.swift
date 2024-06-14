@@ -45,7 +45,7 @@ extension SessionManager {
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
             let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
-            let activeUserSession = activeUserSession
+            let activeUserSession
         else {
             return completion(.failure(BackupError.noActiveAccount))
         }
@@ -116,7 +116,7 @@ extension SessionManager {
         guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension }) else { return completion(.failure(BackupError.invalidFileExtension)) }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
-            guard let `self` = self else {
+            guard let self else {
                 completion(.failure(NSError(code: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
                 return
             }

@@ -82,7 +82,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     // MARK: - Request generation
 
     func testThatItGeneratesRequestWhenAssetIsPreprocessed() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
@@ -97,7 +97,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotGenerateRequestForVersion2Assets() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let message = self.createFileMessage()
             message.version = 2
@@ -113,7 +113,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotGenerateRequestForDeliveredMessages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let message = self.createFileMessage()
             message.delivered = true
@@ -129,7 +129,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotGenerateRequestWhilePreprocessingIsNotCompleted() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let message = self.createFileMessage(hasCompletedPreprocessing: false)
             let messageSet: Set<NSManagedObject> = [message]
@@ -147,7 +147,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         let allTransferStatesExpectUploading: [AssetTransferState] = [.uploaded, .uploadingFailed, .uploadingCancelled]
 
         allTransferStatesExpectUploading.forEach { transferState in
-            syncMOC.performGroupedBlockAndWait {
+            syncMOC.performGroupedAndWait {
                 // given
                 let message = self.createFileMessage(transferState: transferState)
                 let messageSet: Set<NSManagedObject> = [message]
@@ -167,7 +167,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     func testThatItCancelsRequest_WhenTransferStateChangesToUploadingCancelled() {
         let expectedIdentifier: UInt = 42
         var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
@@ -184,7 +184,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // then - the cancellation provider should be informed to cancel the request
             let cancelledIdentifier = self.mockApplicationStatus.cancelledIdentifiers.first
             XCTAssertEqual(self.mockApplicationStatus.cancelledIdentifiers.count, 1)
@@ -198,7 +198,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     func testThatItUpdatesUploadProgress() {
         let expectedProgress: Float = 0.5
         var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
@@ -210,7 +210,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(message.progress, expectedProgress)
         }
@@ -218,7 +218,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
     func testThatItUpdatesTransferState_OnSuccessfulResponse() {
         var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             message = self.createImageMessage()
             let messageSet: Set<NSManagedObject> = [message]
@@ -230,14 +230,14 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(message.transferState, .uploaded)
         }
     }
 
     func testThatItDoesNotUpdateTransferState_OnSuccessfulResponse_WhenThereIsMoreAssetsToUpload() {
         var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             message = self.createFileMessage() // has two assets (file and thumbnail)
             let messageSet: Set<NSManagedObject> = [message]
@@ -249,7 +249,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(message.transferState, .uploading)
         }
     }
@@ -257,7 +257,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     func testThatItAddsAssetId_OnSuccessfulResponse() {
         let expectedAssetId = "asset-id-123"
         var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             message = self.createImageMessage()
             let messageAsset: Set<NSManagedObject> = [message]
@@ -269,14 +269,14 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(message?.underlyingMessage?.assetData?.uploaded.assetID, expectedAssetId)
         }
     }
 
     func testThatItExpiresTheMessage_OnPermanentFailureResponse() {
         var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             message = self.createImageMessage()
             let messageSet: Set<NSManagedObject> = [message]
@@ -288,7 +288,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(message.isExpired)
             XCTAssertEqual(message.transferState, .uploadingFailed)
         }

@@ -27,7 +27,7 @@ extension MockTransportSession {
                               onlyForUserId: String?) -> [AnyHashable: Any]? {
         var missedClients: [AnyHashable: Any] = [:]
         for user in users {
-            if let onlyForUserId = onlyForUserId,
+            if let onlyForUserId,
                UUID(transportString: user.identifier) != UUID(transportString: onlyForUserId) {
                 continue
             }
@@ -99,7 +99,7 @@ extension MockTransportSession {
                 return nil
             })
 
-            if let recipientClients = recipientClients {
+            if let recipientClients {
                 userClients.subtract(recipientClients)
             }
 

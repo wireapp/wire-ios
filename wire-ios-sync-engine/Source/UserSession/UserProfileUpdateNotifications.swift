@@ -106,7 +106,7 @@ extension UserProfileUpdateStatus {
     ) -> Any {
         return NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[UserProfileUpdateNotification.userInfoKey] as? UserProfileUpdateNotification,
-                  let observer = observer else {
+                  let observer else {
                     return
             }
             switch note.type {

@@ -26,10 +26,10 @@ extension BackendEnvironment {
 
     public static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
         URLSession.shared.dataTask(with: url) { data, _, error in
-            if let error = error {
+            if let error {
                 Logging.backendEnvironment.error("Error fetching configuration from \(url): \(error)")
                 onCompletion(.failure(error))
-            } else if let data = data {
+            } else if let data {
                 if let environment = BackendEnvironment(environmentType: .custom(url: url), data: data) {
                     Logging.backendEnvironment.info("Fetched custom configuration from \(url)")
                     onCompletion(.success(environment))

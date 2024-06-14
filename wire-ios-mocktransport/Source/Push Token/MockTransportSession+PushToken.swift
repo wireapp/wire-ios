@@ -46,7 +46,7 @@ extension MockTransportSession {
     }
 
     func processDeletePushToken(_ token: String?, apiVersion: APIVersion) -> ZMTransportResponse {
-        if let token = token {
+        if let token {
             if pushTokens[token] != nil {
                 removePushToken(token)
                 return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil, apiVersion: apiVersion.rawValue)

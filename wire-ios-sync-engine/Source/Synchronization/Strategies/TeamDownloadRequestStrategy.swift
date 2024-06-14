@@ -48,15 +48,11 @@ struct TeamPayload: Decodable {
 
 extension TeamPayload {
 
-    func createOrUpdateTeam(in managedObjectContext: NSManagedObjectContext) -> Team? {
-        var created: Bool = false
-        guard let team = Team.fetchOrCreate(with: identifier,
-                                            create: true,
-                                            in: managedObjectContext,
-                                            created: &created)
-        else {
-            return nil
-        }
+    func createOrUpdateTeam(in managedObjectContext: NSManagedObjectContext) -> Team {
+        let team = Team.fetchOrCreate(
+            with: identifier,
+            in: managedObjectContext
+        )
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         _ = Member.getOrUpdateMember(for: selfUser, in: team, context: managedObjectContext)
@@ -161,7 +157,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
+        guard let team = Team.fetch(with: identifier, in: managedObjectContext) else { return }
         guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
         if let member = user.membership {

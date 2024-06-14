@@ -51,7 +51,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     var userClientToken: NSObjectProtocol!
-    var credentials: ZMEmailCredentials?
+    var credentials: UserEmailCredentials?
 
     var tableView: UITableView!
     let topSeparator = OverflowSeparatorView()
@@ -63,14 +63,14 @@ final class SettingsClientViewController: UIViewController,
     convenience init(userClient: UserClient,
                      userSession: UserSession,
                      fromConversation: Bool,
-                     credentials: ZMEmailCredentials? = .none) {
+                     credentials: UserEmailCredentials? = .none) {
         self.init(userClient: userClient, userSession: userSession, credentials: credentials)
         self.fromConversation = fromConversation
     }
 
     required init(userClient: UserClient,
                   userSession: UserSession,
-                  credentials: ZMEmailCredentials? = .none) {
+                  credentials: UserEmailCredentials? = .none) {
         self.userSession = userSession
         self.viewModel = SettingsClientViewModel(userClient: userClient,
                                                  getUserClientFingerprint: userSession.getUserClientFingerprint)
@@ -122,7 +122,12 @@ final class SettingsClientViewController: UIViewController,
             navController.viewControllers.count > 0 &&
             navController.viewControllers[0] == self,
             self.navigationItem.rightBarButtonItem == nil {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(SettingsClientViewController.onDonePressed(_:)))
+            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.done.capitalized,
+                systemImage: false,
+                target: self,
+                action: #selector(SettingsClientViewController.onDonePressed(_:)))
+            self.navigationItem.rightBarButtonItem = doneButtonItem
             if fromConversation {
                 let barColor = SemanticColors.View.backgroundDefault
                 navController.navigationBar.barTintColor = barColor

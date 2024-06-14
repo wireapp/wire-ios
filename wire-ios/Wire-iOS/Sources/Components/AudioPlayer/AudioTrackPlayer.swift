@@ -63,7 +63,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     var state: MediaPlayerState? {
         didSet {
             audioTrackPlayerDelegate?.stateDidChange(self, state: state)
-            if let state = state {
+            if let state {
                 mediaPlayerDelegate?.mediaPlayer(self, didChangeTo: state)
             }
         }
@@ -136,7 +136,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         loadAudioTrackCompletionHandler = completionHandler
 
         if let streamURL = track.streamURL {
-            if let avPlayer = avPlayer {
+            if let avPlayer {
                 avPlayer.replaceCurrentItem(with: AVPlayerItem(url: streamURL))
 
                 if avPlayer.status == .readyToPlay {
@@ -165,14 +165,12 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlay(toEndTime:)), name: .AVPlayerItemDidPlayToEndTime, object: avPlayer?.currentItem)
 
-        if let timeObserverToken = timeObserverToken {
+        if let timeObserverToken {
             avPlayer?.removeTimeObserver(timeObserverToken)
         }
 
         timeObserverToken = avPlayer?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main, using: { [weak self] time in
-            guard let weakSelf = self,
-                let duration = weakSelf.avPlayer?.currentItem?.asset.duration
-                else { return }
+            guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
 
             let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
 
@@ -180,7 +178,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
 
             let normalizedTime = CMTimeMapTimeFromRangeToRange(time, fromRange: itemRange, toRange: normalizedRange)
 
-            weakSelf.progress = CMTimeGetSeconds(normalizedTime)
+            progress = CMTimeGetSeconds(normalizedTime)
         })
 
         messageObserverToken = userSession.addMessageObserver(
@@ -190,7 +188,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     private func playRateChanged() {
-        state = avPlayer?.rate > 0 ? .playing : .paused
+        if let avPlayer, avPlayer.rate > 0 {
+            state = .playing
+        } else {
+            state = .paused
+        }
 
         updateNowPlayingState()
     }
@@ -237,7 +239,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         }
 
         pauseHandler = commandCenter.pauseCommand.addTarget(handler: { [weak self] _ in
-            if self?.avPlayer?.rate > 0 {
+            if let avPlayer = self?.avPlayer, avPlayer.rate > 0 {
                 self?.pause()
                 return .success
             } else {
@@ -260,7 +262,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var isPlaying: Bool {
-        return avPlayer?.rate > 0 && avPlayer?.error == nil
+        if let avPlayer, avPlayer.rate > 0, avPlayer.error == nil {
+            return true
+        }
+
+        return false
     }
 
     func stop() {
@@ -299,10 +305,10 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     private func itemDidPlay(toEndTime notification: Notification?) {
         // AUDIO-557 workaround for AVSMediaManager trying to pause already paused tracks.
         delay(0.1) { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
-            weakSelf.clearNowPlayingState()
-            weakSelf.state = .completed
+            clearNowPlayingState()
+            state = .completed
         }
     }
 

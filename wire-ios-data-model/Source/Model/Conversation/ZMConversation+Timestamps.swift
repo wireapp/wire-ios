@@ -48,7 +48,7 @@ extension ZMConversation {
     // MARK: - Timestamps
 
     func updatePendingLastRead(_ timestamp: Date) {
-        if timestamp > pendingLastReadServerTimestamp {
+        if pendingLastReadServerTimestamp == nil || pendingLastReadServerTimestamp! < timestamp {
             pendingLastReadServerTimestamp = timestamp
         }
 
@@ -59,9 +59,9 @@ extension ZMConversation {
 
     @objc
     func updateLastRead(_ timestamp: Date, synchronize: Bool = false) {
-        guard let managedObjectContext = managedObjectContext else { return }
+        guard let managedObjectContext else { return }
 
-        if timestamp > lastReadServerTimeStamp {
+        if pendingLastReadServerTimestamp == nil || pendingLastReadServerTimestamp! < timestamp {
             lastReadServerTimeStamp = timestamp
 
             // modified keys are set "automatically" on the uiMOC
@@ -75,23 +75,23 @@ extension ZMConversation {
 
     @objc
     public func updateLastModified(_ timestamp: Date) {
-        if timestamp > lastModifiedDate {
+        if lastModifiedDate == nil || lastModifiedDate! < timestamp {
             lastModifiedDate = timestamp
         }
     }
 
     @objc
     public func updateServerModified(_ timestamp: Date) {
-        if timestamp > lastServerTimeStamp {
+        if lastServerTimeStamp == nil || lastServerTimeStamp! < timestamp {
             lastServerTimeStamp = timestamp
         }
     }
 
     @objc
     public func updateCleared(_ timestamp: Date, synchronize: Bool = false) {
-        guard let managedObjectContext = managedObjectContext else { return }
+        guard let managedObjectContext else { return }
 
-        if timestamp > clearedTimeStamp {
+        if clearedTimeStamp == nil || clearedTimeStamp! < timestamp {
             clearedTimeStamp = timestamp
 
             if synchronize && managedObjectContext.zm_isSyncContext {
@@ -102,9 +102,9 @@ extension ZMConversation {
 
     @objc @discardableResult
     func updateArchived(_ timestamp: Date, synchronize: Bool = false) -> Bool {
-        guard let managedObjectContext = managedObjectContext else { return false }
+        guard let managedObjectContext else { return false }
 
-        if timestamp > archivedChangedTimestamp {
+        if archivedChangedTimestamp == nil || archivedChangedTimestamp! < timestamp {
             archivedChangedTimestamp = timestamp
 
             if synchronize && managedObjectContext.zm_isSyncContext {
@@ -125,9 +125,9 @@ extension ZMConversation {
 
     @objc @discardableResult
     func updateMuted(_ timestamp: Date, synchronize: Bool = false) -> Bool {
-        guard let managedObjectContext = managedObjectContext else { return false }
+        guard let managedObjectContext else { return false }
 
-        if timestamp > silencedChangedTimestamp {
+        if silencedChangedTimestamp == nil || silencedChangedTimestamp! < timestamp {
             silencedChangedTimestamp = timestamp
 
             if synchronize && managedObjectContext.zm_isSyncContext {
@@ -147,17 +147,20 @@ extension ZMConversation {
     }
 
     fileprivate func updateLastUnreadKnock(_ timestamp: Date?) {
-        guard let timestamp = timestamp else { return lastUnreadKnockDate = nil }
+        guard let timestamp else { return lastUnreadKnockDate = nil }
 
-        if timestamp > lastUnreadKnockDate {
+        if lastUnreadKnockDate == nil || lastUnreadKnockDate! < timestamp {
             lastUnreadKnockDate = timestamp
         }
     }
 
     fileprivate func updateLastUnreadMissedCall(_ timestamp: Date?) {
-        guard let timestamp = timestamp else { return lastUnreadMissedCallDate = nil }
+        guard let timestamp else {
+            lastUnreadMissedCallDate = nil
+            return
+        }
 
-        if timestamp > lastUnreadMissedCallDate {
+        if lastUnreadMissedCallDate == nil || lastUnreadMissedCallDate! < timestamp {
             lastUnreadMissedCallDate = timestamp
         }
     }
@@ -241,7 +244,7 @@ extension ZMConversation {
     /// This method only has an effect when called from the UI context and it's throttled so it's fine to call it repeatedly.
 
     fileprivate func enqueueMarkAsReadUpdate(_ timestamp: Date) {
-        guard let managedObjectContext = managedObjectContext, managedObjectContext.zm_isUserInterfaceContext else { return }
+        guard let managedObjectContext, managedObjectContext.zm_isUserInterfaceContext else { return }
 
         updatePendingLastRead(timestamp)
 
@@ -303,7 +306,7 @@ extension ZMConversation {
     @objc
     func calculateLastUnreadMessages() {
         // We only calculate unread message on the sync MOC
-        guard let managedObjectContext = managedObjectContext, managedObjectContext.zm_isSyncContext else { return }
+        guard let managedObjectContext, managedObjectContext.zm_isSyncContext else { return }
 
         let messages = unreadMessages()
         var lastKnockDate: Date?
@@ -392,7 +395,7 @@ extension ZMConversation {
     }
 
     internal func unreadMessagesIncludingInvisible(in range: ClosedRange<Date>) -> [ZMMessage] {
-        guard let managedObjectContext = managedObjectContext else { return [] }
+        guard let managedObjectContext else { return [] }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())

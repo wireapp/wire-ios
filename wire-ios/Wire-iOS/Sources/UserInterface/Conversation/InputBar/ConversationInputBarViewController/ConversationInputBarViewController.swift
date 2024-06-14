@@ -21,6 +21,7 @@ import avs
 import MobileCoreServices
 import Photos
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 
 enum ConversationInputBarViewControllerMode {
@@ -45,7 +46,8 @@ final class ConversationInputBarViewController: UIViewController,
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
-    private let classificationProvider: SecurityClassificationProviding?
+    private let classificationProvider: (any SecurityClassificationProviding)?
+    private let networkStatusObservable: any NetworkStatusObservable
 
     private(set) var inputController: UIViewController? {
         willSet {
@@ -328,12 +330,13 @@ final class ConversationInputBarViewController: UIViewController,
     init(
         conversation: InputBarConversationType,
         userSession: UserSession,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
+        classificationProvider: (any SecurityClassificationProviding)?,
+        networkStatusObservable: any NetworkStatusObservable
     ) {
         self.conversation = conversation
-        self.classificationProvider = classificationProvider
-
         self.userSession = userSession
+        self.classificationProvider = classificationProvider
+        self.networkStatusObservable = networkStatusObservable
 
         super.init(nibName: nil, bundle: nil)
 
@@ -692,8 +695,10 @@ final class ConversationInputBarViewController: UIViewController,
 
     @objc
     private func giphyButtonPressed(_ sender: Any?) {
-        guard !AppDelegate.isOffline,
-              let conversation = conversation as? ZMConversation else { return }
+        guard
+            case .ok = networkStatusObservable.reachability,
+            let conversation = conversation as? ZMConversation
+        else { return }
 
         presentMLSPrivacyWarningIfNeeded {
             self.showGiphy(for: conversation)
@@ -701,7 +706,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func presentMLSPrivacyWarningIfNeeded(execute: @escaping () -> Void) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             execute()
         }
 
@@ -753,13 +758,13 @@ final class ConversationInputBarViewController: UIViewController,
                                                object: nil,
                                                queue: .main) { [weak self] _ in
 
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
-            let inRotation = weakSelf.inRotation
-            let isRecording = weakSelf.audioRecordKeyboardViewController?.isRecording ?? false
+            let inRotation = inRotation
+            let isRecording = audioRecordKeyboardViewController?.isRecording ?? false
 
             if !inRotation && !isRecording {
-                weakSelf.mode = .textInput
+                mode = .textInput
             }
         }
 
@@ -832,7 +837,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self.process(picker: picker, info: info)
         }
 
@@ -888,7 +893,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     @objc
     func sketchButtonPressed(_ sender: Any?) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+        let checker = PrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
             sketch()
         })
 
