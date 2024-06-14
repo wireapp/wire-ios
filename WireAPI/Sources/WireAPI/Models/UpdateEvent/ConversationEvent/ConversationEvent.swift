@@ -68,7 +68,7 @@ public enum ConversationEvent: Equatable {
 
     /// A conversation's message protocol was updated.
 
-    case protocolUpdate
+    case protocolUpdate(ConversationProtocolUpdateEvent)
 
     /// A conversation's read receipt mode was updated.
 

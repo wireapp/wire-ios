@@ -187,6 +187,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationProtocolUpdateEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationProtocolUpdate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.protocolUpdate(Scaffolding.protocolUpdateEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -370,6 +384,12 @@ final class ConversationEventDecodingTests: XCTestCase {
             externalData: "bar",
             messageSenderID: senderID.uuid,
             messageRecipientID: senderID.uuid
+        )
+
+        static let protocolUpdateEvent = ConversationProtocolUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            newProtocol: .mls
         )
 
     }

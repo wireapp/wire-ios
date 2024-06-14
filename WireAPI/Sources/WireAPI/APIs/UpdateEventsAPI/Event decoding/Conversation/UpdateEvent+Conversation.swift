@@ -72,7 +72,8 @@ extension UpdateEvent {
             self = .conversation(.proteusMessageAdd(event))
 
         case .protocolUpdate:
-            self = .conversation(.protocolUpdate)
+            let event = try ConversationProtocolUpdateEventDecoder().decode(from: container)
+            self = .conversation(.protocolUpdate(event))
 
         case .receiptModeUpdate:
             self = .conversation(.receiptModeUpdate)
