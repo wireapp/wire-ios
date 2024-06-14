@@ -105,7 +105,7 @@ public protocol SessionManagerType: AnyObject {
     func showConnectionRequest(userId: UUID)
 
     /// Needs to be called before we try to register another device because API requires password
-    func update(credentials: ZMCredentials) -> Bool
+    func update(credentials: UserCredentials) -> Bool
 
     func passwordVerificationDidFail(with failCount: Int)
 
@@ -1288,8 +1288,8 @@ extension SessionManager: UserObserving {
 extension SessionManager {
 
     /// Needs to be called before we try to register another device because API requires password
-    public func update(credentials: ZMCredentials) -> Bool {
-        guard let userSession = activeUserSession, let emailCredentials = credentials as? ZMEmailCredentials else { return false }
+    public func update(credentials: UserCredentials) -> Bool {
+        guard let userSession = activeUserSession, let emailCredentials = credentials as? UserEmailCredentials else { return false }
 
         userSession.setEmailCredentials(emailCredentials)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
@@ -1307,7 +1307,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         return accountManager.accounts.contains(account)
     }
 
-    public func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) -> Bool {
+    public func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool {
         return update(credentials: credentials)
     }
 

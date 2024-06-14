@@ -16,30 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Down
+import Foundation
 import UIKit
-import WireCommonComponents
 
-final class InviteButton: IconButton {
-    init() {
-        super.init()
+// MARK: - DownStyle
 
-        clipsToBounds = true
-        titleLabel?.font = FontSpec.normalSemiboldFont.font!
-        applyStyle(.secondaryTextButtonStyle)
-        layer.cornerRadius = 12
-        contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
+extension DownStyle {
+
+    static var warningLabelStyle: DownStyle {
+        let paragraphStyle = NSMutableParagraphStyle()
+        let style = DownStyle()
+        style.baseFont = .preferredFont(forTextStyle: .caption1)
+        style.baseFontColor = SemanticColors.Label.textDefault
+        paragraphStyle.lineBreakMode = .byWordWrapping
+        paragraphStyle.lineHeightMultiple = 0.98
+        style.baseParagraphStyle = paragraphStyle
+        return style
     }
 
-    convenience init(fontSpec: FontSpec, insets: UIEdgeInsets) {
-        self.init()
-
-        titleLabel?.font = fontSpec.font
-        self.contentEdgeInsets = insets
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            applyStyle(.secondaryTextButtonStyle)
-        }
-    }
 }
