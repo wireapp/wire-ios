@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D02940D8990046124D /* DatadogWrapper.swift */; };
 		010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D62940F4F30046124D /* TextFieldWrapper.swift */; };
 		010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D72940F4F40046124D /* CustomBackendView.swift */; };
 		010497DB2940F4F40046124D /* ProxyCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */; };
@@ -23,9 +22,6 @@
 		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
 		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
 		01D8E71A2BA39CE900B71CB7 /* PrivacyWarningChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */; };
-		01E29C8C2996A2710024E1A7 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		01F5EAE42B712DD7009FD25D /* LogFileDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */; };
 		06024ABC29E69A860032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */; };
 		0608828F29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0608828E29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift */; };
@@ -1304,8 +1300,12 @@
 		E666EDD62B73E62800C03E2B /* BackupSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDD52B73E62800C03E2B /* BackupSource.swift */; };
 		E666EDDA2B73E9C400C03E2B /* BackupStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */; };
 		E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */; };
+		E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D42C13375700F82F88 /* WireAnalytics.swift */; };
+		E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E66C51D62C13395400F82F88 /* WireAnalytics */; };
+		E66C51D92C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */; };
 		E66D4E822BE525DF00C7F374 /* AVSVideoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
+		E68C005C2C1C533000747C9E /* WireAnalytics+Datadog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
 		E6C25FCA2AFFABD700406A1C /* UITextView+ReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */; };
@@ -1322,8 +1322,10 @@
 		E6C25FF42B03550A00406A1C /* AppLockModuleInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */; };
 		E6C25FF62B03550A00406A1C /* AppLockModulePresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */; };
 		E6C25FF72B0355AD00406A1C /* AppLockModuleViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */; };
+		E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */; };
 		E6DC00652B10A5AF003ECF53 /* MLSMigrationCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */; };
 		E6E557982BBD49A60033E62B /* NetworkQualityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E557972BBD49A60033E62B /* NetworkQualityType.swift */; };
+		E6F0F90B2C170C0A0019297F /* WireDatadogBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */; };
 		E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */; };
 		E6F443032B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F443022B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
@@ -1483,7 +1485,6 @@
 		EE7F467225B1D058001B3EE4 /* AppLockModule.MockPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F467125B1D058001B3EE4 /* AppLockModule.MockPresenter.swift */; };
 		EE7F467425B1D0BA001B3EE4 /* AppLockModule.MockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F467325B1D0BA001B3EE4 /* AppLockModule.MockView.swift */; };
 		EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
-		EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE876CAE23F2FCB100040D75 /* SwiftMockLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE876CAC23F2FCA900040D75 /* SwiftMockLoader.swift */; };
 		EE88E00623FAC9EA00D24703 /* SelfUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88E00523FAC9EA00D24703 /* SelfUser.swift */; };
 		EE8E9267202496C2000F4752 /* NSAttributedString+Down.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8E9266202496C2000F4752 /* NSAttributedString+Down.swift */; };
@@ -1493,7 +1494,6 @@
 		EE961C202A9F036A008127A6 /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE961C1F2A9F036A008127A6 /* Emoji.swift */; };
 		EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98A09D296ED46D0055E981 /* DeviceConfigurationEventHandler.swift */; };
 		EE997A1A2507A851008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A192507A851008336D2 /* Logging.swift */; };
-		EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		EE9AEC9E2BD15A3600F7853F /* Wire-iOS.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */; };
 		EE9B56A72AE7EA08001D7C2E /* UserSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */; };
@@ -2032,14 +2032,12 @@
 				EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */,
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
-				EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */,
 				EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */,
 				EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */,
 				EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */,
 				A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
 				5996E8A32C19D066007A52F0 /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
-				EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */,
 				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
 			);
@@ -2049,7 +2047,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		010497D02940D8990046124D /* DatadogWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatadogWrapper.swift; sourceTree = "<group>"; };
 		010497D62940F4F30046124D /* TextFieldWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldWrapper.swift; sourceTree = "<group>"; };
 		010497D72940F4F40046124D /* CustomBackendView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBackendView.swift; sourceTree = "<group>"; };
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
@@ -2068,7 +2065,6 @@
 		01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = copyExtraAudioNotifications; sourceTree = "<group>"; };
 		01A5E04B297FDAB500624B65 /* embed-internal-resources */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "embed-internal-resources"; sourceTree = "<group>"; };
 		01A5E04C297FDAB500624B65 /* embedBuildInfo */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = embedBuildInfo; sourceTree = "<group>"; };
-		01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "datadog-conditional-framework.sh"; sourceTree = "<group>"; };
 		01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyWarningChecker.swift; sourceTree = "<group>"; };
 		01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileDestination.swift; sourceTree = "<group>"; };
 		06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageFailedRecipientsCellDescription.swift; sourceTree = "<group>"; };
@@ -3406,16 +3402,21 @@
 		E666EDD52B73E62800C03E2B /* BackupSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSource.swift; sourceTree = "<group>"; };
 		E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStatusCell.swift; sourceTree = "<group>"; };
 		E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupActionCell.swift; sourceTree = "<group>"; };
+		E66C51D42C13375700F82F88 /* WireAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalytics.swift; sourceTree = "<group>"; };
+		E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireDatadog+LoggerProtocol.swift"; sourceTree = "<group>"; };
 		E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSVideoContainerView.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
+		E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+Datadog.swift"; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Attachments.swift"; sourceTree = "<group>"; };
 		E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleInteractorTests.swift; sourceTree = "<group>"; };
 		E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleViewTests.swift; sourceTree = "<group>"; };
 		E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModulePresenterTests.swift; sourceTree = "<group>"; };
+		E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+WireCommonComponents.swift"; sourceTree = "<group>"; };
 		E6DC00642B10A5AF003ECF53 /* MLSMigrationCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescription.swift; sourceTree = "<group>"; };
 		E6E557972BBD49A60033E62B /* NetworkQualityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkQualityType.swift; sourceTree = "<group>"; };
+		E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireDatadogBuilder.swift; sourceTree = "<group>"; };
 		E6F442FC2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellSnapshotTests.swift; sourceTree = "<group>"; };
 		E6F443022B1601BA00D2B08A /* MLSMigrationCellDescriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationCellDescriptionTests.swift; sourceTree = "<group>"; };
 		E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUIButton+HapticFeedback.swift"; sourceTree = "<group>"; };
@@ -3565,7 +3566,6 @@
 		EE7F466F25B1D031001B3EE4 /* AppLockModule.MockInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.MockInteractor.swift; sourceTree = "<group>"; };
 		EE7F467125B1D058001B3EE4 /* AppLockModule.MockPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.MockPresenter.swift; sourceTree = "<group>"; };
 		EE7F467325B1D0BA001B3EE4 /* AppLockModule.MockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.MockView.swift; sourceTree = "<group>"; };
-		EE82971229719FC400F12CAA /* Datadog.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Datadog.xcframework; path = ../Carthage/Build/Datadog.xcframework; sourceTree = "<group>"; };
 		EE876CAC23F2FCA900040D75 /* SwiftMockLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftMockLoader.swift; sourceTree = "<group>"; };
 		EE88E00523FAC9EA00D24703 /* SelfUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfUser.swift; sourceTree = "<group>"; };
 		EE8E9266202496C2000F4752 /* NSAttributedString+Down.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Down.swift"; sourceTree = "<group>"; };
@@ -3575,8 +3575,6 @@
 		EE961C1F2A9F036A008127A6 /* Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
 		EE98A09D296ED46D0055E981 /* DeviceConfigurationEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConfigurationEventHandler.swift; sourceTree = "<group>"; };
 		EE997A192507A851008336D2 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
-		EE9A857529896B4D00064A9C /* CrashReporter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CrashReporter.xcframework; path = ../Carthage/Build/CrashReporter.xcframework; sourceTree = "<group>"; };
-		EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DatadogCrashReporting.xcframework; path = ../Carthage/Build/DatadogCrashReporting.xcframework; sourceTree = "<group>"; };
 		EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = "Wire-iOS.docc"; sourceTree = "<group>"; };
 		EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionMock.swift; sourceTree = "<group>"; };
@@ -4080,9 +4078,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01E29C8C2996A2710024E1A7 /* CrashReporter.xcframework in Frameworks */,
-				01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */,
-				01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */,
+				E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */,
 				EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4098,7 +4094,6 @@
 				01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */,
 				01A5E04B297FDAB500624B65 /* embed-internal-resources */,
 				01A5E04C297FDAB500624B65 /* embedBuildInfo */,
-				01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -5498,10 +5493,7 @@
 				EEE25B4F29719D2F0008B894 /* avs.xcframework */,
 				EEE25B2629719A730008B894 /* Clibsodium.xcframework */,
 				EE67F6CE296F067F001D7C88 /* Countly.xcframework */,
-				EE9A857529896B4D00064A9C /* CrashReporter.xcframework */,
 				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
-				EE82971229719FC400F12CAA /* Datadog.xcframework */,
-				EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */,
 				EE67F6D4296F06A3001D7C88 /* Down.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
 				EEE25B5529719D840008B894 /* HTMLString.xcframework */,
@@ -6562,7 +6554,6 @@
 				875060721E5B3D9E005B21C7 /* FileBackupExcluder.swift */,
 				551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */,
 				0665DF7128F01D120094482B /* Image */,
-				010497D02940D8990046124D /* DatadogWrapper.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -7656,6 +7647,15 @@
 			path = Colors;
 			sourceTree = "<group>";
 		};
+		E63C65642C1B456900354BB4 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				E68C005D2C1C536900747C9E /* Datadog */,
+				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 		E644B7982B7CBBA3005D0BFD /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
@@ -7782,6 +7782,16 @@
 				E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		E68C005D2C1C536900747C9E /* Datadog */ = {
+			isa = PBXGroup;
+			children = (
+				E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */,
+				E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */,
+				E6F0F90A2C170C0A0019297F /* WireDatadogBuilder.swift */,
+			);
+			path = Datadog;
 			sourceTree = "<group>";
 		};
 		E6C25FCC2AFFAC1C00406A1C /* Fixture */ = {
@@ -8572,12 +8582,14 @@
 		F1FEA14B21DCEB1700790A54 /* WireCommonComponents */ = {
 			isa = PBXGroup;
 			children = (
+				E63C65642C1B456900354BB4 /* Analytics */,
 				1E5E0CE71B6B8EDB003B0CAC /* Icons */,
 				EEF37EDF2BE0E7560055C9E1 /* Typography */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
 				06F9864825CC1518005572C5 /* AccessoryTextField.swift */,
 				EF1EB850235F008F00575DD9 /* Bundle+InfoDict.swift */,
 				5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */,
+				E6D186F02C11F71300083F9B /* Bundle+WireCommonComponents.swift */,
 				CE8E4FAA1DF066750009F437 /* FilePreviewGenerator.swift */,
 				16BBEC852469941D00801AEC /* UIColor+NamedColors.swift */,
 				CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */,
@@ -8686,7 +8698,6 @@
 				8795A5D21D34D1A50024101B /* EmbedBuildInfo */,
 				EE00ACE125E43FA2005FEC14 /* Run SwiftLint */,
 				A96867A826A5E52F00679D95 /* Embed Frameworks */,
-				01D97B17294CCA1A001A04BD /* Conditional Datadog Framework Removal */,
 				065A5AE9279B07AC002D4D1E /* Embed App Extensions */,
 			);
 			buildRules = (
@@ -8763,6 +8774,7 @@
 			);
 			name = WireCommonComponents;
 			packageProductDependencies = (
+				E66C51D62C13395400F82F88 /* WireAnalytics */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -8983,25 +8995,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		01D97B17294CCA1A001A04BD /* Conditional Datadog Framework Removal */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Conditional Datadog Framework Removal";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "$SRCROOT/Scripts/datadog-conditional-framework.sh\n";
-		};
 		160EABBA1D47BD7200F83CA7 /* Copy Extra Audio Notifications */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10887,18 +10880,21 @@
 				7C525EBF23603C9100396C42 /* Bundle+SSO.swift in Sources */,
 				F15650C321DD0A9B00210504 /* Bundle+Backend.swift in Sources */,
 				F15650B221DD018700210504 /* Bundle+Identifiers.swift in Sources */,
+				E6D186F12C11F71300083F9B /* Bundle+WireCommonComponents.swift in Sources */,
+				E68C005C2C1C533000747C9E /* WireAnalytics+Datadog.swift in Sources */,
 				F15650B021DCFF5300210504 /* AutomationHelper.swift in Sources */,
 				F15650A421DCF66600210504 /* AudioProcessing.swift in Sources */,
 				F15650A121DCF3E700210504 /* ExtensionSettings.swift in Sources */,
 				5EA952C32260F90A00C83FDB /* StyleKitIconSize.swift in Sources */,
 				F15650AE21DCFCED00210504 /* SettingsPropertyName.swift in Sources */,
 				59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */,
-				010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */,
+				E66C51D92C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift in Sources */,
 				A9730DDC250287360061BF36 /* Bundle+ThirdPartyKeys.swift in Sources */,
 				63F65EFB2464444B00534A69 /* TimedCircularProgressView.swift in Sources */,
 				06E69AB825C9A37700B678BF /* AttributedStringOperators.swift in Sources */,
 				F15650AD21DCFC8700210504 /* AppLock.swift in Sources */,
 				A98370BC2488101500515687 /* URL+FileSize.swift in Sources */,
+				E6F0F90B2C170C0A0019297F /* WireDatadogBuilder.swift in Sources */,
 				E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */,
 				5E3E1B732260DA200053AC59 /* StyleKitIcons.generated.swift in Sources */,
 				F15650C621DD0C5500210504 /* CGFloat+Hairline.swift in Sources */,
@@ -10916,6 +10912,7 @@
 				7C88BB90235F413F0075BCC5 /* Bundle+InfoDict.swift in Sources */,
 				EEF37EDA2BDFD9620055C9E1 /* WireTextStyle.swift in Sources */,
 				F15650AF21DCFE5200210504 /* CircularProgressView.swift in Sources */,
+				E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */,
 				F156509E21DCF1DA00210504 /* Dummy.swift in Sources */,
 				165C55C2254B0CB500731CA9 /* UIColor+NamedColors.swift in Sources */,
 				01F5EAE42B712DD7009FD25D /* LogFileDestination.swift in Sources */,
@@ -11765,6 +11762,10 @@
 		595D304A2BF923B30064A018 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		E66C51D62C13395400F82F88 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
