@@ -125,6 +125,30 @@ public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneC
 
 }
 
+public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationGuestLinkUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) {
+        invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
+
+        guard let mock = invokeConversationPasswordCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationPasswordCompletion`")
+        }
+
+        mock(conversation, password, completion)
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -489,7 +513,7 @@ public class MockSelfClientCertificateProviderProtocol: SelfClientCertificatePro
     public var hasCertificate: Bool {
         get async {
             hasCertificateCallsCount += 1
-            if let hasCertificateClosure = hasCertificateClosure {
+            if let hasCertificateClosure {
                 return await hasCertificateClosure()
             } else {
                 return underlyingHasCertificate
@@ -804,6 +828,30 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
 }
 
+public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServicesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void)] = []
+    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) {
+        invokeConversationAllowGuestsAllowServicesCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowServices: allowServices, completion: completion))
+
+        guard let mock = invokeConversationAllowGuestsAllowServicesCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowServicesCompletion`")
+        }
+
+        mock(conversation, allowGuests, allowServices, completion)
+    }
+
+}
+
 public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -907,10 +955,10 @@ public class MockUserProfile: UserProfile {
 
     // MARK: - requestPhoneNumberChange
 
-    public var requestPhoneNumberChangeCredentials_Invocations: [ZMPhoneCredentials] = []
-    public var requestPhoneNumberChangeCredentials_MockMethod: ((ZMPhoneCredentials) -> Void)?
+    public var requestPhoneNumberChangeCredentials_Invocations: [UserPhoneCredentials] = []
+    public var requestPhoneNumberChangeCredentials_MockMethod: ((UserPhoneCredentials) -> Void)?
 
-    public func requestPhoneNumberChange(credentials: ZMPhoneCredentials) {
+    public func requestPhoneNumberChange(credentials: UserPhoneCredentials) {
         requestPhoneNumberChangeCredentials_Invocations.append(credentials)
 
         guard let mock = requestPhoneNumberChangeCredentials_MockMethod else {
@@ -957,11 +1005,11 @@ public class MockUserProfile: UserProfile {
 
     // MARK: - requestSettingEmailAndPassword
 
-    public var requestSettingEmailAndPasswordCredentials_Invocations: [ZMEmailCredentials] = []
+    public var requestSettingEmailAndPasswordCredentials_Invocations: [UserEmailCredentials] = []
     public var requestSettingEmailAndPasswordCredentials_MockError: Error?
-    public var requestSettingEmailAndPasswordCredentials_MockMethod: ((ZMEmailCredentials) throws -> Void)?
+    public var requestSettingEmailAndPasswordCredentials_MockMethod: ((UserEmailCredentials) throws -> Void)?
 
-    public func requestSettingEmailAndPassword(credentials: ZMEmailCredentials) throws {
+    public func requestSettingEmailAndPassword(credentials: UserEmailCredentials) throws {
         requestSettingEmailAndPasswordCredentials_Invocations.append(credentials)
 
         if let error = requestSettingEmailAndPasswordCredentials_MockError {

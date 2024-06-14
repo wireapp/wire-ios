@@ -38,7 +38,7 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
                 mockUserClient(),
                 mockUserClient()
             ],
-            credentials: ZMCredentials()
+            credentials: UserCredentials()
         )
     }
 
