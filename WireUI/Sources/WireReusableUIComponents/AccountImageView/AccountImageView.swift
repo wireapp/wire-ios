@@ -18,8 +18,8 @@
 
 import SwiftUI
 
-private let imageHeight: CGFloat = 27
-private let imageBorderWidth: CGFloat = 1
+private let accountImageHeight: CGFloat = 26
+private let accountImageBorderWidth: CGFloat = 1
 private let availabilityIndicatorRadius: CGFloat = 4.375
 private let availabilityIndicatorBorderWidth: CGFloat = 2
 private let teamAccountImageCornerRadius: CGFloat = 6
@@ -43,7 +43,8 @@ public final class AccountImageView: UIView {
 
     // MARK: - Private Properties
 
-    private let imageView = UIImageView()
+    private let accountImageView = UIImageView()
+    private let availabilityImageView = UIImageView()
 
     // MARK: - Life Cycle
 
@@ -61,15 +62,22 @@ public final class AccountImageView: UIView {
 
     private func setupSubviews() {
 
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(imageView)
+        accountImageView.contentMode = .scaleAspectFill
+        accountImageView.clipsToBounds = true
+        accountImageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(accountImageView)
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: imageHeight),
-            imageView.heightAnchor.constraint(equalToConstant: imageHeight),
-            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            accountImageView.widthAnchor.constraint(equalToConstant: accountImageHeight),
+            accountImageView.heightAnchor.constraint(equalToConstant: accountImageHeight),
+            accountImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            accountImageView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+
+        availabilityImageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(availabilityImageView)
+        NSLayoutConstraint.activate([
+            accountImageView.trailingAnchor.constraint(equalTo: availabilityImageView.trailingAnchor),
+            accountImageView.bottomAnchor.constraint(equalTo: availabilityImageView.bottomAnchor)
         ])
 
         updateAccountImage()
@@ -78,34 +86,35 @@ public final class AccountImageView: UIView {
     }
 
     private func updateAccountImage() {
-        imageView.image = accountImage
+        accountImageView.image = accountImage
     }
 
     private func updateClipping() {
         switch accountType {
         case .user:
-            imageView.layer.cornerRadius = imageHeight / 2
+            accountImageView.layer.cornerRadius = accountImageHeight / 2
         case .team:
-            imageView.layer.cornerRadius = teamAccountImageCornerRadius
+            accountImageView.layer.cornerRadius = teamAccountImageCornerRadius
         }
     }
 
     private func updateAvailabilityIndicator() {
 
-        if availability == .none {
-            return imageView.layer.mask = .none
+        guard let availability else {
+            availabilityImageView.image = .none
+            accountImageView.layer.mask = .none
+            return
         }
 
         // draw a rect over the total bounds (for inverting the arc)
         let maskPath = UIBezierPath(
-            rect: .init(x: 0, y: 0, width: imageHeight, height: imageHeight)
+            rect: .init(x: 0, y: 0, width: accountImageHeight, height: accountImageHeight)
         )
         // draw the circle to clip from the image
+        let centerOffset = accountImageHeight - availabilityIndicatorRadius / 2
+        let center = CGPoint(x: centerOffset, y: centerOffset)
         maskPath.addArc(
-            withCenter: .init(
-                x: imageHeight - availabilityIndicatorRadius / 2,
-                y: imageHeight - availabilityIndicatorRadius / 2
-            ),
+            withCenter: center,
             radius: availabilityIndicatorRadius + 2 * availabilityIndicatorBorderWidth,
             startAngle: 0,
             endAngle: 2 * .pi,
@@ -116,8 +125,19 @@ public final class AccountImageView: UIView {
         maskLayer.path = maskPath.cgPath
         maskLayer.fillColor = UIColor.white.cgColor
         maskLayer.fillRule = .evenOdd
+        accountImageView.layer.mask = maskLayer
 
-        imageView.layer.mask = maskLayer
+        switch availability {
+        case .available:
+            availabilityImageView.image = .init(resource: .AccountImageView.Availability.available)
+            availabilityImageView.tintColor = .green
+        case .away:
+            availabilityImageView.image = .init(resource: .AccountImageView.Availability.away)
+            availabilityImageView.tintColor = .red
+        case .busy:
+            availabilityImageView.image = .init(resource: .AccountImageView.Availability.busy)
+            availabilityImageView.tintColor = .yellow
+        }
     }
 
     // MARK: - Nested Types
