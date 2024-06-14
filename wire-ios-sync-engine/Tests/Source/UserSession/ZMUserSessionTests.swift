@@ -415,17 +415,12 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
-            stateRecorder,
-            notificationContext: sut.managedObjectContext.notificationContext
-        )
+        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
         sut.didGoOffline()
 
         // THEN
-        withExtendedLifetime(token) {
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
     }
 
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
