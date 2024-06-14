@@ -141,12 +141,6 @@
 "conversation_list.bottom_bar.folders.title" = "Папки";
 "conversation_list.bottom_bar.archived.title" = "Архив";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Помогите нам сделать Wire лучше";
-"conversation_list.data_usage_permission_alert.message" = "Я согласен с тем, что Wire может создавать и анализировать анонимные отчеты об использовании и ошибках для улучшения приложения Wire. Я могу отозвать данное согласие в любое время.";
-"conversation_list.data_usage_permission_alert.disagree" = "Нет";
-"conversation_list.data_usage_permission_alert.agree" = "Принять";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
 
@@ -1013,6 +1007,20 @@
 "group_details.conversation_admins_header.title" = "Администраторы группы";
 "group_details.conversation_members_header.title" = "Участники группы";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Создание ссылки, защищенной паролем";
+"secured_guest_link_with_password.warning_label.title" = "Пользователям, которые хотят присоединиться к беседе по гостевой ссылке, потребуется ввести этот пароль.\n**Вы не сможете изменить пароль позже. Обязательно скопируйте и сохраните его**.";
+"secured_guest_link_with_password.generate_password_button.title" = "Сгенерировать пароль";
+"secured_guest_link_with_password.textfield.header" = "Установить пароль";
+"secured_guest_link_with_password.textfield.footer" = "Используйте как минимум 15 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
+"secured_guest_link_with_password.textfield.placeholder" = "Введите пароль";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Подтвердить пароль";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Подтвердите пароль";
+"secured_guest_link_with_password.createLinkButton.title" = "Создать ссылку";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Пароль скопирован";
+"secured_guest_link_with_password.alertController.message" = "Пароль скопирован в буфер обмена устройства.";
 "group_details.conversation_verification_status.e2ei" = "Верифицировано (сквозная идентификация)";
 "group_details.conversation_verification_status.proteus" = "Верифицировано (Proteus)";
 
@@ -1420,6 +1428,12 @@
 
 "guest_room.link.button.title" = "Создать ссылку";
 
+"guest_room.secure_link.header.title" = "Ссылка защищена паролем";
+"guest_room.secure_link.header.subtitle" = "Для подключения к беседе по гостевой ссылке необходимо сначала ввести этот пароль. \n\nЗабыли пароль? Аннулируйте ссылку и создайте новую.";
+
+"guest_room.create.link_with_password.action" = "Создание ссылки, защищенной паролем";
+"guest_room.create.link_without_password.action" = "Создание ссылки без пароля";
+
 "guest_room.actions.copy_link" = "Скопировать ссылку";
 "guest_room.actions.copied_link" = "Ссылка скопирована!";
 "guest_room.actions.share_link" = "Поделиться ссылкой";
@@ -1429,6 +1443,13 @@
 
 "guest_room.expiration.hours_left" = "Осталось %@ час.";
 "guest_room.expiration.less_than_minutes_left" = "Осталось менее %@ мин.";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Введите пароль";
+"join.group.conversation.alert.message" = "Эта беседа защищена паролем";
+"join.group.conversation.alert.textfield.placeholder" = "Введите пароль беседы";
+"join.group.conversation.alert.joinAction.title" = "Присоединиться к беседе";
+"join.group.conversation.alert.learnMoreAction.title" = "Узнать больше о гостевых ссылках";
 
 // Services Options
 
@@ -1892,6 +1913,8 @@
 "url_action.join_conversation.error.alert.converation_is_full.message" = "Беседа переполнена.";
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "Ссылка на беседу недействительна.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Узнать больше о гостевых ссылках";
+
+"url_action.join_conversation.error.alert.invalid_password.message" = "Пароль неверен, попробуйте еще раз.";
 
 // Deep Link
 "url_action.invalid_user.title" = "Wire не может найти этого человека.";

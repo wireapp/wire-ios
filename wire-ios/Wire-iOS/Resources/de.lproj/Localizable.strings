@@ -141,12 +141,6 @@
 "conversation_list.bottom_bar.folders.title" = "Ordner";
 "conversation_list.bottom_bar.archived.title" = "Archiv";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Helfen Sie uns, Wire zu verbessern";
-"conversation_list.data_usage_permission_alert.message" = "Ich willige ein, dass Wire anonymisierte Nutzungs- und Fehlerberichte erstellen und verwenden darf, um die Wire-App zu verbessern. Ich kann diese Einwilligung jederzeit widerrufen.";
-"conversation_list.data_usage_permission_alert.disagree" = "Nein";
-"conversation_list.data_usage_permission_alert.agree" = "Ich willige ein";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
 
@@ -1013,6 +1007,20 @@
 "group_details.conversation_admins_header.title" = "Gruppen-Admins";
 "group_details.conversation_members_header.title" = "Gruppen-Mitglieder";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Passwortgesicherten Link erstellen";
+"secured_guest_link_with_password.warning_label.title" = "Personen, die über den Gäste-Link an der Unterhaltung teilnehmen möchten, müssen zuerst dieses Passwort eingeben. \n**Sie können das Passwort später nicht ändern. Denken Sie daran, es zu kopieren und zu speichern.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Passwort generieren";
+"secured_guest_link_with_password.textfield.header" = "Passwort festlegen";
+"secured_guest_link_with_password.textfield.footer" = "Verwenden Sie mindestens 15 Zeichen mit einem Kleinbuchstaben, einem Großbuchstaben, einer Ziffer und einem Sonderzeichen.";
+"secured_guest_link_with_password.textfield.placeholder" = "Passwort eingeben";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Passwort bestätigen";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Bestätigen Sie Ihr Passwort";
+"secured_guest_link_with_password.createLinkButton.title" = "Link erstellen";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Passwort kopiert";
+"secured_guest_link_with_password.alertController.message" = "Passwort in Zwischenablage kopiert";
 "group_details.conversation_verification_status.e2ei" = "Überprüft (Ende-zu-Ende-Identität)";
 "group_details.conversation_verification_status.proteus" = "Überprüft (Proteus)";
 
@@ -1420,6 +1428,12 @@
 
 "guest_room.link.button.title" = "Link erstellen";
 
+"guest_room.secure_link.header.title" = "Link ist passwortgesichert";
+"guest_room.secure_link.header.subtitle" = "Personen, die über den Gäste-Link an der Unterhaltung teilnehmen möchten, müssen zuerst dieses Passwort eingeben. \n\nPasswort vergessen? Widerrufen Sie den Link und erstellen Sie einen neuen.";
+
+"guest_room.create.link_with_password.action" = "Passwortgesicherten Link erstellen";
+"guest_room.create.link_without_password.action" = "Link ohne Passwort erstellen";
+
 "guest_room.actions.copy_link" = "Link kopieren";
 "guest_room.actions.copied_link" = "Link kopiert!";
 "guest_room.actions.share_link" = "Link teilen";
@@ -1429,6 +1443,13 @@
 
 "guest_room.expiration.hours_left" = "%@h verbleibend";
 "guest_room.expiration.less_than_minutes_left" = "Weniger als %@m verbleibend";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Passwort eingeben";
+"join.group.conversation.alert.message" = "Diese Unterhaltung ist passwortgeschützt";
+"join.group.conversation.alert.textfield.placeholder" = "Passwort für die Unterhaltung eingeben";
+"join.group.conversation.alert.joinAction.title" = "Unterhaltung beitreten";
+"join.group.conversation.alert.learnMoreAction.title" = "Erfahren Sie mehr über Gäste-Links.";
 
 // Services Options
 
@@ -1892,6 +1913,8 @@
 "url_action.join_conversation.error.alert.converation_is_full.message" = "Die Unterhaltung ist voll.";
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "Der Link zu dieser Unterhaltung ist ungültig.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Erfahren Sie mehr über Gäste-Links.";
+
+"url_action.join_conversation.error.alert.invalid_password.message" = "Passwort ist nicht korrekt, bitte versuchen Sie es erneut.";
 
 // Deep Link
 "url_action.invalid_user.title" = "Wire kann diese Person nicht finden.";
