@@ -19,9 +19,32 @@
 import SwiftUI
 
 /// Displays the image of a user account plus optional availability.
-final class AccountImageView: UIView {
+public final class AccountImageView: UIView {
 
-    let label = UILabel()
+    // MARK: - Constants
+
+    let imageHeight: CGFloat = 27
+    let teamAccountImageCornerRadius: CGFloat = 6
+
+    // MARK: - Public Properties
+
+    public var accountImage = UIImage() {
+        didSet { updateAccountImage() }
+    }
+
+    public var accountType = AccountType.user {
+        didSet { updateClippingShape() }
+    }
+
+    public var availability: Availability? {
+        didSet { updateAvailabilityIndicator() }
+    }
+
+    // MARK: - Private Properties
+
+    private let imageView = UIImageView()
+
+    // MARK: - Life Cycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,13 +56,54 @@ final class AccountImageView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
+    // MARK: - Methods
+
     private func setupSubviews() {
-        label.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(label)
+
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(imageView)
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            imageView.widthAnchor.constraint(equalToConstant: imageHeight),
+            imageView.heightAnchor.constraint(equalToConstant: imageHeight),
+            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
+
+        updateAccountImage()
+        updateClippingShape()
+        updateAvailabilityIndicator()
+    }
+
+    private func updateAccountImage() {
+        imageView.image = accountImage
+    }
+
+    private func updateClippingShape() {
+        switch accountType {
+        case .user:
+            imageView.layer.cornerRadius = imageHeight / 2
+        case .team:
+            imageView.layer.cornerRadius = teamAccountImageCornerRadius
+        }
+    }
+
+    private func updateAvailabilityIndicator() {
+        //
+    }
+
+    // MARK: - Nested Types
+
+    public enum AccountType: CaseIterable {
+        /// The account image will be clipped using a circle shape.
+        case user
+        /// The account image will be clipped using a round rectangle shape.
+        case team
+    }
+
+    public enum Availability: CaseIterable {
+        case available, busy, away
     }
 }
 
@@ -47,27 +111,60 @@ final class AccountImageView: UIView {
 
 struct AccountImageView_Previews: PreviewProvider {
 
+    typealias AccountType = AccountImageView.AccountType
+    typealias Availability = AccountImageView.Availability
+
     static var previews: some View {
         Group {
-            AccountImageViewRepresentable(value: "Lorem")
-                .previewDisplayName("Lorem")
-            AccountImageViewRepresentable(value: "Ipsum")
-                .previewDisplayName("Ipsum")
+            ForEach(AccountType.allCases, id: \.self) { accountType in
+                let accountImage = switch accountType {
+                case .user: userAccountImage
+                case .team: teamAccountImage
+                }
+
+                AccountImageViewRepresentable(accountImage, accountType)
+                    .previewDisplayName("\(accountType)")
+                ForEach(Availability.allCases, id: \.self) { availability in
+                    AccountImageViewRepresentable(accountImage, accountType)
+                        .previewDisplayName("\(accountType) - \(availability)")
+                }
+            }
         }
+        .background(.gray)
     }
+
+    static let userAccountImage = {
+        let url = URL(string: "https://wire.com/hs-fs/hubfs/Keyvisual_Homepage_medium.jpg?height=135")!
+        let data = try! Data(contentsOf: url)
+        return UIImage(data: data)!
+    }()
+
+    static let teamAccountImage = {
+        let url = URL(string: "https://wire.com/hs-fs/hubfs/WIRE_Logo_rgb_black.png?width=135")!
+        let data = try! Data(contentsOf: url)
+        return UIImage(data: data)!
+    }()
 }
 
 private struct AccountImageViewRepresentable: UIViewRepresentable {
 
-    @State var value: String
+    @State var accountImage: UIImage
+    @State var accountType: AccountImageView.AccountType
+
+    init(_ accountImage: UIImage, _ accountType: AccountImageView.AccountType) {
+        self.accountImage = accountImage
+        self.accountType = accountType
+    }
 
     func makeUIView(context: Context) -> AccountImageView {
         let view = AccountImageView()
-        view.label.text = value
+        view.accountImage = accountImage
+        view.accountType = accountType
         return view
     }
 
     func updateUIView(_ view: AccountImageView, context: Context) {
-        view.label.text = value
+        view.accountImage = accountImage
+        view.accountType = accountType
     }
 }
