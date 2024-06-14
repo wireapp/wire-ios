@@ -18,44 +18,6 @@
 
 import WireDataModel
 
-// MARK: - Network Availability
-
-@objcMembers public class ZMNetworkAvailabilityChangeNotification: NSObject {
-
-    static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
-
-    static let stateKey = "networkState"
-
-    public static func addNetworkAvailabilityObserver(
-        _ observer: ZMNetworkAvailabilityObserver,
-        notificationContext: NotificationContext
-    ) -> SelfUnregisteringNotificationCenterToken {
-        NotificationInContext.addObserver(
-            name: name,
-            context: notificationContext
-        ) { [weak observer] note in
-            let networkState = note.userInfo[stateKey] as! ZMNetworkState
-            observer?.didChangeAvailability(newState: networkState)
-        }
-    }
-
-    public static func notify(
-        networkState: ZMNetworkState,
-        notificationContext: NotificationContext
-    ) {
-        NotificationInContext(
-            name: name,
-            context: notificationContext,
-            userInfo: [stateKey: networkState]
-        ).post()
-    }
-
-}
-
-@objc public protocol ZMNetworkAvailabilityObserver: NSObjectProtocol {
-    func didChangeAvailability(newState: ZMNetworkState)
-}
-
 // MARK: - Typing
 
 private let typingNotificationUsersKey = "typingUsers"
