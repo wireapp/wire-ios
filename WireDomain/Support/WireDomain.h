@@ -16,31 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+#import <Foundation/Foundation.h>
 
-// sourcery: AutoMockable
-public protocol UserRepositoryProtocol {
+//! Project version number for WireDomain.
+FOUNDATION_EXPORT double WireDomainVersionNumber;
 
-    func fetchSelfUser() -> ZMUser
+//! Project version string for WireDomain.
+FOUNDATION_EXPORT const unsigned char WireDomainVersionString[];
 
-}
+// In this header, you should import all the public headers of your framework using statements like #import <WireDomain/PublicHeader.h>
 
-public final class UserRepository: UserRepositoryProtocol {
 
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
-
-    public init(context: NSManagedObjectContext) {
-        self.context = context
-    }
-
-    // MARK: - Methods
-
-    public func fetchSelfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
-    }
-
-}
