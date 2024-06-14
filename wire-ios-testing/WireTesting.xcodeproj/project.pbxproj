@@ -10,7 +10,6 @@
 		091799581B7DFBD100E60DD9 /* NSUUID+WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 091799561B7DFBD100E60DD9 /* NSUUID+WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		091799591B7DFBD100E60DD9 /* NSUUID+WireTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 091799571B7DFBD100E60DD9 /* NSUUID+WireTesting.m */; };
 		096AD7EA1B68D6D300E007A8 /* WireTestingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 096AD7E51B68D6BD00E007A8 /* WireTestingTests.m */; };
-		098CFBC11B7BA68C000B02B1 /* NSObject+WireTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098CFBC01B7BA68C000B02B1 /* NSObject+WireTesting.swift */; };
 		098CFBC41B7BAA2D000B02B1 /* XCTestCase+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */; };
 		09A217F41B78DFAF0076547A /* ZMTExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217E41B78DFAF0076547A /* ZMTExpectation.h */; };
@@ -86,7 +85,6 @@
 		096AD7DC1B68D6BD00E007A8 /* WireTesting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WireTesting.plist; sourceTree = "<group>"; };
 		096AD7E51B68D6BD00E007A8 /* WireTestingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireTestingTests.m; sourceTree = "<group>"; };
 		096AD7EB1B68D6E700E007A8 /* WireTesting-test-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTesting-test-iOS.plist"; sourceTree = "<group>"; };
-		098CFBC01B7BA68C000B02B1 /* NSObject+WireTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+WireTesting.swift"; sourceTree = "<group>"; };
 		098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+Helpers.h"; sourceTree = "<group>"; };
 		098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+Helpers.m"; sourceTree = "<group>"; };
 		09A217E41B78DFAF0076547A /* ZMTExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTExpectation.h; sourceTree = "<group>"; };
@@ -275,7 +273,6 @@
 				F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */,
 				09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */,
 				09A218031B78E01A0076547A /* FakeGroupContext.swift */,
-				098CFBC01B7BA68C000B02B1 /* NSObject+WireTesting.swift */,
 				CEB8FD671C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h */,
 				CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */,
 				87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */,
@@ -496,7 +493,6 @@
 				595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */,
 				F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */,
 				16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */,
-				098CFBC11B7BA68C000B02B1 /* NSObject+WireTesting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
