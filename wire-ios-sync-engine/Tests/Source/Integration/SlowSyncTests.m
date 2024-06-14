@@ -162,6 +162,18 @@
 
 - (void)testThatTheUIIsNotifiedWhenTheSyncIsComplete
 {
+    /*💡Insights https://github.com/wireapp/wire-ios/pull/1561
+
+     I found out, that the internal used `userSession.managedObjectContext.notificationContext` was `nil`,
+     because `userSession` was not instantiated and only get instantiated automagically after `[self login]`.
+
+     To solve it I couldn't run `[self login]` first, because as side effect the `userSession.init` triggered the network state changes and add the the observer in the test next line missed the published changes!
+
+     The solution I chose is to skip `NotificationInContext` in the chain with `[stateRecoder observe]` and add the `NotificationCenter` observer with nil value as it has been before implicitly.
+
+     Warning: Just because of Objective-C compiler doing no optional check it was possible that a nil value was passed to not optional Swift code, that passed it to NotificationCenter where the object parameter was optional.. and it worked for a long time.
+     */
+
     NetworkStateRecorder *stateRecoder = [[NetworkStateRecorder alloc] init];
     [stateRecoder observe];
 
