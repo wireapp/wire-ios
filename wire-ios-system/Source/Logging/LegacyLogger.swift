@@ -25,7 +25,6 @@ public class LegacyLogger: LoggerProtocol {
         return []
     }
 
-
     private var loggers = [String: ZMSLog]()
 
     subscript(tag: String) -> ZMSLog {
