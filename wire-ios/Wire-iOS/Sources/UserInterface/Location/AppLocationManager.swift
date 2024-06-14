@@ -28,6 +28,7 @@ protocol AppLocationManagerDelegate: AnyObject {
 
 }
 
+// sourcery: AutoMockable
 protocol AppLocationManagerProtocol: AnyObject {
 
     var delegate: AppLocationManagerDelegate? { get set }
@@ -41,6 +42,7 @@ protocol AppLocationManagerProtocol: AnyObject {
     func startUpdatingLocation()
 
     func stopUpdatingLocation()
+
 }
 
 final class AppLocationManager: NSObject, AppLocationManagerProtocol {
