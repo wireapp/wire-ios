@@ -16,24 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMTBaseTest {
+import Foundation
+import UIKit
 
-    public func wait(timeout: TimeInterval = 0.5,
-                     file: StaticString = #filePath,
-                     line: UInt = #line,
-                     forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.customExpectation(description: "isDone")
+extension UIAlertController {
 
-        Task {
-            do {
-                try await block()
-            } catch {
-                XCTFail("test failed: \(String(describing: error))", file: file, line: line)
-            }
+    typealias UIAlertControllerLocale = L10n.Localizable.General
 
-            expectation.fulfill()
-        }
+    static func presentPasswordCopiedAlert(
+        on viewController: UIViewController,
+        title: String,
+        message: String
+    ) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
+        alertController.addAction(UIAlertAction(title: UIAlertControllerLocale.ok, style: .default) { _ in
+            viewController.dismiss(animated: true, completion: nil)
+        })
+
+        viewController.present(alertController, animated: true, completion: nil)
     }
 }

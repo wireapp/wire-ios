@@ -71,7 +71,7 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
     func testThatObserverIsNonRetained() {
         prepareSut()
 
-        let emailCredentials = ZMEmailCredentials(email: "foo@bar.com", password: "12345678")
+        let emailCredentials = UserEmailCredentials(email: "foo@bar.com", password: "12345678")
         sut.deleteUserClient(client, credentials: emailCredentials)
 
         clientRemovalObserver = sut.removalObserver

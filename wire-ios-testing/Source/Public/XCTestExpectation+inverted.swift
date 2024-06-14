@@ -16,5 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMCredentials.h"
-#import <WireSyncEngine/WireSyncEngine-Swift.h>
+import XCTest
+
+extension XCTestExpectation {
+
+    public func inverted() -> Self {
+        isInverted = true
+        return self
+    }
+}

@@ -65,7 +65,7 @@ final class ValidatedTextFieldTests: XCTestCase {
 
     func testThatItShowsPasswordInputedAndConfirmButtonIsEnabled() {
         // GIVEN
-        sut.kind = .password(isNew: false)
+        sut.kind = .password(.nonEmpty, isNew: false)
 
         // WHEN
         sut.text = "Password"
