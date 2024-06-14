@@ -1,0 +1,23 @@
+{
+    "type": "feature-config.update",
+    "name": "mls",
+    "data": {
+        "config": {
+            "protocolToggleUsers": [
+                "b8ffd03e-425a-468c-8cfe-1b1c1e1e274c",
+                "ef84379d-9bd6-432f-b2d6-ff636343596b"
+            ],
+            "defaultProtocol": "mls",
+            "allowedCipherSuites": [
+                1, 2, 3
+            ],
+            "defaultCipherSuite": 2,
+            "supportedProtocols": [
+                "proteus", "mls"
+            ]
+        },
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    }
+}

@@ -179,7 +179,7 @@ class ClientUpdateStatusTests: MessagingTest {
         self.receivedNotifications.removeAll()
 
         // when
-        let credentials = ZMEmailCredentials(email: "hallo@example.com", password: "secret123456")
+        let credentials = UserEmailCredentials(email: "hallo@example.com", password: "secret123456")
         self.sut.deleteClients(withCredentials: credentials)
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.deletingClients)
 
@@ -267,7 +267,7 @@ class ClientUpdateStatusTests: MessagingTest {
         self.receivedNotifications.removeAll()
 
         // when
-        let credentials = ZMEmailCredentials(email: "hallo@example.com", password: "secret123456")
+        let credentials = UserEmailCredentials(email: "hallo@example.com", password: "secret123456")
         self.sut.deleteClients(withCredentials: credentials)
         self.sut.failedToDeleteClient(client, error: error)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
