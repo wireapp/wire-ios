@@ -672,7 +672,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // WHEN
         syncMOC.performAndWait {
-            sut.processEventsWhileInBackground([updateEvent])
+            sut.processEvents([updateEvent], liveEvents: false, prefetchResult: nil)
         }
 
         // THEN

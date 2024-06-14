@@ -240,11 +240,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         events.forEach(processEvent)
     }
 
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
-        Self.logger.trace("process events while in background: \(events)")
-        events.forEach(processEvent)
-    }
-
     private func processEvent(_ event: ZMUpdateEvent) {
         let serverTimeDelta = managedObjectContext.serverTimeDelta
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
