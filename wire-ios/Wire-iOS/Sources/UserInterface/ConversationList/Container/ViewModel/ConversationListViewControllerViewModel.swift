@@ -75,7 +75,7 @@ extension ConversationListViewController {
 
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
-        private var initialSyncObserverToken: Any?
+        private var initialSyncObserverToken: (any NSObjectProtocol)?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
@@ -123,7 +123,17 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
+            let context = userSession.managedObjectContext
+
+            initialSyncObserverToken = NotificationInContext.addObserver(
+                name: .initialSync,
+                context: context.notificationContext
+            ) { [weak self] _ in
+                context.performGroupedBlock {
+                    self?.requestMarketingConsentIfNeeded()
+                }
+            }
+
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
         }
 
@@ -199,10 +209,6 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    private var isComingFromRegistration: Bool {
-        return ZClientViewController.shared?.isComingFromRegistration ?? false
-    }
-
     /// show PushPermissionDeniedDialog when necessary
     ///
     /// - Returns: true if PushPermissionDeniedDialog is shown
@@ -211,7 +217,6 @@ extension ConversationListViewController.ViewModel {
         // and is not coming from the registration flow (where we alreday ask for permissions).
         guard
             selfUserLegalHoldSubject.handle != nil,
-            !isComingFromRegistration,
             !AutomationHelper.sharedHelper.skipFirstLoginAlerts
         else { return }
 
@@ -254,12 +259,5 @@ extension ConversationListViewController.ViewModel: UserObserving {
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }
-    }
-}
-
-extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
-
-    func initialSyncCompleted() {
-        requestMarketingConsentIfNeeded()
     }
 }
