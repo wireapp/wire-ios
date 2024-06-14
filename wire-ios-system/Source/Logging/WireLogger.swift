@@ -19,11 +19,6 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
-    public var logFiles: [URL]
-
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider?.addTag(key, value: value)
-    }
 
     public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
 
@@ -31,7 +26,14 @@ public struct WireLogger: LoggerProtocol {
 
     public init(tag: String = "") {
         self.tag = tag
-        self.logFiles = []
+    }
+
+    public var logFiles: [URL] {
+        Self.provider?.logFiles ?? []
+    }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        Self.provider?.addTag(key, value: value)
     }
 
     public func debug(
