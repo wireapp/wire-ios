@@ -201,6 +201,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationReceiptModeUpdateEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationReceiptModeUpdate")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.receiptModeUpdate(Scaffolding.receiptModeUpdateEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -390,6 +404,12 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             newProtocol: .mls
+        )
+
+        static let receiptModeUpdateEvent = ConversationReceiptModeUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            newRecieptMode: 1
         )
 
     }

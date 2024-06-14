@@ -76,7 +76,8 @@ extension UpdateEvent {
             self = .conversation(.protocolUpdate(event))
 
         case .receiptModeUpdate:
-            self = .conversation(.receiptModeUpdate)
+            let event = try ConversationReceiptModeUpdateEventDecoder().decode(from: container)
+            self = .conversation(.receiptModeUpdate(event))
 
         case .rename:
             self = .conversation(.rename)

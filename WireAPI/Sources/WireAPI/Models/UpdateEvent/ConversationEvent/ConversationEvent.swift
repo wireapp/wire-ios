@@ -72,7 +72,7 @@ public enum ConversationEvent: Equatable {
 
     /// A conversation's read receipt mode was updated.
 
-    case receiptModeUpdate
+    case receiptModeUpdate(ConversationReceiptModeUpdateEvent)
 
     /// A conversation's name was updated.
 
