@@ -210,6 +210,7 @@ extension ZMSLog {
         logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)
     }
 
+    #warning("Parameters file and line are unused")
     static private func logEntry(
         _ entry: ZMSLogEntry,
         level: ZMLogLevel_t,
@@ -327,6 +328,17 @@ extension ZMSLog {
         }
     }
 
+    static public var pathsForExistingLogs: [URL] {
+        var paths: [URL] = previousZipLogURLs
+        if let assertionFile = ZMLastAssertionFile(), FileManager.default.fileExists(atPath: assertionFile.path) {
+            paths.append(assertionFile)
+        }
+        if let currentPath = currentLogURL, FileManager.default.fileExists(atPath: currentPath.path) {
+            paths.append(currentPath)
+        }
+        return paths
+    }
+
     static private func closeHandle() {
         updatingHandle?.closeFile()
         updatingHandle = nil
@@ -360,6 +372,7 @@ extension ZMSLog {
 let logQueue = DispatchQueue(label: "ZMSLog")
 
 public extension FileManager {
+
     func zipData(from url: URL?) -> Data? {
         guard
             let url,

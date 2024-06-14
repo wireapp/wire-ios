@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 public actor GenericArrayActor<T> {
-    public var items = [T]()
+
+    public private(set) var items = [T]()
 
     public init() {}
 

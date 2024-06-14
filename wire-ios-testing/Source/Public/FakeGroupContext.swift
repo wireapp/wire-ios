@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireSystem
 
 @objcMembers
 public class FakeGroupContext: NSObject, ZMSGroupQueue {

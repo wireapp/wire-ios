@@ -19,6 +19,9 @@
 import Foundation
 import XCTest
 
+#warning("TODO: remove")
+// TODO: remove this file
+
 public func AssertOptionalNil<T>(_ condition: @autoclosure () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let value = condition() {
         XCTFail("\(value) is not nil: \(message)", file: file, line: line)

@@ -19,12 +19,6 @@
 import Foundation
 import WireUtilities
 
-@objc public enum ZMUpdateEventsPolicy: Int {
-    case buffer /// store live events in a buffer, to be processed later
-    case ignore /// process events received through /notifications or /conversation/.../events
-    case process /// process events received through the push channel
-}
-
 @objc public enum ZMUpdateEventSource: Int {
     case webSocket
     case pushNotification

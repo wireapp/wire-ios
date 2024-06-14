@@ -81,28 +81,12 @@ open class Flow {
   public func fail(_ error: Error) {
       logger.error(FlowLog(name: name, event: .init(type: .end, description: String(describing: error), outcome: .failure)))
   }
-
-  /// Report a failed end to the flow.
-  ///
-  /// - Parameters:
-  ///   - reason: The failure reason.
-
-  public func fail(_ reason: LogConvertible) {
-      logger.error(FlowLog(name: name, event: .init(type: .end, description: reason.logDescription, outcome: .failure)))
-  }
-
-  struct GenericError: Error {
-
-    let reason: String
-
-  }
-
 }
 
 struct FlowLog: LogConvertible, Encodable {
 
   let name: String
-  let event: Event
+  // let event: Event
 
   var logDescription: String {
       let encoder = JSONEncoder()

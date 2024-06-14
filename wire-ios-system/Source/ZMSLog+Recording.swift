@@ -38,20 +38,6 @@ extension ZMSLog {
         }
     }
 
-    /// Stop recording logs and discard cache
-    @objc public static func stopRecording() {
-        var tokenToRemove: LogHookToken?
-        logQueue.sync {
-            guard let token = recordingToken else { return }
-            tokenToRemove = token
-            ZMSLog.clearLogs()
-            recordingToken = nil
-        }
-        if let token = tokenToRemove {
-            self.removeLogHook(token: token)
-        }
-    }
-
     private static var dateFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS Z"

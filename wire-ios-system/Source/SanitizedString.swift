@@ -42,6 +42,7 @@ extension SanitizedString: StringInterpolationProtocol {
         value += literal
     }
 
+    #warning("Function 'appendInterpolation(_:)' is unused")
     public mutating func appendInterpolation<T: SafeForLoggingStringConvertible>(_ x: T?) {
         value += x?.safeForLoggingDescription ?? "nil"
     }
