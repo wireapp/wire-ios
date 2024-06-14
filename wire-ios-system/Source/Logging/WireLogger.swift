@@ -128,7 +128,6 @@ public struct WireLogger: LoggerProtocol {
         case critical
 
     }
-
 }
 
 public typealias LogAttributes = [String: Encodable]
@@ -157,7 +156,7 @@ public protocol LoggerProtocol {
     func error(_ message: LogConvertible, attributes: LogAttributes?)
     func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
-    func persist(fileDestination: FileLoggerDestination) async
+    
     var logFiles: [URL] { get }
 
     /// Add an attribute, value to each logs - DataDog only
@@ -165,8 +164,14 @@ public protocol LoggerProtocol {
 }
 
 extension LoggerProtocol {
+    func attributesDescription(from attributes: LogAttributes?) -> String {
+        var logAttributes = attributes
+        // drop attributes used for visibility and category
+        logAttributes?.removeValue(forKey: "public")
+        logAttributes?.removeValue(forKey: "tag")
+        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
+    }
 
-    public func persist(fileDestination: FileLoggerDestination) async {}
 }
 
 public protocol LogConvertible {

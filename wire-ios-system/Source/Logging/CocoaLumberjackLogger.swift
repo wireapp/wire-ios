@@ -62,7 +62,6 @@ public class CocoaLumberjackLogger: LoggerProtocol {
     private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
         var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"
 
-
         if let tag = attributes?["tag"] as? String {
             entry = "[\(tag)] - \(entry)"
         }
@@ -74,16 +73,4 @@ public class CocoaLumberjackLogger: LoggerProtocol {
     public func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
     }
-
-    public func persist(fileDestination: FileLoggerDestination) async {
-        // do nothing
-    }
-}
-
-private func attributesDescription(from attributes: LogAttributes?) -> String {
-    var logAttributes = attributes
-    // drop attributes used for visibility and category
-    logAttributes?.removeValue(forKey: "public")
-    logAttributes?.removeValue(forKey: "tag")
-    return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
 }

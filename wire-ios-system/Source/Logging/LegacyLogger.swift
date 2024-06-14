@@ -73,8 +73,4 @@ public class LegacyLogger: LoggerProtocol {
     public func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
     }
-
-    public func persist(fileDestination: FileLoggerDestination) async {
-        // do nothing
-    }
 }
