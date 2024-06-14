@@ -53,7 +53,8 @@
                                           pushNotificationStatus:self.pushNotificationStatus
                                                  callEventStatus:self.callEventStatus
                                                            uiMOC:self.uiMOC
-                                                         syncMOC:self.syncMOC];
+                                                         syncMOC:self.syncMOC
+                                          isDeveloperModeEnabled:NO];
     self.pushChannelObserverToken = [NotificationInContext addObserverWithName:ZMOperationLoop.pushChannelStateChangeNotificationName
                                        context:self.uiMOC.notificationContext
                                         object:nil
@@ -119,7 +120,8 @@
                                                      pushNotificationStatus:self.pushNotificationStatus
                                                             callEventStatus:self.callEventStatus
                                                                       uiMOC:self.uiMOC
-                                                                    syncMOC:self.syncMOC];
+                                                                    syncMOC:self.syncMOC
+                                                     isDeveloperModeEnabled:NO];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

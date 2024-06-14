@@ -22,17 +22,19 @@ import WireAPI
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
     public func pushChannelDidReceive(_ data: Data) {
-        // TODO: [WPB-9612] remove event decoding monitoring.
-        // Since update event models aren't documented, we aren't yet completely sure
-        // that the new type-safe UpdateEvent model can successfully decode all event
-        // types. To test correctness, we try to decode every update event received
-        // through the push channel and simply log when it fails so we know how to
-        // fix it. Once we're sure it works, we should remove this.
-        do {
-            let decoder = JSONDecoder.defaultDecoder
-            _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
-        } catch {
-            WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
+        if isDeveloperModeEnabled {
+            // TODO: [WPB-9612] remove event decoding monitoring.
+            // Since update event models aren't documented, we aren't yet completely sure
+            // that the new type-safe UpdateEvent model can successfully decode all event
+            // types. To test correctness, we try to decode every update event received
+            // through the push channel and simply log when it fails so we know how to
+            // fix it. Once we're sure it works, we should remove this.
+            do {
+                let decoder = JSONDecoder.defaultDecoder
+                _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
+            } catch {
+                WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
+            }
         }
 
         guard let transportData = try? JSONSerialization.jsonObject(
