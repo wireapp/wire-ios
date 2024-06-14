@@ -68,7 +68,8 @@ extension UpdateEvent {
             self = .conversation(.mlsWelcome(event))
 
         case .otrMessageAdd:
-            self = .conversation(.proteusMessageAdd)
+            let event = try ConversationProteusMessageAddEventDecoder().decode(from: container)
+            self = .conversation(.proteusMessageAdd(event))
 
         case .protocolUpdate:
             self = .conversation(.protocolUpdate)

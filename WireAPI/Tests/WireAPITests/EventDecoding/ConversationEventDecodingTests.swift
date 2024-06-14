@@ -173,6 +173,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationProteusMessageAddEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationProteusMessageAdd")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.proteusMessageAdd(Scaffolding.proteusMessageAddEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -346,6 +360,16 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             welcomeMessage: "message"
+        )
+
+        static let proteusMessageAddEvent = ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            message: "foo",
+            externalData: "bar",
+            messageSenderID: senderID.uuid,
+            messageRecipientID: senderID.uuid
         )
 
     }

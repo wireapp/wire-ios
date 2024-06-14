@@ -64,7 +64,7 @@ public enum ConversationEvent: Equatable {
 
     /// An encrypted Proteus message was added to a conversation.
 
-    case proteusMessageAdd
+    case proteusMessageAdd(ConversationProteusMessageAddEvent)
 
     /// A conversation's message protocol was updated.
 
