@@ -5,16 +5,21 @@ import PackageDescription
 
 let package = Package(
     name: "WireUI",
+    defaultLocalization: "en",
+    platforms: [
+        .iOS(.v15),
+        .macOS(.v12)
+    ],
     products: [
         .library(
-            name: "WireUserStatusUI",
-            targets: ["WireUserStatusUI"])
+            name: "WireReusableUIComponents",
+            targets: ["WireReusableUIComponents"])
     ],
     targets: [
         .target(
-            name: "WireUserStatusUI"),
+            name: "WireReusableUIComponents"),
         .testTarget(
-            name: "WireUserStatusUITests",
-            dependencies: ["WireUserStatusUI"])
+            name: "WireReusableUIComponentsTests",
+            dependencies: ["WireReusableUIComponents"])
     ]
 )

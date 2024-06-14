@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUserStatusUI"
-               BuildableName = "WireUserStatusUI"
-               BlueprintName = "WireUserStatusUI"
+               BlueprintIdentifier = "WireReusableUIComponents"
+               BuildableName = "WireReusableUIComponents"
+               BlueprintName = "WireReusableUIComponents"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireUserStatusUI.xctestplan"
+            reference = "container:.swiftpm/WireReusableUIComponents.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -55,9 +55,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireUserStatusUI"
-            BuildableName = "WireUserStatusUI"
-            BlueprintName = "WireUserStatusUI"
+            BlueprintIdentifier = "WireReusableUIComponents"
+            BuildableName = "WireReusableUIComponents"
+            BlueprintName = "WireReusableUIComponents"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
