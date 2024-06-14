@@ -84,7 +84,8 @@ extension UpdateEvent {
             self = .conversation(.rename(event))
 
         case .typing:
-            self = .conversation(.typing)
+            let event = try ConversationTypingEventDecoder().decode(from: container)
+            self = .conversation(.typing(event))
         }
     }
 

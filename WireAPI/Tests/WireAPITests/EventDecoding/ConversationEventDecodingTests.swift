@@ -229,6 +229,20 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationTypingEvent() throws {
+        // Given
+        let mockEventData = try MockEventDataResource(name: "ConversationTyping")
+
+        // When
+        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.typing(Scaffolding.typingEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -431,6 +445,12 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             timestamp: timestamp,
             newName: "foo"
+        )
+
+        static let typingEvent = ConversationTypingEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            isTyping: true
         )
 
     }
