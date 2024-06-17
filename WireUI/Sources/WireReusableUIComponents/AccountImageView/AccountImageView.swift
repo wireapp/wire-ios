@@ -211,21 +211,44 @@ public final class AccountImageView: UIView {
 
 private typealias AccountType = AccountImageView.AccountType
 
+@available(iOS 16.0, *)
 struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
-        let accountImage = UIImage.from(solidColor: UIColor(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         Group {
             ForEach(AccountType.allCases, id: \.self) { accountType in
-                AccountImageViewRepresentable(accountImage, accountType, .none)
+
+                previewWithNavigationBar(accountType, .none)
                     .previewDisplayName("\(accountType)")
+
                 ForEach(Availability.allCases, id: \.self) { availability in
-                    AccountImageViewRepresentable(accountImage, accountType, availability)
+                    previewWithNavigationBar(accountType, availability)
                         .previewDisplayName("\(accountType) - \(availability)")
                 }
             }
         }
         .background(Color(UIColor.systemGray2))
+    }
+
+    @ViewBuilder
+    fileprivate static func previewWithNavigationBar(_ accountType: AccountType, _ availability: Availability?) -> some View {
+        let accountImage = UIImage.from(solidColor: UIColor(red: 0, green: 0.73, blue: 0.87, alpha: 1))
+        NavigationStack {
+            AccountImageViewRepresentable(accountImage, accountType, availability)
+                .scaleEffect(6)
+                .navigationTitle("Conversations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            //
+                        } label: {
+                            AccountImageViewRepresentable(accountImage, accountType, availability)
+                                .padding(.horizontal)
+                        }
+                    }
+                }
+        }
     }
 }
 
@@ -250,7 +273,7 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
         view.accountImage = accountImage
         view.accountType = accountType
         view.availability = availability
-        view.transform = .init(scaleX: 6, y: 6)
+        // view.transform = .init(scaleX: 6, y: 6)
         return view
     }
 
