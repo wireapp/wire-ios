@@ -3889,6 +3889,14 @@ internal enum L10n {
       }
     }
     internal enum Location {
+      internal enum Error {
+        internal enum Alert {
+          /// Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.
+          internal static let description = L10n.tr("Localizable", "location.error.alert.description", fallback: "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.")
+          /// Location can’t be sent.
+          internal static let title = L10n.tr("Localizable", "location.error.alert.title", fallback: "Location can’t be sent.")
+        }
+      }
       internal enum SendButton {
         /// Send
         internal static let title = L10n.tr("Localizable", "location.send_button.title", fallback: "Send")
