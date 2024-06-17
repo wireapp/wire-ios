@@ -32,6 +32,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
+    private var isProcessingNotifications = false
 
     weak var delegate: PushNotificationStrategyDelegate?
 
@@ -62,6 +63,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     // MARK: - Methods
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard !isProcessingNotifications else { return nil }
+
         return nextRequest(for: apiVersion)
     }
 
@@ -93,6 +96,8 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
         WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
 
+        isProcessingNotifications = true
+
         let eventIds = events.compactMap(\.uuid)
         let latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
@@ -104,7 +109,9 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             do {
                 try await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
                 await managedObjectContext.perform {
+                    self.isProcessingNotifications = false
                     self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+                    RequestAvailableNotification.notifyNewRequestsAvailable(nil)
                 }
 
                 if !hasMoreToFetch {
@@ -112,6 +119,9 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 }
             } catch {
                 WireLogger.notifications.warn("Failed to process fetched events: \(error)")
+                await managedObjectContext.perform {
+                    self.isProcessingNotifications = false
+                }
                 sync.reset()
                 delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
             }
