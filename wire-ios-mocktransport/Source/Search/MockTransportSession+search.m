@@ -23,6 +23,7 @@
 #import "MockTransportSession+OTR.h"
 #import "MockAsset.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 @implementation MockTransportSession (Search)
 

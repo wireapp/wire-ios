@@ -18,6 +18,7 @@
 
 #import "MockTransportSession+OTR.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @implementation MockTransportSession (OTR)

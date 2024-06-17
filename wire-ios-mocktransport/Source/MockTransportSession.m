@@ -29,6 +29,7 @@
 #import "MockPreKey.h"
 #import "MockReachability.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 NSString * const ZMPushChannelStateChangeNotificationName = @"ZMPushChannelStateChangeNotification";
 NSString * const ZMPushChannelIsOpenKey = @"pushChannelIsOpen";

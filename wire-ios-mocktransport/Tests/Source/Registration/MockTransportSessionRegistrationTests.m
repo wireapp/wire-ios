@@ -17,6 +17,7 @@
 //
 
 #import "MockTransportSessionTests.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 @import WireMockTransport;
 
 @interface MockTransportSessionRegistrationTests : MockTransportSessionTests

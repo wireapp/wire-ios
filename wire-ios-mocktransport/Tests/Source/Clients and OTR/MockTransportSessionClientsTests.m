@@ -18,6 +18,7 @@
 
 #import "MockTransportSessionTests.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @interface MockTransportSessionClientsTests : MockTransportSessionTests

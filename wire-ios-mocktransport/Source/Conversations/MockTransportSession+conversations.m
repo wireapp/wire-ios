@@ -25,7 +25,7 @@
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
-
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransport";

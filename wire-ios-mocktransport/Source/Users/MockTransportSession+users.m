@@ -23,6 +23,7 @@
 #import "MockTransportSession+internal.h"
 #import "MockPreKey.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @implementation MockTransportSession (Users)
