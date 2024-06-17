@@ -25,6 +25,10 @@ public class AggregatedLogger: LoggerProtocol {
         self.loggers = loggers
     }
 
+    public var logFiles: [URL] {
+        return loggers.reduce(into: [], { $0 += $1.logFiles })
+    }
+
     public func addLogger(_ logger: LoggerProtocol) {
         self.loggers.append(logger)
     }
@@ -62,12 +66,6 @@ public class AggregatedLogger: LoggerProtocol {
     public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
         loggers.forEach {
             $0.critical(message, attributes: attributes)
-        }
-    }
-
-    public func persist(fileDestination: FileLoggerDestination) async {
-        for logger in loggers {
-            await logger.persist(fileDestination: fileDestination)
         }
     }
 
