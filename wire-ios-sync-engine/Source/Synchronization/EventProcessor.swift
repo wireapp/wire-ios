@@ -41,11 +41,16 @@ actor EventProcessor: UpdateEventProcessor {
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
         eventConsumers: [ZMEventConsumer],
-        eventAsyncConsumers: [ZMEventAsyncConsumer]
+        eventAsyncConsumers: [ZMEventAsyncConsumer],
+        lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
-        self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
+        self.eventDecoder = EventDecoder(
+            eventMOC: eventContext,
+            syncMOC: syncContext,
+            lastEventIDRepository: lastEventIDRepository
+        )
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
         self.bufferedEvents = []

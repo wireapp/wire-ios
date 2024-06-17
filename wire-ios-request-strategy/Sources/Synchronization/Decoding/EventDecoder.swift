@@ -51,9 +51,14 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 
     fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 
-    public init(eventMOC: NSManagedObjectContext, syncMOC: NSManagedObjectContext) {
+    public init(
+        eventMOC: NSManagedObjectContext,
+        syncMOC: NSManagedObjectContext,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
+        self.lastEventIDRepository = lastEventIDRepository
         super.init()
         self.eventMOC.performGroupedBlockAndWait {
             self.createReceivedPushEventIDsStoreIfNecessary()
@@ -67,6 +72,8 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
             syncMOC.proteusProvider
         }
     }
+
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
 }
 
 // MARK: - Process events
@@ -241,6 +248,12 @@ extension EventDecoder {
 
         await eventMOC.perform {
             self.storeUpdateEvents(decryptedEvents, startingAtIndex: index, publicKeys: publicKeys)
+        }
+
+        await syncMOC.perform {
+            if let eventUUID = event.uuid {
+                self.lastEventIDRepository.storeLastEventID(eventUUID)
+            }
         }
 
         return decryptedEvents

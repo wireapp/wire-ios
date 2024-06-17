@@ -267,7 +267,8 @@ public final class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor),
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -283,7 +284,8 @@ public final class NotificationSession {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
         proteusService: ProteusServiceInterface,
-        mlsDecryptionService: MLSDecryptionServiceInterface
+        mlsDecryptionService: MLSDecryptionServiceInterface,
+        lastEventIDRepository: LastEventIDRepositoryInterface
 
     ) throws {
         self.coreDataStack = coreDataStack
@@ -296,7 +298,8 @@ public final class NotificationSession {
 
         eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
-            syncMOC: coreDataStack.syncContext
+            syncMOC: coreDataStack.syncContext,
+            lastEventIDRepository: lastEventIDRepository
         )
 
         pushNotificationStrategy.delegate = self
