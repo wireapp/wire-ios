@@ -32,7 +32,7 @@
     // given
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
                                 // not been fulfilled yet without making the test fail
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
     [sut enter];
     
@@ -61,7 +61,7 @@
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
     // not been fulfilled yet without making the test fail
     dispatch_group_t rawGroup = dispatch_group_create();
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithDispatchGroup:rawGroup label:@"Test"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithGroup:rawGroup label:@"Test"];
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
     dispatch_group_enter(rawGroup);
     
@@ -89,7 +89,7 @@
     // given
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
     // not been fulfilled yet without making the test fail
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
     
     // when
@@ -108,7 +108,7 @@
     // given
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
                                 // not been fulfilled yet without making the test fail
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
     [sut enter]; // enterinc once
     [sut enter]; // entering twice
@@ -139,7 +139,7 @@
     // given
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
                                 // not been fulfilled yet without making the test fail
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
     [sut enter];
 
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
@@ -175,8 +175,8 @@
     // given
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
     // not been fulfilled yet without making the test fail
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
-    
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
+
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     [sut asyncOnQueue:queue block:^{
@@ -205,12 +205,12 @@
 - (void)testThatItWaitsAfterEnteringWithATimeoutThatExpires
 {
     // given
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
     [sut enter];
     
     // when
-    long result = [sut waitWithTimeout:dispatch_time(DISPATCH_TIME_NOW, 200LL * NSEC_PER_MSEC)];
-    
+    long result = [sut waitWithDeltaFromNow:200LL * NSEC_PER_MSEC];
+
     // then
     XCTAssertNotEqual(result, 0);
     [sut leave];
@@ -219,7 +219,7 @@
 - (void)testThatItWaitsAfterEnteringWithATimeoutThatDoesNotExpire
 {
     // given
-    ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithLabel:@"test group"];
     [sut enter];
     
     dispatch_queue_t queue = dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
@@ -228,7 +228,7 @@
     });
     
     // when
-    long result = [sut waitWithTimeout:DISPATCH_TIME_FOREVER];
+    long result = [sut waitWithTimeoutForever];
     
     // then
     XCTAssertEqual(result, 0);

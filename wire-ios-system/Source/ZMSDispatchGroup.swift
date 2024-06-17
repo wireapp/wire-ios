@@ -18,47 +18,59 @@
 
 import Foundation
 
-@objc(ZMSDispatchGroup_) @objcMembers
-public final class ZMSDispatchGroup_: NSObject {
+@objc(ZMSDispatchGroup) @objcMembers
+public final class ZMSDispatchGroup: NSObject {
 
     let label: String
 
     private let group: DispatchGroup
 
     public convenience init(label: String) {
-        self.init(dispatchGroup: .init(), label: label)
+        self.init(group: .init(), label: label)
     }
 
-    public init(dispatchGroup group: dispatch_group_t, label: String) {
+    public init(group: DispatchGroup, label: String) {
         self.group = group
         self.label = label
     }
 
-    func enter() {
+    public func enter() {
         group.enter()
     }
 
-    func leave() {
+    public func leave() {
         group.leave()
     }
 
-    func notify(on queue: DispatchQueue, block: @escaping () -> Void) {
+    @objc(notifyOnQueue:block:)
+    public func notify(on queue: DispatchQueue, block: @escaping () -> Void) {
         group.notify(queue: queue, execute: block)
     }
 
     @discardableResult
-    func wait(withTimeout timeout: DispatchTime) -> Int {
+    public func wait(withTimeout timeout: DispatchTime) -> Int {
         let result = group.wait(timeout: timeout)
         return result == .success ? 0 : 1
     }
 
+    @discardableResult @objc(waitWithDeltaFromNow:)
+    public func wait(withDeltaFromNow nanoseconds: Int) -> Int {
+        wait(withTimeout: .now() + .nanoseconds(nanoseconds))
+    }
+
     @discardableResult
-    func wait(forInterval timeout: TimeInterval) -> Int {
+    public func waitWithTimeoutForever() -> Int {
+        wait(withTimeout: .distantFuture)
+    }
+
+    @discardableResult
+    public func wait(forInterval timeout: TimeInterval) -> Int {
         let nanoseconds = Int(timeout * 1_000_000_000)
         return wait(withTimeout: .now() + .nanoseconds(nanoseconds))
     }
 
-    func async(on queue: dispatch_queue_t, block: @escaping () -> Void) {
+    @objc(asyncOnQueue:block:)
+    public func async(on queue: dispatch_queue_t, block: @escaping () -> Void) {
         queue.async(group: group, execute: block)
     }
 }
