@@ -23,16 +23,16 @@ extension NSManagedObjectContext: GroupQueue {
 
     @objc
     public var dispatchGroup: ZMSDispatchGroup? {
-        dispatchGroupContext.groups.first
+        dispatchGroupContext?.groups.first
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {
-        let groups = dispatchGroupContext.enterAll()
+        let groups = dispatchGroupContext?.enterAll() ?? []
         let timePoint = TimePoint(interval: PerformWarningTimeout)
         perform {
             timePoint.resetTime()
             block()
-            self.dispatchGroupContext.leave(groups)
+            self.dispatchGroupContext?.leave(groups)
             timePoint.warnIfLongerThanInterval()
         }
     }
@@ -47,15 +47,15 @@ extension NSManagedObjectContext {
     }
 
     @objc
-    public var dispatchGroupContext: DispatchGroupContext {
-        get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as! DispatchGroupContext }
+    public var dispatchGroupContext: DispatchGroupContext? {
+        get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as? DispatchGroupContext }
         set { objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     /// List of all groups associated with this context
     @objc
     public var allGroups: [ZMSDispatchGroup] {
-        dispatchGroupContext.groups
+        dispatchGroupContext?.groups ?? []
     }
 
     @objc
@@ -75,12 +75,12 @@ extension NSManagedObjectContext {
     /// @attention: Be *very careful* not to create deadlocks.
     @objc
     public func performGroupedBlockAndWait(_ block: @escaping () -> Void) {
-        let groups = dispatchGroupContext.enterAll()
+        let groups = dispatchGroupContext?.enterAll() ?? []
         let timePoint = TimePoint(interval: PerformWarningTimeout)
         performAndWait {
             timePoint.resetTime()
             block()
-            dispatchGroupContext.leave(groups)
+            dispatchGroupContext?.leave(groups)
             timePoint.warnIfLongerThanInterval()
         }
     }
@@ -100,10 +100,10 @@ extension NSManagedObjectContext {
         // We need to enter & leave all but the first group to make sure that any work added by
         // this method is stil being tracked by the other groups.
         if let firstGroup = dispatchGroup {
-            let groups = dispatchGroupContext.enterAll(except: firstGroup)
+            let groups = dispatchGroupContext?.enterAll(except: firstGroup) ?? []
             firstGroup.notify(on: .global()) {
                 self.performGroupedBlock(block)
-                self.dispatchGroupContext.leave(groups)
+                self.dispatchGroupContext?.leave(groups)
             }
         } else {
             // TODO: what to do?
@@ -124,17 +124,17 @@ extension NSManagedObjectContext {
     /// This is used for testing. It is not thread safe.
     @objc
     public func addGroup(_ dispatchGroup: ZMSDispatchGroup) {
-        dispatchGroupContext.add(dispatchGroup)
+        dispatchGroupContext?.add(dispatchGroup)
     }
 
     @objc
     public func enterAllGroups() -> [ZMSDispatchGroup] {
-        dispatchGroupContext.enterAll()
+        dispatchGroupContext?.enterAll() ?? []
     }
 
     @objc
     public func leaveAllGroups(_ groups: [ZMSDispatchGroup]) {
-        dispatchGroupContext.leave(groups)
+        dispatchGroupContext?.leave(groups)
     }
 }
 
