@@ -26,7 +26,7 @@ protocol PushNotificationStrategyDelegate: AnyObject {
 
 }
 
-final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
+final class PushNotificationStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
@@ -63,14 +63,12 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     // MARK: - Methods
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard !isProcessingNotifications else { return nil }
-
         return nextRequest(for: apiVersion)
     }
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard isFetchingStreamForAPNS else { return nil }
-        let request = requestGenerators.nextRequest(for: apiVersion)
+        guard isFetchingStreamForAPNS && !isProcessingNotifications else { return nil }
+        let request = sync.nextRequest(for: apiVersion)
 
         if request != nil {
             pushNotificationStatus.didStartFetching()
@@ -78,10 +76,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 
         return request
     }
-
-    public var requestGenerators: [ZMRequestGenerator] {
-           return [sync]
-       }
 
     public var isFetchingStreamForAPNS: Bool {
         return self.pushNotificationStatus.hasEventsToFetch
