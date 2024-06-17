@@ -26,10 +26,10 @@ public final class ZMSDispatchGroup: NSObject {
     private let group: DispatchGroup
 
     public convenience init(label: String) {
-        self.init(group: .init(), label: label)
+        self.init(dispatchGroup: .init(), label: label)
     }
 
-    public init(group: DispatchGroup, label: String) {
+    public init(dispatchGroup group: DispatchGroup, label: String) {
         self.group = group
         self.label = label
     }
