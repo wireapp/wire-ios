@@ -9885,7 +9885,6 @@
 				A90BECF124A23E6500E5C008 /* LinkViewDelegate.swift in Sources */,
 				A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */,
 				D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */,
-				D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */,
 				E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */,
 				16D74BE82B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift in Sources */,
 				871BC3601D34F94200DF0793 /* SettingsPropertyFactory.swift in Sources */,
