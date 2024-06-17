@@ -20,9 +20,9 @@ import SwiftUI
 
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
-private let availabilityIndicatorRadius: CGFloat = 4.5
+private let availabilityIndicatorRadius: CGFloat = 8.75 / 2
 private let availabilityIndicatorBorderWidth: CGFloat = 2
-private let availabilityIndicatorCenterOffset = accountImageHeight - 2 * accountImageBorderWidth - availabilityIndicatorRadius / 2
+private let availabilityIndicatorCenterOffset = accountImageBorderWidth * 2 + accountImageHeight - availabilityIndicatorRadius
 private let teamAccountImageCornerRadius: CGFloat = 6
 
 /// Displays the image of a user account plus optional availability.
@@ -35,7 +35,7 @@ public final class AccountImageView: UIView {
     }
 
     public var accountType = AccountType.user {
-        didSet { updateClipping() }
+        didSet { updateShape() }
     }
 
     public var availability: Availability? {
@@ -59,19 +59,36 @@ public final class AccountImageView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        updateAccountImageBorder()
+    }
+
     // MARK: - Methods
 
     private func setupSubviews() {
 
+        // wrapper of the image view which applies the border on its layer
+        let accountImageViewWrapper = UIView()
+        accountImageViewWrapper.translatesAutoresizingMaskIntoConstraints = false
+        accountImageViewWrapper.clipsToBounds = true
+        addSubview(accountImageViewWrapper)
+        NSLayoutConstraint.activate([
+            accountImageViewWrapper.centerXAnchor.constraint(equalTo: centerXAnchor),
+            accountImageViewWrapper.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+
+        // the image view which displays the account image
         accountImageView.contentMode = .scaleAspectFill
-        accountImageView.clipsToBounds = true
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(accountImageView)
+        accountImageViewWrapper.addSubview(accountImageView)
         NSLayoutConstraint.activate([
             accountImageView.widthAnchor.constraint(equalToConstant: accountImageHeight),
             accountImageView.heightAnchor.constraint(equalToConstant: accountImageHeight),
-            accountImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            accountImageView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: accountImageBorderWidth),
+            accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: accountImageBorderWidth),
+            accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: accountImageBorderWidth),
+            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth)
         ])
 
         availabilityImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -82,20 +99,50 @@ public final class AccountImageView: UIView {
         ])
 
         updateAccountImage()
-        updateClipping()
+        updateShape()
         updateAvailabilityIndicator()
+
+        // TMP
+
+        let tmp = UIView()
+        tmp.backgroundColor = .green
+        tmp.layer.cornerRadius = 4.375
+        tmp.alpha = 0.4
+        tmp.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(tmp)
+        NSLayoutConstraint.activate([
+            accountImageViewWrapper.trailingAnchor.constraint(equalTo: tmp.trailingAnchor),
+            accountImageViewWrapper.bottomAnchor.constraint(equalTo: tmp.bottomAnchor),
+            tmp.widthAnchor.constraint(equalToConstant: 8.75),
+            tmp.heightAnchor.constraint(equalToConstant: 8.75)
+        ])
+    }
+
+    private func updateAccountImageBorder() {
+        guard let accountImageViewWrapper = accountImageView.superview else { return }
+
+        accountImageViewWrapper.layer.borderWidth = 1
+        // #dce0e3 Gray-40 light
+        // #34373d Gray-90 dark
+        accountImageViewWrapper.layer.borderColor = UIColor {
+            $0.userInterfaceStyle == .dark
+            ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1.00)
+            : .init(red: 0.86, green: 0.88, blue: 0.89, alpha: 1)
+        }.cgColor
     }
 
     private func updateAccountImage() {
         accountImageView.image = accountImage
     }
 
-    private func updateClipping() {
+    private func updateShape() {
+        guard let accountImageViewWrapper = accountImageView.superview else { return }
+
         switch accountType {
         case .user:
-            accountImageView.layer.cornerRadius = accountImageHeight / 2
+            accountImageViewWrapper.layer.cornerRadius = accountImageHeight / 2 + accountImageBorderWidth
         case .team:
-            accountImageView.layer.cornerRadius = teamAccountImageCornerRadius
+            accountImageViewWrapper.layer.cornerRadius = teamAccountImageCornerRadius
         }
     }
 
@@ -109,27 +156,27 @@ public final class AccountImageView: UIView {
 
         // draw a rect over the total bounds (for inverting the arc)
         let maskPath = UIBezierPath(
-            rect: .init(x: 0, y: 0, width: accountImageHeight, height: accountImageHeight)
+            rect: .init(
+                origin: .zero,
+                size: .init(width: accountImageHeight + accountImageBorderWidth * 2, height: accountImageHeight + accountImageBorderWidth * 2)
+            )
         )
-        // draw the circle to clip from the image
+        // crop a circle shape from the image
         let center = CGPoint(x: availabilityIndicatorCenterOffset, y: availabilityIndicatorCenterOffset)
-        maskPath.addArc(
-            withCenter: center,
-            radius: availabilityIndicatorRadius + availabilityIndicatorBorderWidth,
-            startAngle: 0,
-            endAngle: 2 * .pi,
-            clockwise: true
-        )
+        let radius = availabilityIndicatorRadius + availabilityIndicatorBorderWidth
+        maskPath.addArc(withCenter: center, radius: radius, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
 
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
         maskLayer.fillColor = UIColor.white.cgColor
         maskLayer.fillRule = .evenOdd
-        accountImageView.layer.mask = maskLayer
+        accountImageView.superview?.layer.mask = maskLayer
+
+        let availabilityLayer = CAShapeLayer()
 
         switch availability {
         case .available:
-            availabilityImageView.image = .init(resource: .AccountImageView.Availability.available)
+            availabilityImageView.image = nil
             availabilityImageView.tintColor = .green
         case .away:
             availabilityImageView.image = .init(resource: .AccountImageView.Availability.away)
@@ -178,7 +225,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 }
             }
         }
-        .background(Color(white: 0.98))
+        .background(Color(UIColor.systemGray2))
     }
 
     static let userAccountImage = {
