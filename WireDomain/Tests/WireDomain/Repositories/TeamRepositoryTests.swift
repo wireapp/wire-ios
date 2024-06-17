@@ -19,10 +19,9 @@
 import WireAPI
 import WireAPISupport
 import WireDataModelSupport
-import WireSyncEngineSupport
 import XCTest
 
-@testable import WireSyncEngine
+@testable import WireDomain
 
 final class TeamRepositoryTests: XCTestCase {
 
