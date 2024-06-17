@@ -65,7 +65,7 @@ class ZMLogTests: XCTestCase {
         _ = ZMSLog(tag: tag)
 
         // then
-        XCTAssertEqual(ZMSLog.getLevel(tag: tag), ZMLogLevel_t.warn)
+        XCTAssertEqual(ZMSLog.getLevel(tag: tag), ZMLogLevel.warn)
     }
 
     func testThatTheLevelIsDebug() {
@@ -208,7 +208,7 @@ extension ZMLogTests {
 
         // GIVEN
         let tag = "Network"
-        let level = ZMLogLevel_t.error
+        let level = ZMLogLevel.error
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
@@ -233,7 +233,7 @@ extension ZMLogTests {
 
         // GIVEN
         let tag = "Network"
-        let level = ZMLogLevel_t.info
+        let level = ZMLogLevel.info
         let message = "PANIC!"
 
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
@@ -256,7 +256,7 @@ extension ZMLogTests {
 
         // GIVEN
         let tag = "Network"
-        let level = ZMLogLevel_t.warn
+        let level = ZMLogLevel.warn
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
@@ -281,7 +281,7 @@ extension ZMLogTests {
 
         // GIVEN
         let tag = "Network"
-        let level = ZMLogLevel_t.debug
+        let level = ZMLogLevel.debug
         let message = "PANIC!"
 
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
@@ -305,7 +305,7 @@ extension ZMLogTests {
 
         // GIVEN
         let tag = "Network"
-        let level = ZMLogLevel_t.debug
+        let level = ZMLogLevel.debug
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
@@ -363,7 +363,7 @@ extension ZMLogTests {
 
         // GIVEN
         let tag = "Network"
-        let level = ZMLogLevel_t.error
+        let level = ZMLogLevel.error
         let message = "PANIC!"
 
         let expectation1 = self.expectation(description: "Log received")

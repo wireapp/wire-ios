@@ -61,7 +61,7 @@
     __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
     // not been fulfilled yet without making the test fail
     dispatch_group_t rawGroup = dispatch_group_create();
-    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithGroup:rawGroup label:@"Test"];
+    ZMSDispatchGroup *sut = [[ZMSDispatchGroup alloc] initWithDispatchGroup:rawGroup label:@"Test"];
     dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
     dispatch_group_enter(rawGroup);
     
