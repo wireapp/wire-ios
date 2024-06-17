@@ -261,16 +261,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
 {
-    
-    if (!liveEvents) {
-        return;
-    }
-    
-    for (ZMUpdateEvent *event in events) {
-        if (event.uuid != nil && ! event.isTransient && event.source != ZMUpdateEventSourcePushNotification) {
-            [self.lastEventIDRepository storeLastEventID:event.uuid];
-        }
-    }
+
 }
 
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion
