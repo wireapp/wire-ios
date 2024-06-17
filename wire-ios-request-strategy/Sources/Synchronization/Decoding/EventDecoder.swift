@@ -161,7 +161,7 @@ extension EventDecoder {
                         Task {
                             do {
                                 try await self.startWork(block: block, semaphore: semaphore).value
-                                WireLogger.backgroundActivity.debug("Expiring activity completed")
+                                WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
                                 continuation.resume()
                             } catch {
                                 WireLogger.backgroundActivity.debug("Expiring activity ended with an error: \(error)")
@@ -171,7 +171,7 @@ extension EventDecoder {
                         }
                         semaphore.wait()
                     } else {
-                        WireLogger.backgroundActivity.warn("Backgrond activity is expiring: \(reason)")
+                        WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
                         Task {
                             await self.stopWork()
                         }
@@ -220,7 +220,9 @@ extension EventDecoder {
             var index = startIndex
             for event in events {
                 try Task.checkCancellation()
-//                try await Task.sleep(nanoseconds: 1_000_000_000)
+                if DeveloperFlag.debugDuplicateObjects.isOn {
+                    try await Task.sleep(nanoseconds: 1_000_000_000)
+                }
                 await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
                 index += 1
             }
