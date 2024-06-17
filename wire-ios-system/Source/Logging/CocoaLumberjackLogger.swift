@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CocoaLumberjackSwift
+import Foundation
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
 public class CocoaLumberjackLogger: LoggerProtocol {
@@ -35,34 +35,39 @@ public class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func debug(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func info(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func notice(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func warn(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warning)
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func error(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func critical(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
+    private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
+        var mergedAttributes: LogAttributes = [:]
+        attributes.forEach {
+            mergedAttributes.merge($0) { _, new in new }
+        }
+
         var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"
 
-        if let tag = attributes?["tag"] as? String {
+        if let tag = mergedAttributes[.tag] as? String {
             entry = "[\(tag)] - \(entry)"
         }
 

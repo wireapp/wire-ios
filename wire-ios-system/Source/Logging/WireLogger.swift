@@ -28,9 +28,6 @@ public struct WireLogger: LoggerProtocol {
         self.tag = tag
     }
 
-<<<<<<< HEAD
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-=======
     public var logFiles: [URL] {
         Self.provider?.logFiles ?? []
     }
@@ -39,11 +36,7 @@ public struct WireLogger: LoggerProtocol {
         Self.provider?.addTag(key, value: value)
     }
 
-    public func debug(
-        _ message: LogConvertible,
-        attributes: LogAttributes? = nil
-    ) {
->>>>>>> 54e4fcfc57 (fix: persist logs across runs - WPB-9714 (#1568))
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
         log(level: .debug, message: message, attributes: attributes)
     }
@@ -151,16 +144,14 @@ public protocol LoggerProtocol {
 }
 
 extension LoggerProtocol {
-    func attributesDescription(from attributes: LogAttributes?) -> String {
-        var logAttributes = attributes
-        // drop attributes used for visibility and category
-        logAttributes?.removeValue(forKey: "public")
-        logAttributes?.removeValue(forKey: "tag")
-        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
-    }
+    func attributesDescription(from attributes: [LogAttributes]) -> String {
+        var logAttributes = flattenArray(attributes)
 
-<<<<<<< HEAD
-    public func persist(fileDestination: FileLoggerDestination) async {}
+        // drop attributes used for visibility and category
+        logAttributes.removeValue(forKey: LogAttributesKey.public)
+        logAttributes.removeValue(forKey: LogAttributesKey.tag)
+        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
+    }
 
     /// helper method to transform attributes array to single LogAttributes
     /// - note: if same key is contained accross multiple attributes, the latest one is taken
@@ -171,8 +162,6 @@ extension LoggerProtocol {
         }
         return mergedAttributes
     }
-=======
->>>>>>> 54e4fcfc57 (fix: persist logs across runs - WPB-9714 (#1568))
 }
 
 public protocol LogConvertible {
