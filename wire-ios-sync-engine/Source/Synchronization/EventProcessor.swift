@@ -56,7 +56,6 @@ actor EventProcessor: UpdateEventProcessor {
     // MARK: Methods
 
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
-        let a = 1
         guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
         bufferedEvents.append(contentsOf: events)
     }
