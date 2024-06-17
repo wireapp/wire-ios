@@ -46,6 +46,8 @@ public final class AccountImageView: UIView {
 
     private let accountImageView = UIImageView()
     private let availabilityIndicatorView = AvailabilityIndicatorView()
+    // provides a background color only for dark mode
+    private let availabilityIndicatorBackgroundView = UIView()
 
     // MARK: - Life Cycle
 
@@ -62,6 +64,14 @@ public final class AccountImageView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         updateAccountImageBorder()
+    }
+
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #unavailable(iOS 17.0) {
+            updateAvailabilityIndicator()
+        }
     }
 
     // MARK: - Methods
@@ -101,22 +111,44 @@ public final class AccountImageView: UIView {
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
         ])
 
+        // background view for the availability indicator
+        availabilityIndicatorBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        insertSubview(availabilityIndicatorBackgroundView, belowSubview: availabilityIndicatorView)
+        NSLayoutConstraint.activate([
+            availabilityIndicatorView.leadingAnchor.constraint(equalTo: availabilityIndicatorBackgroundView.leadingAnchor, constant: availabilityIndicatorBorderWidth),
+            availabilityIndicatorView.topAnchor.constraint(equalTo: availabilityIndicatorBackgroundView.topAnchor, constant: availabilityIndicatorBorderWidth),
+            availabilityIndicatorBackgroundView.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor, constant: availabilityIndicatorBorderWidth),
+            availabilityIndicatorBackgroundView.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor, constant: availabilityIndicatorBorderWidth)
+        ])
+
         updateAccountImage()
         updateShape()
         updateAvailabilityIndicator()
+
+        if #available(iOS 17.0, *) {
+            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
+                self.updateAvailabilityIndicator()
+            }
+        }
     }
 
     private func updateAccountImageBorder() {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
         accountImageViewWrapper.layer.borderWidth = 1
-        // #dce0e3 Gray-40 light
-        // #34373d Gray-90 dark
         accountImageViewWrapper.layer.borderColor = UIColor {
             $0.userInterfaceStyle == .dark
-            ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1.00)
-            : .init(red: 0.86, green: 0.88, blue: 0.89, alpha: 1)
+            ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1) // #34373D Gray-90 dark
+            : .init(red: 0.86, green: 0.88, blue: 0.89, alpha: 1) // #DCE0E3 Gray-40 light
         }.cgColor
+
+        // update the background view of the activitiy indicator view
+        availabilityIndicatorBackgroundView.layer.cornerRadius = availabilityIndicatorBackgroundView.frame.height / 2
+        availabilityIndicatorBackgroundView.backgroundColor = .init {
+            $0.userInterfaceStyle == .dark
+            ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1) // #34373D Gray-90 dark
+            : .clear
+        }
     }
 
     private func updateAccountImage() {
@@ -138,9 +170,12 @@ public final class AccountImageView: UIView {
 
         availabilityIndicatorView.availability = availability
 
-        if availability == .none {
+        // for dark mode
+        availabilityIndicatorBackgroundView.isHidden = availability == .none || traitCollection.userInterfaceStyle != .dark
+
+        if availability == .none || traitCollection.userInterfaceStyle == .dark {
             // remove clipping
-            accountImageView.layer.mask = .none
+            accountImageView.superview?.layer.mask = .none
             return
         }
 
@@ -154,9 +189,12 @@ public final class AccountImageView: UIView {
         let radius = availabilityIndicatorRadius + availabilityIndicatorBorderWidth
         maskPath.addArc(withCenter: center, radius: radius, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
 
+        // this clips a circle from the view, which gives the
+        // availability indicator view a transparent border
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
-        maskLayer.fillColor = UIColor.white.cgColor
+        // TODO: remove this line if it's not needed
+//        maskLayer.fillColor = UIColor.white.cgColor // just some non transparent value
         maskLayer.fillRule = .evenOdd
         accountImageView.superview?.layer.mask = maskLayer
     }
