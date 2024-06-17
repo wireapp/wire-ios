@@ -38,17 +38,13 @@ final class UpdateEventsAPITests: XCTestCase {
     }
 
     func testGetUpdateEvents() async throws {
-        // Given
-        let responses = try [
-            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
-            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page2")
-        ].map {
-            HTTPResponse(code: 200, payload: $0.jsonData)
-        }
-
-        // Thens
+        // Then
         try await createSnapshotter().verifyRequestForAllAPIVersions {
-            HTTPClientMock(responses: responses)
+            // Given
+            try HTTPClientMock(responses: [
+                .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
+                .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+            ])
         } when: { sut in
             for try await _ in sut.getUpdateEvents(
                 selfClientID: Scaffolding.selfClientID,
@@ -105,14 +101,11 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_200_V0() async throws {
         // Given
-        let responses = try [
-            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
-            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page2")
-        ].map {
-            HTTPResponse(code: 200, payload: $0.jsonData)
-        }
+        let httpClient = try HTTPClientMock(responses: [
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+        ])
 
-        let httpClient = HTTPClientMock(responses: responses)
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // When
@@ -200,14 +193,11 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_200_V5() async throws {
         // Given
-        let responses = try [
-            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
-            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page2")
-        ].map {
-            HTTPResponse(code: 200, payload: $0.jsonData)
-        }
+        let httpClient = try HTTPClientMock(responses: [
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+        ])
 
-        let httpClient = HTTPClientMock(responses: responses)
         let sut = UpdateEventsAPIV5(httpClient: httpClient)
 
         // When
