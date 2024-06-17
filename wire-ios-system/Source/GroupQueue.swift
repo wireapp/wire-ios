@@ -24,7 +24,7 @@ public protocol GroupQueue: NSObjectProtocol {
 
     /// The underlying dispatch group that is used for `performGroupedBlock(_:)`.
     /// It can be used to associate a block with the receiver without running it on the receiver's queue.
-    var dispatchGroup: ZMSDispatchGroup { get }
+    var dispatchGroup: ZMSDispatchGroup? { get }
 
     /// Submits a block to the receiver's private queue and associates it with the receiver's group.
     /// This will use `NSManagedObjectContext.performBlock(_:)` internally and hence encapsulates

@@ -34,7 +34,7 @@ public final class TimePoint: NSObject {
 
     /// Time since creation
     public var elapsedTime: TimeInterval {
-        timePoint.timeIntervalSinceNow
+        -timePoint.timeIntervalSinceNow
     }
 
     /// Creates a time point and records the callstack
