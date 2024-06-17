@@ -395,6 +395,9 @@
 "location.unauthorized_alert.cancel" = "Cancel";
 "location.unauthorized_alert.settings" = "Settings";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ on Twitter";
 
