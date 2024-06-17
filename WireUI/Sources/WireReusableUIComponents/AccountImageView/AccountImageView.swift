@@ -193,8 +193,6 @@ public final class AccountImageView: UIView {
         // availability indicator view a transparent border
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
-        // TODO: remove this line if it's not needed
-//        maskLayer.fillColor = UIColor.white.cgColor // just some non transparent value
         maskLayer.fillRule = .evenOdd
         accountImageView.superview?.layer.mask = maskLayer
     }
@@ -216,14 +214,9 @@ private typealias AccountType = AccountImageView.AccountType
 struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
+        let accountImage = UIImage.from(solidColor: UIColor(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         Group {
             ForEach(AccountType.allCases, id: \.self) { accountType in
-
-                let accountImage = switch accountType {
-                case .user: userAccountImage
-                case .team: teamAccountImage
-                }
-
                 AccountImageViewRepresentable(accountImage, accountType, .none)
                     .previewDisplayName("\(accountType)")
                 ForEach(Availability.allCases, id: \.self) { availability in
@@ -234,18 +227,6 @@ struct AccountImageView_Previews: PreviewProvider {
         }
         .background(Color(UIColor.systemGray2))
     }
-
-    static let userAccountImage = {
-        let url = URL(string: "https://wire.com/hs-fs/hubfs/Keyvisual_Homepage_medium.jpg?height=135")!
-        let data = try! Data(contentsOf: url)
-        return UIImage(data: data)!
-    }()
-
-    static let teamAccountImage = {
-        let url = URL(string: "https://wire.com/hs-fs/hubfs/WIRE_Logo_rgb_black.png?width=135")!
-        let data = try! Data(contentsOf: url)
-        return UIImage(data: data)!
-    }()
 }
 
 private struct AccountImageViewRepresentable: UIViewRepresentable {
@@ -277,5 +258,16 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
         view.accountImage = accountImage
         view.accountType = accountType
         view.availability = availability
+    }
+}
+
+extension UIImage {
+
+    fileprivate static func from(solidColor color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: .init(width: 1, height: 1))
+        return renderer.image { rendererContext in
+            color.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
     }
 }

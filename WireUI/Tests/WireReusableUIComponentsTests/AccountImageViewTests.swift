@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import WireUserStatusUI
+@testable import WireReusableUIComponents
 
 final class AccountImageViewTests: XCTestCase {
 

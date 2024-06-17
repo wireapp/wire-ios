@@ -15,11 +15,27 @@ let package = Package(
             name: "WireReusableUIComponents",
             targets: ["WireReusableUIComponents"])
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/apple/swift-docc-plugin",
+            from: "1.1.0"
+        ),
+        .package(
+            url: "https://github.com/pointfreeco/swift-snapshot-testing",
+            from: "1.16.0"
+        )
+    ],
     targets: [
         .target(
             name: "WireReusableUIComponents"),
         .testTarget(
             name: "WireReusableUIComponentsTests",
-            dependencies: ["WireReusableUIComponents"])
+            dependencies: [
+                "WireReusableUIComponents",
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
+            ])
     ]
 )
