@@ -19,11 +19,8 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider?.addTag(key, value: value)
-    }
 
-    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
+    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
 
     public let tag: String
 
@@ -31,7 +28,22 @@ public struct WireLogger: LoggerProtocol {
         self.tag = tag
     }
 
+<<<<<<< HEAD
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+=======
+    public var logFiles: [URL] {
+        Self.provider?.logFiles ?? []
+    }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        Self.provider?.addTag(key, value: value)
+    }
+
+    public func debug(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+>>>>>>> 54e4fcfc57 (fix: persist logs across runs - WPB-9714 (#1568))
         guard shouldLogMessage(message) else { return }
         log(level: .debug, message: message, attributes: attributes)
     }
@@ -107,7 +119,6 @@ public struct WireLogger: LoggerProtocol {
         case critical
 
     }
-
 }
 
 public typealias LogAttributes = [LogAttributesKey: Encodable]
@@ -133,14 +144,22 @@ public protocol LoggerProtocol {
     func error(_ message: any LogConvertible, attributes: LogAttributes...)
     func critical(_ message: any LogConvertible, attributes: LogAttributes...)
 
-    func persist(fileDestination: FileLoggerDestination) async
+    var logFiles: [URL] { get }
 
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {
+    func attributesDescription(from attributes: LogAttributes?) -> String {
+        var logAttributes = attributes
+        // drop attributes used for visibility and category
+        logAttributes?.removeValue(forKey: "public")
+        logAttributes?.removeValue(forKey: "tag")
+        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
+    }
 
+<<<<<<< HEAD
     public func persist(fileDestination: FileLoggerDestination) async {}
 
     /// helper method to transform attributes array to single LogAttributes
@@ -152,6 +171,8 @@ extension LoggerProtocol {
         }
         return mergedAttributes
     }
+=======
+>>>>>>> 54e4fcfc57 (fix: persist logs across runs - WPB-9714 (#1568))
 }
 
 public protocol LogConvertible {

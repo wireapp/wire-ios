@@ -27,6 +27,10 @@ struct SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
 
+    var logFiles: [URL] {
+        return []
+    }
+
     var lastReportTime: Date? {
         get {
             guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval else { return nil }
@@ -37,6 +41,7 @@ struct SystemLogger: LoggerProtocol {
         }
     }
 
+<<<<<<< HEAD
     var fileLogger = FileLogger()
 
     func persist(fileDestination: FileLoggerDestination) async {
@@ -63,6 +68,9 @@ struct SystemLogger: LoggerProtocol {
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+=======
+    func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+>>>>>>> 54e4fcfc57 (fix: persist logs across runs - WPB-9714 (#1568))
         log(message, attributes: attributes, osLogType: .debug)
     }
 
@@ -110,42 +118,3 @@ struct SystemLogger: LoggerProtocol {
 }
 
 private var loggers: [String: OSLog] = [:]
-
-public class FileLogger {
-
-    var updatingHandle: FileHandle?
-
-    func write(entries: [String], to url: URL?) {
-        guard let currentLogPath = url?.path else { return }
-
-        let manager = FileManager.default
-
-        if !manager.fileExists(atPath: currentLogPath) {
-            manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
-            // if there was no file, force to recreate the fileHandle
-            updatingHandle = nil
-        }
-
-        if updatingHandle == nil {
-            updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
-            updatingHandle?.seekToEndOfFile()
-        }
-
-        do {
-            if let data = entries.joined(separator: "\n").data(using: .utf8) {
-                try updatingHandle?.write(contentsOf: data)
-            }
-        } catch {
-            updatingHandle = nil
-        }
-    }
-
-    func closeFile() {
-        updatingHandle?.closeFile()
-        updatingHandle = nil
-    }
-
-    deinit {
-        closeFile()
-    }
-}
