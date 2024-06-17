@@ -40,8 +40,8 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetUpdateEvents() async throws {
         // Given
         let responses = try [
-            MockEventDataResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
-            MockEventDataResource(name: "GetUpdateEventsSuccessResponse200_Page2")
+            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
+            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page2")
         ].map {
             HTTPResponse(code: 200, payload: $0.jsonData)
         }
@@ -106,8 +106,8 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetUpdateEvents_200_V0() async throws {
         // Given
         let responses = try [
-            MockEventDataResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
-            MockEventDataResource(name: "GetUpdateEventsSuccessResponse200_Page2")
+            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
+            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page2")
         ].map {
             HTTPResponse(code: 200, payload: $0.jsonData)
         }
@@ -201,8 +201,8 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetUpdateEvents_200_V5() async throws {
         // Given
         let responses = try [
-            MockEventDataResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
-            MockEventDataResource(name: "GetUpdateEventsSuccessResponse200_Page2")
+            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page1"),
+            MockJSONPayloadResource(name: "GetUpdateEventsSuccessResponse200_Page2")
         ].map {
             HTTPResponse(code: 200, payload: $0.jsonData)
         }
