@@ -30,9 +30,9 @@ extension ZMOTRMessage {
     }
 
     func needsDeliveryConfirmationAtCurrentDate(_ currentDate: Date = Date()) -> Bool {
-        guard let conversation = conversation, conversation.conversationType == .oneOnOne,
-              let sender = sender, !sender.isSelfUser,
-              let serverTimestamp = serverTimestamp,
+        guard let conversation, conversation.conversationType == .oneOnOne,
+              let sender, !sender.isSelfUser,
+              let serverTimestamp,
               let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day,
               deliveryState != .delivered,
               deliveryState != .read
@@ -42,7 +42,7 @@ extension ZMOTRMessage {
     }
 
     func needsReadConfirmation(_ genericMessage: GenericMessage) -> Bool {
-        guard let conversation = conversation, let managedObjectContext = managedObjectContext else { return false }
+        guard let conversation, let managedObjectContext else { return false }
 
         if conversation.conversationType == .oneOnOne {
             var expectsReadConfirmation: Bool {

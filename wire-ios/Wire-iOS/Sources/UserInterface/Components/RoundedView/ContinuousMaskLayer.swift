@@ -19,37 +19,33 @@
 import UIKit
 import WireSystem
 
-/**
- * The dimension to use when calculating relative radii.
- */
-
+/// The dimension to use when calculating relative radii.
 enum MaskDimension: Int {
     case width, height
 }
 
-/**
- * The shape of a layer mask.
- */
-
+/// Define the MaskShape enum to include the required shapes
 enum MaskShape {
-    case circle
     case rectangle
-    case relative(multiplier: CGFloat, dimension: MaskDimension)
+    case circle
     case rounded(radius: CGFloat)
+    case relative(multiplier: CGFloat, dimension: MaskDimension)
+
+    enum Dimension {
+        case width
+        case height
+    }
 }
 
-/**
- * A layer whose corners are rounded with a continuous mask (“squircle“).
- */
-
+/// A layer whose corners are rounded with a continuous mask (“squircle“).
 final class ContinuousMaskLayer: CALayer {
 
+    // MARK: - Properties
+
     override var cornerRadius: CGFloat {
-        get {
-            return 0
-        }
-        set {
-            preconditionFailure("The layer is a `ContinuousMaskLayer`. The `cornerRadius` property is unavailable. Set the `shape` property.")
+        didSet {
+            // Ensure masksToBounds is set when cornerRadius is changed
+            masksToBounds = cornerRadius > 0
         }
     }
 
@@ -74,13 +70,12 @@ final class ContinuousMaskLayer: CALayer {
             self.shape = otherMaskLayer.shape
             self.roundedCorners = otherMaskLayer.roundedCorners
         } else {
-            fatal("Cannot init with \(layer)")
+            preconditionFailure("Cannot init with \(layer)")
         }
     }
 
     override init() {
         super.init()
-        self.mask = CAShapeLayer()
     }
 
     @available(*, unavailable)
@@ -96,25 +91,17 @@ final class ContinuousMaskLayer: CALayer {
     }
 
     private func refreshMask() {
-
-        guard let mask = mask as? CAShapeLayer else {
-            return
-        }
-
-        let roundedPath: UIBezierPath
-
         switch shape {
         case .rectangle:
-            roundedPath = UIBezierPath(rect: bounds)
+            cornerRadius = 0
 
         case .circle:
-            roundedPath = UIBezierPath(ovalIn: bounds)
+            cornerRadius = min(bounds.width, bounds.height) / 2
 
         case .rounded(let radius):
-            roundedPath = roundedPathForBounds(radius: radius)
+            cornerRadius = radius
 
         case .relative(let multiplier, let dimension):
-
             let base: CGFloat
 
             switch dimension {
@@ -122,16 +109,9 @@ final class ContinuousMaskLayer: CALayer {
             case .height: base = bounds.height
             }
 
-            roundedPath = roundedPathForBounds(radius: base * multiplier)
+            cornerRadius = base * multiplier
         }
 
-        mask.path = roundedPath.cgPath
-
+        masksToBounds = cornerRadius > 0
     }
-
-    private func roundedPathForBounds(radius: CGFloat) -> UIBezierPath {
-        let radii = CGSize(width: radius, height: radius)
-        return UIBezierPath(roundedRect: bounds, byRoundingCorners: roundedCorners, cornerRadii: radii)
-    }
-
 }

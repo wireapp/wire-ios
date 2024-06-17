@@ -179,7 +179,7 @@ extension ZMOTRMessage {
     }
 
     private static func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
-        guard let message = message else { return false }
+        guard let message else { return false }
         return message.isZombieObject
     }
 

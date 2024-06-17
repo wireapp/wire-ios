@@ -112,7 +112,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
 
         var client: UserClient!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.otherUser.domain = nil
             let clientUUID = UUID()
@@ -132,7 +132,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(client.deviceClass, .phone)
         }
     }
@@ -141,7 +141,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
 
         var client: UserClient!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.otherUser.domain = nil
             let clientUUID = UUID()
@@ -157,7 +157,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(client.isZombieObject)
         }
     }
@@ -165,7 +165,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
     // MARK: - Fetching clients in batches
 
     func testThatItCreatesABatchRequest_WhenUserClientNeedsToBeUpdatedFromBackend_AndDomainIsAvailble() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.apiVersion = .v1
             let clientUUID = UUID()
@@ -186,7 +186,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
 
         var client: UserClient!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let clientUUID = UUID()
             let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
@@ -219,7 +219,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(client.deviceClass, .phone)
         }
     }
@@ -228,7 +228,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
 
         var client: UserClient!
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let clientUUID = UUID()
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
@@ -252,7 +252,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(client.isZombieObject)
         }
     }
@@ -262,7 +262,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         var existingClient: UserClient!
         let newClientID = UUID()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let userID = self.otherUser.remoteIdentifier!
             let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
@@ -288,7 +288,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             guard let newClient = UserClient.fetchUserClient(
                 withRemoteId: newClientID.transportString(),
                 forUser: self.otherUser,
@@ -333,7 +333,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
 
         let identifier = UUID.create()
         var user: ZMUser!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = identifier
             user.fetchUserClients()
@@ -341,14 +341,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let expectedDeviceClasses: Set<DeviceClass> = [.phone, .tablet]
             let actualDeviceClasses = Set(user.clients.compactMap(\.deviceClass))
             let expectedIdentifiers: Set<String> = [firstIdentifier, secondIdentifier]
@@ -363,7 +363,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var user: ZMUser!
         var payload: ZMTransportData!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             let (firstIdentifier, secondIdentifier) = (UUID.create().transportString(), UUID.create().transportString())
             payload = self.payloadForOtherClients(firstIdentifier, secondIdentifier)
@@ -376,14 +376,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(user.clients.count, 2)
             XCTAssertEqual(user.clients, self.selfClient.missingClients)
         }
@@ -393,7 +393,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var payload: ZMTransportData!
         var firstIdentifier: String!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
 
             firstIdentifier = UUID.create().transportString()
@@ -401,20 +401,20 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             self.otherUser.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.otherUser.clients.count, 1)
         }
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.otherUser.clients.count, 1)
             XCTAssertEqual(self.otherUser.clients.first?.remoteIdentifier, firstIdentifier)
         }
@@ -423,19 +423,19 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
     func testThatItCreatesLegacyRequest_WhenFederationEndpointIsNotAvailable() {
         // GIVEN
         var user: ZMUser!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             user = self.selfClient.user!
             user.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
-            if let request = request {
+            if let request {
                 let path = "/users/\(user.remoteIdentifier!.transportString())/clients"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .get)
@@ -450,19 +450,19 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
 
         var user: ZMUser!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             user = self.selfClient.user!
             user.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
-            if let request = request {
+            if let request {
                 let path = "/v1/users/list-clients/v2"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .post)
@@ -477,19 +477,19 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v2
 
         var user: ZMUser!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             user = self.selfClient.user!
             user.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
-            if let request = request {
+            if let request {
                 let path = "/v2/users/list-clients"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .post)
@@ -505,7 +505,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
 
         // GIVEN
         var payload: ZMTransportData!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let user = self.otherClient.user
             user?.fetchUserClients()
             payload = [["id": self.otherClient.remoteIdentifier!, "class": "phone"]] as NSArray
@@ -514,14 +514,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.otherClient.isDeleted)
         }
     }
@@ -530,7 +530,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var payload: ZMTransportData!
         let remoteIdentifier = "aabbccdd0011"
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
         }
@@ -538,14 +538,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertNil(self.selfClient.trustedClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
             XCTAssertNotNil(self.selfClient.ignoredClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
         }
@@ -555,7 +555,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var payload: ZMTransportData!
         var client: UserClient!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             client = self.createClient(user: self.otherUser)
             self.otherUser.fetchUserClients()
             payload = [["id": client.remoteIdentifier!, "class": "phone"]] as NSArray
@@ -564,14 +564,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.selfClient.trustedClients.contains(client))
             XCTAssertTrue(self.selfClient.ignoredClients.contains(client))
         }
@@ -582,7 +582,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         var payload: ZMTransportData!
         let remoteIdentifier = "aabbccdd0011"
         var sessionIdentifier: EncryptionSessionIdentifier!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
@@ -597,14 +597,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertNil(self.selfClient.trustedClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
             XCTAssertNotNil(self.selfClient.ignoredClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
         }
@@ -614,7 +614,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         let remoteID = "otherRemoteID"
         let payload: [[String: Any]] = [["id": remoteID, "class": "phone"]]
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertNotEqual(self.otherClient.remoteIdentifier, remoteID)
             let user = self.otherClient.user
             user?.fetchUserClients()
@@ -623,14 +623,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertTrue(self.otherClient.isZombieObject)
         }
     }
@@ -643,7 +643,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         reportObjectsChanged: Bool = true,
         completion: @escaping (ZMTransportRequest) -> Void
     ) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.apiVersion = apiVersion
             self.otherUser.domain = nil
@@ -660,7 +660,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
 
             // THEN
             let request = self.sut.nextRequest(for: self.apiVersion)
-            if let request = request {
+            if let request {
                 completion(request)
             } else {
                 XCTFail("Failed to create request")

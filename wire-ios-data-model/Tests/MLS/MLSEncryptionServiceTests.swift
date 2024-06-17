@@ -85,7 +85,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
         // Mock
         mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
-            throw CryptoError.invalidByteArrayError
+            throw CryptoError.InvalidByteArrayError(message: "invalid byte array error")
         }
 
         // Then

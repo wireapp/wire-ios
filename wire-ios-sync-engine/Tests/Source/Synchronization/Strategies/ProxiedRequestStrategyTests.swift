@@ -52,7 +52,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
 
         // then
-        if let request = request {
+        if let request {
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertEqual(request.path, "/proxy/giphy/foo/bar")
             XCTAssertTrue(request.needsAuthentication)
@@ -70,7 +70,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
 
         // then
-        if let request = request {
+        if let request {
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertEqual(request.path, "/proxy/soundcloud/foo/bar")
             XCTAssertTrue(request.needsAuthentication)
@@ -89,7 +89,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
 
         // then
-        if let request = request {
+        if let request {
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertEqual(request.path, "/proxy/youtube/foo/bar")
             XCTAssertTrue(request.needsAuthentication)
@@ -138,7 +138,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
-        if let request = request {
+        if let request {
             request.complete(with: response)
         }
 
@@ -157,7 +157,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
 
         // then
-        if let request = request {
+        if let request {
             XCTAssertNotNil(request.expirationDate)
             let delay = request.expirationDate!.timeIntervalSinceNow
             XCTAssertLessThanOrEqual(delay, ExpectedDelay)

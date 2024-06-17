@@ -73,7 +73,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         guard let userSession else { return }
 
         Task {
-            try await userSession.updateMLSMigrationStatus()
+            do {
+                try await userSession.updateMLSMigrationStatus()
+            } catch {
+                WireLogger.mls.error("failed to update MLS migration status: \(error)")
+            }
         }
     }
 
@@ -129,4 +133,5 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 .qualifiedID
         }
     }
+
 }

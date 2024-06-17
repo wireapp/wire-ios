@@ -339,7 +339,7 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let userName = userName else { XCTFail("missing userName"); return }
+        guard let userName else { XCTFail("missing userName"); return }
         guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("searchQuery"); return }
         guard let user = searchForConnectedUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing user"); return }
 
@@ -412,7 +412,7 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let userName = userName else { XCTFail("missing userName"); return }
+        guard let userName else { XCTFail("missing userName"); return }
         guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("missing searchQuery"); return }
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing searchUser"); return }
         searchUser.requestPreviewProfileImage()

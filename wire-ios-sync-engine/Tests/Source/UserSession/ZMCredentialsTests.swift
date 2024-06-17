@@ -23,7 +23,7 @@ class ZMCredentialTests: MessagingTest {
         let phoneNumber = "+4912345678"
         let code = "aabbcc"
 
-        let sut = ZMPhoneCredentials(phoneNumber: phoneNumber, verificationCode: code)
+        let sut = UserPhoneCredentials.credentials(phoneNumber: phoneNumber, verificationCode: code)
 
         XCTAssertEqual(sut.phoneNumber, phoneNumber)
         XCTAssertEqual(sut.phoneNumberVerificationCode, code)
@@ -38,7 +38,7 @@ class ZMCredentialTests: MessagingTest {
 
         let code = "aabbcc"
 
-        let sut = ZMPhoneCredentials(phoneNumber: phone as! String, verificationCode: code)
+        let sut = UserPhoneCredentials.credentials(phoneNumber: phone as! String, verificationCode: code)
 
         XCTAssertEqual(sut.phoneNumber, phone as? String)
         XCTAssertEqual(sut.phoneNumberVerificationCode, code)

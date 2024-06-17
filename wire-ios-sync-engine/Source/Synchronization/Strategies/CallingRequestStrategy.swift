@@ -240,11 +240,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         events.forEach(processEvent)
     }
 
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
-        Self.logger.trace("process events while in background: \(events)")
-        events.forEach(processEvent)
-    }
-
     private func processEvent(_ event: ZMUpdateEvent) {
         let serverTimeDelta = managedObjectContext.serverTimeDelta
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
@@ -408,14 +403,14 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         request.httpBody = data
 
         ephemeralURLSession.task(with: request) { data, response, error in
-            if let error = error {
+            if let error {
                 completionHandler(.failure(SFTResponseError.transport(error: error)))
                 return
             }
 
             guard
                 let response = response as? HTTPURLResponse,
-                let data = data
+                let data
             else {
                 completionHandler(.failure(SFTResponseError.missingData))
                 return

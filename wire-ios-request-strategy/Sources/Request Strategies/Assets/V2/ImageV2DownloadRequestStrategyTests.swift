@@ -99,7 +99,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlock {
             message = try? self.createV2ImageMessage(withAssetId: UUID()).0
 
-            guard let message = message else {
+            guard let message else {
                 XCTFail("no message")
                 return
             }
@@ -110,8 +110,8 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
-            guard let message = message else {
+        syncMOC.performGroupedAndWait {
+            guard let message else {
                 XCTFail("failed to create message")
                 return
             }
@@ -138,7 +138,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -160,7 +160,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -182,7 +182,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -196,7 +196,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     // MARK: - Response Handling
 
     func testThatMessageIsDeleted_WhenResponseSaysItDoesntExistOnBackend() {
-        let nonceAndConversation: (UUID, ZMConversation)? = syncMOC.performGroupedAndWait { _ -> (UUID, ZMConversation)? in
+        let nonceAndConversation: (UUID, ZMConversation)? = syncMOC.performGroupedAndWait { () -> (UUID, ZMConversation)? in
             // GIVEN
             guard let (message, _) = try? self.createV2ImageMessage(withAssetId: UUID.create()) else {
                 XCTFail("failed to create message")
@@ -215,15 +215,15 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait {
             guard let (nonce, conversation) = nonceAndConversation else {
                 XCTFail("failed to get nonce and conversation")
                 return
             }
 
             // GIVEN
-            moc.processPendingChanges() // Make sure the deletion has been processed
-            let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc, prefetchResult: nil)
+            syncMOC.processPendingChanges() // Make sure the deletion has been processed
+            let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: syncMOC, prefetchResult: nil)
 
             // THEN
             XCTAssertNil(message)
@@ -256,7 +256,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertTrue(message.hasDownloadedFile)
         }

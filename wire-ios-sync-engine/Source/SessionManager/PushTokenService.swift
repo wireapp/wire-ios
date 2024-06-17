@@ -131,7 +131,7 @@ public extension PushTokenServiceInterface {
         clientID: String,
         in context: NotificationContext
     ) async throws {
-        guard let localToken = localToken else { return }
+        guard let localToken else { return }
 
         try await registerPushToken(
             localToken,

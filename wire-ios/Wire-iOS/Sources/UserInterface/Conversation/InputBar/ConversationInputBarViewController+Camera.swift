@@ -290,7 +290,7 @@ extension ConversationInputBarViewController {
                 self.mode = .textInput
             }
         } else {
-            let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+            let checker = PrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
                 showCameraAndPhotos()
             })
             checker.performAction()

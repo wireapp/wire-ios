@@ -120,7 +120,15 @@ extension ZMUserSession: UserSession {
         try appLockController.deletePasscode()
     }
 
-    public var selfUser: SelfUserType {
+    public var selfUser: any UserType {
+        ZMUser.selfUser(inUserSession: self)
+    }
+
+    public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
+        ZMUser.selfUser(inUserSession: self)
+    }
+
+    public var editableSelfUser: any EditableUserType & UserType {
         ZMUser.selfUser(inUserSession: self)
     }
 
@@ -305,6 +313,14 @@ extension ZMUserSession: UserSession {
     public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let featureRepository = FeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
+    }
+
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        return CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+    }
+
+    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        return SetAllowGuestAndServicesUseCase()
     }
 
     @MainActor

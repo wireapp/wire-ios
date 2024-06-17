@@ -199,7 +199,7 @@ final class FullscreenImageViewController: UIViewController {
             minimumDismissMagnitude = 250
         }
 
-        view.backgroundColor = .from(scheme: .background)
+        view.backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
 
     private func setupSnapshotBackgroundView() {
@@ -390,11 +390,11 @@ final class FullscreenImageViewController: UIViewController {
         attachmentBehavior = UIAttachmentBehavior(item: proxy, offsetFromCenter: offset, attachedToAnchor: anchor)
         attachmentBehavior?.damping = 1
         attachmentBehavior?.action = { [weak self] in
-            guard let weakSelf = self else { return }
-            weakSelf.imageView?.center = CGPoint(x: weakSelf.imageView?.center.x ?? 0.0, y: proxy.center.y)
-            weakSelf.imageView?.transform = proxy.transform.concatenating(weakSelf.imageViewStartingTransform)
+            guard let self else { return }
+            self.imageView?.center = CGPoint(x: self.imageView?.center.x ?? 0.0, y: proxy.center.y)
+            self.imageView?.transform = proxy.transform.concatenating(imageViewStartingTransform)
         }
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             animator.addBehavior(attachmentBehavior)
         }
 
@@ -416,12 +416,12 @@ final class FullscreenImageViewController: UIViewController {
             imageView?.center = initialImageViewCenter
         } else {
             UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { [weak self] in
-                guard let weakSelf = self else { return }
-                if !weakSelf.isDraggingImage {
-                    weakSelf.imageView?.transform = weakSelf.imageViewStartingTransform
-                    weakSelf.updateBackgroundColor(progress: 0)
-                    if !weakSelf.scrollView.isDragging && !weakSelf.scrollView.isDecelerating {
-                        weakSelf.imageView?.center = weakSelf.initialImageViewCenter
+                guard let self else { return }
+                if !isDraggingImage {
+                    imageView?.transform = imageViewStartingTransform
+                    updateBackgroundColor(progress: 0)
+                    if !scrollView.isDragging && !scrollView.isDecelerating {
+                        imageView?.center = initialImageViewCenter
                     }
                 }
             })
@@ -445,22 +445,22 @@ final class FullscreenImageViewController: UIViewController {
         push.magnitude = max(minimumDismissMagnitude, abs(velocity.y) / 6)
 
         push.action = { [weak self] in
-            guard let weakSelf = self else { return }
-            weakSelf.imageView?.center = CGPoint(x: imageView.center.x, y: proxy.center.y)
+            guard let self else { return }
+            self.imageView?.center = CGPoint(x: imageView.center.x, y: proxy.center.y)
 
-            weakSelf.updateBackgroundColor(imageViewCenter: imageView.center)
-            if weakSelf.imageViewIsOffscreen {
-                UIView.animate(withDuration: 0.1, animations: {
-                    weakSelf.updateBackgroundColor(progress: 1)
-                }, completion: { _ in
-                    weakSelf.animator.removeAllBehaviors()
-                    weakSelf.attachmentBehavior = nil
-                    weakSelf.imageView?.removeFromSuperview()
-                    weakSelf.dismiss()
-                })
+            updateBackgroundColor(imageViewCenter: imageView.center)
+            if imageViewIsOffscreen {
+                UIView.animate(withDuration: 0.1) {
+                    self.updateBackgroundColor(progress: 1)
+                } completion: { _ in
+                    self.animator.removeAllBehaviors()
+                    self.attachmentBehavior = nil
+                    self.imageView?.removeFromSuperview()
+                    self.dismiss()
+                }
             }
         }
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             animator.removeBehavior(attachmentBehavior)
         }
         animator.addBehavior(push)

@@ -229,7 +229,7 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(
+            let userClientListViewController = OtherUserClientsListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
                 contextProvider: viewModel.userSession as? ContextProvider,
@@ -239,7 +239,10 @@ final class ProfileViewController: UIViewController {
         }
 
         tabsController = TabBarController(viewControllers: viewControllers)
-        if viewModel.context == .deviceList, tabsController?.viewControllers.count > 1 {
+
+        if viewModel.context == .deviceList,
+           let count = tabsController?.viewControllers.count,
+           count > 1 {
             tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
         }
         addToSelf(tabsController!)
@@ -386,7 +389,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.topBarViewController.presentSettings()
+                ZClientViewController.shared?.conversationListViewController.presentSettings()
             }
         }
     }
@@ -592,13 +595,31 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func presentError(_ error: LocalizedError) {
         typealias Strings = L10n.Localizable.Error.Connection
 
-        if let connectionError = error as? ConnectToUserError,
-           connectionError == .federationDenied {
-            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
-            UIAlertController.showErrorAlert(title: "", message: message)
+        let title: String?
+        let message: String?
+        let style: UIAlertAction.Style
+
+        if let connectionError = error as? ConnectToUserError, connectionError == .federationDenied {
+            title = nil
+            message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            style = .cancel
         } else {
-            presentLocalizedErrorAlert(error)
+            title = error.localizedDescription
+            message = error.failureReason
+            style = .default
         }
+
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: style
+        ))
+
+        present(alertController, animated: true)
     }
 
     func presentConversationCreationError(username: String) {
@@ -607,8 +628,13 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let alertController = UIAlertController(
             title: "",
             message: ConversationError.cannotStart(username, username),
-            alertAction: .ok()
+            preferredStyle: .alert
         )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
+
         present(alertController, animated: true, completion: nil)
     }
 

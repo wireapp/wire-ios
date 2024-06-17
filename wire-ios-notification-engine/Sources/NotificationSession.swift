@@ -150,7 +150,7 @@ public final class NotificationSession {
             // Currently it is the given behavior, but should be refactored
             // into a "setup" or "load" func that can be async and handle errors.
 
-            if let error = error {
+            if let error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
         }
@@ -409,6 +409,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
         WireLogger.notifications.info("processing \(events.count) decoded events...")
 
+        // Dictionary to filter notifications fetched in same batch with same messageOnce
+        // i.e: textMessage and linkPreview
+        var tempNotifications = [Int: ZMLocalNotification]()
+
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
                 WireLogger.calling.info("detected a call event")
@@ -416,11 +420,13 @@ extension NotificationSession: PushNotificationStrategyDelegate {
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
                 WireLogger.notifications.info("generated a notification from an event")
-                localNotifications.append(notification)
+                tempNotifications[notification.contentHashValue] = notification
             } else {
                 WireLogger.notifications.info("ignoring event")
             }
         }
+
+        localNotifications = Array(tempNotifications.values)
         context.saveOrRollback()
     }
 
@@ -534,7 +540,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func processCallEvent() {
-        if let callEvent = callEvent {
+        if let callEvent {
             delegate?.reportCallEvent(
                 callEvent,
                 currentTimestamp: context.serverTimeDelta
@@ -601,7 +607,7 @@ extension NotificationSession {
     }
 
     private func isEventTimedOut(currentTimestamp: Date, eventTimestamp: Date?) -> Bool {
-        guard let eventTimestamp = eventTimestamp else {
+        guard let eventTimestamp else {
             return true
         }
 

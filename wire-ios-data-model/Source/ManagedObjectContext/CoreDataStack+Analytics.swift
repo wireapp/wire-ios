@@ -21,7 +21,7 @@ import WireUtilities
 extension CoreDataStack {
 
     public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             self.syncContext.analytics = analytics
         }
     }

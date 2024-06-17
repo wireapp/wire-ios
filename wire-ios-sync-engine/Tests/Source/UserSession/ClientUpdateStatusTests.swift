@@ -68,7 +68,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
     func insertNewClient(_ isSelfClient: Bool) -> UserClient! {
         var client: UserClient!
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             client = UserClient.insertNewObject(in: syncMOC)
             client.remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
             client.user = ZMUser.selfUser(in: syncMOC)
@@ -77,7 +77,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
             syncMOC.performAndWait {
-                self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+                syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
             }
         }
         return client
@@ -98,7 +98,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([selfClient, otherClient])
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -108,7 +108,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             let clientIDs = note.clientObjectIDs
             XCTAssertEqual(clientIDs.count, 1)
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchCompleted)
@@ -126,7 +126,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([client, selfClient])
         }
 
@@ -137,7 +137,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             let clientIDs = note.clientObjectIDs
             XCTAssertEqual(clientIDs.count, 1)
             XCTAssertEqual(clientIDs.first, client.objectID)
@@ -158,7 +158,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.fetchingClients) // if we go back online we want to try to verify the client
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             let clients = note.clientObjectIDs
             XCTAssertEqual(clients, [])
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchFailed)
@@ -180,11 +180,11 @@ class ClientUpdateStatusTests: MessagingTest {
         self.receivedNotifications.removeAll()
 
         // when
-        let credentials = ZMEmailCredentials(email: "hallo@example.com", password: "secret123456")
+        let credentials = UserEmailCredentials(email: "hallo@example.com", password: "secret123456")
         self.sut.deleteClients(withCredentials: credentials)
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.deletingClients)
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didDeleteClient()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -193,7 +193,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertNotNil(note.clientObjectIDs)
             XCTAssertEqual(note.clientObjectIDs.first, client.objectID)
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.deletionCompleted)
@@ -210,7 +210,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([otherClient])
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -219,7 +219,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchFailed)
             XCTAssertNotNil(note.error)
             XCTAssertEqual(note.error?.code, ClientUpdateError.selfClientIsInvalid.rawValue)
@@ -234,7 +234,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([otherClient])
         }
 
@@ -244,7 +244,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchFailed)
             XCTAssertNotNil(note.error)
             XCTAssertEqual(note.error?.code, ClientUpdateError.selfClientIsInvalid.rawValue)
@@ -260,7 +260,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.sut.didFetchClients([client, selfClient])
         }
 
@@ -268,7 +268,7 @@ class ClientUpdateStatusTests: MessagingTest {
         self.receivedNotifications.removeAll()
 
         // when
-        let credentials = ZMEmailCredentials(email: "hallo@example.com", password: "secret123456")
+        let credentials = UserEmailCredentials(email: "hallo@example.com", password: "secret123456")
         self.sut.deleteClients(withCredentials: credentials)
         self.sut.failedToDeleteClient(client, error: error)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -277,7 +277,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.deletionFailed)
             XCTAssertNotNil(note.error)
             XCTAssertEqual(note.error?.code, ClientUpdateError.invalidCredentials.rawValue)

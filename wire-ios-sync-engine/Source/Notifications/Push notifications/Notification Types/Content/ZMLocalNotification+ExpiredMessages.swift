@@ -40,7 +40,7 @@ extension ZMLocalNotification {
         }
 
         init?(conversation: ZMConversation?) {
-            guard let conversation = conversation, let managedObjectContext = conversation.managedObjectContext else { return nil }
+            guard let conversation, let managedObjectContext = conversation.managedObjectContext else { return nil }
 
             self.conversation = conversation
             self.managedObjectContext = managedObjectContext

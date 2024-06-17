@@ -84,7 +84,7 @@ extension UIApplication {
         })
     }
 
-    private class func wr_warnAboutCameraPermission(withCompletion completion: AlertActionHandler?) {
+    private class func wr_warnAboutCameraPermission(withCompletion completion: ((UIAlertAction) -> Void)?) {
         let currentResponder = UIResponder.currentFirst
         (currentResponder as? UIView)?.endEditing(true)
 
@@ -99,10 +99,15 @@ extension UIApplication {
     }
 
     private class func wr_warnAboutPhotoLibraryRestricted() {
-        let alert = UIAlertController.alertWithOKButton(
+        let alert = UIAlertController(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,
-            message: L10n.Localizable.Library.Alert.PermissionWarning.Restrictions.explaination
+            message: L10n.Localizable.Library.Alert.PermissionWarning.Restrictions.explaination,
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }

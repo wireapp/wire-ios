@@ -31,19 +31,17 @@ public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
 
 }
 
+public enum CheckOneOnOneConversationIsReadyError: Error, Equatable {
+    case userNotFound
+    case missingGroupID
+}
+
 struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReadyUseCaseProtocol {
 
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-
-    // MARK: - Types
-
-    public enum Error: Swift.Error, Equatable {
-        case userNotFound
-        case missingGroupID
-    }
 
     // MARK: - Life cycle
 
@@ -60,12 +58,12 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
     public func invoke(userID: QualifiedID) async throws -> Bool {
         let conversation = try await context.perform {
             guard let user = ZMUser.fetch(with: userID, in: context) else {
-                throw Error.userNotFound
+                throw CheckOneOnOneConversationIsReadyError.userNotFound
             }
             return user.oneOnOneConversation
         }
 
-        if let conversation = conversation {
+        if let conversation {
             let messageProtocol = await context.perform { conversation.messageProtocol }
 
             switch messageProtocol {
@@ -73,7 +71,7 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
                 return true
             case .mls:
                 guard let groupID = await context.perform({ conversation.mlsGroupID }) else {
-                    throw Error.missingGroupID
+                    throw CheckOneOnOneConversationIsReadyError.missingGroupID
                 }
 
                 return try await isMLSConversationEstablished(groupID: groupID)

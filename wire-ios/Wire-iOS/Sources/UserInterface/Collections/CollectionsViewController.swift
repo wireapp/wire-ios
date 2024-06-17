@@ -295,7 +295,9 @@ final class CollectionsViewController: UIViewController {
         button.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
 
-        if !inOverviewMode && navigationController?.viewControllers.count > 1 {
+        if !inOverviewMode,
+           let count = navigationController?.viewControllers.count,
+           count > 1 {
             let backButton = CollectionsView.backButton()
             backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
@@ -659,7 +661,11 @@ extension CollectionsViewController: CollectionCellMessageChangeDelegate {
 extension CollectionsViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if navigationController?.interactivePopGestureRecognizer == gestureRecognizer {
-            return navigationController?.viewControllers.count > 1
+            if let count = navigationController?.viewControllers.count, count > 1 {
+                return true
+            } else {
+                return false
+            }
         } else {
             return true
         }

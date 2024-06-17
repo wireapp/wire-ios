@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "lưu trữ";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Bắt đầu cuộc hội thoại ngay đây";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ đã bắt đầu sử dụng một thiết bị mới.";
 "call.degraded.alert.message.unknown" = "Someone started using a new device.";
 "call.degraded.alert.action.continue" = "Vẫn gọi";
+"call.degraded.incoming.alert.action.continue" = "Join anyway";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "ĐÃ CHẶN";
 "profile.create_conversation_button_title" = "Tạo nhóm";
 "profile.open_conversation_button_title" = "Mở cuộc hội thoại";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
 "profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Thêm địa chỉ email và mật khẩu";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Điều khoản Sử dụng";
 "about.privacy.title" = "Chính sách Riêng tư";
 "about.license.title" = "Thông tin Giấy phép";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "Tên";
 "self.settings.account_section.email.title" = "Email";
-"self.settings.account_section.phone.title" = "Di động";
 "self.settings.account_section.handle.title" = "Tên người dùng";
 "self.settings.account_section.add_handle.title" = "Thêm tên người dùng";
 "self.settings.account_section.team.title" = "Nhóm";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Gửi lại Email";
 "self.settings.account_section.email.change.resend.message" = "Thư xác minh đã gửi lại đến %@. Kiểm tra hộp thư đến và làm theo hướng dẫn.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Di động";
-"self.settings.account_section.phone_number.change.save" = "Lưu";
-"self.settings.account_section.phone_number.change.remove" = "Xóa Số Di động";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Xóa Số Di động";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Lưu";
-"self.settings.account_section.phone_number.change.verify.title" = "Xác minh";
-"self.settings.account_section.phone_number.change.verify.description" = "Nhận mã xác minh chúng tôi đã gửi cho: %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Nhập mã";
-"self.settings.account_section.phone_number.change.verify.resend" = "Gửi lại Mã";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Không có mã hiển thị?\nBạn có thể yêu cầu mã mới mỗi 30 giây.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Gửi lại mã";
-"self.settings.account_section.phone_number.change.resend.message" = "Mã xác minh đã gửi lại cho %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Thông báo";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Mật khẩu";
 "password.guidance.toolong" = "Quá nhiều kí tự";
 
-"phone.guidance.invalid" = "Invalid phone number";
-"phone.guidance.tooshort" = "Phone number is too short";
-"phone.guidance.toolong" = "Quá nhiều kí tự";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Nhập mã xác minh chúng tôi gửi cho %@.";
 "team.activation_code.button.resend" = "Gửi lại mã";
 "team.activation_code.button.change_email" = "Thay đổi email";
-"team.activation_code.button.change_phone" = "Change phone number";
 
 "team.full_name.headline" = "Tên của bạn";
 "team.full_name.textfield.placeholder" = "Tên đầy đủ";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Đăng ký";
 "registration.close_email_invitation_button.email_title" = "Sử dụng email khác";
-"registration.close_email_invitation_button.phone_title" = "Đăng ký bằng di động";
 "registration.close_phone_invitation_button.email_title" = "Đăng ký bằng email";
-"registration.close_phone_invitation_button.phone_title" = "Dùng số di động khác";
 
-"registration.register_by_phone" = "Di động";
 "registration.register_by_email" = "Email";
-
-"registration.enter_phone_number.title" = "Sửa số di động";
-"registration.enter_phone_number.placeholder" = "Số di động";
-
-"registration.verify_phone_number.instructions" = "Nhập mã xác nhận chúng tôi đã gửi cho %@";
-"registration.verify_phone_number.resend" = "Gửi lại";
-"registration.verify_phone_number.resend_placeholder" = "Không có mã hiển thị?\nBạn có thể yêu cầu mã mới trong %.0f giây";
 
 "registration.verify_email.instructions" = "Chúng tôi gửi một email cho %@.\n Theo đường dẫn để xác minh địa chỉ của bạn.";
 "registration.verify_email.resend.instructions" = "Chưa nhận đươc tin nhắn?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
-"registration.alert.change_phone_action" = "Register with Another Number";
 "registration.alert.change_signin_action" = "Đăng nhập";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Quản lí thiết bị";
 "registration.signin.too_many_devices.sign_out_button.title" = "Đăng xuất";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Login with Email";
-"signin.use_phone.label" = "Login with Phone";
 "signin.forgot_password" = "Quên mật khẩu?";
 "signin.use_one_password.label" = "Log in with 1Password";
 "signin.use_one_password.hint" = "Double tap to fill your password with 1Password";
 "signin.confirm" = "Đăng nhập";
 "signin.company_idp.button.title" = "For Companies";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
-"signin_logout.phone.subheadline" = "Your session expired. Enter your phone number to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
-"signin.phone.missing_password.subtitle" = "Enter your phone number to continue.";
-
-"registration.phone_country" = "Quốc gia";
-"registration.phone_code" = "Country Code";
-"registration.phone_country.hint" = "Double tap to select another country.";
-"registration.phone_code.hint" = "Double tap to select another country code.";
-"registration.phone.verify.label" = "Verify phone number";
-"registration.phone.verify_field.label" = "Verification Code";
-
-"registration.add_phone_number.hero.title" = "Thêm số điện thoại";
-"registration.add_phone_number.hero.paragraph" = "Điều này sẽ giúp chúng tôi tìm người mà bạn có thể biết. Chúng tôi không bao giờ chia sẽ nó.";
-"registration.add_phone_number.skip_button.title" = "Không phải lúc này";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "Điều này sẽ cho bạn sử dụng Wire trên nhiều thiết bị.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Xin chào, %@";
 "registration.email_invitation.hero.paragraph" = "Chọn nật khẩu để tạo tài khoản của bạn.";
 
-"registration.phone_invitation.title" = "Lời mời";
-"registration.phone_invitation.hero.title" = "Xin chào, %@";
-"registration.phone_invitation.hero.paragraph" = "Bạn vừa xong bước đầu tiên trong việc tạo tài khoản của bạn.";
-
 "registration.confirm" = "Sign Up";
-"registration.phone.country_code.hint" = "Double tap to use a phone number from this country.";
 
 "error.name_and_email" = "Vui lòng nhập tên đầy đủ và email hợp lệ";
 "error.full_name" = "Vui lòng nhập tên đầy đủ";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "Xin hãy nhập một địa chỉ email hợp lệ";
-"error.phone.invalid" = "Vui lòng nhập số di động hợp lệ";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Tài khoản bạn đang cố truy cập đang chờ kích hoạt. Vui lòng xác minh thông tin của bạn.";
 "error.user.network_error" = "Xem ra đã có vấn đề với mạng của bạn. Vui lòng thử lại sau.";
 "error.user.email_is_taken" = "Địa chỉ email bạn đã cung cấp đã được đăng kí. Vui lòng thử lại.";
-"error.user.phone_is_taken" = "Số di động bạn đã cung cấp đã được đăng kí. Vui lòng thử lại.";
-"error.user.phone_code_invalid" = "Vui lòng nhập mã hợp lệ";
-"error.user.phone_code_too_many" = "Chúng tôi đã gửi cho bạn mã qua SMS. Chạm Gửi lại sau 10 phút để nhận mã mới.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Đã xảy ra lỗi. Vui lòng thử lại.";
 "error.user.device_deleted_remotely" = "Bạn đã đăng xuất từ thiết bị khác.";
-"error.user.last_identity_cant_be_deleted" = "Một địa chỉ email hoặc số điện thoại là bắt buộc.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Tài khoản này không có quyền được đăng nhập.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Removing the participant failed";
 "error.conversation.too_many_members" = "Cuộc hội thoại đã đầy";
 "error.conversation.offline" = "Có vẻ là một vấn đề với kết nối Internet của bạn. Vui lòng chắc chắn rằng nó hoạt động.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Confirm URL action";
 "url_action.connect_to_bot.message" = "Would you like to connect to the bot?";
 
-"url_action.switch_backend.title" = "Connect to server";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

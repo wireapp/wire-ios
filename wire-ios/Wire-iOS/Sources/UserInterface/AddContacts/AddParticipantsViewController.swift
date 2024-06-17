@@ -82,7 +82,10 @@ extension AddParticipantsViewController.Context {
             preferredStyle: .alert
         )
 
-        controller.addAction(.ok())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
         return controller
     }
 }
@@ -386,12 +389,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
         UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] keyboardFrameInView in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
 
-            weakSelf.bottomConstraint.constant = -(keyboardHeight + weakSelf.bottomMargin)
-            weakSelf.view.layoutIfNeeded()
+            bottomConstraint.constant = -(keyboardHeight + bottomMargin)
+            view.layoutIfNeeded()
         })
     }
 

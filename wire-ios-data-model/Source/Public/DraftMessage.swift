@@ -99,7 +99,7 @@ private struct StorableQuote: Codable {
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func quote(in context: NSManagedObjectContext, for conversation: ZMConversation) -> ZMMessage? {
-        guard let nonce = nonce else { return nil }
+        guard let nonce else { return nil }
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
     }
 

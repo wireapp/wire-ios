@@ -27,18 +27,18 @@ class CoreCryptoCallbacksTests: XCTestCase {
         let sut = CoreCryptoCallbacksImpl()
 
         // When
-        let authorizeResult = await sut.authorize(
+        let authorizeResult = sut.authorize(
             conversationId: .random(),
             clientId: .random()
         )
 
-        let userAuthorizeResult = await sut.userAuthorize(
+        let userAuthorizeResult = sut.userAuthorize(
             conversationId: .random(),
             externalClientId: .random(),
             existingClients: [.random()]
         )
 
-        let clientIsExistingGroupUserResult = await sut.clientIsExistingGroupUser(
+        let clientIsExistingGroupUserResult = sut.clientIsExistingGroupUser(
             conversationId: .random(),
             clientId: .random(),
             existingClients: [.random()],

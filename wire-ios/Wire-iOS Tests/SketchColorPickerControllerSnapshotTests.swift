@@ -17,10 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class SketchColorPickerControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
     typealias SketchColors = SemanticColors.DrawingColors

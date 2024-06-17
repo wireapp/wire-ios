@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "архів";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Розмови починаються тут";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ почав(-ла) використовувати новий пристрій.";
 "call.degraded.alert.message.unknown" = "Хтось почав використовувати новий пристрій.";
 "call.degraded.alert.action.continue" = "Подзвонити все-одно";
+"call.degraded.incoming.alert.action.continue" = "Приєднатися все-одно";
 
 "call.degraded.ended.alert.title" = "Дзвінок завершено";
 "call.degraded.ended.alert.message.self" = "Дзвінок було роз'єднано, оскільки ви почали використовувати новий пристрій.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "ЗАБЛОКОВАНИЙ(-А)";
 "profile.create_conversation_button_title" = "Створити групу";
 "profile.open_conversation_button_title" = "Відкрити розмову";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "ВИ УВІМКНУЛИ ЗВІТИ ПРО ПЕРЕГЛЯД";
 "profile.read_receipts_disabled_memo.header" = "ВИ ВИМКНУЛИ ЗВІТИ ПРО ПЕРЕГЛЯД";
 "profile.read_receipts_memo.body" = "Якщо обидві сторони увімкнуть звіти про перегляд, ви зможете бачити, коли повідомлення були переглянуті.\n\nДану опцію можна змінити в налаштуваннях акаунта.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Додайте email та пароль";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Умови використання";
 "about.privacy.title" = "Політика конфіденційності";
 "about.license.title" = "Відомості про ліцензію";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "Ім’я";
 "self.settings.account_section.email.title" = "Email";
-"self.settings.account_section.phone.title" = "Номер телефону";
 "self.settings.account_section.handle.title" = "Нік";
 "self.settings.account_section.add_handle.title" = "Додати нік";
 "self.settings.account_section.team.title" = "Команда";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Email було надіслано повторно";
 "self.settings.account_section.email.change.resend.message" = "Email з кододом верифікації було повторно надіслано на %@. Перевірте вашу поштову скриньку та дотримуйтесь надісланих інструкцій.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Номер телефону";
-"self.settings.account_section.phone_number.change.save" = "Зберегти";
-"self.settings.account_section.phone_number.change.remove" = "Видалити номер телефону";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Видалити номер телефону";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Зберегти";
-"self.settings.account_section.phone_number.change.verify.title" = "Верифікувати";
-"self.settings.account_section.phone_number.change.verify.description" = "Введіть код, який ми вислали на %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Введіть код";
-"self.settings.account_section.phone_number.change.verify.resend" = "Надіслати код повторно";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Код не показується?\nВи можете надіслати запит на новий кожні 30 секунд.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Код верифікації було надіслано повторно";
-"self.settings.account_section.phone_number.change.resend.message" = "Код верифікації було надіслано на %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Сповіщення";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Пароль";
 "password.guidance.toolong" = "Занадто багато символів";
 
-"phone.guidance.invalid" = "Невірний номер телефону";
-"phone.guidance.tooshort" = "Номер телефону занадто короткий";
-"phone.guidance.toolong" = "Занадто багато символів";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Введіть код, який ми вислали на %@.";
 "team.activation_code.button.resend" = "Надіслати код повторно";
 "team.activation_code.button.change_email" = "Змінити електронну пошту";
-"team.activation_code.button.change_phone" = "Змінити номер телефону";
 
 "team.full_name.headline" = "Ваше ім’я";
 "team.full_name.textfield.placeholder" = "Повне ім'я";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Реєстрація";
 "registration.close_email_invitation_button.email_title" = "Використати інший email";
-"registration.close_email_invitation_button.phone_title" = "Зареєструватися за номером телефону";
 "registration.close_phone_invitation_button.email_title" = "Реєстрація з Email";
-"registration.close_phone_invitation_button.phone_title" = "За допомогою іншого телефону";
 
-"registration.register_by_phone" = "Номер телефону";
 "registration.register_by_email" = "Email";
-
-"registration.enter_phone_number.title" = "Редагувати номер телефону";
-"registration.enter_phone_number.placeholder" = "Номер телефону";
-
-"registration.verify_phone_number.instructions" = "Введіть код, який ми вислали на %@";
-"registration.verify_phone_number.resend" = "Надіслати ще раз";
-"registration.verify_phone_number.resend_placeholder" = "Код не показується?\nВи можете надіслати запит на новий через %.0f секунд";
 
 "registration.verify_email.instructions" = "Ми відправили email на %@.\n Перейдіть за посиланням для підтвердження адреси.";
 "registration.verify_email.resend.instructions" = "Не прийшло повідомлення?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Відновити з резервної копії";
 
 "registration.alert.account_exists.title" = "Акаунт уже існує";
-"registration.alert.account_exists.message_phone" = "Номер телефону, який використовується для реєстрації, вже зв'язано з іншим акаунтом.\n\nСпробуйте використати інший номер телефону або залогіньтесь, якщо ви є власником цього акаунту.";
 "registration.alert.account_exists.message_email" = "Адреса електронної пошти, яка використовується для реєстрації, вже зв'язана з іншим акаунтом.\n\n Спробуйте використати іншу адресу або залогіньтесь, якщо ви є власником цього акаунту.";
 "registration.alert.change_email_action" = "Зареєструватися з іншою адресою ел. пошти";
-"registration.alert.change_phone_action" = "Зареєструватися з іншим номером";
 "registration.alert.change_signin_action" = "Увійти";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Керування пристроями";
 "registration.signin.too_many_devices.sign_out_button.title" = "Вийти";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Видалити пристрій";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Необхідно ввести пароль";
 "registration.signin.alert.password_needed.message" = "Будь ласка, введіть ваш пароль для того, щоб увійти.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Увійти через Email";
-"signin.use_phone.label" = "Увійти через Номер ьелефону";
 "signin.forgot_password" = "Забули пароль?";
 "signin.use_one_password.label" = "Увійти через 1Password";
 "signin.use_one_password.hint" = "Торкніться двічі, щоб заповнити поле паролю значенням з 1Password";
 "signin.confirm" = "Увійти";
 "signin.company_idp.button.title" = "Для компаній";
 
-"signin_logout.subheadline" = "Термін дійсності вашого сеансу завершився. Залогіньтеся ще раз, щоб продовжити.";
 "signin_logout.email.subheadline" = "Термін дійсності вашого сеансу завершився. Введіть ваш email та пароль, щоб продовжити.";
-"signin_logout.phone.subheadline" = "Термін дійсності вашого сеансу завершився. Введіть ваш номер телефону, щоб продовжити.";
 "signin_logout.sso.subheadline" = "Термін дійсності вашого сеансу завершився. Увійдіть у ваш корпоративний акаунт для продовження.";
 "signin_logout.sso.buton" = "Корпоративна аутентифікація";
 
 "signin.email.missing_password.subtitle" = "Введіть ваш email та пароль для продовження.";
-"signin.phone.missing_password.subtitle" = "Введіть ваш номер телефону для продовження.";
-
-"registration.phone_country" = "Країна";
-"registration.phone_code" = "Код країни";
-"registration.phone_country.hint" = "Торкніться двічі, щоб вибрати іншу країну.";
-"registration.phone_code.hint" = "Торкніться двічі, щоб вибрати інший код країни.";
-"registration.phone.verify.label" = "Верифікувати номер телефону";
-"registration.phone.verify_field.label" = "Код верифікації";
-
-"registration.add_phone_number.hero.title" = "Додати номер телефону";
-"registration.add_phone_number.hero.paragraph" = "Це допомагає нам знайти людей, яких ви знаєте. Ми ніколи не ділимося цими даними.";
-"registration.add_phone_number.skip_button.title" = "Не зараз";
 
 "registration.add_email_password.hero.title" = "Додайте ваш email та пароль";
 "registration.add_email_password.hero.paragraph" = "Це дасть вам можливість використовувати Wire на різних пристроях.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Привіт, %@";
 "registration.email_invitation.hero.paragraph" = "Виберіть пароль для створення акаунту.";
 
-"registration.phone_invitation.title" = "Запрошення";
-"registration.phone_invitation.hero.title" = "Привіт, %@";
-"registration.phone_invitation.hero.paragraph" = "Ви за один крок від створення свого акаунту.";
-
 "registration.confirm" = "Зареєструватися";
-"registration.phone.country_code.hint" = "Торкніться двічі, щоб використати номер телефону з цієї країни.";
 
 "error.name_and_email" = "Будь ласка, введіть своє ім'я та email";
 "error.full_name" = "Будь ласка, введіть своє ім’я";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Будь ласка, введіть коротше ім'я користувача";
 "error.input.too_short" = "Будь ласка, введіть довше ім'я користувача";
 "error.email.invalid" = "Будь ласка, введіть актуальну адресу електронної пошти";
-"error.phone.invalid" = "Будь ласка, введіть правильний номер телефону";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Акаунт, який ви намагаєтесь використовувати, очікує активації. Будь ласка, перевірте ваші дані.";
 "error.user.network_error" = "Спостерігаються тимчасові проблеми з вашою мережею. Будь ласка, спробуйте знову пізніше.";
 "error.user.email_is_taken" = "Такий email вже зареєстрований. Будь ласка, спробуйте інший.";
-"error.user.phone_is_taken" = "Такий номер телефону вже зареєстрований. Будь ласка, спробуйте інший.";
-"error.user.phone_code_invalid" = "Будь ласка, введіть правильний код";
-"error.user.phone_code_too_many" = "Ми вже надіслали SMS з кодом. Щоб отримати новий код, натисніть \"Надіслати ще раз\" через 10 хвилин.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Щось пішло не так. Будь ласка спробуйте ще раз.";
 "error.user.device_deleted_remotely" = "Ви вийшли на іншому пристрої.";
-"error.user.last_identity_cant_be_deleted" = "Необхідна або email-адреса або номер телефону.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Даний акаунт був заблокований.";
 "error.user.account_limit_reached" = "Ви не можете додати більше трьох акаунтів.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Не вдалося видалити учасника(-цю)";
 "error.conversation.too_many_members" = "Розмова переповнена";
 "error.conversation.offline" = "Схоже, що є проблема із інтернет-з'єднанням. Будь ласка, переконайтесь, що з ним все в порядку.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Тільки члени команди можуть бути додані до цієї розмови через правовий захист.";
 "error.message.send.missing_legalhold_consent" = "Ви не можете надіслати це повідомлення, тому що у вас є хоча б один застарілий пристрій, який не підтримує правовий захист. Будь ласка, оновіть всі ваші пристрої, або видаліть їх з налаштувань додатку.";
 "error.message.send.title" = "Неможливо надіслати повідомлення";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Підтвердження дії з URL";
 "url_action.connect_to_bot.message" = "Чи Ви хотіли б ви додати бота до контактів?";
 
-"url_action.switch_backend.title" = "Під'єднатися до сервера";
-"url_action.switch_backend.message" = "З цією конфігурацією ви під'єднаєте додаток до серверу третьої сторони:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Не вдалося переключити сервер";
 "url_action.switch_backend.error.logged_in" = "Ви вже увійшли. Вийдіть з усіх акаунтів та повторіть спробу, щоб переключитися на інший сервер.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

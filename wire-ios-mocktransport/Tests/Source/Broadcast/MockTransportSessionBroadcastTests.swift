@@ -74,7 +74,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -123,7 +123,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -173,7 +173,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [
@@ -223,7 +223,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [

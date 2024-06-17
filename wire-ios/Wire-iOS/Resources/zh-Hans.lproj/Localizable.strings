@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "档案";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "从这里开始对话";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ 开始使用新的设备。";
 "call.degraded.alert.message.unknown" = "有人开始使用新的设备。";
 "call.degraded.alert.action.continue" = "仍然要通话";
+"call.degraded.incoming.alert.action.continue" = "仍要加入";
 
 "call.degraded.ended.alert.title" = "通话结束";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "已加入黑名单";
 "profile.create_conversation_button_title" = "创建群聊";
 "profile.open_conversation_button_title" = "打开对话";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "您已经开启了已读回执";
 "profile.read_receipts_disabled_memo.header" = "您已经关闭了已读回执";
 "profile.read_receipts_memo.body" = "如果双方都打开已读回执，你可以查看消息的阅读时间。\n\n您可以在帐户设置中更改此选项。";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "新增邮箱地址和密码";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "使用条款";
 "about.privacy.title" = "隐私政策";
 "about.license.title" = "授權資訊";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "名称";
 "self.settings.account_section.email.title" = "电邮箱地址";
-"self.settings.account_section.phone.title" = "电话";
 "self.settings.account_section.handle.title" = "用户名";
 "self.settings.account_section.add_handle.title" = "添加用户名";
 "self.settings.account_section.team.title" = "团队";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "重新发送邮件";
 "self.settings.account_section.email.change.resend.message" = "确认邮件已经发送至%@。 请检查您的收件箱并按照说明进行操作。";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "电话";
-"self.settings.account_section.phone_number.change.save" = "保存";
-"self.settings.account_section.phone_number.change.remove" = "移除手机号码";
-
-"self.settings.account_section.phone_number.change.remove.action" = "移除手机号码";
-
-"self.settings.account_section.phone_number.change.verify.save" = "保存";
-"self.settings.account_section.phone_number.change.verify.title" = "验证";
-"self.settings.account_section.phone_number.change.verify.description" = "请输入我们发送至 %@ 的验证码。";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "输入验证码";
-"self.settings.account_section.phone_number.change.verify.resend" = "重新发送验证码";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "没有收到验证码？\n您可以每30秒重新获取一次。";
-
-"self.settings.account_section.phone_number.change.resend.title" = "验证码已重新发送";
-"self.settings.account_section.phone_number.change.resend.message" = "验证码已重新发送至%@。";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "通知";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "密码";
 "password.guidance.toolong" = "超出字符限制";
 
-"phone.guidance.invalid" = "无效的手机号码";
-"phone.guidance.tooshort" = "电话号码太短";
-"phone.guidance.toolong" = "超出字符限制";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "输入我们发送到 %@ 的验证码";
 "team.activation_code.button.resend" = "重新发送验证码";
 "team.activation_code.button.change_email" = "更改电邮地址";
-"team.activation_code.button.change_phone" = "更改手机号码";
 
 "team.full_name.headline" = "您的名字";
 "team.full_name.textfield.placeholder" = "全名";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "注册";
 "registration.close_email_invitation_button.email_title" = "使用其他邮箱地址";
-"registration.close_email_invitation_button.phone_title" = "通过手机注册";
 "registration.close_phone_invitation_button.email_title" = "通过电邮箱地址注册";
-"registration.close_phone_invitation_button.phone_title" = "使用其他手机";
 
-"registration.register_by_phone" = "电话";
 "registration.register_by_email" = "电子邮件";
-
-"registration.enter_phone_number.title" = "编辑手机号码";
-"registration.enter_phone_number.placeholder" = "手机号码";
-
-"registration.verify_phone_number.instructions" = "输入我们发送到%@的验证码";
-"registration.verify_phone_number.resend" = "重新发送";
-"registration.verify_phone_number.resend_placeholder" = "验证码没有收到？\n你可以在 %.0f 秒后再次申请";
 
 "registration.verify_email.instructions" = "我们发送了一封电子邮件到%@。请验证您的地址链接。";
 "registration.verify_email.resend.instructions" = "没有收到验证邮件？";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "从备份还原";
 
 "registration.alert.account_exists.title" = "帐户已存在";
-"registration.alert.account_exists.message_phone" = "这个用于注册的电话号码已经关联了一个帐户。\n\n使用另一个电话号码，或者如果您拥有此帐户，请尝试登录。";
 "registration.alert.account_exists.message_email" = "这个用于注册的电子邮箱地址已经关联了一个帐户。\n\n使用另一个电子邮箱地址，或者如果您拥有此帐户，请尝试登录。";
 "registration.alert.change_email_action" = "使用另一个电子邮件注册";
-"registration.alert.change_phone_action" = "用另一个号码注册";
 "registration.alert.change_signin_action" = "登录";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "设备管理";
 "registration.signin.too_many_devices.sign_out_button.title" = "登出";
 
-"registration.signin.too_many_devices.manage_screen.title" = "移除设备";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "需要输入密码";
 "registration.signin.alert.password_needed.message" = "请输入您的密码以登入。";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "使用电子邮件登录";
-"signin.use_phone.label" = "使用电话登录";
 "signin.forgot_password" = "忘记密码？";
 "signin.use_one_password.label" = "使用 1Password 登录";
 "signin.use_one_password.hint" = "双击使用 1Password 填充密码";
 "signin.confirm" = "登录";
 "signin.company_idp.button.title" = "供公司使用";
 
-"signin_logout.subheadline" = "您太久没使用Wire。请重新登入。";
 "signin_logout.email.subheadline" = "您的工作階段已过期。输入您的邮箱地址和密码来继续。";
-"signin_logout.phone.subheadline" = "您太久没使用Wire。输入您的电话号码以继续。";
 "signin_logout.sso.subheadline" = "您的工作阶段已过期。请使用您的企业帐户登录以继续。";
 "signin_logout.sso.buton" = "企业登录";
 
 "signin.email.missing_password.subtitle" = "输入您的邮箱和密码以继续。";
-"signin.phone.missing_password.subtitle" = "输入您的电话号码以继续。";
-
-"registration.phone_country" = "国家";
-"registration.phone_code" = "国家代码";
-"registration.phone_country.hint" = "双击选择其他国家。";
-"registration.phone_code.hint" = "双击选其他国家代码。";
-"registration.phone.verify.label" = "驗證電話號碼";
-"registration.phone.verify_field.label" = "验证码";
-
-"registration.add_phone_number.hero.title" = "新增手机号码";
-"registration.add_phone_number.hero.paragraph" = "这将帮助我们找到您可能认识的人。我们不会向任何第三方泄漏您的信息。";
-"registration.add_phone_number.skip_button.title" = "先跳过";
 
 "registration.add_email_password.hero.title" = "添加您的电子邮件和密码";
 "registration.add_email_password.hero.paragraph" = "这可以让您在多个设备上使用Wire。";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "您好，%@";
 "registration.email_invitation.hero.paragraph" = "选择一个密码来创建您的账户。";
 
-"registration.phone_invitation.title" = "邀请";
-"registration.phone_invitation.hero.title" = "您好，%@";
-"registration.phone_invitation.hero.paragraph" = "再一个步骤就完成建立您的账户。";
-
 "registration.confirm" = "注册";
-"registration.phone.country_code.hint" = "双击使用当前国家电话号码。";
 
 "error.name_and_email" = "请输入您的全名和一个有效的电子邮箱和密码。";
 "error.full_name" = "请输入您的全名";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "请输入一个较短的用户名";
 "error.input.too_short" = "请输入更长的用户名";
 "error.email.invalid" = "请输入有效的电邮箱地址";
-"error.phone.invalid" = "请输入有效的手机号码";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "您的账号尚未激活。";
 "error.user.network_error" = "您的网络好像有些问题，请稍候再试。";
 "error.user.email_is_taken" = "您提供的电子邮箱已经被占用，请尝试其他的电子邮箱。";
-"error.user.phone_is_taken" = "该手机号码已被注册，请尝试其他号码。";
-"error.user.phone_code_invalid" = "请输入一个有限的验证码";
-"error.user.phone_code_too_many" = "我们已经将验证码通过短信发送给您。如需重新获取验证码，请等候10分钟后点击重新发送。";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "出了点问题，请再试一次。";
 "error.user.device_deleted_remotely" = "您的另一台设备已被登出。";
-"error.user.last_identity_cant_be_deleted" = "邮箱地址或手机号码是必填项。";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "此账户不再被授权登录";
 "error.user.account_limit_reached" = "您最多只能添加3个帐号。";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "移除参与者失败";
 "error.conversation.too_many_members" = "对话人数已达上限";
 "error.conversation.offline" = "您的互联网连线似乎出现了问题。请确保您有网路连线。";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "确认 URL 操作";
 "url_action.connect_to_bot.message" = "你仍要连接到此服务器吗？";
 
-"url_action.switch_backend.title" = "连接到服务器";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "无法切换服务器";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

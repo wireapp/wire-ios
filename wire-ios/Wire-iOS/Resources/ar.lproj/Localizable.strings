@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "الأرشيف";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "المحادثات تبدأ هنا";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ بدأ باستخدام جهاز جديد.";
 "call.degraded.alert.message.unknown" = "بدأ شخص ما باستخدام جهاز جديد.";
 "call.degraded.alert.action.continue" = "الاتصال على أي حال";
+"call.degraded.incoming.alert.action.continue" = "Join anyway";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "حظر";
 "profile.create_conversation_button_title" = "إنشاء مجموعة";
 "profile.open_conversation_button_title" = "افتح المحادثة";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "لقد فعّلتَ إيصالات القراءة";
 "profile.read_receipts_disabled_memo.header" = "لقد عطّلتَ إيصالات القراءة";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "إضافة عنوان البريد الإلكتروني وكلمة المرور";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "شروط الاستخدام";
 "about.privacy.title" = "سياسة الخصوصية";
 "about.license.title" = "معلومات عن الترخيص";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "الاسم";
 "self.settings.account_section.email.title" = "البريد الإلكتروني";
-"self.settings.account_section.phone.title" = "الهاتف";
 "self.settings.account_section.handle.title" = "مُعرّف";
 "self.settings.account_section.add_handle.title" = "أضف مُعرّف";
 "self.settings.account_section.team.title" = "الفريق";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "تمّت إعادة إرسال البريد";
 "self.settings.account_section.email.change.resend.message" = "تم إعادة إرسال رسالة التأكيد إلى %@. تحقق من صندوق الوارد واتّبع الإرشادات.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "الهاتف";
-"self.settings.account_section.phone_number.change.save" = "حفظ";
-"self.settings.account_section.phone_number.change.remove" = "إزالة رقم الهاتف";
-
-"self.settings.account_section.phone_number.change.remove.action" = "إزالة رقم الهاتف";
-
-"self.settings.account_section.phone_number.change.verify.save" = "حفظ";
-"self.settings.account_section.phone_number.change.verify.title" = "تحقق";
-"self.settings.account_section.phone_number.change.verify.description" = "أدخل رمز التحقق الذي أرسلناه إلى: %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "أدخل الرمز";
-"self.settings.account_section.phone_number.change.verify.resend" = "إعادة إرسال الرمز";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "لم يظهر لك الرمز؟\nبإمكانك طلب رمز جديد كل ٣٠ ثانية.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "تمت إعادة إرسال الرمز";
-"self.settings.account_section.phone_number.change.resend.message" = "تمّ إرسال رمز التحقق إلى %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "إشعارات";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "كلمة المرور";
 "password.guidance.toolong" = "حروف كثيرة عن الحد";
 
-"phone.guidance.invalid" = "رقم الهاتف غير صحيح";
-"phone.guidance.tooshort" = "Phone number is too short";
-"phone.guidance.toolong" = "حروف كثيرة عن الحد";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "أدخل رمز التحقق الذي أرسلناه إلى: %@.";
 "team.activation_code.button.resend" = "أعد إرسال الكود";
 "team.activation_code.button.change_email" = "تغيير البريد الإلكتروني";
-"team.activation_code.button.change_phone" = "تغيير رقم الهاتف";
 
 "team.full_name.headline" = "اسمك";
 "team.full_name.textfield.placeholder" = "الاسم الكامل";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "تسجيل";
 "registration.close_email_invitation_button.email_title" = "استخدام بريد إلكتروني آخر";
-"registration.close_email_invitation_button.phone_title" = "تسجيل بواسطة رقم الهاتف";
 "registration.close_phone_invitation_button.email_title" = "تسجيل بواسطة بريد إلكتروني";
-"registration.close_phone_invitation_button.phone_title" = "استخدام رقم هاتف آخر";
 
-"registration.register_by_phone" = "الهاتف";
 "registration.register_by_email" = "البريد الإلكتروني";
-
-"registration.enter_phone_number.title" = "تعديل رقم الهاتف";
-"registration.enter_phone_number.placeholder" = "رقم الهاتف";
-
-"registration.verify_phone_number.instructions" = "أدخل رمز التّحقق الذي أُرسل لـ%@";
-"registration.verify_phone_number.resend" = "إعادة الإرسال";
-"registration.verify_phone_number.resend_placeholder" = "لم يظهر لك الرمز؟\nبإمكانك طلب رمز جديد خلال %.0f ثانية";
 
 "registration.verify_email.instructions" = "قمنا بإرسال رسالة لـ %@.\nتتبع الرابط لتأكيد بريدك الإلكتروني.";
 "registration.verify_email.resend.instructions" = "لم تستلم الرسالة؟";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "استعد من نسخة احتياطية";
 
 "registration.alert.account_exists.title" = "Account Exists";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
-"registration.alert.change_phone_action" = "Register with Another Number";
 "registration.alert.change_signin_action" = "تسجيل الدخول";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "إدارة الأجهزة";
 "registration.signin.too_many_devices.sign_out_button.title" = "تسجيل الخروج";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "المُعرّف:";
 
 "signin.use_email.label" = "Login with Email";
-"signin.use_phone.label" = "Login with Phone";
 "signin.forgot_password" = "نسيتَ كلمة المرور؟";
 "signin.use_one_password.label" = "دخول باستخدام 1Password";
 "signin.use_one_password.hint" = "Double tap to fill your password with 1Password";
 "signin.confirm" = "تسجيل الدخول";
 "signin.company_idp.button.title" = "For Companies";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
-"signin_logout.phone.subheadline" = "Your session expired. Enter your phone number to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
-"signin.phone.missing_password.subtitle" = "Enter your phone number to continue.";
-
-"registration.phone_country" = "البلد";
-"registration.phone_code" = "رمز الدولة";
-"registration.phone_country.hint" = "انقر مرتين لاختيار دولة أخرى.";
-"registration.phone_code.hint" = "انقر مرتين لاختيار رمز دولة أخر.";
-"registration.phone.verify.label" = "تأكيد رقم الهاتف";
-"registration.phone.verify_field.label" = "رمز التحقق";
-
-"registration.add_phone_number.hero.title" = "أضف رقم الهاتف";
-"registration.add_phone_number.hero.paragraph" = "يساعدنا هذا على إيجاد أشخاص لربما تعرفهم. نحن لا نشارك هذه المعلومات.";
-"registration.add_phone_number.skip_button.title" = "ليس الآن";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "هذا يمكنك من استخدام واير على أجهزة متعددة.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "مرحبًا، %@";
 "registration.email_invitation.hero.paragraph" = "اختر كلمة مرور لإنشاء الحساب الخاص بك.";
 
-"registration.phone_invitation.title" = "دعوة";
-"registration.phone_invitation.hero.title" = "مرحبًا، %@";
-"registration.phone_invitation.hero.paragraph" = "أنت على بعد خطوة واحدة من إنشاء حسابك الخاص.";
-
 "registration.confirm" = "تسجيل";
-"registration.phone.country_code.hint" = "انقر مرتين لاستخدام رقم هاتف من هذه الدولة.";
 
 "error.name_and_email" = "الرجاء إدخال اسمك الكامل وعنوان بريد إلكتروني صحيح";
 "error.full_name" = "ادخل اسمك الكامل";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "الرجاء إدخال عنوان بريد إلكتروني صالح.";
-"error.phone.invalid" = "الرجاء إدخال رقم هاتف صحيح";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "الحساب الذي تحاول الوصول له في انتظار التفعيل. من فضلك تحقق من التفاصيل.";
 "error.user.network_error" = "يبدو أن هناك مشكلة في شبكة اتصالك. الرجاء المحاولة مرة أخرى لاحقاً.";
 "error.user.email_is_taken" = "البريد الإلكتروني المُدخل تم استخدامه بالفعل. الرجاء استخدام بريد إلكتروني مختلف.";
-"error.user.phone_is_taken" = "رقم الهاتف الذي أعطيته تم تسجيله من قبل. الرجاء حاول مرة أخرى.";
-"error.user.phone_code_invalid" = "الرجاء ادخال رمز صحيح";
-"error.user.phone_code_too_many" = "لقد قمنا بإرسال رمز إليك عبر رسالة قصيرة . انقر فوق إعادة إرسال بعد 10 دقائق للحصول على رمز جديد.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "حدث خطأ ما. برجاء إعادة المحاولة.";
 "error.user.device_deleted_remotely" = "قمت بتسجيل خروج من جهاز آخر.";
-"error.user.last_identity_cant_be_deleted" = "مطلوب إمّا عنوان بريد إلكتروني أو رقم هاتف.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "لم يعد مصرّحًا لهذا الحساب بتسجيل الدخول.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "فشل حذف المشارك";
 "error.conversation.too_many_members" = "المحادثة مكتملة العدد";
 "error.conversation.offline" = "يبدو أن هناك مشكلة في اتصالك بالإنترنت. من فضلك تأكد من عمل الاتصال.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Confirm URL action";
 "url_action.connect_to_bot.message" = "Would you like to connect to the bot?";
 
-"url_action.switch_backend.title" = "اتصل بالخادم";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archivovat";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Konverzace začněte zde";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ začal(a) používat nové zařízení.";
 "call.degraded.alert.message.unknown" = "Někdo začal používat nové zařízení.";
 "call.degraded.alert.action.continue" = "Přesto zavolat";
+"call.degraded.incoming.alert.action.continue" = "Přesto se přidat";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "BLOKOVÁN(A)";
 "profile.create_conversation_button_title" = "Vytvořit skupinu";
 "profile.open_conversation_button_title" = "Otevřít konverzaci";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "POVOLIL JSTE POTVRZENÍ O PŘEČTENÍ";
 "profile.read_receipts_disabled_memo.header" = "ZAKÁZAL JSTE POTVRZENÍ O PŘEČTENÍ";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Přidat emailovou adresu a heslo";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Podmínky používání";
 "about.privacy.title" = "Zásady ochrany osobních údajů";
 "about.license.title" = "Informace o licenci";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "Jméno";
 "self.settings.account_section.email.title" = "Email";
-"self.settings.account_section.phone.title" = "Telefon";
 "self.settings.account_section.handle.title" = "Uživatelské jméno";
 "self.settings.account_section.add_handle.title" = "Přidat uživatelské jméno";
 "self.settings.account_section.team.title" = "Team";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Email znovu odeslán";
 "self.settings.account_section.email.change.resend.message" = "Potvrzovací email byl odeslán na adresu %@. Zkontrolujte si doručenou poštu a pokračujte dle pokynů.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Telefon";
-"self.settings.account_section.phone_number.change.save" = "Uložit";
-"self.settings.account_section.phone_number.change.remove" = "Odstranit telefonní číslo";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Odstranit telefonní číslo";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Uložit";
-"self.settings.account_section.phone_number.change.verify.title" = "Ověřit";
-"self.settings.account_section.phone_number.change.verify.description" = "Zadejte ověřovací kód, který jsme poslali na adresu: %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Zadejte kód";
-"self.settings.account_section.phone_number.change.verify.resend" = "Znovu odeslat kód";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Žádný kód se nezobrazuje?\nMůžete požádat o nový každých 30 vteřin.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Kód znovu odeslán";
-"self.settings.account_section.phone_number.change.resend.message" = "Ověřovací kód byl znovu odeslán na %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Upozornění";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Heslo";
 "password.guidance.toolong" = "Příliš mnoho znaků";
 
-"phone.guidance.invalid" = "Neplatné telefonní číslo";
-"phone.guidance.tooshort" = "Phone number is too short";
-"phone.guidance.toolong" = "Příliš mnoho znaků";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Enter the verification code we sent to %@.";
 "team.activation_code.button.resend" = "Resend code";
 "team.activation_code.button.change_email" = "Změnit email";
-"team.activation_code.button.change_phone" = "Změnit telefonní číslo";
 
 "team.full_name.headline" = "Vaše jméno";
 "team.full_name.textfield.placeholder" = "Full name";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Registrace";
 "registration.close_email_invitation_button.email_title" = "Použít jiný e-mail";
-"registration.close_email_invitation_button.phone_title" = "Registrovat pomocí telefonu";
 "registration.close_phone_invitation_button.email_title" = "Registrovat pomocí emailu";
-"registration.close_phone_invitation_button.phone_title" = "Použít jiný telefon";
 
-"registration.register_by_phone" = "Telefon";
 "registration.register_by_email" = "Email";
-
-"registration.enter_phone_number.title" = "Upravit telefonní číslo";
-"registration.enter_phone_number.placeholder" = "Telefonní číslo";
-
-"registration.verify_phone_number.instructions" = "Enter the verification code we sent to %@";
-"registration.verify_phone_number.resend" = "Odeslat znovu";
-"registration.verify_phone_number.resend_placeholder" = "No code showing up?\nYou can request a new one in %.0f seconds";
 
 "registration.verify_email.instructions" = "We sent an email to %@.\n Follow the link to verify your address.";
 "registration.verify_email.resend.instructions" = "Nedostal(a) zprávu?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
-"registration.alert.change_phone_action" = "Register with Another Number";
 "registration.alert.change_signin_action" = "Přihlásit se";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Spravovat přístroje";
 "registration.signin.too_many_devices.sign_out_button.title" = "Odhlásit se";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Odebrat zařízení";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Je vyžadováno heslo";
 "registration.signin.alert.password_needed.message" = "Pro přihlášení zadejte prosím své heslo.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Přihlášení pomocí emailu";
-"signin.use_phone.label" = "Přihlášení pomocí mobilu";
 "signin.forgot_password" = "Zapomenuté heslo?";
 "signin.use_one_password.label" = "Přihlášení pomocí 1Passowrd";
 "signin.use_one_password.hint" = "Dvojitým poklepáním vyplníte své heslo pomocí 1Password";
 "signin.confirm" = "Přihlásit se";
 "signin.company_idp.button.title" = "Pro firmy";
 
-"signin_logout.subheadline" = "Vaše relace vypršela. Pro pokračování se prosím přihlaste.";
 "signin_logout.email.subheadline" = "Vaše relace vypršela. Pro pokračování zadejte svoji emailovou adresu a heslo.";
-"signin_logout.phone.subheadline" = "Vaše relace vypršela. Pro pokračování zadejte svoje telefonní číslo.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Pro pokračování zadejte svoji emailovou adresu.";
-"signin.phone.missing_password.subtitle" = "Pro pokračování zadejte svoje telefonní číslo.";
-
-"registration.phone_country" = "Země";
-"registration.phone_code" = "Kód země";
-"registration.phone_country.hint" = "Dvojitým poklepáním vyberte jinou zemi.";
-"registration.phone_code.hint" = "Dvojitým poklepáním vyberte jiný kód země.";
-"registration.phone.verify.label" = "Ověřit telefonní číslo";
-"registration.phone.verify_field.label" = "Ověřovací kód";
-
-"registration.add_phone_number.hero.title" = "Přidat telefonní číslo";
-"registration.add_phone_number.hero.paragraph" = "Toto nám pomůže najít lidi, které možná znáte. Nikdy tyto informace nesdílíme.";
-"registration.add_phone_number.skip_button.title" = "Nyní ne";
 
 "registration.add_email_password.hero.title" = "Zadejte svůj email a heslo";
 "registration.add_email_password.hero.paragraph" = "To umožňuje používat Wire na více zařízeních.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Vítejte, %@";
 "registration.email_invitation.hero.paragraph" = "Zvolte heslo pro založení účtu.";
 
-"registration.phone_invitation.title" = "Pozvánka";
-"registration.phone_invitation.hero.title" = "Vítejte, %@";
-"registration.phone_invitation.hero.paragraph" = "Jste jeden krok od vytvoření účtu.";
-
 "registration.confirm" = "Registrace";
-"registration.phone.country_code.hint" = "Dvojitým poklepáním použijete telefonní číslo z této země.";
 
 "error.name_and_email" = "Zadejte prosím své celé jméno a platnou emailovou adresu";
 "error.full_name" = "Prosím, zadejte celé své jméno";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "Zadejte prosím platnou emailovou adresu";
-"error.phone.invalid" = "Uveďte prosím platné telefonní číslo";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Účet, na který se zkoušíte přihlásit, čeká na aktivaci. Zkontrolujte prosím své údaje.";
 "error.user.network_error" = "Zdá se, že došlo k problému s připojením. Prosím zkuste to znovu později.";
 "error.user.email_is_taken" = "Emailová adresa kterou jste zadali je již zaregistrována. Zkusím prosím znovu.";
-"error.user.phone_is_taken" = "Telefonní číslo, které jste zadali je již zaregistrován. Zkusím prosím znovu.";
-"error.user.phone_code_invalid" = "Tento kód je neplatný";
-"error.user.phone_code_too_many" = "Již jsme vám poslali kód prostřednictvím SMS. Pro získání nového klepněte po 10 minutách na tlačítko znovu odeslat.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Něco se pokazilo. Zkuste prosím znovu.";
 "error.user.device_deleted_remotely" = "Byl(a) jste odhlášen(a) z jiného zařízení.";
-"error.user.last_identity_cant_be_deleted" = "Je třeba zadat e-mailovou adresu nebo telefonní číslo.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Pro tento účet již není povoleno se přihlásit.";
 "error.user.account_limit_reached" = "Nelze přidat více než 3 účty.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Odebrání uživatele se nezdařilo";
 "error.conversation.too_many_members" = "Konverzace je plná";
 "error.conversation.offline" = "Zdá se, že je zde problém s vaším připojením k internetu. Prosím ujistěte se, že je funguje.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Confirm URL action";
 "url_action.connect_to_bot.message" = "Would you like to connect to the bot?";
 
-"url_action.switch_backend.title" = "Připojit k serveru";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

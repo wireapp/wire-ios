@@ -39,7 +39,7 @@ public extension GenericMessage {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable
-            if let timeout = timeout, timeout > 0 {
+            if let timeout, timeout > 0 {
                 messageContent = Ephemeral(content: content, expiresAfter: timeout)
             } else {
                 messageContent = content
@@ -66,7 +66,7 @@ public extension GenericMessage {
 
 extension GenericMessage {
     public var messageData: MessageCapable? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .text(let data):
             return data
@@ -114,7 +114,7 @@ extension GenericMessage {
     }
 
     var locationData: Location? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .location(let data):
             return data
@@ -131,7 +131,7 @@ extension GenericMessage {
     }
 
     public var compositeData: Composite? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .composite(let data):
             return data
@@ -141,7 +141,7 @@ extension GenericMessage {
     }
 
     public var imageAssetData: ImageAsset? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .image(let data):
             return data
@@ -158,7 +158,7 @@ extension GenericMessage {
     }
 
     public var assetData: WireProtos.Asset? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .asset(let data):
             return data
@@ -175,7 +175,7 @@ extension GenericMessage {
     }
 
     public var knockData: Knock? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .knock(let data):
             return data
@@ -192,7 +192,7 @@ extension GenericMessage {
     }
 
     public var textData: Text? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .text(let data):
             return data
@@ -228,7 +228,7 @@ extension GenericMessage {
 
     var v3_uploadedAssetId: String? {
         guard
-            let assetData = assetData,
+            let assetData,
             case .uploaded? = assetData.status
         else {
             return nil
@@ -238,7 +238,7 @@ extension GenericMessage {
 
     public var previewAssetId: String? {
         guard
-            let assetData = assetData,
+            let assetData,
             assetData.hasPreview,
             assetData.preview.hasRemote,
             assetData.preview.remote.hasAssetID
@@ -251,7 +251,7 @@ extension GenericMessage {
 
 extension GenericMessage {
     public var linkPreviews: [LinkPreview] {
-        guard let content = content else { return [] }
+        guard let content else { return [] }
         switch content {
         case .text:
             return text.linkPreview.compactMap { $0 }
@@ -280,7 +280,7 @@ extension Ephemeral {
     }
 
     public var messageData: MessageCapable? {
-        guard let content = content else { return nil }
+        guard let content else { return nil }
         switch content {
         case .text(let data):
             return data
@@ -359,7 +359,7 @@ public extension Proteus_QualifiedNewOtrMessage {
             $0.sender = sender.clientId
             $0.recipients = recipients
 
-            if let blob = blob {
+            if let blob {
                 $0.blob = blob
             }
 
@@ -715,19 +715,19 @@ public extension LinkPreview {
             $0.permanentURL = permanentURL
             $0.urlOffset = offset
 
-            if let title = title {
+            if let title {
                 $0.title = title
             }
-            if let summary = summary {
+            if let summary {
                 $0.summary = summary
             }
             if let image = imageAsset {
                 $0.image = image
             }
-            if let tweet = tweet {
+            if let tweet {
                 $0.tweet = tweet
             }
-            if let article = article {
+            if let article {
                 $0.article = article
             }
         }
@@ -735,7 +735,7 @@ public extension LinkPreview {
 
     mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
         image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
-        if let original = original {
+        if let original {
             image.original = original
         }
     }
@@ -759,10 +759,10 @@ public extension LinkPreview {
 public extension Tweet {
     init(author: String?, username: String?) {
         self = Tweet.with {
-            if let author = author {
+            if let author {
                 $0.author = author
             }
-            if let username = username {
+            if let username {
                 $0.username = username
             }
         }

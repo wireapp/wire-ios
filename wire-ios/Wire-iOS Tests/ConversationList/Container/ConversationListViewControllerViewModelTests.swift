@@ -40,7 +40,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
         sut = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
@@ -70,19 +70,5 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockConversation, sut.selectedConversation)
         XCTAssert(mockViewController.isSelectedOnListContentController)
-    }
-
-    func testThatShowPushPermissionDeniedDialogIfNeededReturnTrueWhenHandleExists() {
-        // GIVEN
-        selfUser.handle = nil
-        var result = sut.showPushPermissionDeniedDialogIfNeeded()
-        XCTAssertFalse(result)
-
-        // WHEN
-        selfUser.handle = "blah"
-        result = sut.showPushPermissionDeniedDialogIfNeeded()
-
-        // THEN
-        XCTAssert(result)
     }
 }

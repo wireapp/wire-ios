@@ -67,7 +67,7 @@ extension BackendEnvironment {
             )
 
             let proxy: ProxySettings?
-            if let proxySettings = proxySettings {
+            if let proxySettings {
                 proxy = ProxySettings(
                     host: proxySettings.host,
                     port: proxySettings.port,

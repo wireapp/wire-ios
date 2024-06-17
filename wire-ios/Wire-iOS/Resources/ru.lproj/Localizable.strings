@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "архив";
+"archived_list.empty_placeholder.headline" = "В архиве пока ничего нет";
+"archived_list.empty_placeholder.subheadline" = "Для поддержания порядка в списке бесед переместите сюда неиспользуемые. Позже их всегда можно будет разархивировать.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Общение начинается здесь";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ начал(-а) использовать новое устройство.";
 "call.degraded.alert.message.unknown" = "Кто-то начал использовать новое устройство.";
 "call.degraded.alert.action.continue" = "Все равно позвонить";
+"call.degraded.incoming.alert.action.continue" = "Все равно присоединиться";
 
 "call.degraded.ended.alert.title" = "Вызов завершен";
 "call.degraded.ended.alert.message.self" = "Вызов был прерван, поскольку вы начали использовать новое устройство.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "ЗАБЛОКИРОВАН";
 "profile.create_conversation_button_title" = "Создать группу";
 "profile.open_conversation_button_title" = "Открыть беседу";
-
+"profile.start_conversation_button_title" = "Начать беседу";
 "profile.read_receipts_enabled_memo.header" = "ВЫ ВКЛЮЧИЛИ ОТЧЕТЫ О ПРОЧТЕНИИ";
 "profile.read_receipts_disabled_memo.header" = "У ВАС ОТКЛЮЧЕНЫ ОТЧЕТЫ О ПРОЧТЕНИИ";
 "profile.read_receipts_memo.body" = "Если обе стороны включат отчеты о прочтении, вы сможете видеть когда были прочитаны ваши сообщения.\n\nЭтот параметр можно изменить в настройках вашего аккаунта.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Добавить email и пароль";
 
 // About screen
+"about.legal.title" = "Юридическая информация";
 "about.tos.title" = "Условия использования";
 "about.privacy.title" = "Политика конфиденциальности";
 "about.license.title" = "Информация о лицензии";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "Имя";
 "self.settings.account_section.email.title" = "Email";
-"self.settings.account_section.phone.title" = "Телефон";
 "self.settings.account_section.handle.title" = "Псевдоним";
 "self.settings.account_section.add_handle.title" = "Добавить псевдоним";
 "self.settings.account_section.team.title" = "Команда";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Цвет профиля";
 "self.settings.account_picture_group.accent_color.blue" = "Синий";
 "self.settings.account_picture_group.accent_color.green" = "Зеленый";
-"self.settings.account_picture_group.accent_color.yellow" = "Желтый";
 "self.settings.account_picture_group.accent_color.red" = "Красный";
 "self.settings.account_picture_group.accent_color.amber" = "Янтарный";
 "self.settings.account_picture_group.accent_color.turquoise" = "Бирюзовый";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Отправить email повторно";
 "self.settings.account_section.email.change.resend.message" = "Письмо с подтверждением было повторно отправлено на %@. Проверьте свою электронную почту и следуйте инструкциям.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Телефон";
-"self.settings.account_section.phone_number.change.save" = "Сохранить";
-"self.settings.account_section.phone_number.change.remove" = "Удалить номер телефона";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Удалить номер телефона";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Сохранить";
-"self.settings.account_section.phone_number.change.verify.title" = "Верифицировать";
-"self.settings.account_section.phone_number.change.verify.description" = "Введите код подтверждения, который мы отправили на %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Введите код";
-"self.settings.account_section.phone_number.change.verify.resend" = "Отправить код еще раз";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Не получили код?\nВы можете запросить новый через 30 секунд.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Код отправлен повторно";
-"self.settings.account_section.phone_number.change.resend.message" = "Код подтверждения был повторно отправлен на %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Уведомления";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Пароль";
 "password.guidance.toolong" = "Слишком много символов";
 
-"phone.guidance.invalid" = "Некорректный номер телефона";
-"phone.guidance.tooshort" = "Номер телефона слишком короткий";
-"phone.guidance.toolong" = "Слишком много символов";
-
 // Landing screen
 
 "landing.header" = "Wire. Войдите или создайте персональный аккаунт.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Введите код подтверждения, который мы отправили на %@.";
 "team.activation_code.button.resend" = "Отправить код еще раз";
 "team.activation_code.button.change_email" = "Изменить email";
-"team.activation_code.button.change_phone" = "Изменить номер телефона";
 
 "team.full_name.headline" = "Ваше имя";
 "team.full_name.textfield.placeholder" = "Полное имя";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Регистрация";
 "registration.close_email_invitation_button.email_title" = "Использовать другой email";
-"registration.close_email_invitation_button.phone_title" = "Регистрация по номеру телефона";
 "registration.close_phone_invitation_button.email_title" = "Регистрация по email";
-"registration.close_phone_invitation_button.phone_title" = "Использовать другой номер телефона";
 
-"registration.register_by_phone" = "Телефон";
 "registration.register_by_email" = "Email";
-
-"registration.enter_phone_number.title" = "Изменить номер телефона";
-"registration.enter_phone_number.placeholder" = "Номер телефона";
-
-"registration.verify_phone_number.instructions" = "Введите код подтверждения, который мы отправили на %@";
-"registration.verify_phone_number.resend" = "Отправить повторно";
-"registration.verify_phone_number.resend_placeholder" = "Не получили код?\nВы можете запросить новый через %.0f секунд";
 
 "registration.verify_email.instructions" = "Мы отправили email на %@.\n Перейдите по ссылке в письме для подтверждения вашего адреса.";
 "registration.verify_email.resend.instructions" = "Не получили сообщение?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Восстановить из резервной копии";
 
 "registration.alert.account_exists.title" = "Учетная запись существует";
-"registration.alert.account_exists.message_phone" = "Номер телефона, который вы использовали для регистрации, уже связан с учетной записью. \n\nИспользуйте другой номер телефона или попробуйте войти, если это ваша учетная запись.";
 "registration.alert.account_exists.message_email" = "Адрес email, который вы использовали для регистрации, уже связан с учетной записью. \n\n Используйте другой email или попробуйте войти, если это ваша учетная запись.";
 "registration.alert.change_email_action" = "Зарегистрироваться с другим email";
-"registration.alert.change_phone_action" = "Зарегистрироваться с другим номером";
 "registration.alert.change_signin_action" = "Войти";
 
 // Restore History Warning Alert
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Войти c email";
-"signin.use_phone.label" = "Войти с номером телефона";
 "signin.forgot_password" = "Забыли пароль?";
 "signin.use_one_password.label" = "Войти с 1Password";
 "signin.use_one_password.hint" = "Дважды кликните, чтобы заполнить ваш пароль из 1Password";
 "signin.confirm" = "Войти";
 "signin.company_idp.button.title" = "Для компаний";
 
-"signin_logout.subheadline" = "Ваш сеанс истек. Для продолжения вам необходимо авторизоваться повторно.";
 "signin_logout.email.subheadline" = "Ваш сеанс истек. Введите адрес электронной почты и пароль, чтобы продолжить.";
-"signin_logout.phone.subheadline" = "Ваш сеанс истек. Введите номер телефона, чтобы продолжить.";
 "signin_logout.sso.subheadline" = "Ваш сеанс истек. Войдите, используя свой корпоративный аккаунт.";
 "signin_logout.sso.buton" = "Вход для организаций";
 
 "signin.email.missing_password.subtitle" = "Для продолжения введите адрес электронной почты и пароль.";
-"signin.phone.missing_password.subtitle" = "Для продолжения введите номер телефона.";
-
-"registration.phone_country" = "Страна";
-"registration.phone_code" = "Код страны";
-"registration.phone_country.hint" = "Дважды кликните, чтобы выбрать другую страну.";
-"registration.phone_code.hint" = "Дважды кликните, чтобы выбрать другой код страны.";
-"registration.phone.verify.label" = "Подтвердить номер телефона";
-"registration.phone.verify_field.label" = "Код подтверждения";
-
-"registration.add_phone_number.hero.title" = "Добавить номер телефона";
-"registration.add_phone_number.hero.paragraph" = "Это поможет нам найти пользователей, которых вы, возможно, знаете. Мы не разглашаем информацию о вас.";
-"registration.add_phone_number.skip_button.title" = "Не сейчас";
 
 "registration.add_email_password.hero.title" = "Добавьте ваш email и пароль";
 "registration.add_email_password.hero.paragraph" = "Это позволяет использовать Wire на нескольких устройствах.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Привет, %@";
 "registration.email_invitation.hero.paragraph" = "Выберите пароль для создания учетной записи.";
 
-"registration.phone_invitation.title" = "Приглашение";
-"registration.phone_invitation.hero.title" = "Привет, %@";
-"registration.phone_invitation.hero.paragraph" = "Вы в одном шаге от создания аккаунта.";
-
 "registration.confirm" = "Регистрация";
-"registration.phone.country_code.hint" = "Дважды кликните, чтобы использовать телефонный номер этой страны.";
 
 "error.name_and_email" = "Пожалуйста, введите свое полное имя и действующий email";
 "error.full_name" = "Пожалуйста, введите свое полное имя";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Пожалуйста, введите более короткий псевдоним";
 "error.input.too_short" = "Пожалуйста, введите более длинный псевдоним";
 "error.email.invalid" = "Пожалуйста, введите действительный адрес электронной почты";
-"error.phone.invalid" = "Пожалуйста, введите действительный номер телефона";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Учетная запись, к которой вы пытаетесь получить доступ, ожидает активации. Пожалуйста, проверьте ваши данные.";
 "error.user.network_error" = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
 "error.user.email_is_taken" = "Указанный вами адрес электронной почты уже зарегистрирован. Пожалуйста, попробуйте еще раз.";
-"error.user.phone_is_taken" = "Указанный вами номер телефона уже зарегистрирован. Пожалуйста, попробуйте еще раз.";
-"error.user.phone_code_invalid" = "Пожалуйста, введите правильный код";
-"error.user.phone_code_too_many" = "Мы уже отправили вам код через SMS. Нажмите \"Отправить еще раз\" через 10 минут, чтобы получить новый.";
+"error.user.verification_code_invalid" = "Пожалуйста, введите действительный верификационный код.";
+"error.user.verification_code_too_many" = "Мы уже отправили вам верификационный код. Для получения нового кода нажмите \"Отправить повторно\" через 10 минут.";
 "error.user.registration_unknown_error" = "Что-то пошло не так. Пожалуйста, попробуйте еще раз.";
 "error.user.device_deleted_remotely" = "Вы вышли на другом устройстве.";
-"error.user.last_identity_cant_be_deleted" = "Требуется либо адрес электронной почты, либо номер телефона.";
+"error.user.last_identity_cant_be_deleted" = "Необходимо указать адрес электронной почты.";
 "error.user.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
 "error.user.account_limit_reached" = "Нельзя добавить более трех учетных записей.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Не удалось удалить участника";
 "error.conversation.too_many_members" = "Беседа переполнена";
 "error.conversation.offline" = "Похоже, что есть проблема с вашим интернет-соединением. Пожалуйста, убедитесь, что оно работает.";
+"error.conversation.oneonone.cannot_start" = "Вы не можете начать беседу с %@ прямо сейчас. %@ следует сначала открыть Wire или авторизоваться. Пожалуйста, повторите попытку позже.";
 "error.conversation.missing_legalhold_consent" = "Из-за юридических ограничений в эту беседу могут быть добавлены только члены команды";
 "error.message.send.missing_legalhold_consent" = "Вы не можете отправить это сообщение, поскольку у вас есть как минимум одно устаревшее устройство, которое не поддерживает юридические ограничения.  Обновите все свои устройства или удалите их из настроек приложения.";
 "error.message.send.title" = "Сообщения не могут быть отправлены";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Подтвердить действие по URL";
 "url_action.connect_to_bot.message" = "Вы хотите подключиться к боту?";
 
-"url_action.switch_backend.title" = "Подключиться к серверу";
-"url_action.switch_backend.message" = "Эта конфигурация подключит приложение к стороннему серверу:\n%@";
+"url_action.switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
+"url_action.switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
+"url_action.switch_backend_confirmation.backend_name" = "Название бэкэнда";
+"url_action.switch_backend_confirmation.backend_url" = "URL бэкэнда:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "URL веб-сокета внутреннего сервера:";
+"url_action.switch_backend_confirmation.blacklist_url" = "URL черного списка:";
+"url_action.switch_backend_confirmation.teams_url" = "URL команды:";
+"url_action.switch_backend_confirmation.accounts_url" = "URL аккаунта:";
+"url_action.switch_backend_confirmation.website_url" = "URL веб-сайта:";
+"url_action.switch_backend_confirmation.proceed" = "Продолжить";
 
 "url_action.switch_backend.error.logged_in.title" = "Невозможно переключить серверы";
 "url_action.switch_backend.error.logged_in" = "Вы уже авторизованы. Чтобы переключиться на этот сервер, выйдите из всех учетных записей и повторите попытку.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Истек";
 "device.details.section.e2ei.status.invalid" = "Недействителен";
 "device.details.section.e2ei.serial_number" = "Серийный номер";
-"device.details.section.mls.signature" = "MLS с подписью Ed25519";
+"device.details.section.mls.signature" = "MLS с подписью %@";
 "device.details.section.mls.title" = "Отпечаток MLS";
 "device.details.section.mls.thumbprint" = "Отпечаток MLS: %@";
 "device.details.certificate_details.title" = "Сведения о сертификате";
