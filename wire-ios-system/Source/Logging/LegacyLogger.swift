@@ -21,6 +21,10 @@ import Foundation
 /// Logger to write logs to fileSystem via ZMSLog
 public class LegacyLogger: LoggerProtocol {
 
+    public var logFiles: [URL] {
+        return []
+    }
+
     private var loggers = [String: ZMSLog]()
 
     subscript(tag: String) -> ZMSLog {
@@ -67,10 +71,6 @@ public class LegacyLogger: LoggerProtocol {
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
-        // do nothing
-    }
-
-    public func persist(fileDestination: FileLoggerDestination) async {
         // do nothing
     }
 }
