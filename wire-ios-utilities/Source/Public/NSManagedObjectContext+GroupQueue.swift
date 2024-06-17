@@ -99,15 +99,19 @@ extension NSManagedObjectContext {
     public func notifyWhenGroupIsEmpty(_ block: @escaping () -> Void) {
         // We need to enter & leave all but the first group to make sure that any work added by
         // this method is stil being tracked by the other groups.
-        if let firstGroup = dispatchGroup {
-            let groups = dispatchGroupContext?.enterAll(except: firstGroup) ?? []
+        let firstGroup = dispatchGroup
+        let groups = dispatchGroupContext?.enterAll(except: firstGroup) ?? []
+        if let firstGroup {
             firstGroup.notify(on: .global()) {
                 self.performGroupedBlock(block)
                 self.dispatchGroupContext?.leave(groups)
             }
         } else {
-            // TODO: what to do?
-            fatalError()
+            assertionFailure("firstGroup is nil")
+            DispatchQueue.global().async {
+                self.performGroupedBlock(block)
+                self.dispatchGroupContext?.leave(groups)
+            }
         }
     }
 

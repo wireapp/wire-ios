@@ -26,10 +26,7 @@ public extension NSManagedObjectContext {
     /// otherwise  delayed saves could be blocked.
     @objc
     func enterAllGroupsExceptSecondary() -> [ZMSDispatchGroup] {
-        if let secondaryGroup = dispatchGroupContext?.groups[1] {
-            return dispatchGroupContext?.enterAll(except: secondaryGroup) ?? []
-        } else {
-            return dispatchGroupContext?.enterAll() ?? []
-        }
+        let secondaryGroup = dispatchGroupContext?.groups[1]
+        return dispatchGroupContext?.enterAll(except: secondaryGroup) ?? []
     }
 }
