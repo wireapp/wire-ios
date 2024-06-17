@@ -1,0 +1,7 @@
+{
+    "domain": "example.com",
+    "federation": true,
+    "supported": [0, 1, 2],
+    "development": [3]
+}
+

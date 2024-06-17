@@ -18,10 +18,17 @@
 
 import Foundation
 
-class BackendInfoAPIV2: BackendInfoAPIV1 {
+class BackendInfoAPIImpl: BackendInfoAPI {
 
-    override func getBackendInfo() async throws -> BackendInfo {
+    let httpClient: HTTPClient
 
+    init(httpClient: HTTPClient) {
+        self.httpClient = httpClient
+    }
+
+    let path = "/api-version"
+
+    func getBackendInfo() async throws -> BackendInfo {
         let request = HTTPRequest(
             path: path,
             method: .get
@@ -29,27 +36,25 @@ class BackendInfoAPIV2: BackendInfoAPIV1 {
 
         let response = try await httpClient.executeRequest(request)
         return try ResponseParser()
-            .success(code: 200, type: BackendInfoResponseV2.self)
+            .success(code: 200, type: BackendInfoResponse.self)
             .parse(response)
     }
 
 }
 
-private struct BackendInfoResponseV2: Decodable, ToAPIModelConvertible {
+private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
 
     var domain: String
     var federation: Bool
     var supported: [UInt]
-
-    // New
-    var development: [UInt]
+    var development: [UInt]?
 
     func toAPIModel() -> BackendInfo {
         .init(
             domain: domain,
             isFederationEnabled: federation,
             supportedVersions: Set(supported.compactMap(APIVersion.init)),
-            developmentVersions: Set(development.compactMap(APIVersion.init))
+            developmentVersions: Set(development?.compactMap(APIVersion.init) ?? [])
         )
     }
 
