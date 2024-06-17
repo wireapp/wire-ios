@@ -29,5 +29,18 @@ public protocol UpdateEventsAPI {
     /// - Returns: An update envelope containing the last update event.
 
     func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
+    
+    /// Get all update events for the self client since a particular event.
+    ///
+    /// - Parameters:
+    ///   - selfClientID: The id of the self client.
+    ///   - sinceEventID: The id of the event after which the events should be returned.
+    ///
+    /// - Returns: A pager of events since (but not including) the specified event.
+
+    func getUpdateEvents(
+        selfClientID: String,
+        sinceEventID: UUID
+    ) -> PayloadPager<UpdateEventEnvelope>
 
 }
