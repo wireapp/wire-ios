@@ -46,7 +46,7 @@
 - (void)testThatGroupIsProperlyAddedInDispatchGroups;
 {
     // given
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"TestingGroup"];
+    ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:@"TestingGroup"];
     [self.MOC addGroup:group];
     
     // when

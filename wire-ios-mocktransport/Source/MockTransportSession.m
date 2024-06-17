@@ -115,7 +115,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     self = [super init];
     if (self != nil) {
         if (group == nil) {
-            group = [ZMSDispatchGroup groupWithLabel:@"MockTransportSession"];
+            group = [[ZMSDispatchGroup alloc] initWithLabel:@"MockTransportSession"];
         }
         [self setupWithDispatchGroup:group];
         _generatedTransportRequests = [NSMutableArray array];
