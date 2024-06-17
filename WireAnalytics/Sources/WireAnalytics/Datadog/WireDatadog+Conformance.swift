@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+#if canImport(WireDatadog)
 
-class BackendInfoAPIV4: BackendInfoAPIV3 {
+import WireDatadog
 
-    // No changes.
+extension WireDatadog: WireDatadogProtocol { }
 
-}
+#endif

@@ -36,13 +36,11 @@ extension MFMailComposeViewController {
         Date: \(date.transportString())
         """
 
-#if DATADOG_IMPORT
-        // datadogId has always a value. NONE by default
-        // display only when enabled
-        if let datadogId = DatadogWrapper.shared?.datadogUserId {
-            body.append("\nDatadog ID: \(datadogId)")
+        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
+            // display only when enabled
+            body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
-#endif
+
         body.append("\n---------------\n")
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
         let details = """

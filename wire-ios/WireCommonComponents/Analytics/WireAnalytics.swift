@@ -16,10 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-class BackendInfoAPIV1: BackendInfoAPIV0 {
-
-    // No changes.
-
-}
+/// Namespace for analytics tools.
+public enum WireAnalytics { }

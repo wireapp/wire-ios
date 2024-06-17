@@ -18,8 +18,9 @@
 
 import Foundation
 
-class BackendInfoAPIV6: BackendInfoAPIV5 {
-
-    // No changes.
-
+extension Bundle {
+    /// Provides access to the Bundle 'WireCommonComponents'.
+    static let wireCommonComponents = Bundle(for: WireCommonComponentsBundle.self)
 }
+
+private final class WireCommonComponentsBundle { }
