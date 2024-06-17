@@ -26,6 +26,17 @@ private let availableColor = UIColor {
     : .init(red: 0.11, green: 0.47, blue: 0.20, alpha: 1)
 }
 
+// #C20013 light
+// #FF7770 dark
+private let awayColor = UIColor {
+    $0.userInterfaceStyle == .dark
+    ? .init(red: 1.00, green: 0.47, blue: 0.44, alpha: 1)
+    : .init(red: 0.76, green: 0.00, blue: 0.07, alpha: 1)
+}
+
+// in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
+private let awayRelativeBorderSize = 2.0 / 4.375
+
 final class AvailabilityIndicatorView: UIView {
 
     var availability: Availability? {
@@ -35,6 +46,7 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Private Properties
 
     private let shapeLayer = CAShapeLayer()
+    private let maskLayer = CAShapeLayer()
 
     // MARK: - Life Cycle
 
@@ -52,31 +64,50 @@ final class AvailabilityIndicatorView: UIView {
 
     private func setupSubviews() {
         layer.addSublayer(shapeLayer)
+        maskLayer.fillColor = UIColor.white.cgColor
+        maskLayer.fillRule = .evenOdd
+        layer.mask = maskLayer
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
+        // reset mask
+        maskLayer.path = UIBezierPath(rect: bounds).cgPath
+
+        guard let availability else {
+            return shapeLayer.path = nil
+        }
+
+        let diameter = min(bounds.width, bounds.height)
+        let frame = CGRect(
+            origin: .init(x: (bounds.width - diameter) / 2, y: (bounds.height - diameter) / 2),
+            size: .init(width: diameter, height: diameter)
+        )
+        shapeLayer.path = UIBezierPath(ovalIn: frame).cgPath
+
         switch availability {
 
-        case .none:
-            break
-
         case .available:
-            let diameter = min(bounds.width, bounds.height)
-            let frame = CGRect(
-                origin: .init(x: center.x - diameter / 2, y: center.y - diameter / 2),
-                size: .init(width: diameter, height: diameter)
-            )
-            shapeLayer.path = UIBezierPath(ovalIn: frame).cgPath
             shapeLayer.fillColor = availableColor.cgColor
 
-        case .some(.busy):
-            break
+        case .away:
+            shapeLayer.fillColor = awayColor.cgColor
 
-        case .some(.away):
-            break
-
+            // mask with another circle, so that a ring results
+            let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
+            let radius = (bounds.width / 2) * (1 - awayRelativeBorderSize)
+            let maskPath = UIBezierPath(rect: bounds)
+            maskPath.addArc(
+                withCenter: center,
+                radius: radius,
+                startAngle: 0,
+                endAngle: 2 * .pi,
+                clockwise: true
+            )
+            maskLayer.path = maskPath.cgPath
+            case .busy:
+            backgroundColor = .brown
         }
     }
 }
@@ -86,11 +117,14 @@ final class AvailabilityIndicatorView: UIView {
 struct AvailabilityIndicatorView_Previews: PreviewProvider {
 
     static var previews: some View {
-        VStack {
-            AvailabilityIndicatorViewRepresentable(.none)
-            AvailabilityIndicatorViewRepresentable(.available)
-            AvailabilityIndicatorViewRepresentable(.away)
-            AvailabilityIndicatorViewRepresentable(.busy)
+        HStack {
+            Rectangle()
+            VStack {
+                AvailabilityIndicatorViewRepresentable(.none)
+                AvailabilityIndicatorViewRepresentable(.available)
+                AvailabilityIndicatorViewRepresentable(.away)
+                AvailabilityIndicatorViewRepresentable(.busy)
+            }
         }
         .background(Color(UIColor.systemGray2))
     }
