@@ -32,7 +32,7 @@
 		54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F249C71BB9242900040600 /* ZMSDispatchGroup.m */; };
 		54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */; };
 		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
-		59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */; };
+		59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */; };
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -114,7 +114,7 @@
 		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimePointTests.m; sourceTree = "<group>"; };
 		59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
-		59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateProviding.swift; sourceTree = "<group>"; };
+		59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDateProviding.swift; sourceTree = "<group>"; };
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
 		598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -286,8 +286,8 @@
 		59059B982B4DBA1D0087D1F1 /* DateProviding */ = {
 			isa = PBXGroup;
 			children = (
+				59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */,
 				59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */,
-				59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */,
 			);
 			path = DateProviding;
 			sourceTree = "<group>";
@@ -572,7 +572,7 @@
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				E68BFB892C1B30AA00EE8A3C /* WireLogger+Datadog.swift in Sources */,
 				EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */,
-				59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */,
+				59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
