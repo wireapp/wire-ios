@@ -115,13 +115,6 @@ extension NSManagedObjectContext {
         }
     }
 
-    /// Executes a fetch request and asserts in case of error
-    /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-    @objc
-    public func executeFetchRequestOrAssert(_ request: NSFetchRequest<NSFetchRequestResult>) -> [NSFetchRequestResult] { // TODO: try to remove
-        try! fetch(request)
-    }
-
     /// Adds a group to the receiver. All blocks associated with the receiver's group will
     /// also be associated with this group.
     ///
