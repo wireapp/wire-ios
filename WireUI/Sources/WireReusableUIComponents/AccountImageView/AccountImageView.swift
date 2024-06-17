@@ -273,7 +273,6 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
         view.accountImage = accountImage
         view.accountType = accountType
         view.availability = availability
-        // view.transform = .init(scaleX: 6, y: 6)
         return view
     }
 
@@ -287,8 +286,7 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
 extension UIImage {
 
     fileprivate static func from(solidColor color: UIColor) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: .init(width: 1, height: 1))
-        return renderer.image { rendererContext in
+        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
             color.setFill()
             rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
         }
