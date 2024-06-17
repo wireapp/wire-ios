@@ -75,13 +75,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     private var lastUpdateEventID: UUID? {
-        get {
-            lastEventIDRepository.fetchLastEventID()
-        }
-
-        set {
-            lastEventIDRepository.storeLastEventID(newValue)
-        }
+        lastEventIDRepository.fetchLastEventID()
     }
 
     @objc(nextUUIDFromResponse:forListPaginator:)
