@@ -45,6 +45,8 @@ public final class AccountImageView: UIView {
     // MARK: - Private Properties
 
     private let accountImageView = UIImageView()
+    private let availabilityIndicatorView = AvailabilityIndicatorView()
+    private let availabilityLayer = CAShapeLayer()
     private let availabilityImageView = UIImageView()
 
     // MARK: - Life Cycle
@@ -91,6 +93,18 @@ public final class AccountImageView: UIView {
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth)
         ])
 
+        // view which renders the availability status
+        availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(availabilityIndicatorView)
+        NSLayoutConstraint.activate([
+            availabilityIndicatorView.widthAnchor.constraint(equalToConstant: availabilityIndicatorRadius * 2),
+            availabilityIndicatorView.heightAnchor.constraint(equalToConstant: availabilityIndicatorRadius * 2),
+            accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
+            accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
+        ])
+
+        accountImageViewWrapper.layer.addSublayer(availabilityLayer)
+
         availabilityImageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityImageView)
         NSLayoutConstraint.activate([
@@ -104,18 +118,18 @@ public final class AccountImageView: UIView {
 
         // TMP
 
-        let tmp = UIView()
-        tmp.backgroundColor = .green
-        tmp.layer.cornerRadius = 4.375
-        tmp.alpha = 0.4
-        tmp.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(tmp)
-        NSLayoutConstraint.activate([
-            accountImageViewWrapper.trailingAnchor.constraint(equalTo: tmp.trailingAnchor),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: tmp.bottomAnchor),
-            tmp.widthAnchor.constraint(equalToConstant: 8.75),
-            tmp.heightAnchor.constraint(equalToConstant: 8.75)
-        ])
+//        let tmp = UIView()
+//        tmp.backgroundColor = .green
+//        tmp.layer.cornerRadius = 4.375
+//        tmp.alpha = 0.4
+//        tmp.translatesAutoresizingMaskIntoConstraints = false
+//        addSubview(tmp)
+//        NSLayoutConstraint.activate([
+//            accountImageViewWrapper.trailingAnchor.constraint(equalTo: tmp.trailingAnchor),
+//            accountImageViewWrapper.bottomAnchor.constraint(equalTo: tmp.bottomAnchor),
+//            tmp.widthAnchor.constraint(equalToConstant: 8.75),
+//            tmp.heightAnchor.constraint(equalToConstant: 8.75)
+//        ])
     }
 
     private func updateAccountImageBorder() {
@@ -149,17 +163,16 @@ public final class AccountImageView: UIView {
     private func updateAvailabilityIndicator() {
 
         guard let availability else {
+            availabilityLayer.path = .none
             availabilityImageView.image = .none
             accountImageView.layer.mask = .none
             return
         }
 
         // draw a rect over the total bounds (for inverting the arc)
+        let imageWrapperViewHeight = accountImageBorderWidth * 2 + accountImageHeight
         let maskPath = UIBezierPath(
-            rect: .init(
-                origin: .zero,
-                size: .init(width: accountImageHeight + accountImageBorderWidth * 2, height: accountImageHeight + accountImageBorderWidth * 2)
-            )
+            rect: .init(origin: .zero, size: .init(width: imageWrapperViewHeight, height: imageWrapperViewHeight))
         )
         // crop a circle shape from the image
         let center = CGPoint(x: availabilityIndicatorCenterOffset, y: availabilityIndicatorCenterOffset)
@@ -172,18 +185,25 @@ public final class AccountImageView: UIView {
         maskLayer.fillRule = .evenOdd
         accountImageView.superview?.layer.mask = maskLayer
 
-        let availabilityLayer = CAShapeLayer()
-
         switch availability {
         case .available:
             availabilityImageView.image = nil
             availabilityImageView.tintColor = .green
+            // let path = UIBezierPath(ovalIn: .init(x: availabilityIndicatorCenterOffset - availabilityIndicatorRadius, y: availabilityIndicatorCenterOffset - availabilityIndicatorRadius, width: availabilityIndicatorRadius, height: availabilityIndicatorRadius))
+            let path = UIBezierPath()
+            let center = CGPoint(x: availabilityIndicatorCenterOffset - availabilityIndicatorRadius, y: availabilityIndicatorCenterOffset - availabilityIndicatorRadius)
+            path.addArc(withCenter: center, radius: availabilityIndicatorRadius, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
+            availabilityLayer.path = path.cgPath
+            availabilityLayer.fillColor = UIColor.green.cgColor
+            // availabilityLayer.fillRule = .evenOdd
         case .away:
             availabilityImageView.image = .init(resource: .AccountImageView.Availability.away)
             availabilityImageView.tintColor = .red
+            availabilityLayer.path = .none
         case .busy:
             availabilityImageView.image = .init(resource: .AccountImageView.Availability.busy)
             availabilityImageView.tintColor = .yellow
+            availabilityLayer.path = .none
         }
     }
 
@@ -195,16 +215,11 @@ public final class AccountImageView: UIView {
         /// The account image will be clipped using a round rectangle shape.
         case team
     }
-
-    public enum Availability: CaseIterable {
-        case available, busy, away
-    }
 }
 
 // MARK: - Previews
 
 private typealias AccountType = AccountImageView.AccountType
-private typealias Availability = AccountImageView.Availability
 
 struct AccountImageView_Previews: PreviewProvider {
 
