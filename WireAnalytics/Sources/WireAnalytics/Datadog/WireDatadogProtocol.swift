@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public protocol WireDatadogProtocol {
 
-class BackendInfoAPIV3: BackendInfoAPIV2 {
+    /// Unique obfuscated identifier of the current device across app and extensions.
+    var userIdentifier: String { get }
 
-    // No changes.
-
+    func enable()
 }

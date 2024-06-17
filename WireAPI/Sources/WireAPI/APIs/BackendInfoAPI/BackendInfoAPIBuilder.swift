@@ -32,28 +32,12 @@ public struct BackendInfoAPIBuilder {
         self.httpClient = httpClient
     }
 
-    /// Make a versioned`BackendInfoAPI`.
+    /// Make a `BackendInfoAPI`.
     ///
-    /// - Parameter version: An api version.
-    /// - Returns: A versioned `BackendInfoAPI`.
+    /// - Returns: A `BackendInfoAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any BackendInfoAPI {
-        switch version {
-        case .v0:
-            BackendInfoAPIV0(httpClient: httpClient)
-        case .v1:
-            BackendInfoAPIV1(httpClient: httpClient)
-        case .v2:
-            BackendInfoAPIV2(httpClient: httpClient)
-        case .v3:
-            BackendInfoAPIV3(httpClient: httpClient)
-        case .v4:
-            BackendInfoAPIV4(httpClient: httpClient)
-        case .v5:
-            BackendInfoAPIV5(httpClient: httpClient)
-        case .v6:
-            BackendInfoAPIV6(httpClient: httpClient)
-        }
+    public func makeAPI() -> any BackendInfoAPI {
+        BackendInfoAPIImpl(httpClient: httpClient)
     }
 
 }

@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-class BackendInfoAPIV5: BackendInfoAPIV4 {
-
-    // No changes.
-
+extension WireLogger {
+    public static func addDatadog(_ datadog: LoggerProtocol) {
+        if let aggregatedLogger = Self.provider as? AggregatedLogger {
+            aggregatedLogger.addLogger(datadog)
+        } else {
+            Self.provider = datadog
+        }
+    }
 }
