@@ -221,7 +221,10 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
         sendControllerHeightConstraint?.isActive = isActive
 
         if isActive {
-            sendControllerHeightConstraint?.constant = 56 + UIScreen.safeArea.bottom
+            guard let window = view.window else { return }
+
+            let bottomInset = window.safeAreaInsets.bottom
+            sendControllerHeightConstraint?.constant = 56 + bottomInset
         }
 
         UIView.animate(withDuration: 0.3) {
