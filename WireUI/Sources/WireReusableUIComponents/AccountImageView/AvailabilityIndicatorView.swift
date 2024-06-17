@@ -34,8 +34,19 @@ private let awayColor = UIColor {
     : .init(red: 0.76, green: 0.00, blue: 0.07, alpha: 1)
 }
 
+// #A25915 light
+// #FFD426 dark
+private let busyColor = UIColor {
+    $0.userInterfaceStyle == .dark
+    ? .init(red: 1.00, green: 0.83, blue: 0.15, alpha: 1)
+    : .init(red: 0.64, green: 0.35, blue: 0.08, alpha: 1)
+}
+
 // in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
 private let awayRelativeBorderSize = 2.0 / 4.375
+
+private let busyMaskRelativeRectangleWidth = 5.25 / 8.75
+private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 
 final class AvailabilityIndicatorView: UIView {
 
@@ -80,11 +91,11 @@ final class AvailabilityIndicatorView: UIView {
         }
 
         let diameter = min(bounds.width, bounds.height)
-        let frame = CGRect(
+        let baseCircleFrame = CGRect(
             origin: .init(x: (bounds.width - diameter) / 2, y: (bounds.height - diameter) / 2),
             size: .init(width: diameter, height: diameter)
         )
-        shapeLayer.path = UIBezierPath(ovalIn: frame).cgPath
+        shapeLayer.path = UIBezierPath(ovalIn: baseCircleFrame).cgPath
 
         switch availability {
 
@@ -96,7 +107,7 @@ final class AvailabilityIndicatorView: UIView {
 
             // mask with another circle, so that a ring results
             let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
-            let radius = (bounds.width / 2) * (1 - awayRelativeBorderSize)
+            let radius = (baseCircleFrame.width / 2) * (1 - awayRelativeBorderSize)
             let maskPath = UIBezierPath(rect: bounds)
             maskPath.addArc(
                 withCenter: center,
@@ -106,8 +117,22 @@ final class AvailabilityIndicatorView: UIView {
                 clockwise: true
             )
             maskLayer.path = maskPath.cgPath
-            case .busy:
-            backgroundColor = .brown
+
+        case .busy:
+            shapeLayer.fillColor = busyColor.cgColor
+
+            // mask with a rectangle
+            let maskPath = UIBezierPath(rect: bounds)
+            let rectangleWidth = baseCircleFrame.width * busyMaskRelativeRectangleWidth
+            let rectangleHeight = baseCircleFrame.height * busyMaskRelativeRectangleHeight
+            let rectangleFrame = CGRect(
+                x: (bounds.width - rectangleWidth) / 2,
+                y: (bounds.height - rectangleHeight) / 2,
+                width: rectangleWidth,
+                height: rectangleHeight
+            )
+            maskPath.append(UIBezierPath(rect: rectangleFrame))
+            maskLayer.path = maskPath.cgPath
         }
     }
 }
@@ -117,14 +142,11 @@ final class AvailabilityIndicatorView: UIView {
 struct AvailabilityIndicatorView_Previews: PreviewProvider {
 
     static var previews: some View {
-        HStack {
-            Rectangle()
-            VStack {
-                AvailabilityIndicatorViewRepresentable(.none)
-                AvailabilityIndicatorViewRepresentable(.available)
-                AvailabilityIndicatorViewRepresentable(.away)
-                AvailabilityIndicatorViewRepresentable(.busy)
-            }
+        VStack {
+            AvailabilityIndicatorViewRepresentable(.none)
+            AvailabilityIndicatorViewRepresentable(.available)
+            AvailabilityIndicatorViewRepresentable(.away)
+            AvailabilityIndicatorViewRepresentable(.busy)
         }
         .background(Color(UIColor.systemGray2))
     }
