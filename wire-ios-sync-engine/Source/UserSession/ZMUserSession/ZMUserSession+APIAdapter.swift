@@ -31,7 +31,7 @@ extension ZMUserSession {
         )
 
         return BackendInfoAPIBuilder(httpClient: httpClient)
-            .makeAPI(for: .v0)
+            .makeAPI()
     }
 
 }
