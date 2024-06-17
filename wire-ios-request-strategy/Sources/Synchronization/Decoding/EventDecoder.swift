@@ -220,7 +220,7 @@ extension EventDecoder {
             var index = startIndex
             for event in events {
                 try Task.checkCancellation()
-                try await Task.sleep(nanoseconds: 3_000_000_000)
+//                try await Task.sleep(nanoseconds: 1_000_000_000)
                 await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
                 index += 1
             }

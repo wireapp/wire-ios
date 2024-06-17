@@ -105,6 +105,7 @@ public final class NotificationSession {
 
     private var callEvent: CallEventPayload?
     private var localNotifications = [ZMLocalNotification]()
+    private var processingTask: Task<Void, Error>?
 
     private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
@@ -396,14 +397,26 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
     ) async throws {
-        let decodedEvents = try await eventDecoder.decryptAndStoreEvents(
-            events,
-            publicKeys: try? earService.fetchPublicKeys()
-        )
+        try await enqueueTask {
+            let decodedEvents = try await self.eventDecoder.decryptAndStoreEvents(
+                events,
+                publicKeys: try? self.earService.fetchPublicKeys()
+            )
 
-        await context.perform { [self] in
-            processDecodedEvents(decodedEvents)
+            await self.context.perform { [self] in
+                processDecodedEvents(decodedEvents)
+            }
         }
+    }
+
+    private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
+        processingTask = Task { [processingTask] in
+            _ = await processingTask?.result
+            return try await block()
+        }
+
+        // throw error if any
+        _ = try await processingTask?.value
     }
 
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {

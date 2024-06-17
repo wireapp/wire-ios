@@ -194,11 +194,12 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
     NSLog(@"ZMMissingUpdateEventsTranscoder process %lu events", (unsigned long)parsedEvents.count);
     [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
-        NOT_USED(error);
         [self.managedObjectContext performBlock:^{
             if (error != nil) {
+                NSLog(@"ZMMissingUpdateEventsTranscoder error processing events: %@", error);
                 [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:NO];
                 self.isProcessingEvents = NO;
+                [self.listPaginator resetFetching];
                 [self.managedObjectContext leaveAllGroups:groups];
                 return;
             }

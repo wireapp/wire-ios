@@ -111,7 +111,8 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                     delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
                 }
             } catch {
-                // TODO we must enqueue the decryption 
+                WireLogger.notifications.warn("Failed to process fetched events: \(error)")
+                sync.reset()
                 delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
             }
 
