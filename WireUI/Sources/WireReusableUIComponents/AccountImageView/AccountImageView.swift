@@ -20,8 +20,9 @@ import SwiftUI
 
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
-private let availabilityIndicatorRadius: CGFloat = 4.375
+private let availabilityIndicatorRadius: CGFloat = 4.5
 private let availabilityIndicatorBorderWidth: CGFloat = 2
+private let availabilityIndicatorCenterOffset = accountImageHeight - 2 * accountImageBorderWidth - availabilityIndicatorRadius / 2
 private let teamAccountImageCornerRadius: CGFloat = 6
 
 /// Displays the image of a user account plus optional availability.
@@ -76,8 +77,8 @@ public final class AccountImageView: UIView {
         availabilityImageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityImageView)
         NSLayoutConstraint.activate([
-            accountImageView.trailingAnchor.constraint(equalTo: availabilityImageView.trailingAnchor),
-            accountImageView.bottomAnchor.constraint(equalTo: availabilityImageView.bottomAnchor)
+            availabilityImageView.centerXAnchor.constraint(equalTo: accountImageView.centerXAnchor, constant: availabilityIndicatorCenterOffset / 2),
+            availabilityImageView.centerYAnchor.constraint(equalTo: accountImageView.centerYAnchor, constant: availabilityIndicatorCenterOffset / 2)
         ])
 
         updateAccountImage()
@@ -111,11 +112,10 @@ public final class AccountImageView: UIView {
             rect: .init(x: 0, y: 0, width: accountImageHeight, height: accountImageHeight)
         )
         // draw the circle to clip from the image
-        let centerOffset = accountImageHeight - availabilityIndicatorRadius / 2
-        let center = CGPoint(x: centerOffset, y: centerOffset)
+        let center = CGPoint(x: availabilityIndicatorCenterOffset, y: availabilityIndicatorCenterOffset)
         maskPath.addArc(
             withCenter: center,
-            radius: availabilityIndicatorRadius + 2 * availabilityIndicatorBorderWidth,
+            radius: availabilityIndicatorRadius + availabilityIndicatorBorderWidth,
             startAngle: 0,
             endAngle: 2 * .pi,
             clockwise: true
@@ -178,7 +178,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 }
             }
         }
-        .background(.gray)
+        .background(Color(white: 0.98))
     }
 
     static let userAccountImage = {
@@ -215,6 +215,7 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
         view.accountImage = accountImage
         view.accountType = accountType
         view.availability = availability
+        view.transform = .init(scaleX: 6, y: 6)
         return view
     }
 
