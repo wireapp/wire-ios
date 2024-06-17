@@ -1,13 +1,21 @@
 # ``WireDomain``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Domain layer where Business logic
 
 ## Overview
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+The WireDomain framework provides the business logic components of the app: Repositories, Use cases or specific components related to Event Processing.
+
+It depends on WireAPI and for the time being other older frameworks like WireDataModel and WireTransport.
+
+> Note: In order to make it work with the old stack (WireSyncEngine...), it has been created as a Xcode project producing a framework. Once the old stack is replaced it could become a Swift Package.
 
 ## Topics
 
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
+### Repositories
 
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
+- ``UserRepository``
+
+### UseCases
+
+- TBD
