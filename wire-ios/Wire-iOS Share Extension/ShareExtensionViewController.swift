@@ -121,15 +121,21 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setup() {
-        setupObserver()
-
-        if let datadog = DatadogWrapper.shared {
-            datadog.startMonitoring()
-        }
+        setUpObserver()
+        setUpDatadog()
     }
 
-    private func setupObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(extensionHostDidEnterBackground), name: .NSExtensionHostDidEnterBackground, object: nil)
+    private func setUpObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(extensionHostDidEnterBackground),
+            name: .NSExtensionHostDidEnterBackground,
+            object: nil
+        )
+    }
+
+    private func setUpDatadog() {
+        WireAnalytics.Datadog.enable()
     }
 
     override func viewDidLoad() {
