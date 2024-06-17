@@ -319,10 +319,8 @@ platform :ios do
         else
             # DataDog values needs to go through WireCommonComponents
             enable_datadog_args = [
-            "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
-            "OTHER_PREPROCESSOR_FLAGS='DATADOG_IMPORT'"
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
