@@ -29,7 +29,7 @@ public protocol UpdateEventsAPI {
     /// - Returns: An update envelope containing the last update event.
 
     func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
-    
+
     /// Get all update events for the self client since a particular event.
     ///
     /// - Parameters:

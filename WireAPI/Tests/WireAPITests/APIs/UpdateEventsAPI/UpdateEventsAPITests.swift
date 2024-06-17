@@ -119,7 +119,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
         // Then
         XCTAssertEqual(pages.count, 2)
-        
+
         let page1 = try XCTUnwrap(pages.first)
         XCTAssertEqual(page1, Scaffolding.updateEventPage1)
 
