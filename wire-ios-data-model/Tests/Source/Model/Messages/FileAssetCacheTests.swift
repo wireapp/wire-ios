@@ -46,7 +46,7 @@ class FileAssetCacheTests: XCTestCase {
         }
 
         location = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
         )
 
         try FileManager.default.removeItemIfExists(at: location!)

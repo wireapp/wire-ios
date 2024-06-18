@@ -212,7 +212,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // required to add be able to add images
         let cacheLocation = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
         )
 
         await syncContext.perform {
