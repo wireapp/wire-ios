@@ -18,23 +18,34 @@
 
 import Foundation
 
-struct MockEventDataResource {
+struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
 
-    let jsonData: Data
+    let notifications: [UpdateEventEnvelopeV0]
+    let time: Date?
+    let hasMore: Bool?
 
-    init(name: String) throws {
-        guard let url = Bundle.module.url(
-            forResource: name,
-            withExtension: "json"
-        ) else {
-            throw "resource \(name).json not found"
+    enum CodingKeys: String, CodingKey {
+
+        case notifications
+        case time
+        case hasMore = "has_more"
+
+    }
+
+    func toAPIModel() -> PayloadPager<UpdateEventEnvelope>.Page {
+        let eventEnvelopes = notifications.map {
+            $0.toAPIModel()
         }
 
-        do {
-            jsonData = try Data(contentsOf: url)
-        } catch {
-            throw "unable to load data from resource: \(error)"
+        let lastNonTransientEvent = eventEnvelopes.last {
+            !$0.isTransient
         }
+
+        return .init(
+            element: notifications.map { $0.toAPIModel() },
+            hasMore: hasMore ?? false,
+            nextStart: lastNonTransientEvent?.id.transportString() ?? ""
+        )
     }
 
 }

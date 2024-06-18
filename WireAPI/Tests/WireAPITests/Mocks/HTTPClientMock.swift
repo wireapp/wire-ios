@@ -41,6 +41,18 @@ final class HTTPClientMock: HTTPClient {
         }
     }
 
+    convenience init(responses: [HTTPResponse]) {
+        var responses = responses
+
+        self.init { _ in
+            if responses.isEmpty {
+                throw HTTPClientMockError(message: "no more responses")
+            } else {
+                return responses.removeFirst()
+            }
+        }
+    }
+
     convenience init(
         code: Int,
         payloadResourceName: String

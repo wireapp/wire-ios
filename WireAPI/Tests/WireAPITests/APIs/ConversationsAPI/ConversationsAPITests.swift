@@ -82,7 +82,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         // when
@@ -103,7 +103,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         let expectedIDs: [UUID] = [
@@ -149,7 +149,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
         // when
@@ -170,7 +170,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
         let expectedIDs: [QualifiedID] = [
@@ -237,7 +237,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV0AndSuccessResponse200"
+                name: "testGetConversations_givenV0AndSuccessResponse200"
             )
         ]
 
@@ -299,7 +299,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV2AndSuccessResponse200"
+                name: "testGetConversations_givenV2AndSuccessResponse200"
             )
         ]
 
@@ -361,7 +361,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV3AndSuccessResponse200"
+                name: "testGetConversations_givenV3AndSuccessResponse200"
             )
         ]
 
@@ -427,7 +427,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV5AndSuccessResponse200"
+                name: "testGetConversations_givenV5AndSuccessResponse200"
             )
         ]
 

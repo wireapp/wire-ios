@@ -35,7 +35,7 @@ final class FederationEventDecodingTests: XCTestCase {
 
     func testDecodingFederationConnectionRemovedEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FederationConnectionRemoved")
+        let mockEventData = try MockJSONPayloadResource(name: "FederationConnectionRemoved")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -49,7 +49,7 @@ final class FederationEventDecodingTests: XCTestCase {
 
     func testDecodingFederationDeleteEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FederationDelete")
+        let mockEventData = try MockJSONPayloadResource(name: "FederationDelete")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)

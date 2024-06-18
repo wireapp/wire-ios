@@ -35,7 +35,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateAppLockEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateAppLock")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateAppLock")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -49,7 +49,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateClassfiedDomainsEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateClassifiedDomains")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateClassifiedDomains")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -63,7 +63,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateConferenceCallingEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateConferenceCalling")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateConferenceCalling")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -77,7 +77,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateConversationGuestLinksEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateConversationGuestLinks")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateConversationGuestLinks")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -91,7 +91,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateDigitalSignatureEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateDigitalSignature")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateDigitalSignature")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -105,7 +105,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateEndToEndIdentityEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateEndToEndIdentity")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateEndToEndIdentity")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -119,7 +119,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateFileSharingEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateFileSharing")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateFileSharing")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -133,7 +133,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateMLSEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateMLS")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateMLS")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -147,7 +147,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateMLSMigrationEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateMLSMigration")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateMLSMigration")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -161,7 +161,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     func testDecodingFeatureConfigUpdateSelfDeletingMessagesEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "FeatureConfigUpdateSelfDeletingMessages")
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateSelfDeletingMessages")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)

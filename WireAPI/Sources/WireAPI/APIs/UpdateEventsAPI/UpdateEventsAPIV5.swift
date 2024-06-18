@@ -51,4 +51,40 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
             .parse(response)
     }
 
+    // MARK: - Get events since
+
+    override func getUpdateEvents(
+        selfClientID: String,
+        sinceEventID: UUID
+    ) -> PayloadPager<UpdateEventEnvelope> {
+        let resourcePath = "\(pathPrefix)\(basePath)"
+
+        return PayloadPager(start: sinceEventID.transportString()) { nextSince in
+            var components = URLComponents(string: resourcePath)
+            components?.queryItems = [
+                URLQueryItem(name: "client", value: selfClientID),
+                URLQueryItem(name: "since", value: nextSince),
+                URLQueryItem(name: "size", value: "500")
+            ]
+
+            guard let path = components?.string else {
+                assertionFailure("generated an invalid path")
+                throw UpdateEventsAPIError.invalidPath
+            }
+
+            let request = HTTPRequest(
+                path: path,
+                method: .get
+            )
+
+            let response = try await self.httpClient.executeRequest(request)
+
+            // Change: 400 error removed.
+            return try ResponseParser()
+                .success(code: 200, type: UpdateEventListResponseV0.self)
+                .failure(code: 404, error: UpdateEventsAPIError.notFound)
+                .parse(response)
+        }
+    }
+
 }

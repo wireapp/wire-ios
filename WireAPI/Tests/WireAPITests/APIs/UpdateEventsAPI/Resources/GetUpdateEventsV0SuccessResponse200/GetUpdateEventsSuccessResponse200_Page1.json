@@ -1,0 +1,23 @@
+{
+    "notifications": [
+        {
+            "id": "2eeeb5e4-df85-4aef-9eb2-289981f086ab",
+            "payload": [
+                {
+                    "type": "some event"
+                }
+            ]
+        },
+        {
+            "id": "688ad9fc-6906-4dd6-9ccc-db8d849c41ad",
+            "transient": true,
+            "payload": [
+                {
+                    "type": "some transient event"
+                }
+            ]
+        }
+    ],
+    "time": "2024-06-05T08:34:21.766Z",
+    "has_more": true
+}

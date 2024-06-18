@@ -35,7 +35,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingClientAddEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserClientAdd")
+        let mockEventData = try MockJSONPayloadResource(name: "UserClientAdd")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -49,7 +49,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingClientRemoveEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserClientRemove")
+        let mockEventData = try MockJSONPayloadResource(name: "UserClientRemove")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -63,7 +63,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserConnectionEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserConnection")
+        let mockEventData = try MockJSONPayloadResource(name: "UserConnection")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -77,7 +77,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserContactJoinEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserContactJoin")
+        let mockEventData = try MockJSONPayloadResource(name: "UserContactJoin")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -91,7 +91,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserDelete")
+        let mockEventData = try MockJSONPayloadResource(name: "UserDelete")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -105,7 +105,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserLegalholdDisableEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserLegalholdDisable")
+        let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdDisable")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -119,7 +119,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserLegalholdEnableEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserLegalholdEnable")
+        let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdEnable")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -133,7 +133,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserLegalholdRequestEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserLegalholdRequest")
+        let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdRequest")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -147,7 +147,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserPropertiesSetEvent_ReadReceipts() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetReadReceipts")
+        let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetReadReceipts")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -161,7 +161,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserPropertiesSetEvent_TypingIndicators() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetTypingIndicators")
+        let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetTypingIndicators")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -175,7 +175,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserPropertiesSetEvent_ConversationLabels() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetConversationLabels")
+        let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetConversationLabels")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -189,7 +189,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserPropertiesSetEvent_UnknownProperty() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserPropertiesSetUnknownProperty")
+        let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetUnknownProperty")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -203,7 +203,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserPropertiesDeleteEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserPropertiesDelete")
+        let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesDelete")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -217,7 +217,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     func testDecodingUserUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "UserUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "UserUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
