@@ -65,7 +65,7 @@ class ZMLogTests: XCTestCase {
         _ = ZMSLog(tag: tag)
 
         // then
-        XCTAssertEqual(ZMSLog.getLevel(tag: tag), ZMLogLevel.warn)
+        XCTAssertEqual(ZMSLog.getLevel(tag: tag), .warn)
     }
 
     func testThatTheLevelIsDebug() {

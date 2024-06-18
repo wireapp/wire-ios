@@ -55,7 +55,7 @@ private var logTagToLogger: [String: OSLog] = [:]
     /// - note: Does not switch to the log queue
     static func register(tag: String) {
         if logTagToLevel[tag] == nil {
-            logTagToLevel[tag] = ZMLogLevel.warn
+            logTagToLevel[tag] = .warn
         }
     }
 
