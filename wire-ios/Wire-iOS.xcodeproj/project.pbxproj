@@ -1399,7 +1399,6 @@
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
 		E9D70C892BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D70C882BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
-		E9DDB9B82C217897004BD0B8 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E9DDB9B72C217897004BD0B8 /* WireAnalytics */; };
 		E9E20AEA2AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */; };
 		E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */; };
 		E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D128194F2D0058C793 /* FontScheme.swift */; };
@@ -4021,7 +4020,6 @@
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
 				EE67F6DE296F06CE001D7C88 /* libcmark.xcframework in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
-				E9DDB9B82C217897004BD0B8 /* WireAnalytics in Frameworks */,
 				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
 				EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */,
 				EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */,
@@ -8718,7 +8716,6 @@
 				061F34182B1E2ED50099CBAB /* AppAuth */,
 				061F341A2B1E2ED50099CBAB /* AppAuthCore */,
 				595D304A2BF923B30064A018 /* WireAPI */,
-				E9DDB9B72C217897004BD0B8 /* WireAnalytics */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11790,10 +11787,6 @@
 			productName = WireAPI;
 		};
 		E66C51D62C13395400F82F88 /* WireAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAnalytics;
-		};
-		E9DDB9B72C217897004BD0B8 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalytics;
 		};
