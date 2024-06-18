@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class WipeCompletionViewController: UIViewController {
     let wireLogoInfoView = WireLogoInfoView(title: L10n.Localizable.WipeDatabaseCompletion.title, subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle)
