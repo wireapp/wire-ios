@@ -369,7 +369,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func configureViewContext(_ context: NSManagedObjectContext) {
         context.markAsUIContext()
         context.createDispatchGroups()
-        dispatchGroup.map(context.addGroup(_:))
+        dispatchGroup.map(context.add)
         context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
         ZMUser.selfUser(in: context)
         Label.fetchOrCreateFavoriteLabel(in: context, create: true)
@@ -388,7 +388,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         context.markAsSyncContext()
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            dispatchGroup.map(context.add)
             context.setupLocalCachedSessionAndSelfUser()
 
             context.accountDirectoryURL = accountContainer
@@ -419,7 +419,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         context.markAsSearch()
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            dispatchGroup.map(context.add)
             context.setupLocalCachedSessionAndSelfUser()
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
@@ -430,7 +430,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func configureEventContext(_ context: NSManagedObjectContext) {
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            dispatchGroup.map(context.add)
         }
     }
 
