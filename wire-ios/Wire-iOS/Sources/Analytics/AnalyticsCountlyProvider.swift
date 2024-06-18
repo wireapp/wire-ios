@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Countly
 import Foundation
+import WireAnalytics
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "Analytics")

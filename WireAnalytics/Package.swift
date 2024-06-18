@@ -26,7 +26,9 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies() + [
+                .product(name: "Countly", package: "countly-sdk-ios")
+            ]
         ),
         .target(
             name: "WireDatadog",
