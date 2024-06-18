@@ -24,8 +24,6 @@
 #import "MockConversation.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
-static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
-
 @implementation MockEvent
 
 @dynamic from;

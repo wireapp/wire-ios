@@ -22,16 +22,36 @@ import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
 
-    // MARK: - Request generation
-
-    func testGetLastUpdateEvent() async throws {
-        let snapshotter = APISnapshotHelper { httpClient, apiVersion in
+    private func createSnapshotter() -> APISnapshotHelper<UpdateEventsAPI> {
+        APISnapshotHelper { httpClient, apiVersion in
             UpdateEventsAPIBuilder(httpClient: httpClient)
                 .makeAPI(for: apiVersion)
         }
+    }
 
-        try await snapshotter.verifyRequestForAllAPIVersions { sut in
+    // MARK: - Request generation
+
+    func testGetLastUpdateEvent() async throws {
+        try await createSnapshotter().verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
+        }
+    }
+
+    func testGetUpdateEvents() async throws {
+        // Then
+        try await createSnapshotter().verifyRequestForAllAPIVersions {
+            // Given
+            try HTTPClientMock(responses: [
+                .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
+                .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+            ])
+        } when: { sut in
+            for try await _ in sut.getUpdateEvents(
+                selfClientID: Scaffolding.selfClientID,
+                sinceEventID: Scaffolding.lastUpdateEventID
+            ) {
+                // Nothing to assert here since we're only snapshotting request.
+            }
         }
     }
 
@@ -79,6 +99,68 @@ final class UpdateEventsAPITests: XCTestCase {
         }
     }
 
+    func testGetUpdateEvents_200_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(responses: [
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+        ])
+
+        let sut = UpdateEventsAPIV0(httpClient: httpClient)
+
+        // When
+        var pages = [[UpdateEventEnvelope]]()
+        for try await page in sut.getUpdateEvents(
+            selfClientID: Scaffolding.selfClientID,
+            sinceEventID: Scaffolding.lastUpdateEventID
+        ) {
+            pages.append(page)
+        }
+
+        // Then
+        XCTAssertEqual(pages.count, 2)
+
+        let page1 = try XCTUnwrap(pages.first)
+        XCTAssertEqual(page1, Scaffolding.updateEventPage1)
+
+        let page2 = try XCTUnwrap(pages.last)
+        XCTAssertEqual(page2, Scaffolding.updateEventPage2)
+    }
+
+    func testGetUpdateEvents_400_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let sut = UpdateEventsAPIV0(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(UpdateEventsAPIError.invalidParameters) {
+            // When
+            for try await _ in sut.getUpdateEvents(
+                selfClientID: Scaffolding.selfClientID,
+                sinceEventID: Scaffolding.lastUpdateEventID
+            ) {
+                // no op
+            }
+        }
+    }
+
+    func testGetUpdateEvents_404_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let sut = UpdateEventsAPIV0(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+            // When
+            for try await _ in sut.getUpdateEvents(
+                selfClientID: Scaffolding.selfClientID,
+                sinceEventID: Scaffolding.lastUpdateEventID
+            ) {
+                // no op
+            }
+        }
+    }
+
     // MARK: - V5
 
     func testGetLastUpdateEvent_200_V5() async throws {
@@ -109,18 +191,90 @@ final class UpdateEventsAPITests: XCTestCase {
         }
     }
 
+    func testGetUpdateEvents_200_V5() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(responses: [
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
+            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+        ])
+
+        let sut = UpdateEventsAPIV5(httpClient: httpClient)
+
+        // When
+        var pages = [[UpdateEventEnvelope]]()
+        for try await page in sut.getUpdateEvents(
+            selfClientID: Scaffolding.selfClientID,
+            sinceEventID: Scaffolding.lastUpdateEventID
+        ) {
+            pages.append(page)
+        }
+
+        // Then
+        XCTAssertEqual(pages.count, 2)
+
+        let page1 = try XCTUnwrap(pages.first)
+        XCTAssertEqual(page1, Scaffolding.updateEventPage1)
+
+        let page2 = try XCTUnwrap(pages.last)
+        XCTAssertEqual(page2, Scaffolding.updateEventPage2)
+    }
+
+    func testGetUpdateEvents_404_V5() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let sut = UpdateEventsAPIV5(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+            // When
+            for try await _ in sut.getUpdateEvents(
+                selfClientID: Scaffolding.selfClientID,
+                sinceEventID: Scaffolding.lastUpdateEventID
+            ) {
+                // no op
+            }
+        }
+    }
+
     // MARK: - Helpers
 
     struct Scaffolding {
 
         static let selfClientID = "abcd1234"
         static let eventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
+        static let lastUpdateEventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
 
         static let updateEventEnvelope = UpdateEventEnvelope(
             id: eventID,
             events: [.conversation(.create)],
             isTransient: false
         )
+
+        static let updateEventPage1 = [
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "2eeeb5e4-df85-4aef-9eb2-289981f086ab")!,
+                payloads: [.unknown(eventType: "some event")],
+                isTransient: false
+            ),
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "688ad9fc-6906-4dd6-9ccc-db8d849c41ad")!,
+                payloads: [.unknown(eventType: "some transient event")],
+                isTransient: true
+            )
+        ]
+
+        static let updateEventPage2 = [
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "0b08693f-4f67-46e1-9e5e-f7c15f3e8157")!,
+                payloads: [.unknown(eventType: "some transient event")],
+                isTransient: true
+            ),
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "7ed84e3d-108c-4d50-904e-78a4e6908956")!,
+                payloads: [.unknown(eventType: "some event")],
+                isTransient: false
+            )
+        ]
 
     }
 
