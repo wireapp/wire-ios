@@ -90,9 +90,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: deviceActionsHandler
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient

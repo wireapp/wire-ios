@@ -254,9 +254,7 @@ final class ClientListViewController: UIViewController,
             mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 
