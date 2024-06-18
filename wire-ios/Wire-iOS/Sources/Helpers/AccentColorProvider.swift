@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+
 extension UserType {
 
     /// Returns the current accent color of the user.

@@ -19,24 +19,22 @@
 import WireDataModel
 import WireDesign
 
-// TODO: is this file needed?
-
 extension AccentColor {
 
-//    var uiColor: UIColor {
-//        switch self {
-//        case .blue:
-//            SemanticColors.Accent.blue
-//        case .green:
-//            SemanticColors.Accent.green
-//        case .red:
-//            SemanticColors.Accent.red
-//        case .amber:
-//            SemanticColors.Accent.amber
-//        case .turquoise:
-//            SemanticColors.Accent.turquoise
-//        case .purple:
-//            SemanticColors.Accent.purple
-//        }
-//    }
+    var uiColor: UIColor {
+        switch self {
+        case .blue:
+            SemanticColors.Accent.blue
+        case .green:
+            SemanticColors.Accent.green
+        case .red:
+            SemanticColors.Accent.red
+        case .amber:
+            SemanticColors.Accent.amber
+        case .turquoise:
+            SemanticColors.Accent.turquoise
+        case .purple:
+            SemanticColors.Accent.purple
+        }
+    }
 }
