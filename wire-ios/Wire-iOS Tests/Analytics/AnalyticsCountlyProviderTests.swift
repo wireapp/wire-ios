@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Countly
 import Foundation
 @testable import Wire
+import WireAnalytics
 import XCTest
 
 final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper {
@@ -137,7 +137,7 @@ final class MockCountly: CountlyInstance {
         MockCountly.recordEventCount += 1
     }
 
-    func start(with config: CountlyConfig) {
+    func start(with config: WireCountlyConfig) {
         MockCountly.startCount += 1
     }
 }

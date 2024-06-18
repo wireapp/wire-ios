@@ -20,12 +20,15 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0")
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0"),
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies() + [
+                .product(name: "Countly", package: "countly-sdk-ios")
+            ]
         ),
         .target(
             name: "WireDatadog",

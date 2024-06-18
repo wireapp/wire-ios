@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Countly",
+        "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
+          "version": "24.4.2"
+        }
+      },
+      {
         "package": "Datadog",
         "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
         "state": {
