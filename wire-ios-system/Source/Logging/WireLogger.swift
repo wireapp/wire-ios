@@ -19,16 +19,21 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider?.addTag(key, value: value)
-    }
 
-    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
+    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
 
     public let tag: String
 
     public init(tag: String = "") {
         self.tag = tag
+    }
+
+    public var logFiles: [URL] {
+        Self.provider?.logFiles ?? []
+    }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        Self.provider?.addTag(key, value: value)
     }
 
     public func debug(
@@ -125,7 +130,6 @@ public struct WireLogger: LoggerProtocol {
         case critical
 
     }
-
 }
 
 public typealias LogAttributes = [String: Encodable]
@@ -156,15 +160,21 @@ public protocol LoggerProtocol {
     func error(_ message: LogConvertible, attributes: LogAttributes?)
     func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
-    func persist(fileDestination: FileLoggerDestination) async
+    var logFiles: [URL] { get }
 
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {
+    func attributesDescription(from attributes: LogAttributes?) -> String {
+        var logAttributes = attributes
+        // drop attributes used for visibility and category
+        logAttributes?.removeValue(forKey: "public")
+        logAttributes?.removeValue(forKey: "tag")
+        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
+    }
 
-    public func persist(fileDestination: FileLoggerDestination) async {}
 }
 
 public protocol LogConvertible {
