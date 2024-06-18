@@ -199,11 +199,10 @@ final class GroupQueueTests: XCTestCase {
         sut.enter()
 
         // When
-        // let result = sut.waitWithTimeout(dispatch_time(DISPATCH_TIME_NOW, 200 * NSEC_PER_MSEC))
-        XCTFail("TODO")
+        let result = sut.waitWithDelta(fromNow: 200 * NSEC_PER_MSEC)
 
         // Then
-        // XCTAssertNotEqual(result, 0)
+        XCTAssertNotEqual(result, 0)
         sut.leave()
     }
 
@@ -218,12 +217,11 @@ final class GroupQueueTests: XCTestCase {
             sut.leave()
         }
 
-         // When
-        XCTFail("TODO")
-        // let result = sut.waitWithTimeout(DISPATCH_TIME_FOREVER)
+        // When
+        let result = sut.waitWithTimeoutForever()
 
-         // then
-         // XCTAssertEqual(result, 0)
+        // then
+        XCTAssertEqual(result, 0)
     }
 
     // MARK: - Helper
