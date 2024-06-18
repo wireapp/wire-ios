@@ -16,34 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import XCTest;
-@import WireSystem.Swift;
+import XCTest
 
-@interface ZMTimePointTests : XCTestCase
-@end
+@testable import WireSystem
 
-@implementation ZMTimePointTests
+final class TimePointTests: XCTestCase {
 
-- (void)testThatATimePointDoesNotWarnTooEarly
-{
-    // given
-    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:1000];
+    func testThatATimePointDoesNotWarnTooEarly() {
 
-    // then
-    XCTAssertFalse([tp warnIfLongerThanInterval]);
+        // Given
+        let tp = ZMSTimePoint.init(interval: 1000)
+
+        // Then
+        XCTAssertFalse(tp.warnIfLongerThanInterval())
+    }
+
+    func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
+
+        // Given
+        let tp = ZMSTimePoint.init(interval: 0.01)
+
+        // When
+        var waitExpectation = XCTestExpectation()
+        waitExpectation.isInverted = true
+        wait(for: [waitExpectation], timeout: 0.1)
+
+        // Then
+        XCTAssertTrue(tp.warnIfLongerThanInterval())
+    }
 }
-
-- (void)testThatATimePointWarnsIfTooMuchTimeHasPassed
-{
-    // given
-    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:0.01];
-
-    // when
-    [NSThread sleepForTimeInterval:0.1];
-    
-    // then
-    XCTAssertTrue([tp warnIfLongerThanInterval]);
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-}
-
-@end
