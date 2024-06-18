@@ -15,24 +15,3 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import SwiftUI
-
-struct DeveloperDebugActionsView: View {
-
-    @ObservedObject var viewModel: DeveloperDebugActionsViewModel
-
-    var body: some View {
-        List(viewModel.buttons) { button in
-            Button(action: button.action) {
-                Text(button.title)
-            }
-        }
-    }
-}
-
-// MARK: - Previews
-
-#Preview {
-    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
-}

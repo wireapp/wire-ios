@@ -17,23 +17,24 @@
 //
 
 import WireDataModel
+import WireDesign
 
 extension AccentColor {
 
-    var uiColor: UIColor {
-        switch self {
-        case .blue:
-            UIColor(light: .blue500Light, dark: .blue500Dark)
-        case .green:
-            UIColor(light: .green500Light, dark: .green500Dark)
-        case .red:
-            UIColor(light: .red500Light, dark: .red500Dark)
-        case .amber:
-            UIColor(light: .amber500Light, dark: .amber500Dark)
-        case .turquoise:
-            UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
-        case .purple:
-            UIColor(light: .purple500Light, dark: .purple500Dark)
-        }
-    }
+//    var uiColor: UIColor {
+//        switch self {
+//        case .blue:
+//            SemanticColors.Accent.blue
+//        case .green:
+//            SemanticColors.Accent.green
+//        case .red:
+//            SemanticColors.Accent.red
+//        case .amber:
+//            SemanticColors.Accent.amber
+//        case .turquoise:
+//            SemanticColors.Accent.turquoise
+//        case .purple:
+//            SemanticColors.Accent.purple
+//        }
+//    }
 }
