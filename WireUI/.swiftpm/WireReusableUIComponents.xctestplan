@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "43763EA3-FD79-4FAE-AC4E-3DAEB126DE56",
+      "id" : "ABF616AC-701B-4B34-BBCB-4A69F7D560B5",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -9,11 +9,19 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
+    "language" : "en",
+    "region" : "DE",
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
-
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    }
   ],
   "version" : 1
 }
