@@ -38,8 +38,6 @@
 		0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */; };
 		0630E4C42580469300C75BFB /* AppLockChangeWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */; };
 		06379687296491C000674AAA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06379686296491C000674AAA /* Images.xcassets */; };
-		0637968F2964E2FE00674AAA /* Assets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0637968E2964E2FE00674AAA /* Assets+Generated.swift */; };
-		063796902964E37C00674AAA /* Assets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0637968E2964E2FE00674AAA /* Assets+Generated.swift */; };
 		064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */; };
 		0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */; };
 		0658F5AD25D16EA900DD6859 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */; };
@@ -317,7 +315,9 @@
 		5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */; };
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
+		592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		595D304B2BF923B30064A018 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; };
 		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
@@ -2083,7 +2083,6 @@
 		0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBlockingReasonCell.swift; sourceTree = "<group>"; };
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		0637968E2964E2FE00674AAA /* Assets+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Generated.swift"; sourceTree = "<group>"; };
 		064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+OpenURL.swift"; sourceTree = "<group>"; };
 		065A591D2BEA219E008487CF /* OtherUserDeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherUserDeviceDetailsView.swift; sourceTree = "<group>"; };
 		065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Notification Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4011,6 +4010,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A968680426A5F73400679D95 /* WireCommonComponents.framework in Frameworks */,
+				5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4024,6 +4024,7 @@
 				EE67F6DE296F06CE001D7C88 /* libcmark.xcframework in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
 				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
+				592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */,
 				EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */,
 				EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */,
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
@@ -8056,7 +8057,6 @@
 		EEA65C2525D27A8300AA7519 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
-				0637968E2964E2FE00674AAA /* Assets+Generated.swift */,
 				EEA65C2625D27A8300AA7519 /* Strings+Generated.swift */,
 			);
 			name = Generated;
@@ -8687,6 +8687,9 @@
 				F1FEA15721DCEC3D00790A54 /* PBXTargetDependency */,
 			);
 			name = "Wire Share Extension";
+			packageProductDependencies = (
+				5945D0292C219F7200D039E3 /* WireDesign */,
+			);
 			productName = "Wire-iOS Share Extension";
 			productReference = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -8720,6 +8723,7 @@
 				061F34182B1E2ED50099CBAB /* AppAuth */,
 				061F341A2B1E2ED50099CBAB /* AppAuthCore */,
 				595D304A2BF923B30064A018 /* WireAPI */,
+				592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -9196,7 +9200,6 @@
 				168A16AC1D9597C2005CFA6C /* ShareExtensionViewController.swift in Sources */,
 				E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */,
 				7C0BB6E61FE682A200386A19 /* AccountSelectionViewController.swift in Sources */,
-				063796902964E37C00674AAA /* Assets+Generated.swift in Sources */,
 				543E0C661E23A72F000E2161 /* SendingProgressViewController.swift in Sources */,
 				EFB97F6D22EF44CC0092A620 /* UIImage+DownSize.swift in Sources */,
 				D5D89780201A12D300FAF69C /* Account+ShareExtensionDisplayName.swift in Sources */,
@@ -9890,7 +9893,6 @@
 				D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */,
 				D5189477205045A100C095C1 /* LinkHeaderCell.swift in Sources */,
 				A9681D8623884FF1004FE917 /* Message+DateFormatter.swift in Sources */,
-				0637968F2964E2FE00674AAA /* Assets+Generated.swift in Sources */,
 				BF69C6C31F0CEBC500649C55 /* EphemeralTimeoutFormatter.swift in Sources */,
 				5E4B1385204FE58D00ED5DF1 /* TimeInterval+Days.swift in Sources */,
 				EE4332491F1A67E500096D90 /* PopUpIconButton.swift in Sources */,
@@ -9908,7 +9910,6 @@
 				EF2388882211B8C500331C07 /* UserType+DisplayString.swift in Sources */,
 				A90BECF124A23E6500E5C008 /* LinkViewDelegate.swift in Sources */,
 				A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */,
-				D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */,
 				D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */,
 				E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */,
 				16D74BE82B573A1C00160298 /* AuthenticationE2EIdentityMissingErrorHandler.swift in Sources */,
@@ -11785,6 +11786,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
+		};
+		592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireReusableUIComponents;
+		};
+		5945D0292C219F7200D039E3 /* WireDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDesign;
 		};
 		595D304A2BF923B30064A018 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;

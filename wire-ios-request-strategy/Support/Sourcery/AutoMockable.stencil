@@ -190,7 +190,7 @@ import {{ import }}
             {% call variableThrowableErrorUsage variable %}
             {% endif %}
             {% call mockedVariableName variable %}CallsCount += 1
-            if let {% call variableClosureName variable %} = {% call variableClosureName variable %} {
+            if let {% call variableClosureName variable %} {
                 return {{ 'try ' if variable.throws }}{{ 'await ' if variable.isAsync }}{% call variableClosureName variable %}()
             } else {
                 return {% call underlyingMockedVariableName variable %}

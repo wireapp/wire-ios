@@ -16,23 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import XCTest
 
-struct DeveloperDebugActionsView: View {
+final class PlaceholderTests: XCTestCase {
 
-    @ObservedObject var viewModel: DeveloperDebugActionsViewModel
-
-    var body: some View {
-        List(viewModel.buttons) { button in
-            Button(action: button.action) {
-                Text(button.title)
-            }
-        }
-    }
-}
-
-// MARK: - Previews
-
-#Preview {
-    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
+    func testNothing() {}
 }
