@@ -46,7 +46,8 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent(UUID().uuidString)
+
     }
 
     private func cleanUp() {
