@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "ABF616AC-701B-4B34-BBCB-4A69F7D560B5",
+      "id" : "68751A36-DC10-47CB-B914-B38C2F372E56",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -18,8 +18,8 @@
       "parallelizable" : true,
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
       }
     }
   ],
