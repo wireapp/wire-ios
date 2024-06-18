@@ -91,7 +91,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
 
             // when
-            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({ $0.fetchRequestForTrackedObjects() }).flatMap({ self.syncMOC.executeFetchRequestOrAssert($0) as! [ZMConversation] })
+            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({ $0.fetchRequestForTrackedObjects() }).flatMap({ try! self.syncMOC.fetch($0) as! [ZMConversation] })
 
             // then            
             XCTAssertEqual(objs, [convo1])

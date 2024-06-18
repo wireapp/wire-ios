@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireUtilities;
 @import UIKit;
 @import WireCryptobox;
+@import WireUtilities;
 
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "NSManagedObjectContext+tests.h"
