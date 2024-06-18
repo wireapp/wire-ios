@@ -145,7 +145,6 @@
 @end
 
 
-
 @implementation NSManagedObjectContext (ZMFetchRequestBatch)
 
 - (ZMFetchRequestBatchResult *)executeFetchRequestBatchOrAssert:(ZMFetchRequestBatch *)fetchRequestbatch

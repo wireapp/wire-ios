@@ -45,7 +45,7 @@ extension ZMConversationTests {
 
     // MARK: - SendOnlyEncryptedMessages
 
-    func testThatItInsertsEncryptedKnockMessages() {
+    func testThatItInsertsEncryptedKnockMessages() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -54,13 +54,13 @@ extension ZMConversationTests {
 
         // then
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
         XCTAssertTrue((result.first is ZMClientMessage))
     }
 
-    func testThatItInsertsEncryptedTextMessages() {
+    func testThatItInsertsEncryptedTextMessages() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -69,13 +69,13 @@ extension ZMConversationTests {
 
         // then
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
         XCTAssertTrue((result.first is ZMClientMessage))
     }
 
-    func testThatItInsertsEncryptedImageMessages() {
+    func testThatItInsertsEncryptedImageMessages() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -84,7 +84,7 @@ extension ZMConversationTests {
 
         // then
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
         XCTAssertTrue((result.first is ZMAssetClientMessage))

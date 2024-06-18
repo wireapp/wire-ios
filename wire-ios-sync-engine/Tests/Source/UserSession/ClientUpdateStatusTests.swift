@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 import WireTesting
 
 @testable import WireSyncEngine
@@ -76,7 +77,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
             syncMOC.performAndWait {
-                syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
+                syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
             }
         }
         return client

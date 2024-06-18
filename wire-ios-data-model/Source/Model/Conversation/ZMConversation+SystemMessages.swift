@@ -98,7 +98,7 @@ extension ZMConversation {
     static public func appendNewPotentialGapSystemMessage(at timestamp: Date?, inContext moc: NSManagedObjectContext) {
         let offset = 0.1
         var lastMessageTimestamp = timestamp
-        guard let conversations = moc.executeFetchRequestOrAssert(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
+        guard let conversations = try! moc.fetch(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
             return
         }
         for conversation in conversations {

@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireDataModel
+
 @testable import WireSyncEngine
 
 final class CallParticipantsSnapshotTests: MessagingTest {
@@ -281,7 +283,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             self.selfClient = UserClient.insertNewObject(in: self.uiMOC)
             self.selfClient.user = self.selfUser
             self.selfClient.remoteIdentifier = self.aliceIphone.clientId
-            self.uiMOC.setPersistentStoreMetadata(self.selfClient.remoteIdentifier, key: "PersistedClientId")
+            self.uiMOC.setPersistentStoreMetadata(self.selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
 
             self.client1 = UserClient.insertNewObject(in: self.uiMOC)
             self.client1.user = self.selfUser

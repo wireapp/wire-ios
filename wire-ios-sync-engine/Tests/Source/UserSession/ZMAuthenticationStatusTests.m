@@ -97,7 +97,7 @@
     
     // then
     XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseAuthenticated);
-    [self.uiMOC setPersistentStoreMetadata:nil forKey:@"PersistedClientId"];
+    [self.uiMOC setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
 }
 
 @end

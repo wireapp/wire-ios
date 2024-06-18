@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Executes a fetch request and asserts in case of error
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
+- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
 
 - (NSArray<ZMSDispatchGroup*>*_Nonnull)enterAllGroups;
 - (void)leaveAllGroups:(NSArray <ZMSDispatchGroup*>*_Null_unspecified)groups;

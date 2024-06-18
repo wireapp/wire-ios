@@ -62,7 +62,7 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         XCTAssertEqual(ZMConversation.fetch(with: uuid3, in: uiMOC), conversation3)
     }
 
-    func testThatItDeletesMembersWhichArePartOfATeamWhenTeamGetsDeleted() {
+    func testThatItDeletesMembersWhichArePartOfATeamWhenTeamGetsDeleted() throws {
         // given
         let team = Team.insertNewObject(in: uiMOC)
         let member1 = Member.insertNewObject(in: uiMOC)
@@ -83,7 +83,7 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
 
         // then
 
-        guard let members = uiMOC.executeFetchRequestOrAssert(NSFetchRequest(entityName: Member.entityName())) as? [Member] else {
+        guard let members = try uiMOC.fetch(NSFetchRequest(entityName: Member.entityName())) as? [Member] else {
             return XCTFail("No members fetched")
         }
 

@@ -161,8 +161,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
     private func fetchConversation(with identifier: String, in managedObjectContext: NSManagedObjectContext) -> MockConversation? {
         let request = MockConversation.sortedFetchRequest()
         request.predicate = NSPredicate(format: "identifier == %@", identifier.lowercased())
-        let conversations = managedObjectContext.executeFetchRequestOrAssert(request) as? [MockConversation]
+        let conversations = try! managedObjectContext.fetch(request) as? [MockConversation]
         return conversations?.first
     }
-
 }

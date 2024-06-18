@@ -298,7 +298,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
         selfClient.remoteIdentifier = UUID().transportString()
         selfClient.user = ZMUser.selfUser(in: context)
         context.saveOrRollback()
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: "PersistedClientId")
+        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
         return selfClient
     }
 }

@@ -59,7 +59,7 @@ extension ZMUserSession {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-                guard let conversations = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                guard let conversations = try! context.fetch(fetchRequest) as? [ZMConversation] else {
                     return
                 }
 

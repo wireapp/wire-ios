@@ -374,8 +374,8 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSFetchRequest *usersWithEmailFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
     usersWithEmailFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", EmailAddressKey, emailAddress];
-    NSArray<ZMUser *> *users = [context executeFetchRequestOrAssert:usersWithEmailFetch];
-    
+    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithEmailFetch];
+
     RequireString(users.count <= 1, "More than one user with the same email address");
     
     if (0 == users.count) {
@@ -395,7 +395,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSFetchRequest *usersWithPhoneFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
     usersWithPhoneFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", PhoneNumberKey, phoneNumber];
-    NSArray<ZMUser *> *users = [context executeFetchRequestOrAssert:usersWithPhoneFetch];
+    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithPhoneFetch];
     
     RequireString(users.count <= 1, "More than one user with the same phone number");
     

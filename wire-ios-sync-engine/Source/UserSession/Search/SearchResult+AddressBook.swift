@@ -102,7 +102,7 @@ extension SearchResult {
         let fetchRequest = ZMUser.sortedFetchRequest(with: predicate)
         fetchRequest.returnsObjectsAsFaults = false
 
-        guard let users = managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMUser] else {
+        guard let users = try! managedObjectContext.fetch(fetchRequest) as? [ZMUser] else {
             fatal("fetchOrAssert failed")
         }
 
