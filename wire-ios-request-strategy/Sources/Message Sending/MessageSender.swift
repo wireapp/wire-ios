@@ -27,9 +27,9 @@ public protocol HttpClient {
 public class HttpClientImpl: HttpClient {
 
     let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
+    let queue: GroupQueue
 
-    public init(transportSession: TransportSessionType, queue: ZMSGroupQueue) {
+    public init(transportSession: TransportSessionType, queue: GroupQueue) {
         self.transportSession = transportSession
         self.queue = queue
     }
