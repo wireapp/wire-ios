@@ -137,7 +137,7 @@ final class MockCountly: CountlyInstance {
         MockCountly.recordEventCount += 1
     }
 
-    func start(with config: CountlyConfig) {
+    func start(with config: WireCountlyConfig) {
         MockCountly.startCount += 1
     }
 }
