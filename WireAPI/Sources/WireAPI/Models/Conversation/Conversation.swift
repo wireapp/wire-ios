@@ -87,6 +87,8 @@ public struct Conversation: Equatable, Codable {
     public var accessRoles: Set<ConversationAccessRole>?
 
     /// LEGACY: Which users are allowed to be participants.
+    ///
+    /// This can be removed when api v3 is the minimum supported version.
 
     public var legacyAccessRole: ConversationAccessRoleLegacy?
 
