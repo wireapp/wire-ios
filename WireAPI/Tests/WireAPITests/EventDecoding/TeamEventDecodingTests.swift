@@ -35,7 +35,7 @@ final class TeamEventDecodingTests: XCTestCase {
 
     func testDecodingTeamMemberLeaveEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "TeamMemberLeave")
+        let mockEventData = try MockJSONPayloadResource(name: "TeamMemberLeave")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -49,7 +49,7 @@ final class TeamEventDecodingTests: XCTestCase {
 
     func testDecodingTeamMemberUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "TeamMemberUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "TeamMemberUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
