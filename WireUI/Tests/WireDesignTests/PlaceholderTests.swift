@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-class BackendInfoAPIV3: BackendInfoAPIV2 {
+final class PlaceholderTests: XCTestCase {
 
-    // No changes.
-
+    func testNothing() {}
 }
