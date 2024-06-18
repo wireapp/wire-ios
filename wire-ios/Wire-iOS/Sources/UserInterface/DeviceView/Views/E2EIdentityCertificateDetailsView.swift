@@ -44,7 +44,7 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                SwiftUI.Button(
+                Button(
                     action: {
                         dismiss()
                         didDismiss?()
@@ -71,7 +71,7 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     private var downloadImageButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 performDownload?()
             },
@@ -83,7 +83,7 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     private var downloadButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 performDownload?()
             },
@@ -96,7 +96,7 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     private var moreButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 isMenuPresented.toggle()
             },
@@ -110,7 +110,7 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     private var copyToClipboardButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 performCopy?(certificateDetails)
             },

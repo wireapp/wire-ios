@@ -4870,7 +4870,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var lastPrekeyID: UInt16 {
         get async {
             lastPrekeyIDCallsCount += 1
-            if let lastPrekeyIDClosure = lastPrekeyIDClosure {
+            if let lastPrekeyIDClosure {
                 return await lastPrekeyIDClosure()
             } else {
                 return underlyingLastPrekeyID

@@ -53,7 +53,7 @@ struct DeviceDetailsBottomView: View {
 
     var removeDeviceView: some View {
         HStack {
-            SwiftUI.Button {
+            Button {
                 Task {
                    await viewModel.removeDevice()
                 }

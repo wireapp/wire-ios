@@ -64,6 +64,22 @@
         "identifier" : "E6579E352AFF9B30004E7FD8",
         "name" : "Wire-iOS UnitTests"
       }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:..\/WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:..\/WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
+      }
     }
   ],
   "version" : 1

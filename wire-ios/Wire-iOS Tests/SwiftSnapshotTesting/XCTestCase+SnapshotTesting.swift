@@ -18,8 +18,9 @@
 
 import SnapshotTesting
 import UIKit
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
 private let precision: Float = 0.90

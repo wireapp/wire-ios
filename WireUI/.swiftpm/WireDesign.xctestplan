@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "68751A36-DC10-47CB-B914-B38C2F372E56",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
+      }
+    }
+  ],
+  "version" : 1
+}

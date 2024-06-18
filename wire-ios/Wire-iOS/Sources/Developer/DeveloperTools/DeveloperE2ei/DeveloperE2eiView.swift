@@ -51,7 +51,7 @@ struct DeveloperE2eiView: View {
             Section("Enroll E2EI Certificate") {
                 TextField("Certificate expiration time (in seconds)", text: $viewModel.certificateExpirationTime)
 
-                SwiftUI.Button("Enroll", action: { viewModel.enrollCertificate() })
+                Button("Enroll", action: { viewModel.enrollCertificate() })
             }
 
             Section("Certificate Revocation Lists") {
@@ -61,7 +61,7 @@ struct DeveloperE2eiView: View {
                     binding: binding(for: .forceCRLExpiryAfterOneMinute)
                 )
                 VStack(alignment: .leading) {
-                    SwiftUI.Button("Clear CRL expiration dates", action: { viewModel.removeAllExpirationDates() })
+                    Button("Clear CRL expiration dates", action: { viewModel.removeAllExpirationDates() })
                     footNote("Clears the CRL expiration dates from storage. Will force the CRLs to be refetched when discovering distribution points")
                 }
             }
@@ -82,7 +82,7 @@ struct DeveloperE2eiView: View {
                     }
                 }
 
-                SwiftUI.Button("Refresh", action: { viewModel.refreshCRLExpirationDates() })
+                Button("Refresh", action: { viewModel.refreshCRLExpirationDates() })
             }
         }
     }
