@@ -472,18 +472,18 @@ extension IntegrationTest {
 
     @objc
     func login() -> Bool {
-        let credentials = ZMEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
         return login(withCredentials: credentials, ignoreAuthenticationFailures: false)
     }
 
     @objc(loginAndIgnoreAuthenticationFailures:)
     func login(ignoreAuthenticationFailures: Bool) -> Bool {
-        let credentials = ZMEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
         return login(withCredentials: credentials, ignoreAuthenticationFailures: ignoreAuthenticationFailures)
     }
 
     @objc
-    func login(withCredentials credentials: ZMCredentials, ignoreAuthenticationFailures: Bool = false) -> Bool {
+    func login(withCredentials credentials: UserCredentials, ignoreAuthenticationFailures: Bool = false) -> Bool {
         sessionManager?.unauthenticatedSession?.login(with: credentials)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         sessionManager?.unauthenticatedSession?.continueAfterBackupImportStep()
@@ -510,7 +510,7 @@ extension IntegrationTest {
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMUser.sortedFetchRequest(with: predicate)
-        let result = userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMUser]
+        let result = try! userSession?.managedObjectContext.fetch(request) as? [ZMUser]
 
         if let user = result?.first {
             return user
@@ -528,7 +528,7 @@ extension IntegrationTest {
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
 
-        let result = userSession?.managedObjectContext.performAndWait { userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+        let result = userSession?.managedObjectContext.performAndWait { try! userSession?.managedObjectContext.fetch(request) as? [ZMConversation]
         }
 
         if let conversation = result?.first {
