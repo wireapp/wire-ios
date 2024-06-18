@@ -251,7 +251,7 @@ extension EventDecoder {
         }
 
         await syncMOC.perform {
-            if let eventUUID = event.uuid {
+            if let eventUUID = event.uuid, !event.isTransient {
                 self.lastEventIDRepository.storeLastEventID(eventUUID)
             }
         }
