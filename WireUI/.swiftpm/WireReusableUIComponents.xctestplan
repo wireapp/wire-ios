@@ -1,0 +1,19 @@
+{
+  "configurations" : [
+    {
+      "id" : "43763EA3-FD79-4FAE-AC4E-3DAEB126DE56",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+
+  ],
+  "version" : 1
+}
