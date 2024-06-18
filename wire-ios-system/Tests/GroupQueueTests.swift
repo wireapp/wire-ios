@@ -18,29 +18,254 @@
 
 import XCTest
 
+@testable import WireSystem
+
 final class GroupQueueTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testThatItNotifiesWhenEnteringAndLeavingAGroupOnce() {
+        // TODO: implement
+
+        /*
+
+         // given
+         __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
+                                     // not been fulfilled yet without making the test fail
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+         dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
+         [sut enter];
+
+         // when
+         [sut notifyOnQueue:queue block:^{
+             notified = YES;
+         }];
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertFalse(notified);
+         });
+
+         // and when
+         [sut leave];
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertTrue(notified);
+         });
+
+         */
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testThatItNotifiesWhenEnteringAndLeavingAGroupThatWasInjected() {
+        // TODO: implement
+
+        /*
+
+         // given
+         __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
+         // not been fulfilled yet without making the test fail
+         dispatch_group_t rawGroup = dispatch_group_create();
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithDispatchGroup:rawGroup label:@"Test"];
+         dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
+         dispatch_group_enter(rawGroup);
+
+         // when
+         [sut notifyOnQueue:queue block:^{
+             notified = YES;
+         }];
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertFalse(notified);
+         });
+
+         // and when
+         [sut leave];
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertTrue(notified);
+         });
+
+         */
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testThatItNotifiesImmediatelyIfTheGroupWasNotEntered() {
+        // TODO: implement
+
+        /*
+
+         // given
+         __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
+         // not been fulfilled yet without making the test fail
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+         dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
+
+         // when
+         [sut notifyOnQueue:queue block:^{
+             notified = YES;
+         }];
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertTrue(notified);
+         });
+
+         */
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testThatItNotifiesWhenEnteringAndLeavingAGroupMultipleTimes() {
+        // TODO: implement
+
+        /*
+
+         // given
+         __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
+                                     // not been fulfilled yet without making the test fail
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+         dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
+         [sut enter]; // enterinc once
+         [sut enter]; // entering twice
+
+         // when
+         [sut notifyOnQueue:queue block:^{
+             notified = YES;
+         }];
+         [sut leave]; // leave once
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+
+             XCTAssertFalse(notified);
+         });
+
+         // and when
+         [sut leave]; // leaving twice
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertTrue(notified);
+         });
+
+         */
     }
 
+    func testThatItNotifiesOnTheRightQueueAfterEnteringAndLeaving() {
+        // TODO: implement
+
+        /*
+
+         // given
+         __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
+                                     // not been fulfilled yet without making the test fail
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+         [sut enter];
+
+         dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
+
+         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+         dispatch_async(queue, ^{
+             dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);  // this will block this queue until we signal
+                                                                         // preventing the notify to be executed
+                                                                         // only if it's enqueued on this queue
+         });
+
+         // when
+         [sut notifyOnQueue:queue block:^{
+             notified = YES;
+         }];
+         [sut leave];
+         [NSThread sleepForTimeInterval:0.1f];
+
+         // then
+         XCTAssertFalse(notified);
+
+         // and when
+         dispatch_semaphore_signal(semaphore);
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertTrue(notified);
+         });
+
+         */
+    }
+
+    func testThatItNotifiesWhenPerformingAsync() {
+        // TODO: implement
+
+        /*
+
+         // given
+         __block BOOL notified = NO; // I can't use XCTestExpectation because I have no way to verify that is has
+         // not been fulfilled yet without making the test fail
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+
+         dispatch_queue_t queue = dispatch_queue_create("test queue", DISPATCH_QUEUE_SERIAL);
+         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+         [sut asyncOnQueue:queue block:^{
+             dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+         }];
+
+         // when
+         [sut notifyOnQueue:queue block:^{
+             notified = YES;
+         }];
+         [NSThread sleepForTimeInterval:0.1f];
+
+         // then
+         XCTAssertFalse(notified);
+
+         // and when
+         dispatch_semaphore_signal(semaphore);
+         [NSThread sleepForTimeInterval:0.1];
+
+         // then
+         dispatch_sync(queue, ^{ // this is here to make sure there are no previous op running on the queue
+             XCTAssertTrue(notified);
+         });
+
+         */
+    }
+
+    func testThatItWaitsAfterEnteringWithATimeoutThatExpires() {
+        // TODO: implement
+
+        /*
+
+         // given
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+         [sut enter];
+
+         // when
+         long result = [sut waitWithTimeout:dispatch_time(DISPATCH_TIME_NOW, 200LL * NSEC_PER_MSEC)];
+
+         // then
+         XCTAssertNotEqual(result, 0);
+         [sut leave];
+
+         */
+    }
+
+    func testThatItWaitsAfterEnteringWithATimeoutThatDoesNotExpire() {
+        // TODO: implement
+
+        /*
+
+         // given
+         ZMSDispatchGroup *sut = [ZMSDispatchGroup groupWithLabel:@"test group"];
+         [sut enter];
+
+         dispatch_queue_t queue = dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
+         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 500LL * NSEC_PER_MSEC), queue, ^{
+             [sut leave];
+         });
+
+         // when
+         long result = [sut waitWithTimeout:DISPATCH_TIME_FOREVER];
+
+         // then
+         XCTAssertEqual(result, 0);
+
+         */
+    }
 }
