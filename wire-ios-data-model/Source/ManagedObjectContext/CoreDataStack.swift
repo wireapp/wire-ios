@@ -19,6 +19,7 @@
 import CoreData
 import Foundation
 import WireSystem
+import WireUtilities
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
@@ -45,7 +46,6 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
-
 }
 
 extension URL {

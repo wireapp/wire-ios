@@ -18,8 +18,23 @@
 
 import Foundation
 
-class BackendInfoAPIV6: BackendInfoAPIV5 {
+struct MockJSONPayloadResource {
 
-    // No changes.
+    let jsonData: Data
+
+    init(name: String) throws {
+        guard let url = Bundle.module.url(
+            forResource: name,
+            withExtension: "json"
+        ) else {
+            throw "resource \(name).json not found"
+        }
+
+        do {
+            jsonData = try Data(contentsOf: url)
+        } catch {
+            throw "unable to load data from resource: \(error)"
+        }
+    }
 
 }

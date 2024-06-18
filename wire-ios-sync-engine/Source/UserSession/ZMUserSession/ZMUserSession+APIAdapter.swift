@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireSystem
 
 // Note: this is just a tempory helper for debugging
 // purposes and should eventually be removed.
@@ -31,9 +32,8 @@ extension ZMUserSession {
         )
 
         return BackendInfoAPIBuilder(httpClient: httpClient)
-            .makeAPI(for: .v0)
+            .makeAPI()
     }
-
 }
 
 private class HTTPClientImpl: HTTPClient {
@@ -52,10 +52,10 @@ private class HTTPClientImpl: HTTPClient {
     public func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
         await withCheckedContinuation { continuation in
             let request = request.toZMTransportRequest()
-            request.add(ZMCompletionHandler(on: queue, block: { response in
+            request.add(ZMCompletionHandler(on: queue) { response in
                 let response = response.toHTTPResponse()
                 continuation.resume(returning: response)
-            }))
+            })
 
             transportSession.enqueueOneTime(request)
         }
