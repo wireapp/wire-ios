@@ -267,6 +267,15 @@ enum SemanticColors {
         static let chocolate = UIColor(red: 0.384, green: 0.184, blue: 0, alpha: 1)
         static let gray = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray70)
     }
+
+    public enum Accent {
+        public static let blue = UIColor(light: .blue500Light, dark: .blue500Dark)
+        public static let green = UIColor(light: .green500Light, dark: .green500Dark)
+        public static let red = UIColor(light: .red500Light, dark: .red500Dark)
+        public static let amber = UIColor(light: .amber500Light, dark: .amber500Dark)
+        public static let turquoise = UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+        public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
+    }
 }
 
 extension UIColor {
