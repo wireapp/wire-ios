@@ -79,10 +79,10 @@ final class ConnectionsRepositoryTests: XCTestCase {
         try await sut.pullConnections()
 
         // Then
-        await context.perform { [context] in
+        try await context.perform { [context] in
             // There is a connection in the database.
             let fetchRequest = NSFetchRequest<any NSFetchRequestResult>(entityName: ZMConnection.entityName())
-            let a = context.executeFetchRequestOrAssert(fetchRequest)
+            let a = try context.fetch(fetchRequest)
             XCTAssertEqual(a.count, 1)
         }
     }

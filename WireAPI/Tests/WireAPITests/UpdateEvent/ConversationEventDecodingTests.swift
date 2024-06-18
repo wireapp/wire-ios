@@ -35,7 +35,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationAccessUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationAccessUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationAccessUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -49,7 +49,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationCodeUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationCodeUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationCodeUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -63,7 +63,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationCreateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationCreate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationCreate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -77,7 +77,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationDeleteEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationDelete")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationDelete")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -91,7 +91,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationMemberJoinEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationMemberJoin")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberJoin")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -105,7 +105,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationMemberLeaveEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationMemberLeave")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberLeave")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -119,7 +119,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationMemberUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationMemberUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -133,7 +133,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationMessageTimerUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationMessageTimerUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMessageTimerUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -147,7 +147,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationMLSMessageAddEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationMLSMessageAdd")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMLSMessageAdd")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -161,7 +161,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationMLSWelcomeEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationMLSWelcome")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMLSWelcome")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -175,7 +175,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationProteusMessageAddEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationProteusMessageAdd")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationProteusMessageAdd")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -189,7 +189,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationProtocolUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationProtocolUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationProtocolUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -203,7 +203,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationReceiptModeUpdateEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationReceiptModeUpdate")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationReceiptModeUpdate")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -217,7 +217,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationRenameEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationRename")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationRename")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
@@ -231,7 +231,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     func testDecodingConversationTypingEvent() throws {
         // Given
-        let mockEventData = try MockEventDataResource(name: "ConversationTyping")
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationTyping")
 
         // When
         let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)

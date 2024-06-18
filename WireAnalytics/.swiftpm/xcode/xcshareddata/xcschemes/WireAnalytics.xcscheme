@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E6C01B342BF769CB0059EC62"
-               BuildableName = "RunSourcery"
-               BlueprintName = "RunSourcery"
-               ReferencedContainer = "container:Wire-iOS.xcodeproj">
+               BlueprintIdentifier = "WireAnalytics"
+               BuildableName = "WireAnalytics"
+               BlueprintName = "WireAnalytics"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E6C01B342BF769CB0059EC62"
-            BuildableName = "RunSourcery"
-            BlueprintName = "RunSourcery"
-            ReferencedContainer = "container:Wire-iOS.xcodeproj">
+            BlueprintIdentifier = "WireAnalytics"
+            BuildableName = "WireAnalytics"
+            BlueprintName = "WireAnalytics"
+            ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
