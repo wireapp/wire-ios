@@ -27,8 +27,12 @@
 		54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DB81621DBF66CF00AF495D /* ZMSLog+Levels.swift */; };
 		54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DB81641DBFACE800AF495D /* CircularArray.swift */; };
 		54DB81671DBFB16700AF495D /* CircularArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DB81661DBFB16700AF495D /* CircularArrayTests.swift */; };
+		54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F249C61BB9242900040600 /* ZMSDispatchGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F249C71BB9242900040600 /* ZMSDispatchGroup.m */; };
+		54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
 		59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */; };
+		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -110,6 +114,7 @@
 		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
 		59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDateProviding.swift; sourceTree = "<group>"; };
+		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
 		598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
