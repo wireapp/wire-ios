@@ -18,24 +18,23 @@
 
 import Foundation
 
-/// Errors originating from `UpdateEventsAPI`.
+struct MockJSONPayloadResource {
 
-public enum UpdateEventsAPIError: Error {
+    let jsonData: Data
 
-    /// A request path is not invalid.
+    init(name: String) throws {
+        guard let url = Bundle.module.url(
+            forResource: name,
+            withExtension: "json"
+        ) else {
+            throw "resource \(name).json not found"
+        }
 
-    case invalidPath
-
-    /// A provided client id is not valid.
-
-    case invalidClient
-
-    /// One or more provided query parameters are invalid.
-
-    case invalidParameters
-
-    /// The requested notification(s) was not found.
-
-    case notFound
+        do {
+            jsonData = try Data(contentsOf: url)
+        } catch {
+            throw "unable to load data from resource: \(error)"
+        }
+    }
 
 }
