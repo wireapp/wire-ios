@@ -4418,8 +4418,8 @@ internal enum L10n {
       internal enum Button {
         /// Add Participants
         internal static let addToConversation = L10n.tr("Localizable", "peoplepicker.button.add_to_conversation", fallback: "Add Participants")
-        /// Create group
-        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.button.create_conversation", fallback: "Create group")
+        /// Create Group
+        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.button.create_conversation", fallback: "Create Group")
       }
       internal enum Federation {
         /// The federated domain is currently not available. [Learn more](%@)
