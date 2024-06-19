@@ -18,23 +18,10 @@
 
 import Foundation
 
-/// A container for update events.
+extension UpdateEventEnvelope: ToAPIModelConvertible {
 
-public struct UpdateEventEnvelope: Equatable {
-
-    /// The id of the event.
-
-    public let id: UUID
-
-    /// The event payloads.
-
-    public let payloads: [UpdateEvent]
-
-    /// Whether this event is transient.
-    ///
-    /// If `true`, then the event is not stored on the backend and is
-    /// only sent through the push channel as it occurs.
-
-    public let isTransient: Bool
+    func toAPIModel() -> Self {
+        self
+    }
 
 }
