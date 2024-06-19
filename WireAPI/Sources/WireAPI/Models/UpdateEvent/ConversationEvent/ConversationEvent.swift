@@ -20,86 +20,66 @@ import Foundation
 
 /// An event concerning conversations.
 
-public enum ConversationEvent {
-
-    /// A new asset was added to a conversation.
-
-    case assetAdd
+public enum ConversationEvent: Equatable {
 
     /// A conversation's access settings were updated.
 
-    case accessUpdate
-
-    /// An unencrypted client message was added to a conversation.
-
-    case clientMessageAdd
+    case accessUpdate(ConversationAccessUpdateEvent)
 
     /// A conversation's guest link code was updated.
 
-    case codeUpdate
+    case codeUpdate(ConversationCodeUpdateEvent)
 
     /// A new conversation was created.
 
-    case create
+    case create(ConversationCreateEvent)
 
     /// An existing conversation was deleted.
 
-    case delete
-
-    /// A knock (aka ping) message was added to a conversation.
-
-    case knock
+    case delete(ConversationDeleteEvent)
 
     /// One or more users were added to a conversation.
 
-    case memberJoin
+    case memberJoin(ConversationMemberJoinEvent)
 
     /// One or more users were removed from a conversation.
 
-    case memberLeave
+    case memberLeave(ConversationMemberLeaveEvent)
 
     /// One or more users have updated metadata in a conversation.
 
-    case memberUpdate
-
-    /// An unencrypted message was added to a conversation.
-
-    case messageAdd
+    case memberUpdate(ConversationMemberUpdateEvent)
 
     /// A conversation's self-deleting-message timer was updated.
 
-    case messageTimerUpdate
+    case messageTimerUpdate(ConversationMessageTimerUpdateEvent)
 
     /// An MLS message was added to a conversation.
 
-    case mlsMessageAdd
+    case mlsMessageAdd(ConversationMLSMessageAddEvent)
 
     /// The self user has been added to an MLS group.
 
-    case mlsWelcome
-
-    /// An encrypted Proteus asset message was added to a conversation.
-
-    case proteusAssetAdd
+    case mlsWelcome(ConversationMLSWelcomeEvent)
 
     /// An encrypted Proteus message was added to a conversation.
 
-    case proteusMessageAdd
+    case proteusMessageAdd(ConversationProteusMessageAddEvent)
 
     /// A conversation's message protocol was updated.
 
-    case protocolUpdate
+    case protocolUpdate(ConversationProtocolUpdateEvent)
 
     /// A conversation's read receipt mode was updated.
 
-    case receiptModeUpdate
+    case receiptModeUpdate(ConversationReceiptModeUpdateEvent)
 
     /// A conversation's name was updated.
 
-    case rename
+    case rename(ConversationRenameEvent)
 
     /// One or more users are typing in a conversation.
 
-    case typing
+    case typing(ConversationTypingEvent)
 
 }

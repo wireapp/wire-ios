@@ -21,18 +21,39 @@ import Foundation
 extension Conversation {
 
     /// Represents a conversation's member.
-    public struct Member {
+
+    public struct Member: Equatable, Codable {
+
+        public let qualifiedID: QualifiedID?
+        public let id: UUID?
+        public let qualifiedTarget: QualifiedID?
+        public let target: UUID?
+        public let conversationRole: String?
+        public let service: Service?
         public let archived: Bool?
         public let archivedReference: Date?
-        public let conversationRole: String?
         public let hidden: Bool?
         public let hiddenReference: String?
-        public let id: UUID?
-        public let mutedReference: Date?
         public let mutedStatus: Int?
-        public let qualifiedID: QualifiedID?
-        public let qualifiedTarget: QualifiedID?
-        public let service: Service?
-        public let target: UUID?
+        public let mutedReference: Date?
+
+        enum CodingKeys: String, CodingKey {
+
+            case qualifiedID = "qualified_id"
+            case id
+            case qualifiedTarget = "qualified_target"
+            case target
+            case conversationRole = "conversation_role"
+            case service
+            case archived = "otr_archived"
+            case archivedReference = "otr_archived_ref"
+            case hidden = "otr_hidden"
+            case hiddenReference = "otr_hidden_ref"
+            case mutedStatus = "otr_muted_status"
+            case mutedReference = "otr_muted_ref"
+
+        }
+
     }
+
 }
