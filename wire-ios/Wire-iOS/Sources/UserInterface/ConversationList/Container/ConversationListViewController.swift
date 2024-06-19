@@ -70,15 +70,12 @@ final class ConversationListViewController: UIViewController, UITabBarController
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
 
-    private var startCallToken: Any?
-
     weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
 
     private let noConversationLabel = {
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
-        label.backgroundColor = .clear
         return label
     }()
 
@@ -170,6 +167,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupObservers()
 
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+
+        setupSearchController()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -320,6 +319,10 @@ final class ConversationListViewController: UIViewController, UITabBarController
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
             noConversationLabel.widthAnchor.constraint(equalToConstant: 240)
         ])
+    }
+
+    private func setupSearchController() {
+        navigationItem.searchController = .init(searchResultsController: .none)
     }
 
     // MARK: - No Contact Label Management
