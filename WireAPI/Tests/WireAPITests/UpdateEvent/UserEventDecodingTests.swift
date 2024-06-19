@@ -25,7 +25,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -278,7 +278,7 @@ final class UserEventDecodingTests: XCTestCase {
                     uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     domain: "example.com"
                 ),
-                lastUpdate: fractionalDate(from: "2024-06-05T08:34:21.766Z"),
+                lastUpdate: date(from: "2024-06-05T08:34:21Z"),
                 status: .accepted
             )
         )
