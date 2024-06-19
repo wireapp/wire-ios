@@ -18,25 +18,106 @@
 
 import Foundation
 
-/// Represents the conversation's meta data and configuration.
-public struct Conversation {
-    public var access: [String]?
-    public var accessRoles: [String]?
-    public var cipherSuite: UInt16?
-    public var creator: UUID?
-    public var epoch: UInt?
-    public var epochTimestamp: Date?
+/// Metadata for a conversation.
+
+public struct Conversation: Equatable, Codable {
+
+    /// The unqualified conversation id.
+
     public var id: UUID?
-    public var lastEvent: String?
-    public var lastEventTime: String?
-    public var legacyAccessRole: String?
-    public var members: Members?
-    public var messageProtocol: String?
-    public var messageTimer: TimeInterval?
-    public var mlsGroupID: String?
-    public var name: String?
-    public var qualifiedID: QualifiedID?
-    public var readReceiptMode: Int?
+
+    /// The qualified conversation id.
+
+    public var qualifiedID: ConversationID?
+
+    /// The owning team id.
+
     public var teamID: UUID?
-    public var type: Int?
+
+    /// The conversation's type.
+
+    public var type: ConversationType?
+
+    /// The conversation's message protocol.
+
+    public var messageProtocol: ConversationMessageProtocol?
+
+    /// The id of the associated mls group.
+
+    public var mlsGroupID: String?
+
+    /// The mls ciphersuite used for E2EE communcation.
+
+    public var cipherSuite: MLSCipherSuite?
+
+    /// The current mls group epoch.
+
+    public var epoch: UInt?
+
+    /// When the mls epoch changed.
+
+    public var epochTimestamp: Date?
+
+    /// The user id of the conversation's creator.
+
+    public var creator: UUID?
+
+    /// The conversation's participants.
+
+    public var members: Members?
+
+    /// The conversation's name.
+
+    public var name: String?
+
+    /// The number of seconds after which messages will self delete.
+
+    public var messageTimer: TimeInterval?
+
+    /// The conversation's read receipt setting.
+
+    public var readReceiptMode: Int?
+
+    /// How users can join a conversation.
+
+    public var access: Set<ConversationAccessMode>?
+
+    /// Which users are allowed to be participants.
+
+    public var accessRoles: Set<ConversationAccessRole>?
+
+    /// LEGACY: Which users are allowed to be participants.
+    ///
+    /// This can be removed when api v3 is the minimum supported version.
+
+    public var legacyAccessRole: ConversationAccessRoleLegacy?
+
+    public var lastEvent: String?
+
+    public var lastEventTime: Date?
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case qualifiedID = "qualified_id"
+        case teamID = "team"
+        case type
+        case messageProtocol = "protocol"
+        case mlsGroupID = "group_id"
+        case cipherSuite = "cipher_suite"
+        case epoch
+        case epochTimestamp = "epoch_timestamp"
+        case creator
+        case members
+        case name
+        case messageTimer = "message_timer"
+        case readReceiptMode = "receipt_mode"
+        case access
+        case accessRoles = "access_role_v2"
+        case legacyAccessRole = "access_role"
+        case lastEvent = "last_event"
+        case lastEventTime = "last_event_time"
+
+    }
+
 }

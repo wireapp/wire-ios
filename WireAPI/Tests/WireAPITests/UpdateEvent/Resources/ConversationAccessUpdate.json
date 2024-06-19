@@ -1,0 +1,16 @@
+{
+  "type": "conversation.access-update",
+  "qualified_conversation": {
+    "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
+    "domain": "example.com"
+  },
+  "qualified_from": {
+    "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+    "domain": "example.com"
+  },
+  "data": {
+    "access": ["private", "invite", "link", "code"],
+    "access_role": "non_activated",
+    "access_role_v2": ["team_member", "non_team_member", "guest", "service"]
+  }
+}

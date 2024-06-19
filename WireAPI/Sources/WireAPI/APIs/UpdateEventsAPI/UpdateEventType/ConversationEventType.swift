@@ -20,21 +20,16 @@ import Foundation
 
 enum ConversationEventType: String {
 
-    case assetAdd = "conversation.asset-add"
     case accessUpdate = "conversation.access-update"
-    case clientMessageAdd = "conversation.client-message-add"
     case codeUpdate = "conversation.code-update"
     case create = "conversation.create"
     case delete = "conversation.delete"
-    case knock = "conversation.knock"
     case memberJoin = "conversation.member-join"
     case memberLeave = "conversation.member-leave"
     case memberUpdate = "conversation.member-update"
-    case messageAdd = "conversation.message-add"
     case messageTimerUpdate = "conversation.message-timer-update"
     case mlsMessageAdd = "conversation.mls-message-add"
     case mlsWelcome = "conversation.mls-welcome"
-    case otrAssetAdd = "conversation.otr-asset-add"
     case otrMessageAdd = "conversation.otr-message-add"
     case protocolUpdate = "conversation.protocol-update"
     case receiptModeUpdate = "conversation.receipt-mode-update"

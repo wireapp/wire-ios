@@ -27,7 +27,7 @@ extension JSONEncoder {
         encoder.outputFormatting = .sortedKeys
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
-            let transportString = ISO8601DateFormatter.default.string(from: date)
+            let transportString = ISO8601DateFormatter.fractionalInternetDateTime.string(from: date)
             try container.encode(transportString)
         })
 

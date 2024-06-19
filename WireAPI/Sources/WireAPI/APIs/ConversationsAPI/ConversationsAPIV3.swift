@@ -85,45 +85,44 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
         case type
     }
 
-    var access: [String]?
-
-    var accessRoles: [String]?
+    var access: Set<ConversationAccessMode>?
+    var accessRoles: Set<ConversationAccessRole>?
     var creator: UUID?
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: String?
+    var lastEventTime: Date?
     var members: QualifiedConversationMembers?
-    var messageProtocol: String?
+    var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?
     var name: String?
     var qualifiedID: QualifiedID?
     var readReceiptMode: Int?
     var teamID: UUID?
-    var type: Int?
+    var type: ConversationType?
 
     func toAPIModel() -> Conversation {
         Conversation(
-            access: access,
-            accessRoles: accessRoles,
+            id: id,
+            qualifiedID: qualifiedID,
+            teamID: teamID,
+            type: type,
+            messageProtocol: messageProtocol,
+            mlsGroupID: mlsGroupID,
             cipherSuite: nil,
-            creator: creator,
             epoch: epoch,
             epochTimestamp: nil,
-            id: id,
-            lastEvent: lastEvent,
-            lastEventTime: lastEventTime,
-            legacyAccessRole: nil, // Removed: `var legacyAccessRole`
+            creator: creator,
             members: members.map { $0.toAPIModel() },
-            messageProtocol: messageProtocol,
-            messageTimer: messageTimer,
-            mlsGroupID: mlsGroupID,
             name: name,
-            qualifiedID: qualifiedID,
+            messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            teamID: teamID,
-            type: type
+            access: access,
+            accessRoles: accessRoles,
+            legacyAccessRole: nil, // Removed: `var legacyAccessRole`
+            lastEvent: lastEvent,
+            lastEventTime: lastEventTime
         )
     }
 }
