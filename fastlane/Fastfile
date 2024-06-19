@@ -80,7 +80,7 @@ platform :ios do
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Playground')
         build_and_upload_app(options)
-        `export TEMP='BUILD_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['PLAYGROUND_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Beta build"
@@ -93,7 +93,7 @@ platform :ios do
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         save_app_name('Testflight Beta')
         build_and_upload_app(options)
-        `export TEMP='BUILD_INSTALL_LINK=#{ENV['PLAYGROUND_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Public AppStore build"
