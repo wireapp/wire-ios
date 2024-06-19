@@ -329,7 +329,12 @@ extension ZMSLog {
     }
 
     static public var pathsForExistingLogs: [URL] {
-        var paths: [URL] = previousZipLogURLs
+        var paths: [URL] = []
+        previousZipLogURLs.forEach { url in
+            if FileManager.default.fileExists(atPath: url.path) {
+                paths.append(url)
+            }
+        }
         if let assertionFile = ZMLastAssertionFile(), FileManager.default.fileExists(atPath: assertionFile.path) {
             paths.append(assertionFile)
         }
