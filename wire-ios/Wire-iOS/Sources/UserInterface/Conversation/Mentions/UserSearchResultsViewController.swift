@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 protocol UserSearchResultsViewControllerDelegate: AnyObject {
     func didSelect(user: UserType)
