@@ -369,34 +369,6 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
-<<<<<<< HEAD
-        handleEventInContext("active-speakers-change") {
-            guard let data = data.data(using: .utf8) else {
-                zmLog.safePublic("Invalid active speakers data")
-                return
-            }
-
-            // Example of `data`
-            //  {
-            //      "audio_levels": [
-            //          {
-            //              "userid": "3f49da1d-0d52-4696-9ef3-0dd181383e8a",
-            //              "clientid": "24cc758f602fb1f4",
-            //              "audio_level": 100,
-            //              "audio_level_now": 100
-            //          }
-            //      ]
-            // }
-
-            do {
-                let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
-                if let call = self.callSnapshots[conversationId] {
-                    self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
-                    WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
-                }
-            } catch {
-                zmLog.safePublic("Cannot decode active speakers change JSON")
-=======
         // TODO [WPB-9604]: - refactor to avoid processing call data on the UI context 
         handleEventInContext("active-speakers-change") {
 
@@ -460,7 +432,6 @@ extension WireCallCenterV3 {
                 isSignificant = stoppedTalking || startedTalking
             } else {
                 isSignificant = newSpeaker.audioLevelNow > 0
->>>>>>> 9f15398b99 (fix: crash accessing callSnapshots WPB-9549 (#1540))
             }
         }
     }
