@@ -38,7 +38,7 @@ extension JSONDecoder {
             } else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
-                    debugDescription: "Expected date string to be ISO8601-formatted with or without  fractional seconds"
+                    debugDescription: "Expected date string to be ISO8601-formatted with or without fractional seconds"
                 )
             }
         }
