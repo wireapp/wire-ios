@@ -25,7 +25,7 @@ final class TimePointTests: XCTestCase {
     func testThatATimePointDoesNotWarnTooEarly() {
 
         // Given
-        let tp = ZMSTimePoint.init(interval: 1000)
+        let tp = TimePoint(interval: 1000)
 
         // Then
         XCTAssertFalse(tp.warnIfLongerThanInterval())
@@ -34,10 +34,10 @@ final class TimePointTests: XCTestCase {
     func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
 
         // Given
-        let tp = ZMSTimePoint.init(interval: 0.01)
+        let tp = TimePoint(interval: 0.01)
 
         // When
-        var waitExpectation = XCTestExpectation()
+        let waitExpectation = XCTestExpectation()
         waitExpectation.isInverted = true
         wait(for: [waitExpectation], timeout: 0.1)
 

@@ -233,7 +233,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
-                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
+                let tp = TimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
 
                 do {

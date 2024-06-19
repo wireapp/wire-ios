@@ -28,7 +28,7 @@ extension NSManagedObjectContext {
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return performAndWait {
 
-            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+            let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
@@ -43,7 +43,7 @@ extension NSManagedObjectContext {
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return await perform {
 
-            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+            let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 self.dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
@@ -58,7 +58,7 @@ extension NSManagedObjectContext {
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return try performAndWait {
 
-            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+            let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
@@ -75,7 +75,7 @@ extension NSManagedObjectContext {
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return try await perform {
 
-            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+            let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 self.dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()

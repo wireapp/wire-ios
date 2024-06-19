@@ -59,7 +59,7 @@ static NSTimeInterval const PerformWarningTimeout = 10;
 - (void)performGroupedBlock:(dispatch_block_t)block;
 {
     NSArray *groups = [self.dispatchGroupContext enterAllExcept:nil];
-    ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:PerformWarningTimeout];
+    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:PerformWarningTimeout];
     [self performBlock:^{
         [tp resetTime];
         block();
@@ -71,7 +71,7 @@ static NSTimeInterval const PerformWarningTimeout = 10;
 - (void)performGroupedBlockAndWait:(dispatch_block_t)block;
 {
     NSArray *groups = [self.dispatchGroupContext enterAllExcept:nil];
-    ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:PerformWarningTimeout];
+    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:PerformWarningTimeout];
     [self performBlockAndWait:^{
         [tp resetTime];
         block();
