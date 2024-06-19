@@ -67,7 +67,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let id: UserID
     let name: String
     let handle: String?
-    let teamID: UUID
+    let teamID: UUID?
     let accentID: Int
     let assets: [UserAsset]
     let deleted: Bool?
