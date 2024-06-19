@@ -176,28 +176,6 @@ final class ConversationListViewController: UIViewController {
 
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
-
-        DispatchQueue.main.async { [self] in
-            let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
-            let accountImageView = AccountImageView(accountImage: accountImage, accountType: .user, availability: .available)
-            accountImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappp)))
-            let bbi = UIBarButtonItem(customView: accountImageView)
-            navigationItem.rightBarButtonItems = [bbi]
-
-            let v = AccountImageView(accountImage: accountImage, accountType: .user, availability: .busy)
-            v.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(v)
-            NSLayoutConstraint.activate([
-                v.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                v.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-            ])
-        }
-
-    }
-
-    @objc(tappp)
-    private func tappp() {
-        print("tap")
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -393,15 +371,5 @@ private extension NSAttributedString {
 
         let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
         return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
-    }
-}
-
-extension UIImage {
-
-    fileprivate static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-        }
     }
 }
