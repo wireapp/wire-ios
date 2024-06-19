@@ -1093,7 +1093,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @end
 
 
-
 @implementation MockTransportSession (IsTyping)
 
 - (void)sendIsTypingEventForConversation:(MockConversation *)conversation user:(MockUser *)user started:(BOOL)started;
