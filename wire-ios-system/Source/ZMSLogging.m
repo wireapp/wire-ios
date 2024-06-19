@@ -19,7 +19,7 @@
 #import "ZMSLogging.h"
 #import "WireSystem/WireSystem-swift.h"
 
-void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel_t logLevel, NSString *format, ...)
+void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel logLevel, NSString *format, ...)
 {
     va_list args;
     va_start(args, format);

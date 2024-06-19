@@ -92,7 +92,7 @@
 {
     self.ignoreLogErrors = NO;
     ZM_WEAK(self);
-    self.logHookToken = [ZMSLog addEntryHookWithLogHook:^(ZMLogLevel_t level, NSString * _Nullable tag, ZMSLogEntry * _Nonnull entry, ZM_UNUSED BOOL isSafe ) {
+    self.logHookToken = [ZMSLog addEntryHookWithLogHook:^(ZMLogLevel level, NSString * _Nullable tag, ZMSLogEntry * _Nonnull entry, ZM_UNUSED BOOL isSafe ) {
         ZM_STRONG(self);
         if (!self.ignoreLogErrors && level == ZMLogLevelError) {
             XCTFail(@"Unexpected log error: [%@] %@", tag, entry.text);

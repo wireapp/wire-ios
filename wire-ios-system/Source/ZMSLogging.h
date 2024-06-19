@@ -20,7 +20,7 @@
 #import <WireSystem/ZMSAsserts.h>
 
 /// Log levels
-typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel_t) {
+typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel) {
     ZMLogLevelPublic = 0,
     ZMLogLevelError,
     ZMLogLevelWarn,
@@ -71,4 +71,4 @@ typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel_t) {
 /// Logs an assert
 FOUNDATION_EXTERN void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
 /// Logs a message
-FOUNDATION_EXTERN void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel_t logLevel, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);
+FOUNDATION_EXTERN void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel logLevel, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);
