@@ -275,6 +275,10 @@ extension EventDecoder {
 
         }
 
+        if let lastEventID = decryptedEvents.last(where: { !$0.isTransient })?.uuid {
+            lastEventIDRepository.storeLastEventID(lastEventID)
+        }
+
         return decryptedEvents
     }
 
