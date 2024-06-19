@@ -248,30 +248,15 @@ final class ConversationListContentController: UICollectionViewController, Popov
     }
 
     // MARK: context menu
-    override func collectionView(_ collectionView: UICollectionView,
-                                 willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                 animator: UIContextMenuInteractionCommitAnimating) {
-        guard let destinationViewController = animator.previewViewController as? ConversationPreviewViewController else { return }
 
-        animator.addAnimations { [weak self] in
-            self?.openConversation(conversationListItem: destinationViewController.conversation)
-        }
-    }
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
 
-    override func collectionView(_ collectionView: UICollectionView,
-                                 contextMenuConfigurationForItemAt indexPath: IndexPath,
-                                 point: CGPoint) -> UIContextMenuConfiguration? {
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
                 return nil
-        }
-
-        let previewProvider: UIContextMenuContentPreviewProvider = {
-            return ConversationPreviewViewController(
-                conversation: conversation,
-                presentingViewController: self,
-                sourceView: collectionView.cellForItem(at: indexPath),
-                userSession: self.userSession
-            )
         }
 
         let actionProvider: UIContextMenuActionProvider = { _ in
@@ -421,35 +406,6 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         setData: (C?) -> Void
     ) {
         collectionView.reload(using: stagedChangeset, interrupt: interrupt, setData: setData)
-    }
-}
-
-// MARK: iOS 12- peek pop
-
-extension ConversationListContentController: UIViewControllerPreviewingDelegate {
-
-    @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        guard let previewViewController = viewControllerToCommit as? ConversationPreviewViewController else { return }
-
-        openConversation(conversationListItem: previewViewController.conversation)
-    }
-
-    @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        guard let indexPath = collectionView.indexPathForItem(at: location),
-            let layoutAttributes = collectionView.layoutAttributesForItem(at: indexPath)
-            else {
-                return nil
-        }
-
-        guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
-            return nil
-        }
-
-        previewingContext.sourceRect = layoutAttributes.frame
-
-        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath), userSession: userSession)
     }
 }
 
