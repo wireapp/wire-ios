@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
@@ -212,7 +213,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // required to add be able to add images
         let cacheLocation = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
+            FileManager.default.randomCacheURL
         )
 
         await syncContext.perform {

@@ -43,7 +43,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         super.setUp()
 
         accountId = .create()
-        cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent(UUID().uuidString)
+        cacheURL = FileManager.default.randomCacheURL
         sharedContainerURL = cacheURL.appendingPathComponent(UUID().uuidString)
         cleanUp()
         createDatabase()

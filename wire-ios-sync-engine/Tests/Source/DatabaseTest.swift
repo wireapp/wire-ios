@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTesting
 
 class DatabaseTest: ZMTBaseTest {
 
@@ -46,7 +47,7 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent(UUID().uuidString)
+        return FileManager.default.randomCacheURL!
 
     }
 

@@ -17,6 +17,7 @@
 // 
 
 import XCTest
+import WireTesting
 import WireDataModelSupport
 @testable import WireDataModel
 
@@ -46,7 +47,7 @@ class FileAssetCacheTests: XCTestCase {
         }
 
         location = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
+            FileManager.default.randomCacheURL
         )
 
         try FileManager.default.removeItemIfExists(at: location!)
