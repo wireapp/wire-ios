@@ -51,6 +51,17 @@ public final class AccountImageView: UIView {
 
     // MARK: - Life Cycle
 
+    public init(
+        accountImage: UIImage,
+        accountType: AccountType,
+        availability: Availability?
+    ) {
+        self.accountImage = accountImage
+        self.accountType = accountType
+        self.availability = availability
+        super.init(frame: .zero)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupSubviews()
@@ -84,8 +95,10 @@ public final class AccountImageView: UIView {
         accountImageViewWrapper.clipsToBounds = true
         addSubview(accountImageViewWrapper)
         NSLayoutConstraint.activate([
-            accountImageViewWrapper.centerXAnchor.constraint(equalTo: centerXAnchor),
-            accountImageViewWrapper.centerYAnchor.constraint(equalTo: centerYAnchor)
+            accountImageViewWrapper.leadingAnchor.constraint(equalTo: leadingAnchor),
+            accountImageViewWrapper.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor),
+            bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor)
         ])
 
         // the image view which displays the account image

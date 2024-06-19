@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ConversationListState {
@@ -175,6 +176,29 @@ final class ConversationListViewController: UIViewController {
 
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
+
+        let accountImage = UIImage.from(solidColor: UIColor(red: 0, green: 0.73, blue: 0.87, alpha: 1))
+        let view = AccountImageView(accountImage: accountImage, accountType: .user, availability: .available)
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappp)))
+        let bbi = UIBarButtonItem(customView: view)
+        let button = UIButton(type: .custom)
+        button.setTitle("ok", for: .normal)
+        let tmp = UIBarButtonItem(customView: button)
+        navigationItem.rightBarButtonItems = [bbi, tmp]
+
+        let v = AccountImageView(accountImage: accountImage, accountType: .user, availability: .available)
+        v.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(v)
+        NSLayoutConstraint.activate([
+            v.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            v.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+
+    }
+
+    @objc(tappp)
+    private func tappp() {
+        print("ok")
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -370,5 +394,15 @@ private extension NSAttributedString {
 
         let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
         return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
+    }
+}
+
+extension UIImage {
+
+    fileprivate static func from(solidColor color: UIColor) -> UIImage {
+        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
+            color.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
     }
 }
