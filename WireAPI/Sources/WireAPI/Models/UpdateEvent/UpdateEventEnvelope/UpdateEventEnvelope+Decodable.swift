@@ -18,18 +18,21 @@
 
 import Foundation
 
-struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+extension UpdateEventEnvelope: Decodable {
 
-    var id: UUID
-    var payload: [UpdateEvent]?
-    var transient: Bool?
+    enum CodingKeys: String, CodingKey {
 
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            payloads: payload ?? [],
-            isTransient: transient ?? false
-        )
+        case id
+        case events = "payload"
+        case isTransient = "transient"
+
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(UUID.self, forKey: .id)
+        self.events = try container.decodeIfPresent([UpdateEvent].self, forKey: .events) ?? []
+        self.isTransient = try container.decodeIfPresent(Bool.self, forKey: .isTransient) ?? false
     }
 
 }

@@ -16,25 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-/// A container for update events.
+@testable import WireSystem
 
-public struct UpdateEventEnvelope: Equatable {
+final class TimePointTests: XCTestCase {
 
-    /// The id of the event.
+    func testThatATimePointDoesNotWarnTooEarly() {
 
-    public let id: UUID
+        // Given
+        let tp = ZMSTimePoint.init(interval: 1000)
 
-    /// The event payloads.
+        // Then
+        XCTAssertFalse(tp.warnIfLongerThanInterval())
+    }
 
-    public let payloads: [UpdateEvent]
+    func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
 
-    /// Whether this event is transient.
-    ///
-    /// If `true`, then the event is not stored on the backend and is
-    /// only sent through the push channel as it occurs.
+        // Given
+        let tp = ZMSTimePoint.init(interval: 0.01)
 
-    public let isTransient: Bool
+        // When
+        var waitExpectation = XCTestExpectation()
+        waitExpectation.isInverted = true
+        wait(for: [waitExpectation], timeout: 0.1)
 
+        // Then
+        XCTAssertTrue(tp.warnIfLongerThanInterval())
+    }
 }
