@@ -20,7 +20,7 @@ import XCTest
 
 @testable import WireSystem
 
-final class GroupQueueTests: XCTestCase {
+final class DispatchGroupTests: XCTestCase {
 
     func testThatItNotifiesWhenEnteringAndLeavingAGroupOnce() {
 
