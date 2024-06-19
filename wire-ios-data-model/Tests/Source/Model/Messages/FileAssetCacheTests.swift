@@ -16,6 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
+=======
+import XCTest
+import WireTesting
+import WireDataModelSupport
+>>>>>>> 3c8ad65bec (fix: DDLOG errors reading logs while running tests - WPB-9714 (#1587))
 @testable import WireDataModel
 import WireDataModelSupport
 import XCTest
@@ -46,7 +52,7 @@ class FileAssetCacheTests: XCTestCase {
         }
 
         location = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         try FileManager.default.removeItemIfExists(at: location!)

@@ -28,7 +28,6 @@ final class PerformanceDebugger {
     /// The shared debugger.
     static let shared = PerformanceDebugger()
 
-    private let log = ZMSLog(tag: "Performance")
     private var displayLink: CADisplayLink!
 
     init() {
@@ -54,14 +53,12 @@ final class PerformanceDebugger {
         let elapsedTime = displayLink.duration * 100
 
         if elapsedTime > 16.7 {
-            log.warn("Frame dropped after \(elapsedTime)s")
             WireLogger.performance.warn("Frame dropped after \(elapsedTime)s")
         }
     }
 
     @objc
     private func handleMemoryWarning() {
-        log.warn("Application did receive memory warning.")
         WireLogger.performance.warn("Application did receive memory warning.")
     }
 
