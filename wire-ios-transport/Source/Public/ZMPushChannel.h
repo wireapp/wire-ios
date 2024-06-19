@@ -21,7 +21,7 @@
 
 @protocol ZMPushChannelConsumer <NSObject>
 
-- (void)pushChannelDidReceiveTransportData:(id<ZMTransportData> _Nonnull)data;
+- (void)pushChannelDidReceiveData:(NSData* _Nonnull)data;
 - (void)pushChannelDidClose;
 - (void)pushChannelDidOpen;
 

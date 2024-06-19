@@ -78,7 +78,7 @@ final class ClientListViewController: UIViewController,
 
     private var selfClient: UserClient?
     private let detailedView: Bool
-    private var credentials: ZMEmailCredentials?
+    private var credentials: UserEmailCredentials?
     private var clientsObserverToken: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
@@ -105,7 +105,7 @@ final class ClientListViewController: UIViewController,
         clientsList: [UserClient]?,
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
         userSession: UserSession? = ZMUserSession.shared(),
-        credentials: ZMEmailCredentials? = .none,
+        credentials: UserEmailCredentials? = .none,
         contextProvider: ContextProvider? = ZMUserSession.shared(),
         detailedView: Bool = false,
         showTemporary: Bool = true,
@@ -254,9 +254,7 @@ final class ClientListViewController: UIViewController,
             mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 
@@ -314,7 +312,7 @@ final class ClientListViewController: UIViewController,
 
     func deleteUserClient(
         _ userClient: UserClient,
-        credentials: ZMEmailCredentials?
+        credentials: UserEmailCredentials?
     ) {
 
         removalObserver = ClientRemovalObserver(
