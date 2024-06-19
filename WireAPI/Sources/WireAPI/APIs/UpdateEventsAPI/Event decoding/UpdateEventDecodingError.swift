@@ -16,24 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <WireTransport/ZMTransportData.h>
+import Foundation
 
-@protocol ZMPushChannelConsumer <NSObject>
+/// An error when decoding `UpdateEvent`.
 
-- (void)pushChannelDidReceiveData:(NSData* _Nonnull)data;
-- (void)pushChannelDidClose;
-- (void)pushChannelDidOpen;
+public struct UpdateEventDecodingError: Error, CustomStringConvertible {
 
-@end
+    /// The type of the event being decoding.
 
-@protocol ZMPushChannel <NSObject>
+    public let eventType: String
 
-/// When set not to nil an attempt open the push channel will be made if necessary
-@property (nonatomic, nullable) NSString *clientID;
+    /// The error that occurred when decoding.
 
-/// When set to YES the push channel will try to remain open and if set to NO it will
-/// close immediately and remain closed.
-@property (nonatomic) BOOL keepOpen;
+    public let decodingError: Error
 
-@end
+    /// A textual representation of the error.
+
+    public var description: String {
+        "failed to decode event '\(eventType)': \(decodingError)"
+    }
+
+}

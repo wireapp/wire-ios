@@ -64,6 +64,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
                          callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
+                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
 {
     Check(uiMOC != nil);
     Check(syncMOC != nil);
@@ -80,6 +81,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.syncMOC = syncMOC;
         self.shouldStopEnqueueing = NO;
         self.operationStatus.delegate = self;
+        self.isDeveloperModeEnabled = isDeveloperModeEnabled;
 
         [ZMRequestAvailableNotification addObserver:self];
         

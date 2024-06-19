@@ -161,13 +161,12 @@ final class NativePushChannel: NSObject, PushChannelType {
                 Logging.pushChannel.debug("Failed to receive message \(error)")
                 self?.onClose()
             case .success(let message):
-                guard
-                    case .data(let data) = message,
-                    let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-                else { break }
+                guard case .data(let data) = message else {
+                    break
+                }
 
                 self?.consumerQueue?.performGroupedBlock({
-                    self?.consumer?.pushChannelDidReceive(transportData)
+                    self?.consumer?.pushChannelDidReceive(data)
                 })
             }
 

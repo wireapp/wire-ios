@@ -20,7 +20,7 @@ import Foundation
 
 struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
 
-    let notifications: [UpdateEventEnvelopeV0]
+    let notifications: [UpdateEventEnvelope]
     let time: Date?
     let hasMore: Bool?
 

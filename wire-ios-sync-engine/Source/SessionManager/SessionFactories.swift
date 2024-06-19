@@ -60,9 +60,9 @@ open class AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
-
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -101,7 +101,8 @@ open class AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         )
         userSession.startRequestLoopTracker()
 

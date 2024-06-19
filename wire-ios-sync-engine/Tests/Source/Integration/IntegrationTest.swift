@@ -58,7 +58,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
         let mockContextStorage = MockLAContextStorable()
         mockContextStorage.clear_MockMethod = { }
@@ -93,7 +94,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         )
 
         return userSession

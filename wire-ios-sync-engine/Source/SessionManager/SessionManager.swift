@@ -1070,7 +1070,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }
