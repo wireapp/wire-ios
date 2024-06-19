@@ -323,7 +323,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 return false
             } else if clientUpdateStatus?.currentPhase == .waitingForPrekeys {
                 clientUpdateStatus?.willGeneratePrekeys()
-                let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
+                let groups = managedObjectContext?.enterAllGroupsExceptSecondary() ?? []
                 Task {
                     do {
                         let prekeys = try await prekeyGenerator.generatePrekeys()
