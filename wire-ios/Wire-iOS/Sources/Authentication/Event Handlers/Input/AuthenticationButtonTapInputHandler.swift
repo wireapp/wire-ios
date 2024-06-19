@@ -38,8 +38,9 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
             return [.showLoadingView, .startE2EIEnrollment]
         case .noHistory:
             return [.showLoadingView, .configureNotifications, .completeBackupStep]
+            // TODO Katerina remove credentials from clientManagement
         case .clientManagement(let clients, let credentials):
-            let nextStep = AuthenticationFlowStep.deleteClient(clients: clients, credentials: credentials)
+            let nextStep = AuthenticationFlowStep.deleteClient(clients: clients)
             return [AuthenticationCoordinatorAction.transition(nextStep, mode: .normal)]
         case .pendingEmailLinkVerification:
             return [.repeatAction]

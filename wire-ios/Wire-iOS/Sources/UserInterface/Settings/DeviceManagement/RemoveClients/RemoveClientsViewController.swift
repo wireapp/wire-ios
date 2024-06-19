@@ -59,13 +59,10 @@ final class RemoveClientsViewController: UIViewController,
 
     // MARK: - Life cycle
 
-    required init(
-        clientsList: [UserClient],
-        credentials: ZMEmailCredentials? = .none
-    ) {
+    required init(clientsList: [UserClient]) {
         viewModel = RemoveClientsViewController.ViewModel(
-            clientsList: clientsList,
-            credentials: credentials)
+            clientsList: clientsList)
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -125,15 +122,36 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func removeUserClient(_ userClient: UserClient) async {
-        isLoadingViewVisible = true
+        let requestPasswordController = RequestPasswordController(
+            context: .removeDevice,
+            callback: confirmAlertCallback(userClient: userClient))
+        present(requestPasswordController.alertController, animated: true)
+    }
+
+    // MARK: - Helpers
+
+    private func confirmAlertCallback(userClient: UserClient) -> RequestPasswordController.Callback {
+        return { [weak self] password in
+            guard
+                let password = password,
+                !password.isEmpty else {
+                return
+            }
+            self?.isLoadingViewVisible = true
+            Task {
+                await self?.removeUserClient(userClient, password: password)
+            }
+        }
+    }
+
+    private func removeUserClient(_ userClient: UserClient, password: String) async {
         do {
-            try await viewModel.removeUserClient(userClient)
-            isLoadingViewVisible = false
+            try await viewModel.removeUserClient(userClient, password: password)
             delegate?.finishedDeleting(self)
         } catch {
-            isLoadingViewVisible = false
             delegate?.failedToDeleteClients(error)
         }
+        isLoadingViewVisible = false
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate

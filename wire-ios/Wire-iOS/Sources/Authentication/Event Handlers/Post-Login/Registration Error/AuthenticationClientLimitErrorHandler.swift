@@ -56,3 +56,26 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
     }
 
 }
+
+final class AuthenticationClientLimitErrorHandler1: AuthenticationEventHandler {
+
+    weak var statusProvider: AuthenticationStatusProvider?
+
+    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+        let (error, _) = context
+
+        // Only handle canNotRegisterMoreClients errors
+        guard
+            let error = error,
+            error.userSessionErrorCode == .canNotRegisterMoreClients,
+            let nextStep = AuthenticationFlowStep.makeClientManagementStep(
+                from: error,
+                credentials: nil,
+                statusProvider: self.statusProvider)
+        else {
+            return nil
+        }
+        return [.hideLoadingView, .transition(nextStep, mode: .reset)]
+    }
+
+}

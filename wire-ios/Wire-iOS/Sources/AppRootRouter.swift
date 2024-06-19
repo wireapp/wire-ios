@@ -208,7 +208,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)
-        case .migrating:
+        case .migrating: //
             showLaunchScreen(isLoading: true, completion: completionBlock)
         case .unauthenticated(error: let error):
             screenCurtain.userSession = nil
@@ -321,6 +321,7 @@ extension AppRootRouter {
             self.authenticationCoordinator == nil ||
                 error?.userSessionErrorCode == .addAccountRequested ||
                 error?.userSessionErrorCode == .accountDeleted ||
+                error?.userSessionErrorCode == .canNotRegisterMoreClients ||
                 error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
             let sessionManager = SessionManager.shared
         else {
