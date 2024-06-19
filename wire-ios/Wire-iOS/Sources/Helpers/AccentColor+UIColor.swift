@@ -23,17 +23,17 @@ extension AccentColor {
     var uiColor: UIColor {
         switch self {
         case .blue:
-            UIColor(light: .blue500Light, dark: .blue500Dark)
+            SemanticColors.Accent.blue
         case .green:
-            UIColor(light: .green500Light, dark: .green500Dark)
+            SemanticColors.Accent.green
         case .red:
-            UIColor(light: .red500Light, dark: .red500Dark)
+            SemanticColors.Accent.red
         case .amber:
-            UIColor(light: .amber500Light, dark: .amber500Dark)
+            SemanticColors.Accent.amber
         case .turquoise:
-            UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+            SemanticColors.Accent.turquoise
         case .purple:
-            UIColor(light: .purple500Light, dark: .purple500Dark)
+            SemanticColors.Accent.purple
         }
     }
 }

@@ -19,13 +19,27 @@
 import Foundation
 import WireDataModel
 
-protocol ConversationUserClientDetailsDebugActions {
-    func deleteDevice() async
-    func corruptSession() async
-    func duplicateClient()
-}
+/// Provides debug actions for UserClientDetails
+struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
 
-extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugActions {
+    let userClient: UserClient
+    let logger = WireLogger.system
+
+    init?(context: DeveloperToolsContext) {
+        guard let userClient = context.currentUserClient else {
+            return nil
+        }
+        self.userClient = userClient
+    }
+
+    func getActionItems() -> [DeveloperToolsViewModel.Item] {
+        typealias ButtonItem = DeveloperToolsViewModel.ButtonItem
+        return [
+            .button(ButtonItem(title: "Delete Device", action: { Task { await deleteDevice() } })),
+            .button(ButtonItem(title: "Duplicate Session", action: { Task { await duplicateClient() } })),
+            .button(ButtonItem(title: "Corrupt Session", action: { Task { await corruptSession() } }))
+        ]
+    }
 
     @MainActor
     func deleteDevice() async {
