@@ -18,6 +18,7 @@
 
 import Down
 import UIKit
+import WireDesign
 
 final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
 
