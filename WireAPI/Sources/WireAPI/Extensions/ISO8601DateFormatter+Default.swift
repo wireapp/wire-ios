@@ -28,7 +28,6 @@ extension ISO8601DateFormatter {
         return dateFormatter
     }()
 
-
     /// ISO8601 date formatter for internet date time with fractional seconds.
 
     static let fractionalInternetDateTime = {
