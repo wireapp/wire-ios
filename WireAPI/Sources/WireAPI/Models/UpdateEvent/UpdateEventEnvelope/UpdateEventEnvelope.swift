@@ -16,24 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <WireTransport/ZMTransportData.h>
+import Foundation
 
-@protocol ZMPushChannelConsumer <NSObject>
+/// A container for update events.
 
-- (void)pushChannelDidReceiveData:(NSData* _Nonnull)data;
-- (void)pushChannelDidClose;
-- (void)pushChannelDidOpen;
+public struct UpdateEventEnvelope: Equatable {
 
-@end
+    /// The id of the event.
 
-@protocol ZMPushChannel <NSObject>
+    public let id: UUID
 
-/// When set not to nil an attempt open the push channel will be made if necessary
-@property (nonatomic, nullable) NSString *clientID;
+    /// The event payloads.
 
-/// When set to YES the push channel will try to remain open and if set to NO it will
-/// close immediately and remain closed.
-@property (nonatomic) BOOL keepOpen;
+    public let events: [UpdateEvent]
 
-@end
+    /// Whether this event is transient.
+    ///
+    /// If `true`, then the event is not stored on the backend and is
+    /// only sent through the push channel as it occurs.
+
+    public let isTransient: Bool
+
+}
