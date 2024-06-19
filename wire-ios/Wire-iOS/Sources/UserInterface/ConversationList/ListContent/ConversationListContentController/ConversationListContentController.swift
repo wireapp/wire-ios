@@ -289,7 +289,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         }
 
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
-                                          previewProvider: previewProvider,
+                                          previewProvider: .none,
                                           actionProvider: actionProvider)
     }
 
@@ -425,6 +425,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 }
 
 // MARK: iOS 12- peek pop
+
 extension ConversationListContentController: UIViewControllerPreviewingDelegate {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
