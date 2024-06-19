@@ -72,7 +72,7 @@ struct ConversationCreateEventDecoder {
     }
 
     private struct Payload: Decodable {
-        
+
         let id: UUID?
         let qualifiedID: ConversationID?
         let teamID: UUID?
