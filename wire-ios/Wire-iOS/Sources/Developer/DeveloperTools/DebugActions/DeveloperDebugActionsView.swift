@@ -24,7 +24,7 @@ struct DeveloperDebugActionsView: View {
 
     var body: some View {
         List(viewModel.buttons) { button in
-            SwiftUI.Button(action: button.action) {
+            Button(action: button.action) {
                 Text(button.title)
             }
         }

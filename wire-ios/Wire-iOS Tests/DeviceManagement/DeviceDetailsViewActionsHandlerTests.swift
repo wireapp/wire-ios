@@ -27,7 +27,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var coreDataFixture: CoreDataFixture!
     var client: UserClient!
     var mockSession: UserSessionMock!
-    var emailCredentials: ZMEmailCredentials!
+    var emailCredentials: UserEmailCredentials!
 
     var saveFileManager: MockSaveFileManager!
     var mockGetIsE2eIdentityEnabled: MockGetIsE2EIdentityEnabledUseCaseProtocol!
@@ -41,7 +41,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         coreDataFixture = CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
-        emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         saveFileManager = MockSaveFileManager()
         mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()

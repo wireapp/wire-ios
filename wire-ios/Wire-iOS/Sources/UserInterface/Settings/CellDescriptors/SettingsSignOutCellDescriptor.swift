@@ -45,7 +45,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             topMostViewController?.isLoadingViewVisible = true
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: ZMEmailCredentials(email: "", password: password ?? ""), { result in
+            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { result in
                 topMostViewController?.isLoadingViewVisible = false
                 TrackingManager.shared.disableCrashSharing = false
                 TrackingManager.shared.disableAnalyticsSharing = false
