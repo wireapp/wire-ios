@@ -16,14 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireUI/Sources/WireReusableUIComponents/AccountImageView/Availability.swift
 public enum Availability: CaseIterable {
     case available, busy, away
-========
-import XCTest
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
->>>>>>>> chore/add-wire-user-interface-package-WPB-9385:WireUI/Tests/WireReusableUIComponentsTests/PlaceholderTests.swift
 }
