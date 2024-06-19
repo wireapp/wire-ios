@@ -82,7 +82,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         // when
@@ -103,7 +103,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ]
 
         let expectedIDs: [UUID] = [
@@ -149,7 +149,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
         // when
@@ -170,7 +170,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: 200, jsonResource: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(code: 200, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ]
 
         let expectedIDs: [QualifiedID] = [
@@ -237,7 +237,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV0AndSuccessResponse200"
+                name: "testGetConversations_givenV0AndSuccessResponse200"
             )
         ]
 
@@ -299,7 +299,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV2AndSuccessResponse200"
+                name: "testGetConversations_givenV2AndSuccessResponse200"
             )
         ]
 
@@ -361,7 +361,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV3AndSuccessResponse200"
+                name: "testGetConversations_givenV3AndSuccessResponse200"
             )
         ]
 
@@ -375,7 +375,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(list.failed.count, 1)
 
         let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.accessRoles, ["team_member"])
+        XCTAssertEqual(conversation.accessRoles, [.teamMember])
         XCTAssertNil(conversation.legacyAccessRole)
     }
 
@@ -427,7 +427,7 @@ final class ConversationsAPITests: XCTestCase {
         httpClient.httpResponses = [
             try HTTPResponse.mockJSONResource(
                 code: 200,
-                jsonResource: "testGetConversations_givenV5AndSuccessResponse200"
+                name: "testGetConversations_givenV5AndSuccessResponse200"
             )
         ]
 
@@ -442,7 +442,7 @@ final class ConversationsAPITests: XCTestCase {
 
         let conversation = try XCTUnwrap(list.found.first)
         XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
-        XCTAssertEqual(conversation.cipherSuite, 0)
+        XCTAssertEqual(conversation.cipherSuite, .MLS_128_DHKEMP256_AES128GCM_SHA256_P256)
     }
 
     func testGetConversations_givenV5AndSuccessResponse503() async throws {

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurable {
     private let imageContainer = UIView()

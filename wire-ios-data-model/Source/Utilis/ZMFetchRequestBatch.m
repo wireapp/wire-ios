@@ -125,7 +125,7 @@
     NSFetchRequest *messagesRequest = [ZMMessage sortedFetchRequestWithPredicate:messagePredicate];
     messagesRequest.returnsObjectsAsFaults = NO;
     
-    return [moc executeFetchRequestOrAssert:messagesRequest];
+    return (NSArray <ZMMessage *> *) [moc executeFetchRequestOrAssert:messagesRequest];
 }
 
 - (NSArray <ZMConversation *>*)fetchConversationsInManagedObjectContext:(NSManagedObjectContext *)moc
@@ -134,7 +134,7 @@
     NSPredicate *conversationPredicate = [self predicateForKey:ZMConversationRemoteIdentifierDataKey matchingValues:identifierData];
     NSFetchRequest *conversationRequest = [ZMConversation sortedFetchRequestWithPredicate:conversationPredicate];
     conversationRequest.returnsObjectsAsFaults = NO;
-    return [moc executeFetchRequestOrAssert:conversationRequest];
+    return (NSArray <ZMConversation *> *) [moc executeFetchRequestOrAssert:conversationRequest];
 }
 
 - (NSPredicate *)predicateForKey:(NSString *)key matchingValues:(NSSet *)values
@@ -143,7 +143,6 @@
 }
 
 @end
-
 
 
 @implementation NSManagedObjectContext (ZMFetchRequestBatch)

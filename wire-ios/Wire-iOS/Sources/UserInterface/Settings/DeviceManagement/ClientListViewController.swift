@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -254,9 +255,7 @@ final class ClientListViewController: UIViewController,
             mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 

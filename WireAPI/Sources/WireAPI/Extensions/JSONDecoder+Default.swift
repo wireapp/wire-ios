@@ -29,14 +29,18 @@ extension JSONDecoder {
             let container = try decoder.singleValueContainer()
             let rawDate = try container.decode(String.self)
 
-            guard let date = ISO8601DateFormatter.default.date(from: rawDate) else {
+            // Date strings can be either with fractional seconds or without, even in the
+            // same payload. To account for this, we try to decode both formats.
+            if let date = ISO8601DateFormatter.fractionalInternetDateTime.date(from: rawDate) {
+                return date
+            } else if let date = ISO8601DateFormatter.internetDateTime.date(from: rawDate) {
+                return date
+            } else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
-                    debugDescription: "Expected date string to be ISO8601-formatted with fractional seconds"
+                    debugDescription: "Expected date string to be ISO8601-formatted with or without fractional seconds"
                 )
             }
-
-            return date
         }
 
         return decoder
