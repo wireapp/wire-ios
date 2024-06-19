@@ -177,28 +177,27 @@ final class ConversationListViewController: UIViewController {
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
 
-        let accountImage = UIImage.from(solidColor: UIColor(red: 0, green: 0.73, blue: 0.87, alpha: 1))
-        let view = AccountImageView(accountImage: accountImage, accountType: .user, availability: .available)
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappp)))
-        let bbi = UIBarButtonItem(customView: view)
-        let button = UIButton(type: .custom)
-        button.setTitle("ok", for: .normal)
-        let tmp = UIBarButtonItem(customView: button)
-        navigationItem.rightBarButtonItems = [bbi, tmp]
+        DispatchQueue.main.async { [self] in
+            let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
+            let accountImageView = AccountImageView(accountImage: accountImage, accountType: .user, availability: .available)
+            accountImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappp)))
+            let bbi = UIBarButtonItem(customView: accountImageView)
+            navigationItem.rightBarButtonItems = [bbi]
 
-        let v = AccountImageView(accountImage: accountImage, accountType: .user, availability: .available)
-        v.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(v)
-        NSLayoutConstraint.activate([
-            v.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            v.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+            let v = AccountImageView(accountImage: accountImage, accountType: .user, availability: .busy)
+            v.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(v)
+            NSLayoutConstraint.activate([
+                v.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                v.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            ])
+        }
 
     }
 
     @objc(tappp)
     private func tappp() {
-        print("ok")
+        print("tap")
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

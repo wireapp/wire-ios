@@ -56,7 +56,7 @@ final class AvailabilityIndicatorView: UIView {
 
     // MARK: - Private Properties
 
-    private let shapeLayer = CAShapeLayer()
+    private let shapeView = UIView()
     private let maskLayer = CAShapeLayer()
 
     // MARK: - Life Cycle
@@ -74,10 +74,11 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Methods
 
     private func setupSubviews() {
-        layer.addSublayer(shapeLayer)
+        addSubview(shapeView)
         maskLayer.fillColor = UIColor.white.cgColor
         maskLayer.fillRule = .evenOdd
         layer.mask = maskLayer
+        setNeedsLayout()
     }
 
     override func layoutSubviews() {
@@ -87,7 +88,7 @@ final class AvailabilityIndicatorView: UIView {
         maskLayer.path = UIBezierPath(rect: bounds).cgPath
 
         guard let availability else {
-            return shapeLayer.path = nil
+            return shapeView.backgroundColor = .none
         }
 
         let diameter = min(bounds.width, bounds.height)
@@ -95,15 +96,17 @@ final class AvailabilityIndicatorView: UIView {
             origin: .init(x: (bounds.width - diameter) / 2, y: (bounds.height - diameter) / 2),
             size: .init(width: diameter, height: diameter)
         )
-        shapeLayer.path = UIBezierPath(ovalIn: baseCircleFrame).cgPath
+        shapeView.frame = baseCircleFrame
+        shapeView.layer.cornerRadius = diameter / 2
 
         switch availability {
 
         case .available:
-            shapeLayer.fillColor = availableColor.cgColor
+            // TODO: fix runtime warning
+            shapeView.backgroundColor = availableColor
 
         case .away:
-            shapeLayer.fillColor = awayColor.cgColor
+            shapeView.backgroundColor = awayColor
 
             // mask with another circle, so that a ring results
             let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
@@ -119,7 +122,7 @@ final class AvailabilityIndicatorView: UIView {
             maskLayer.path = maskPath.cgPath
 
         case .busy:
-            shapeLayer.fillColor = busyColor.cgColor
+            shapeView.backgroundColor = busyColor
 
             // mask with a rectangle
             let maskPath = UIBezierPath(rect: bounds)

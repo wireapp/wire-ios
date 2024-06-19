@@ -49,18 +49,14 @@ public final class AccountImageView: UIView {
     // provides a background color only for dark mode
     private let availabilityIndicatorBackgroundView = UIView()
 
-    // MARK: - Life Cycle
-
-    public init(
-        accountImage: UIImage,
-        accountType: AccountType,
-        availability: Availability?
-    ) {
-        self.accountImage = accountImage
-        self.accountType = accountType
-        self.availability = availability
-        super.init(frame: .zero)
+    public override var intrinsicContentSize: CGSize {
+        .init(
+            width: accountImageBorderWidth * 2 + accountImageHeight,
+            height: accountImageBorderWidth * 2 + accountImageHeight
+        )
     }
+
+    // MARK: - Life Cycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -95,10 +91,13 @@ public final class AccountImageView: UIView {
         accountImageViewWrapper.clipsToBounds = true
         addSubview(accountImageViewWrapper)
         NSLayoutConstraint.activate([
-            accountImageViewWrapper.leadingAnchor.constraint(equalTo: leadingAnchor),
-            accountImageViewWrapper.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor),
-            bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor)
+            // TODO: remove if not needed
+            // accountImageViewWrapper.leadingAnchor.constraint(equalTo: leadingAnchor),
+            // accountImageViewWrapper.topAnchor.constraint(equalTo: topAnchor),
+            // trailingAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor),
+            // bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor)
+            accountImageViewWrapper.centerXAnchor.constraint(equalTo: centerXAnchor),
+            accountImageViewWrapper.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
 
         // the image view which displays the account image
@@ -181,7 +180,9 @@ public final class AccountImageView: UIView {
 
     private func updateAvailabilityIndicator() {
 
-        availabilityIndicatorView.availability = availability
+        if availabilityIndicatorView.availability != availability {
+            availabilityIndicatorView.availability = availability
+        }
 
         // for dark mode
         availabilityIndicatorBackgroundView.isHidden = availability == .none || traitCollection.userInterfaceStyle != .dark
@@ -220,6 +221,27 @@ public final class AccountImageView: UIView {
     }
 }
 
+// MARK: - Convenience Init
+
+extension AccountImageView {
+
+    public convenience init(
+        accountImage: UIImage,
+        accountType: AccountType,
+        availability: Availability?
+    ) {
+        self.init()
+
+        self.accountImage = accountImage
+        self.accountType = accountType
+        self.availability = availability
+
+        updateAccountImage()
+        updateShape()
+        updateAvailabilityIndicator()
+    }
+}
+
 // MARK: - Previews
 
 private typealias AccountType = AccountImageView.AccountType
@@ -245,22 +267,30 @@ struct AccountImageView_Previews: PreviewProvider {
 
     @ViewBuilder
     fileprivate static func previewWithNavigationBar(_ accountType: AccountType, _ availability: Availability?) -> some View {
-        let accountImage = UIImage.from(solidColor: UIColor(red: 0, green: 0.73, blue: 0.87, alpha: 1))
+        let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
-            AccountImageViewRepresentable(accountImage, accountType, availability)
-                .scaleEffect(6)
-                .navigationTitle("Conversations")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            //
-                        } label: {
-                            AccountImageViewRepresentable(accountImage, accountType, availability)
-                                .padding(.horizontal)
-                        }
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    AccountImageViewRepresentable(accountImage, accountType, availability)
+                        .scaleEffect(6)
+                    Spacer()
+                }
+                Spacer()
+            }
+            .navigationTitle("Conversations")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        //
+                    } label: {
+                        AccountImageViewRepresentable(accountImage, accountType, availability)
+                            .padding(.horizontal)
                     }
                 }
+            }
         }
     }
 }
