@@ -57,7 +57,6 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Private Properties
 
     private let shapeView = UIView()
-    private let maskLayer = CAShapeLayer()
 
     // MARK: - Life Cycle
 
@@ -75,20 +74,16 @@ final class AvailabilityIndicatorView: UIView {
 
     private func setupSubviews() {
         addSubview(shapeView)
-        maskLayer.fillColor = UIColor.white.cgColor
-        maskLayer.fillRule = .evenOdd
-        layer.mask = maskLayer
         setNeedsLayout()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        // reset mask
-        maskLayer.path = UIBezierPath(rect: bounds).cgPath
-
         guard let availability else {
-            return shapeView.backgroundColor = .none
+            shapeView.backgroundColor = .none
+            layer.mask = nil
+            return
         }
 
         let diameter = min(bounds.width, bounds.height)
@@ -102,8 +97,8 @@ final class AvailabilityIndicatorView: UIView {
         switch availability {
 
         case .available:
-            // TODO: fix runtime warning
             shapeView.backgroundColor = availableColor
+            layer.mask = nil
 
         case .away:
             shapeView.backgroundColor = awayColor
@@ -119,7 +114,10 @@ final class AvailabilityIndicatorView: UIView {
                 endAngle: 2 * .pi,
                 clockwise: true
             )
+            let maskLayer = CAShapeLayer()
             maskLayer.path = maskPath.cgPath
+            maskLayer.fillRule = .evenOdd
+            layer.mask = maskLayer
 
         case .busy:
             shapeView.backgroundColor = busyColor
@@ -135,7 +133,10 @@ final class AvailabilityIndicatorView: UIView {
                 height: rectangleHeight
             )
             maskPath.append(UIBezierPath(rect: rectangleFrame))
+            let maskLayer = CAShapeLayer()
             maskLayer.path = maskPath.cgPath
+            maskLayer.fillRule = .evenOdd
+            layer.mask = maskLayer
         }
     }
 }

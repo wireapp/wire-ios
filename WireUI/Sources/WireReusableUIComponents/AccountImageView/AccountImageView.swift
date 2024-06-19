@@ -91,11 +91,6 @@ public final class AccountImageView: UIView {
         accountImageViewWrapper.clipsToBounds = true
         addSubview(accountImageViewWrapper)
         NSLayoutConstraint.activate([
-            // TODO: remove if not needed
-            // accountImageViewWrapper.leadingAnchor.constraint(equalTo: leadingAnchor),
-            // accountImageViewWrapper.topAnchor.constraint(equalTo: topAnchor),
-            // trailingAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor),
-            // bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor)
             accountImageViewWrapper.centerXAnchor.constraint(equalTo: centerXAnchor),
             accountImageViewWrapper.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
