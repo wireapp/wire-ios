@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 protocol ClientListViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: ClientListViewController)

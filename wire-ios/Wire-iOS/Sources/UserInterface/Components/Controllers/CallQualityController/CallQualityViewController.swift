@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 // MARK: Call Quality View Controller Delegate
 protocol CallQualityViewControllerDelegate: AnyObject {

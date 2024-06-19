@@ -19,6 +19,7 @@
 import Down
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol MarkdownBarViewDelegate: AnyObject {
     func markdownBarView(_ view: MarkdownBarView, didSelectMarkdown markdown: Markdown, with sender: IconButton)

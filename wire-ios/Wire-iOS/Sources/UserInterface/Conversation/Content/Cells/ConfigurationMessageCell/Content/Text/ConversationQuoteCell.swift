@@ -20,6 +20,7 @@ import Down
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class ConversationReplyContentView: UIView {
     typealias View = ConversationReplyCell

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol ModalTopBarDelegate: AnyObject {
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar)

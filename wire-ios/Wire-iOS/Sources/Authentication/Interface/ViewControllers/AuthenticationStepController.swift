@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 /**
  * A view controller that can display the interface from an authentication step.

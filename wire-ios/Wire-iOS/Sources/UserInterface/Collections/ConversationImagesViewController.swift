@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void

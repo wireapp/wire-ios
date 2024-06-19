@@ -17,8 +17,8 @@
 //
 
 import Down
-import Foundation
 import UIKit
+import WireDesign
 
 // MARK: - DownStyle
 

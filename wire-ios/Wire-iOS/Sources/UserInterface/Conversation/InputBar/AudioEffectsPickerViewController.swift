@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 protocol AudioEffectsPickerDelegate: AnyObject {
     func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String)

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class CallHeaderBar: UIView {
     private let verticalStackView = UIStackView(axis: .vertical)

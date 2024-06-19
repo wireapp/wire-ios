@@ -19,6 +19,7 @@
 import Down
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol PasscodeSetupUserInterface: AnyObject {
     var createButtonEnabled: Bool { get set }

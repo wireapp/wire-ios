@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {

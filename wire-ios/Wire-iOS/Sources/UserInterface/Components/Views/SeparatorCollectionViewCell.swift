@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
 

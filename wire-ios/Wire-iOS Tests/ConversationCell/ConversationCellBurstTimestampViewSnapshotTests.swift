@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireDesign
 import XCTest
 
 @testable import Wire

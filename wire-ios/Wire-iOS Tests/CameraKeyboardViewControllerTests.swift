@@ -19,8 +19,10 @@
 import AVFoundation
 import Photos
 import SnapshotTesting
-@testable import Wire
+import WireDesign
 import XCTest
+
+@testable import Wire
 
 // MARK: - CameraKeyboardViewControllerDelegateMock
 

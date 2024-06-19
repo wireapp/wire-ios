@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 

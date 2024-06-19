@@ -20,6 +20,7 @@ import Down
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 extension Settings {
     var returnKeyType: UIReturnKeyType {

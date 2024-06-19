@@ -19,6 +19,7 @@
 import avs
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "calling")

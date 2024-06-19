@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class CollectionAudioCell: CollectionCell {
     private var containerView = UIView()

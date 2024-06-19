@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireUtilities
 
 final class NavigationController: UINavigationController, SpinnerCapable {

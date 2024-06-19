@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 protocol ShareDestination: Hashable {
     var displayNameWithFallback: String { get }

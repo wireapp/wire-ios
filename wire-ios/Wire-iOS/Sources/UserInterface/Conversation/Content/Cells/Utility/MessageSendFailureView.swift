@@ -19,6 +19,7 @@
 import Down
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class MessageSendFailureView: UIView {
 

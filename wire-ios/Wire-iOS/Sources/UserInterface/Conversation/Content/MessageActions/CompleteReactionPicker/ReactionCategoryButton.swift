@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class ReactionCategoryButton: UIButton {
     private var selectionIndicator = UIView()

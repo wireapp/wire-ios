@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 enum MainTabBarControllerTab: Int {
     case contacts, conversations, folders, archive

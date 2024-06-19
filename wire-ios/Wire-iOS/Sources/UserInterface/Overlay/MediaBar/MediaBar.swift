@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class MediaBar: UIView {
     private(set) var titleLabel: UILabel!

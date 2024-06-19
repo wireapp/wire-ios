@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireDesign
 
 struct AudioEffectCellBorders: OptionSet {
     let rawValue: Int

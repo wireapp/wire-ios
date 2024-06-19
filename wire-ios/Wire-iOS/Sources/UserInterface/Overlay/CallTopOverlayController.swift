@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 // MARK: - CallTopOverlayControllerDelegate

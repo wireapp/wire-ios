@@ -19,6 +19,7 @@
 import DifferenceKit
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"

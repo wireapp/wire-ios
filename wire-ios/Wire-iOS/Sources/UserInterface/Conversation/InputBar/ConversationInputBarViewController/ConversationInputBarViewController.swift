@@ -22,6 +22,7 @@ import MobileCoreServices
 import Photos
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 enum ConversationInputBarViewControllerMode {

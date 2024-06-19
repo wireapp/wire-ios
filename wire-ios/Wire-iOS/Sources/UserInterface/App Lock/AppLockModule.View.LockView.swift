@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSystem
 
 extension AppLockModule.View {

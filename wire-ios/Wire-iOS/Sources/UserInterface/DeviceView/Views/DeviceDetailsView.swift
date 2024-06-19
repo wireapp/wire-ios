@@ -19,6 +19,7 @@
 import Combine
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsView: View {
 

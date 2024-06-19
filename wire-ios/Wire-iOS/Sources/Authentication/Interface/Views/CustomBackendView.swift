@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class CustomBackendView: UIView {
     lazy var backendLabel: UILabel = {

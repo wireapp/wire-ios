@@ -21,6 +21,7 @@ import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 extension Notification.Name {

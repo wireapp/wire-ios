@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class BackupActionCell: UITableViewCell {
     let actionTitleLabel: DynamicFontLabel = {

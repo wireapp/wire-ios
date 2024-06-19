@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 protocol EmojiPickerViewControllerDelegate: AnyObject {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji)
