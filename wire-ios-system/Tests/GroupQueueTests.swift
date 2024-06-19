@@ -199,7 +199,7 @@ final class GroupQueueTests: XCTestCase {
         sut.enter()
 
         // When
-        let result = sut.waitWithDelta(fromNow: 200 * NSEC_PER_MSEC)
+        let result = sut.waitWithDelta(fromNow: 200)
 
         // Then
         XCTAssertNotEqual(result, 0)
