@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct E2EIdentityCertificateDetailsView: View {
     @Environment(\.dismiss)
