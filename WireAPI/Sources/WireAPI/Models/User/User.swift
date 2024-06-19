@@ -36,7 +36,7 @@ public struct User: Equatable {
 
     /// Team ID if the user belongs to a team
 
-    public let teamID: UUID
+    public let teamID: UUID?
 
     /// Color accent of the user
 
