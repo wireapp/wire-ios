@@ -16,14 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<< HEAD
-=======
-import XCTest
 import WireTesting
->>>>>>> 3c8ad65bec (fix: DDLOG errors reading logs while running tests - WPB-9714 (#1587))
+import XCTest
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class OneOnOneMigratorTests: XCTestCase {
 

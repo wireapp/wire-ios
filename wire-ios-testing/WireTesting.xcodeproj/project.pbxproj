@@ -282,12 +282,9 @@
 				CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */,
 				87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */,
 				634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */,
-<<<<<<< HEAD
 				595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */,
 				595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */,
-=======
 				16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */,
->>>>>>> 3c8ad65bec (fix: DDLOG errors reading logs while running tests - WPB-9714 (#1587))
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -497,11 +494,7 @@
 				098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */,
 				CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */,
 				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
-<<<<<<< HEAD
-=======
 				16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */,
-				A971FAE123D7477200AB25B4 /* ZMTBaseTest.swift in Sources */,
->>>>>>> 3c8ad65bec (fix: DDLOG errors reading logs while running tests - WPB-9714 (#1587))
 				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
 				595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */,
