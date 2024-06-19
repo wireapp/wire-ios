@@ -1082,10 +1082,13 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             }
             
             LogNetwork(@"<<<--- Push channel event(%@): %@", event.uuid, event.payload);
-            
-            id<ZMTransportData> payload = event.transportData;
+
+            NSData *data = [NSJSONSerialization dataWithJSONObject:event.transportData
+                                                           options:0
+                                                             error:nil];
+
             [self.pushChannelGroupQueue performGroupedBlock:^{
-                [self.pushChannelConsumer pushChannelDidReceiveTransportData:payload];
+                [self.pushChannelConsumer pushChannelDidReceiveData:data];
             }];
         }
     }

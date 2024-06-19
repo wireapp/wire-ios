@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct CopyValueView: View {
     let title: String

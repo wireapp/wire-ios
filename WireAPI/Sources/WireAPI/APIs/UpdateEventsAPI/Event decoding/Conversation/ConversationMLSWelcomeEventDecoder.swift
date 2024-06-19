@@ -18,17 +18,30 @@
 
 import Foundation
 
-struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+struct ConversationMLSWelcomeEventDecoder {
 
-    var id: UUID
-    var payload: [UpdateEvent]?
-    var transient: Bool?
+    func decode(
+        from container: KeyedDecodingContainer<ConversationEventCodingKeys>
+    ) throws -> ConversationMLSWelcomeEvent {
+        let conversationID = try container.decode(
+            ConversationID.self,
+            forKey: .conversationQualifiedID
+        )
 
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            payloads: payload ?? [],
-            isTransient: transient ?? false
+        let senderID = try container.decode(
+            UserID.self,
+            forKey: .senderQualifiedID
+        )
+
+        let payload = try container.decode(
+            String.self,
+            forKey: .payload
+        )
+
+        return ConversationMLSWelcomeEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            welcomeMessage: payload
         )
     }
 

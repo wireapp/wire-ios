@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class TopPeopleCell: UICollectionViewCell {

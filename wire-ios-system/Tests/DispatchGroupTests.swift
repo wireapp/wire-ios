@@ -20,7 +20,7 @@ import XCTest
 
 @testable import WireSystem
 
-final class GroupQueueTests: XCTestCase {
+final class DispatchGroupTests: XCTestCase {
 
     func testThatItNotifiesWhenEnteringAndLeavingAGroupOnce() {
 
@@ -199,7 +199,7 @@ final class GroupQueueTests: XCTestCase {
         sut.enter()
 
         // When
-        let result = sut.waitWithDelta(fromNow: 200 * NSEC_PER_MSEC)
+        let result = sut.waitWithDelta(fromNow: 200)
 
         // Then
         XCTAssertNotEqual(result, 0)
