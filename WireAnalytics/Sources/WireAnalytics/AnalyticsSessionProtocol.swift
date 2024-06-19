@@ -20,7 +20,9 @@
 
 public protocol AnalyticsSessionProtocol {
 
-    func start()
+    func startSession()
+
+    func endSession()
 
     func trackEvent(_ event: AnalyticEvent)
 

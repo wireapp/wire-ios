@@ -16,10 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// All possible analytic events that can be tracked
+import Countly
 
-public enum AnalyticEvent: String {
+public final class AnalyticsSession: AnalyticsSessionProtocol {
 
-    case appOpen
+    public init(appKey: String, host: URL) {
+        let config = CountlyConfig()
+        config.appKey = appKey
+        config.host = host.absoluteString
+
+        WireCountly.sharedInstance().start(with: config)
+    }
+
+    public func startSession() {
+        WireCountly.sharedInstance().beginSession()
+    }
+
+    public func endSession() {
+        WireCountly.sharedInstance().endSession()
+    }
+
+    public func trackEvent(_ event: AnalyticEvent) {
+        WireCountly.sharedInstance().recordEvent(event.rawValue)
+    }
 
 }
