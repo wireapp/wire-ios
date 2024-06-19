@@ -62,6 +62,10 @@ final class OtherUserClientsListViewController: UIViewController,
         }
     }
 
+    deinit {
+        DeveloperToolsViewModel.context.currentUserClient = nil
+    }
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -193,6 +197,8 @@ final class OtherUserClientsListViewController: UIViewController,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
+        DeveloperToolsViewModel.context.currentUserClient = client
+
         return DeviceInfoViewModel(
             title: title,
             addedDate: "",
@@ -203,9 +209,7 @@ final class OtherUserClientsListViewController: UIViewController,
             mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: true,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: Bundle.developerModeEnabled
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 }
