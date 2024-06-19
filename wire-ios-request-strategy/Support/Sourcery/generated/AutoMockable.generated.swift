@@ -136,6 +136,7 @@ public class MockAPIProviderInterface: APIProviderInterface {
     }
 
 }
+
 public class MockAcmeAPIInterface: AcmeAPIInterface {
 
     // MARK: - Life cycle
@@ -305,6 +306,7 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
     }
 
 }
+
 public class MockCertificateRevocationListAPIProtocol: CertificateRevocationListAPIProtocol {
 
     // MARK: - Life cycle
@@ -336,6 +338,7 @@ public class MockCertificateRevocationListAPIProtocol: CertificateRevocationList
     }
 
 }
+
 public class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle
@@ -384,6 +387,7 @@ public class MockConversationParticipantsServiceInterface: ConversationParticipa
     }
 
 }
+
 public class MockConversationServiceInterface: ConversationServiceInterface {
 
     // MARK: - Life cycle
@@ -467,6 +471,7 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
     }
 
 }
+
 public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
 
     // MARK: - Life cycle
@@ -495,6 +500,7 @@ public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
     }
 
 }
+
 public class MockE2eIAPI: E2eIAPI {
 
     // MARK: - Life cycle
@@ -549,6 +555,7 @@ public class MockE2eIAPI: E2eIAPI {
     }
 
 }
+
 public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -580,6 +587,7 @@ public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseC
     }
 
 }
+
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 
     // MARK: - Life cycle
@@ -610,6 +618,7 @@ class MockMLSClientIDsProviding: MLSClientIDsProviding {
     }
 
 }
+
 class MockMLSConversationParticipantsServiceInterface: MLSConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle
@@ -657,6 +666,7 @@ class MockMLSConversationParticipantsServiceInterface: MLSConversationParticipan
     }
 
 }
+
 public class MockMLSEventProcessing: MLSEventProcessing {
 
     // MARK: - Life cycle
@@ -710,6 +720,7 @@ public class MockMLSEventProcessing: MLSEventProcessing {
     }
 
 }
+
 public class MockMessageAPI: MessageAPI {
 
     // MARK: - Life cycle
@@ -787,6 +798,7 @@ public class MockMessageAPI: MessageAPI {
     }
 
 }
+
 public class MockMessageDependencyResolverInterface: MessageDependencyResolverInterface {
 
     // MARK: - Life cycle
@@ -815,6 +827,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
     }
 
 }
+
 public class MockMessageSenderInterface: MessageSenderInterface {
 
     // MARK: - Life cycle
@@ -863,6 +876,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
     }
 
 }
+
 public class MockPrekeyAPI: PrekeyAPI {
 
     // MARK: - Life cycle
@@ -894,6 +908,7 @@ public class MockPrekeyAPI: PrekeyAPI {
     }
 
 }
+
 public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterface {
 
     // MARK: - Life cycle
@@ -917,6 +932,7 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     }
 
 }
+
 class MockProteusConversationParticipantsServiceInterface: ProteusConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle
@@ -964,6 +980,7 @@ class MockProteusConversationParticipantsServiceInterface: ProteusConversationPa
     }
 
 }
+
 public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     // MARK: - Life cycle
@@ -987,6 +1004,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
     }
 
 }
+
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
     // MARK: - Life cycle
@@ -1015,6 +1033,7 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     }
 
 }
+
 public class MockSyncProgress: SyncProgress {
 
     // MARK: - Life cycle
@@ -1062,6 +1081,7 @@ public class MockSyncProgress: SyncProgress {
     }
 
 }
+
 public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - Life cycle
@@ -1090,6 +1110,7 @@ public class MockUserClientAPI: UserClientAPI {
     }
 
 }
+
 class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
 
     // MARK: - Life cycle
