@@ -434,6 +434,8 @@ extension WireCallCenterV3 {
                 isSignificant = newSpeaker.audioLevelNow > 0
             }
         }
+
+        return isSignificant
     }
 
     func handleNewEpochRequest(conversationID: AVSIdentifier) {
