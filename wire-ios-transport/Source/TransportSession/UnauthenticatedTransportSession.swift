@@ -55,7 +55,7 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
     private let maximumNumberOfRequests: Int = 3
-    private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
+    private var numberOfRunningRequests = AtomicInteger(value: 0)
     private let baseURL: URL
     private var session: SessionProtocol!
     private let userAgent: ZMUserAgent

@@ -86,8 +86,6 @@
 		5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */; };
 		5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */; };
 		5E9EA4C422423EA800D401B2 /* ArraySafeIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */; };
-		5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */; };
 		6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632378692508D34D00AD4346 /* Array+Shift.swift */; };
 		6323786C2508D51C00AD4346 /* ArrayShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */; };
 		636F70472A65AD7900E086B6 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636F70462A65AD7800E086B6 /* TimerManager.swift */; };
@@ -137,6 +135,7 @@
 		E67995EA2B6D403A0024BD81 /* NSSet+IsEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67995E92B6D403A0024BD81 /* NSSet+IsEmpty.swift */; };
 		E6C4B37B2B68EFD6008BF384 /* NSString+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */; };
 		E6C4B37E2B6A896E008BF384 /* StringRandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37D2B6A896E008BF384 /* StringRandomTests.swift */; };
+		E93D3B7C2C22C353006AF44F /* AtomicInteger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93D3B7B2C22C353006AF44F /* AtomicInteger.swift */; };
 		E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */; };
 		EE162710250BA12900D35062 /* VolatileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE16270F250BA12900D35062 /* VolatileData.swift */; };
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
@@ -320,8 +319,6 @@
 		5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicIntegerTests.swift; sourceTree = "<group>"; };
 		5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeIndex.swift"; sourceTree = "<group>"; };
 		5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArraySafeIndexTests.swift; sourceTree = "<group>"; };
-		5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAtomicInteger.h; sourceTree = "<group>"; };
-		5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAtomicInteger.m; sourceTree = "<group>"; };
 		632378692508D34D00AD4346 /* Array+Shift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Shift.swift"; sourceTree = "<group>"; };
 		6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayShiftTests.swift; sourceTree = "<group>"; };
 		636F70462A65AD7800E086B6 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
@@ -372,6 +369,7 @@
 		E67995E92B6D403A0024BD81 /* NSSet+IsEmpty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSSet+IsEmpty.swift"; sourceTree = "<group>"; };
 		E6C4B37A2B68EFD6008BF384 /* NSString+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSString+Random.swift"; sourceTree = "<group>"; };
 		E6C4B37D2B6A896E008BF384 /* StringRandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringRandomTests.swift; sourceTree = "<group>"; };
+		E93D3B7B2C22C353006AF44F /* AtomicInteger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicInteger.swift; sourceTree = "<group>"; };
 		E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Cardinality.swift"; sourceTree = "<group>"; };
 		EE16270F250BA12900D35062 /* VolatileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolatileData.swift; sourceTree = "<group>"; };
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
@@ -551,8 +549,7 @@
 				54181A4F1F594E4100155ABC /* FileManager+Move.swift */,
 				54181A531F594F6B00155ABC /* FileManager+Protection.swift */,
 				EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */,
-				5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */,
-				5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */,
+				E93D3B7B2C22C353006AF44F /* AtomicInteger.swift */,
 				5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */,
 				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
 				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
@@ -869,7 +866,6 @@
 				54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */,
 				54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */,
 				59E3C25E2BD8094900C95BD7 /* ZMAccentColor.h in Headers */,
-				5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */,
 				54CA312B1B74F36B00B820C0 /* NSData+ZMAdditions.h in Headers */,
 				F9D381B61B70B95A00E6E4EB /* WireUtilities-Tests.pch in Headers */,
 				F9C9A7961CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h in Headers */,
@@ -1160,6 +1156,7 @@
 				5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */,
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
+				E93D3B7C2C22C353006AF44F /* AtomicInteger.swift in Sources */,
 				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,
 				1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
@@ -1177,7 +1174,6 @@
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
 				5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */,
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
-				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
 				E6C4B37B2B68EFD6008BF384 /* NSString+Random.swift in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,

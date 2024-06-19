@@ -49,7 +49,7 @@ import WireTransport
 
     // MARK: - Data
 
-    private var lastIdentifier: ZMAtomicInteger = ZMAtomicInteger(integer: 1)
+    private var lastIdentifier: AtomicInteger = AtomicInteger(value: 1)
 
     private struct Task {
         let name: String?

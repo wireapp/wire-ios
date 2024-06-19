@@ -48,7 +48,7 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 @property (nonatomic) ZMWebSocketHandshake *handshake;
 @property (nonatomic) NSError *handshakeError;
 @property (nonatomic, copy) NSDictionary* additionalHeaderFields;
-@property (nonatomic) ZMAtomicInteger *openFlag;
+@property (nonatomic) AtomicInteger *openFlag;
 
 @end
 
@@ -97,8 +97,8 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
         self.consumer = consumer;
         self.consumerQueue = queue;
         self.consumerGroup = group;
-        self.openFlag = [[ZMAtomicInteger alloc] initWithInteger:0];
-        
+        self.openFlag = [[AtomicInteger alloc] initWithValue:0];
+
         self.networkSocketQueue = networkSocketQueue ? : dispatch_queue_create("ZMWebSocket", DISPATCH_QUEUE_SERIAL);
         
         if (networkSocket == nil) {

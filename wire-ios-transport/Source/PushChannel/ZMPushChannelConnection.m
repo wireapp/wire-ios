@@ -39,7 +39,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic) NSTimeInterval pingInterval;
 @property (nonatomic) NSTimer *pingTimer;
 @property (nonatomic) NSHTTPURLResponse *closeResponse;
-@property (nonatomic) ZMAtomicInteger *closedFlag;
+@property (nonatomic) AtomicInteger *closedFlag;
 
 @end
 
@@ -113,7 +113,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         }
         self.webSocket = webSocket;
         self.pingInterval = 40;
-        self.closedFlag = [[ZMAtomicInteger alloc] initWithInteger:0];
+        self.closedFlag = [[AtomicInteger alloc] initWithValue:0];
     }
     return self;
 }

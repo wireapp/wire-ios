@@ -80,7 +80,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) RequestLoopDetection *requestLoopDetection;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
-@property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
+@property (nonatomic) AtomicInteger *numberOfRequestsInProgress;
 
 @property (nonatomic) NSString *minTLSVersion;
 
@@ -193,8 +193,8 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.environment = environment;
         self.baseURL = environment.backendURL;
         self.websocketURL = environment.backendWSURL;
-        self.numberOfRequestsInProgress = [[ZMAtomicInteger alloc] initWithInteger:0];
-        
+        self.numberOfRequestsInProgress = [[AtomicInteger alloc] initWithValue:0];
+
         self.workQueue = queue;
         _workGroup = group;
         self.cookieStorage = cookieStorage;

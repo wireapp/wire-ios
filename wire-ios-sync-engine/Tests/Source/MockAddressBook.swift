@@ -79,7 +79,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 
 struct MockAddressBookContact: WireSyncEngine.ContactRecord {
 
-    static var incrementalLocalIdentifier = ZMAtomicInteger(integer: 0)
+    static var incrementalLocalIdentifier = AtomicInteger(value: 0)
 
     var firstName = ""
     var lastName = ""
