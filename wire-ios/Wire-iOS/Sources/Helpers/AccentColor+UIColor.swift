@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireDesign
 
 extension AccentColor {
 
