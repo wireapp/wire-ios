@@ -18,6 +18,18 @@
 
 import Foundation
 
+protocol ExpiringActivityInterface {
+
+    func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void)
+
+}
+
+extension ProcessInfo: ExpiringActivityInterface { }
+
+/// The expiring activity is not allowed to run possibly because the background execution time has already expired.
+
+public struct ExpiringActivityNotAllowedToRun: Error { }
+
 /// Execute an async function inside an [performExpiringActivity](https://developer.apple.com/documentation/foundation/processinfo/1617030-performexpiringactivity)
 /// which cancels the task when the activity expires. It's up to the async function to handle the cancellation by for example
 /// calling [Task.checkCancellation](https://developer.apple.com/documentation/swift/task/checkcancellation()) at the appropriate time.
@@ -32,11 +44,21 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
 }
 
 actor ExpiringActivityManager {
+
+    let api: ExpiringActivityInterface
     var task: Task<Void, Error>?
+
+    init() {
+        self.init(api: ProcessInfo.processInfo)
+    }
+
+    init(api: ExpiringActivityInterface) {
+        self.api = api
+    }
 
     func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { expiring in
+            api.performExpiringActivity(withReason: reason) { expiring in
                 if !expiring {
                     let semaphore = DispatchSemaphore(value: 0)
                     Task {
@@ -54,7 +76,11 @@ actor ExpiringActivityManager {
                 } else {
                     WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
                     Task {
-                        await self.stopWork()
+                        do {
+                            try await self.stopWork()
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
                     }
                 }
             }
@@ -73,8 +99,9 @@ actor ExpiringActivityManager {
         return task
     }
 
-    func stopWork() {
-        self.task?.cancel()
+    func stopWork() throws {
+        guard let task else { throw ExpiringActivityNotAllowedToRun() }
+        task.cancel()
         self.task = nil
     }
 }

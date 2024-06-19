@@ -17,6 +17,7 @@
 		16962EDD20221F970069D88D /* ZMSLogNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 16962EDB20221F970069D88D /* ZMSLogNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 16962EDC20221F970069D88D /* ZMSLogNotifications.m */; };
 		16AAA62A2C21903200080A06 /* ExpiringActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA6292C21903200080A06 /* ExpiringActivity.swift */; };
+		16AAA62E2C22F7D500080A06 /* ExpiringActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */; };
 		16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */; };
 		54180BD81F459DCF0020D2BD /* MemoryReferenceDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54180BD91F459DCF0020D2BD /* MemoryReferenceDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54180BD71F459DCF0020D2BD /* MemoryReferenceDebugger.swift */; };
@@ -86,6 +87,7 @@
 		16962EDB20221F970069D88D /* ZMSLogNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogNotifications.h; sourceTree = "<group>"; };
 		16962EDC20221F970069D88D /* ZMSLogNotifications.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSLogNotifications.m; sourceTree = "<group>"; };
 		16AAA6292C21903200080A06 /* ExpiringActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiringActivity.swift; sourceTree = "<group>"; };
+		16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiringActivityTests.swift; sourceTree = "<group>"; };
 		16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemLogger.swift; sourceTree = "<group>"; };
 		3ECC35191AD436750089FD4B /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryReferenceDebugger.h; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */,
 				54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */,
 				54C0CC421C9C7862000A9286 /* ZMSAssertionTests.m */,
+				16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				54A3273A1B99A3840004EB95 /* ZMLoggingTests.m in Sources */,
 				54180BDF1F459DFF0020D2BD /* MemoryReferenceDebuggerTests.swift in Sources */,
 				5457426C1BA9C50C0009409B /* ZMDefinesTest.m in Sources */,
+				16AAA62E2C22F7D500080A06 /* ExpiringActivityTests.swift in Sources */,
 				54DB81671DBFB16700AF495D /* CircularArrayTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
