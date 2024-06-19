@@ -20,9 +20,18 @@ import Foundation
 
 extension ISO8601DateFormatter {
 
-    /// ISO8601 date formatter with internet date time and fractional seconds.
+    /// ISO8601 date formatter for internet date time.
 
-    static let `default` = {
+    static let internetDateTime = {
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime]
+        return dateFormatter
+    }()
+
+
+    /// ISO8601 date formatter for internet date time with fractional seconds.
+
+    static let fractionalInternetDateTime = {
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return dateFormatter

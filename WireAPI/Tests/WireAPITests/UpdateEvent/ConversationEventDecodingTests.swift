@@ -246,7 +246,7 @@ final class ConversationEventDecodingTests: XCTestCase {
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
-            ISO8601DateFormatter.default.date(from: string)!
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }
 
         static let conversationID = ConversationID(
