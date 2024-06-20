@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
@@ -28,6 +29,9 @@ public protocol UserSession: AnyObject {
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
+
+    /// The current analytics session
+    var analyticsSession: AnalyticsSession { get }
 
     /// The current session lock, if any.
 

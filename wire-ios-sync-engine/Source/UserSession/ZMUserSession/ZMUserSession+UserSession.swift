@@ -18,9 +18,14 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
+
+    public var analyticsSession: AnalyticsSession {
+        return AnalyticsSession(appKey: "", host: URL(string: "")!)
+    }
 
     // MARK: Properties
 
