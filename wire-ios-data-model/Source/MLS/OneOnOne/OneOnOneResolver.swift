@@ -82,7 +82,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         case .mls:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            return resolveCommonUserProtocolProteus()
+            return await resolveCommonUserProtocolProteus(with: userID, in: context)
         case .mixed:
             // This should never happen:
             // Users can only support proteus and mls protocols.
@@ -147,18 +147,47 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             throw OneOnOneResolverError.migratorNotFound
         }
 
-        let mlsGroupID = try await migrator.migrateToMLS(
-            userID: userID,
-            in: context
-        )
+        do {
+            let mlsGroupID = try await migrator.migrateToMLS(
+                userID: userID,
+                in: context
+            )
+            await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
+            return .migratedToMLSGroup(identifier: mlsGroupID)
+        } catch MigrateMLSOneOnOneConversationError.failedToEstablishGroup(let error) {
+            await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
+            throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
+        } catch {
+            throw error
+        }
+    }
 
-        return .migratedToMLSGroup(identifier: mlsGroupID)
+    private func setReadOnly(
+        to readOnly: Bool,
+        forOneOnOneWithUser userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async {
+        await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation,
+                conversation.isForcedReadOnly != readOnly
+            else {
+                return
+            }
+
+            conversation.isForcedReadOnly = readOnly
+        }
     }
 
     // MARK: Resolve - Proteus
 
-    private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
+    private func resolveCommonUserProtocolProteus(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
     }
 

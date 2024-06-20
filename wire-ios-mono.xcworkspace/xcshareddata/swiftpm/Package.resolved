@@ -11,8 +11,17 @@
         }
       },
       {
+        "package": "CocoaLumberjack",
+        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
+        "state": {
+          "branch": null,
+          "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
+          "version": "3.8.5"
+        }
+      },
+      {
         "package": "DifferenceKit",
-        "repositoryURL": "https://github.com/wireapp/DifferenceKit",
+        "repositoryURL": "https://github.com/wireapp/DifferenceKit/",
         "state": {
           "branch": null,
           "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
@@ -24,8 +33,8 @@
         "repositoryURL": "https://github.com/pinterest/PINCache",
         "state": {
           "branch": null,
-          "revision": "875c654984fb52b47ca65ae70d24852b0003ccd9",
-          "version": "3.0.3"
+          "revision": "2fb85948463292c2e824148cf17dc62a4c217a94",
+          "version": "3.0.4"
         }
       },
       {
@@ -33,8 +42,26 @@
         "repositoryURL": "https://github.com/pinterest/PINOperation.git",
         "state": {
           "branch": null,
-          "revision": "40504c156a68b20f98f7ddc73a115cbb7893be25",
-          "version": "1.2.2"
+          "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
+          "version": "1.2.3"
+        }
+      },
+      {
+        "package": "Starscream",
+        "repositoryURL": "https://github.com/wireapp/starscream",
+        "state": {
+          "branch": null,
+          "revision": "bf73a16e7409a83c38872726e45e4f432512315e",
+          "version": "4.0.8"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log",
+        "state": {
+          "branch": null,
+          "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
+          "version": "1.5.4"
         }
       },
       {

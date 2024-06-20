@@ -145,20 +145,28 @@ class MessageAPIV0: MessageAPI {
 
 func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     if response.result == .success {
-        guard
-            let value = T(response, decoder: .defaultDecoder)
-        else {
-            throw NetworkError.errorDecodingResponse(response)
-        }
-        return value
+        return try mapSuccessResponse(response)
     } else {
-        guard
-            let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder)
-        else {
-            throw NetworkError.errorDecodingResponse(response)
-        }
-        throw NetworkError.invalidRequestError(responseFailure, response)
+        throw mapFailureResponse(response)
     }
+}
+
+func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
+    guard
+        let value = T(response, decoder: .defaultDecoder)
+    else {
+        throw NetworkError.errorDecodingResponse(response)
+    }
+    return value
+}
+
+func mapFailureResponse(_ response: ZMTransportResponse) -> Error {
+    guard
+        let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder)
+    else {
+        return NetworkError.errorDecodingResponse(response)
+    }
+    return NetworkError.invalidRequestError(responseFailure, response)
 }
 
 class MessageAPIV1: MessageAPIV0 {

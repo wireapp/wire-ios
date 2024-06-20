@@ -50,7 +50,7 @@ extension ConversationContentViewController {
         canvasViewController.navigationItem.setupNavigationBarTitle(title: message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
-        present(canvasViewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        present(canvasViewController.wrapInNavigationController(), animated: true)
     }
 
     func messageAction(actionId: MessageAction,
@@ -143,9 +143,11 @@ extension ConversationContentViewController {
             userSession.perform {
                 message.react(reaction)
             }
-        case .visitLink(let path):
-            if let url = URL(string: path),
-                UIApplication.shared.canOpenURL(url) {
+        case .visitLink:
+            if let textMessageData = message.textMessageData,
+               let path = textMessageData.linkPreview?.originalURLString ?? textMessageData.messageText,
+               let url = URL(string: path),
+               UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
         }

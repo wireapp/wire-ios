@@ -23,7 +23,7 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class ConversationListTopBarViewControllerSnapshotTests: XCTestCase {
 
     var sut: ConversationListTopBarViewController!
     var mockAccount: Account!

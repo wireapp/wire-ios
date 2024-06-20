@@ -32,7 +32,7 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
         let selfClientController = SettingsClientViewController(userClient: selfUserClient,
                                                                 userSession: userSession,
                                                                 fromConversation: true)
-        let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationControllerWrapper = selfClientController.wrapInNavigationController()
         navigationControllerWrapper.presentTopmost()
     }
 

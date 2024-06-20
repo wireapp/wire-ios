@@ -168,7 +168,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         conversation.securityLevel = .secureWithIgnored
 
         // when
-        conversation.acknowledgePrivacyWarning(withResendIntent: false)
+        conversation.acknowledgePrivacyWarningAndResendMessages()
 
         // then
         XCTAssertEqual(conversation.securityLevel, .notSecure)
@@ -686,7 +686,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // WHEN
         let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
-        uiConversation.acknowledgePrivacyWarning(withResendIntent: false)
+        uiConversation.discardPendingMessagesAfterPrivacyChanges()
 
         self.syncMOC.performGroupedAndWait { moc in
             moc.refreshAllObjects()
@@ -701,7 +701,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             XCTAssertFalse(message3.causedSecurityLevelDegradation)
             XCTAssertEqual(message3.deliveryState, .failedToSend)
             XCTAssertFalse(conversation.allUsersTrusted)
-            XCTAssertEqual(conversation.securityLevel, .notSecure)
+            XCTAssertEqual(conversation.securityLevel, .secureWithIgnored)
         }
     }
 
@@ -717,7 +717,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // WHEN
         let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
-        uiConversation.acknowledgePrivacyWarning(withResendIntent: true)
+        uiConversation.acknowledgePrivacyWarningAndResendMessages()
         self.uiMOC.saveOrRollback()
 
         self.syncMOC.performGroupedAndWait { _ in
@@ -754,7 +754,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         // WHEN
         try await uiMOC.perform {
             let uiConversation = try XCTUnwrap(try self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
-            uiConversation.acknowledgePrivacyWarning(withResendIntent: true)
+            uiConversation.acknowledgePrivacyWarningAndResendMessages()
         }
 
         await syncMOC.perform {
@@ -803,7 +803,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // WHEN
         let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
-        uiConversation.acknowledgePrivacyWarning(withResendIntent: true)
+        uiConversation.acknowledgePrivacyWarningAndResendMessages()
 
         self.syncMOC.performGroupedAndWait { _ in
 

@@ -537,7 +537,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
 
             self.performPretendingSyncMocIsUiMoc {
-                conversation.acknowledgePrivacyWarning(withResendIntent: true)
+                conversation.acknowledgePrivacyWarningAndResendMessages()
             }
 
             // THEN

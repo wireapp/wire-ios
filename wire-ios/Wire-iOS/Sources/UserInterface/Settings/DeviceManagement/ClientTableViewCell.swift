@@ -27,12 +27,21 @@ final class ClientTableViewCell: UITableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
-    let nameLabel = DynamicFontLabel(style: .headline,
-                                     color: LabelColors.textDefault)
-    let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
-                                        color: LabelColors.textCellSubtitle)
-    let proteusIdLabel = DynamicFontLabel(style: .caption1,
-                                            color: LabelColors.textCellSubtitle)
+    let nameLabel = DynamicFontLabel(
+        style: .h3,
+        color: LabelColors.textDefault
+    )
+
+    let mlsThumbprintLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
+
+    let proteusIdLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
+
     let statusStackView = UIStackView()
 
     var viewModel: ClientTableViewCellModel? {

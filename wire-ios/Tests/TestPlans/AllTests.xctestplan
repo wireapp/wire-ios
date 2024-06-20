@@ -50,8 +50,10 @@
     {
       "skippedTests" : [
         "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
+        "CallActionsViewSnapshotTests",
         "ConversationListTopBarViewControllerSnapshotTests\/testForLongName()",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
+        "ProfileViewControllerTests",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()",

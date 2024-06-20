@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import SwiftUI
 
-/// A customized hosting controller for `DeviceDetailsView` and `ProfileDeviceDetailsView` in order to allow displaying
+/// A customized hosting controller for `DeviceDetailsView` and `OtherUserDeviceDetailsView` in order to allow displaying
 /// a custom navigation item title view and a debug menu button in the navigation bar.
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
 

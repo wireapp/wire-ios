@@ -36,8 +36,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
         let label = DynamicFontLabel(
             text: title,
-            style: .bigHeadline,
-            color: SemanticColors.Label.textDefault)
+            style: .largeTitle,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.accessibilityIdentifier = "titleLabel"
@@ -49,8 +50,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
         let label = DynamicFontLabel(
             text: subtitle,
-            style: .body,
-            color: SemanticColors.Label.textDefault)
+            style: .body1,
+            color: SemanticColors.Label.textDefault
+        )
         label.numberOfLines = 0
         label.textAlignment = .center
         label.accessibilityIdentifier = "detailsLabel"

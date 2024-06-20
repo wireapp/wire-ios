@@ -25,6 +25,7 @@ import WireRequestStrategy
 class SwiftMockConversation: NSObject, Conversation {
 
     var isMLSConversationDegraded: Bool = false
+    var isProteusConversationDegraded: Bool = false
 
 	var relatedConnectionState: ZMConnectionStatus = .invalid
 
@@ -77,6 +78,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var areServicesPresent: Bool = false
 
     var domain: String?
+
+    var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

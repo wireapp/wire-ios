@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class TypingIndicatorViewSnapshotTests: BaseSnapshotTestCase {
+final class TypingIndicatorViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

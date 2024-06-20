@@ -93,6 +93,38 @@ public class MockCertificateRevocationListsChecking: CertificateRevocationListsC
 
 }
 
+public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserID_Invocations: [QualifiedID] = []
+    public var invokeUserID_MockError: Error?
+    public var invokeUserID_MockMethod: ((QualifiedID) async throws -> Bool)?
+    public var invokeUserID_MockValue: Bool?
+
+    public func invoke(userID: QualifiedID) async throws -> Bool {
+        invokeUserID_Invocations.append(userID)
+
+        if let error = invokeUserID_MockError {
+            throw error
+        }
+
+        if let mock = invokeUserID_MockMethod {
+            return try await mock(userID)
+        } else if let mock = invokeUserID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUserID`")
+        }
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -339,6 +371,35 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
         }
 
         mock(id)
+    }
+
+}
+
+public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
+    public var invokeClientIdCredentials_MockError: Error?
+    public var invokeClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+
+    public func invoke(clientId: String, credentials: EmailCredentials?) async throws {
+        invokeClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+
+        if let error = invokeClientIdCredentials_MockError {
+            throw error
+        }
+
+        guard let mock = invokeClientIdCredentials_MockMethod else {
+            fatalError("no mock for `invokeClientIdCredentials`")
+        }
+
+        try await mock(clientId, credentials)
     }
 
 }

@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import XCTest
 import avs
+import XCTest
+
 @testable import Wire
 
-final class AudioEffectsPickerViewControllerTests: BaseSnapshotTestCase {
+final class AudioEffectsPickerViewControllerTests: XCTestCase {
     var sut: AudioEffectsPickerViewController! = .none
 
     override func tearDown() {

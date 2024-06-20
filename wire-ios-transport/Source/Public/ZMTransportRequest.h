@@ -186,7 +186,9 @@ typedef NS_CLOSED_ENUM(int8_t, ZMTransportAccept) {
 @interface ZMTransportRequest (Debugging)
 
 @property (nonatomic, readonly, nullable) NSDate *startOfUploadTimestamp;
-@property (nonatomic, readonly) NSUInteger contentDebugInformationHash;
+
+/// Hint about content to identify distinct request (e.g. detect repeated requests with the same content).
+@property (nonatomic) NSString *contentHintForRequestLoop;
 
 - (void)setDebugInformationTranscoder:(NSObject *)transcoder;
 - (void)setDebugInformationState:(ZMSyncState *)state;

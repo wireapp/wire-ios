@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class AudioButtonOverlayTests: BaseSnapshotTestCase {
+final class AudioButtonOverlayTests: XCTestCase {
 
     var sut: AudioButtonOverlay!
     var buttonTapHistory: [AudioButtonOverlay.AudioButtonOverlayButtonType]!
