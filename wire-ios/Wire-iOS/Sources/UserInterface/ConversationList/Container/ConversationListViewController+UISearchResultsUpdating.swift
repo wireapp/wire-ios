@@ -18,7 +18,7 @@
 
 import UIKit
 
-private let searchDebounceInterval: TimeInterval = 1.2 // 0.2
+private let searchDebounceInterval: TimeInterval = 0.2
 
 extension ConversationListViewController: UISearchResultsUpdating {
 
