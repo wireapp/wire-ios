@@ -53,26 +53,10 @@ final class RemoveClientsViewController: UIViewController,
 
         return nil
     }
-
-    private lazy var requestPasswordController: RequestPasswordController = {
-        return RequestPasswordController(
-            context: .removeDevice,
-            callback: { [weak self] password in
-                guard
-                    let password = password,
-                    !password.isEmpty else {
-                    return
-                }
-
-                Task {
-                    await self?.removeUserClient(password: password)
-                }
-            })
-    }()
+    private var requestPasswordController: RequestPasswordController?
 
     weak var delegate: RemoveClientsViewControllerDelegate?
     private var viewModel: RemoveClientsViewController.ViewModel
-    private var userClientToDelete: UserClient?
 
     // MARK: - Life cycle
 
@@ -138,19 +122,33 @@ final class RemoveClientsViewController: UIViewController,
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
-    func removeUserClient(_ userClient: UserClient) {
-        userClientToDelete = userClient
-        present(requestPasswordController.alertController, animated: true)
+    func removeUserClient(_ userClient: UserClient) async {
+        if let password = await presentRequestPasswordController() {
+            await removeUserClient(userClient, password: password)
+        }
     }
 
     // MARK: - Helpers
 
-    private func removeUserClient(password: String) async {
-        guard let userClientToDelete = userClientToDelete else { return }
+    private func presentRequestPasswordController() async -> String? {
+        await withCheckedContinuation { continuation in
+            requestPasswordController = RequestPasswordController(
+                context: .removeDevice,
+                callback: { password in
+                    continuation.resume(returning: password)
+                })
+            guard let alertController = requestPasswordController?.alertController else {
+                return
+            }
 
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    private func removeUserClient(_ userClient: UserClient, password: String) async {
         isLoadingViewVisible = true
         do {
-            try await viewModel.removeUserClient(userClientToDelete, password: password)
+            try await viewModel.removeUserClient(userClient, password: password)
             delegate?.finishedDeleting(self)
         } catch {
             delegate?.failedToDeleteClients(error)
@@ -201,7 +199,9 @@ final class RemoveClientsViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let userClient = viewModel.clients[indexPath.row]
-        removeUserClient(userClient)
+        Task {
+            await removeUserClient(userClient)
+        }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {

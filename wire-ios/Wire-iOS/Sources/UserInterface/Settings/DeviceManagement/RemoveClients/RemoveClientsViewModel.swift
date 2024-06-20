@@ -54,7 +54,7 @@ extension RemoveClientsViewController {
             }
 
             try await removeUserClientUseCase?.invoke(clientId: clientId,
-                                                      credentials: EmailCredentials(email: "", password: password))
+                                                      password: password)
         }
     }
 }
