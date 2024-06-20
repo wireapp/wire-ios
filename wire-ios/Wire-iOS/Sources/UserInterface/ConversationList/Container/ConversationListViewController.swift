@@ -327,7 +327,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.isTranslucent = false
-        searchController.delegate = self
         searchController.searchResultsUpdater = self
 
         navigationItem.searchController = searchController
@@ -374,7 +373,10 @@ final class ConversationListViewController: UIViewController, UITabBarController
         } else {
             filterContainerView.isHidden = true
         }
+    }
 
+    func applySearchText(_ searchText: String) {
+        listContentController.listViewModel.appliedSearchText = searchText
     }
 
     // MARK: - Selection Management

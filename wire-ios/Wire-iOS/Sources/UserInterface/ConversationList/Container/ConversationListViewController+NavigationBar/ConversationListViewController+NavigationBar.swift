@@ -21,10 +21,6 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-enum ConversationFilterType {
-    case favorites, groups, oneToOneConversations
-}
-
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {

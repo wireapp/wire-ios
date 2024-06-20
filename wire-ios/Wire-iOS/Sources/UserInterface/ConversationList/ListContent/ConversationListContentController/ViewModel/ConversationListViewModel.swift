@@ -33,6 +33,10 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    var appliedSearchText = "" {
+        didSet { reloadConversationList() }
+    }
+
     fileprivate struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
@@ -527,7 +531,13 @@ final class ConversationListViewModel: NSObject {
             kinds = [.conversations, .contactRequests]
         }
 
-        return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
+        return kinds.map { kind in
+            Section(
+                kind: kind,
+                conversationDirectory: conversationDirectory,
+                collapsed: state.collapsed.contains(kind.identifier)
+            )
+        }
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
