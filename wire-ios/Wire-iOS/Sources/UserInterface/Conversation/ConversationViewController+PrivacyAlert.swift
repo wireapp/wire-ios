@@ -102,6 +102,17 @@ extension ConversationViewController {
         return (title, message, actions)
     }
 
+    private func clientVerificationPrivacyWarningAlertContent(action: @escaping (Bool) -> Void) -> AlertContent {
+        typealias DegradationReasonMessage = L10n.Localizable.Meta.Degraded.DegradationReasonMessage
+
+        let title = DegradationReasonMessage.someone
+        let message = L10n.Localizable.Meta.Degraded.dialogMessage
+
+        let actions: [PrivacyAlertAction] = [.verifyDevices, .sendAnywayWithAction(action), .cancelWithAction(action)]
+
+        return (title, message, actions)
+    }
+
     private func legalHoldPrivacyWarningAlertContent() -> AlertContent {
         let title = L10n.Localizable.Meta.Legalhold.sendAlertTitle
         let message = L10n.Localizable.Meta.Degraded.dialogMessage
@@ -129,15 +140,13 @@ extension ConversationViewController {
     private func performPrivacyAction(_ action: PrivacyAlertAction) {
         switch action {
         case .verifyDevices:
-            conversation.acknowledgePrivacyWarning(withResendIntent: false)
             presentVerificationScreen()
         case .legalHoldDetails:
-            conversation.acknowledgePrivacyWarning(withResendIntent: false)
             presentLegalHoldDetails()
         case .sendAnyway:
-            conversation.acknowledgePrivacyWarning(withResendIntent: true)
+            conversation.acknowledgePrivacyWarningAndResendMessages()
         case .cancel:
-            conversation.acknowledgePrivacyWarning(withResendIntent: false)
+            conversation.discardPendingMessagesAfterPrivacyChanges()
         case .sendAnywayWithAction(let closure):
             closure(true)
         case .cancelWithAction(let closure):
@@ -156,7 +165,7 @@ extension ConversationViewController {
             let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList, userSession: userSession)
             profileViewController.delegate = self
             profileViewController.viewControllerDismisser = self
-            let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
+            let navigationController = profileViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         } else if conversation.conversationType == .group {
@@ -165,7 +174,7 @@ extension ConversationViewController {
                 conversation: conversation,
                 userSession: userSession
             )
-            let navigationController = participantsViewController.wrapInNavigationController(setBackgroundColor: true)
+            let navigationController = participantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         }
@@ -179,9 +188,17 @@ extension ConversationViewController {
 
 // MARK: - E2EIPrivacyWarningPresenter
 
-extension ConversationViewController: E2EIPrivacyWarningPresenter {
+extension ConversationViewController: PrivacyWarningPresenter {
+    func presentPrivacyWarningAlert(_ notification: Notification) {
+        switch conversation.messageProtocol {
+        case .proteus, .mixed:
+            presentClientVerificationPrivacyWarningAlert(notification)
+        case .mls:
+            presentE2EIPrivacyWarningAlert(notification)
+        }
+    }
 
-    func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
+    private func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
         switch notification.alertType {
         case .incomingCall?:
             let alert = UIAlertController.makeIncomingDegradedMLSCall { continueDegradedCall in
@@ -189,7 +206,7 @@ extension ConversationViewController: E2EIPrivacyWarningPresenter {
                 if continueDegradedCall {
                     self.conversation.acknowledgePrivacyChanges()
                 }
-                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
+                PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: continueDegradedCall)
             }
 
             present(alert, animated: true)
@@ -200,7 +217,7 @@ extension ConversationViewController: E2EIPrivacyWarningPresenter {
                 if continueDegradedCall {
                     self.conversation.acknowledgePrivacyChanges()
                 }
-                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
+                PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: continueDegradedCall)
             }
 
             present(alert, animated: true)
@@ -212,9 +229,49 @@ extension ConversationViewController: E2EIPrivacyWarningPresenter {
                     self.conversation.acknowledgePrivacyChanges()
                 }
 
-                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+                PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: sendAnyway)
             }
 
+            presentAlert(with: content)
+
+        case .none:
+            assertionFailure("wrong type of notification sent!")
+        }
+    }
+
+    private func presentClientVerificationPrivacyWarningAlert(_ notification: Notification) {
+        switch notification.alertType {
+        case .incomingCall?:
+            let alert = UIAlertController.makeIncomingDegradedProteusCall(degradedUser: nil) { continueDegradedCall in
+
+                if continueDegradedCall {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+                PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: continueDegradedCall)
+            }
+
+            present(alert, animated: true)
+
+        case .outgoingCall?:
+            let alert = UIAlertController.makeOutgoingDegradedProteusCall(degradedUser: nil) { continueDegradedCall in
+
+                if continueDegradedCall {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+                PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: continueDegradedCall)
+            }
+
+            present(alert, animated: true)
+
+        case .message?:
+            let content = clientVerificationPrivacyWarningAlertContent { sendAnyway in
+
+                if sendAnyway {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+
+                PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: sendAnyway)
+            }
             presentAlert(with: content)
 
         case .none:

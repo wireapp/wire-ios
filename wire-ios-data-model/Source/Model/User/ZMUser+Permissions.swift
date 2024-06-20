@@ -170,7 +170,8 @@ public extension ZMUser {
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         guard
-            let otherUser = user as? ZMUser,
+            let context = managedObjectContext,
+            let otherUser = user.unbox(in: context),
             let otherUserTeamID = otherUser.team?.remoteIdentifier,
             let selfUserTeamID = self.team?.remoteIdentifier
         else {

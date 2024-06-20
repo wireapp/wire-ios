@@ -19,7 +19,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
+final class PasscodeSetupViewControllerTests: XCTestCase {
 
     // MARK: Properties
 

@@ -19,23 +19,29 @@ permissions:
 
 jobs:
   column_1_production:
+    if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_prod
       is_cloud_build: false
+      skip_security_tests: false
     secrets: inherit
 
 
   column_2_production:
+    if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_2_prod
       is_cloud_build: false
+      skip_security_tests: false
     secrets: inherit
   
   column_3_production:
+    if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_prod
       is_cloud_build: false
+      skip_security_tests: false
     secrets: inherit

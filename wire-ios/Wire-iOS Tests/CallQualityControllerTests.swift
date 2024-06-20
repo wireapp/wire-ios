@@ -36,6 +36,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         callConversationProvider = MockCallConversationProvider()
         sut = MockCallQualityController()
         sut.router = router
+        sut.usesCallSurveyBudget = false
 
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
@@ -84,6 +85,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
     // MARK: - CallQualitySurvey Presentation Tests
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
         // GIVEN
+
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .normal)
         conversation.remoteIdentifier = UUID()

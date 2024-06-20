@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
+// `DeviceDetailsView` and `OtherUserDeviceDetailsView` are similar and even use the same view model type.
 // The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
 protocol DeviceInfoView: View {
     var viewModel: DeviceInfoViewModel { get }

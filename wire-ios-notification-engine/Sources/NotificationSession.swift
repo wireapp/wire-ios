@@ -240,9 +240,11 @@ public final class NotificationSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
@@ -337,6 +339,11 @@ public final class NotificationSession {
                 return
             }
 
+            let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
+            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.addTag(.selfClientId, value: clientId)
+            }
+
             self.fetchEvents(fromPushChannelPayload: payload)
         }
     }
@@ -402,6 +409,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
         WireLogger.notifications.info("processing \(events.count) decoded events...")
 
+        // Dictionary to filter notifications fetched in same batch with same messageOnce
+        // i.e: textMessage and linkPreview
+        var tempNotifications = [Int: ZMLocalNotification]()
+
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
                 WireLogger.calling.info("detected a call event")
@@ -409,11 +420,13 @@ extension NotificationSession: PushNotificationStrategyDelegate {
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
                 WireLogger.notifications.info("generated a notification from an event")
-                localNotifications.append(notification)
+                tempNotifications[notification.contentHashValue] = notification
             } else {
                 WireLogger.notifications.info("ignoring event")
             }
         }
+
+        localNotifications = Array(tempNotifications.values)
         context.saveOrRollback()
     }
 

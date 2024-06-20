@@ -34,7 +34,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                     do {
                         try await self.updateEventProcessor.processEvents(events)
                     } catch {
-                        WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })")
+                        WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })", attributes: .safePublic)
                     }
                 }
             }

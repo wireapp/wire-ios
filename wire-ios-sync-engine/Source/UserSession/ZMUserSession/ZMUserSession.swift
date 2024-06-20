@@ -151,6 +151,11 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
+    public var mlsFeature: Feature.MLS {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchMLS()
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
@@ -304,6 +309,7 @@ public final class ZMUserSession: NSObject {
         coreDataStack.close()
 
         NotificationCenter.default.removeObserver(self)
+        WireLogger.authentication.addTag(.selfClientId, value: nil)
 
         tornDown = true
     }
@@ -326,8 +332,7 @@ public final class ZMUserSession: NSObject {
         )
 
         let apiProvider = APIProvider(httpClient: httpClient)
-
-        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
+        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider, featureRepository: featureRepository)
         let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
         let keyRotator = E2EIKeyPackageRotator(
@@ -362,7 +367,10 @@ public final class ZMUserSession: NSObject {
     private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
-        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+        return GetIsE2EIdentityEnabledUseCase(
+            coreCryptoProvider: coreCryptoProvider,
+            featureRespository: featureRepository
+        )
     }()
 
     public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
@@ -378,6 +386,23 @@ public final class ZMUserSession: NSObject {
             isE2EIdentityEnabled: e2eiFeature.isEnabled,
             selfClientCertificateProvider: selfClientCertificateProvider,
             gracePeriodEndDate: gracePeriodEndDate)
+    }()
+
+    public lazy var removeUserClient: RemoveUserClientUseCaseProtocol? = {
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let apiProvider = APIProvider(httpClient: httpClient)
+        guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            return nil
+        }
+
+        return RemoveUserClientUseCase(
+            userClientAPI: apiProvider.userClientAPI(apiVersion: apiVersion),
+            syncContext: syncContext)
     }()
 
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
@@ -477,6 +502,7 @@ public final class ZMUserSession: NSObject {
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
@@ -574,6 +600,10 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
+            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        }
     }
 
     private func configureTransportSession() {
@@ -672,8 +702,6 @@ public final class ZMUserSession: NSObject {
 
     func startRequestLoopTracker() {
         transportSession.requestLoopDetectionCallback = { path in
-            guard !path.hasSuffix("/typing") else { return }
-
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {
@@ -1004,6 +1032,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
             // The client will then join any MLS groups they haven't joined yet.
             syncStatus.forceSlowSync()
         }
+
+        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.addTag(.selfClientId, value: clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {

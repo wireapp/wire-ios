@@ -186,13 +186,7 @@ extension VoiceChannelV3: CallActions {
 
     public func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: true)
-    }
-
-    public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {
-        guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: false)
-        leave(userSession: userSession, completion: nil)
+        conversation.acknowledgePrivacyWarningAndResendMessages()
     }
 
     public func join(video: Bool, userSession: ZMUserSession) -> Bool {

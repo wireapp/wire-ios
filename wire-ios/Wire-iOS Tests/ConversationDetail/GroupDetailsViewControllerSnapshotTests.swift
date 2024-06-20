@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     var sut: GroupDetailsViewController!
     var mockConversation: MockGroupDetailsConversation!
@@ -210,7 +210,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForMlsConversation_withNotVerifiedStatus() throws {
@@ -229,7 +229,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForProteusConversation_withVerifiedStatus() throws {
@@ -248,7 +248,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
 }

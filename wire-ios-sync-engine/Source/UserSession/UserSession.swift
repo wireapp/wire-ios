@@ -212,7 +212,14 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
+    var mlsFeature: Feature.MLS { get }
+
     func fetchAllClients()
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    )
 
     // MARK: Use Cases
 
@@ -229,6 +236,8 @@ public protocol UserSession: AnyObject {
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
 
     var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
+
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol { get }
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 

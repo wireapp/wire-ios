@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class FullscreenImageViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     var sut: FullscreenImageViewController!
     var userSession: UserSessionMock!

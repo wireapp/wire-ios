@@ -39,6 +39,7 @@ protocol MLSActionsProviderProtocol {
     func claimKeyPackages(
         userID: UUID,
         domain: String?,
+        ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
     ) async throws -> [KeyPackage]
@@ -132,12 +133,14 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
     func claimKeyPackages(
         userID: UUID,
         domain: String?,
+        ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
     ) async throws -> [KeyPackage] {
         var action = ClaimMLSKeyPackageAction(
             domain: domain,
             userId: userID,
+            ciphersuite: ciphersuite,
             excludedSelfClientId: excludedSelfClientID
         )
 

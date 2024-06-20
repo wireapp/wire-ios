@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class EmptySearchResultsViewTests: BaseSnapshotTestCase {
+final class EmptySearchResultsViewTests: XCTestCase {
 
     // MARK: - Properties
 

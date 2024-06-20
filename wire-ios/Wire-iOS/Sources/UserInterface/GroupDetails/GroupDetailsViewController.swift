@@ -282,7 +282,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // Protocol details
         sections.append(MessageProtocolSectionController(
             messageProtocol: conversation.messageProtocol,
-            groupID: conversation.mlsGroupID
+            groupID: conversation.mlsGroupID,
+            ciphersuite: conversation.ciphersuite
         ))
 
         return sections
@@ -308,6 +309,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         } else {
             updateUserE2EICertificationStatuses()
         }
+
+        if changeInfo.mlsVerificationStatusChanged {
+            setupNavigatiomItem()
+        }
     }
 
     func footerView(_ view: GroupDetailsFooterView,
@@ -318,7 +323,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation: conversation,
                 userSession: userSession
             )
-            let navigationController = addParticipantsViewController.wrapInNavigationController(setBackgroundColor: true)
+            let navigationController = addParticipantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .currentContext
 
             present(navigationController, animated: true)

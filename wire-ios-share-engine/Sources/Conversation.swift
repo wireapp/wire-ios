@@ -39,6 +39,8 @@ public protocol Conversation: SharingTarget {
     func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable
 
     /// Accept the privacy warning, and resend the messages that caused them if wanted.
-    func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool)
+    func acknowledgePrivacyWarningAndResendMessages()
+
+    func discardPendingMessagesAfterPrivacyChanges()
 
 }

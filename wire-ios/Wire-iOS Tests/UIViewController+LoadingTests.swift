@@ -28,7 +28,7 @@ final class MockLoadingViewController: SpinnerCapableViewController {
 
 // MARK: - LoadingViewControllerTests
 
-final class LoadingViewControllerTests: BaseSnapshotTestCase {
+final class LoadingViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

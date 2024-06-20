@@ -101,7 +101,7 @@ final class ConversationViewController: UIViewController {
             break
         }
 
-        return viewController?.wrapInNavigationController(setBackgroundColor: true)
+        return viewController?.wrapInNavigationController()
     }
 
     required init(conversation: ZMConversation,
@@ -160,7 +160,7 @@ final class ConversationViewController: UIViewController {
             for: userSession.conversationList()
         )
 
-        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
+        observationToken = PrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -661,7 +661,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }

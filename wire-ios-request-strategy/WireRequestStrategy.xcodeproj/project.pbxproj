@@ -54,6 +54,8 @@
 		06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */; };
 		06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */; };
 		06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */; };
+		06ADE9F72BCE825D008BA0B3 /* UserClientAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9F62BCE825D008BA0B3 /* UserClientAPI.swift */; };
+		06ADEA002BD15255008BA0B3 /* UserClientRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9FF2BD15255008BA0B3 /* UserClientRequestFactory.swift */; };
 		06ADF694264B467E002E0C7A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADF693264B467E002E0C7A /* MockAnalytics.swift */; };
 		06C394B6248E6FDA00AE736A /* ZMSimpleListRequestPaginator.h in Headers */ = {isa = PBXBuildFile; fileRef = 06025667248E617D00E060E1 /* ZMSimpleListRequestPaginator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		06C394B7248E6FDE00AE736A /* ZMSimpleListRequestPaginator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 06025669248E61BF00E060E1 /* ZMSimpleListRequestPaginator+Internal.h */; };
@@ -556,6 +558,8 @@
 		06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesAction.swift; sourceTree = "<group>"; };
 		06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesActionHandler.swift; sourceTree = "<group>"; };
 		06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesActionHandlerTests.swift; sourceTree = "<group>"; };
+		06ADE9F62BCE825D008BA0B3 /* UserClientAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientAPI.swift; sourceTree = "<group>"; };
+		06ADE9FF2BD15255008BA0B3 /* UserClientRequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientRequestFactory.swift; sourceTree = "<group>"; };
 		06ADF693264B467E002E0C7A /* MockAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalytics.swift; sourceTree = "<group>"; };
 		06C394C4248E851000AE736A /* NotificationsTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTracker.swift; sourceTree = "<group>"; };
 		06CDDE9E282E9CC200F9360F /* RemovePushTokenAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovePushTokenAction.swift; sourceTree = "<group>"; };
@@ -1159,6 +1163,14 @@
 			path = Federation;
 			sourceTree = "<group>";
 		};
+		06ADE9FE2BD1521A008BA0B3 /* User Client */ = {
+			isa = PBXGroup;
+			children = (
+				06ADE9FF2BD15255008BA0B3 /* UserClientRequestFactory.swift */,
+			);
+			path = "User Client";
+			sourceTree = "<group>";
+		};
 		06ADF692264B4666002E0C7A /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1224,6 +1236,7 @@
 				1623F8DB2AE7FD54004F0319 /* APIProvider.swift */,
 				1623F8DD2AE945E2004F0319 /* MessageAPI.swift */,
 				061389F32B178EBE0053B7B5 /* E2eIAPI.swift */,
+				06ADE9F62BCE825D008BA0B3 /* UserClientAPI.swift */,
 			);
 			path = APIs;
 			sourceTree = "<group>";
@@ -1296,6 +1309,7 @@
 				F963E8D81D955D4600098AD3 /* Helpers */,
 				16229481221EBB8000A98679 /* Image Preprocessing */,
 				1623F8D12AE66F0A004F0319 /* Message Sending */,
+				06ADE9FE2BD1521A008BA0B3 /* User Client */,
 				060ED6D72499F42200412C4A /* Notifications */,
 				F1CD5D812024C16B008C574E /* Object Syncs */,
 				F1CD5D862024C363008C574E /* Other Syncs */,
@@ -2516,6 +2530,7 @@
 				0649D14724F63C02001DDC78 /* PushNotificationCategory.swift in Sources */,
 				F18401AF2073BE0800E9F4CC /* AvailabilityRequestStrategy.swift in Sources */,
 				EEDE7DB128EAEEC3007DC6A3 /* ConversationService.swift in Sources */,
+				06ADEA002BD15255008BA0B3 /* UserClientRequestFactory.swift in Sources */,
 				E69A02222B85096000126FF6 /* ProteusToMLSMigrationState.swift in Sources */,
 				F18401D12073BE0800E9F4CC /* ApplicationStatus.swift in Sources */,
 				0649D14D24F63D3E001DDC78 /* LocalNotificationType+Localization.swift in Sources */,
@@ -2583,6 +2598,7 @@
 				0649D12224F5C5EF001DDC78 /* ZMLocalNotification.swift in Sources */,
 				EE90C2A8282E7ECF00474379 /* RegisterPushTokenAction.swift in Sources */,
 				06FDC62F28354DAE008300DB /* PushTokenStorage.swift in Sources */,
+				06ADE9F72BCE825D008BA0B3 /* UserClientAPI.swift in Sources */,
 				166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */,
 				E629E3BE2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift in Sources */,
 				F18401BB2073BE0800E9F4CC /* LinkPreviewAssetDownloadRequestStrategy.swift in Sources */,

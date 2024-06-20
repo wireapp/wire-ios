@@ -2146,7 +2146,7 @@
 "device.details.section.e2ei.status.expired" = "Истек";
 "device.details.section.e2ei.status.invalid" = "Недействителен";
 "device.details.section.e2ei.serial_number" = "Серийный номер";
-"device.details.section.mls.signature" = "MLS с подписью Ed25519";
+"device.details.section.mls.signature" = "MLS с подписью %@";
 "device.details.section.mls.title" = "Отпечаток MLS";
 "device.details.section.mls.thumbprint" = "Отпечаток MLS: %@";
 "device.details.certificate_details.title" = "Сведения о сертификате";

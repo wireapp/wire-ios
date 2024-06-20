@@ -123,7 +123,12 @@ final class SettingsClientViewController: UIViewController,
             navController.viewControllers.count > 0 &&
             navController.viewControllers[0] == self,
             self.navigationItem.rightBarButtonItem == nil {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(SettingsClientViewController.onDonePressed(_:)))
+            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.done.capitalized,
+                systemImage: false,
+                target: self,
+                action: #selector(SettingsClientViewController.onDonePressed(_:)))
+            self.navigationItem.rightBarButtonItem = doneButtonItem
             if fromConversation {
                 let barColor = SemanticColors.View.backgroundDefault
                 navController.navigationBar.barTintColor = barColor

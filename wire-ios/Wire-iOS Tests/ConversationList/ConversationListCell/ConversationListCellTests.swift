@@ -64,7 +64,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     }
 }
 
-final class ConversationListCellTests: BaseSnapshotTestCase {
+final class ConversationListCellTests: XCTestCase {
 
     // MARK: - Setup
 

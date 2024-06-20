@@ -700,7 +700,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func presentMLSPrivacyWarningIfNeeded(execute: @escaping () -> Void) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             execute()
         }
 
@@ -831,7 +831,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self.process(picker: picker, info: info)
         }
 
@@ -887,7 +887,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     @objc
     func sketchButtonPressed(_ sender: Any?) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+        let checker = PrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
             sketch()
         })
 
@@ -900,7 +900,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         viewController.delegate = self
         viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
-        parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        parent?.present(viewController.wrapInNavigationController(), animated: true)
     }
 }
 

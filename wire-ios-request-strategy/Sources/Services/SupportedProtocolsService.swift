@@ -162,7 +162,7 @@ private extension UserClient {
     }
 
     var hasMLSIdentity: Bool {
-        return mlsPublicKeys.ed25519 != nil
+        return !mlsPublicKeys.isEmpty
     }
 
     var isRecentlyActive: Bool {

@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ClientTableViewCellTests: BaseSnapshotTestCase {
+final class ClientTableViewCellTests: XCTestCase {
     var sut: ClientTableViewCell!
     var container: UIView!
 
@@ -163,7 +163,8 @@ extension ClientTableViewCellModel {
                      proteusLabelText: proteusId.isNonEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
                      mlsThumbprintLabelText: mlsThumbprint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
                      isProteusVerified: isProteusVerified,
-                     e2eIdentityStatus: e2eIdentityCertificateStatus)
+                     e2eIdentityStatus: e2eIdentityCertificateStatus,
+                     activationDate: .now)
     }
 
 }

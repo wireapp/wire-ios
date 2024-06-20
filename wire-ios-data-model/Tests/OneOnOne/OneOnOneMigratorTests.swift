@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
@@ -97,6 +98,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
+        let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 
         let (connection, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
@@ -112,7 +114,9 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in
+            return ciphersuite
+        }
 
         // When
         await syncContext.perform {
@@ -133,6 +137,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         await syncContext.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+            XCTAssertEqual(mlsConversation.ciphersuite, ciphersuite)
+            XCTAssertEqual(mlsConversation.mlsStatus, .ready)
             XCTAssertNil(proteusConversation.oneOnOneUser)
         }
         withExtendedLifetime(handler) {}
@@ -201,11 +207,13 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in
+            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        }
 
         // required to add be able to add images
         let cacheLocation = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         await syncContext.perform {

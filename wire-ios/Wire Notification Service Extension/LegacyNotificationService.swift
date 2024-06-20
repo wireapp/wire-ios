@@ -119,6 +119,8 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
             return finishWithoutShowingNotification()
         }
 
+        removeNotification(withSameMessageId: notification.messageNonce)
+
         WireLogger.notifications.info("session did generate a notification")
 
         defer { tearDown() }
@@ -141,6 +143,19 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
         contentHandler(content)
     }
 
+    private func removeNotification(withSameMessageId messageNonce: UUID?) {
+        guard let messageNonce else { return }
+
+        let notificationCenter = UNUserNotificationCenter.current()
+
+        notificationCenter.getDeliveredNotifications { notifications in
+            let matched = notifications.first(where: { $0.userInfo.messageNonce == messageNonce })
+            if let id = matched?.request.identifier {
+                notificationCenter.removeDeliveredNotifications(withIdentifiers: [id])
+            }
+        }
+    }
+
     public func reportCallEvent(
         _ callEvent: CallEventPayload,
         currentTimestamp: TimeInterval
@@ -155,7 +170,13 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
     }
 
     public func notificationSessionDidFailWithError(error: NotificationSessionError) {
-        WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+        switch error {
+        case .alreadyFetchedEvent:
+            WireLogger.notifications.warn("session failed with error: \(error.localizedDescription)")
+        default:
+            WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+        }
+
         finishWithoutShowingNotification()
     }
 

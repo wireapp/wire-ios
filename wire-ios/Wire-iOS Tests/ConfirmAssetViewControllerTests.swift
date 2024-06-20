@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import FLAnimatedImage
+import XCTest
+
 @testable import Wire
 
-final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
+final class ConfirmAssetViewControllerTests: XCTestCase {
 
     var sut: ConfirmAssetViewController!
 

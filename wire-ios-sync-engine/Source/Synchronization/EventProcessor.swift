@@ -140,7 +140,7 @@ actor EventProcessor: UpdateEventProcessor {
             with: privateKeys,
             callEventsOnly: callEventsOnly
         ) { [weak self] decryptedUpdateEvents in
-            WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database")
+            WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database", attributes: .safePublic)
 
             guard let self else { return }
 
@@ -152,11 +152,13 @@ actor EventProcessor: UpdateEventProcessor {
                 ZMUpdateEvent.eventTypeString(for: $0.type) ?? "unknown"
             }
 
-            WireLogger.updateEvent.info("consuming events: \(eventDescriptions)")
+            WireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
 
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
             for event in decryptedUpdateEvents {
+                WireLogger.updateEvent.info("process decrypted event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID,
+                                                                                    LogAttributesKey.nonce.rawValue: event.messageNonce])
                 await syncContext.perform {
                     for eventConsumer in self.eventConsumers {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
