@@ -225,10 +225,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 userSession: userSession,
                 completion: completion
             )
-
-            userSession.analyticsSession.startSession()
-            userSession.analyticsSession.trackEvent(.appOpen)
-
         case .headless:
             showLaunchScreen(completion: completion)
         case .loading:
