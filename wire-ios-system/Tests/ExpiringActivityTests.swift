@@ -20,22 +20,6 @@ import Foundation
 import XCTest
 @testable import WireSystem
 
-private class MockExpiringActivityAPI: ExpiringActivityInterface {
-
-    typealias MethodCall = (_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) -> Void
-
-    var method: MethodCall?
-
-    func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void) {
-        if let method {
-            method(reason, block)
-        } else {
-            fatalError("no mock for `performExpiringActivity(withReason:using:)`")
-        }
-    }
-
-}
-
 class ExpiringActivityTests: XCTestCase {
 
     let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])
@@ -110,6 +94,22 @@ class ExpiringActivityTests: XCTestCase {
             }
         } catch {
             XCTFail("Expected the activity to end without any error thrown")
+        }
+    }
+
+}
+
+private class MockExpiringActivityAPI: ExpiringActivityInterface {
+
+    typealias MethodCall = (_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) -> Void
+
+    var method: MethodCall?
+
+    func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void) {
+        if let method {
+            method(reason, block)
+        } else {
+            fatalError("no mock for `performExpiringActivity(withReason:using:)`")
         }
     }
 
