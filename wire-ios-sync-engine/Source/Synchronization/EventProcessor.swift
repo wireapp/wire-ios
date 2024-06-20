@@ -149,6 +149,7 @@ actor EventProcessor: UpdateEventProcessor {
             let prefetchResult = await syncContext.perform { self.syncContext.executeFetchRequestBatchOrAssert(fetchRequest) }
 
             let eventDescriptions = decryptedUpdateEvents.map {
+                $0.messageNonce
                 ZMUpdateEvent.eventTypeString(for: $0.type) ?? "unknown"
             }
 

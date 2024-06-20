@@ -18,22 +18,11 @@
 
 import Foundation
 
-/// An API access object for endpoints concerning users.
+enum UserRepositoryError: Error {
 
-// sourcery: AutoMockable
-public protocol UsersAPI {
+    /// Failed to fetch data from the server.
 
-    /// Get user details for a single user
-    ///
-    /// - Parameter userID: The id of the user.
-    /// - Returns: The user details.
+    case failedToFetchRemotely(Error)
+    case failedToCollectKnownUsers(Error)
 
-    func getUser(for userID: UserID) async throws -> User
-
-    /// Get user details for a list of users
-    ///
-    /// - Parameter userIDs: lists of user ids
-    /// - Returns: List user details response.
-
-    func getUsers(userIDs: [UserID]) async throws -> UserList
 }

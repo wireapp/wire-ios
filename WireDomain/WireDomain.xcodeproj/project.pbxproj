@@ -24,6 +24,9 @@
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
 		01D0DD012C1C90E90076CB1C /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 01D0DD002C1C90E90076CB1C /* WireAPI */; };
 		01D0DD032C1C90E90076CB1C /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 01D0DD022C1C90E90076CB1C /* WireAPISupport */; };
+		162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623564F2C2B223100C6666C /* UserRepositoryTests.swift */; };
+		162356532C2B223B00C6666C /* UserRepository_.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356512C2B223B00C6666C /* UserRepository_.swift */; };
+		162356542C2B223B00C6666C /* UserRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356522C2B223B00C6666C /* UserRepositoryError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +65,9 @@
 		01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireDomain.docc; sourceTree = "<group>"; };
 		01D0DCFC2C1C8F9B0076CB1C /* WireDomain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireDomain.xctestplan; sourceTree = "<group>"; };
+		1623564F2C2B223100C6666C /* UserRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryTests.swift; sourceTree = "<group>"; };
+		162356512C2B223B00C6666C /* UserRepository_.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository_.swift; sourceTree = "<group>"; };
+		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +106,7 @@
 		017F67992C20801800B6E02D /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				1623564F2C2B223100C6666C /* UserRepositoryTests.swift */,
 				017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */,
 				017F67982C20801800B6E02D /* TeamRepositoryTests.swift */,
 			);
@@ -117,6 +124,8 @@
 		017F67A22C20802300B6E02D /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				162356512C2B223B00C6666C /* UserRepository_.swift */,
+				162356522C2B223B00C6666C /* UserRepositoryError.swift */,
 				017F679D2C20802300B6E02D /* ConnectionsRepositiory.swift */,
 				017F679E2C20802300B6E02D /* ConnectionsRepositoryError.swift */,
 				017F679F2C20802300B6E02D /* TeamRepository.swift */,
@@ -408,6 +417,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
+				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
+				162356542C2B223B00C6666C /* UserRepositoryError.swift in Sources */,
+				162356532C2B223B00C6666C /* UserRepository_.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
