@@ -208,7 +208,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)
-        case .migrating: //
+        case .migrating:
             showLaunchScreen(isLoading: true, completion: completionBlock)
         case .unauthenticated(error: let error):
             screenCurtain.userSession = nil
