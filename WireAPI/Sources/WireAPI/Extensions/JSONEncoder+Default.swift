@@ -25,8 +25,10 @@ extension JSONEncoder {
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
 
+        #if DEBUG
         // This is needed so we can deterministically snapshot request bodies.
         encoder.outputFormatting = .sortedKeys
+        #endif
 
         return encoder
     }
