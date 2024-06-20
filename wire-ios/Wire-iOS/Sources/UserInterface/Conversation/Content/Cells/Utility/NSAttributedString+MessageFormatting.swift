@@ -17,8 +17,9 @@
 //
 
 import Down
-import Foundation
+import UIKit
 import WireDataModel
+import WireDesign
 import WireLinkPreview
 import WireUtilities
 

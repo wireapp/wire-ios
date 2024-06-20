@@ -209,6 +209,7 @@ public extension WireLogger {
     static let shareExtension = WireLogger(tag: "share-extension")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
+    static let timePoint = WireLogger(tag: "timePoint")
     static let ui = WireLogger(tag: "UI")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
