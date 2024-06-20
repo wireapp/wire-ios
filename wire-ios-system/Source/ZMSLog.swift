@@ -49,9 +49,9 @@ public final class ZMSLogEntry: NSObject {
 @objc
 public final class ZMSLog: NSObject {
 
-    public typealias LogHook = (_ level: ZMLogLevel_t, _ tag: String?, _ message: String) -> Void
+    public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
-        _ level: ZMLogLevel_t,
+        _ level: ZMLogLevel,
         _ tag: String?,
         _ message: ZMSLogEntry,
         _ isSafe: Bool) -> Void
@@ -85,7 +85,7 @@ public final class ZMSLog: NSObject {
 extension ZMSLog {
 
     public func safePublic(_ message: @autoclosure () -> SanitizedString,
-                           level: ZMLogLevel_t = .info,
+                           level: ZMLogLevel = .info,
                            osLogOn: Bool = true,
                            file: String = #file,
                            line: UInt = #line) {
@@ -118,20 +118,20 @@ extension ZMSLog {
 
     /// Executes the closure only if the log level is Warning or higher
     public func ifWarn(_ closure: () -> Void) {
-        if ZMLogLevel_t.warn.rawValue <= ZMSLog.getLevel(tag: self.tag).rawValue {
+        if ZMLogLevel.warn.rawValue <= ZMSLog.getLevel(tag: self.tag).rawValue {
             closure()
         }
     }
 
     /// Executes the closure only if the log level is Info or higher
     public func ifInfo(_ closure: () -> Void) {
-        if ZMLogLevel_t.info.rawValue <= ZMSLog.getLevel(tag: self.tag).rawValue {
+        if ZMLogLevel.info.rawValue <= ZMSLog.getLevel(tag: self.tag).rawValue {
             closure()
         }
     }
     /// Executes the closure only if the log level is Debug or higher
     public func ifDebug(_ closure: () -> Void) {
-        if ZMLogLevel_t.debug.rawValue <= ZMSLog.getLevel(tag: self.tag).rawValue {
+        if ZMLogLevel.debug.rawValue <= ZMSLog.getLevel(tag: self.tag).rawValue {
             closure()
         }
     }
@@ -159,7 +159,7 @@ public final class LogHookToken: NSObject {
 extension ZMSLog {
 
     /// Notify all hooks of a new log
-    fileprivate static func notifyHooks(level: ZMLogLevel_t,
+    fileprivate static func notifyHooks(level: ZMLogLevel,
                                         tag: String?,
                                         entry: ZMSLogEntry,
                                         isSafe: Bool) {
@@ -205,7 +205,7 @@ extension ZMSLog {
 
 extension ZMSLog {
 
-    @objc static public func logWithLevel(_ level: ZMLogLevel_t, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
+    @objc static public func logWithLevel(_ level: ZMLogLevel, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
         let entry = ZMSLogEntry(text: message(), timestamp: Date())
         logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)
     }
@@ -213,7 +213,7 @@ extension ZMSLog {
     #warning("Parameters file and line are unused")
     static private func logEntry(
         _ entry: ZMSLogEntry,
-        level: ZMLogLevel_t,
+        level: ZMLogLevel,
         isSafe: Bool,
         tag: String?,
         osLogOn: Bool = true,

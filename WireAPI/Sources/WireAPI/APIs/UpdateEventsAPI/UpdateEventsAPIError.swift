@@ -30,6 +30,10 @@ public enum UpdateEventsAPIError: Error {
 
     case invalidClient
 
+    /// One or more provided query parameters are invalid.
+
+    case invalidParameters
+
     /// The requested notification(s) was not found.
 
     case notFound
