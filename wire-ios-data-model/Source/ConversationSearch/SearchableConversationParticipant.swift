@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A container of conversations used by the `ConversationSearchUseCase`.
-public protocol SearchableConversationContainer {
-    associatedtype Conversation: SearchableConversation
+public protocol SearchableConversationParticipant {
 
-    var conversations: [Conversation] { get }
-
-    mutating func removeConversation(at index: Int)
+    var searchableName: String { get }
 }

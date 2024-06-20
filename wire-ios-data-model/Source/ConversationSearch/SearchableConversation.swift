@@ -18,4 +18,6 @@
 
 public protocol SearchableConversation {
 
+    var searchableName: String { get }
+    var searchableParticipants: [SearchableConversationParticipant] { get }
 }

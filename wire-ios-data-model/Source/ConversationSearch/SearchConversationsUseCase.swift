@@ -26,35 +26,40 @@ where ConversationContainer: SearchableConversationContainer {
     }
 
     public func invoke(searchText: String) -> [ConversationContainer] {
-        fatalError()
 
-        /*
+        let searchText = searchText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
 
-        // TODO: make use case
+        if searchText.isEmpty {
+            return conversationContainers
+        }
 
-        // filter based on search text
-        guard !appliedSearchText.isEmpty else { return sections }
-        for s in sections.indices {
-            sections[s].items = sections[s].items.filter { item in
-                guard let conversation = item.item as? ZMConversation else { return true }
+        // create a copy, since conversations to be filtered are removed
+        var conversationContainers = conversationContainers
 
-                // group name matches
-                if let conversationName = conversation.name?.lowercased(), conversationName.contains(appliedSearchText) {
-                    return true
+        // iterate through all containers and all conversations and remove those who don't match the search text
+        for containerIndex in conversationContainers.indices {
+        conversationLoop:
+            for conversationIndex in conversationContainers[containerIndex].conversations.indices.reversed() {
+
+                let conversation = conversationContainers[containerIndex].conversations[conversationIndex]
+
+                // check if conversation name matches
+                if conversation.searchableName.lowercased().contains(searchText) {
+                    continue
                 }
 
-                // participant's name contains search text
-                for participant in conversation.participants {
-                    if let participantName = participant.name?.lowercased(), participantName.contains(appliedSearchText) {
-                        return true
-                    }
+                // check if any participant's name matches
+                for participant in conversation.searchableParticipants where participant.searchableName.lowercased().contains(searchText) {
+                    continue conversationLoop
                 }
 
-                return false
+                // no match, remove conversation from results
+                conversationContainers[containerIndex].removeConversation(at: conversationIndex)
             }
         }
-        return sections
 
-         */
+        return conversationContainers
     }
 }

@@ -294,6 +294,7 @@
 		599EA3D52C246955009319D4 /* SearchableConversationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D42C246955009319D4 /* SearchableConversationContainer.swift */; };
 		599EA3D72C247A6B009319D4 /* SearchableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D62C247A6B009319D4 /* SearchableConversation.swift */; };
 		599EA3D92C247ABF009319D4 /* ZMConversation+SearchableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D82C247ABF009319D4 /* ZMConversation+SearchableConversation.swift */; };
+		599EA3DB2C2485AE009319D4 /* SearchableConversationParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3DA2C2485AE009319D4 /* SearchableConversationParticipant.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
@@ -1233,6 +1234,7 @@
 		599EA3D42C246955009319D4 /* SearchableConversationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableConversationContainer.swift; sourceTree = "<group>"; };
 		599EA3D62C247A6B009319D4 /* SearchableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableConversation.swift; sourceTree = "<group>"; };
 		599EA3D82C247ABF009319D4 /* ZMConversation+SearchableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+SearchableConversation.swift"; sourceTree = "<group>"; };
+		599EA3DA2C2485AE009319D4 /* SearchableConversationParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableConversationParticipant.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireDataModelSupport.h; sourceTree = "<group>"; };
@@ -2209,6 +2211,7 @@
 				599EA3D62C247A6B009319D4 /* SearchableConversation.swift */,
 				599EA3D42C246955009319D4 /* SearchableConversationContainer.swift */,
 				599EA3D82C247ABF009319D4 /* ZMConversation+SearchableConversation.swift */,
+				599EA3DA2C2485AE009319D4 /* SearchableConversationParticipant.swift */,
 			);
 			path = ConversationSearch;
 			sourceTree = "<group>";
@@ -4428,6 +4431,7 @@
 				63DA3373286CA43300818C3C /* ZMConversation+MLS.swift in Sources */,
 				599EA3D32C2468A0009319D4 /* SearchConversationsUseCaseProtocol.swift in Sources */,
 				E6E5043A2BC542C5004948E7 /* EARPrivateKeys.swift in Sources */,
+				599EA3DB2C2485AE009319D4 /* SearchableConversationParticipant.swift in Sources */,
 				54E3EE411F616BA600A261E3 /* ZMAssetClientMessage.swift in Sources */,
 				EE429390252C466500E70670 /* ChangeInfoConsumer.swift in Sources */,
 				EE770DAF25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift in Sources */,

@@ -16,4 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMConversation: SearchableConversation {}
+extension ZMConversation: SearchableConversation {
+
+    public var searchableName: String {
+        displayName ?? ""
+    }
+
+    public var searchableParticipants: [any SearchableConversationParticipant] {
+        fatalError()
+    }
+}
