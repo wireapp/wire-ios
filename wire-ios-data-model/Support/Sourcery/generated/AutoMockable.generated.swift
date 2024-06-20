@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -4870,7 +4870,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var lastPrekeyID: UInt16 {
         get async {
             lastPrekeyIDCallsCount += 1
-            if let lastPrekeyIDClosure = lastPrekeyIDClosure {
+            if let lastPrekeyIDClosure {
                 return await lastPrekeyIDClosure()
             } else {
                 return underlyingLastPrekeyID

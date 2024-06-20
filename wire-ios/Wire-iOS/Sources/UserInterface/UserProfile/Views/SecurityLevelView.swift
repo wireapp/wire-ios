@@ -194,8 +194,6 @@ private struct SecurityLevelViewRepresentable: UIViewRepresentable {
     @State var classification: SecurityClassification?
 
     func makeUIView(context: Context) -> SecurityLevelView {
-        FontScheme.configure(with: .large)
-
         let view = SecurityLevelView()
         view.configure(with: classification)
         return view

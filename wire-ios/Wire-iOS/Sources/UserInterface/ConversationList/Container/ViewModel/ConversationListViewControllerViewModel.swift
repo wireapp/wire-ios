@@ -68,7 +68,7 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
-        let selfUser: SelfUserType
+        let selfUserLegalHoldSubject: any SelfUserLegalHoldable
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         private let notificationCenter: NotificationCenter
@@ -77,7 +77,7 @@ extension ConversationListViewController {
 
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
-        private var initialSyncObserverToken: Any?
+        private var initialSyncObserverToken: (any NSObjectProtocol)?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
@@ -90,16 +90,16 @@ extension ConversationListViewController {
 
         init(
             account: Account,
-            selfUser: SelfUserType,
+            selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default
         ) {
             self.account = account
-            self.selfUser = selfUser
+            self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-            selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
             shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
@@ -125,8 +125,18 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-            userObservationToken = userSession.addUserObserver(self, for: selfUser)
+            let context = userSession.managedObjectContext
+
+            initialSyncObserverToken = NotificationInContext.addObserver(
+                name: .initialSync,
+                context: context.notificationContext
+            ) { [weak self] _ in
+                context.performGroupedBlock {
+                    self?.requestMarketingConsentIfNeeded()
+                }
+            }
+
+            userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
         }
 
         updateObserverTokensForActiveTeam()
@@ -209,10 +219,6 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    private var isComingFromRegistration: Bool {
-        return ZClientViewController.shared?.isComingFromRegistration ?? false
-    }
-
     /// show PushPermissionDeniedDialog when necessary
     ///
     /// - Returns: true if PushPermissionDeniedDialog is shown
@@ -220,8 +226,7 @@ extension ConversationListViewController.ViewModel {
         // We only want to present the notification takeover when the user already has a handle
         // and is not coming from the registration flow (where we alreday ask for permissions).
         guard
-            selfUser.handle != nil,
-            !isComingFromRegistration,
+            selfUserLegalHoldSubject.handle != nil,
             !AutomationHelper.sharedHelper.skipFirstLoginAlerts
         else { return }
 
@@ -265,12 +270,5 @@ extension ConversationListViewController.ViewModel: UserObserving {
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }
-    }
-}
-
-extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
-
-    func initialSyncCompleted() {
-        requestMarketingConsentIfNeeded()
     }
 }

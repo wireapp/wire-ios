@@ -33,7 +33,7 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {}
 }
 
-final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
+final class AudioRecordViewControllerTests: XCTestCase {
 
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!

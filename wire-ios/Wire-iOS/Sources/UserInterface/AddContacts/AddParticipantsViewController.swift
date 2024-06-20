@@ -82,7 +82,10 @@ extension AddParticipantsViewController.Context {
             preferredStyle: .alert
         )
 
-        controller.addAction(.ok())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
         return controller
     }
 }
@@ -476,10 +479,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation) {
-        // no-op
-    }
-
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction) {
         // no-op
     }
 

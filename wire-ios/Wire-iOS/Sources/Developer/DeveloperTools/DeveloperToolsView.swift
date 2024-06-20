@@ -51,7 +51,7 @@ struct DeveloperToolsView: View {
     private func itemView(for item: DeveloperToolsViewModel.Item) -> some View {
         switch item {
         case let .button(buttonItem):
-            SwiftUI.Button {
+            Button {
                 viewModel.handleEvent(.itemTapped(item))
             } label: {
                 Text(buttonItem.title)
@@ -60,7 +60,7 @@ struct DeveloperToolsView: View {
         case let .text(textItem):
             TextItemCell(title: textItem.title, value: textItem.value)
                 .contextMenu {
-                    SwiftUI.Button(
+                    Button(
                         hapticFeedbackStyle: .success,
                         action: {
                             viewModel.handleEvent(.itemCopyRequested(item))
@@ -78,7 +78,7 @@ struct DeveloperToolsView: View {
     }
 
     private var dismissButton: some View {
-        SwiftUI.Button(
+        Button(
             action: { viewModel.handleEvent(.dismissButtonTapped) },
             label: { Text("Close") }
         )

@@ -128,7 +128,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // update self user locally
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             ZMUser.selfUser(in: self.syncMOC).remoteIdentifier = selfUserID
             self.syncMOC.saveOrRollback()
         }

@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 
 @testable import Wire
 
-final class AccountViewSnapshotTests: BaseSnapshotTestCase {
+final class AccountViewSnapshotTests: XCTestCase {
     var imageData: Data!
 
     override func setUp() {
@@ -105,63 +106,6 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
         // WHEN
         sut.selected = true
         // THEN
-        verify(matching: sut)
-    }
-
-    // MARK: - unread dot
-
-    func testThatItShowsBasicAccountWithPictureSelected_Team_withUnreadDot() throws {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
-        account.unreadConversationCount = 100
-        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
-        sut.unreadCountStyle = .current
-        sut.overrideUserInterfaceStyle = .light
-
-        // WHEN
-        sut.selected = true
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    func testThatItShowsBasicAccountWithPictureSelected_Personal_withUnreadDot() {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        account.unreadConversationCount = 100
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        sut.unreadCountStyle = .current
-
-        // WHEN
-        sut.selected = true
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    func testThatItShowsBasicAccountSelected_Personal_withUnreadDot() {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        account.unreadConversationCount = 100
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        sut.unreadCountStyle = .current
-
-        // WHEN
-        sut.selected = true
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    func testThatItShowsBasicAccountSelected_Team_withUnreadDot() throws {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
-        account.unreadConversationCount = 100
-        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
-        sut.unreadCountStyle = .current
-        sut.selected = true
-
-        // WHEN && THEN
         verify(matching: sut)
     }
 

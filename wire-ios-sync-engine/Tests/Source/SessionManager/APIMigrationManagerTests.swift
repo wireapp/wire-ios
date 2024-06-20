@@ -282,7 +282,8 @@ final class APIMigrationManagerTests: MessagingTest {
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
 
         return userSession

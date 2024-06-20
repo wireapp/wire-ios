@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "WireAPI",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v15),
+        .macOS(.v12)
     ],
     products: [
         .library(
@@ -25,7 +26,8 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
-        )
+        ),
+        .package(path: "../SourceryPlugin")
     ],
     targets: [
         .target(
@@ -33,7 +35,13 @@ let package = Package(
         ),
         .target(
             name: "WireAPISupport",
-            dependencies: ["WireAPI"]
+            dependencies: ["WireAPI"],
+            plugins: [
+                .plugin(
+                    name: "SourceryPlugin",
+                    package: "SourceryPlugin"
+                )
+            ]
         ),
         .testTarget(
             name: "WireAPITests",
@@ -45,7 +53,13 @@ let package = Package(
                 )
             ],
             resources: [
-                .process("Resources")
+                .process("APIs/BackendInfoAPI/Resources"),
+                .process("APIs/ConnectionsAPI/Resources"),
+                .process("APIs/ConversationsAPI/Resources"),
+                .process("APIs/TeamsAPI/Resources"),
+                .process("APIs/UpdateEventsAPI/Resources"),
+                .process("APIs/UsersAPI/Resources"),
+                .process("EventDecoding/Resources")
             ]
         )
     ]

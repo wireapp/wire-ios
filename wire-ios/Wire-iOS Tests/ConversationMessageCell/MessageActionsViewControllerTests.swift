@@ -17,7 +17,6 @@
 //
 
 import SnapshotTesting
-import WireCommonComponents
 import XCTest
 
 @testable import Wire
@@ -30,7 +29,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }

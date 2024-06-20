@@ -24,68 +24,17 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-        setupLeftNavigationBarButtons()
+        updateAccountView()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        setupLeftNavigationBarButtons()
+        updateLegalHoldIndictor()
     }
 
-    // MARK: - Title View
+    // MARK: - Account View
 
-    func setupTitleView() {
-        let titleLabel = UILabel()
-        titleLabel.font = FontSpec(.normal, .semibold).font
-        titleLabel.textColor = SemanticColors.Label.textDefault
-        titleLabel.accessibilityTraits = .header
-        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-        titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        titleLabel.text = L10n.Localizable.List.title
-        titleLabel.accessibilityValue = L10n.Localizable.List.title
-        navigationItem.titleView = titleLabel
-        self.titleViewLabel = titleLabel
-    }
-
-    // MARK: - Navigation Bar Items
-
-    func setupLeftNavigationBarButtons() {
-
-        // in the design the left bar button items are very close to each other,
-        // so we'll use stack view instead
-        let stackView = UIStackView()
-        stackView.spacing = 4
-
-        // avatar
-        let accountView = createAccountView()
-        stackView.addArrangedSubview(accountView)
-
-        // legal hold
-        switch viewModel.selfUser.legalHoldStatus {
-        case .disabled:
-            break
-        case .pending:
-            let pendingRequestView = createPendingLegalHoldRequestView()
-            stackView.addArrangedSubview(pendingRequestView)
-        case .enabled:
-            let legalHoldView = createLegalHoldView()
-            stackView.addArrangedSubview(legalHoldView)
-        }
-
-        // verification status
-        if viewModel.selfUserStatus.isE2EICertified {
-            let imageView = UIImageView(image: .init(resource: .certificateValid))
-            imageView.contentMode = .scaleAspectFit
-            stackView.addArrangedSubview(imageView)
-        }
-        if viewModel.selfUserStatus.isProteusVerified {
-            let imageView = UIImageView(image: .init(resource: .verifiedShield))
-            imageView.contentMode = .scaleAspectFit
-            stackView.addArrangedSubview(imageView)
-        }
-
-        navigationItem.leftBarButtonItem = .init(customView: stackView)
+    func updateAccountView() {
+        navigationItem.leftBarButtonItem = .init(customView: createAccountView())
     }
 
     private func createAccountView() -> UIView {
@@ -111,41 +60,6 @@ extension ConversationListViewController {
         return accountView.wrapInAvatarSizeContainer()
     }
 
-    func setupRightNavigationBarButtons() {
-
-        let spacer = UIBarButtonItem(systemItem: .fixedSpace)
-
-        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
-        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            self?.presentNewConversationViewController()
-        }
-        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
-
-        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filterConversationsAction = UIAction(image: filerImage) { _ in
-            assertionFailure("TODO [WPB-7298]: implement filtering")
-        }
-        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: filterConversationsAction)))
-    }
-
-    /// Equally distributes the space on the left and on the right side of the filter bar button item.
-    func adjustRightBarButtonItemsSpace() {
-        guard
-            let rightBarButtonItems = navigationItem.rightBarButtonItems,
-            rightBarButtonItems.count == 3, // new conversation, spacer, filter
-            let newConversationButton = rightBarButtonItems[0].customView,
-            let filterConversationsButton = rightBarButtonItems[2].customView,
-            let titleViewLabel,
-            let window = viewIfLoaded?.window
-        else { return }
-
-        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
-        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
-        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
-        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
-        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
-    }
-
     @objc
     func presentSettings() {
         guard let selfUser = ZMUser.selfUser() else {
@@ -169,6 +83,41 @@ extension ConversationListViewController {
         selfProfileViewControllerBuilder
             .build()
             .wrapInNavigationController(navigationControllerClass: NavigationController.self)
+    }
+
+    // MARK: - Title View
+
+    func updateTitleView() {
+        if viewModel.selfUserLegalHoldSubject.isTeamMember {
+            defer { userStatusViewController?.userStatus = viewModel.selfUserStatus }
+            guard userStatusViewController == nil else { return }
+
+            let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
+            navigationItem.titleView = userStatusViewController.view
+            userStatusViewController.delegate = self
+            self.userStatusViewController = userStatusViewController
+
+        } else {
+            defer {
+                titleViewLabel?.text = viewModel.selfUserStatus.name
+                titleViewLabel?.accessibilityValue = viewModel.selfUserStatus.name
+            }
+            guard titleViewLabel == nil else { return }
+            if let userStatusViewController {
+                removeChild(userStatusViewController)
+            }
+
+            let titleLabel = UILabel()
+            titleLabel.font = FontSpec(.normal, .semibold).font
+            titleLabel.textColor = SemanticColors.Label.textDefault
+            titleLabel.accessibilityTraits = .header
+            titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+            titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+            titleLabel.setContentHuggingPriority(.required, for: .vertical)
+            navigationItem.titleView = titleLabel
+            self.titleViewLabel = titleLabel
+        }
     }
 
     // MARK: - Legal Hold
@@ -222,6 +171,17 @@ extension ConversationListViewController {
         return button
     }
 
+    func updateLegalHoldIndictor() {
+        switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
+        case .disabled:
+            navigationItem.rightBarButtonItem = nil
+        case .pending:
+            navigationItem.rightBarButtonItem = .init(customView: createPendingLegalHoldRequestView())
+        case .enabled:
+            navigationItem.rightBarButtonItem = .init(customView: createLegalHoldView())
+        }
+    }
+
     @objc
     func presentLegalHoldInfo() {
         guard let selfUser = ZMUser.selfUser() else {
@@ -234,11 +194,25 @@ extension ConversationListViewController {
 
     @objc
     func presentLegalHoldRequest() {
-        guard case .pending = viewModel.selfUser.legalHoldStatus else {
+        guard case .pending = viewModel.selfUserLegalHoldSubject.legalHoldStatus else {
             return
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
+    }
+}
+
+// MARK: - UserStatusViewControllerDelegate
+
+extension ConversationListViewController: UserStatusViewControllerDelegate {
+
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
+        guard viewController === userStatusViewController else { return }
+
+        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
+        viewModel.userSession.perform { [weak self] in
+            self?.viewModel.selfUserLegalHoldSubject.availability = availability
+        }
     }
 }
 

@@ -19,12 +19,12 @@
 @import Foundation;
 @import CoreData;
 
-#import "NSError+ZMUserSession.h"
+#import <WireSyncEngine/NSError+ZMUserSession.h>
 
 @class UserInfo;
-@class ZMCredentials;
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
+@class UserCredentials;
+@class UserEmailCredentials;
+@class UserPhoneCredentials;
 @class ZMPersistentCookieStorage;
 @class ZMTransportResponse;
 @protocol UserInfoParser;
@@ -35,7 +35,7 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 @protocol ZMCredentialProvider <NSObject>
 
 - (void)credentialsMayBeCleared;
-- (ZMEmailCredentials *)emailCredentials;
+- (UserEmailCredentials *)emailCredentials;
 @end
 
 /// Invoked when the credentials are changed
@@ -70,8 +70,8 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 @property (nonatomic, readonly, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
-@property (nonatomic, readonly) ZMCredentials *loginCredentials;
-@property (nonatomic, readonly) ZMPhoneCredentials *registrationPhoneValidationCredentials;
+@property (nonatomic, readonly) UserCredentials *loginCredentials;
+@property (nonatomic, readonly) UserPhoneCredentials *registrationPhoneValidationCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;
@@ -89,7 +89,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (id)addAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;
 
-- (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials;
+- (void)prepareForLoginWithCredentials:(UserCredentials *)credentials;
 - (void)continueAfterBackupImportStep;
 - (void)prepareForRequestingPhoneVerificationCodeForLogin:(NSString *)phone;
 - (void)prepareForRequestingEmailVerificationCodeForLogin:(NSString *)email;
@@ -111,12 +111,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 - (void)didFailLoginBecauseAccountSuspended;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsRequired;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsInvalid;
-- (void)didTimeoutLoginForCredentials:(ZMCredentials *)credentials;
-
-@end
-
-@interface ZMAuthenticationStatus (CredentialProvider) <ZMCredentialProvider>
-
-- (void)credentialsMayBeCleared;
+- (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials;
+- (void)resetLoginAndRegistrationStatus;
 
 @end

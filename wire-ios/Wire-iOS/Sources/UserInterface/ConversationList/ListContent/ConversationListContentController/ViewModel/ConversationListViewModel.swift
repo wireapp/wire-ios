@@ -27,6 +27,12 @@ final class ConversationListViewModel: NSObject {
 
     typealias SectionIdentifier = String
 
+    var selectedFilter: ConversationFilterType? {
+        didSet {
+            reloadConversationList()
+        }
+    }
+
     fileprivate struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
@@ -224,7 +230,7 @@ final class ConversationListViewModel: NSObject {
     /// When folderEnabled != true, returns false
     ///
     /// - Parameter sectionIndex: section number of collection view
-    /// - Returns: if the section exists and visible, return true. 
+    /// - Returns: if the section exists and visible, return true.
     func sectionHeaderVisible(section: Int) -> Bool {
         false
     }
@@ -403,6 +409,11 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    func reloadConversationList() {
+        updateAllSections()
+        delegate?.listViewModelShouldBeReloaded()
+    }
+
     private func updateAllSections() {
         sections = createSections()
     }
@@ -434,7 +445,7 @@ final class ConversationListViewModel: NSObject {
 
         var newValue: [Section]
         if let kind,
-            let sectionNumber = self.sectionNumber(for: kind) {
+           let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
 
@@ -507,13 +518,11 @@ final class ConversationListViewModel: NSObject {
 
     func folderBadge(at sectionIndex: Int) -> Int {
         return sections[sectionIndex].items.filter({
-             let status = ($0.item as? ZMConversation)?.status
-             return status?.messagesRequiringAttention.isEmpty == false &&
-                    status?.showingAllMessages == true
+            let status = ($0.item as? ZMConversation)?.status
+            return status?.messagesRequiringAttention.isEmpty == false &&
+            status?.showingAllMessages == true
         }).count
     }
-
-    // MARK: - collapse section
 
     func collapsed(at sectionIndex: Int) -> Bool {
         false

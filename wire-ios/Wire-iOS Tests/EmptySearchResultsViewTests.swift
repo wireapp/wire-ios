@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 
-final class EmptySearchResultsViewTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class EmptySearchResultsViewTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -59,7 +60,6 @@ final class EmptySearchResultsViewTests: BaseSnapshotTestCase {
 
         // THEN
         verify(matching: sut)
-
     }
 
     func testNoResultsForUsers_WhenEveryoneHaveBeenAdded() {

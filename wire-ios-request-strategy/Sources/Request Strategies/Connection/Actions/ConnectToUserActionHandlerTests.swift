@@ -38,7 +38,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForConnectingToUser_NonFederated() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -56,7 +56,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForConnectingToUser_Federated() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -87,7 +87,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessConnectionEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -108,7 +108,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -136,7 +136,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -165,7 +165,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     // MARK: - Helper
 
     func assertFailure(_ expectedError: ConnectToUserAction.Failure, on response: ZMTransportResponse) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let domain = self.owningDomain

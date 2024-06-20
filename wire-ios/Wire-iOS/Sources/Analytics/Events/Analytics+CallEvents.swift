@@ -66,18 +66,18 @@ extension Analytics {
                             conversation: ZMConversation) -> [String: Any] {
         var attributes = conversation.attributesForConversation
 
-        attributes.merge(attributesForUser(in: conversation), strategy: .preferNew)
-        attributes.merge(attributesForParticipants(in: conversation), strategy: .preferNew)
-        attributes.merge(attributesForCallParticipants(with: callInfo), strategy: .preferNew)
-        attributes.merge(attributesForVideo(with: callInfo), strategy: .preferNew)
-        attributes.merge(attributesForDirection(with: callInfo), strategy: .preferNew)
+        attributes.merge(attributesForUser(in: conversation)) { _, new in new }
+        attributes.merge(attributesForParticipants(in: conversation)) { _, new in new }
+        attributes.merge(attributesForCallParticipants(with: callInfo)) { _, new in new }
+        attributes.merge(attributesForVideo(with: callInfo)) { _, new in new }
+        attributes.merge(attributesForDirection(with: callInfo)) { _, new in new }
 
         switch event {
         case .ended(reason: let reason):
-            attributes.merge(attributesForSetupTime(with: callInfo), strategy: .preferNew)
-            attributes.merge(attributesForCallDuration(with: callInfo), strategy: .preferNew)
-            attributes.merge(attributesForVideoToogle(with: callInfo), strategy: .preferNew)
-            attributes.merge(["reason": reason], strategy: .preferNew)
+            attributes.merge(attributesForSetupTime(with: callInfo)) { _, new in new }
+            attributes.merge(attributesForCallDuration(with: callInfo)) { _, new in new }
+            attributes.merge(attributesForVideoToogle(with: callInfo)) { _, new in new }
+            attributes.merge(["reason": reason]) { _, new in new }
         case .screenSharing(let duration):
             attributes["screen_share_direction"] = "incoming"
             attributes["screen_share_duration"] = Int(round(duration / 5)) * 5

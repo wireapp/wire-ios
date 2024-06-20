@@ -52,7 +52,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             return plaintext
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.proteusService = self.mockProteusService
         }
     }

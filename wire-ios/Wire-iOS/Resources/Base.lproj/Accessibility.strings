@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Double tap to open profile";
-"contactsList.closeButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -222,6 +222,20 @@
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Double tap to open profile";
+
+"conversationsList.filterButton.description" = "Filter conversations";
+
+"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
+"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
+"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
+
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
+"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
+
+"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
 "conversationAnnouncement.text.description" = "Text message received from %@";
 "conversationAnnouncement.picture.description" = "Picture received from %@";
@@ -282,3 +296,20 @@
 "reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
 "reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";
 
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Generate password";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to generate a random password";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Guest link password";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Enter a new password for the secure guest link";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Password validation error. Please make sure the password meets the requirements.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Confirm Guest Link Password";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Re-enter the password for verification";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
