@@ -18,38 +18,7 @@
 
 import WireDataModel
 
-// MARK: - Initial sync
-
-@objc public protocol ZMInitialSyncCompletionObserver: NSObjectProtocol {
-    func initialSyncCompleted()
-}
-
-private let initialSyncCompletionNotificationName = Notification.Name(rawValue: "ZMInitialSyncCompletedNotification")
-
 extension ZMUserSession: NotificationContext { } // Mark ZMUserSession as valid notification context
-
-extension ZMUserSession {
-
-    @objc public static func notifyInitialSyncCompleted(context: NSManagedObjectContext) {
-        NotificationInContext(name: initialSyncCompletionNotificationName, context: context.notificationContext).post()
-    }
-
-    public func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver) -> Any {
-        return ZMUserSession.addInitialSyncCompletionObserver(observer, context: managedObjectContext)
-    }
-
-    @objc public static func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: initialSyncCompletionNotificationName, context: context.notificationContext) { [weak observer] _ in
-            context.performGroupedBlock {
-                observer?.initialSyncCompleted()
-            }
-        }
-    }
-
-    @objc public static func addInitialSyncCompletionObserver(_ observer: ZMInitialSyncCompletionObserver, userSession: ZMUserSession) -> Any {
-        return self.addInitialSyncCompletionObserver(observer, context: userSession.managedObjectContext)
-    }
-}
 
 // MARK: - Network Availability
 

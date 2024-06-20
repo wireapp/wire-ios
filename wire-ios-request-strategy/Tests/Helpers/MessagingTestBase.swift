@@ -456,7 +456,7 @@ extension MessagingTestBase {
         selfClient.remoteIdentifier = "baddeed"
         selfClient.user = user
 
-        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: "PersistedClientId")
+        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         selfClient.type = .permanent
         self.syncMOC.saveOrRollback()
         return selfClient

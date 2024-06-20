@@ -127,7 +127,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     NSURLSessionConfiguration *foregroundConfiguration = [[self class] foregroundSessionConfigurationWithMinTLSVersion:minTLSVersion];
     foregroundConfiguration.connectionProxyDictionary = proxyDictionary;
-
     ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:foregroundConfiguration
                                                                     trustProvider:environment
                                                                          delegate:self

@@ -391,7 +391,8 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
-        configuration: Configuration
+        configuration: Configuration,
+        isDeveloperModeEnabled: Bool
     ) {
         coreDataStack.linkAnalytics(analytics)
         coreDataStack.linkCaches(dependencies.caches)
@@ -415,7 +416,7 @@ public final class ZMUserSession: NSObject {
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
             self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
-            self.operationLoop = operationLoop ?? self.createOperationLoop()
+            self.operationLoop = operationLoop ?? self.createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
             self.urlActionProcessors = self.createURLActionProcessors()
             self.callStateObserver = CallStateObserver(localNotificationDispatcher: self.localNotificationDispatcher!,
                                                        contextProvider: self,
@@ -549,16 +550,19 @@ public final class ZMUserSession: NSObject {
                               eventProcessingTracker: eventProcessingTracker)
     }
 
-    private func createOperationLoop() -> ZMOperationLoop {
-        return ZMOperationLoop(transportSession: transportSession,
-                               requestStrategy: syncStrategy,
-                               updateEventProcessor: updateEventProcessor!,
-                               operationStatus: applicationStatusDirectory.operationStatus,
-                               syncStatus: applicationStatusDirectory.syncStatus,
-                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-                               callEventStatus: applicationStatusDirectory.callEventStatus,
-                               uiMOC: managedObjectContext,
-                               syncMOC: syncManagedObjectContext)
+    private func createOperationLoop(isDeveloperModeEnabled: Bool) -> ZMOperationLoop {
+        ZMOperationLoop(
+            transportSession: transportSession,
+            requestStrategy: syncStrategy,
+            updateEventProcessor: updateEventProcessor!,
+            operationStatus: applicationStatusDirectory.operationStatus,
+            syncStatus: applicationStatusDirectory.syncStatus,
+            pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
+            callEventStatus: applicationStatusDirectory.callEventStatus,
+            uiMOC: managedObjectContext,
+            syncMOC: syncManagedObjectContext,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
+        )
     }
 
     private func configureRecurringActions() {
@@ -785,7 +789,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self.hasCompletedInitialSync = true
             self.notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
-            ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
+
+            NotificationInContext(
+                name: .initialSync,
+                context: managedObjectContext.notificationContext
+            ).post()
         }
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()

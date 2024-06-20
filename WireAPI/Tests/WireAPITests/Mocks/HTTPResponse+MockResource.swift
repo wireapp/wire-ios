@@ -23,7 +23,11 @@ extension HTTPResponse {
 
     // MARK: Error
 
-    static func mockError(code: Int, label: String, message: String? = nil) throws -> HTTPResponse {
+    static func mockError(
+        code: Int,
+        label: String,
+        message: String? = nil
+    ) throws -> HTTPResponse {
         let payloadString = """
         {
             "code": \(code),
@@ -41,25 +45,15 @@ extension HTTPResponse {
 
     // MARK: JSON
 
-    static func mockJSONResource(code: Int, jsonResource: String) throws -> HTTPResponse {
-        HTTPResponse(
+    static func mockJSONResource(
+        code: Int,
+        name: String
+    ) throws -> HTTPResponse {
+        let resource = try MockJSONPayloadResource(name: name)
+        return HTTPResponse(
             code: code,
-            payload: try data(jsonContentsOf: jsonResource)
+            payload: resource.jsonData
         )
     }
 
-    private static func data(jsonContentsOf resourceName: String) throws -> Data {
-        guard let url = Bundle.module.url(
-            forResource: resourceName,
-            withExtension: "json"
-        ) else {
-            throw HTTPClientMockError(message: "payload resource \(resourceName).json not found")
-        }
-
-        do {
-            return try Data(contentsOf: url)
-        } catch {
-            throw HTTPClientMockError(message: "unable to load data from resource: \(error)")
-        }
-    }
 }
