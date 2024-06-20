@@ -18,26 +18,29 @@
 
 import Countly
 
-public final class AnalyticsSession: AnalyticsSessionProtocol {
+public struct AnalyticsSession: AnalyticsSessionProtocol {
+
+    let countly: WireCountly
 
     public init(appKey: String, host: URL) {
+
         let config = CountlyConfig()
         config.appKey = appKey
         config.host = host.absoluteString
 
-        WireCountly.sharedInstance().start(with: config)
+        countly = .sharedInstance()
+        countly.start(with: config)
     }
 
     public func startSession() {
-        WireCountly.sharedInstance().beginSession()
+        countly.beginSession()
     }
 
     public func endSession() {
-        WireCountly.sharedInstance().endSession()
+        countly.endSession()
     }
 
     public func trackEvent(_ event: AnalyticEvent) {
-        WireCountly.sharedInstance().recordEvent(event.rawValue)
+        countly.recordEvent(event.rawValue)
     }
-
 }
