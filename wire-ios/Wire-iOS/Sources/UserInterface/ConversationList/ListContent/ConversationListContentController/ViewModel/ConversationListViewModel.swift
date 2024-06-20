@@ -538,31 +538,8 @@ final class ConversationListViewModel: NSObject {
                 collapsed: state.collapsed.contains(kind.identifier)
             )
         }
-
-        // TODO: make use case
-
-        // filter based on search text
-        guard !appliedSearchText.isEmpty else { return sections }
-        for s in sections.indices {
-            sections[s].items = sections[s].items.filter { item in
-                guard let conversation = item.item as? ZMConversation else { return true }
-
-                // group name matches
-                if let conversationName = conversation.name?.lowercased(), conversationName.contains(appliedSearchText) {
-                    return true
-                }
-
-                // participant's name contains search text
-                for participant in conversation.participants {
-                    if let participantName = participant.name?.lowercased(), participantName.contains(appliedSearchText) {
-                        return true
-                    }
-                }
-
-                return false
-            }
-        }
-        return sections
+        let searchUseCase = SearchConversationsUseCase(conversationContainers: sections)
+        return searchUseCase.invoke(searchText: appliedSearchText)
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
@@ -821,5 +798,12 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
         return kind
 
+    }
+}
+
+extension ConversationListViewModel.Section: SearchableConversationContainer {
+
+    var conversations: [ZMConversation] {
+        items.map { $0.item as! ZMConversation }
     }
 }

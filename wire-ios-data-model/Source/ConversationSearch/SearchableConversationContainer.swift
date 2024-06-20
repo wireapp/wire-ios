@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: fix doc comments
+/// A container of conversations used by the `ConversationSearchUseCase`.
+public protocol SearchableConversationContainer {
+    associatedtype Conversation: SearchableConversation
 
-// sourcery: AutoMockable
-/// Determines if a user has a valid E2EI certificate on all clients.
-public protocol ConversationSearchUseCaseProtocol {
-    associatedtype ConversationContainer: SearchableConversationContainer
-
-    /// Returns `true` if all clients of the provided conversation's user have valid E2EI certificates.
-    func invoke(searchText: String) -> [ConversationContainer]
+    var conversations: [Conversation] { get }
 }

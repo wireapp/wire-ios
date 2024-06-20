@@ -16,9 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A container of conversations used by the `ConversationSearchUseCase`.
-public protocol SearchableConversationContainer {
-    associatedtype Conversation: WireDataModel.Conversation
-
-    var conversations: [Conversation] { get }
-}
+extension ZMConversation: SearchableConversation {}
