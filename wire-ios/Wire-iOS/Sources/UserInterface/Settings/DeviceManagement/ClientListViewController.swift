@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -28,40 +29,42 @@ final class ClientListViewController: UIViewController,
                                 ClientUpdateObserver,
                                 ClientColorVariantProtocol,
                                 SpinnerCapable {
+
     // MARK: SpinnerCapable
-    var dismissSpinner: (() -> Void)?
+
+    var dismissSpinner: SpinnerCompletion?
 
     var removalObserver: ClientRemovalObserver?
 
-    var clientsTableView: UITableView?
-    let topSeparator = OverflowSeparatorView()
-    weak var delegate: ClientListViewControllerDelegate?
+    private var clientsTableView: UITableView?
+    private let topSeparator = OverflowSeparatorView()
+    private weak var delegate: ClientListViewControllerDelegate?
 
-    var editingList: Bool = false {
+    private var editingList: Bool = false {
         didSet {
             guard !clients.isEmpty else {
-                self.navigationItem.rightBarButtonItem = nil
-                self.navigationItem.setHidesBackButton(false, animated: true)
+                navigationItem.rightBarButtonItem = nil
+                navigationItem.setHidesBackButton(false, animated: true)
                 return
             }
 
             createRightBarButtonItem()
 
-            self.navigationItem.setHidesBackButton(self.editingList, animated: true)
+            navigationItem.setHidesBackButton(editingList, animated: true)
 
-            self.clientsTableView?.setEditing(self.editingList, animated: true)
+            clientsTableView?.setEditing(editingList, animated: true)
         }
     }
 
-    var clients: [UserClient] = [] {
+    private var clients: [UserClient] = [] {
         didSet {
-            self.sortedClients = self.clients.filter(clientFilter).sorted(by: clientSorter)
-            self.clientsTableView?.reloadData()
+            sortedClients = clients.filter(clientFilter).sorted(by: clientSorter)
+            clientsTableView?.reloadData()
 
             if !clients.isEmpty {
                 createRightBarButtonItem()
             } else {
-                self.editingList = false
+                editingList = false
             }
         }
     }
@@ -72,15 +75,15 @@ final class ClientListViewController: UIViewController,
     private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
-    var sortedClients: [UserClient] = []
+    private var sortedClients: [UserClient] = []
 
-    var selfClient: UserClient?
-    let detailedView: Bool
-    var credentials: ZMEmailCredentials?
-    var clientsObserverToken: NSObjectProtocol?
-    var userObserverToken: NSObjectProtocol?
+    private var selfClient: UserClient?
+    private let detailedView: Bool
+    private var credentials: UserEmailCredentials?
+    private var clientsObserverToken: NSObjectProtocol?
+    private var userObserverToken: NSObjectProtocol?
 
-    var leftBarButtonItem: UIBarButtonItem? {
+    private var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {
             return UIBarButtonItem.createNavigationRightBarButtonItem(
                 systemImage: true,
@@ -103,7 +106,7 @@ final class ClientListViewController: UIViewController,
         clientsList: [UserClient]?,
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
         userSession: UserSession? = ZMUserSession.shared(),
-        credentials: ZMEmailCredentials? = .none,
+        credentials: UserEmailCredentials? = .none,
         contextProvider: ContextProvider? = ZMUserSession.shared(),
         detailedView: Bool = false,
         showTemporary: Bool = true,
@@ -193,8 +196,8 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = userSession,
-              let contextProvider = contextProvider,
+        guard let userSession,
+              let contextProvider,
               let navigationController = self.navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -249,11 +252,10 @@ final class ClientListViewController: UIViewController,
             userClient: client,
             isSelfClient: client.isSelfClient(),
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 
@@ -273,7 +275,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func createConstraints() {
-        guard let clientsTableView = clientsTableView else {
+        guard let clientsTableView else {
             return
         }
 
@@ -309,14 +311,16 @@ final class ClientListViewController: UIViewController,
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
-    func deleteUserClient(_ userClient: UserClient,
-                          credentials: ZMEmailCredentials?) {
-        removalObserver = nil
+    func deleteUserClient(
+        _ userClient: UserClient,
+        credentials: UserEmailCredentials?
+    ) {
 
-        removalObserver = ClientRemovalObserver(userClientToDelete: userClient,
-                                                delegate: self,
-                                                credentials: credentials)
-
+        removalObserver = ClientRemovalObserver(
+            userClientToDelete: userClient,
+            delegate: self,
+            credentials: credentials
+        )
         removalObserver?.startRemoval()
 
         delegate?.finishedDeleting(self)
@@ -338,7 +342,17 @@ final class ClientListViewController: UIViewController,
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
-        presentAlertWithOKButton(message: L10n.Localizable.Error.User.unkownError)
+        let alert = UIAlertController(
+            title: title,
+            message: L10n.Localizable.Error.User.unkownError,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        present(alert, animated: true)
     }
 
     func finishedDeleting(_ remainingClients: [UserClient]) {
@@ -421,7 +435,7 @@ final class ClientListViewController: UIViewController,
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                if let selfClient = selfClient {
+                if let selfClient {
                     cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }
@@ -532,7 +546,7 @@ final class ClientListViewController: UIViewController,
         let mlsClients: [UserClient: MLSClientID] = Dictionary(
             uniqueKeysWithValues:
                 userClients
-                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .filter { !$0.mlsPublicKeys.allKeys.isEmpty }
                 .compactMap {
                     if let mlsClientId = MLSClientID(userClient: $0) {
                         ($0, mlsClientId)

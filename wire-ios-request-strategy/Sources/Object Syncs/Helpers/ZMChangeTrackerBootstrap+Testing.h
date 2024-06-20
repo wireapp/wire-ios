@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMChangeTrackerBootstrap.h"
+#import <WireRequestStrategy/ZMChangeTrackerBootstrap.h>
 @protocol ZMContextChangeTracker;
 
 @interface ZMChangeTrackerBootstrap ()

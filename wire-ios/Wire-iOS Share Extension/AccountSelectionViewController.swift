@@ -68,7 +68,7 @@ final class AccountSelectionViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let selectionHandler = selectionHandler {
+        if let selectionHandler {
             selectionHandler(accounts[indexPath.row])
         }
     }

@@ -92,6 +92,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private var localAuthenticationStatus: LocalAuthenticationStatus = .denied
     private var observer: SendableBatchObserver?
+    private let networkStatusObservable: any NetworkStatusObservable = NetworkStatus.shared
     private weak var progressViewController: SendingProgressViewController?
 
     var dispatchQueue: DispatchQueue = DispatchQueue.main
@@ -120,15 +121,21 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setup() {
-        setupObserver()
-
-        if let datadog = DatadogWrapper.shared {
-            datadog.startMonitoring()
-        }
+        setUpObserver()
+        setUpDatadog()
     }
 
-    private func setupObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(extensionHostDidEnterBackground), name: .NSExtensionHostDidEnterBackground, object: nil)
+    private func setUpObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(extensionHostDidEnterBackground),
+            name: .NSExtensionHostDidEnterBackground,
+            object: nil
+        )
+    }
+
+    private func setUpDatadog() {
+        WireAnalytics.Datadog.enable()
     }
 
     override func viewDidLoad() {
@@ -163,7 +170,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private var authenticatedAccounts: [Account] {
-        guard let accountManager = accountManager else { return [] }
+        guard let accountManager else { return [] }
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
@@ -187,7 +194,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     override func configurationItems() -> [Any]! {
-        if accountManager?.accounts.count > 1 {
+        if let count = accountManager?.accounts.count, count > 1 {
             return [accountItem, conversationItem]
         } else {
             return [conversationItem]
@@ -234,7 +241,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         urlItems.first?.fetchURL { url in
             DispatchQueue.main.async {
-                guard let url = url, !url.isFileURL else { return }
+                guard let url, !url.isFileURL else { return }
                 let separator = self.textView.text.isEmpty ? "" : "\n"
                 self.textView.text += separator + url.absoluteString
                 self.textView.delegate?.textViewDidChange?(self.textView)
@@ -268,7 +275,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func appendPostTapped() {
         WireLogger.shareExtension.info("user wants to send content with \(postContent?.attachments.count ?? 0) attachments")
 
-        guard let sharingSession = sharingSession else {
+        guard let sharingSession else {
             WireLogger.shareExtension.error("failed to send attachments: no sharing session")
             return
         }
@@ -276,7 +283,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
         postContent?.send(text: contentText, sharingSession: sharingSession) { [weak self] progress in
-            guard let `self` = self, let postContent = self.postContent else { return }
+            guard let self, let postContent = self.postContent else { return }
 
             switch progress {
             case .preparing:
@@ -317,7 +324,15 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 WireLogger.shareExtension.error("progress event: timed out")
                 self.popConfigurationViewController()
 
-                let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.Timeout.title, message: L10n.ShareExtension.Timeout.message)
+                let alert = UIAlertController(
+                    title: L10n.ShareExtension.Timeout.title,
+                    message: L10n.ShareExtension.Timeout.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
 
                 self.present(alert, animated: true)
 
@@ -325,9 +340,18 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
 
                 if let errorDescription = (error as? UnsentSendableError)?.errorDescription {
-                    let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription) { _ in
-                        self.extensionContext?.completeRequest(returningItems: [])
-                    }
+                    let alert = UIAlertController(
+                        title: nil,
+                        message: errorDescription,
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(
+                        title: L10n.General.ok,
+                        style: .cancel,
+                        handler: { _ in
+                            self.extensionContext?.completeRequest(returningItems: [])
+                        }
+                    ))
 
                     self.present(alert, animated: true) {
                         self.popConfigurationViewController()
@@ -335,8 +359,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }
             case .fileSharingRestriction:
                 WireLogger.shareExtension.warn("progress event: file sharing restricted")
-                let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.title,
-                                                                message: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.message)
+
+                let alert = UIAlertController(
+                    title: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.title,
+                    message: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
+
                 self.present(alert, animated: true)
             }
         }
@@ -352,7 +385,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     func updatePreview() {
         fetchMainAttachmentPreview { previewItem, displayMode in
             DispatchQueue.main.async {
-                guard let previewItem = previewItem else {
+                guard let previewItem else {
                     self.preview?.image = nil
                     self.preview?.isHidden = true
                     return
@@ -400,7 +433,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Transitions
 
     private func presentSendingProgress(mode: SendingProgressViewController.ProgressMode) {
-        let progressSendingViewController = SendingProgressViewController()
+        let progressSendingViewController = SendingProgressViewController(networkStatusObservable: networkStatusObservable)
         progressViewController?.mode = mode
 
         progressSendingViewController.cancelHandler = { [weak self] in
@@ -447,7 +480,15 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
-            let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.LoggedOut.title, message: L10n.ShareExtension.LoggedOut.message)
+            let alert = UIAlertController(
+                title: L10n.ShareExtension.LoggedOut.title,
+                message: L10n.ShareExtension.LoggedOut.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.General.ok,
+                style: .cancel
+            ))
 
             self.present(alert, animated: true)
             return
@@ -469,7 +510,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
-            guard let `self` = self,
+            guard let self,
                   self.localAuthenticationStatus == .granted else { return }
 
             self.showChooseConversation()
@@ -478,7 +519,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     func showChooseConversation() {
 
-        guard let sharingSession = sharingSession else { return }
+        guard let sharingSession else { return }
 
         let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession.writebleArchivedConversations
         let conversationSelectionViewController = ConversationSelectionViewController(conversations: allConversations)
@@ -494,7 +535,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     func showChooseAccount() {
 
-        guard let accountManager = accountManager else { return }
+        guard let accountManager else { return }
         let accountSelectionViewController = AccountSelectionViewController(accounts: accountManager.accounts,
                                                                             current: currentAccount)
 
@@ -568,7 +609,7 @@ extension ShareExtensionViewController {
     /// @param completion; called when authentication evaluation is completed.
     private func requireLocalAuthenticationIfNeeded(with completion: @escaping Completion) {
         guard
-            let sharingSession = sharingSession,
+            let sharingSession,
             sharingSession.appLockController.isActive || sharingSession.encryptMessagesAtRest
         else {
             localAuthenticationStatus = .granted
@@ -618,14 +659,23 @@ extension ShareExtensionViewController {
         case .needCustomPasscode:
             let isCustomPasscodeSet = sharingSession?.appLockController.isCustomPasscodeSet ?? false
             if !isCustomPasscodeSet {
-                let alert = UIAlertController(title: "", message: L10n.ShareExtension.Unlock.Alert.message, alertAction: .ok(style: .cancel))
+                let alert = UIAlertController(
+                    title: "",
+                    message: L10n.ShareExtension.Unlock.Alert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
+
                 self.present(alert, animated: true, completion: nil)
 
                 localAuthenticationStatus = .denied
                 completion()
             } else {
                 requestCustomPasscode { [weak self] status in
-                    guard let `self` = self else { return }
+                    guard let self else { return }
 
                     self.localAuthenticationStatus = status
                     completion()
@@ -639,7 +689,7 @@ extension ShareExtensionViewController {
 
     private func requestCustomPasscode(with callback: @escaping (_ status: LocalAuthenticationStatus) -> Void) {
         presentUnlockScreen { [weak self] customPasscode in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             guard
                 let passcode = customPasscode,

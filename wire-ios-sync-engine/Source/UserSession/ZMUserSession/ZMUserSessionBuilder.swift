@@ -41,15 +41,11 @@ struct ZMUserSessionBuilder {
     private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
     private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
     private var mediaManager: (any MediaManagerType)?
-    private var mlsConversationVerificationStatusUpdater: (any MLSConversationVerificationStatusUpdating)?
     private var mlsService: (any MLSServiceInterface)?
-    private var observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var recurringActionService: (any RecurringActionServiceInterface)?
     private var sharedUserDefaults: UserDefaults?
     private var transportSession: (any TransportSessionType)?
-    private var updateMLSGroupVerificationStatusUseCase: (any UpdateMLSGroupVerificationStatusUseCaseProtocol)?
-    private var useCaseFactory: (any UseCaseFactoryProtocol)?
     private var userId: UUID?
 
     // MARK: - Initialize
@@ -75,15 +71,11 @@ struct ZMUserSessionBuilder {
             let lastE2EIUpdateDateRepository,
             let lastEventIDRepository,
             let mediaManager,
-            let mlsConversationVerificationStatusUpdater,
             let mlsService,
-            let observeMLSGroupVerificationStatusUseCase,
             let proteusToMLSMigrationCoordinator,
             let recurringActionService,
             let sharedUserDefaults,
             let transportSession,
-            let updateMLSGroupVerificationStatusUseCase,
-            let useCaseFactory,
             let userId
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
@@ -103,16 +95,12 @@ struct ZMUserSessionBuilder {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
-            useCaseFactory: useCaseFactory,
-            observeMLSGroupVerificationStatusUseCase: observeMLSGroupVerificationStatusUseCase,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
             lastEventIDRepository: lastEventIDRepository,
             lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository,
             e2eiActivationDateRepository: e2eiActivationDateRepository,
             applicationStatusDirectory: applicationStatusDirectory,
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase,
-            mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater,
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
             dependencies: dependencies
@@ -133,12 +121,10 @@ struct ZMUserSessionBuilder {
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
-        observeMLSGroupVerificationStatus: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
         proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
-        useCaseFactory: (any UseCaseFactoryProtocol)?,
         userId: UUID
     ) {
         // reused dependencies
@@ -150,15 +136,9 @@ struct ZMUserSessionBuilder {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager
         )
-        let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
-        )
-        let updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
-            e2eIVerificationStatusService: e2eiVerificationStatusService,
-            context: coreDataStack.syncContext,
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext)
         )
 
         // other dependencies
@@ -197,33 +177,21 @@ struct ZMUserSessionBuilder {
             userID: userId,
             sharedUserDefaults: UserDefaults.standard
         )
-        let mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
-            updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,
-            syncContext: coreDataStack.syncContext
-        )
         let mlsService = mlsService ?? MLSService(
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
-        let observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatus ?? ObserveMLSGroupVerificationStatusUseCase(
-            mlsService: mlsService,
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
-            syncContext: coreDataStack.syncContext
-        )
+
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: userId
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
-        let useCaseFactory = useCaseFactory ?? UseCaseFactory(
-            context: coreDataStack.syncContext,
-            supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
-            oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
-        )
 
         // setup builder
 
@@ -243,15 +211,11 @@ struct ZMUserSessionBuilder {
         self.lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
         self.lastEventIDRepository = lastEventIDRepository
         self.mediaManager = mediaManager
-        self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.mlsService = mlsService
-        self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.recurringActionService = recurringActionService
         self.sharedUserDefaults = sharedUserDefaults
         self.transportSession = transportSession
-        self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
-        self.useCaseFactory = useCaseFactory
         self.userId = userId
     }
 

@@ -99,7 +99,7 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                 XCTAssertEqual(teamGroupConversation.conversationType, .group)
             },
             postMigrationAction: { context in
-                try context.performGroupedAndWait { context in
+                try context.performGroupedAndWait {
                     let selfUser = try XCTUnwrap(ZMUser.fetch(with: selfUserID, in: context))
                     XCTAssertNil(selfUser.oneOnOneConversation)
 

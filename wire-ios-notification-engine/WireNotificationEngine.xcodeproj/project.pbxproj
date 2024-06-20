@@ -27,7 +27,6 @@
 		EEC80B4729B6053200099727 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4629B6053200099727 /* ViewController.swift */; };
 		EEC80B4A29B6053200099727 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4829B6053200099727 /* Main.storyboard */; };
 		EEC80B4C29B6053500099727 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4B29B6053500099727 /* Assets.xcassets */; };
-		EEC80B4F29B6053500099727 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4D29B6053500099727 /* LaunchScreen.storyboard */; };
 		EEC80B5729B6054A00099727 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
 		EEC80B5829B6054A00099727 /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -101,7 +100,6 @@
 		EEC80B4629B6053200099727 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		EEC80B4929B6053200099727 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EEC80B4B29B6053500099727 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		EEC80B4E29B6053500099727 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EEC80B5029B6053500099727 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EEC80B5629B6054A00099727 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -267,7 +265,6 @@
 				EEC80B4629B6053200099727 /* ViewController.swift */,
 				EEC80B4829B6053200099727 /* Main.storyboard */,
 				EEC80B4B29B6053500099727 /* Assets.xcassets */,
-				EEC80B4D29B6053500099727 /* LaunchScreen.storyboard */,
 				EEC80B5029B6053500099727 /* Info.plist */,
 			);
 			path = WireNotificationEngineTestHost;
@@ -406,7 +403,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEC80B4F29B6053500099727 /* LaunchScreen.storyboard in Resources */,
 				EEC80B4C29B6053500099727 /* Assets.xcassets in Resources */,
 				EEC80B4A29B6053200099727 /* Main.storyboard in Resources */,
 			);
@@ -495,14 +491,6 @@
 				EEC80B4929B6053200099727 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		EEC80B4D29B6053500099727 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				EEC80B4E29B6053500099727 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -639,10 +627,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = WireNotificationEngine/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -678,10 +662,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = WireNotificationEngine/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

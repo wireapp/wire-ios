@@ -30,7 +30,7 @@ func objectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required
     if let object = dictionary[key] as? T {
         return object
     }
-    if let transform = transform {
+    if let transform {
         if let string = dictionary[key] as? String, let object = transform(string) {
             return object
         }

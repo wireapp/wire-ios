@@ -18,11 +18,12 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class TextSearchResultFooter: UIView {
     var message: ZMConversationMessage? {
         didSet {
-            guard let message = message, let serverTimestamp = message.serverTimestamp, let sender = message.senderUser else {
+            guard let message, let serverTimestamp = message.serverTimestamp, let sender = message.senderUser else {
                 return
             }
 

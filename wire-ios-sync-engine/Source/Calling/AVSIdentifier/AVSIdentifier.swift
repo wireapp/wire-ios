@@ -33,7 +33,7 @@ extension AVSIdentifier {
     public var serialized: String {
         var serializedIdentifier = identifier.transportString()
 
-        if let domain = domain {
+        if let domain {
             serializedIdentifier += "@\(domain)"
         }
 

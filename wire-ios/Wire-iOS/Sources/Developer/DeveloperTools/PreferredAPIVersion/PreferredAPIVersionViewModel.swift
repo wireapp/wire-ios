@@ -46,7 +46,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
         case apiVersion(APIVersion)
 
         init(apiVersion: APIVersion?) {
-            if let apiVersion = apiVersion {
+            if let apiVersion {
                 self = .apiVersion(apiVersion)
             } else {
                 self = .noPreference

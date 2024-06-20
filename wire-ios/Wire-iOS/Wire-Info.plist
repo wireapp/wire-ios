@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>MinTLSVersion</key>
-	<string>$(MIN_TLS_VERSION)</string>
 	<key>BackupEnabled</key>
 	<string>${BACKUP_ENABLED}</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -120,20 +118,12 @@
 	<true/>
 	<key>MaxNumberAccounts</key>
 	<string>${MAX_NUMBER_ACCOUNTS}</string>
+	<key>MinTLSVersion</key>
+	<string>$(MIN_TLS_VERSION)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>*</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-		</dict>
+		<false/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Wire to access your camera so you can place video calls and send photos.</string>
@@ -143,8 +133,6 @@
 	<string>In order to authenticate in the app allow Wire to access the Face ID feature.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Wire to access your location so you can send your location to others.</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Wire to access your microphone so you can talk to people and send audio messages.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -164,8 +152,15 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>Black</string>
+		<key>UIImageName</key>
+		<string>Wire/Shield</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIPrerenderedIcon</key>

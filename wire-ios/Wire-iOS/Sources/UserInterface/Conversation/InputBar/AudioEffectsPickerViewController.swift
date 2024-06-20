@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 protocol AudioEffectsPickerDelegate: AnyObject {
     func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String)
@@ -63,7 +64,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
             setState(.playing, animated: true)
 
-            if let audioPlayerController = audioPlayerController, oldValue == selectedAudioEffect {
+            if let audioPlayerController, oldValue == selectedAudioEffect {
 
                 if audioPlayerController.state == .playing {
                     audioPlayerController.stop()

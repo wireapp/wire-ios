@@ -19,8 +19,10 @@
 import AVFoundation
 import Photos
 import SnapshotTesting
-@testable import Wire
+import WireDesign
 import XCTest
+
+@testable import Wire
 
 // MARK: - CameraKeyboardViewControllerDelegateMock
 
@@ -97,7 +99,7 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 
 // MARK: - CameraKeyboardViewControllerTests
 
-final class CameraKeyboardViewControllerTests: BaseSnapshotTestCase {
+final class CameraKeyboardViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

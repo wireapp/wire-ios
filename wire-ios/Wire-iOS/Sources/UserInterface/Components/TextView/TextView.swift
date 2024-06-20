@@ -44,7 +44,7 @@ class TextView: UITextView {
     var attributedPlaceholder: NSAttributedString? {
         didSet {
             let mutableCopy: NSMutableAttributedString
-            if let attributedPlaceholder = attributedPlaceholder {
+            if let attributedPlaceholder {
                 mutableCopy = NSMutableAttributedString(attributedString: attributedPlaceholder)
             } else {
                 mutableCopy = NSMutableAttributedString()

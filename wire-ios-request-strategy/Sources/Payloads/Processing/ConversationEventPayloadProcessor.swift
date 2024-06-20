@@ -375,7 +375,7 @@ struct ConversationEventPayloadProcessor {
                 in: context
             ),
             let timestamp = payload.timestamp,
-            timestamp > conversation.lastServerTimeStamp // Discard event if it has already been applied
+            conversation.lastServerTimeStamp == nil || conversation.lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
             Logging.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return
@@ -618,7 +618,8 @@ struct ConversationEventPayloadProcessor {
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
         if await context.perform({ conversation.epoch <= 0 }) {
-            await mlsService.createSelfGroup(for: groupID)
+            let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
+            await context.perform { conversation.ciphersuite = ciphersuite }
         } else if await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
@@ -719,6 +720,10 @@ struct ConversationEventPayloadProcessor {
             let mlsGroupID = MLSGroupID(base64Encoded: base64String)
         {
             conversation.mlsGroupID = mlsGroupID
+        }
+
+        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
+            conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
         }
     }
 
@@ -915,7 +920,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation?,
         from type: ZMConversationType
     ) -> ZMConversationType {
-        guard let conversation = conversation else {
+        guard let conversation else {
             return type
         }
 
@@ -1037,6 +1042,20 @@ struct ConversationEventPayloadProcessor {
            let archivedReference = payload.archivedReference {
             conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
         }
+    }
+
+}
+
+// MARK: - Payload parsing utils
+
+private extension ZMConversation {
+
+    func fetchOrCreateRoleForConversation(name: String) -> Role {
+        Role.fetchOrCreateRole(
+            with: name,
+            teamOrConversation: team != nil ? .team(team!) : .conversation(self),
+            in: managedObjectContext!
+        )
     }
 
 }

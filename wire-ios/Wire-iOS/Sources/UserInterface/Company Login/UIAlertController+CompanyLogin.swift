@@ -118,7 +118,7 @@ extension UIAlertController {
                 preferredStyle: .alert
             )
 
-            if let error = error {
+            if let error {
                 let attributedString = NSAttributedString.companyLoginString(
                     withMessage: copy.message,
                     error: error.description(for: copy)
@@ -149,7 +149,10 @@ extension UIAlertController {
             preferredStyle: .alert
         )
 
-        controller.addAction(.ok())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
         return controller
     }
 }

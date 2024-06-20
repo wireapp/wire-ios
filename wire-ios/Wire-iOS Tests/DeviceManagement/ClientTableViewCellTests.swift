@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class ClientTableViewCellTests: BaseSnapshotTestCase {
+final class ClientTableViewCellTests: XCTestCase {
     var sut: ClientTableViewCell!
     var container: UIView!
 
@@ -159,11 +159,13 @@ extension ClientTableViewCellModel {
                      proteusId: String = mockProteusId,
                      e2eIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil
     ) -> Self {
-        return .init(title: title,
-                     proteusLabelText: proteusId.isNonEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
-                     mlsThumbprintLabelText: mlsThumbprint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
-                     isProteusVerified: isProteusVerified,
-                     e2eIdentityStatus: e2eIdentityCertificateStatus)
+        .init(
+            title: title,
+            proteusLabelText: !proteusId.isEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
+            mlsThumbprintLabelText: !mlsThumbprint.isEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
+            isProteusVerified: isProteusVerified,
+            e2eIdentityStatus: e2eIdentityCertificateStatus,
+            activationDate: .now
+        )
     }
-
 }

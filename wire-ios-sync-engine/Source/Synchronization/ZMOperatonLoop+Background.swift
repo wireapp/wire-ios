@@ -41,8 +41,8 @@ public extension ZMOperationLoop {
 
         pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
             self.callEventStatus.waitForCallEventProcessingToComplete { [weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.syncMOC.performGroupedBlock {
+                guard let self else { return completionHandler() }
+                syncMOC.performGroupedBlock {
                     completionHandler()
                 }
             }
@@ -77,7 +77,7 @@ public extension ZMOperationLoop {
         //                @"type" : @"cipher"
         //
 
-        guard let apsSignalKeyStore = apsSignalKeyStore else {
+        guard let apsSignalKeyStore else {
             Logging.network.debug("Could not initiate APSSignalingKeystore")
             return nil
         }

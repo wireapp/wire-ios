@@ -30,7 +30,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
         var g2: ZMConversation!
         var g3: ZMConversation!
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             g1 = ZMConversation.insertNewObject(in: self.syncMOC)
             g1.conversationType = .group
@@ -54,7 +54,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
             }
         }
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertTrue(g1.needsToBeUpdatedFromBackend)
             XCTAssertTrue(g2.needsToBeUpdatedFromBackend)
@@ -138,7 +138,10 @@ final class ZMHotFixTests_Integration: MessagingTest {
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let team = Team.fetchOrCreate(with: UUID(), create: true, in: self.syncMOC, created: nil)!
+            let team = Team.fetchOrCreate(
+                with: UUID(),
+                in: self.syncMOC
+            )
             let member = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
             member.needsToBeUpdatedFromBackend = false
 
@@ -295,7 +298,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
         selfClient.remoteIdentifier = UUID().transportString()
         selfClient.user = ZMUser.selfUser(in: context)
         context.saveOrRollback()
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: "PersistedClientId")
+        context.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
         return selfClient
     }
 }

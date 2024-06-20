@@ -60,7 +60,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     private func performQuickSync() {
-        guard let userSession = userSession else { return }
+        guard let userSession else { return }
 
         Task {
             await userSession.syncStatus.performQuickSync()
@@ -70,10 +70,14 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Proteus to MLS migration
 
     private func updateMLSMigrationStatus() {
-        guard let userSession = userSession else { return }
+        guard let userSession else { return }
 
         Task {
-            try await userSession.updateMLSMigrationStatus()
+            do {
+                try await userSession.updateMLSMigrationStatus()
+            } catch {
+                WireLogger.mls.error("failed to update MLS migration status: \(error)")
+            }
         }
     }
 
@@ -89,7 +93,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let context = selfClient.managedObjectContext
         else { return }
 
@@ -129,4 +133,5 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 .qualifiedID
         }
     }
+
 }

@@ -121,7 +121,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     }
 
     deinit {
-        token.apply(NotificationCenter.default.removeObserver)
+        token.map(NotificationCenter.default.removeObserver)
         removeDisplayLink()
         audioRecorder?.delegate = nil
     }
@@ -280,7 +280,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     }
 
     fileprivate var audioSizeIsCritical: Bool {
-        guard let fileURL = fileURL,
+        guard let fileURL,
             let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
             let size = attribs[.size] as? UInt32,
             size > maxAllowedSize else { return false }
@@ -312,7 +312,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         audioPlayer?.isMeteringEnabled = true
 
         audioPlayerDelegate = AudioPlayerDelegate { [weak self] _ in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.removeDisplayLink()
             self.playingStateCallback?(.idle)
             self.recordLevelCallBack?(0)

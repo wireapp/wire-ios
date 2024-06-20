@@ -104,7 +104,7 @@ class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
 
     @objc
     private func keyboardFrameWillChange(_ notification: Notification?) {
-        guard let bottomEdgeConstraint = bottomEdgeConstraint else { return }
+        guard let bottomEdgeConstraint else { return }
 
         guard !disabledWhenInsidePopover || !isInsidePopover else {
             bottomEdgeConstraint.constant = 0

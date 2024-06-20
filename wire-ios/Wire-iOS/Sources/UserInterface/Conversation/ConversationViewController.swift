@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
@@ -104,10 +105,14 @@ final class ConversationViewController: UIViewController {
         return viewController?.wrapInNavigationController()
     }
 
-    required init(conversation: ZMConversation,
-                  visibleMessage: ZMMessage?,
-                  zClientViewController: ZClientViewController,
-                  userSession: UserSession) {
+    required init(
+        conversation: ZMConversation,
+        visibleMessage: ZMMessage?,
+        zClientViewController: ZClientViewController,
+        userSession: UserSession,
+        classificationProvider: (any SecurityClassificationProviding)?,
+        networkStatusObservable: any NetworkStatusObservable
+    ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
         self.zClientViewController = zClientViewController
@@ -117,7 +122,12 @@ final class ConversationViewController: UIViewController {
                                                                   mediaPlaybackManager: zClientViewController.mediaPlaybackManager,
                                                                   userSession: userSession)
 
-        inputBarController = ConversationInputBarViewController(conversation: conversation, userSession: userSession)
+        inputBarController = ConversationInputBarViewController(
+            conversation: conversation,
+            userSession: userSession,
+            classificationProvider: classificationProvider,
+            networkStatusObservable: networkStatusObservable
+        )
 
         mediaBarViewController = MediaBarViewController(mediaPlaybackManager: zClientViewController.mediaPlaybackManager)
 
@@ -160,7 +170,7 @@ final class ConversationViewController: UIViewController {
             for: userSession.conversationList()
         )
 
-        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
+        observationToken = PrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -357,7 +367,7 @@ final class ConversationViewController: UIViewController {
     @objc
     private func titleViewTapped() {
         if let superview = titleView.superview,
-           let participantsController = participantsController {
+           let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
         }
     }
@@ -456,14 +466,8 @@ final class ConversationViewController: UIViewController {
         }
 
         Task {
-            do {
-                try await userSession.updateMLSGroupVerificationStatus.invoke(
-                    for: conversation,
-                    groupID: mlsGroupID)
-                setupNavigatiomItem()
-            } catch {
-                WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
-            }
+            await userSession.mlsGroupVerification?.updateConversation(conversation, with: mlsGroupID)
+            setupNavigatiomItem()
         }
     }
 }
@@ -589,7 +593,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                                                             mentions: [Mention]) {
         contentViewController.didFinishEditing(message)
         userSession.enqueue({
-            if let newText = newText,
+            if let newText,
                !newText.isEmpty {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
                 message.textMessageData?.editText(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
@@ -648,11 +652,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in
-                guard let weakSelf = self else {
-                    return
-                }
-
-                weakSelf.collectionController?.dismiss(animated: true)
+                guard let self else { return }
+                collectionController?.dismiss(animated: true)
             }
             collectionController = collections
         } else {

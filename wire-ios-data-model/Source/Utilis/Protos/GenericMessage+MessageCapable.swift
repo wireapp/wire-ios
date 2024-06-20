@@ -174,7 +174,7 @@ extension External: MessageCapable {
 extension Ephemeral: MessageCapable {
     public var expectsReadConfirmation: Bool {
         get {
-            guard let content = content else { return false }
+            guard let content else { return false }
             switch content {
             case let .text(value):
                 return value.expectsReadConfirmation
@@ -189,7 +189,7 @@ extension Ephemeral: MessageCapable {
             }
         }
         set {
-            guard let content = content else { return }
+            guard let content else { return }
             switch content {
             case .text:
                 text.expectsReadConfirmation = newValue

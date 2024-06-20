@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class VideoMessageView: UIView, TransferView {
     var fileMessage: ZMConversationMessage?
@@ -151,7 +152,7 @@ final class VideoMessageView: UIView, TransferView {
             self.timeLabel.textColor = SemanticColors.Label.textDefault
 
             fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
-                guard let image = image else { return }
+                guard let image else { return }
                 self?.updatePreviewImage(image)
             }
         }

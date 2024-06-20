@@ -26,7 +26,7 @@ final class PreviewHeightCalculator: NSObject {
 
     static func heightForImage(_ image: UIImage?) -> CGFloat {
         var height: CGFloat = 0.0
-        if let image = image, image.size.height < standardCellHeight {
+        if let image, image.size.height < standardCellHeight {
             height = image.size.height
         } else {
             height = standardCellHeight

@@ -75,7 +75,7 @@ extension AddressBookAccessor {
     ) {
         // here we are explicitly capturing self, this is executed on a queue that is
         // never blocked indefinitely as this is the only function using it
-        groupQueue.dispatchGroup.async(on: addressBookProcessingQueue) {
+        groupQueue.dispatchGroup?.async(on: addressBookProcessingQueue) {
 
             let range: Range<UInt> = startingContactIndex..<(startingContactIndex + maxNumberOfContacts)
             let cards = self.generateContactCards(range: range)
@@ -92,9 +92,9 @@ extension AddressBookAccessor {
             let encodedAB = EncodedAddressBookChunk(numberOfTotalContacts: self.numberOfContacts,
                                                     otherContactsHashes: cards,
                                                     includedContacts: cardsRange)
-            groupQueue.performGroupedBlock({
+            groupQueue.performGroupedBlock {
                 completion(encodedAB)
-            })
+            }
         }
     }
 

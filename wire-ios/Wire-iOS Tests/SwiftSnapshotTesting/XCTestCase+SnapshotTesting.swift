@@ -18,8 +18,9 @@
 
 import SnapshotTesting
 import UIKit
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
 private let precision: Float = 0.90
@@ -142,7 +143,7 @@ extension XCTestCase {
                                        testName: String = #function,
                                        line: UInt = #line) {
         let nameWithProperty: String
-        if let name = name {
+        if let name {
             nameWithProperty = "\(name)-\(width)"
         } else {
             nameWithProperty = "\(width)"
@@ -360,7 +361,7 @@ extension XCTestCase {
                 line: UInt = #line) {
 
         var config: ViewImageConfig?
-        if let customSize = customSize {
+        if let customSize {
             config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
                                      size: customSize,
                                      traits: UITraitCollection())

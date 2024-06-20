@@ -20,6 +20,7 @@ import Down
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 extension Settings {
     var returnKeyType: UIReturnKeyType {
@@ -404,7 +405,7 @@ final class InputBar: UIView {
         let textViewChanges = {
             switch state {
             case .writing:
-                if let oldState = oldState, oldState.isEditing {
+                if let oldState, oldState.isEditing {
                     self.textView.text = nil
                 }
             case .editing(let text, let mentions):

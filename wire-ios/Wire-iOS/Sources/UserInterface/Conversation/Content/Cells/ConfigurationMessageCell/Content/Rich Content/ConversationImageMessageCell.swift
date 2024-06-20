@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationImageMessageCell: UIView,
                                           ConversationMessageCell,
@@ -111,7 +112,7 @@ final class ConversationImageMessageCell: UIView,
         let imageSize = object.image.originalSize.applying(CGAffineTransform.init(scaleX: scaleFactor, y: scaleFactor))
         let imageAspectRatio = imageSize.width > 0 ? imageSize.height / imageSize.width : 1.0
 
-        aspectConstraint.apply({ containerView.removeConstraint($0) })
+        aspectConstraint.map({ containerView.removeConstraint($0) })
         let isRestricted = (!object.message.canBeShared && !object.isObfuscated)
         aspectConstraint = containerView.heightAnchor.constraint(equalTo: containerView.widthAnchor,
                                                                  multiplier: !isRestricted ? imageAspectRatio : 9 / 16)

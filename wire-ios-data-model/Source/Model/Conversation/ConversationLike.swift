@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 public typealias Conversation = ConversationLike & SwiftConversationLike
 
@@ -38,6 +39,7 @@ public protocol ConversationLike: AnyObject {
     var isUnderLegalHold: Bool { get }
 
     var isMLSConversationDegraded: Bool { get }
+    var isProteusConversationDegraded: Bool { get }
 
     func verifyLegalHoldSubjects()
 
@@ -61,6 +63,7 @@ public protocol SwiftConversationLike {
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
     var sortedServiceUsers: [UserType] { get }
+    var ciphersuite: MLSCipherSuite? { get }
 }
 
 extension ZMConversation: ConversationLike {
@@ -77,19 +80,23 @@ extension ZMConversation: ConversationLike {
         return connectedUser
 	}
 
-	private static let userNameSorter: (UserType, UserType) -> Bool = {
-		$0.name < $1.name
-	}
-
 	public var sortedOtherParticipants: [UserType] {
-		return localParticipants.filter { !$0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+        localParticipants
+            .filter { !$0.isServiceUser }
+            .sortedAscendingPrependingNil(by: \.name)
 	}
 
 	public var sortedServiceUsers: [UserType] {
-		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+		localParticipants
+            .filter { $0.isServiceUser }
+            .sortedAscendingPrependingNil(by: \.name)
     }
 
     public var isMLSConversationDegraded: Bool {
         mlsVerificationStatus == .degraded
+    }
+
+    public var isProteusConversationDegraded: Bool {
+        securityLevel == .secureWithIgnored
     }
 }

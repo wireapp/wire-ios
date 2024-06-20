@@ -72,8 +72,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
         syncContext.performGroupedBlock {
             guard
-                let callerId = callerId,
-                let conversationId = conversationId,
+                let callerId,
+                let conversationId,
                 let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, domain: callerDomain, in: self.syncContext)
             else {
@@ -147,8 +147,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
         syncContext.performGroupedBlock {
             guard
-                let callerId = callerId,
-                let conversationId = conversationId,
+                let callerId,
+                let conversationId,
                 let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
                 else {
@@ -171,7 +171,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 conversation.isArchived = false
             }
 
-            if let timestamp = timestamp {
+            if let timestamp {
                 conversation.updateLastModified(timestamp)
             }
 

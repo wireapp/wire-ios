@@ -67,7 +67,7 @@ final class UserSelection: NSObject {
     private var limitReachedHandler: (() -> Void)?
 
     var hasReachedLimit: Bool {
-        guard let limit = limit, users.count >= limit else { return false }
+        guard let limit, users.count >= limit else { return false }
         limitReachedHandler?()
         return true
     }

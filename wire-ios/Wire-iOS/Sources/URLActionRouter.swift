@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
 
@@ -133,6 +134,46 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 extension URLActionRouter: PresentationDelegate {
 
+    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+        typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
+
+        let alertController = UIAlertController(
+            title: ConversationAlert.title(conversationName),
+            message: ConversationAlert.message,
+            preferredStyle: .alert
+        )
+
+        alertController.addTextField { textField in
+            textField.placeholder = ConversationAlert.Textfield.placeholder
+            textField.isSecureTextEntry = true
+        }
+
+        let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
+            let password = alertController.textFields?.first?.text
+            completion(password)
+        }
+
+        let helpLinkURL = URL.wr_guestLinksLearnMore
+        let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
+            UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
+        }
+
+        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
+            completion(nil)
+        }
+
+        alertController.addAction(joinAction)
+        alertController.addAction(learnMoreAction)
+        alertController.addAction(cancelAction)
+
+        // Use the rootViewController to present the alert
+        if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
+            rootViewController.present(alertController, animated: true)
+        } else {
+            pendingAlert = alertController
+        }
+    }
+
     // MARK: - Public Implementation
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
@@ -149,9 +190,10 @@ extension URLActionRouter: PresentationDelegate {
         switch action {
         case .connectBot:
             presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
-        case .accessBackend(configurationURL: let configurationURL):
-            guard SecurityFlags.customBackend.isEnabled else { return }
-            presentCustomBackendAlert(with: configurationURL)
+        case .accessBackend(let url):
+            // Switching backend is handled below, so pass false here.
+            decisionHandler(false)
+            switchBackend(configURL: url)
         default:
             decisionHandler(true)
         }
@@ -204,35 +246,44 @@ extension URLActionRouter: PresentationDelegate {
         presentAlert(alert)
     }
 
-    private func presentCustomBackendAlert(with configurationURL: URL) {
-        let alert = UIAlertController(title: L10n.Localizable.UrlAction.SwitchBackend.title,
-                                      message: L10n.Localizable.UrlAction.SwitchBackend.message(configurationURL.absoluteString),
-                                      preferredStyle: .alert)
-
-        let agreeAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak self] _ in
-            self?.rootViewController.isLoadingViewVisible = true
-            self?.switchBackend(with: configurationURL)
+    private func switchBackend(configURL: URL) {
+        guard
+            SecurityFlags.customBackend.isEnabled,
+            let sessionManager
+        else {
+            return
         }
-        alert.addAction(agreeAction)
 
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel)
-        alert.addAction(cancelAction)
+        sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
+            guard let self else { return }
 
-        presentAlert(alert)
-    }
-
-    private func switchBackend(with configurationURL: URL) {
-        sessionManager?.switchBackend(configuration: configurationURL) { [weak self] result in
-            self?.rootViewController.isLoadingViewVisible = false
             switch result {
-            case let .success(environment):
-                BackendEnvironment.shared = environment
-            case let .failure(error):
-                guard let strongSelf = self else { return }
-                let localizedError = strongSelf.mapToLocalizedError(error)
-                strongSelf.presentLocalizedErrorAlert(localizedError)
+            case .success(let backendEnvironment):
+                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
+                    guard didConfirm else { return }
+                    sessionManager.switchBackend(to: backendEnvironment)
+                    BackendEnvironment.shared = backendEnvironment
+                }
+
+            case .failure(let error):
+                let localizedError = self.mapToLocalizedError(error)
+                self.presentLocalizedErrorAlert(localizedError)
             }
         }
+    }
+
+    private func requestUserConfirmationToSwitchBackend(
+        _ environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
+        let viewModel = SwitchBackendConfirmationViewModel(
+            environment: environment,
+            didConfirm: didConfirm
+        )
+
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
+        rootViewController.present(hostingController, animated: true)
     }
 
 }
@@ -257,6 +308,10 @@ private extension URLActionRouter {
 
         case conversationLinkIsDisabled
 
+        // The password for the secure guest link is wrong
+
+        case invalidConversationPassword
+
         /// A generic error case.
 
         case unknown
@@ -271,6 +326,9 @@ private extension URLActionRouter {
 
             case ConversationJoinError.guestLinksDisabled, ConversationFetchError.guestLinksDisabled:
                 self = .conversationLinkIsDisabled
+
+            case ConversationJoinError.invalidConversationPassword:
+                self = .invalidConversationPassword
 
             default:
                 self = .unknown
@@ -289,6 +347,9 @@ private extension URLActionRouter {
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
                 return AlertStrings.LinkIsInvalid.message
 
+            case .invalidConversationPassword:
+                return AlertStrings.InvalidPassword.message
+
             case .unknown:
                 return L10n.Localizable.Error.User.unkownError
             }
@@ -304,7 +365,10 @@ private extension URLActionRouter {
         let title = error.errorDescription
         let message = error.failureReason ?? L10n.Localizable.Error.User.unkownError
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(.ok(style: .cancel))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         switch error {
         case URLActionError.conversationLinkIsDisabled:

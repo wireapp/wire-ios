@@ -19,10 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-/**
- * Valid response actions for authentication events.
- */
-
+/// Valid response actions for authentication events.
 enum AuthenticationCoordinatorAction {
     case showLoadingView
     case hideLoadingView
@@ -34,7 +31,6 @@ enum AuthenticationCoordinatorAction {
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
-    case performPhoneLoginFromRegistration(phoneNumber: String)
     case requestEmailVerificationCode(email: String, password: String)
     case configureNotifications
     case startIncrementalUserCreation(UnregisteredUser)
@@ -44,8 +40,7 @@ enum AuthenticationCoordinatorAction {
     case repeatAction
     case displayInlineError(NSError)
     case continueFlowWithLoginCode(String)
-    case switchCredentialsType(AuthenticationCredentialsType)
-    case startRegistrationFlow(UnverifiedCredentials)
+    case startRegistrationFlow(unverifiedEmail: String)
     case startLoginFlow(AuthenticationLoginRequest, AuthenticationProxyCredentialsInput?)
     case setFullName(String)
     case setUsername(String)
@@ -55,7 +50,7 @@ enum AuthenticationCoordinatorAction {
     case startSSOFlow
     case startBackupFlow
     case signOut(warn: Bool)
-    case addEmailAndPassword(ZMEmailCredentials)
+    case addEmailAndPassword(UserEmailCredentials)
     case configureDevicePermissions
     case startE2EIEnrollment
     case completeE2EIEnrollment
@@ -72,20 +67,14 @@ enum AuthenticationCoordinatorAction {
 
 // MARK: - Alerts
 
-/**
- * A customizable alert to display inside the coordinator's presenter.
- */
-
+/// A customizable alert to display inside the coordinator's presenter.
 struct AuthenticationCoordinatorAlert {
     let title: String?
     let message: String?
     let actions: [AuthenticationCoordinatorAlertAction]
 }
 
-/**
- * An action that is part of an authentication coordinator alert.
- */
-
+/// An action that is part of an authentication coordinator alert.
 struct AuthenticationCoordinatorAlertAction {
     let title: String
     let coordinatorActions: [AuthenticationCoordinatorAction]
@@ -103,10 +92,7 @@ extension AuthenticationCoordinatorAlertAction {
     static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
 }
 
-/**
- * A customizable alert to display inside the coordinator's presenter.
- */
-
+/// A customizable alert to display inside the coordinator's presenter.
 struct AuthenticationCoordinatorErrorAlert {
     let error: NSError
     let completionActions: [AuthenticationCoordinatorAction]
@@ -114,7 +100,6 @@ struct AuthenticationCoordinatorErrorAlert {
 
 enum AuthenticationLoginRequest {
     case email(address: String, password: String)
-    case phoneNumber(String)
 }
 
 struct AuthenticationProxyCredentialsInput {
@@ -128,7 +113,6 @@ extension AuthenticationCoordinatorAction {
         typealias Alert = L10n.Localizable.Landing.CustomBackend.Alert
 
         let env = BackendEnvironment.shared
-
         let info = [
             Alert.Message.backendName,
             env.title,
@@ -136,8 +120,12 @@ extension AuthenticationCoordinatorAction {
             env.backendURL.absoluteString
         ].joined(separator: "\n")
 
-        return .presentAlert(.init(title: Alert.title,
-                                            message: info,
-                                            actions: [.ok]))
+        return .presentAlert(
+            .init(
+                title: Alert.title,
+                message: info,
+                actions: [.ok]
+            )
+        )
     }
 }

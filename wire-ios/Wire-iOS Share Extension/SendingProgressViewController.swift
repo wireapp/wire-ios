@@ -35,6 +35,8 @@ final class SendingProgressViewController: UIViewController {
     private var connectionStatusLabel = UILabel()
     private let minimumProgress: Float = 0.125
 
+    private let networkStatusObservable: any NetworkStatusObservable
+
     var progress: Float = 0 {
         didSet {
             mode = .sending
@@ -61,7 +63,9 @@ final class SendingProgressViewController: UIViewController {
         }
     }
 
-    init() {
+    init(networkStatusObservable: any NetworkStatusObservable) {
+        self.networkStatusObservable = networkStatusObservable
+
         super.init(nibName: nil, bundle: nil)
     }
 

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     let token: Token<NSObjectProtocol>
@@ -63,11 +64,11 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         context.saveGState()
 
-        if let backgroundColor = backgroundColor {
+        if let backgroundColor {
             context.setFillColor(backgroundColor.cgColor)
         }
 
-        if let borderColor = borderColor {
+        if let borderColor {
             context.setStrokeColor(borderColor.cgColor)
         }
 
@@ -114,7 +115,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     }
 
     private var titleAttributes: [NSAttributedString.Key: Any] {
-        guard let titleColor = titleColor else {
+        guard let titleColor else {
             return [:]
         }
 

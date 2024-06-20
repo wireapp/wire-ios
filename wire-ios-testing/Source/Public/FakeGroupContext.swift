@@ -19,9 +19,10 @@
 import Foundation
 import WireSystem
 
-@objcMembers public class FakeGroupContext: NSObject, ZMSGroupQueue {
+@objcMembers
+public class FakeGroupContext: NSObject, ZMSGroupQueue {
 
-    public let dispatchGroup: ZMSDispatchGroup!
+    public let dispatchGroup: ZMSDispatchGroup?
     fileprivate let queue: DispatchQueue!
 
     public static var main: FakeGroupContext {
@@ -42,7 +43,6 @@ import WireSystem
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {
-        dispatchGroup.async(on: queue, block: block)
+        dispatchGroup?.async(on: queue, block: block)
     }
-
 }

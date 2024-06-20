@@ -44,7 +44,7 @@ public protocol AnalyticsType: NSObjectProtocol {
     var eventAttributes = [String: [String: NSObject]]()
 
     public func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
-        if let attributes = attributes {
+        if let attributes {
             eventAttributes[event] = attributes
         } else {
             eventAttributes.removeValue(forKey: event)

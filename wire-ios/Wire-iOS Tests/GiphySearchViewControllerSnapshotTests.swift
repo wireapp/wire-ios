@@ -17,11 +17,13 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireDesign
 import XCTest
 import Ziphy
 
-final class GiphySearchViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class GiphySearchViewControllerSnapshotTests: XCTestCase {
     var sut: GiphySearchViewController!
 
     var mockConversation: MockConversation!

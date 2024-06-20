@@ -48,7 +48,7 @@ extension ProfileImageFetchable where Self: UserType {
             derivedKey = "\(derivedKey)_desaturated"
         }
 
-        if let sizeLimit = sizeLimit {
+        if let sizeLimit {
             derivedKey = "\(derivedKey)_\(sizeLimit)"
         }
 
@@ -64,7 +64,7 @@ extension ProfileImageFetchable where Self: UserType {
         let screenScale = UIScreen.main.scale
         let previewSizeLimit: CGFloat = 280
         let size: ProfileImageSize
-        if let sizeLimit = sizeLimit {
+        if let sizeLimit {
             size = CGFloat(sizeLimit) * screenScale < previewSizeLimit ? .preview : .complete
         } else {
             size = .complete
@@ -86,14 +86,14 @@ extension ProfileImageFetchable where Self: UserType {
         }
 
         imageData(for: size, queue: cache.processingQueue) { imageData in
-            guard let imageData = imageData else {
+            guard let imageData else {
                 return DispatchQueue.main.async {
                     completion(nil, false)
                 }
             }
 
             var image: UIImage?
-            if let sizeLimit = sizeLimit {
+            if let sizeLimit {
                 image = UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * screenScale)
             } else {
                 image = UIImage(data: imageData)?.decoded
@@ -103,7 +103,7 @@ extension ProfileImageFetchable where Self: UserType {
                 image = image?.desaturatedImage(with: CIContext.shared)
             }
 
-            if let image = image {
+            if let image {
                 cache.cache.setObject(image, forKey: cacheKey)
             }
 

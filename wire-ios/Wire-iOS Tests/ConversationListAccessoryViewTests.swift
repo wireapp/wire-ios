@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import Wire
 import XCTest
 
-final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
+final class ConversationListAccessoryViewTests: XCTestCase {
 
     var sut: ConversationListAccessoryView!
     var userSession: UserSessionMock!

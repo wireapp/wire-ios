@@ -113,7 +113,7 @@ extension ConversationInputBarViewController {
 
         AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { resultURL, _, error in
             if error == nil,
-               let resultURL = resultURL {
+               let resultURL {
                 self.uploadFile(at: resultURL)
             }
 

@@ -30,7 +30,7 @@ extension TextView: InputLanguageSettable {
     }
 
     var overriddenTextInputMode: UITextInputMode? {
-        guard let language = language, language.count > 0 else {
+        guard let language, language.count > 0 else {
             return super.textInputMode
         }
 

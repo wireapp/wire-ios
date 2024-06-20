@@ -11,7 +11,6 @@
 		5E2BEC56214BA4A600E65B53 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2BEC55214BA4A600E65B53 /* ViewController.swift */; };
 		5E2BEC59214BA4A600E65B53 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC57214BA4A600E65B53 /* Main.storyboard */; };
 		5E2BEC5B214BA4A700E65B53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */; };
-		5E2BEC5E214BA4A700E65B53 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */; };
 		5E9EA4B72241426A00D401B2 /* NSDataDetector+Links.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */; };
 		5E9EA4BD2241445F00D401B2 /* LinkAttachmentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */; };
 		5E9EA4BF22414FE100D401B2 /* LinkAttachmentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4BE22414FE100D401B2 /* LinkAttachmentDetector.swift */; };
@@ -22,8 +21,6 @@
 		5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */; };
 		5E9EA4D022427BBB00D401B2 /* soundcloud_track_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */; };
 		5E9EA4D222427E0300D401B2 /* soundcloud_playlist_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */; };
-		5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
-		5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
 		5EDF03F4224A208E00C04007 /* HTMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03F3224A208E00C04007 /* HTMLDocument.swift */; };
 		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
@@ -108,7 +105,6 @@
 		5E2BEC55214BA4A600E65B53 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5E2BEC58214BA4A600E65B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5E2BEC5D214BA4A700E65B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5E2BEC5F214BA4A700E65B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDataDetector+Links.swift"; sourceTree = "<group>"; };
 		5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentTypes.swift; sourceTree = "<group>"; };
@@ -120,7 +116,6 @@
 		5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentDetectorTests.swift; sourceTree = "<group>"; };
 		5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_track_head.txt; sourceTree = "<group>"; };
 		5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_playlist_head.txt; sourceTree = "<group>"; };
-		5EDF03F02249287B00C04007 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		5EDF03F3224A208E00C04007 /* HTMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLDocument.swift; sourceTree = "<group>"; };
 		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
@@ -195,7 +190,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */,
 				EE67F6B2296F0548001D7C88 /* HTMLString.xcframework in Frameworks */,
 				EEE4AB2029548DE5004E26A3 /* WireUtilities.framework in Frameworks */,
 			);
@@ -205,7 +199,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */,
 				BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -218,7 +211,6 @@
 			children = (
 				EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */,
 				EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */,
-				5EDF03F02249287B00C04007 /* libxml2.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -230,7 +222,6 @@
 				5E2BEC55214BA4A600E65B53 /* ViewController.swift */,
 				5E2BEC57214BA4A600E65B53 /* Main.storyboard */,
 				5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */,
-				5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */,
 				5E2BEC5F214BA4A700E65B53 /* Info.plist */,
 			);
 			path = WireLinkPreviewTestsHost;
@@ -312,12 +303,12 @@
 			children = (
 				EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */,
 				54BD49F91D41FDE5006E29D1 /* README.md */,
-				16A5FE0F215A868700AEEBBD /* Frameworks */,
+				BF3DD26D1D25445600D51DED /* Resources */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,
 				BFF057981D25434E004A2C29 /* WireLinkPreviewTests */,
 				5E2BEC52214BA4A600E65B53 /* WireLinkPreviewTestsHost */,
 				BFF0578B1D25434D004A2C29 /* Products */,
-				BF3DD26D1D25445600D51DED /* Resources */,
+				16A5FE0F215A868700AEEBBD /* Frameworks */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -503,7 +494,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E2BEC5E214BA4A700E65B53 /* LaunchScreen.storyboard in Resources */,
 				5E2BEC5B214BA4A700E65B53 /* Assets.xcassets in Resources */,
 				5E2BEC59214BA4A600E65B53 /* Main.storyboard in Resources */,
 			);
@@ -646,14 +636,6 @@
 				5E2BEC58214BA4A600E65B53 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5E2BEC5D214BA4A700E65B53 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -24,7 +24,7 @@ extension ZMUserSession: SecurityClassificationProviding {
     ) -> SecurityClassification? {
         guard isSelfClassified else { return .none }
 
-        if let conversationDomain = conversationDomain,
+        if let conversationDomain,
            classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
             return .notClassified
         }

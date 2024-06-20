@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - ConversationRootViewController
@@ -47,12 +49,17 @@ final class ConversationRootViewController: UIViewController {
     init(conversation: ZMConversation,
          message: ZMConversationMessage?,
          clientViewController: ZClientViewController,
-         userSession: UserSession) {
+         userSession: UserSession
+    ) {
 
-        let conversationController = ConversationViewController(conversation: conversation,
-                                                                visibleMessage: message as? ZMMessage,
-                                                                zClientViewController: clientViewController,
-                                                                userSession: userSession)
+        let conversationController = ConversationViewController(
+            conversation: conversation,
+            visibleMessage: message as? ZMMessage,
+            zClientViewController: clientViewController,
+            userSession: userSession,
+            classificationProvider: ZMUserSession.shared(),
+            networkStatusObservable: NetworkStatus.shared
+        )
 
         conversationViewController = conversationController
 

@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-import WireRequestStrategySupport
 @testable import WireSyncEngine
+import WireSyncEngineSupport
 import XCTest
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {

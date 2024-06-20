@@ -22,7 +22,7 @@ extension ZMConversation {
 
     func unarchive(userSession: ZMUserSessionInterface? = ZMUserSession.shared(),
                    completionHandler: Completion? = nil) {
-        guard let userSession = userSession else { return }
+        guard let userSession else { return }
 
         userSession.enqueueChanges({
             self.isArchived = false

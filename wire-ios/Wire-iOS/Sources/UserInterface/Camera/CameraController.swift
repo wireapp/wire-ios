@@ -264,7 +264,7 @@ final class CameraController {
         func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
             defer { completion() }
 
-            if let error = error {
+            if let error {
                 zmLog.error("PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)")
                 handler(PhotoResult(nil, error))
                 return

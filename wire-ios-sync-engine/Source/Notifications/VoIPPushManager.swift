@@ -184,7 +184,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
     ) {
         Self.logger.trace("process voIP push, payload: \(payload)")
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             Self.logger.info("no delegate, ignoring...")
             return
         }

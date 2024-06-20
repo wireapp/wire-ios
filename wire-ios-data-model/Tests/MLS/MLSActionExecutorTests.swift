@@ -30,6 +30,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockCommitSender: MockCommitSending!
+    var mockFeatureRepository: MockFeatureRepositoryInterface!
     var sut: MLSActionExecutor!
     var cancellable: AnyCancellable!
 
@@ -41,10 +42,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockCommitSender = MockCommitSending()
+        mockFeatureRepository = MockFeatureRepositoryInterface()
 
         sut = MLSActionExecutor(
             coreCryptoProvider: mockCoreCryptoProvider,
-            commitSender: mockCommitSender
+            commitSender: mockCommitSender,
+            featureRepository: mockFeatureRepository
         )
     }
 
@@ -78,6 +81,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     // MARK: - Non re-entrant
 
+    // maybe it makes sense to test performNonReentrant directly instead
     func test_TwoOperationsOnSameGroupAreExecutedSerially() async throws {
         // Given
         let groupID = MLSGroupID.random()
@@ -94,8 +98,11 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         let sendCommitExpectation = XCTestExpectation(description: "send commit")
-        let decryptMessageExpectation = XCTestExpectation(description: "decrypted message")
         var sendCommitContinuation: CheckedContinuation<Void, Never>?
+
+        let beforeDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has been started/is running")
+        let insideDecryptMessageInvertedExpectation = XCTestExpectation(description: "not yet decrypting message").inverted()
+        let afterDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has finished")
 
         // Mock Update key material.
         var mockUpdateKeyMaterialArguments = [Data]()
@@ -113,17 +120,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             return []
         }
 
-        // When
-        Task {
-            _ = try await sut.updateKeyMaterial(for: groupID)
-        }
-        Task {
-            try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
-            try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
-        }
-
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
-            decryptMessageExpectation.fulfill()
+            insideDecryptMessageInvertedExpectation.fulfill()
             return DecryptedMessage(
                 message: nil,
                 proposals: [],
@@ -137,18 +135,39 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             )
         }
 
+        // When
+        Task {
+            do {
+                _ = try await sut.updateKeyMaterial(for: groupID)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
+        }
+
         // the decrypt message operation should wait for update key material to finish
         await fulfillment(of: [sendCommitExpectation])
-        try await Task.sleep(nanoseconds: 1_000_000_000)
+        // the `updateKeyMaterial` is blocked/suspended, now ensure that no other call using the same groupID can enter
+
+        Task {
+            do {
+                beforeDecryptMessageExpectation.fulfill()
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
+                afterDecryptMessageExpectation.fulfill()
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
+        }
+        // ensure the task is executing, but we haven't entered `performNonReentrant`
+        await fulfillment(of: [beforeDecryptMessageExpectation, insideDecryptMessageInvertedExpectation], timeout: 0.3)
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 0)
 
         // allow update key material to finish
         sendCommitContinuation?.resume()
-        await fulfillment(of: [decryptMessageExpectation])
-
+        await fulfillment(of: [afterDecryptMessageExpectation], timeout: 0.5)
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
 
+    // maybe it makes sense to test performNonReentrant directly instead
     func test_TwoOperationsOnDifferentGroupsAreExecutedConcurrently() async throws {
         // Given
         let groupID1 = MLSGroupID.random()
@@ -203,15 +222,27 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // When
         Task {
-            _ = try await sut.updateKeyMaterial(for: groupID1)
+            do {
+                _ = try await sut.updateKeyMaterial(for: groupID1)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
+
+        // ensure we entered via sendCommit, block further execution
+        await fulfillment(of: [sendCommitExpectation], timeout: .tenSeconds)
+
         Task {
-            try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
-            try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+            do {
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
 
         // the update key material operation shouldn't block the decrypt message
-        await fulfillment(of: [sendCommitExpectation, decryptMessageExpectation], timeout: .tenSeconds)
+        await fulfillment(of: [decryptMessageExpectation], timeout: .tenSeconds)
+
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
         sendCommitContinuation?.resume()
     }
@@ -530,6 +561,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [Data]()
 
+        // Mock MLS feature config
+        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .enabled,
+            config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+        )
+
         mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
@@ -583,6 +620,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
             return []
         }
+
+        // Mock MLS feature config
+        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .enabled,
+            config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+        )
 
         // Set up expectation to receive the new distribution points
         let expectation = XCTestExpectation(description: "received value")

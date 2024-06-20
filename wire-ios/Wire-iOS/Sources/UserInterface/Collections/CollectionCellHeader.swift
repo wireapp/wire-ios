@@ -18,11 +18,12 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class CollectionCellHeader: UIView {
     var message: ZMConversationMessage? {
         didSet {
-            guard let message = message,
+            guard let message,
                   let serverTimestamp = message.serverTimestamp,
                   let sender = message.senderUser else {
                 return

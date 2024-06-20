@@ -136,15 +136,15 @@ open class UserClientKeysStore: NSObject {
         var error: NSError?
         if internalLastPreKey == nil {
             encryptionContext.perform({ [weak self] sessionsDirectory in
-                guard let strongSelf = self  else { return }
+                guard let self else { return }
                 do {
-                    strongSelf.internalLastPreKey = try sessionsDirectory.generateLastPrekey()
+                    internalLastPreKey = try sessionsDirectory.generateLastPrekey()
                 } catch let anError as NSError {
                     error = anError
                 }
             })
         }
-        if let error = error {
+        if let error {
             throw error
         }
         return internalLastPreKey!
@@ -166,7 +166,7 @@ open class UserClientKeysStore: NSObject {
                     error = anError
                 }
             })
-            if let error = error {
+            if let error {
                 throw error
             }
             return newPreKeys

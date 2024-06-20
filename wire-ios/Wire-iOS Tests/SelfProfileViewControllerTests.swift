@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDataModelSupport
+import WireDesign
 import XCTest
+
+@testable import Wire
 
 final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
@@ -143,7 +146,12 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
-        sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: userSession)
+        sut = SelfProfileViewController(
+            selfUser: selfUser,
+            userRightInterfaceType: MockUserRight.self,
+            userSession: userSession,
+            accountSelector: MockAccountSelector()
+        )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 }

@@ -17,29 +17,33 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class RemoveClientStepViewControllerSnapshotTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
-    var coreDataFixture: CoreDataFixture!
+@testable import Wire
 
+final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+
+    var coreDataFixture: CoreDataFixture!
     var sut: RemoveClientStepViewController!
 
     override func setUp() {
         super.setUp()
-        coreDataFixture = CoreDataFixture()
 
-        sut = RemoveClientStepViewController(clients: [mockUserClient(),
-                                                       mockUserClient(),
-                                                       mockUserClient(),
-                                                       mockUserClient(),
-                                                       mockUserClient()],
-                                             credentials: ZMCredentials())
+        coreDataFixture = CoreDataFixture()
+        sut = RemoveClientStepViewController(
+            clients: [
+                mockUserClient(),
+                mockUserClient(),
+                mockUserClient(),
+                mockUserClient(),
+                mockUserClient()
+            ],
+            credentials: UserCredentials()
+        )
     }
 
     override func tearDown() {
         sut = nil
-
         coreDataFixture = nil
 
         super.tearDown()

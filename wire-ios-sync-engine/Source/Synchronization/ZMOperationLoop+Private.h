@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMOperationLoop.h"
+#import <WireSyncEngine/ZMOperationLoop.h>
 
 @class APSSignalingKeysStore;
 @class ZMSyncStrategy;

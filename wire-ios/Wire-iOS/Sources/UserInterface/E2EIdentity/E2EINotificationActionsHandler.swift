@@ -82,7 +82,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.targetVC = targetVC
 
             self.observer = NotificationCenter.default.addObserver(
-                forName: E2EI.checkForE2EICertificateExpiryStatus,
+                forName: .checkForE2EICertificateExpiryStatus,
                 object: nil,
                 queue: .main
             ) { _ in

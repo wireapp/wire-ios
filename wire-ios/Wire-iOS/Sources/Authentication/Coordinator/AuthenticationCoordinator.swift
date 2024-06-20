@@ -160,7 +160,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
 
     /// Call this when the presented finished presenting.
     func completePresentation() {
-        if let pendingModal = pendingModal {
+        if let pendingModal {
             presenter?.present(pendingModal, animated: true)
             self.pendingModal = nil
         }
@@ -189,12 +189,11 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
         case .replace:
             var viewControllers = presenter.viewControllers
             viewControllers[viewControllers.count - 1] = stepViewController
-            stateController.transition(to: .landingScreen, mode: .reset)
             presenter.setViewControllers(viewControllers, animated: true)
         case .rewindToOrReset(let milestone):
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
-            if let rewindedController = rewindedController {
+            if let rewindedController {
                 viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
@@ -211,7 +210,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
-        currentPostRegistrationFields().apply(sendPostRegistrationFields)
+        currentPostRegistrationFields().map(sendPostRegistrationFields)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -302,9 +301,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .transition(let nextStep, let mode):
                 stateController.transition(to: nextStep, mode: mode)
 
-            case .performPhoneLoginFromRegistration(let phoneNumber):
-                requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: false)
-
             case .requestEmailVerificationCode(let email, let password):
                 requestEmailVerificationCode(email: email, password: password, isResend: false)
 
@@ -335,9 +331,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .continueFlowWithLoginCode(let code):
                 continueFlow(withVerificationCode: code)
-
-            case .switchCredentialsType(let newType):
-                switchCredentialsType(newType)
 
             case .startRegistrationFlow(let unverifiedCredential):
                 activateNetworkSessions { [weak self] _ in
@@ -492,7 +485,7 @@ extension AuthenticationCoordinator {
     /// Repeats the current action.
     func repeatAction() {
         switch stateController.currentStep {
-        case .enterPhoneVerificationCode, .enterActivationCode, .enterEmailVerificationCode:
+        case .enterActivationCode, .enterEmailVerificationCode:
             resendVerificationCode()
         default:
             return
@@ -543,20 +536,6 @@ extension AuthenticationCoordinator {
 
     // MARK: - Registration Code
 
-    /// Switches the type of credentials in the current step.
-    private func switchCredentialsType(_ newType: AuthenticationCredentialsType) {
-        switch stateController.currentStep {
-        case .createCredentials(let unregisteredUser):
-            let newStep = AuthenticationFlowStep.createCredentials(unregisteredUser)
-            stateController.transition(to: newStep, mode: .replace)
-        case .provideCredentials:
-            let newStep = AuthenticationFlowStep.provideCredentials(newType, nil)
-            stateController.transition(to: newStep, mode: .replace)
-        default:
-            log.warn("The current step does not support credential type switching")
-        }
-    }
-
     /**
      * Starts the registration flow with the specified credentials.
      *
@@ -566,7 +545,7 @@ extension AuthenticationCoordinator {
      * - parameter credentials: The unverified credentials to register with.
      */
 
-    private func startRegistration(_ credentials: UnverifiedCredentials) {
+    private func startRegistration(_ unverifiedEmail: String) {
         guard case let .createCredentials(unregisteredUser) = stateController.currentStep, let presenter = self.presenter else {
             log.error("Cannot start phone registration outside of registration flow.")
             return
@@ -575,24 +554,24 @@ extension AuthenticationCoordinator {
         UIAlertController.requestTOSApproval(over: presenter, forTeamAccount: false) { approved in
             if approved {
                 unregisteredUser.acceptedTermsOfService = true
-                unregisteredUser.credentials = credentials
-                self.sendActivationCode(credentials, unregisteredUser, isResend: false)
+                unregisteredUser.unverifiedEmail = unverifiedEmail
+                self.sendActivationCode(unverifiedEmail, unregisteredUser, isResend: false)
             }
         }
     }
 
     /// Sends the registration activation code.
-    private func sendActivationCode(_ credentials: UnverifiedCredentials, _ user: UnregisteredUser, isResend: Bool) {
+    private func sendActivationCode(_ unverifiedEmail: String, _ user: UnregisteredUser, isResend: Bool) {
         presenter?.isLoadingViewVisible = true
-        stateController.transition(to: .sendActivationCode(credentials, user: user, isResend: isResend))
-        registrationStatus.sendActivationCode(to: credentials)
+        stateController.transition(to: .sendActivationCode(unverifiedEmail: unverifiedEmail, user: user, isResend: isResend))
+        registrationStatus.sendActivationCode(to: unverifiedEmail)
     }
 
     /// Asks the registration status to activate the credentials with the code provided by the user.
-    private func activateCredentials(credentials: UnverifiedCredentials, user: UnregisteredUser, code: String) {
+    private func activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String) {
         presenter?.isLoadingViewVisible = true
-        stateController.transition(to: .activateCredentials(credentials, user: user, code: code))
-        registrationStatus.checkActivationCode(credentials: credentials, code: code)
+        stateController.transition(to: .activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code))
+        registrationStatus.checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
     }
 
     // MARK: - Linear Registration
@@ -667,20 +646,14 @@ extension AuthenticationCoordinator {
 
             switch request {
             case .email(let address, let password):
-                let credentials = ZMEmailCredentials(email: address, password: password)
+                let credentials = UserEmailCredentials(email: address, password: password)
                 self?.presenter?.isLoadingViewVisible = true
                 self?.stateController.transition(to: .authenticateEmailCredentials(credentials))
                 self?.unauthenticatedSession.login(with: credentials)
-
-            case .phoneNumber(let phoneNumber):
-                self?.presenter?.isLoadingViewVisible = true
-                let nextStep = AuthenticationFlowStep.requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: false)
-                self?.stateController.transition(to: nextStep)
-                self?.unauthenticatedSession.requestPhoneVerificationCodeForLogin(phoneNumber: phoneNumber)
             }
         }
 
-        if let proxyCredentials = proxyCredentials {
+        if let proxyCredentials {
             sessionManager.saveProxyCredentials(username: proxyCredentials.username,
                                                 password: proxyCredentials.password)
         }
@@ -695,14 +668,6 @@ extension AuthenticationCoordinator {
         }
     }
 
-    /// Sends the login verification code to the phone number.
-    private func requestPhoneVerificationCode(phoneNumber: String, isResend: Bool) {
-        presenter?.isLoadingViewVisible = true
-        let nextStep = AuthenticationFlowStep.requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: isResend)
-        stateController.transition(to: nextStep)
-        unauthenticatedSession.requestPhoneVerificationCodeForLogin(phoneNumber: phoneNumber)
-    }
-
     // Sends the login verification code to the email address
     private func requestEmailVerificationCode(email: String, password: String, isResend: Bool) {
         if !isResend {
@@ -712,14 +677,7 @@ extension AuthenticationCoordinator {
         unauthenticatedSession.requestEmailVerificationCodeForLogin(email: email)
     }
 
-    /// Requests a phone login for the specified credentials.
-    private func requestPhoneLogin(with credentials: ZMPhoneCredentials) {
-        presenter?.isLoadingViewVisible = true
-        stateController.transition(to: .authenticatePhoneCredentials(credentials))
-        unauthenticatedSession.login(with: credentials)
-    }
-
-    private func requestEmailLogin(with credentials: ZMEmailCredentials) {
+    private func requestEmailLogin(with credentials: UserEmailCredentials) {
         presenter?.isLoadingViewVisible = true
         stateController.transition(to: .authenticateEmailCredentials(credentials))
         unauthenticatedSession.login(with: credentials)
@@ -730,8 +688,6 @@ extension AuthenticationCoordinator {
     /// Resends the verification code to the user, if allowed by the current state.
     private func resendVerificationCode() {
         switch stateController.currentStep {
-        case .enterPhoneVerificationCode(let phoneNumber):
-            requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: true)
         case .enterEmailVerificationCode(let email, let password, _):
             requestEmailVerificationCode(email: email, password: password, isResend: true)
         case .enterActivationCode(let credential, let user):
@@ -748,14 +704,11 @@ extension AuthenticationCoordinator {
 
     private func continueFlow(withVerificationCode code: String) {
         switch stateController.currentStep {
-        case .enterPhoneVerificationCode(let phoneNumber):
-            let credentials = ZMPhoneCredentials(phoneNumber: phoneNumber, verificationCode: code)
-            requestPhoneLogin(with: credentials)
         case .enterEmailVerificationCode(let email, let password, _):
-            let credentials = ZMEmailCredentials(email: email, password: password, emailVerificationCode: code)
+            let credentials = UserEmailCredentials(email: email, password: password, emailVerificationCode: code)
             requestEmailLogin(with: credentials)
-        case .enterActivationCode(let unverifiedCredentials, let user):
-            activateCredentials(credentials: unverifiedCredentials, user: user, code: code)
+        case .enterActivationCode(let unverifiedEmail, let user):
+            activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
         default:
             log.error("Cannot continue flow with user code in the current state (\(stateController.currentStep)")
         }
@@ -764,7 +717,7 @@ extension AuthenticationCoordinator {
     // MARK: - Add Email And Password
 
     /// Sets th e-mail and password credentials for the current user.
-    private func setEmailCredentialsForCurrentUser(_ credentials: ZMEmailCredentials) {
+    private func setEmailCredentialsForCurrentUser(_ credentials: UserEmailCredentials) {
         guard case .addEmailAndPassword = stateController.currentStep else {
             log.error("Cannot save e-mail and password outside of designated step.")
             return
@@ -787,7 +740,7 @@ extension AuthenticationCoordinator {
     }
 
     @discardableResult
-    private func setCredentialsWithProfile(_ profile: UserProfile, credentials: ZMEmailCredentials) -> Bool {
+    private func setCredentialsWithProfile(_ profile: UserProfile, credentials: UserEmailCredentials) -> Bool {
         do {
             try profile.requestSettingEmailAndPassword(credentials: credentials)
             return true
@@ -810,7 +763,7 @@ extension AuthenticationCoordinator {
 
     /// Manually start the company login flow.
     private func startCompanyLoginFlowIfPossible(linkCode: UUID?) {
-        if let linkCode = linkCode {
+        if let linkCode {
             companyLoginController?.attemptLoginWithSSOCode(linkCode)
         } else {
             companyLoginController?.displayCompanyLoginPrompt()
@@ -929,6 +882,9 @@ extension AuthenticationCoordinator {
                     }
                     executeAction(.presentAlert(alert))
                 }
+            } catch {
+                WireLogger.authentication.error("failed to update MLS migration status: \(error)")
+                assertionFailure(String(reflecting: error))
             }
         }
     }

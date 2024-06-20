@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModelSupport
 import WireSyncEngine
+import WireTesting
+
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
@@ -117,6 +119,28 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             XCTAssertEqual(mockPushChannel.clientID, userClient.remoteIdentifier)
         }
+    }
+
+    func testItSlowSyncsAfterRegisteringMLSClient() async throws {
+        // GIVEN
+        let userClient = await syncMOC.perform {
+            let userClient = self.createSelfClient()
+            userClient.mlsPublicKeys = .init(ed25519: "ed25519")
+            userClient.needsToUploadMLSPublicKeys = false
+            return userClient
+        }
+
+        // WHEN
+        await syncMOC.perform {
+            self.sut.didRegisterSelfUserClient(userClient)
+        }
+
+        // THEN
+        let syncStatus = try await syncMOC.perform {
+            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
+        }
+
+        XCTAssertTrue(syncStatus.isSlowSyncing)
     }
 
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
@@ -254,28 +278,13 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(contextSaved)
     }
 
-    func waitForStatus(_ state: ZMNetworkState) -> Bool {
-        return waitOnMainLoop(until: {
-            return self.sut.networkState == state
-        }, timeout: 0.5)
-    }
-
-    func waitForOfflineStatus() -> Bool {
-        return waitForStatus(.offline)
-    }
-
-    func waitForOnlineSynchronizingStatus() -> Bool {
-        return waitForStatus(.onlineSynchronizing)
-    }
-
     func testThatWeSetUserSessionToOnlineWhenWeDidReceiveData() {
         // WHEN
         sut.didGoOffline()
         sut.didReceiveData()
 
         // THEN
-        XCTAssertTrue(waitForOnlineSynchronizingStatus())
-
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
     }
 
     func testThatWeSetUserSessionToOfflineWhenARequestFails() {
@@ -283,7 +292,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didGoOffline()
 
         // THEN
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
     func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
@@ -294,6 +303,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             results: [.success(())],
             context: syncMOC.notificationContext
         )
+        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
 
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
@@ -301,7 +314,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // THEN
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
+        XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -311,7 +326,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         // THEN
-        XCTAssertTrue(waitForOnlineSynchronizingStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
     }
 
     func testThatWeCanGoBackOnlineAfterGoingOffline() {
@@ -319,14 +334,13 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didGoOffline()
 
         // THEN
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
         sut.didReceiveData()
 
         // THEN
-        XCTAssertTrue(waitForOnlineSynchronizingStatus())
-
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
     }
 
     func testThatWeCanGoBackOfflineAfterGoingOnline() {
@@ -334,26 +348,26 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         sut.didGoOffline()
 
         // THEN
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
         sut.didReceiveData()
 
         // THEN
-        XCTAssertTrue(waitForOnlineSynchronizingStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .onlineSynchronizing, timeout: 5)
 
         // WHEN
         sut.didGoOffline()
 
         // THEN
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
     func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOnline() {
         // GIVEN
         let stateRecorder = NetworkStateRecorder()
         sut.didGoOffline()
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
         XCTAssertEqual(sut.networkState, .offline)
 
         // WHEN
@@ -404,7 +418,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let stateRecorder = NetworkStateRecorder()
 
         sut.didGoOffline()
-        XCTAssertTrue(waitForOfflineStatus())
+        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
         let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
@@ -450,7 +464,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
-        let handler = MockActionHandler<GetFeatureConfigsAction>(
+        let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
         )
@@ -469,13 +487,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        withExtendedLifetime(handler) {
-            XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
-            XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
-            XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-            XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
 
-            XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
-        }
+        XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
+
+        XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 }

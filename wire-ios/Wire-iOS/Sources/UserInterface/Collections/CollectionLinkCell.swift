@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class CollectionLinkCell: CollectionCell {
     private var articleView: ArticleView? = .none
@@ -79,7 +80,7 @@ final class CollectionLinkCell: CollectionCell {
 
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = message, let textMessageData = message.textMessageData, textMessageData.linkPreview != nil else {
+        guard let message, let textMessageData = message.textMessageData, textMessageData.linkPreview != nil else {
             return
         }
 

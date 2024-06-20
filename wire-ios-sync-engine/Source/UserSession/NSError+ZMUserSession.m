@@ -91,7 +91,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
-+ (instancetype)invalidPhoneNumberErrorWithReponse:(ZMTransportResponse *)response
++ (instancetype)invalidPhoneNumberErrorWithReponse:(ZMTransportResponse *)response // TODO [WPB-8822]: remove
 {
     if (response.HTTPStatus == 400 && ([[response payloadLabel] isEqualToString:@"invalid-phone"] || [[response payloadLabel] isEqualToString:@"bad-request"])) {
         return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
@@ -99,7 +99,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
-+ (instancetype)phoneNumberIsAlreadyRegisteredErrorWithResponse:(ZMTransportResponse *)response
++ (instancetype)phoneNumberIsAlreadyRegisteredErrorWithResponse:(ZMTransportResponse *)response // TODO [WPB-8822]: remove
 {
     if (response.HTTPStatus == 409) {
         return [NSError userSessionErrorWithErrorCode:ZMUserSessionPhoneNumberIsAlreadyRegistered userInfo:nil];

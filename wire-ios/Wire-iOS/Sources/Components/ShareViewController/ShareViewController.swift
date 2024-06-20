@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 protocol ShareDestination: Hashable {
     var displayNameWithFallback: String { get }
@@ -118,7 +119,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     private var filterString: String? = .none {
         didSet {
-            if let filterString = filterString, !filterString.isEmpty {
+            if let filterString, !filterString.isEmpty {
                 self.filteredDestinations = self.destinations.filter {
                     let name = $0.displayNameWithFallback
                     return name.range(of: filterString, options: .caseInsensitive) != nil
@@ -212,11 +213,11 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         let inputAccessoryHeight = UIResponder.currentFirst?.inputAccessoryView?.bounds.size.height ?? 0
 
         UIView.animate(withKeyboardNotification: notification, in: self.view, animations: {[weak self] keyboardFrameInView in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            weakSelf.bottomConstraint?.constant = keyboardHeight == 0 ? -weakSelf.view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
-            weakSelf.view.layoutIfNeeded()
+            bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
+            view.layoutIfNeeded()
         })
     }
 

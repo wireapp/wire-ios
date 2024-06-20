@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireRequestStrategy
 import WireSyncEngine
 
@@ -75,7 +76,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let bottomContainer: UIView = UIView(frame: .zero)
     var searchQueries: [String]? {
         didSet {
-            guard let searchQueries = searchQueries,
+            guard let searchQueries,
                   !searchQueries.isEmpty else { return }
 
             dataSource.searchQueries = searchQueries
@@ -289,7 +290,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
 
-        guard let coordinator = coordinator else { return }
+        guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
 
@@ -424,7 +425,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private func updateMediaBar() {
         let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage
 
-        if let mediaPlayingMessage = mediaPlayingMessage,
+        if let mediaPlayingMessage,
            mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
@@ -508,7 +509,10 @@ private extension UIAlertController {
                                                 message: message,
                                                 preferredStyle: .alert)
 
-        alertController.addAction(.ok(style: .cancel))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
                                                 style: .default,
                                                 handler: legalHoldLearnMoreHandler))

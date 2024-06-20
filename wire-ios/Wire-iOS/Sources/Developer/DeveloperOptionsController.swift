@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 final class DeveloperOptionsController: UIViewController {

@@ -19,6 +19,7 @@
 import DifferenceKit
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
@@ -46,13 +47,19 @@ final class ConversationListContentController: UICollectionViewController, Popov
         NotificationCenter.default.removeObserver(self)
     }
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        isFolderStatePersistenceEnabled: Bool
+    ) {
         self.userSession = userSession
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-        self.listViewModel = ConversationListViewModel(userSession: userSession)
+        self.listViewModel = ConversationListViewModel(
+            userSession: userSession,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
+        )
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()
@@ -91,7 +98,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if let token = token {
+        if let token {
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
@@ -238,10 +245,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
         return true
     }
 
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        contentDelegate?.conversationListDidScroll(self)
-    }
-
     override func collectionView(_ collectionView: UICollectionView,
                                  didSelectItemAt indexPath: IndexPath) {
         selectionFeedbackGenerator.selectionChanged()
@@ -373,7 +376,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             focusOnNextSelection = false
         }
 
-        guard let item = item else {
+        guard let item else {
             // Deselect all items in the collection view
             let indexPaths = collectionView.indexPathsForSelectedItems
             (indexPaths as NSArray?)?.enumerateObjects({ obj, _, _ in

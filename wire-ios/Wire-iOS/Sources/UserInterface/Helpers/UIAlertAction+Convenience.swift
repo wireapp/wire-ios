@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 
 extension UIAlertAction {
+
     static func cancel(_ completion: Completion? = nil) -> UIAlertAction {
         return UIAlertAction(
             title: L10n.Localizable.General.cancel,
@@ -57,7 +58,7 @@ extension UIAlertAction {
 
         setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
 
-        if let icon = icon {
+        if let icon {
             let image = UIImage.imageForIcon(icon, size: 24, color: tintColor)
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
         }

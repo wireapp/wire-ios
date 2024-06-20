@@ -62,37 +62,46 @@ struct SystemLogger: LoggerProtocol {
         fileLogger.write(entries: entries, to: fileDestination.log)
     }
 
-    func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .debug)
     }
 
-    func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .info)
     }
 
-    func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .default)
     }
 
-    func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
-    func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .error)
     }
 
-    func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
-    private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
+    func addTag(_ key: LogAttributesKey, value: String?) {
+       // do nothing, as it's only available on datadog
+    }
+
+    private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
+        var mergedAttributes: LogAttributes = [:]
+        attributes.forEach {
+            mergedAttributes.merge($0) { _, new in new }
+        }
+
         var logger: OSLog = OSLog.default
-        if let tag = attributes?["tag"] as? String {
+        if let tag = mergedAttributes[.tag] as? String {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
-        if attributes?["public"] as? Bool == true {
+        if mergedAttributes[.public] as? Bool == true {
             os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
         } else {
             os_log(osLogType, log: logger, "\(message.logDescription)")

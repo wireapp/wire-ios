@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireSyncEngine
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
@@ -36,8 +37,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
         let label = DynamicFontLabel(
             text: title,
-            style: .bigHeadline,
-            color: SemanticColors.Label.textDefault)
+            style: .largeTitle,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.accessibilityIdentifier = "titleLabel"
@@ -49,8 +51,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
         let label = DynamicFontLabel(
             text: subtitle,
-            style: .body,
-            color: SemanticColors.Label.textDefault)
+            style: .body1,
+            color: SemanticColors.Label.textDefault
+        )
         label.numberOfLines = 0
         label.textAlignment = .center
         label.accessibilityIdentifier = "detailsLabel"
@@ -212,15 +215,15 @@ struct SuccessfulCertificateEnrollmentViewController_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: true)
+            SuccessfulCertificateEnrollmentViewControllerWrapper(isUpdateMode: true)
                 .previewDisplayName("Update Mode: true")
-            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: false)
+            SuccessfulCertificateEnrollmentViewControllerWrapper(isUpdateMode: false)
                 .previewDisplayName("Update Mode: false")
         }
     }
 }
 
-private struct SuccessfulCertificateEnrollmentViewControllerrWrapper: UIViewControllerRepresentable {
+private struct SuccessfulCertificateEnrollmentViewControllerWrapper: UIViewControllerRepresentable {
 
     @State private(set) var isUpdateMode = false
 

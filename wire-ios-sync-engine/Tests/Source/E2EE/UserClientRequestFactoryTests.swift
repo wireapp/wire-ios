@@ -65,7 +65,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     // MARK: - Registration request creation 
 
     func testThatItCreatesRegistrationRequestWithEmailCorrectly() throws {
-        let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
 
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
@@ -79,7 +79,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     }
 
     func testThatItCreatesRegistrationRequestWithEmailVerificationCodeCorrectly() throws {
-        let credentials = ZMEmailCredentials(
+        let credentials = UserEmailCredentials(
             email: "some@example.com",
             password: "123",
             emailVerificationCode: "123456"
@@ -109,7 +109,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     }
 
     private func testThatItCreatesRegistrationRequestCorrectly(
-        credentials: ZMEmailCredentials?,
+        credentials: UserEmailCredentials?,
         usingProteusService: Bool
     ) throws {
         let request = try syncMOC.performAndWait {
@@ -139,7 +139,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
 
-        if let credentials = credentials {
+        if let credentials {
             XCTAssertEqual(payload.password, credentials.password)
         }
 
@@ -179,7 +179,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         // given
         let emptyPrekeys: [IdPrekeyTuple] = []
         let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
-        let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
 
         syncMOC.performAndWait {
             let client = UserClient.insertNewObject(in: syncMOC)
@@ -286,7 +286,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
             // given
             let email = "foo@example.com"
             let password = "gfsgdfgdfgdfgdfg"
-            let credentials = ZMEmailCredentials(email: email, password: password)
+            let credentials = UserEmailCredentials(email: email, password: password)
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = "\(client.objectID)"
             self.syncMOC.saveOrRollback()

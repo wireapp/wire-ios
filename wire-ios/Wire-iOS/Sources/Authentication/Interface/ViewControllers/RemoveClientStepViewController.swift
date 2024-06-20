@@ -18,12 +18,13 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
-    let clientListController: ClientListViewController
+    let clientListController: RemoveClientsViewController
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
        return traitEnvironment.traitCollection.horizontalSizeClass
     }
@@ -34,19 +35,18 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Initialization
 
     init(clients: [UserClient],
-         credentials: ZMCredentials?) {
-        let emailCredentials: ZMEmailCredentials? = credentials.flatMap {
+         credentials: UserCredentials?) {
+        let emailCredentials: UserEmailCredentials? = credentials.flatMap {
             guard let email = $0.email, let password = $0.password else {
                 return nil
             }
 
-            return ZMEmailCredentials(email: email, password: password)
+            return UserEmailCredentials(email: email, password: password)
         }
 
-        clientListController = ClientListViewController(clientsList: clients,
-                                                        credentials: emailCredentials,
-                                                        showTemporary: false,
-                                                        showLegalHold: false)
+        clientListController = RemoveClientsViewController(
+            clientsList: clients,
+            credentials: emailCredentials)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -60,7 +60,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title.capitalized)
+        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
         configureSubviews()
         configureConstraints()
         updateBackButton()
@@ -70,7 +70,6 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         clientListController.view.backgroundColor = .clear
-        clientListController.editingList = true
         clientListController.delegate = self
         addToSelf(clientListController)
     }
@@ -94,7 +93,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Back Button
 
     private func updateBackButton() {
-        guard navigationController?.viewControllers.count > 1 else {
+        guard let count = navigationController?.viewControllers.count, count > 1 else {
             return
         }
 
@@ -132,10 +131,16 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
 // MARK: - ClientListViewControllerDelegate
 
-extension RemoveClientStepViewController: ClientListViewControllerDelegate {
+extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
 
-    func finishedDeleting(_ clientListViewController: ClientListViewController) {
+    func finishedDeleting(_ clientListViewController: RemoveClientsViewController) {
         authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
+    }
+
+    func failedToDeleteClients(_ error: Error) {
+        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
+                                                        completionActions: [.unwindState(withInterface: false)])
+        authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
 
 }

@@ -36,7 +36,7 @@ extension UIViewController {
         ) {
 
         let controller = UIAlertController.remove(participant) { [weak self] remove in
-            guard let `self` = self, remove else { return }
+            guard let self, remove else { return }
 
             conversation.removeOrShowError(participant: participant) { result in
                 switch result {

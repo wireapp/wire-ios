@@ -41,7 +41,7 @@ final class MockMessageFactory {
         let message = T()
 
         var mockZMConversation: MockConversation?
-        if let conversation = conversation {
+        if let conversation {
             message.conversationLike = conversation
         } else {
             let conversation = MockLoader.mockObjects(of: MockConversation.self, fromFile: "conversations-01.json")[0] as? MockConversation
@@ -53,7 +53,7 @@ final class MockMessageFactory {
 
         if let sender = sender as? ZMUser {
             message.senderUser = sender
-        } else if let sender = sender {
+        } else if let sender {
             message.senderUser = sender
         } else {
             let user = MockUserType.createSelfUser(name: "Tarja Turunen")
@@ -75,7 +75,7 @@ final class MockMessageFactory {
 
     class func imageMessage<T: MockMessage>(sender: UserType? = nil, with image: UIImage?) -> T {
         let imageData = MockImageMessageData()
-        if let image = image, let data = image.imageData {
+        if let image, let data = image.imageData {
             imageData.mockImageData = data
             imageData.mockOriginalSize = image.size
             imageData.isDownloaded = true
@@ -277,7 +277,7 @@ final class MockMessageFactory {
         fileMessage.backingFileMessageData.mimeType = "audio/x-m4a"
         fileMessage.backingFileMessageData.filename = "sound.m4a"
 
-        if let config = config {
+        if let config {
             config(fileMessage)
         }
 

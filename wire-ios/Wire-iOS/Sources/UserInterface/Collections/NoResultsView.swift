@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSystem
 
 final class NoResultsView: UIView {
@@ -37,7 +38,7 @@ final class NoResultsView: UIView {
 
     var icon: StyleKitIcon? {
         didSet {
-            if let icon = icon {
+            if let icon {
                 iconView.setTemplateIcon(icon, size: .custom(160))
                 iconView.tintColor = SemanticColors.Icon.foregroundPlaceholder
             }

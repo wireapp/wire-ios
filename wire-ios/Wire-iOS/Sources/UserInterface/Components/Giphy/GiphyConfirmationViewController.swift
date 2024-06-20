@@ -19,6 +19,7 @@
 import FLAnimatedImage
 import UIKit
 import WireCommonComponents
+import WireDesign
 import Ziphy
 
 protocol GiphyConfirmationViewControllerDelegate: AnyObject {
@@ -54,7 +55,7 @@ final class GiphyConfirmationViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let previewImage = previewImage {
+        if let previewImage {
             imagePreview.animatedImage = previewImage
         }
 
@@ -103,7 +104,7 @@ final class GiphyConfirmationViewController: UIViewController {
     }
 
     func fetchImage() {
-        guard let ziph = ziph, let searchResultController = searchResultController else { return }
+        guard let ziph, let searchResultController else { return }
 
         searchResultController.fetchImageData(for: ziph, imageType: .downsized) { [weak self] result in
             guard case let .success(imageData) = result else {
@@ -128,7 +129,7 @@ final class GiphyConfirmationViewController: UIViewController {
 
     @objc
     private func onAccept() {
-        if let imageData = imageData {
+        if let imageData {
             delegate?.giphyConfirmationViewController(self, didConfirmImageData: imageData)
         }
     }

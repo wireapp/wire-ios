@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 private let smallLightFont = FontSpec(.small, .light)
 private let smallBoldFont = FontSpec(.small, .medium)
@@ -104,12 +105,12 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     static func attributedSubtitle(for user: UserType?) -> NSAttributedString? {
-        guard let user = user, let handle = user.handleDisplayString(withDomain: user.isFederated) else { return nil }
+        guard let user, let handle = user.handleDisplayString(withDomain: user.isFederated) else { return nil }
         return handle && smallBoldFont.font! && SemanticColors.Label.textDefault
     }
 
     static func attributedCorrelationText(for user: UserType?, addressBookName: String?) -> NSAttributedString? {
-        guard let user = user else { return nil }
+        guard let user else { return nil }
         return formatter.correlationText(for: user, addressBookName: addressBookName)
     }
 }
@@ -174,7 +175,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     func redrawFont() {
-        guard let model = model else { return }
+        guard let model else { return }
         subtitleLabel.attributedText = model.firstSubtitle
         correlationLabel.attributedText = model.secondSubtitle
     }

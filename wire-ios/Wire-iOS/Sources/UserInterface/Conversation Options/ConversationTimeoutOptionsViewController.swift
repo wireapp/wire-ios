@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private enum Item {
@@ -167,7 +168,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         }
 
         self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
 
@@ -188,7 +189,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     private func requestCustomValue() {
         UIAlertController.requestCustomTimeInterval(over: self) { [weak self] result in
 
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
 

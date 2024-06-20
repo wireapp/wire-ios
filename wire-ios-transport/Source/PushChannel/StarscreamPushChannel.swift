@@ -115,8 +115,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             webSocket == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }
@@ -235,15 +235,9 @@ extension StarscreamPushChannel: WebSocketDelegate {
             break
         case .binary(let data):
             Logging.pushChannel.debug("Received data")
-            guard
-                let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-            else {
-                Logging.pushChannel.safePublic("Received binary data via push channel cannot be deserialized", level: .error)
-                break
-            }
 
             consumerQueue?.performGroupedBlock { [weak self] in
-                self?.consumer?.pushChannelDidReceive(transportData)
+                self?.consumer?.pushChannelDidReceive(data)
             }
         case .pong:
             break
@@ -256,6 +250,8 @@ extension StarscreamPushChannel: WebSocketDelegate {
         case .reconnectSuggested:
             break
         case .cancelled:
+            onClose()
+        case .peerClosed:
             onClose()
         }
     }

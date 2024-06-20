@@ -110,10 +110,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-        WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+        // Set up Datadog as logger
+        WireAnalytics.Datadog.enable()
 
-        DatadogWrapper.shared?.startMonitoring()
-        DatadogWrapper.shared?.log(level: .info, message: "start app")
+        WireLogger.appDelegate.info(
+            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))"
+        )
 
         // Initial log line to indicate the client version and build
         WireLogger.appDelegate.info(
@@ -281,10 +283,10 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
+
         guard let viewController = window?.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
-
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }

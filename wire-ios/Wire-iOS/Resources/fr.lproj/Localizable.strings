@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archives";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Les conversations commencent ici";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ utilise un nouvel appareil.";
 "call.degraded.alert.message.unknown" = "Quelqu'un utilise un nouvel appareil.";
 "call.degraded.alert.action.continue" = "Appeler quand même";
+"call.degraded.incoming.alert.action.continue" = "Répondre quand même";
 
 "call.degraded.ended.alert.title" = "Fin de l'appel";
 "call.degraded.ended.alert.message.self" = "L'appel a été déconnecté car vous avez commencé à utiliser un nouvel appareil.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "BLOQUÉ";
 "profile.create_conversation_button_title" = "Créer un groupe";
 "profile.open_conversation_button_title" = "Ouvrir la conversation";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "VOUS AVEZ ACTIVÉ LES ACCUSÉS DE LECTURE";
 "profile.read_receipts_disabled_memo.header" = "VOUS AVEZ DÉSACTIVÉ LES ACCUSÉS DE LECTURE";
 "profile.read_receipts_memo.body" = "Si les deux participants activent les accusés de lecture, vous pourrez voir quand les messages sont lus.\n\nVous pouvez changer cette option dans les paramètres de votre compte.";
@@ -1040,6 +1043,7 @@
 "self.add_email_password" = "Ajouter une adresse e-mail et un mot de passe";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Conditions d'utilisation";
 "about.privacy.title" = "Politique de confidentialité";
 "about.license.title" = "Informations sur la licence";
@@ -1084,7 +1088,6 @@
 
 "self.settings.account_section.name.title" = "Nom";
 "self.settings.account_section.email.title" = "E-mail";
-"self.settings.account_section.phone.title" = "Téléphone";
 "self.settings.account_section.handle.title" = "Nom d'utilisateur";
 "self.settings.account_section.add_handle.title" = "Choisir un identifiant";
 "self.settings.account_section.team.title" = "Équipe";
@@ -1117,7 +1120,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Bleu";
 "self.settings.account_picture_group.accent_color.green" = "Vert";
-"self.settings.account_picture_group.accent_color.yellow" = "Jaune";
 "self.settings.account_picture_group.accent_color.red" = "Rouge";
 "self.settings.account_picture_group.accent_color.amber" = "Ambre";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1182,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "E-mail renvoyé";
 "self.settings.account_section.email.change.resend.message" = "L'e-mail de confirmation a été renvoyé à %@. Vérifiez votre boîte de réception et suivez les instructions.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Téléphone";
-"self.settings.account_section.phone_number.change.save" = "Enregistrer";
-"self.settings.account_section.phone_number.change.remove" = "Supprimer le numéro de téléphone";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Supprimer le numéro de téléphone";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Enregistrer";
-"self.settings.account_section.phone_number.change.verify.title" = "Vérifier";
-"self.settings.account_section.phone_number.change.verify.description" = "Saisissez le code de vérification que nous avons envoyé au : %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Saisissez le code";
-"self.settings.account_section.phone_number.change.verify.resend" = "Renvoyer le code";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Aucun code à l'horizon ?\nVous pouvez en demander un nouveau toutes les 30 secondes.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Code renvoyé";
-"self.settings.account_section.phone_number.change.resend.message" = "Le code de vérification a été renvoyé à %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Notifications";
@@ -1375,10 +1358,6 @@
 "password.placeholder" = "Mot de passe";
 "password.guidance.toolong" = "Trop de caractères";
 
-"phone.guidance.invalid" = "Numéro de téléphone incorrect";
-"phone.guidance.tooshort" = "Le numéro est trop court";
-"phone.guidance.toolong" = "Trop de caractères";
-
 // Landing screen
 
 "landing.header" = "Wire. Connectez-vous ou créez un compte personnel.";
@@ -1409,7 +1388,6 @@
 "team.activation_code.subheadline" = "Saisir le code de vérification que nous avons envoyé à %@.";
 "team.activation_code.button.resend" = "Renvoyer le code";
 "team.activation_code.button.change_email" = "Modifier l’adresse e-mail";
-"team.activation_code.button.change_phone" = "Changer le numéro de téléphone";
 
 "team.full_name.headline" = "Votre nom";
 "team.full_name.textfield.placeholder" = "Nom complet";
@@ -1466,19 +1444,9 @@
 
 "registration.title" = "Inscription";
 "registration.close_email_invitation_button.email_title" = "Utiliser une autre adresse e-mail";
-"registration.close_email_invitation_button.phone_title" = "S’inscrire avec le téléphone";
 "registration.close_phone_invitation_button.email_title" = "S’inscrire avec l'e-mail";
-"registration.close_phone_invitation_button.phone_title" = "Utiliser un autre téléphone";
 
-"registration.register_by_phone" = "Téléphone";
 "registration.register_by_email" = "Email";
-
-"registration.enter_phone_number.title" = "Modifier le numéro de téléphone";
-"registration.enter_phone_number.placeholder" = "Numéro de téléphone";
-
-"registration.verify_phone_number.instructions" = "Saisissez le code de vérification que nous avons envoyé au %@";
-"registration.verify_phone_number.resend" = "Renvoyer";
-"registration.verify_phone_number.resend_placeholder" = "Aucun code à l'horizon ?\nVous pourrez en demander un nouveau dans %.0f secondes";
 
 "registration.verify_email.instructions" = "Nous avons envoyé un e-mail à %@.\nCliquez sur le lien afin de vérifier votre adresse.";
 "registration.verify_email.resend.instructions" = "Message non reçu ?";
@@ -1490,10 +1458,8 @@
 "registration.no_history.restore_backup" = "Restaurer depuis une sauvegarde";
 
 "registration.alert.account_exists.title" = "Le compte existe déjà";
-"registration.alert.account_exists.message_phone" = "Le numéro de téléphone que vous avez utilisé pour vous inscrire est lié à un compte déjà existant.\n\nUtilisez un autre numéro, ou essayez de vous connecter si ce compte vous appartient.";
 "registration.alert.account_exists.message_email" = "L'adresse email que vous avez utilisé pour vous inscrire est lié à un compte déjà existant.\n\n Utilisez une autre adresse, ou essayez de vous connecter si ce compte vous appartient.";
 "registration.alert.change_email_action" = "Utiliser un autre email";
-"registration.alert.change_phone_action" = "Utiliser un autre numéro";
 "registration.alert.change_signin_action" = "Se connecter";
 
 // Restore History Warning Alert
@@ -1598,7 +1564,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Gérer les appareils";
 "registration.signin.too_many_devices.sign_out_button.title" = "Se déconnecter";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Supprimer un appareil";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Mot de passe requis";
 "registration.signin.alert.password_needed.message" = "Veuillez saisir votre mot de passe pour vous connecter.";
@@ -1636,32 +1602,17 @@
 "registration.devices.id" = "ID :";
 
 "signin.use_email.label" = "Connexion avec votre adresse email";
-"signin.use_phone.label" = "Connexion avec votre numéro de téléphone";
 "signin.forgot_password" = "Mot de passe oublié ?";
 "signin.use_one_password.label" = "Connexion avec 1Password";
 "signin.use_one_password.hint" = "Tapez deux fois pour renseigner votre mot de passe avec 1Password";
 "signin.confirm" = "Se connecter";
 "signin.company_idp.button.title" = "Entreprises";
 
-"signin_logout.subheadline" = "Votre session a expiré, veuillez vous reconnecter pour continuer.";
 "signin_logout.email.subheadline" = "Votre session a expiré. Entrez votre adresse email et votre mot de passe pour continuer.";
-"signin_logout.phone.subheadline" = "Votre session a expiré. Entrez votre numéro de téléphone de continuer.";
 "signin_logout.sso.subheadline" = "Votre session a expiré. Connectez-vous avec votre compte entreprise pour continuer.";
 "signin_logout.sso.buton" = "Connection Entreprise";
 
 "signin.email.missing_password.subtitle" = "Entrez votre adresse email et votre mot de passe pour continuer.";
-"signin.phone.missing_password.subtitle" = "Entrez votre numéro de téléphone pour continuer.";
-
-"registration.phone_country" = "Pays";
-"registration.phone_code" = "Indicatif du pays";
-"registration.phone_country.hint" = "Tapez deux fois pour sélectionner un autre pays.";
-"registration.phone_code.hint" = "Tapez deux fois pour sélectionner un autre indicatif pays.";
-"registration.phone.verify.label" = "Vérifier votre numéro de téléphone";
-"registration.phone.verify_field.label" = "Code de vérification";
-
-"registration.add_phone_number.hero.title" = "Ajouter un numéro de téléphone";
-"registration.add_phone_number.hero.paragraph" = "Cela nous aide à trouver des personnes que vous pouvez connaître. Ces informations ne seront jamais partagées.";
-"registration.add_phone_number.skip_button.title" = "Pas maintenant";
 
 "registration.add_email_password.hero.title" = "Ajouter votre e-mail et votre mot de passe";
 "registration.add_email_password.hero.paragraph" = "Cela vous permet d'utiliser Wire sur plusieurs appareils.";
@@ -1670,12 +1621,7 @@
 "registration.email_invitation.hero.title" = "Bonjour, %@";
 "registration.email_invitation.hero.paragraph" = "Choisissez un mot de passe pour créer votre compte.";
 
-"registration.phone_invitation.title" = "Invitation";
-"registration.phone_invitation.hero.title" = "Bonjour, %@";
-"registration.phone_invitation.hero.paragraph" = "Vous avez presque terminé de créer votre compte.";
-
 "registration.confirm" = "S’inscrire";
-"registration.phone.country_code.hint" = "Tapez deux fois pour utiliser un téléphone de ce pays.";
 
 "error.name_and_email" = "Veuillez saisir votre nom complet ainsi qu'une adresse e-mail valide";
 "error.full_name" = "Veuillez saisir votre nom complet";
@@ -1683,7 +1629,6 @@
 "error.input.too_long" = "Veuillez saisir un nom d'utilisateur plus court";
 "error.input.too_short" = "Veuillez saisir un nom d'utilisateur plus long";
 "error.email.invalid" = "Veuillez saisir une adresse e-mail valide";
-"error.phone.invalid" = "Veuillez saisir un numéro de téléphone valide";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1647,11 @@
 "error.user.account_pending_activation" = "Le compte auquel vous tentez d’accéder est en attente d’activation. Merci de vérifier vos informations.";
 "error.user.network_error" = "Il semble y avoir un problème avec votre réseau. Veuillez réessayer ultérieurement.";
 "error.user.email_is_taken" = "L'adresse e-mail fournie a déjà été enregistrée. Veuillez réessayer.";
-"error.user.phone_is_taken" = "Le numéro de téléphone que vous avez fourni est déjà enregistré. Veuillez réessayer.";
-"error.user.phone_code_invalid" = "Veuillez fournir un code valide";
-"error.user.phone_code_too_many" = "Nous vous avons déjà envoyé un code par SMS. Appuyez sur renvoyer après 10 minutes pour en obtenir un autre.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Une erreur s'est produite. Veuillez réessayer.";
 "error.user.device_deleted_remotely" = "Vous avez été déconnecté depuis un autre appareil.";
-"error.user.last_identity_cant_be_deleted" = "Une adresse e-mail ou un numéro de téléphone est nécessaire.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Ce compte n'est plus autorisé à se connecter.";
 "error.user.account_limit_reached" = "Vous ne pouvez pas ajouter plus de 3 comptes.";
 
@@ -1735,6 +1679,7 @@
 "error.conversation.cannot_remove" = "Le participant n'a pas pu être retiré";
 "error.conversation.too_many_members" = "Cette conversation est saturée";
 "error.conversation.offline" = "Il semble y avoir un problème avec votre connexion Internet. Merci de vous assurer de son bon fonctionnement.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "A cause de la conservation à des fins juridiques, seuls les membres de l'équipe peuvent être ajoutés à cette conversation";
 "error.message.send.missing_legalhold_consent" = "Vous ne pouvez pas envoyer ce message car vous avez au moins un appareil obsolète qui ne prend pas en charge la conservation à des fins juridiques. Veuillez mettre à jour tous vos appareils ou les supprimer via les paramètres de l'application";
 "error.message.send.title" = "Impossible d'envoyer de messages";
@@ -1922,8 +1867,16 @@
 "url_action.title" = "Confirmer";
 "url_action.connect_to_bot.message" = "Voulez-vous vous connecter à ce service ?";
 
-"url_action.switch_backend.title" = "Se connecter au serveur";
-"url_action.switch_backend.message" = "Cette configuration va connecter l’application au serveur tiers :\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Nom du serveur :";
+"url_action.switch_backend_confirmation.backend_url" = "URL du serveur:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Impossible de changer de serveur";
 "url_action.switch_backend.error.logged_in" = "Vous êtes déjà connecté. Pour vous connecter à ce serveur, veuillez vous déconnecter de tous vos comptes et essayer à nouveau.";
@@ -2146,7 +2099,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

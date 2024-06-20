@@ -70,7 +70,7 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        guard let bundleKey = bundleKey else {
+        guard let bundleKey else {
             return false
         }
         return DeveloperFlagsDefault.isEnabled(for: bundleKey)

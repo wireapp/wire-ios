@@ -148,15 +148,17 @@ public class Feature: ZMManagedObject {
     ///     - context: The context in which to fetch the instance.
     ///     - changes: A closure to mutate the fetched instance.
 
-    public static func updateOrCreate(havingName name: Name,
-                                      in context: NSManagedObjectContext,
-                                      changes: @escaping (Feature) -> Void) {
+    public static func updateOrCreate(
+        havingName name: Name,
+        in context: NSManagedObjectContext,
+        changes: @escaping (Feature) -> Void
+    ) {
 
         // There should be at most one instance per feature, so only allow modifications
         // on a single context to avoid race conditions.
         assert(context.zm_isSyncContext, "Modifications of `Feature` can only occur on the sync context")
 
-        context.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             if let existing = fetch(name: name, context: context) {
                 changes(existing)
                 existing.hasInitialDefault = false

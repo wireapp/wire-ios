@@ -45,9 +45,10 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             topMostViewController?.isLoadingViewVisible = true
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: ZMEmailCredentials(email: "", password: password ?? ""), { result in
+            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { result in
                 topMostViewController?.isLoadingViewVisible = false
-
+                TrackingManager.shared.disableCrashSharing = false
+                TrackingManager.shared.disableAnalyticsSharing = false
                 if case .failure(let error) = result {
                     topMostViewController?.showAlert(for: error)
                 }
@@ -78,7 +79,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             viewController = alert
         } else {
             requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
-                guard let password = password else { return }
+                guard let password else { return }
 
                 self?.logout(password: password)
             })

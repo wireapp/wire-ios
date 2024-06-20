@@ -39,7 +39,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
 
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
-    private let comparedDate: DateProviding
+    private let comparedDate: CurrentDateProviding
     private let mlsClientID: MLSClientID
     private let context: NSManagedObjectContext
     private let lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
@@ -50,7 +50,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         mlsClientID: MLSClientID,
         context: NSManagedObjectContext,
         lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
-        comparedDate: DateProviding = SystemDateProvider()
+        comparedDate: CurrentDateProviding = SystemDateProvider()
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod

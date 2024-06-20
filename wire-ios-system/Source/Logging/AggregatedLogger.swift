@@ -29,45 +29,57 @@ public class AggregatedLogger: LoggerProtocol {
         self.loggers.append(logger)
     }
 
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+        let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
-            $0.debug(message, attributes: attributes)
+            $0.debug(message, attributes: mergedAttributes)
         }
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+        let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
-            $0.info(message, attributes: attributes)
+            $0.info(message, attributes: mergedAttributes)
         }
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+        let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
-            $0.notice(message, attributes: attributes)
+            $0.notice(message, attributes: mergedAttributes)
         }
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+        let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
-            $0.warn(message, attributes: attributes)
+            $0.warn(message, attributes: mergedAttributes)
         }
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+        let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
-            $0.error(message, attributes: attributes)
+            $0.error(message, attributes: mergedAttributes)
         }
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+        let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
-            $0.critical(message, attributes: attributes)
+            $0.critical(message, attributes: mergedAttributes)
         }
     }
 
     public func persist(fileDestination: FileLoggerDestination) async {
         for logger in loggers {
             await logger.persist(fileDestination: fileDestination)
+        }
+    }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        loggers.forEach {
+            $0.addTag(key, value: value)
         }
     }
 }
