@@ -85,8 +85,10 @@ final class AppRootRouter: NSObject {
         sessionManager.switchingDelegate = switchingAccountRouter
         sessionManager.presentationDelegate = urlActionRouter
 
-        if let countlyKey = Bundle.countlyAppKey, let host = BackendEnvironment.shared.countlyURL {
-            self.analyticsSession = AnalyticsSession(appKey: countlyKey, host: host)
+        if !ProcessInfo.processInfo.isRunningTests {
+            if let countlyKey = Bundle.countlyAppKey, let host = BackendEnvironment.shared.countlyURL {
+                self.analyticsSession = AnalyticsSession(appKey: countlyKey, host: host)
+            }
         }
 
         super.init()
