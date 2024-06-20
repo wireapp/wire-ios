@@ -391,20 +391,21 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
-        configuration: Configuration
+        configuration: Configuration,
+        isDeveloperModeEnabled: Bool
     ) {
         coreDataStack.linkAnalytics(analytics)
         coreDataStack.linkCaches(dependencies.caches)
         coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
-        self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
-        self.earService.delegate = self
+        earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
+        earService.delegate = self
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        syncManagedObjectContext.performGroupedBlockAndWait { [self] in
+        syncManagedObjectContext.performGroupedAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
 
@@ -415,7 +416,7 @@ public final class ZMUserSession: NSObject {
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
             self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
-            self.operationLoop = operationLoop ?? self.createOperationLoop()
+            self.operationLoop = operationLoop ?? self.createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
             self.urlActionProcessors = self.createURLActionProcessors()
             self.callStateObserver = CallStateObserver(localNotificationDispatcher: self.localNotificationDispatcher!,
                                                        contextProvider: self,
@@ -549,16 +550,19 @@ public final class ZMUserSession: NSObject {
                               eventProcessingTracker: eventProcessingTracker)
     }
 
-    private func createOperationLoop() -> ZMOperationLoop {
-        return ZMOperationLoop(transportSession: transportSession,
-                               requestStrategy: syncStrategy,
-                               updateEventProcessor: updateEventProcessor!,
-                               operationStatus: applicationStatusDirectory.operationStatus,
-                               syncStatus: applicationStatusDirectory.syncStatus,
-                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-                               callEventStatus: applicationStatusDirectory.callEventStatus,
-                               uiMOC: managedObjectContext,
-                               syncMOC: syncManagedObjectContext)
+    private func createOperationLoop(isDeveloperModeEnabled: Bool) -> ZMOperationLoop {
+        ZMOperationLoop(
+            transportSession: transportSession,
+            requestStrategy: syncStrategy,
+            updateEventProcessor: updateEventProcessor!,
+            operationStatus: applicationStatusDirectory.operationStatus,
+            syncStatus: applicationStatusDirectory.syncStatus,
+            pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
+            callEventStatus: applicationStatusDirectory.callEventStatus,
+            uiMOC: managedObjectContext,
+            syncMOC: syncManagedObjectContext,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
+        )
     }
 
     private func configureRecurringActions() {
@@ -571,8 +575,6 @@ public final class ZMUserSession: NSObject {
 
     func startRequestLoopTracker() {
         transportSession.requestLoopDetectionCallback = { path in
-            guard !path.hasSuffix("/typing") else { return }
-
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {
@@ -658,7 +660,7 @@ public final class ZMUserSession: NSObject {
 
     @objc(performChanges:)
     public func perform(_ changes: @escaping () -> Void) {
-        managedObjectContext.performGroupedBlockAndWait { [weak self] in
+        managedObjectContext.performGroupedAndWait { [weak self] in
             changes()
             self?.saveOrRollbackChanges()
         }
@@ -787,7 +789,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self.hasCompletedInitialSync = true
             self.notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
-            ZMUserSession.notifyInitialSyncCompleted(context: managedObjectContext)
+
+            NotificationInContext(
+                name: .initialSync,
+                context: managedObjectContext.notificationContext
+            ).post()
         }
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()

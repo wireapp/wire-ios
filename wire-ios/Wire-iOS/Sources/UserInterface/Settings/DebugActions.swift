@@ -169,8 +169,12 @@ enum DebugActions {
         let alert = UIAlertController(
             title: "Analytics identifier",
             message: "\(selfUser.analyticsIdentifier ?? "nil")",
-            alertAction: .ok(style: .cancel)
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -190,8 +194,12 @@ enum DebugActions {
         let alert = UIAlertController(
             title: "API Version info",
             message: message,
-            alertAction: .ok(style: .cancel)
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -209,9 +217,15 @@ enum DebugActions {
 
         CallQualityController.resetSurveyMuteFilter()
 
-        let alert = UIAlertController(title: "Success",
-                                      message: "The call quality survey will be displayed after the next call.",
-                                      alertAction: .ok(style: .cancel))
+        let alert = UIAlertController(
+            title: "Success",
+            message: "The call quality survey will be displayed after the next call.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -286,12 +300,21 @@ enum DebugActions {
             conversations?.forEach({ _ = $0.estimatedUnreadCount })
         }
         userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
-        userSession.syncManagedObjectContext.performGroupedBlockAndWait {
+        userSession.syncManagedObjectContext.performGroupedAndWait {
             conversations = nil
             userSession.syncManagedObjectContext.saveOrRollback()
         }
 
-        let alertController = UIAlertController(title: "Updated", message: "Badge count  has been re-calculated", alertAction: .ok(style: .cancel))
+        let alertController = UIAlertController(
+            title: "Updated",
+            message: "Badge count  has been re-calculated",
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
         controller.show(alertController, sender: nil)
     }
 
@@ -300,7 +323,7 @@ enum DebugActions {
             if let number = NumberFormatter().number(from: $0) {
                 callback(number.intValue)
             } else {
-              alert("ERROR: not a number")
+                alert("ERROR: not a number")
             }
         }
     }

@@ -24,7 +24,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"
 
-#import "ZMCredentials.h"
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 
 extern NSTimeInterval DebugLoginFailureTimerOverride;
@@ -61,7 +60,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
 
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -89,7 +88,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
 
     // and when
-    ZMCredentials *credentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code];
+    UserCredentials *credentials = [UserPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -112,7 +111,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
 
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -149,7 +148,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"wrong-password"];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"wrong-password"];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -188,7 +187,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -229,7 +228,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -256,7 +255,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     DebugLoginFailureTimerOverride = 0.2;
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:@"janet@fo.example.com" password:@"::FsdF:#$:fgsdAG"];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:@"janet@fo.example.com" password:@"::FsdF:#$:fgsdAG"];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     
     // then
@@ -293,7 +292,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
     
     // and when
-    [self.unauthenticatedSession loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code]];
+    [self.unauthenticatedSession loginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code]];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -364,7 +363,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
     
     // and when
-    ZMCredentials *credentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone
+    UserCredentials *credentials = [UserPhoneCredentials credentialsWithPhoneNumber:phone
                                                                verificationCode:self.mockTransportSession.invalidPhoneVerificationCode];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -425,7 +424,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.userSession performChanges:^{
         [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     }];
@@ -451,7 +450,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // and when
-    ZMPhoneCredentials *newCredentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone
+    UserPhoneCredentials *newCredentials = [UserPhoneCredentials credentialsWithPhoneNumber:phone
                                                                        verificationCode:self.mockTransportSession.phoneVerificationCodeForLogin];
     XCTAssertTrue([self loginWithCredentials:newCredentials ignoreAuthenticationFailures:YES]);
     WaitForAllGroupsToBeEmpty(0.5);
@@ -496,7 +495,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
 
     // when
-    [self.unauthenticatedSession loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:self.mockTransportSession.phoneVerificationCodeForLogin]];
+    [self.unauthenticatedSession loginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:self.mockTransportSession.phoneVerificationCodeForLogin]];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -506,7 +505,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     
     // first provide the wrong credentials
     [self.mockTransportSession resetReceivedRequests];
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:wrongPassword];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:wrongPassword];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -515,7 +514,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     
     // then provide the right password
     [self.mockTransportSession resetReceivedRequests];
-    ZMEmailCredentials *newCredentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
+    UserEmailCredentials *newCredentials = [UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
     [self.unauthenticatedSession loginWithCredentials:newCredentials];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -569,7 +568,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
 
     // (2) login again after losing our client (BE will ask for password on 2nd client
     {
-        ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
+        UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
         [self.userSession performChanges:^{
             [self.unauthenticatedSession loginWithCredentials:credentials];
         }];
@@ -578,7 +577,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         
         // when
         [self.unauthenticatedSession requestPhoneVerificationCodeForLogin:phone];
-        XCTAssertTrue([self loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code] ignoreAuthenticationFailures:YES]);
+        XCTAssertTrue([self loginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code] ignoreAuthenticationFailures:YES]);
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
         WaitForAllGroupsToBeEmpty(0.5);
 

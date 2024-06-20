@@ -20,9 +20,9 @@
 @import WireProtos;
 @import WireTransport;
 
-#import "ZMMessage.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMFetchRequestBatch.h"
+#import <WireDataModel/ZMMessage.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
+#import <WireDataModel/ZMFetchRequestBatch.h>
 
 @class ZMUser;
 @class Reaction;

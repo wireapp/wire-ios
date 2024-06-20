@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -53,7 +54,7 @@ struct DeviceDetailsBottomView: View {
 
     var removeDeviceView: some View {
         HStack {
-            SwiftUI.Button {
+            Button {
                 Task {
                    await viewModel.removeDevice()
                 }

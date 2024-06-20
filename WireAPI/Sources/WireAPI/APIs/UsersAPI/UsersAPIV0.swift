@@ -67,7 +67,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let id: UserID
     let name: String
     let handle: String?
-    let teamID: UUID
+    let teamID: UUID?
     let accentID: Int
     let assets: [UserAsset]
     let deleted: Bool?
@@ -131,8 +131,8 @@ extension ListUsersResponseV0: ToAPIModelConvertible {
 
 struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
 
-    let id: String
-    let provider: String
+    let id: UUID
+    let provider: UUID
 
     func toAPIModel() -> Service {
         Service(id: id, provider: provider)

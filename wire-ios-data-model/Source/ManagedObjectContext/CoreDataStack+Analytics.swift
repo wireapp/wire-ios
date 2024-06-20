@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireUtilities
 
 extension CoreDataStack {
+
     public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             self.syncContext.analytics = analytics
         }
     }

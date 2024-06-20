@@ -53,7 +53,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )

@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireTransport
 import XCTest
 
-class RequestLoopDetectionTests: XCTestCase {
+@testable import WireTransport
+
+final class RequestLoopDetectionTests: XCTestCase {
 
     func testThatItDetectsALoopWithOneRepeatedRequest() {
 
         // given
         var triggered = false
         let path = "foo.com"
-        let hash: UInt = 13
+        let hash = "13"
 
         let sut = RequestLoopDetection {
             XCTAssertEqual(path, $0)
@@ -36,7 +36,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
-            sut.recordRequest(path: path, contentHash: hash, date: nil)
+            sut.recordRequest(path: path, contentHint: hash, date: nil)
         }
 
         // then
@@ -47,7 +47,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // given
         let path = "foo.com"
-        let hash: UInt = 13
+        let hash = "13"
         var startDate = Date(timeIntervalSince1970: 100)
 
         let sut = RequestLoopDetection { _ in
@@ -56,7 +56,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
-            sut.recordRequest(path: path, contentHash: hash, date: startDate)
+            sut.recordRequest(path: path, contentHint: hash, date: startDate)
             startDate.addTimeInterval(10 * 60)
         }
     }
@@ -65,7 +65,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // given
         let path = "foo.com"
-        let hash: UInt = 12
+        let hash = "12"
         var startDate = Date()
 
         let sut = RequestLoopDetection { _ in
@@ -74,7 +74,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
-            sut.recordRequest(path: path, contentHash: hash, date: startDate)
+            sut.recordRequest(path: path, contentHint: hash, date: startDate)
             startDate.addTimeInterval(-4 * 60)
         }
     }
@@ -82,14 +82,14 @@ class RequestLoopDetectionTests: XCTestCase {
     func testThatItDoesNotDetectsALoopIfPathIsNotSame() {
 
         // given
-        let hash: UInt = 14
+        let hash = "14"
         let sut = RequestLoopDetection { _ in
             XCTFail()
         }
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
-            sut.recordRequest(path: "foo.com/\($0)", contentHash: hash, date: nil)
+            sut.recordRequest(path: "foo.com/\($0)", contentHint: hash, date: nil)
         }
     }
 
@@ -102,7 +102,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
-            sut.recordRequest(path: "foo.com", contentHash: UInt($0), date: nil)
+            sut.recordRequest(path: "foo.com", contentHint: "\($0)", date: nil)
         }
     }
 
@@ -111,7 +111,7 @@ class RequestLoopDetectionTests: XCTestCase {
         // given
         let path = "foo.com"
         var triggerCount = 0
-        let hash: UInt = 14
+        let hash = "14"
 
         let sut = RequestLoopDetection {
             triggerCount += 1
@@ -120,7 +120,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold * 3).forEach { _ in
-            sut.recordRequest(path: path, contentHash: hash, date: nil)
+            sut.recordRequest(path: path, contentHint: hash, date: nil)
         }
 
         // then
@@ -132,7 +132,7 @@ class RequestLoopDetectionTests: XCTestCase {
         // given
         let paths = ["foo.com", "bar.de", "baz.org"]
         var triggeredURLs: [String] = []
-        let hash: UInt = 14
+        let hash = "14"
 
         let sut = RequestLoopDetection {
             triggeredURLs.append($0)
@@ -141,7 +141,7 @@ class RequestLoopDetectionTests: XCTestCase {
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
             let path = paths[$0 % paths.count] // this will insert them in interleaved order
-            sut.recordRequest(path: path, contentHash: hash, date: nil)
+            sut.recordRequest(path: path, contentHint: hash, date: nil)
          }
 
         // then
@@ -161,7 +161,7 @@ class RequestLoopDetectionTests: XCTestCase {
 
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
-            sut.recordRequest(path: path, contentHash: UInt($0 % 3), date: nil)
+            sut.recordRequest(path: path, contentHint: "\($0 % 3)", date: nil)
         }
 
         // then
@@ -173,20 +173,102 @@ class RequestLoopDetectionTests: XCTestCase {
         // given
         let path = "MyURL.com"
         var triggered = false
-        let hash: UInt = 14
+        let hash = "14"
 
         let sut = RequestLoopDetection { _ in
             triggered = true
         }
 
         // when
-        sut.recordRequest(path: path, contentHash: hash, date: nil)
+        sut.recordRequest(path: path, contentHint: hash, date: nil)
         (0..<2500).forEach {
-            sut.recordRequest(path: "url.com", contentHash: $0, date: nil)
+            sut.recordRequest(path: "url.com", contentHint: "\($0)", date: nil)
         }
-        sut.recordRequest(path: path, contentHash: hash, date: nil)
+        sut.recordRequest(path: path, contentHint: hash, date: nil)
 
         // then
         XCTAssertFalse(triggered)
+    }
+
+    // MARK: Excluded URLs
+
+    func testRecordRequest_givenExcludedPathTyping() {
+        // given
+        let mockPath = "/v1/typing"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHint: String(),
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathTypingWithMoreParameters() {
+        // given
+        let mockPath = "/v1/typing?test=1"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHint: String(),
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathEmptySearch() {
+        // given
+        let mockPath = "/v1/search/contacts?q="
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHint: String(),
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathEmptySearchAndMoreParameters() {
+        // given
+        let mockPath = "/v1/search/contacts?q=&size=10"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHint: String(),
+            date: nil
+        )
+
+        // then
+        XCTAssert(sut.recordedRequests.isEmpty)
+    }
+
+    func testRecordRequest_givenExcludedPathNonEmptySearch() {
+        // given
+        let mockPath = "/v1/search/contacts?q=abc"
+        let sut = RequestLoopDetection { _ in }
+
+        // when
+        sut.recordRequest(
+            path: mockPath,
+            contentHint: String(),
+            date: nil
+        )
+
+        // then
+        XCTAssertEqual(sut.recordedRequests.first?.path, mockPath)
     }
 }
