@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
@@ -47,7 +48,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     private let usersView = WebLinkTextView()
     private let imageContainer = UIView()
     private var imageView = UIImageView()
-    private let button = InviteButton(fontSpec: FontSpec.buttonSmallSemibold,
+    private let button = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
                                       insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     private var config: Configuration? {
@@ -76,7 +77,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     }
 
     private func updateUI() {
-        guard let config = config else {
+        guard let config else {
             return
         }
 

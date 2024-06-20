@@ -67,7 +67,7 @@ public enum LocalNotificationContentType: Equatable {
         let selfUser = ZMUser.selfUser(in: moc)
 
         func getQuotedMessage(_ textMessageData: Text, conversation: ZMConversation?, in moc: NSManagedObjectContext) -> ZMOTRMessage? {
-            guard let conversation = conversation else { return nil }
+            guard let conversation else { return nil }
             let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
             return ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: moc)
         }
@@ -80,6 +80,7 @@ public enum LocalNotificationContentType: Equatable {
             self = .knock
 
         case .image:
+            // NOTE: is this v2 asset ?
             self = .image
 
         case .ephemeral:

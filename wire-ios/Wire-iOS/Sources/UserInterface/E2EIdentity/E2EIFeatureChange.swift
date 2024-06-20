@@ -46,7 +46,7 @@ extension UIAlertController {
                 url: URL.wr_e2eiLearnMore,
                 presenter: topViewController) {
                     if !canRemindLater {
-                        NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
+                        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
                     }
                     handler(.learnMore)
                 }

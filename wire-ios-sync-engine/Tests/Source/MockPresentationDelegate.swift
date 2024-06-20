@@ -19,6 +19,7 @@
 import Foundation
 
 class MockPresentationDelegate: PresentationDelegate {
+
     var completedURLActionCallsCompletion: () -> Void = { }
     var showConversationCalls: [ZMConversation] = []
     var showConversationListCalls: Int = 0
@@ -62,6 +63,11 @@ class MockPresentationDelegate: PresentationDelegate {
 
     func showConnectionRequest(userId: UUID) {
         showConnectionRequestCalls.append(userId)
+    }
+
+    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+        let mockPassword = "mockPassword12345678!3"
+        completion(mockPassword)
     }
 
 }

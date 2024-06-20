@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
-import UIKit
 import AVFoundation
+import UIKit
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -264,7 +264,7 @@ final class CameraController {
         func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
             defer { completion() }
 
-            if let error = error {
+            if let error {
                 zmLog.error("PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)")
                 handler(PhotoResult(nil, error))
                 return

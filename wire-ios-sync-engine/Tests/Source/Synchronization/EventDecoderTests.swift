@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
 
 class EventDecoderTest: MessagingTest {
 
@@ -383,7 +383,7 @@ extension EventDecoderTest {
 
     func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
         var payload: ZMTransportData
-        if let user = user {
+        if let user {
             payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
         } else {
             payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!

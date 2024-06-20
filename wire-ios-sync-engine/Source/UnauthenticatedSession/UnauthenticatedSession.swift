@@ -21,7 +21,7 @@ import WireUtilities
 
 public protocol UnauthenticatedSessionDelegate: AnyObject {
     /// Update credentials for the corresponding user session. Returns true if the credentials were accepted.
-    func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) -> Bool
+    func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool
     func session(session: UnauthenticatedSession, updatedProfileImage imageData: Data)
     func session(session: UnauthenticatedSession, createdAccount account: Account)
     func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool
@@ -132,7 +132,7 @@ extension UnauthenticatedSession: UserInfoParser {
 
     public func accountExistsLocally(from info: UserInfo) -> Bool {
         let account = Account(userName: "", userIdentifier: info.identifier)
-        guard let delegate = delegate else { return false }
+        guard let delegate else { return false }
         return delegate.session(session: self, isExistingAccount: account)
     }
 

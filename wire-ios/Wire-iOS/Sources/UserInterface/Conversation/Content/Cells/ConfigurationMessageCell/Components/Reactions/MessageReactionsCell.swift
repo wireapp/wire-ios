@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
@@ -86,7 +85,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
                 isToggled: reaction.isSelfUserReacting
             ) { [weak self] in
                 guard
-                    let `self` = self,
+                    let self,
                     let message = self.message
                 else {
                     return

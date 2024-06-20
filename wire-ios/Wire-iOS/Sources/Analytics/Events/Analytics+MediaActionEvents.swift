@@ -25,7 +25,7 @@ extension Analytics {
     func tagReacted(in conversation: ZMConversation) {
         var attributes = conversation.ephemeralTrackingAttributes
         attributes["message_action"] = "reaction"
-        attributes.merge(conversation.attributesForConversation, strategy: .preferNew)
+        attributes.merge(conversation.attributesForConversation) { _, new in new }
         tagEvent(conversationMediaCompleteActionEventName, attributes: attributes)
     }
 
@@ -33,7 +33,7 @@ extension Analytics {
                                  inConversation conversation: ZMConversation) {
         var attributes = conversation.ephemeralTrackingAttributes
         attributes["message_action"] = action.attributeValue
-        attributes.merge(conversation.attributesForConversation, strategy: .preferNew)
+        attributes.merge(conversation.attributesForConversation) { _, new in new }
         tagEvent(conversationMediaCompleteActionEventName, attributes: attributes)
     }
 

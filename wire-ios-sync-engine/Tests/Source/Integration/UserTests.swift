@@ -67,7 +67,7 @@ final class UserTests_swift: IntegrationTest {
 
         let realUser = user(for: extraUser!)
         XCTAssertEqual(realUser?.name, "Max Tester")
-        if let realUser = realUser {
+        if let realUser {
             XCTAssert(((conversation?.localParticipants.contains(realUser)) != nil))
         }
 

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 final class RoleTests: ZMBaseManagedObjectTest {
 
@@ -73,8 +73,8 @@ final class RoleTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(sut.actions.count, 9)
         XCTAssertEqual(sut.name, "wire_admin")
 
-        let action = sut.actions.sorted(by: { $0.name < $1.name }).first!
-        XCTAssertEqual(action.name, "add_conversation_member")
+        let actions = sut.actions.sortedAscendingPrependingNil(by: \.name)
+        XCTAssertEqual(actions.first?.name, "add_conversation_member")
     }
 
     func testThatCreateOrUpdate_FetchesAnExistingRole() {

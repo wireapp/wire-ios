@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 private let verifiedShieldImage = WireStyleKit.imageOfShieldverified
 
@@ -73,7 +72,7 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
     var destination: D? {
         didSet {
 
-            guard let destination = destination else { return }
+            guard let destination else { return }
 
             titleLabel.text = destination.displayNameWithFallback
             shieldView.isHidden = destination.securityLevel != .secure

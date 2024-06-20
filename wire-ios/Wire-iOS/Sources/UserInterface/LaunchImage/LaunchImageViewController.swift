@@ -23,7 +23,7 @@ class LaunchImageViewController: UIViewController {
 
     private var shouldShowLoadingScreenOnViewDidLoad = false
 
-    private var contentView: UIView!
+    private weak var contentView: UIView!
     private let loadingScreenLabel = UILabel()
     private let activityIndicator = ProgressSpinner()
 
@@ -43,26 +43,19 @@ class LaunchImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let loadedObjects = UINib(nibName: "LaunchScreen", bundle: nil).instantiate(withOwner: nil, options: nil)
-
-        let nibView = loadedObjects.first as? UIView
-        nibView?.translatesAutoresizingMaskIntoConstraints = false
-        if let nibView = nibView {
-            view.addSubview(nibView)
-        }
-        if let nibView = nibView {
-            contentView = nibView
-        }
+        let contentView: UIView = AppLockView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(contentView)
+        self.contentView = contentView
 
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(activityIndicator)
 
         loadingScreenLabel.font = .systemFont(ofSize: 12)
         loadingScreenLabel.textColor = .white
-
         loadingScreenLabel.text = L10n.Localizable.Migration.pleaseWaitMessage.localizedUppercase
         loadingScreenLabel.isHidden = true
-
+        loadingScreenLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loadingScreenLabel)
 
         createConstraints()
@@ -74,31 +67,28 @@ class LaunchImageViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [contentView, loadingScreenLabel, activityIndicator].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
 
-        var constraints: [NSLayoutConstraint] = []
+        NSLayoutConstraint.activate(
+            [
+                contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                contentView.topAnchor.constraint(equalTo: view.topAnchor),
+                contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-        constraints += [contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                        contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                        contentView.topAnchor.constraint(equalTo: view.topAnchor),
-                        contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
+                loadingScreenLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                loadingScreenLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
 
-        constraints.append(loadingScreenLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor))
-        constraints.append(loadingScreenLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40))
-
-        constraints.append(activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor))
-        constraints.append(activityIndicator.bottomAnchor.constraint(equalTo: loadingScreenLabel.topAnchor, constant: -24))
-
-        NSLayoutConstraint.activate(constraints)
+                activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                activityIndicator.bottomAnchor.constraint(equalTo: loadingScreenLabel.topAnchor, constant: -24)
+            ]
+        )
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 }

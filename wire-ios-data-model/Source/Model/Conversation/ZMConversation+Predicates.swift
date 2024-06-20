@@ -70,7 +70,7 @@ extension ZMConversation {
 
     @objc(predicateForConversationsInTeam:)
     class func predicateForConversations(in team: Team?) -> NSPredicate {
-        if let team = team {
+        if let team {
             return .init(format: "%K == %@", #keyPath(ZMConversation.team), team)
         }
 

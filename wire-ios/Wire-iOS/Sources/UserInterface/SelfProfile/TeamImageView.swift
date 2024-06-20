@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class TeamImageView: UIImageView {
 
@@ -31,9 +32,9 @@ final class TeamImageView: UIImageView {
         case teamName(String)
 
         init?(imageData: Data?, name: String?) {
-            if let imageData = imageData {
+            if let imageData {
                 self = .teamImage(imageData)
-            } else if let name = name, !name.isEmpty {
+            } else if let name, !name.isEmpty {
                 self = .teamName(name)
             } else {
                 return nil

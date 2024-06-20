@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {
@@ -147,11 +147,10 @@ final class MessageToolboxDataSource {
     private func makeCallList() -> NSAttributedString {
         if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty, let timestamp = timestampString(message) {
 
-            let childrenTimestamps = childMessages.compactMap {
-                $0 as? ZMConversationMessage
-            }.sorted { left, right in
-                left.serverTimestamp < right.serverTimestamp
-            }.compactMap(timestampString)
+            let childrenTimestamps = childMessages
+                .compactMap { $0 as? ZMConversationMessage }
+                .sortedAscendingPrependingNil(by: \.serverTimestamp)
+                .compactMap(timestampString)
 
             let finalText = childrenTimestamps.reduce(timestamp) { text, current in
                 return "\(text)\n\(current)"
@@ -170,7 +169,7 @@ final class MessageToolboxDataSource {
         let deliveryStateString = selfMessageStatus(for: message)
 
         if let timestampString = self.timestampString(message), message.isSent {
-            if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
+            if let deliveryStateString, message.shouldShowDeliveryState {
                 return (timestampString && attributes, deliveryStateString, countdownStatus)
             } else {
                 return (timestampString && attributes, nil, countdownStatus)

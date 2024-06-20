@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class DeviceInfoViewModelTests: XCTestCase {
     let mockDeviceActionsHandler = MockDeviceDetailsViewActions()
@@ -38,10 +38,10 @@ final class DeviceInfoViewModelTests: XCTestCase {
             userClient: userClient,
             isSelfClient: false,
             gracePeriod: 0,
+            mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
             isFromConversation: false,
             actionsHandler: mockDeviceActionsHandler,
-            conversationClientDetailsActions: mockConversationUserClientDetailsActions,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: mockConversationUserClientDetailsActions
         )
     }
 

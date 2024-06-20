@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
+import XCTest
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
@@ -38,7 +38,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 }
 
-final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
+final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     var userSession: UserSessionMock!
 

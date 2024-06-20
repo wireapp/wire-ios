@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireMockTransport
+import XCTest
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
@@ -74,7 +74,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -123,7 +123,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -173,7 +173,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [
@@ -223,7 +223,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [

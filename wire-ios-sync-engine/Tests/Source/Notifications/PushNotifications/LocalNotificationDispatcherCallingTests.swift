@@ -17,6 +17,7 @@
 //
 
 import UserNotifications
+import WireUtilitiesSupport
 
 @testable import WireSyncEngine
 
@@ -41,7 +42,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
         sut.notificationCenter = notificationCenter
         sut.callingNotifications.notificationCenter = notificationCenter
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.name = "Callie"
             sender.remoteIdentifier = UUID()

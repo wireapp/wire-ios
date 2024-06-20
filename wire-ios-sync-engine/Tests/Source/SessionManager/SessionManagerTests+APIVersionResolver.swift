@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
+import XCTest
 
 final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 
@@ -123,7 +123,7 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
     }
 
     func sessionManagerWillOpenAccount(_ account: Account, from selectedAccount: Account?, userSessionCanBeTornDown: @escaping () -> Void) {
-        // no op
+        userSessionCanBeTornDown()
     }
 
     func sessionManagerDidFailToLoadDatabase(error: Error) {

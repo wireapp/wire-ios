@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class MessageActionsViewController: UIAlertController {
 
@@ -74,7 +75,7 @@ final class MessageActionsViewController: UIAlertController {
 
     private func addAction(_ action: MessageAction) {
         guard let title = action.title,
-              let actionController = actionController,
+              let actionController,
               let selector = action.selector,
               actionController.canPerformAction(selector)
         else { return }

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import WireMockTransport
+@testable import WireSyncEngine
 
 class UserProfileImageV3Tests: IntegrationTest {
 

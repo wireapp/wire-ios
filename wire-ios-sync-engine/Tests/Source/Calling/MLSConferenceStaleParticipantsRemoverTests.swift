@@ -18,7 +18,9 @@
 
 import Foundation
 import WireDataModelSupport
+import WireTesting
 import XCTest
+
 @testable import WireSyncEngine
 
 class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
@@ -150,8 +152,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         }
 
         // set expectations
-        let expectation = XCTestExpectation()
-        expectation.isInverted = true
+        let expectation = XCTestExpectation().inverted()
 
         // fulfill expectation
         mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
@@ -185,8 +186,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         }
 
         // mock remove members
-        let expectation = XCTestExpectation()
-        expectation.isInverted = true
+        let expectation = XCTestExpectation().inverted()
         mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
             expectation.fulfill()
         }
@@ -221,8 +221,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             case .connecting:
                 expectation = XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
             default:
-                expectation = XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))")
-                expectation.isInverted = true
+                expectation = XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
             }
 
             expectations[participant.mlsClientID] = expectation

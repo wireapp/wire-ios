@@ -16,20 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
+import XCTest
 
-class ZMSearchUserTests_TeamUser: ModelObjectsTests {
+final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
 
     func testThatSearchUserIsRecognizedAsTeamMember_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                      name: "Foo",
-                                      handle: "foo",
-                                      accentColor: .amber,
-                                      remoteIdentifier: UUID(),
-                                      teamIdentifier: team.remoteIdentifier)
+        let searchUser = makeSearchUser(teamIdentifier: team.remoteIdentifier)
 
         // then
         XCTAssertTrue(searchUser.isTeamMember)
@@ -40,12 +36,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                      name: "Foo",
-                                      handle: "foo",
-                                      accentColor: .amber,
-                                      remoteIdentifier: UUID(),
-                                      teamIdentifier: UUID())
+        let searchUser = makeSearchUser(teamIdentifier: UUID())
 
         // then
         XCTAssertFalse(searchUser.isTeamMember)
@@ -56,12 +47,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                      name: "Foo",
-                                      handle: "foo",
-                                      accentColor: .amber,
-                                      remoteIdentifier: UUID(),
-                                      teamIdentifier: UUID())
+        let searchUser = makeSearchUser(teamIdentifier: UUID())
         uiMOC.saveOrRollback()
 
         // then
@@ -73,12 +59,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         let creator = UUID()
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                      name: "Foo",
-                                      handle: "foo",
-                                      accentColor: .amber,
-                                      remoteIdentifier: UUID(),
-                                      teamIdentifier: team.remoteIdentifier)
+        let searchUser = makeSearchUser(teamIdentifier: team.remoteIdentifier)
 
         // when
         searchUser.updateWithTeamMembership(permissions: .partner, createdBy: creator)
@@ -88,4 +69,17 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         XCTAssertEqual(searchUser.teamCreatedBy, creator)
     }
 
+    // MARK: Helpers
+
+    private func makeSearchUser(teamIdentifier: UUID?) -> ZMSearchUser {
+        ZMSearchUser(
+            contextProvider: coreDataStack,
+            name: "Foo",
+            handle: "foo",
+            accentColor: .amber,
+            remoteIdentifier: teamIdentifier,
+            teamIdentifier: teamIdentifier,
+            searchUsersCache: nil
+        )
+    }
 }

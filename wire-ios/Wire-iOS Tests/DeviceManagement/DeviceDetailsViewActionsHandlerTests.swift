@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
-import WireSyncEngineSupport
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireSyncEngineSupport
+import XCTest
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
 
     var coreDataFixture: CoreDataFixture!
     var client: UserClient!
     var mockSession: UserSessionMock!
-    var emailCredentials: ZMEmailCredentials!
+    var emailCredentials: UserEmailCredentials!
 
     var saveFileManager: MockSaveFileManager!
     var mockGetIsE2eIdentityEnabled: MockGetIsE2EIdentityEnabledUseCaseProtocol!
@@ -41,7 +41,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         coreDataFixture = CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
-        emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         saveFileManager = MockSaveFileManager()
         mockGetIsE2eIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()

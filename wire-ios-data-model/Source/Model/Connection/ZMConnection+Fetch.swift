@@ -65,7 +65,7 @@ extension ZMConnection {
 
         let predicate: NSPredicate
         if searchingLocalDomain {
-            if let domain = domain {
+            if let domain {
                 predicate = NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
             } else {
                 predicate = NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)

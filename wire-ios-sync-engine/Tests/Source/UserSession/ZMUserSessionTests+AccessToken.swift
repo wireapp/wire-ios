@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 @testable import WireSyncEngine
+import WireTransport
 import XCTest
 
 final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {

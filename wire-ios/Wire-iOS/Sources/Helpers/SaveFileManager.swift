@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSystem
 
@@ -45,7 +44,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
             systemSaveFilePresenter.presentSystemPromptToSave(file: fileURL, completed: finishedSaving)
             pendingSaveURL = fileURL
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
         }
     }
 
@@ -61,7 +60,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
         do {
             try deleteFilesInTemporyDirectory()
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
         }
     }
 }

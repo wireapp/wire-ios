@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
@@ -66,7 +66,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
-    let inviteButton = InviteButton()
+    let inviteButton = SecondaryTextButton()
     var isSelected: Bool = false
 
     // MARK: initialization

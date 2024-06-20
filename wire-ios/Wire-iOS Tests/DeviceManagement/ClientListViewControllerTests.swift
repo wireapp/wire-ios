@@ -17,17 +17,17 @@
 //
 
 import XCTest
+
 @testable import Wire
 
-final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
-    var sut: ClientListViewController!
-    var mockUser: MockUserType!
-    var client: UserClient!
-    var selfClient: UserClient!
-
-    weak var clientRemovalObserver: ClientRemovalObserver!
+    private var sut: ClientListViewController!
+    private var mockUser: MockUserType!
+    private var client: UserClient!
+    private var selfClient: UserClient!
+    private weak var clientRemovalObserver: ClientRemovalObserver!
 
     override func setUp() {
         super.setUp()
@@ -71,7 +71,7 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
     func testThatObserverIsNonRetained() {
         prepareSut()
 
-        let emailCredentials = ZMEmailCredentials(email: "foo@bar.com", password: "12345678")
+        let emailCredentials = UserEmailCredentials(email: "foo@bar.com", password: "12345678")
         sut.deleteUserClient(client, credentials: emailCredentials)
 
         clientRemovalObserver = sut.removalObserver

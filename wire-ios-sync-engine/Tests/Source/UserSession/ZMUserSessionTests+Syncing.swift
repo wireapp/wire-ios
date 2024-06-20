@@ -16,34 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
+
 @testable import WireRequestStrategy
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
+    // The mock in this place is a workaround, because somewhere down the line the test funcs call
+    // `func startQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
+
     override func setUp() {
         super.setUp()
 
         mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+
+        mockPushSupportedProtocolsActionHandler = .init(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+    }
+
+    override func tearDown() {
+        mockPushSupportedProtocolsActionHandler = nil
+
+        super.tearDown()
     }
 
     // MARK: Helpers
-
-    final class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {
-
-        var didNotify: Bool = false
-        var initialSyncToken: Any?
-
-        init(context: NSManagedObjectContext) {
-            super.init()
-            initialSyncToken = ZMUserSession.addInitialSyncCompletionObserver(self, context: context)
-        }
-
-        func initialSyncCompleted() {
-            didNotify = true
-        }
-    }
 
     func startQuickSync() {
         sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
@@ -121,17 +124,26 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     func testThatItNotifiesObserverWhenInitialIsSyncCompleted() {
         // given
-        let observer = InitialSyncObserver(context: uiMOC)
+        var didNotify: Bool = false
+
+        let token = NotificationInContext.addObserver(
+            name: .initialSync,
+            context: uiMOC.notificationContext) { _ in
+                didNotify = true
+            }
+
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertFalse(observer.didNotify)
+        XCTAssertFalse(didNotify)
 
         // when
         finishSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(observer.didNotify)
+        withExtendedLifetime(token) {
+            XCTAssertTrue(didNotify)
+        }
     }
 
     func testThatPerformingSyncIsStillOngoingAfterSlowSync() {

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AppAuth
+import Foundation
+import WireRequestStrategy
 import WireSystem
 import WireUtilities
-import WireRequestStrategy
 
 protocol OAuthUseCaseInterface {
 
@@ -47,7 +47,7 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
-                if let error = error {
+                if let error {
                     return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration(error))
                 }
 

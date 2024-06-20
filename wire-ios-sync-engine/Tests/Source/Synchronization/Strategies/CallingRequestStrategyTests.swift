@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModelSupport
 import WireRequestStrategy
-import WireSyncEngineSupport
 @testable import WireSyncEngine
+import WireSyncEngineSupport
 
 class CallingRequestStrategyTests: MessagingTest {
 
@@ -672,7 +672,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // WHEN
         syncMOC.performAndWait {
-            sut.processEventsWhileInBackground([updateEvent])
+            sut.processEvents([updateEvent], liveEvents: false, prefetchResult: nil)
         }
 
         // THEN

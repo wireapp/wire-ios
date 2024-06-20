@@ -20,7 +20,7 @@ import Foundation
 
 extension Stream {
     var isSharingVideo: Bool {
-        guard let videoState = videoState else {
+        guard let videoState else {
             return false
         }
         return videoState != .stopped

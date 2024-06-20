@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreLocation
 import Foundation
 import WireCryptobox
-import CoreLocation
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
@@ -126,7 +126,12 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
-    public var e2eIdentityCertificate: E2eIdentityCertificate?
+    public var e2eIdentityCertificate: E2eIdentityCertificate? {
+        didSet {
+            NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
+        }
+    }
+
     public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
@@ -260,7 +265,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     private func deleteClient() {
-        assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
+        guard let managedObjectContext else { return }
+
+        assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
         let user = self.user
@@ -287,7 +294,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
 
         // delete the object
-        managedObjectContext?.delete(self)
+        managedObjectContext.delete(self)
     }
 
     /// Checks if there is an existing session with the self client.
@@ -415,11 +422,15 @@ public extension UserClient {
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
-        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
-        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
         let isNewClient = result.isNewClient
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
+        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
+        let mlsEd448 = mlsPublicKeys?.optionalString(forKey: "ed448")
+        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp256r1_sha256")
+        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp384r1_sha384")
+        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp521r1_sha512")
 
         client.label = label
         client.type = DeviceType(rawValue: type)
@@ -428,15 +439,9 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        if let mlsEd25519 {
-            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
-        }
+
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
-
-        if let ed22519Key = mlsPublicKeys?["ed25519"] as? String {
-            client.mlsPublicKeys.ed25519 = ed22519Key
-        }
 
         if isNewClient {
             client.needsSessionMigration = selfUser.domain == nil
@@ -445,6 +450,14 @@ public extension UserClient {
         if client.isLegalHoldDevice, isNewClient {
             selfUser.legalHoldRequest = nil
             selfUser.needsToAcknowledgeLegalHoldStatus = true
+        }
+
+        if !client.isSelfClient() {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
+                                                 ed448: mlsEd448,
+                                                 p256: mlsP256,
+                                                 p384: mlsP384,
+                                                 p521: mlsP521)
         }
 
         if let selfClient = selfUser.selfClient() {
@@ -528,7 +541,7 @@ public extension UserClient {
 public extension UserClient {
 
     @objc func isSelfClient() -> Bool {
-        guard let managedObjectContext = managedObjectContext,
+        guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return self == selfClient
@@ -861,7 +874,7 @@ extension UserClient {
 
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
         guard
-            let user = user,
+            let user,
             let domain = user.domain ?? BackendInfo.domain,
             let userIdentifier = user.remoteIdentifier,
             let clientIdentifier = remoteIdentifier
@@ -878,7 +891,7 @@ extension UserClient {
 
     public func migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
-            let sessionIdentifier_V1 = sessionIdentifier_V1,
+            let sessionIdentifier_V1,
             let sessionIdentifier = sessionIdentifier_V2
         else {
             return
@@ -890,7 +903,7 @@ extension UserClient {
 
     public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
-            let sessionIdentifier_V2 = sessionIdentifier_V2,
+            let sessionIdentifier_V2,
             let sessionIdentifier = sessionIdentifier_V3
         else {
             return
@@ -934,7 +947,7 @@ extension UserClient {
 
     private var proteusSessionID_V3: ProteusSessionID? {
         guard
-            let user = user,
+            let user,
             let domain = user.domain ?? BackendInfo.domain,
             let userID = user.remoteIdentifier,
             let clientID = remoteIdentifier

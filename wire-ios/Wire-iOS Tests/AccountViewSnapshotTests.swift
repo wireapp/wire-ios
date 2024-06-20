@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import XCTest
+
 @testable import Wire
 
-final class AccountViewSnapshotTests: BaseSnapshotTestCase {
+final class AccountViewSnapshotTests: XCTestCase {
     var imageData: Data!
 
     override func setUp() {
@@ -31,14 +32,13 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         imageData = nil
-
         super.tearDown()
     }
 
     func testThatItShowsBasicAccount_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)!
+        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         sut.overrideUserInterfaceStyle = .light
         // WHEN && THEN
         verify(matching: sut)
@@ -47,7 +47,7 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
     func testThatItShowsBasicAccountSelected_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)!
+        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         sut.overrideUserInterfaceStyle = .light
         // WHEN 
         sut.selected = true
@@ -58,7 +58,7 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
     func testThatItShowsBasicAccountWithPicture_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)!
+        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         // WHEN && THEN
         verify(matching: sut)
     }
@@ -66,43 +66,43 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
     func testThatItShowsBasicAccountWithPictureSelected_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)!
+        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         // WHEN 
         sut.selected = true
         // THEN
         verify(matching: sut)
     }
 
-    func testThatItShowsBasicAccount_Team() {
+    func testThatItShowsBasicAccount_Team() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
-        let sut = TeamAccountView(account: account, displayContext: .accountSelector)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN && THEN
         verify(matching: sut)
     }
 
-    func testThatItShowsBasicAccountSelected_Team() {
+    func testThatItShowsBasicAccountSelected_Team() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
-        let sut = TeamAccountView(account: account, displayContext: .accountSelector)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN
         sut.selected = true
         // THEN
         verify(matching: sut)
     }
 
-    func testThatItShowsBasicAccountWithPicture_Team() {
+    func testThatItShowsBasicAccountWithPicture_Team() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
-        let sut = TeamAccountView(account: account, displayContext: .accountSelector)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN && THEN
         verify(matching: sut)
     }
 
-    func testThatItShowsBasicAccountWithPictureSelected_Team() {
+    func testThatItShowsBasicAccountWithPictureSelected_Team() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
-        let sut = TeamAccountView(account: account, displayContext: .accountSelector)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN
         sut.selected = true
         // THEN
@@ -111,11 +111,11 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
 
     // MARK: - unread dot
 
-    func testThatItShowsBasicAccountWithPictureSelected_Team_withUnreadDot() {
+    func testThatItShowsBasicAccountWithPictureSelected_Team_withUnreadDot() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
         account.unreadConversationCount = 100
-        let sut = TeamAccountView(account: account, displayContext: .accountSelector)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         sut.unreadCountStyle = .current
         sut.overrideUserInterfaceStyle = .light
 
@@ -130,7 +130,7 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
         account.unreadConversationCount = 100
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)!
+        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         sut.unreadCountStyle = .current
 
         // WHEN
@@ -144,7 +144,7 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
         account.unreadConversationCount = 100
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)!
+        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         sut.unreadCountStyle = .current
 
         // WHEN
@@ -154,11 +154,11 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
-    func testThatItShowsBasicAccountSelected_Team_withUnreadDot() {
+    func testThatItShowsBasicAccountSelected_Team_withUnreadDot() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
         account.unreadConversationCount = 100
-        let sut = TeamAccountView(account: account, displayContext: .accountSelector)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         sut.unreadCountStyle = .current
         sut.selected = true
 
@@ -167,10 +167,10 @@ final class AccountViewSnapshotTests: BaseSnapshotTestCase {
     }
 
     // MARK: - smaller icon for conversation list
-    func testThatItShowsBasicAccount_Team_conversationListContext() {
+    func testThatItShowsBasicAccount_Team_conversationListContext() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
-        let sut = TeamAccountView(account: account, displayContext: .conversationListHeader)!
+        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .conversationListHeader))
         // WHEN && THEN
         verify(matching: sut)
     }

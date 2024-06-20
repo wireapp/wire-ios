@@ -51,7 +51,7 @@ extension ZMConversation {
 extension UserType {
 
     var hasEmptyName: Bool {
-        guard let name = name else {
+        guard let name else {
             return true
         }
         return name.isEmpty

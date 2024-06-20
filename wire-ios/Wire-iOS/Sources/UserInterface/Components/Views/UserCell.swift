@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
@@ -396,7 +397,7 @@ extension UserCell {
         )
         userTypeIconView.set(style: style)
 
-        if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
+        if let subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
             subtitleLabel.attributedText = subtitle
         } else {

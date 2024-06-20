@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 /**
@@ -42,7 +41,7 @@ final class LicensesLoader {
     }
 
     deinit {
-        memoryWarningToken.apply(NotificationCenter.default.removeObserver)
+        memoryWarningToken.map(NotificationCenter.default.removeObserver)
     }
 
     // MARK: - Reading the list of Licences

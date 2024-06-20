@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireUtilities
+import XCTest
 
 final class PrivateUserDefaultsTests: XCTestCase {
 

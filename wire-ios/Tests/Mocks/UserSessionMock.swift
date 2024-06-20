@@ -18,10 +18,10 @@
 
 import Foundation
 import LocalAuthentication
-import WireSyncEngine
-import WireSyncEngineSupport
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireSyncEngine
+import WireSyncEngineSupport
 
 @testable import Wire
 
@@ -69,8 +69,18 @@ final class UserSessionMock: UserSession {
 
     var networkState: ZMNetworkState = .offline
 
-    var selfUser: SelfUserType
+    var selfUser: any UserType
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable
+
+    var editableSelfUser: any EditableUserType & UserType
+
     var mockConversationList: ZMConversationList?
+
+    var searchUsersCache: SearchUsersCache
+    var contextProvider: ContextProvider?
+
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
@@ -79,15 +89,31 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(mockUser: MockZMEditableUser) {
-        self.init(selfUser: mockUser)
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
+        )
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(selfUser: mockUser)
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
+        )
     }
 
-    init(selfUser: SelfUserType) {
+    init(
+        selfUser: any UserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
+        editableSelfUser: any EditableUserType & UserType
+    ) {
         self.selfUser = selfUser
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
+        self.editableSelfUser = editableSelfUser
+
+        searchUsersCache = .init()
     }
 
     var lock: SessionLock? = .screen
@@ -287,11 +313,52 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        MockCreateConversationGuestLinkUseCaseProtocol()
+    }
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
+    var mlsFeature: Feature.MLS = Feature.MLS(
+        status: .enabled,
+        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+    )
+
     func fetchAllClients() {}
+
+    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+        createTeamOneOnOneWithCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createTeamOneOnOneWithCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneWithCompletion`")
+        }
+
+        mock(user, completion)
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+}
+
+// MARK: - UserSessionMock + ContextProvider
+
+extension UserSessionMock: ContextProvider {
+
+    var account: Account { contextProvider!.account }
+    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
 }

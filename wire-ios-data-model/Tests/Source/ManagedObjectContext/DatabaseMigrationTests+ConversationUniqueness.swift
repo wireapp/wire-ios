@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import Foundation
 @testable import WireDataModel
+import XCTest
 
 @available(iOS 15.0, *)
 final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
@@ -51,19 +51,19 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
             preMigrationAction: { context in
                 insertDuplicateConversations(with: conversationId, domain: domain, in: context)
                 insertDuplicateConversations(with: otherDuplicateConversations.0, domain: otherDuplicateConversations.1, in: context)
-                _ = context.performGroupedAndWait({ context in
+                _ = context.performGroupedAndWait {
                     let conversation = ZMConversation(context: context)
                     conversation.remoteIdentifier = uniqueConversation1.0
                     conversation.domain = uniqueConversation1.1
                     return conversation
-                })
+                }
 
-                _ = context.performGroupedAndWait({ context in
+                _ = context.performGroupedAndWait {
                     let conversation = ZMConversation(context: context)
                     conversation.remoteIdentifier = uniqueConversation2.0
                     conversation.domain = uniqueConversation2.1
                     return conversation
-                })
+                }
 
                 try context.save()
 
@@ -72,7 +72,7 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
             },
             postMigrationAction: { context in
                 // we need to use syncContext here because of `setInternalEstimatedUnreadCount` being tiggered on save
-                try context.performGroupedAndWait { context in
+                try context.performGroupedAndWait {
                     // verify it deleted duplicates
                     var conversations = try self.fetchConversations(with: self.conversationId, domain: self.domain, in: context)
                     XCTAssertEqual(conversations.count, 1)

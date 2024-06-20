@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
 
@@ -78,7 +79,7 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         context.saveGState()
 
-        if let backgroundColor = backgroundColor {
+        if let backgroundColor {
             context.setFillColor(backgroundColor.cgColor)
         }
         context.setLineJoin(.round)
@@ -87,7 +88,7 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         // draw dot
         let dotPath = UIBezierPath(ovalIn: CGRect(x: dotSpacing, y: ceil((imageSize.height + dotSize) / 2), width: dotSize, height: dotSize))
 
-        if let dotColor = dotColor {
+        if let dotColor {
             context.setFillColor(dotColor.cgColor)
         }
         context.addPath(dotPath.cgPath)

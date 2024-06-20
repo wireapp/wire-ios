@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 protocol FolderPickerViewControllerDelegate: AnyObject {
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation)

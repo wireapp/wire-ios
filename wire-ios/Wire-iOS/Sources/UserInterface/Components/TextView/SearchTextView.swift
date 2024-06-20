@@ -27,7 +27,7 @@ final class SearchTextView: TokenizedTextView {
 
     private var isEditing: Bool = false {
         didSet {
-            guard let style = style else {
+            guard let style else {
                 return
             }
             layer.borderColor = isEditing

@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
 import WireSyncEngine
+import WireSystem
 
 public final class AutomationEmailCredentials: NSObject {
     public var email: String
@@ -36,20 +36,6 @@ public final class AutomationEmailCredentials: NSObject {
 /// These values typically do not need to be stored in `Settings`.
 public final class AutomationHelper: NSObject {
     public static let sharedHelper = AutomationHelper()
-    private var useAppCenterLaunchOption: Bool?
-    /// Whether AppCenter should be used
-    /// Launch option `--use-app-center` overrides user defaults setting.
-    public var useAppCenter: Bool {
-        // useAppCenterLaunchOption has higher priority
-        if let useAppCenterLaunchOption = useAppCenterLaunchOption {
-            return useAppCenterLaunchOption
-        }
-        if UserDefaults.standard.object(forKey: "UseAppCenter") != nil {
-            return UserDefaults.standard.bool(forKey: "UseAppCenter")
-        }
-        // When UserDefaults's useAppCenter is not set, default is true to allow app center start
-        return true
-    }
     /// Whether analytics should be used
     public var useAnalytics: Bool {
     // swiftlint:disable todo_requires_jira_link
@@ -104,10 +90,6 @@ public final class AutomationHelper: NSObject {
         disableInteractiveKeyboardDismissal = arguments.hasFlag(AutomationKey.disableInteractiveKeyboardDismissal)
         keepCallingOverlayVisible = arguments.hasFlag(AutomationKey.keepCallingOverlayVisible)
 
-        if let value = arguments.flagValueIfPresent(AutomationKey.useAppCenter.rawValue) {
-            useAppCenterLaunchOption = (value != "0")
-        }
-
         automationEmailCredentials = AutomationHelper.credentials(arguments)
         if arguments.hasFlag(AutomationKey.logNetwork) {
             ZMSLog.set(level: .debug, tag: "Network")
@@ -151,7 +133,6 @@ public final class AutomationHelper: NSObject {
         case disableCallQualitySurvey = "disable-call-quality-survey"
         case persistBackendType = "persist-backend-type"
         case disableInteractiveKeyboardDismissal = "disable-interactive-keyboard-dismissal"
-        case useAppCenter = "use-app-center"
         case keepCallingOverlayVisible = "keep-calling-overlay-visible"
         case preferredAPIVersion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"

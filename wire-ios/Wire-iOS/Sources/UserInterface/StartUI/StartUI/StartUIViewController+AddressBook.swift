@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel
@@ -37,11 +36,11 @@ extension StartUIViewController {
 
 extension StartUIViewController: ShareContactsViewControllerDelegate {
 
-    func shareDidFinish(_ viewController: UIViewController) {
+    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
         viewController.dismiss(animated: true)
     }
 
-    func shareDidSkip(_ viewController: UIViewController) {
+    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {
         dismiss(animated: true) {
             UIApplication.shared.topmostViewController()?.presentInviteActivityViewController(with: self.quickActionsBar)
         }

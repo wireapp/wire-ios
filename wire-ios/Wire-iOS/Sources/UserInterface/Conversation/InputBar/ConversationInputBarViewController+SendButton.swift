@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
 extension ConversationInputBarViewController {
     func sendText() {
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self._sendText()
         }
 
@@ -55,10 +54,15 @@ extension ConversationInputBarViewController {
 
         guard text.count > maximumMessageLength else { return false }
 
-        let alert = UIAlertController.alertWithOKButton(
+        let alert = UIAlertController(
             title: L10n.Localizable.Conversation.InputBar.MessageTooLong.title,
-            message: L10n.Localizable.Conversation.InputBar.MessageTooLong.message(maximumMessageLength)
+            message: L10n.Localizable.Conversation.InputBar.MessageTooLong.message(maximumMessageLength),
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         present(alert, animated: true)
 

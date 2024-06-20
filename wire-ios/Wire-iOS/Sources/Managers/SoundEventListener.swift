@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
 import WireSyncEngine
-import avs
 
 extension ZMConversationMessage {
     var isSentBySelfUser: Bool {
@@ -144,7 +144,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
 
         guard let mediaManager = AVSMediaManager.sharedInstance(),
-              let userSession = userSession,
+              let userSession,
               let callCenter = userSession.callCenter,
               let conversationId = conversation.avsIdentifier
         else {

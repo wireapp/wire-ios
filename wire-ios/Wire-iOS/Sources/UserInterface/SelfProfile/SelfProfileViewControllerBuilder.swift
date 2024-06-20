@@ -25,12 +25,14 @@ struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
+    var accountSelector: AccountSelector?
 
     func build() -> SelfProfileViewController {
         .init(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: accountSelector
         )
     }
 }

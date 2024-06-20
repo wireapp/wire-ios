@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
 import WireUtilities
+import XCTest
 
 var sampleUploadState: UserProfileImageUpdateStatus.ImageState {
     return UserProfileImageUpdateStatus.ImageState.upload(image: Data())
@@ -193,7 +193,7 @@ class UserProfileImageUpdateStatusTests: MessagingTest {
 // MARK: Image state transitions
 extension UserProfileImageUpdateStatusTests {
     func testThatImageStateStartsWithReadyState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.sut.imageState(for: .preview), .ready)
             XCTAssertEqual(self.sut.imageState(for: .complete), .ready)
         }
@@ -209,7 +209,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatImageStateCanTransitionToValidState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             self.sut.setState(state: .preprocessing, for: .complete)
 
@@ -220,7 +220,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatImageStateDoesntTransitionToInvalidState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             self.sut.setState(state: .uploading, for: .preview)
 
@@ -231,7 +231,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatImageStateMaintainsSeparateStatesForDifferentSizes() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             self.sut.setState(state: .preprocessing, for: .preview)
 
@@ -242,7 +242,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatProfileUpdateStateIsSetToUpdateAfterAllImageStatesAreUploaded() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.sut.setState(state: samplePreprocessState)
             self.sut.setState(state: .preprocessing, for: .preview)
@@ -270,7 +270,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatProfileUpdateStateIsSetToFailedAfterAnyImageStatesIsFailed() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             self.sut.setState(state: .preprocessing, for: .preview)
             self.sut.setState(state: sampleUploadState, for: .preview)
@@ -286,7 +286,7 @@ extension UserProfileImageUpdateStatusTests {
 // MARK: Main state transitions
 extension UserProfileImageUpdateStatusTests {
     func testThatProfileUpdateStateStartsWithReadyState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.sut.state, .ready)
         }
     }
@@ -299,7 +299,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatProfileUpdateStateCanTransitionToValidState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             self.sut.setState(state: samplePreprocessState)
 
@@ -309,7 +309,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatProfileUpdateStateDoesntTransitionToInvalidState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             self.sut.setState(state: .ready)
 
@@ -319,7 +319,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatWhenProfileUpdateStateIsFailedImageStatesAreBackToReady() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.sut.setState(state: .preprocessing, for: .preview)
             self.sut.setState(state: .preprocessing, for: .complete)
@@ -387,7 +387,7 @@ extension UserProfileImageUpdateStatusTests {
 
     func testThatAfterDownsamplingImageItSetsCorrectState() {
         // GIVEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sut.setState(state: .preprocessing, for: .complete)
             self.sut.setState(state: .preprocessing, for: .preview)
         }
@@ -414,7 +414,7 @@ extension UserProfileImageUpdateStatusTests {
 
     func testThatIfDownsamplingFailsStateForAllSizesIsSetToFail() {
         // GIVEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sut.setState(state: .preprocessing, for: .complete)
             self.sut.setState(state: .preprocessing, for: .preview)
         }
@@ -436,7 +436,7 @@ extension UserProfileImageUpdateStatusTests {
         XCTAssertEqual(self.sut.state, .preprocess(image: Data()))
         XCTAssertEqual(self.sut.imageState(for: .preview), .preprocessing)
         XCTAssertEqual(self.sut.imageState(for: .complete), .preprocessing)
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.sut.setState(state: .failed(.preprocessingFailed))
         }
 
@@ -457,7 +457,7 @@ extension UserProfileImageUpdateStatusTests {
 extension UserProfileImageUpdateStatusTests {
 
     func testThatItReturnsImageToUploadOnlyWhenInUploadState() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             XCTAssertFalse(self.sut.hasImageToUpload(for: .preview))
             self.sut.setState(state: .preprocessing, for: .preview)
@@ -470,7 +470,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatItAdvancesStateAfterConsumingImage() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let data = "some".data(using: .utf8)!
             self.sut.setState(state: .preprocessing, for: .preview)
@@ -487,7 +487,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatItAdvancesStateAfterUploadIsDone() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.sut.setState(state: .preprocessing, for: .preview)
             self.sut.setState(state: .upload(image: Data()), for: .preview)
@@ -503,7 +503,7 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testThatItAdvancesStateAndPropogatesErrorWhenUploadFails() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.sut.setState(state: .preprocessing, for: .preview)
             self.sut.setState(state: .upload(image: Data()), for: .preview)
@@ -538,7 +538,7 @@ extension UserProfileImageUpdateStatusTests {
 // MARK: - User profile update
 extension UserProfileImageUpdateStatusTests {
     func testThatItUpdatesUserProfileAndMarksPropertiesToBeUploaded() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.preprocessor.operations = [Operation()]
             let previewId = "foo"
@@ -571,7 +571,7 @@ extension UserProfileImageUpdateStatusTests {
         // WHEN
         self.sut.setState(state: .upload(image: previewData), for: .preview)
         self.sut.setState(state: .upload(image: completeData), for: .complete)
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             _ = self.self.sut.consumeImage(for: .preview)
             _ = self.self.sut.consumeImage(for: .complete)
             self.self.sut.uploadingDone(imageSize: .preview, assetId: previewId)

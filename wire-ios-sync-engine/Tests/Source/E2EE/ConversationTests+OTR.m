@@ -499,7 +499,7 @@
             notificationRecieved = YES;
             [self.userSession performChanges:^{
                 if (changeInfo.conversation.securityLevel == ZMConversationSecurityLevelSecureWithIgnored) {
-                    [changeInfo.conversation acknowledgePrivacyWarningWithResendIntent:YES];
+                    [changeInfo.conversation acknowledgePrivacyWarningAndResendMessages];
                 }
             }];
         }
@@ -525,27 +525,26 @@
 - (void)testThatItDoesNotDeliversOTRMessageAfterIgnoringExpiring
 {
     __block BOOL notificationRecieved = NO;
-    
+
     // when
     ZMClientMessage *message1 = [self sendOtrMessageWithInitialSecurityLevel:ZMConversationSecurityLevelSecure
                                                             numberOfMessages:1
                                                       createAdditionalClient:YES
                                              handleSecurityLevelNotification:^(ConversationChangeInfo *changeInfo) {
-                                                 notificationRecieved = YES;
-                                                 if (changeInfo.conversation.securityLevel == ZMConversationSecurityLevelSecureWithIgnored) {
-                                                     XCTAssertTrue(changeInfo.causedByConversationPrivacyChange);
-                                                 }
-                                             }];
+        notificationRecieved = YES;
+        if (changeInfo.conversation.securityLevel == ZMConversationSecurityLevelSecureWithIgnored) {
+            XCTAssertTrue(changeInfo.causedByConversationPrivacyChange);
+        }
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     XCTAssertTrue(notificationRecieved);
-    
+
     XCTAssertEqual(message1.deliveryState, ZMDeliveryStateFailedToSend);
-    
+
     XCTAssertEqual(message1.conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
 }
-
 
 - (void)testThatItDoesNotDeliverOriginalOTRMessageAfterIgnoringExpiringAndThenSendingAnotherOne
 {
@@ -553,19 +552,19 @@
     __block BOOL notificationRecieved = NO;
     XCTAssertTrue([self login]);
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
-    
+
     [self.userSession performChanges:^ {
         [conversation appendText:[NSString stringWithFormat:@"Hey %lu", conversation.allMessages.count] mentions:@[] fetchLinkPreview:YES nonce:[NSUUID createUUID]];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     [self makeConversationSecured:conversation];
-    
+
     // add extra user, that will cause conversation degradation
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session registerClientForUser:self.user1];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     __block ConversationChangeObserver *observer;
     observer = [[ConversationChangeObserver alloc] initWithConversation:conversation];
     observer.notificationCallback = ^(NSObject *note) {
@@ -574,26 +573,26 @@
             notificationRecieved = YES;
             if (changeInfo.conversation.securityLevel == ZMConversationSecurityLevelSecureWithIgnored) {
                 XCTAssertTrue(changeInfo.causedByConversationPrivacyChange);
-                [changeInfo.conversation acknowledgePrivacyWarningWithResendIntent:NO];
+                [changeInfo.conversation discardPendingMessagesAfterPrivacyChanges];
             }
         }
     };
     [observer clearNotifications];
-    
+
     // WHEN
     __block ZMClientMessage* message1;
     [self.userSession performChanges:^{ // this should cause conversation to degrade
         message1 = (id)[conversation appendText:[NSString stringWithFormat:@"Hey %lu", conversation.allMessages.count] mentions:@[] fetchLinkPreview:YES nonce:[NSUUID createUUID]];
     }];
-    
+
     // THEN
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertTrue(notificationRecieved);
     XCTAssertNotNil(message1);
     XCTAssertEqual(message1.deliveryState, ZMDeliveryStateFailedToSend);
-    XCTAssertEqual(message1.conversation.securityLevel, ZMConversationSecurityLevelNotSecure);
+    XCTAssertEqual(message1.conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // GIVEN
     observer.notificationCallback = ^(NSObject *note) {
         ConversationChangeInfo *changeInfo = (ConversationChangeInfo *)note;
@@ -602,7 +601,7 @@
             if (changeInfo.conversation.securityLevel == ZMConversationSecurityLevelSecureWithIgnored) {
                 XCTAssertTrue(changeInfo.causedByConversationPrivacyChange);
                 [self.userSession performChanges:^{
-                    [changeInfo.conversation acknowledgePrivacyWarningWithResendIntent:YES];
+                    [changeInfo.conversation acknowledgePrivacyWarningAndResendMessages];
                 }];
             }
         }
@@ -615,7 +614,7 @@
         message2 = (id)[conversation appendText:[NSString stringWithFormat:@"Hey %lu", conversation.allMessages.count] mentions:@[] fetchLinkPreview:YES nonce:[NSUUID createUUID]];
     }];
 
-    
+
     // THEN
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertTrue(notificationRecieved);
@@ -631,15 +630,15 @@
                                                            numberOfMessages:1
                                                      createAdditionalClient:YES
                                             handleSecurityLevelNotification:nil];
-    
+
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     ZMConversation *conversation = message.conversation;
     ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][1]; // second to last
     XCTAssertTrue([lastMessage isKindOfClass:[ZMSystemMessage class]]);
-    
+
     NSArray<ZMUser *> *expectedUsers = @[[self userForMockUser:self.user1]];
-    
+
     AssertArraysContainsSameObjects(lastMessage.users.allObjects, expectedUsers);
     XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageTypeNewClient);
 }
@@ -650,17 +649,17 @@
                                                            numberOfMessages:5
                                                      createAdditionalClient:YES
                                             handleSecurityLevelNotification:^(ConversationChangeInfo *changeInfo) {
-        [changeInfo.conversation acknowledgePrivacyWarningWithResendIntent:NO];
+        [changeInfo.conversation acknowledgePrivacyWarningAndResendMessages];
     }];
 
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     ZMConversation *conversation = message.conversation;
     ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][5];
     XCTAssertTrue([lastMessage isKindOfClass:[ZMSystemMessage class]]);
-    
+
     NSArray<ZMUser *> *expectedUsers = @[[self userForMockUser:self.user1]];
-    
+
     AssertArraysContainsSameObjects(lastMessage.users.allObjects, expectedUsers);
     XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageTypeNewClient);
 }
@@ -668,9 +667,9 @@
 - (void)testThatInsertsSecurityLevelDecreasedMessageInTheEndIfMessageCausedIsInOtherConversation
 {
     XCTAssertTrue([self login]);
-    
+
     //register other users clients
-    
+
     void (^secureConversationBlock)(ZMConversation *) = ^(ZMConversation *conversation) {
         // send a message to fetch all the missing client
         [self.userSession performChanges:^{
@@ -680,13 +679,13 @@
         [self makeConversationSecured:conversation];
 
     };
-    
+
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
     ZMConversation *groupLocalConversation = [self conversationForMockConversation:self.groupConversationWithOnlyConnected];
 
     secureConversationBlock(conversation);
     secureConversationBlock(groupLocalConversation);
-    
+
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation> session){
         [session registerClientForUser:self.user1];
     }];
@@ -995,7 +994,7 @@
     // (2) selfUser deletes remote selfUser client
     {
         [self.userSession performChanges:^{
-            [self.userSession deleteClient:otherSelfClient withCredentials:[ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
+            [self.userSession deleteClient:otherSelfClient withCredentials:[UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
         }];
         WaitForAllGroupsToBeEmpty(0.5);
         
@@ -1180,7 +1179,7 @@
     WaitForAllGroupsToBeEmpty(1.0);
     
     [self.userSession performChanges:^{
-        [self.userSession deleteClient:notSelfClient withCredentials:[ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
+        [self.userSession deleteClient:notSelfClient withCredentials:[UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword]];
     }];
     WaitForAllGroupsToBeEmpty(1.0);
     

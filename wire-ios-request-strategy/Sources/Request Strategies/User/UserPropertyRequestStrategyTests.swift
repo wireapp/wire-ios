@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class UserPropertyRequestStrategyTests: MessagingTestBase {
 
@@ -27,10 +27,10 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = UserPropertyRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
+            self.sut = UserPropertyRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
         }
     }
 
@@ -42,9 +42,9 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesARequestWhenSettingIsModified() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsToBeUpdatedFromBackend = false
             selfUser.readReceiptsEnabled = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
@@ -58,9 +58,9 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
 
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
@@ -78,9 +78,9 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent_false() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
             selfUser.readReceiptsEnabled = true
 
@@ -99,10 +99,10 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent_delete() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
 
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
             selfUser.readReceiptsEnabled = true
 
@@ -123,9 +123,9 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
 // MARK: - Downstream sync
 extension UserPropertyRequestStrategyTests {
     func testThatItIsFetchingPropertyValue() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
 
             // when
             let request = self.sut.nextRequestIfAllowed(for: .v0)
@@ -146,9 +146,9 @@ extension UserPropertyRequestStrategyTests {
     }
 
     func testThatItIsFetchingPropertyValue_404() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
 
             // when
             let request = self.sut.nextRequestIfAllowed(for: .v0)

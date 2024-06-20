@@ -64,7 +64,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     }
 }
 
-final class ConversationListCellTests: BaseSnapshotTestCase {
+final class ConversationListCellTests: XCTestCase {
 
     // MARK: - Setup
 
@@ -125,7 +125,7 @@ final class ConversationListCellTests: BaseSnapshotTestCase {
 
         sut.overrideUserInterfaceStyle = .dark
 
-        if let icon = icon {
+        if let icon {
             sut.itemView.rightAccessory.icon = icon
         }
 

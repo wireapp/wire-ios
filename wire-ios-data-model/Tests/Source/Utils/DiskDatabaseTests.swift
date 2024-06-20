@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 @testable import WireDataModel
+import WireTesting
+import XCTest
 
 public class DiskDatabaseTest: ZMTBaseTest {
 
@@ -68,7 +68,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         coreDataStack.viewContext.zm_userImageCache = UserImageLocalCache(location: nil)
         coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: cacheURL)
 
-        coreDataStack.syncContext.performGroupedBlockAndWait {
+        coreDataStack.syncContext.performGroupedAndWait {
             self.coreDataStack.syncContext.zm_fileAssetCache = self.coreDataStack.viewContext.zm_fileAssetCache
             self.coreDataStack.syncContext.zm_userImageCache = self.coreDataStack.viewContext.zm_userImageCache
         }
@@ -85,7 +85,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
             XCTAssertNil(error)
         }
 
-        self.moc.performGroupedBlockAndWait {
+        self.moc.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.moc)
             selfUser.remoteIdentifier = self.accountId
         }

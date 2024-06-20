@@ -72,7 +72,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     }
 
     var callStartDate: Date? {
-        if let mockCallDuration = mockCallDuration {
+        if let mockCallDuration {
             return Date(timeIntervalSinceNow: -mockCallDuration)
         } else {
             return nil
@@ -152,8 +152,6 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     func leave(userSession: ZMUserSession, completion: (() -> Void)?) {}
 
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {}
-
-    func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {}
 
     func join(video: Bool) -> Bool { return true }
 

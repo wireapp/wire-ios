@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireDesign
 
 final class ProxyCredentialsViewController: UIViewController {
 
@@ -66,9 +66,9 @@ final class ProxyCredentialsViewController: UIViewController {
     }()
 
     lazy var passwordInput: ValidatedTextField = {
-        let textField = ValidatedTextField(kind: .password(isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
-        // TODO: .uppercased() when new design is implemented
-        textField.placeholder = Credentials.Password.placeholder.capitalized
+        let textField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
+
+        textField.placeholder = Credentials.Password.placeholder.capitalized // TODO: .uppercased() when new design is implemented
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()

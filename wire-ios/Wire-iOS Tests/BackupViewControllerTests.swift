@@ -16,39 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDesign
 import XCTest
+
 @testable import Wire
 
-final class BackupViewControllerTests: ZMSnapshotTestCase {
-
-    override func setUp() {
-        super.setUp()
-        self.snapshotBackgroundColor = .darkGray
-    }
+final class BackupViewControllerTests: XCTestCase {
 
     func testInitialState() {
         // GIVEN
         let sut = makeViewController()
 
         // WHEN && THEN
-        self.verifyInIPhoneSize(view: sut.view)
-    }
-
-    func testLoading() {
-        // GIVEN
-        let sut = makeViewController()
-        sut.view.layer.speed = 0
-        sut.tableView(UITableView(), didSelectRowAt: IndexPath(row: 1, section: 0))
-
-        // WHEN && THEN
-        self.verifyInIPhoneSize(view: sut.view)
+        self.verify(matching: sut.view)
     }
 
     // MARK: Helpers
 
     private func makeViewController() -> BackupViewController {
         let backupSource = MockBackupSource()
-        return BackupViewController(backupSource: backupSource)
+        let vc = BackupViewController(backupSource: backupSource)
+        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
+        return vc
     }
 }

@@ -17,8 +17,9 @@
 //
 
 import Foundation
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 protocol UserCellSubtitleProtocol: AnyObject {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString?
@@ -29,7 +30,7 @@ protocol UserCellSubtitleProtocol: AnyObject {
 
 extension UserCellSubtitleProtocol where Self: UIView {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString? {
-        guard let user = user else { return nil }
+        guard let user else { return nil }
 
         var components: [NSAttributedString?] = []
 
@@ -39,7 +40,7 @@ extension UserCellSubtitleProtocol where Self: UIView {
             components.append(domain && UserCell.boldFont.font!)
         }
 
-        WirelessExpirationTimeFormatter.shared.string(for: user).apply {
+        WirelessExpirationTimeFormatter.shared.string(for: user).map {
             components.append($0 && UserCell.boldFont.font!)
         }
 

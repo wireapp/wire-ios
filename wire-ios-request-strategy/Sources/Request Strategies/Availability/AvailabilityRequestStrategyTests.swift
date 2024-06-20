@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireRequestStrategy
 import WireRequestStrategySupport
+import XCTest
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
 
@@ -40,16 +40,16 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItBroadcastWhenAvailabilityIsModified() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
             selfUser.needsToBeUpdatedFromBackend = false
             selfUser.setLocallyModifiedKeys(availabilityKeySet)
             self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 
             // when
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) }
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -58,19 +58,19 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItBroadcastWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
-        self.syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait {
 
             // given
             self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
             selfUser.needsToBeUpdatedFromBackend = false
             selfUser.setLocallyModifiedKeys(availabilityKeySet)
 
-            let team = Team.insertNewObject(in: moc)
+            let team = Team.insertNewObject(in: syncMOC)
 
-            let membership = Member.insertNewObject(in: moc)
+            let membership = Member.insertNewObject(in: syncMOC)
             membership.user = selfUser
             membership.team = team
 
@@ -83,7 +83,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesntBroadcastWhenAvailabilityIsModifiedForOtherUsers() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 
@@ -99,11 +99,11 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesAvailabilityFromUpdateEvent() throws {
-        try syncMOC.performGroupedAndWait { moc in
+        try syncMOC.performGroupedAndWait {
 
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
-            _ = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: moc) // create self conversation
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            _ = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: syncMOC) // create self conversation
 
             let message = GenericMessage(content: WireProtos.Availability(.away))
             let messageData = try message.serializedData()
@@ -115,7 +115,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
                 "type": "conversation.otr-message-add",
                 "data": dict,
                 "from": selfUser.remoteIdentifier!,
-                "conversation": ZMConversation.selfConversation(in: moc).remoteIdentifier!.transportString(),
+                "conversation": ZMConversation.selfConversation(in: syncMOC).remoteIdentifier!.transportString(),
                 "time": Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)!
 
             // when

@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import UIKit
+import WireDesign
+import WireSyncEngine
 
 private typealias ConversationInputBarMessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
 

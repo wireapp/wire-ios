@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDataModel
 import WireSystem
-import UIKit
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -52,7 +51,7 @@ extension ContactsViewController {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
         }
 
-        if let navigationController = navigationController {
+        if let navigationController {
             navigationController.popToRootViewController(animated: false, completion: showConversation)
         } else {
             showConversation()

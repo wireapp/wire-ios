@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireDesign
 import WireSystem
 
 extension AppLockModule.View {
@@ -49,7 +49,7 @@ extension AppLockModule.View {
 
         private let shieldViewContainer = UIView()
         private let contentContainerView = UIView()
-        private let blurView = UIVisualEffectView.blurView()
+        private lazy var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
 
         private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
 
@@ -69,7 +69,7 @@ extension AppLockModule.View {
         init() {
             super.init(frame: .zero)
 
-            let shieldView = UIView.shieldView()
+            let shieldView: UIView = AppLockView()
             shieldViewContainer.addSubview(shieldView)
 
             addSubview(shieldViewContainer)
@@ -86,7 +86,7 @@ extension AppLockModule.View {
 
             actionButton.addTarget(self, action: #selector(LockView.onButtonPressed(_:)), for: .touchUpInside)
 
-            createConstraints(nibView: shieldView)
+            createConstraints(shieldView: shieldView)
 
             toggleConstraints()
         }
@@ -98,9 +98,9 @@ extension AppLockModule.View {
 
         // MARK: - Helpers
 
-        private func createConstraints(nibView: UIView) {
+        private func createConstraints(shieldView: UIView) {
             self.translatesAutoresizingMaskIntoConstraints = false
-            nibView.translatesAutoresizingMaskIntoConstraints = false
+            shieldView.translatesAutoresizingMaskIntoConstraints = false
             shieldViewContainer.translatesAutoresizingMaskIntoConstraints = false
             blurView.translatesAutoresizingMaskIntoConstraints = false
             contentContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -117,10 +117,10 @@ extension AppLockModule.View {
 
             NSLayoutConstraint.activate([
                 // nibView
-                nibView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                nibView.topAnchor.constraint(equalTo: topAnchor),
-                nibView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                nibView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                shieldView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                shieldView.topAnchor.constraint(equalTo: topAnchor),
+                shieldView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                shieldView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
                 // shieldViewContainer
                 shieldViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -167,7 +167,5 @@ extension AppLockModule.View {
         @objc func onButtonPressed(_ sender: AnyObject!) {
             actionRequested?()
         }
-
     }
-
 }

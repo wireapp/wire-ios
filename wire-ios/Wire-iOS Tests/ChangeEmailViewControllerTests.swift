@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
-@testable import Wire
+import XCTest
 
-final class ChangeEmailViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+final class ChangeEmailViewControllerTests: XCTestCase {
 
     var userSession: UserSession!
 

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 typealias ProfileImageSize = WireSyncEngine.ProfileImageSize
 

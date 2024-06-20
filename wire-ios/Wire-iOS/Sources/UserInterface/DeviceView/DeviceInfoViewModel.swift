@@ -42,6 +42,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
+    let mlsCiphersuite: MLSCipherSuite?
 
     let title: String
     var isSelfClient: Bool
@@ -86,9 +87,6 @@ final class DeviceInfoViewModel: ObservableObject {
 
     var actionsHandler: DeviceDetailsViewActions
     var conversationClientDetailsActions: ConversationUserClientDetailsActions
-    var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
-    let isDebugMenuAvailable: Bool
-    @Published var isDebugMenuPresented = false
 
     init(
         title: String,
@@ -97,11 +95,10 @@ final class DeviceInfoViewModel: ObservableObject {
         userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
+        mlsCiphersuite: MLSCipherSuite?,
         isFromConversation: Bool,
         actionsHandler: DeviceDetailsViewActions,
-        conversationClientDetailsActions: ConversationUserClientDetailsActions,
-        debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
-        isDebugMenuAvailable: Bool
+        conversationClientDetailsActions: ConversationUserClientDetailsActions
     ) {
         self.title = title
         self.addedDate = addedDate
@@ -110,10 +107,10 @@ final class DeviceInfoViewModel: ObservableObject {
         self.userClient = userClient
         self.isSelfClient = isSelfClient
         self.gracePeriod = gracePeriod
+        self.mlsCiphersuite = mlsCiphersuite
         self.isFromConversation = isFromConversation
         self.conversationClientDetailsActions = conversationClientDetailsActions
-        self.debugMenuActionsHandler = debugMenuActionsHandler
-        self.isDebugMenuAvailable = isDebugMenuAvailable
+
         self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -187,27 +184,4 @@ final class DeviceInfoViewModel: ObservableObject {
         conversationClientDetailsActions.howToDoThat()
     }
 
-    // MARK: ConversationUserClientDetailsDebugActions
-
-    func onDeleteDeviceTapped() {
-        Task {
-            await debugMenuActionsHandler?.deleteDevice()
-            await MainActor.run {
-                shouldDismiss = true
-            }
-        }
-    }
-
-    func onCorruptSessionTapped() {
-        Task {
-            await debugMenuActionsHandler?.corruptSession()
-            await MainActor.run {
-                shouldDismiss = true
-            }
-        }
-    }
-
-    func onDuplicateClientTapped() {
-        debugMenuActionsHandler?.duplicateClient()
-    }
 }

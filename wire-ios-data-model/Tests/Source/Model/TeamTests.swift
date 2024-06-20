@@ -16,26 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 @testable import WireDataModel
+import WireTesting
 
 final class TeamTests: ZMConversationTestsBase {
 
     func testThatItCreatesANewTeamIfThereIsNone() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let uuid = UUID.create()
-            var created = false
 
-            withUnsafeMutablePointer(to: &created) {
-                // when
-                let sut = Team.fetchOrCreate(with: uuid, create: true, in: self.syncMOC, created: $0)
+            // when
+            let sut = Team.fetchOrCreate(
+                with: uuid,
+                in: self.syncMOC
+            )
 
-                // then
-                XCTAssertNotNil(sut)
-                XCTAssertEqual(sut?.remoteIdentifier, uuid)
-            }
-            XCTAssertTrue(created)
+            // then
+            XCTAssertEqual(sut.remoteIdentifier, uuid)
         }
     }
 
@@ -49,15 +47,11 @@ final class TeamTests: ZMConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // when
-        var created = false
-        withUnsafeMutablePointer(to: &created) {
-            let existing = Team.fetchOrCreate(with: uuid, create: false, in: uiMOC, created: $0)
+        let existing = Team.fetch(with: uuid, in: uiMOC)
 
-            // then
-            XCTAssertNotNil(existing)
-            XCTAssertEqual(existing, sut)
-        }
-        XCTAssertFalse(created)
+        // then
+        XCTAssertNotNil(existing)
+        XCTAssertEqual(existing, sut)
     }
 
     func testThatItReturnsGuestsOfATeam() throws {

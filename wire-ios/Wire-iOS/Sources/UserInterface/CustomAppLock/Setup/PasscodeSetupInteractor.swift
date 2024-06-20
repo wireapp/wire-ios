@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireUtilities
 import WireCommonComponents
-import WireTransport
 import WireSyncEngine
+import WireTransport
+import WireUtilities
 
 protocol PasscodeSetupInteractorInput: AnyObject {
     func validate(error: TextFieldValidator.ValidationError?)
@@ -49,7 +49,7 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
     }
 
     func validate(error: TextFieldValidator.ValidationError?) {
-        guard let error = error else {
+        guard let error else {
             interactorOutput?.passcodeValidated(result: .valid)
             return
         }

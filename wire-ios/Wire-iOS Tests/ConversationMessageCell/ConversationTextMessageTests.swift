@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
-import XCTest
-import WireLinkPreview
 @testable import Wire
+import WireLinkPreview
+import XCTest
 
 final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 

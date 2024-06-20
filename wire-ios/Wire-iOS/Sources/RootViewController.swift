@@ -60,14 +60,14 @@ final class RootViewController: UIViewController {
     func set(childViewController newViewController: UIViewController?,
              animated: Bool = false,
              completion: (() -> Void)? = nil) {
-        if let newViewController = newViewController,
+        if let newViewController,
            let previousViewController = childViewController {
             transition(
                 from: previousViewController,
                 to: newViewController,
                 animated: animated,
                 completion: completion)
-        } else if let newViewController = newViewController {
+        } else if let newViewController {
             contain(newViewController, completion: completion)
         } else {
             removeChildViewController(animated: animated, completion: completion)
@@ -126,7 +126,7 @@ final class RootViewController: UIViewController {
         transition(
             from: fromViewController,
             to: toViewController,
-            duration: 0.5,
+            duration: animated ? 0.5 : 0,
             options: .transitionCrossDissolve,
             animations: {
                 self.view.bringSubviewToFront(fromViewController.view)

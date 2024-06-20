@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class MockTeam: TeamType {
     var conversations: Set<ZMConversation> = []
@@ -41,7 +41,7 @@ final class MockTeam: TeamType {
     }
 }
 
-final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
     var userSession: UserSessionMock!
     var mockSelfUser: MockUserType!
 

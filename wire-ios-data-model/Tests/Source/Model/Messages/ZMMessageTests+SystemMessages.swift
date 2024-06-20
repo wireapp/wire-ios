@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMMessageTests_SystemMessages: BaseZMMessageTests {
 
@@ -121,7 +121,7 @@ extension ZMMessageTests_SystemMessages {
         ]
 
         var data: [String: Any]
-        if let domain = domain {
+        if let domain {
             if updateEventType == .conversationMemberJoin {
                 data = ["users": usersIDs.map {
                     ["qualified_id":

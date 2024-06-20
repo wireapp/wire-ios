@@ -118,8 +118,8 @@ final class NativePushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             websocketTask == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }
@@ -161,13 +161,12 @@ final class NativePushChannel: NSObject, PushChannelType {
                 Logging.pushChannel.debug("Failed to receive message \(error)")
                 self?.onClose()
             case .success(let message):
-                guard
-                    case .data(let data) = message,
-                    let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-                else { break }
+                guard case .data(let data) = message else {
+                    break
+                }
 
                 self?.consumerQueue?.performGroupedBlock({
-                    self?.consumer?.pushChannelDidReceive(transportData)
+                    self?.consumer?.pushChannelDidReceive(data)
                 })
             }
 
@@ -225,7 +224,7 @@ extension NativePushChannel: ZMTimerClient {
     func timerDidFire(_ timer: ZMTimer!) {
         Logging.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
-            if let error = error {
+            if let error {
                 Logging.pushChannel.debug("Failed to send ping: \(error)")
             }
         })

@@ -18,9 +18,9 @@
 
 import Foundation
 import UserNotifications
-import WireTransport
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
+import WireTransport
 
 final class Job: NSObject, Loggable {
 

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 enum ChangeEmailFlowType {
@@ -59,12 +60,12 @@ struct ChangeEmailState {
         return isEmailPasswordInputValid ? newPassword : nil
     }
 
-    var validatedCredentials: ZMEmailCredentials? {
+    var validatedCredentials: UserEmailCredentials? {
         guard let email = validatedEmail, let password = validatedPassword else {
             return nil
         }
 
-        return ZMEmailCredentials(email: email, password: password)
+        return UserEmailCredentials(email: email, password: password)
     }
 
     var isValid: Bool {
@@ -157,7 +158,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func updateSaveButtonState(enabled: Bool? = nil) {
-        if let enabled = enabled {
+        if let enabled {
             navigationItem.rightBarButtonItem?.isEnabled = enabled
         } else {
             navigationItem.rightBarButtonItem?.isEnabled = state.isValid

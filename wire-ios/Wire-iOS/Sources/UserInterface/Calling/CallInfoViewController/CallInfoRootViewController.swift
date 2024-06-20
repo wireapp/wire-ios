@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SafariServices
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {

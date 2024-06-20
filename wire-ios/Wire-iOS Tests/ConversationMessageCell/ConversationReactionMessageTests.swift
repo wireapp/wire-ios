@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+import XCTest
 
-final class ConversationReactionMessageTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ConversationReactionMessageTests: XCTestCase {
 
     // MARK: - Properties
 

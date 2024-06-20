@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversation: MockConversation

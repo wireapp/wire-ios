@@ -54,6 +54,16 @@
     return dispatch_group_wait(self.group, timeout);
 }
 
+- (long)waitWithDeltaFromNow:(unsigned long long)nanoseconds
+{
+    return [self waitWithTimeout:dispatch_time(DISPATCH_TIME_NOW, (int64_t)(nanoseconds * NSEC_PER_MSEC))];
+}
+
+- (long)waitWithTimeoutForever
+{
+    return [self waitWithTimeout:DISPATCH_TIME_FOREVER];
+}
+
 - (long)waitForInterval:(NSTimeInterval)timeout;
 {
     dispatch_time_t start = DISPATCH_TIME_NOW;

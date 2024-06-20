@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 final class CollectionViewCellAdapter: UICollectionViewCell {
@@ -31,7 +30,7 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
 
             contentView.subviews.forEach({ $0.removeFromSuperview() })
 
-            guard let wrappedView = wrappedView else { return }
+            guard let wrappedView else { return }
 
             wrappedView.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(wrappedView)

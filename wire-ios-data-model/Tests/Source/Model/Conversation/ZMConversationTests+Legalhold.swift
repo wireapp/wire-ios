@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMConversationTests_Legalhold: ZMConversationTestsBase {
 
@@ -360,7 +360,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         var legalHoldClient: UserClient!
         var conversation: ZMConversation!
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
@@ -381,7 +381,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         await legalHoldClient.deleteClientAndEndSession()
 
         // THEN
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
             let lastMessage = conversation.lastMessage as? ZMSystemMessage
             XCTAssertTrue(lastMessage?.systemMessageType == .legalHoldDisabled)
@@ -537,7 +537,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
 
             self.performPretendingSyncMocIsUiMoc {
-                conversation.acknowledgePrivacyWarning(withResendIntent: true)
+                conversation.acknowledgePrivacyWarningAndResendMessages()
             }
 
             // THEN

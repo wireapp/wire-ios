@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import LocalAuthentication
-@testable import WireDataModelSupport
 @_spi(AppLockControllerState) @testable import WireDataModel
+@testable import WireDataModelSupport
+import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
 

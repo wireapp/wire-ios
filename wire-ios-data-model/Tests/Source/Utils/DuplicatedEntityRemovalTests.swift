@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 @testable import WireDataModel
+import WireTesting
+import XCTest
 
 final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
 
@@ -40,7 +40,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
         systemMessage.serverTimestamp = timestamp
-        if let duration = duration {
+        if let duration {
             systemMessage.duration = duration
         }
 

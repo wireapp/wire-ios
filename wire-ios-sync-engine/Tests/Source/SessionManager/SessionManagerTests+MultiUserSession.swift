@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireTesting
+
 @testable import WireSyncEngine
 
 final class SessionManagerMultiUserSessionTests: IntegrationTest {
@@ -158,7 +160,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let account = self.createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
 
-        guard let application = application else { return XCTFail() }
+        guard let application else { return XCTFail() }
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
 
@@ -352,7 +354,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             expectation.fulfill()
         })
 
-        XCTAssertTrue(self.wait(withTimeout: 0.1) { return self.sessionManager!.activeUserSession != nil })
+        wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 5)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
@@ -392,7 +394,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
                                                    completionHandler: {})
         }
 
-        XCTAssertTrue(self.wait(withTimeout: 0.1) { return self.sessionManager!.activeUserSession != nil })
+        wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 5)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
@@ -519,7 +521,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
     // the background as soon as the SessionManager is created
     func testThatABackgroundTaskCanBeCreatedAfterCreatingSessionManager() {
         // WHEN
-        let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "PushActivity")
+        let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "PushActivity")
 
         // THEN
         XCTAssertNotNil(activity)

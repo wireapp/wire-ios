@@ -17,10 +17,11 @@
 //
 
 import XCTest
-@testable import WireSyncEngine
-@testable import WireDataModelSupport
 
-class EventProcessorTests: MessagingTest {
+@testable import WireDataModelSupport
+@testable import WireSyncEngine
+
+final class EventProcessorTests: MessagingTest {
 
     struct MockError: Error { }
 

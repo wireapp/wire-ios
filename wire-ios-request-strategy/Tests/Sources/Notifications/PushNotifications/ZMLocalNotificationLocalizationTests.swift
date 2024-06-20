@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class ZMLocalNotificationLocalizationTests: ZMLocalNotificationTests {
 
     func testThatItLocalizesCallkitCallerName() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let result: (ZMUser, ZMConversation) -> String = {
                 $1.localizedCallerName(with: $0)
             }

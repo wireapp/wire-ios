@@ -1,6 +1,12 @@
 name: Playground
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      distribute_externals:
+        type: boolean
+        description: 'Distribute externally'
+        default: false
 
 permissions: 
   checks: write
@@ -9,5 +15,7 @@ jobs:
   playground:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      datadog_enabled: true
+      distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
     secrets: inherit

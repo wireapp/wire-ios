@@ -20,7 +20,21 @@ import Foundation
 
 @testable import WireSyncEngine
 
-class SearchResultTests: DatabaseTest {
+final class SearchResultTests: DatabaseTest {
+
+    private var mockCache: SearchUsersCache!
+
+    override func setUp() {
+        super.setUp()
+
+        mockCache = SearchUsersCache()
+    }
+
+    override func tearDown() {
+        mockCache = nil
+
+        super.tearDown()
+    }
 
     func testThatItFiltersConnectedUsers() {
         // given
@@ -45,7 +59,13 @@ class SearchResultTests: DatabaseTest {
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .fullTextSearch(""), searchOptions: [.directory], contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.directory.count, 1)
@@ -78,7 +98,12 @@ class SearchResultTests: DatabaseTest {
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .fullTextSearch(""), searchOptions: [.directory], contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache)
 
         // then
         XCTAssertEqual(result?.directory.count, 1)
@@ -99,7 +124,13 @@ class SearchResultTests: DatabaseTest {
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .fullTextSearch(name), searchOptions: [.directory], contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(name),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.directory.count, 2)
@@ -121,7 +152,13 @@ class SearchResultTests: DatabaseTest {
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .exactHandle(name), searchOptions: [.directory], contextProvider: coreDataStack!)!
+        let result = SearchResult(
+            payload: payload,
+            query: .exactHandle(name),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertEqual(result.directory.count, 1)
@@ -150,10 +187,16 @@ class SearchResultTests: DatabaseTest {
         ]
 
         // when
-        let result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.teamMembers.count, 1)
@@ -182,10 +225,17 @@ class SearchResultTests: DatabaseTest {
         ]
 
         // when
-        let result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers, .excludeNonActiveTeamMembers],
-                                  contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers,
+                .excludeNonActiveTeamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.teamMembers.count, 0)
@@ -212,10 +262,16 @@ class SearchResultTests: DatabaseTest {
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: selfUser.remoteIdentifier, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])
@@ -253,10 +309,16 @@ class SearchResultTests: DatabaseTest {
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: nil, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])
@@ -291,10 +353,16 @@ class SearchResultTests: DatabaseTest {
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: selfUser.remoteIdentifier, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])
@@ -330,10 +398,16 @@ class SearchResultTests: DatabaseTest {
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: nil, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])

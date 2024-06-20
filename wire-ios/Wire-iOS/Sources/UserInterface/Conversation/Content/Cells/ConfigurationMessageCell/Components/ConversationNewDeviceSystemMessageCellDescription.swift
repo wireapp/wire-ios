@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
@@ -78,9 +79,10 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         )
 
         let clients = systemMessage.clients.compactMap({ $0 as? UserClientType })
-        let users = systemMessage.userTypes.lazy
+        let users = systemMessage.userTypes
+            .lazy
             .compactMap { $0 as? UserType }
-            .sorted { $0.name < $1.name }
+            .sortedAscendingPrependingNil(by: \.name)
 
         if !systemMessage.addedUserTypes.isEmpty {
             return configureForAddedUsers(in: conversation, attributes: textAttributes)

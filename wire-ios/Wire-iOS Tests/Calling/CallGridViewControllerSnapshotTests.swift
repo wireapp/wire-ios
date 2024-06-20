@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
 import WireUtilities
+import XCTest
 
 struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
     var isConnected: Bool = true
@@ -41,7 +41,7 @@ struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
     var isGroupCall: Bool = false
 }
 
-final class CallGridViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     var sut: CallGridViewController!
     var mediaManager: ZMMockAVSMediaManager!

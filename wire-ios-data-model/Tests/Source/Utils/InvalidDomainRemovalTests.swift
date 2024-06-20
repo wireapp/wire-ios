@@ -16,13 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import XCTest
+
 @testable import WireDataModel
 
-class InvalidDomainRemovalTests: DiskDatabaseTest {
+final class InvalidDomainRemovalTests: DiskDatabaseTest {
+
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     func testAllUsersWithInvalidDomainIsRemoved() throws {
-        coreDataStack.syncContext.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             // GIVEN
             let selfDomain = "example.com"
             let otherDomain = "other.com"
@@ -48,7 +52,7 @@ class InvalidDomainRemovalTests: DiskDatabaseTest {
     }
 
     func testAllConversationsWithInvalidDomainIsRemoved() throws {
-        coreDataStack.syncContext.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             // GIVEN
             let selfDomain = "example.com"
             let otherDomain = "other.com"

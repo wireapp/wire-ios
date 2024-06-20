@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import XCTest
+
 @testable import Wire
 
-final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
     var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
@@ -36,6 +38,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         callConversationProvider = MockCallConversationProvider()
         sut = MockCallQualityController()
         sut.router = router
+        sut.usesCallSurveyBudget = false
 
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
@@ -78,12 +81,13 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
     // MARK: - SnapshotTests
     func testSurveyInterface() {
         CallQualityController.resetSurveyMuteFilter()
-        verifyInAllDeviceSizes(view: callQualityViewController.view, configuration: configure)
+        verify(matching: callQualityViewController.view)
     }
 
     // MARK: - CallQualitySurvey Presentation Tests
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
         // GIVEN
+
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .normal)
         conversation.remoteIdentifier = UUID()

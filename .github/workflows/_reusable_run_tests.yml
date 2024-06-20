@@ -21,6 +21,10 @@ on:
         type: boolean
         default: false
         required: false
+      wire-api:
+        type: boolean
+        default: false
+        required: false
       wire-ios-transport:
         type: boolean
         default: false
@@ -77,7 +81,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 
 jobs:
   run-tests:
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
@@ -111,12 +115,10 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-      - name: Restore Bundler Cache
-        uses: actions/cache@v3
-        id: cache-bundler
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+          bundler-cache: true
 
       - name: Setup workspace
         run: |
@@ -223,6 +225,16 @@ jobs:
           echo "Building WireDataModel..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-data-model.log | bundle exec xcpretty --report junit --output build/reports/WireDataModel.junit
+          exit ${PIPESTATUS[0]}
+
+      - name: Test WireAPI
+        if: ${{ inputs.wire-api || inputs.all }}
+        run: |
+          echo "WireAPI has changes"
+          echo "Building WireAPI..."
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
+          echo "Testing WireAPI..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireRequestStrategy

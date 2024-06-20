@@ -88,7 +88,7 @@ extension ZMConversation {
         let participantRoleForUser = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: conversation)
         let customRole = Role.fetchOrCreateRole(with: defaultAdminRoleName, teamOrConversation: team != nil ? .team(team!) : .conversation(conversation), in: moc)
 
-        if let adminRole = adminRole {
+        if let adminRole {
             participantRoleForUser.role = adminRole
         } else {
             participantRoleForUser.role = customRole

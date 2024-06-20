@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import Foundation
 import MobileCoreServices
 import WireDataModel
-import AVFoundation
 
 private let zmLog = ZMSLog(tag: "UI")
 

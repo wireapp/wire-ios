@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 final class ClientMessageTests: BaseZMClientMessageTests {
 
@@ -257,7 +257,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
     }
 
     func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID.create()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
@@ -790,7 +790,7 @@ extension ClientMessageTests {
 
     func testThatItDecryptsMessageWithExternalBlobCorrectly() {
         // given
-        self.syncMOC.performGroupedAndWait {_ in
+        self.syncMOC.performGroupedAndWait {
             self.createSelfClient(onMOC: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 typealias E2ei = L10n.Localizable.Registration.Signin.E2ei

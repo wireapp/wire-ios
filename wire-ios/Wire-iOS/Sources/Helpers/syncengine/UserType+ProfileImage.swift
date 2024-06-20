@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
 var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 
@@ -58,7 +58,7 @@ extension UserType {
     // MARK: ImageSize Helper
 
     private func profileImageSize(with sizeLimit: Int?) -> ProfileImageSize {
-        guard let sizeLimit = sizeLimit else { return .complete }
+        guard let sizeLimit else { return .complete }
 
         let screenScale = UIScreen.main.scale
         let previewSizeLimit: CGFloat = 280
@@ -87,7 +87,7 @@ extension UserType {
             derivedKey = "\(derivedKey)_desaturated"
         }
 
-        if let sizeLimit = sizeLimit {
+        if let sizeLimit {
             derivedKey = "\(derivedKey)_\(sizeLimit)"
         }
 
@@ -114,14 +114,14 @@ extension UserType {
                                                cacheKey: String,
                                                completion: @escaping ProfileImageCompletion) {
         imageData(for: imageSize, queue: imageCache.processingQueue) { imageData in
-            guard let imageData = imageData else {
+            guard let imageData else {
                 return DispatchQueue.main.async {
                     completion(nil, false)
                 }
             }
 
             var image: UIImage?
-            if let sizeLimit = sizeLimit {
+            if let sizeLimit {
                 image = UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
             } else {
                 image = UIImage(data: imageData)?.decoded
@@ -132,7 +132,7 @@ extension UserType {
                 image = transformer.adjustInputSaturation(value: 0, image: image!)
             }
 
-            if let image = image {
+            if let image {
                 imageCache.cache.setObject(image, forKey: cacheKey as NSString)
             }
 

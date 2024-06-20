@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+import UIKit
 import WireDataModel
+import WireDesign
+import WireSyncEngine
 
 /// Observes events from the message toolbox.
 protocol MessageToolboxViewDelegate: AnyObject {

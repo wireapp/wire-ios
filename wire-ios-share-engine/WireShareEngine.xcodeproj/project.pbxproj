@@ -20,6 +20,7 @@
 		EE67F6F6296F093E001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F4296F093E001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6F9296F094C001D7C88 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */; };
 		EE67F6FA296F094C001D7C88 /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE9AEC962BD159A900F7853F /* WireShareEngine.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC952BD159A900F7853F /* WireShareEngine.docc */; };
 		F125E9B51E28DB06006583A2 /* SharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */; };
 		F154EE0B1F44826400CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EE0A1F44826400CB8184 /* AppDelegate.swift */; };
 		F1DABFA21E9B8B6100AD2324 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABF971E9B8B6100AD2324 /* AuthenticationStatusProvider.swift */; };
@@ -102,6 +103,7 @@
 		EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F4296F093E001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE9AEC952BD159A900F7853F /* WireShareEngine.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireShareEngine.docc; sourceTree = "<group>"; };
 		F10C8E4E1E9647AF00020408 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingSessionTests.swift; sourceTree = "<group>"; };
 		F154EE081F44826400CB8184 /* WireShareEngineTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireShareEngineTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -153,6 +155,7 @@
 		5470D3DE1D76E1B000FDE440 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC952BD159A900F7853F /* WireShareEngine.docc */,
 				5470D42B1D770CEE00FDE440 /* LICENSE */,
 				5470D42C1D770CEE00FDE440 /* README.md */,
 				F1DABF961E9B8B6100AD2324 /* Sources */,
@@ -282,9 +285,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5470D3FC1D76E1B000FDE440 /* Build configuration list for PBXNativeTarget "WireShareEngine" */;
 			buildPhases = (
+				5470D3E51D76E1B000FDE440 /* Headers */,
 				5470D3E31D76E1B000FDE440 /* Sources */,
 				5470D3E41D76E1B000FDE440 /* Frameworks */,
-				5470D3E51D76E1B000FDE440 /* Headers */,
 				663C9D9E275A2B8F00D5B0BC /* Run SwiftLint */,
 				5470D3E61D76E1B000FDE440 /* Resources */,
 			);
@@ -438,6 +441,7 @@
 				F1DABFA31E9B8B6100AD2324 /* Conversation.swift in Sources */,
 				F1DABFAB1E9B8B6100AD2324 /* ZMConversation+Conversation.swift in Sources */,
 				165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */,
+				EE9AEC962BD159A900F7853F /* WireShareEngine.docc in Sources */,
 				F1DABFA21E9B8B6100AD2324 /* AuthenticationStatusProvider.swift in Sources */,
 				F1DABFA41E9B8B6100AD2324 /* OperationLoop.swift in Sources */,
 				F1DABFA91E9B8B6100AD2324 /* StrategyFactory.swift in Sources */,

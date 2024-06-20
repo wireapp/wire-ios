@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelegate {
     var didCancelCalledCount: Int = 0

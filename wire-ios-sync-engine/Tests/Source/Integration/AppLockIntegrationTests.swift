@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 final class AppLockIntegrationTests: IntegrationTest {
 

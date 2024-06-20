@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import WireImages
 @testable import WireDataModel
+import WireImages
 
 class ZMConversationMessagesTests: ZMConversationTestsBase {
 
     func testThatWeCanInsertATextMessage() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -268,7 +268,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
     }
 
     func testThatLastReadUpdatesInSelfConversationDontExpire() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID()
@@ -410,7 +410,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let locationData = self.locationData()
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID()
 

@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireSystem
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireDesign
+import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -130,7 +130,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.audioPreviewView.gradientColor = backgroundColor
 
         self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
-            if let color = color {
+            if let color {
                 self.audioPreviewView.color = color
             }
         }
@@ -337,7 +337,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.updateTimeLabel(time)
         }
 
@@ -352,7 +352,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
 
         recorder.recordLevelCallBack = { [weak self] level in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.audioPreviewView.updateWithLevel(level)
         }
     }

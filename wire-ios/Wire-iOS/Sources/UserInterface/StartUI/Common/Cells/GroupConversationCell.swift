@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
 import UIKit
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 typealias GroupConversationCellConversation = Conversation & StableRandomParticipantsProvider
 

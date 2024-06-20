@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
 import avs
+import WireCommonComponents
+import XCTest
 
 @testable import Wire
 
-class MockAVSVideoPreview: AVSVideoPreview {
+private class MockAVSVideoPreview: AVSVideoPreview {
     var isCapturing: Bool = false
 
     override func startVideoCapture() {
@@ -34,13 +34,16 @@ class MockAVSVideoPreview: AVSVideoPreview {
     }
 }
 
-class SelfCallParticipantViewTests: XCTestCase {
-    var sut: SelfCallParticipantView!
-    var stubProvider = StreamStubProvider()
-    var previewViewMock = MockAVSVideoPreview()
+final class SelfCallParticipantViewTests: XCTestCase {
+    private var sut: SelfCallParticipantView!
+    private var stubProvider: StreamStubProvider!
+    private var previewViewMock: MockAVSVideoPreview!
 
     override func setUp() {
         super.setUp()
+
+        stubProvider = StreamStubProvider()
+        previewViewMock = MockAVSVideoPreview()
 
         let stream = stubProvider.stream()
         sut = SelfCallParticipantView(
@@ -55,6 +58,9 @@ class SelfCallParticipantViewTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        previewViewMock = nil
+        stubProvider = nil
+
         super.tearDown()
     }
 

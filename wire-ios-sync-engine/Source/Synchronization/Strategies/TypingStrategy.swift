@@ -44,7 +44,7 @@ public struct TypingEvent {
                             isTyping: Bool,
                             ifDifferentFrom other: TypingEvent?) -> TypingEvent? {
         let newEvent = TypingEvent(date: Date(), objectID: objectID, isTyping: isTyping)
-        if let other = other, newEvent.isEqual(other: other) {
+        if let other, newEvent.isEqual(other: other) {
             return nil
         }
         return newEvent
@@ -197,7 +197,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
         case .v3, .v4, .v5, .v6:
-            guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }
 

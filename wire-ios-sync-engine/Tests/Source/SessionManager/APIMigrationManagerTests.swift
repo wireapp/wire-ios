@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
-import WireTransport
 import WireDataModelSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+import WireTransport
+import XCTest
 
 class APIMigrationMock: APIMigration {
     var version: APIVersion
@@ -269,12 +269,10 @@ final class APIMigrationManagerTests: MessagingTest {
             flowManager: FlowManagerMock(),
             mediaManager: MockMediaManager(),
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: mockTransportSession,
-            useCaseFactory: nil,
             userId: .create()
         )
 
@@ -284,7 +282,8 @@ final class APIMigrationManagerTests: MessagingTest {
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
 
         return userSession

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireDataModel
-import CoreData
 
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {
@@ -72,8 +72,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
         syncContext.performGroupedBlock {
             guard
-                let callerId = callerId,
-                let conversationId = conversationId,
+                let callerId,
+                let conversationId,
                 let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, domain: callerDomain, in: self.syncContext)
             else {
@@ -147,8 +147,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
         syncContext.performGroupedBlock {
             guard
-                let callerId = callerId,
-                let conversationId = conversationId,
+                let callerId,
+                let conversationId,
                 let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
                 else {
@@ -171,7 +171,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 conversation.isArchived = false
             }
 
-            if let timestamp = timestamp {
+            if let timestamp {
                 conversation.updateLastModified(timestamp)
             }
 

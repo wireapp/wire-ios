@@ -22,24 +22,6 @@ import XCTest
 
 final class UnregisteredUserTests: XCTestCase {
 
-    func testThatItReturnsCompletedWhenUserIsComplete_Phone() {
-
-        // GIVEN
-        let user = UnregisteredUser()
-
-        // WHEN
-        user.name = "Mario"
-        user.credentials = .phone("+49123456789")
-        user.verificationCode = "123456"
-        user.accentColor = .turquoise
-        user.acceptedTermsOfService = true
-        user.marketingConsent = false
-
-        // THEN
-        XCTAssertTrue(user.isComplete)
-        XCTAssertFalse(user.needsPassword)
-    }
-
     func testThatItReturnsCompletedWhenUserIsComplete_Email() {
 
         // GIVEN
@@ -47,7 +29,7 @@ final class UnregisteredUserTests: XCTestCase {
 
         // WHEN
         user.name = "Mario"
-        user.credentials = .email("alexis@example.com")
+        user.unverifiedEmail = "alexis@example.com"
         user.verificationCode = "123456"
         user.accentColor = .turquoise
         user.acceptedTermsOfService = true

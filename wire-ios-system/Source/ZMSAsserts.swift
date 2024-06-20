@@ -66,13 +66,3 @@ public func requireInternal(_ condition: Bool, _ message: @autoclosure () -> Str
         WireLogger.system.critical("requireInternal: \(errorMessage)")
     }
 }
-
-/// Terminates the application if the current build is not an AppStore build
-public func requireInternalFailure(_ message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
-    let errorMessage = message()
-    if AppBuild.current.canFatalError {
-        fatal(errorMessage, file: file, line: line)
-    } else {
-        WireLogger.system.critical("requireInternalFailure: \(errorMessage)")
-    }
-}

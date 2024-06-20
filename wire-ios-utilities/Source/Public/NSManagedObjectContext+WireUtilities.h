@@ -20,11 +20,13 @@
 #import <CoreData/CoreData.h>
 #import <WireSystem/WireSystem.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class DispatchGroupContext;
 
 @interface NSManagedObjectContext (ZMSGroupQueue) <ZMSGroupQueue>
 
-@property (nonatomic, readonly, null_unspecified ) DispatchGroupContext *dispatchGroupContext;
+@property (nonatomic, readonly, null_unspecified) DispatchGroupContext *dispatchGroupContext;
 
 - (void)createDispatchGroups;
 
@@ -38,13 +40,13 @@
 /// the receiver's queue.
 ///
 /// @sa  dispatch_group_notify()
-- (void)notifyWhenGroupIsEmpty:(dispatch_block_t _Null_unspecified )block ZM_NON_NULL(1);
+- (void)notifyWhenGroupIsEmpty:(dispatch_block_t _Null_unspecified)block;
 
 /// Adds a group to the receiver. All blocks associated with the receiver's group will
 /// also be associated with this group.
 ///
 /// This is used for testing. It is not thread safe.
-- (void)addGroup:(ZMSDispatchGroup *_Null_unspecified)dispatchGroup ZM_NON_NULL(1);
+- (void)addGroup:(ZMSDispatchGroup *_Null_unspecified)dispatchGroup;
 
 /// List of all groups associated with this context
 - (NSArray <ZMSDispatchGroup*>*_Nonnull)allGroups;
@@ -54,11 +56,11 @@
 /// is not running (e.g. blocked by a deadlock), the block and all its captured variables
 /// will be retained, otherwise it will eventually be released.
 /// @attention: Be *very careful* not to create deadlocks.
-- (void)performGroupedBlockAndWait:(dispatch_block_t _Null_unspecified )block ZM_NON_NULL(1);
+- (void)performGroupedBlockAndWait:(dispatch_block_t _Null_unspecified)block NS_SWIFT_UNAVAILABLE("Use `performGroupedAndWait<T>(_:)`");
 
 /// Executes a fetch request and asserts in case of error
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
+- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
 
 - (NSArray<ZMSDispatchGroup*>*_Nonnull)enterAllGroups;
 - (void)leaveAllGroups:(NSArray <ZMSDispatchGroup*>*_Null_unspecified)groups;
@@ -66,3 +68,5 @@
 @property (nonatomic) int pendingSaveCounter;
 
 @end
+
+NS_ASSUME_NONNULL_END

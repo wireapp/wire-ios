@@ -16,16 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
-import WireCommonComponents
-import AppCenter
-#if DISABLE_APPCENTER_CRASH_LOGGING
-#else
-import AppCenterCrashes
-#endif
-import AppCenterDistribute
 import avs
+import Foundation
+import WireCommonComponents
+import WireSyncEngine
 
 // MARK: - LaunchSequenceOperation
 protocol LaunchSequenceOperation {
@@ -109,97 +103,6 @@ final class FileBackupExcluderOperation: LaunchSequenceOperation {
     }
 }
 
-// MARK: - AppCenterOperation
-final class AppCenterOperation: NSObject, LaunchSequenceOperation {
-    private var zmLog: ZMSLog {
-        return ZMSLog(tag: "UI")
-    }
-
-    func execute() {
-        guard AutomationHelper.sharedHelper.useAppCenter || Bundle.useAppCenter else {
-            AppCenter.setTrackingEnabled(false)
-            return
-        }
-        UserDefaults.standard.set(true, forKey: "kBITExcludeApplicationSupportFromBackup") // check
-
-        guard !TrackingManager.shared.disableCrashSharing else {
-            AppCenter.setTrackingEnabled(false)
-            return
-        }
-
-#if DISABLE_APPCENTER_CRASH_LOGGING
-#else
-        Crashes.delegate = self
-#endif
-        Distribute.delegate = self
-
-        AppCenter.start()
-
-        AppCenter.logLevel = .verbose
-
-        // This method must only be used after Services have been started.
-        AppCenter.setTrackingEnabled(true)
-
-    }
-}
-
-extension AppCenterOperation: DistributeDelegate {
-    func distribute(_ distribute: Distribute, releaseAvailableWith details: ReleaseDetails) -> Bool {
-
-        guard
-            let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-            let window = appDelegate.window,
-            let rootViewController = appDelegate.appRootRouter?.rootViewController
-        else {
-            return false
-        }
-
-        let alertController = UIAlertController(title: "Update available \(details.shortVersion ?? "") (\(details.version ?? ""))",
-                                                message: "Release Note:\n\n\(details.releaseNotes ?? "")\n\nDo you want to update?",
-                                                preferredStyle: .actionSheet)
-        alertController.configPopover(pointToView: window)
-
-        alertController.addAction(UIAlertAction(title: "Update", style: .cancel) {_ in
-            Distribute.notify(.update)
-        })
-
-        alertController.addAction(UIAlertAction(title: "Postpone", style: .default) {_ in
-            Distribute.notify(.postpone)
-        })
-
-        if let url = details.releaseNotesUrl {
-            alertController.addAction(UIAlertAction(title: "View release note", style: .default) {_ in
-                UIApplication.shared.open(url, options: [:])
-            })
-        }
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) { _ in })
-
-        window.endEditing(true)
-        rootViewController.present(alertController, animated: true)
-
-        return true
-    }
-}
-
-#if DISABLE_APPCENTER_CRASH_LOGGING
-#else
-extension AppCenterOperation: CrashesDelegate {
-
-    func crashes(_ crashes: Crashes, shouldProcess errorReport: ErrorReport) -> Bool {
-        return !TrackingManager.shared.disableCrashSharing
-    }
-
-    internal func crashes(_ crashes: Crashes, didSucceedSending errorReport: ErrorReport) {
-        WireLogger.system.error("AppCenter: finished sending the crash report", attributes: .safePublic)
-    }
-
-    internal func crashes(_ crashes: Crashes, didFailSending errorReport: ErrorReport, withError error: Error?) {
-        WireLogger.system.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))", attributes: .safePublic)
-    }
-}
-#endif
-
 // MARK: - BackendInfoOperation
 
 final class BackendInfoOperation: LaunchSequenceOperation {
@@ -212,15 +115,13 @@ final class BackendInfoOperation: LaunchSequenceOperation {
             BackendInfo.preferredAPIVersion = preferredVersion
         }
     }
-
 }
 
 final class FontSchemeOperation: LaunchSequenceOperation {
 
     func execute() {
-        FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
+        FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
     }
-
 }
 
 final class VoIPPushHelperOperation: LaunchSequenceOperation {
@@ -228,7 +129,6 @@ final class VoIPPushHelperOperation: LaunchSequenceOperation {
     func execute() {
         VoIPPushHelper.storage = .applicationGroup
     }
-
 }
 
 /// This operation cleans up any state that may have been set in debug builds so that
@@ -250,5 +150,4 @@ final class CleanUpDebugStateOperation: LaunchSequenceOperation {
         // present in the app.
         DeveloperFlag.clearAllFlags()
     }
-
 }

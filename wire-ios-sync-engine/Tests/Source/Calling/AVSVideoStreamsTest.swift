@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 class AVSVideoStreamsTest: XCTestCase {
     func testThatJSONStringValue_ConformsToAVSAPI() {

@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
+
 @testable import WireSyncEngine
 
-class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
+final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
     private typealias Typing = WireSyncEngine.Typing
 
@@ -51,7 +53,7 @@ class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
     // MARK: - Tests
 
-    func testThatItSendsTypingNotifications() {
+    func testThatItSendsTypingNotifications() throws {
         // Given
         XCTAssertTrue(login())
 
@@ -73,10 +75,11 @@ class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
         // Then
         XCTAssertEqual(notifications.count, 1)
-        let notification = notifications.first
-        XCTAssertNotNil(notification)
-        XCTAssertEqual(notification!.conversation, conversation)
-        XCTAssertEqual(notification!.typingUsers.count, 0)
+
+        let notification = try XCTUnwrap(notifications.first)
+        XCTAssertEqual(notification.conversation, conversation)
+        XCTAssertEqual(notification.typingUsers.count, 0)
+
         XCTAssertEqual(conversation.typingUsers.count, 0)
     }
 
