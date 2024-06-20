@@ -375,7 +375,14 @@ final class ConversationListViewController: UIViewController, UITabBarController
         }
     }
 
-    func applySearchText(_ searchText: String) {
+    @objc
+    func applySearchText() {
+        let searchText = navigationItem
+            .searchController?
+            .searchBar
+            .text?
+            .trimmingCharacters(in: .whitespaces)
+            .lowercased() ?? ""
         listContentController.listViewModel.appliedSearchText = searchText
     }
 

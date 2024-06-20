@@ -18,9 +18,18 @@
 
 import UIKit
 
+private let searchDebounceInterval: TimeInterval = 1.2 // 0.2
+
 extension ConversationListViewController: UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
-        self.applySearchText(searchController.searchBar.text ?? "")
+
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(applySearchText),
+            object: nil
+        )
+
+        perform(#selector(applySearchText), with: nil, afterDelay: searchDebounceInterval)
     }
 }
