@@ -18,6 +18,7 @@
 
 import avs
 import UIKit
+import WireAnalytics
 import WireCommonComponents
 import WireSyncEngine
 
@@ -32,6 +33,7 @@ final class AppRootRouter: NSObject {
 
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
+    var analyticsSession: AnalyticsSession?
 
     private var authenticationCoordinator: AuthenticationCoordinator?
     private var switchingAccountRouter: SwitchingAccountRouter
@@ -82,6 +84,10 @@ final class AppRootRouter: NSObject {
         sessionManager.foregroundNotificationResponder = foregroundNotificationFilter
         sessionManager.switchingDelegate = switchingAccountRouter
         sessionManager.presentationDelegate = urlActionRouter
+
+        if let countlyKey = Bundle.countlyAppKey, let host = BackendEnvironment.shared.countlyURL {
+            self.analyticsSession = AnalyticsSession(appKey: countlyKey, host: host)
+        }
 
         super.init()
 
@@ -225,6 +231,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 userSession: userSession,
                 completion: completion
             )
+
+            analyticsSession?.trackEvent(.appOpen)
+
         case .headless:
             showLaunchScreen(completion: completion)
         case .loading:
