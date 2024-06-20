@@ -232,6 +232,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 completion: completion
             )
 
+            analyticsSession?.startSession()
             analyticsSession?.trackEvent(.appOpen)
 
         case .headless:
