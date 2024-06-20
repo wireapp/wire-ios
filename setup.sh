@@ -84,7 +84,7 @@ if [[ -n "${CI-}" ]]; then # skip cache bootstrap for CI
     echo "Skipping install since CI is defined"
 else
     which bundle || gem install bundler
-    bundle check || bundle install || echo "⚠️  Skipping bundle install since no or an old ruby version is installed"
+    bundle check || bundle install || echo "⚠️  Skipping bundle install, please check if you have the required ruby version installed"
 fi
 echo ""
 
