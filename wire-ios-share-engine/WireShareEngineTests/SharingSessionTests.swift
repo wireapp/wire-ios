@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModel
-import WireTesting
 @testable import WireShareEngine
+import WireTesting
+import XCTest
 
 final class SharingSessionTests: BaseSharingSessionTests {
 

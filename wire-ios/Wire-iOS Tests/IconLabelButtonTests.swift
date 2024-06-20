@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import XCTest
-@testable import WireCommonComponents
+
 @testable import Wire
 
-final class IconLabelButtonTests: BaseSnapshotTestCase {
+final class IconLabelButtonTests: XCTestCase {
 
     private var button: IconLabelButton!
 

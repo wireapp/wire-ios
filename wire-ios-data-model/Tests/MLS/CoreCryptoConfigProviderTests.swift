@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
@@ -56,9 +56,9 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     // MARK: - Core crypto configuration
 
     func test_itReturnsInitialCoreCryptoConfiguration() throws {
-        try syncMOC.performGroupedAndWait { context in
+        try syncMOC.performGroupedAndWait {
             // GIVEN
-            let selfUser = ZMUser.selfUser(in: context)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID.create()
 
             // mock core crypto key
@@ -81,11 +81,11 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     }
 
     func test_itReturnsFullCoreCryptoConfiguration() throws {
-        try syncMOC.performGroupedAndWait { context in
+        try syncMOC.performGroupedAndWait {
             // GIVEN
             // create self client and self user
             self.createSelfClient()
-            let selfUser = ZMUser.selfUser(in: context)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.domain = "example.domain.com"
 
             // mock core crypto key
@@ -156,10 +156,10 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     // MARK: - Client ID
 
     func test_itReturnsClientIDForSelfUser() throws {
-        try syncMOC.performGroupedAndWait { context in
+        try syncMOC.performGroupedAndWait {
             // GIVEN
             self.createSelfClient()
-            let selfUser = ZMUser.selfUser(in: context)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.domain = "example.domain.com"
 
             // WHEN

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModel
 @testable import WireRequestStrategy
+import XCTest
 
 class FederationTerminationManagerTests: MessagingTestBase {
 
@@ -40,7 +40,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     // MARK: - Handle federation termination with other domain
 
     func testThatItMarksOneToOneConversationAsReadOnly_AndAddsSystemMessage() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             otherUser.domain = defederatedDomain
             guard let conversation = otherUser.oneOnOneConversation else {
@@ -60,7 +60,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testThatItRemovesPendingConnectionRequest() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             otherUser.domain = defederatedDomain
             otherUser.connection?.status = .pending
@@ -74,7 +74,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testThatItCancelsSentConnectionRequest() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             otherUser.domain = defederatedDomain
             otherUser.connection?.status = .sent
@@ -88,7 +88,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testThatItRemovesConnectionForConnectedUsers() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             otherUser.domain = defederatedDomain
             otherUser.connection?.status = .accepted
@@ -102,7 +102,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testItRemovesSelfUserFromConversationHostedByDefederatedDomain_AndAddsSystemMessages() throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
             otherUser.domain = defederatedDomain
@@ -123,7 +123,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testThatItRemovesOtherUserFromConversationHostedBySelfDomain_AndAddsSystemMessages() throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
             otherUser.domain = defederatedDomain
@@ -144,7 +144,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testThatItRemovesSelfUserAndOtherUserFromConversationHostedByOtherDomain_AndAddsSystemMessages() throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let thirdDomain = "third.user.domain"
@@ -172,7 +172,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     // MARK: - Handle federation termination between two domains
 
     func testItRemovesDefederatedParticipantsFromConversationHostedBySelfDomain_AndAddsSystemMessages() throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
 
@@ -200,7 +200,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     }
 
     func testThatItRemovesParticipantFromConversationHostedBySelfDomain_AndAddsSystemMessages() throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
 

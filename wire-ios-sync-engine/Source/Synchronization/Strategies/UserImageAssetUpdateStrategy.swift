@@ -172,19 +172,19 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         let path: String
         switch apiVersion {
+
         case .v0:
             path = "/assets/v3/\(assetId)"
+
         case .v1:
-            guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
-                return nil
-            }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else { return nil }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
-                return nil
-            }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else { return nil }
 
             path = "/assets/\(domain)/\(assetId)"
         }
@@ -216,7 +216,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let size = size(for: sync), let image = imageUploadStatus?.consumeImage(for: size) {
             let request = requestFactory.upstreamRequestForAsset(withData: image, shareable: true, retention: .eternal, apiVersion: apiVersion)
+
+            // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+            // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
             request?.addContentDebugInformation("Uploading to /assets/V3: [\(size)]  [\(image)] ")
+            request?.contentHintForRequestLoop += "Uploading to /assets/V3: [\(size)]  [\(image)] "
+
             return request
         } else if sync === deleteRequestSync {
             if let assetId = imageUploadStatus?.consumeAssetToDelete() {

@@ -19,7 +19,6 @@
 @import WireUtilities;
 
 #import "MessagingTest.h"
-#import "NSURL+LaunchOptions.h"
 #import <CommonCrypto/CommonCrypto.h>
 
 static unsigned long SampleTimestamp = 1398634400; // Sun, 27 Apr 2014 21:33:20 GMT

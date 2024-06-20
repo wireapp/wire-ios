@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 /**
  * Handles client registration errors related to the client limit.
@@ -37,7 +37,7 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
         }
 
         // Get the credentials to start the deletion
-        let authenticationCredentials: ZMCredentials?
+        let authenticationCredentials: UserCredentials?
 
         switch currentStep {
         case .noHistory(let credentials, _):

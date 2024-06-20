@@ -18,8 +18,8 @@
 
 @import Foundation;
 @import WireTransport;
-#import "ZMSingleRequestSync.h"
-#import "ZMRequestGenerator.h"
+#import <WireRequestStrategy/ZMSingleRequestSync.h>
+#import <WireRequestStrategy/ZMRequestGenerator.h>
 
 @protocol ZMSimpleListRequestPaginatorSync;
 

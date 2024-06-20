@@ -1,9 +1,10 @@
 sources:
   - ../../Wire-iOS/Sources
+  - ../../WireCommonComponents
 templates:
   - ./AutoMockable.stencil
 output:
   ./generated
 args:
-  autoMockableTestableImports: ["Wire"]
-  autoMockableImports: ["WireDataModel"]
+  autoMockableTestableImports: ["Wire", "WireCommonComponents"]
+  autoMockableImports: ["CoreLocation", "WireDataModel", "WireSyncEngine"]

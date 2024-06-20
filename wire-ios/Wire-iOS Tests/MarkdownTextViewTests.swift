@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import Down
-@testable import WireCommonComponents
+import WireCommonComponents
+import WireDesign
+import XCTest
+
+@testable import Wire
 
 final class MarkdownTextViewTests: XCTestCase {
 

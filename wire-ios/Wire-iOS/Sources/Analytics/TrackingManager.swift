@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import AppCenter
-import WireCommonComponents
 import avs
+import Foundation
+import WireCommonComponents
 import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
@@ -36,37 +35,16 @@ final class TrackingManager: NSObject, TrackingInterface {
     static let shared = TrackingManager()
 
     var disableCrashSharing: Bool {
-        get {
-            return ExtensionSettings.shared.disableCrashSharing
-        }
-
-        set {
-            updateAppCenterStateIfNeeded(oldState: disableCrashSharing, newValue)
-            ExtensionSettings.shared.disableCrashSharing = newValue
-        }
+        get { ExtensionSettings.shared.disableCrashSharing }
+        set { ExtensionSettings.shared.disableCrashSharing = newValue }
     }
 
     var disableAnalyticsSharing: Bool {
-        get {
-            return ExtensionSettings.shared.disableAnalyticsSharing
-        }
-
+        get { ExtensionSettings.shared.disableAnalyticsSharing }
         set {
             Analytics.shared?.isOptedOut = newValue
             AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
             ExtensionSettings.shared.disableAnalyticsSharing = newValue
-        }
-    }
-
-    private func updateAppCenterStateIfNeeded(oldState: Bool, _ newState: Bool) {
-        switch (oldState, newState) {
-        case (true, false):
-            AppCenter.enabled = true
-            AppCenter.start()
-        case (false, true):
-            AppCenter.enabled = false
-        default:
-            return
         }
     }
 }

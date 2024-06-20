@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
 struct BurstTimestampSenderMessageCellConfiguration {
     let date: Date

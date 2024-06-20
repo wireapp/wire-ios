@@ -17,12 +17,11 @@
 //
 
 import SnapshotTesting
+@testable import Wire
 import WireDataModel
 import XCTest
 
-@testable import Wire
-
-final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireMockTransport
+import XCTest
 
 class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
 
@@ -27,7 +27,7 @@ class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
     }
 
     func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, teamIdentifier: String, data: [String: String?] = [:], file: StaticString = #file, line: UInt = #line) {
-        guard let event = event else { XCTFail("Should have event", file: file, line: line); return }
+        guard let event else { XCTFail("Should have event", file: file, line: line); return }
 
         XCTAssertEqual(event.type, type, "Wrong type \(String(describing: ZMUpdateEvent.eventTypeString(for: type)))", file: file, line: line)
 

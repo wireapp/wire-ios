@@ -845,7 +845,7 @@ public extension FileAssetCache {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-	guard let input = input else { return nil }
+	guard let input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
 
@@ -882,7 +882,7 @@ private struct FileCache: Cache {
             }
         }
 
-        if let error = error {
+        if let error {
             if error.code != NSFileReadNoSuchFileError {
                 WireLogger.assets.error("Failed reading asset data for key = \(key): \(error)")
             }
@@ -902,7 +902,7 @@ private struct FileCache: Cache {
                                                                                           .creationDate: creationDate])
         }
 
-        if let error = error {
+        if let error {
             WireLogger.assets.error("Failed storing asset data for key = \(key): \(error)")
         }
     }
@@ -925,7 +925,7 @@ private struct FileCache: Cache {
             }
         }
 
-        if let error = error {
+        if let error {
             WireLogger.assets.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
         }
     }
@@ -946,7 +946,7 @@ private struct FileCache: Cache {
             }
         }
 
-        if let error = error {
+        if let error {
             WireLogger.assets.error("Failed deleting asset data for key = \(key): \(error)")
         }
     }

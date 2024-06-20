@@ -18,8 +18,9 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
-final class PersonalAccountView: BaseAccountView, AccountView {
+final class PersonalAccountView: BaseAccountView {
 
     let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)
@@ -34,11 +35,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
     private var conversationListObserver: NSObjectProtocol!
     private var connectionRequestObserver: NSObjectProtocol!
 
-    override var collapsed: Bool {
-        didSet { userImageView.isHidden = collapsed }
-    }
-
-    override init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
+    override init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         super.init(account: account, user: user, displayContext: displayContext)
 
         self.isAccessibilityElement = true
@@ -56,9 +53,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
         }
 
         self.imageViewContainer.addSubview(userImageView)
-
         userImageView.translatesAutoresizingMaskIntoConstraints = false
-
         userImageView.fitIn(view: imageViewContainer, inset: 2)
 
         update()
@@ -81,7 +76,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
         }
     }
 
-    func createDotConstraints() -> [NSLayoutConstraint] {
+    override func createDotConstraints() -> [NSLayoutConstraint] {
         let dotSize: CGFloat = 9
         dotView.translatesAutoresizingMaskIntoConstraints = false
         imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -95,6 +90,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
 }
 
 extension PersonalAccountView {
+
     override func userDidChange(_ changeInfo: UserChangeInfo) {
         super.userDidChange(changeInfo)
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import LocalAuthentication
-import CoreData
 
 /// An object that provides encryption at rest.
 ///
@@ -76,9 +76,13 @@ public protocol EARServiceInterface: AnyObject {
     func setInitialEARFlagValue(_ enabled: Bool)
 }
 
+/// The EARService is responsible for managing encryption at rest functionality. See <doc:encryption-at-rest> for more information about how encryption at rest works.
+
 public class EARService: EARServiceInterface {
 
     // MARK: - Properties
+
+    /// An object to assist in migrations.
 
     public weak var delegate: EARServiceDelegate?
 
@@ -98,6 +102,15 @@ public class EARService: EARServiceInterface {
     private let authenticationContext: any AuthenticationContextProtocol
 
     // MARK: - Life cycle
+
+    /// Create a new `EARService`.
+    ///
+    /// - Parameters:
+    ///   - accountID: The id of the self user.
+    ///   - databaseContexts: A list of database contexts that require access to the database key.
+    ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when the service is running in app extensions.
+    ///   - sharedUserDefaults: The shared user defaults in which to keep track of whether EAR is enabled.
+    ///   - authenticationContext: The authentication context used to access encryption keys.
 
     public convenience init(
         accountID: UUID,
@@ -148,9 +161,17 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Feature Flag
 
+    /// Whether encryption at rest is enabled.
+
     public var isEAREnabled: Bool {
         earStorage.earEnabled()
     }
+
+    /// Store the encryption a rest flag value.
+    ///
+    /// This flag used to be stored in the database store metadata but was moved to
+    /// the shared user defaults. This method was introduced to copy the value from
+    /// old location to the new location.
 
     public func setInitialEARFlagValue(_ enabled: Bool) {
         earStorage.enableEAR(enabled)
@@ -177,6 +198,18 @@ public class EARService: EARServiceInterface {
     }
 
     // MARK: - Enable / disable
+
+    /// Enable encryption at rest.
+    ///
+    /// Invoking this method will generate new encryption keys and prompt the user for
+    /// biometric authentication. Sensitive data in the database will be encrypted with
+    /// the newly generated database key (unless `skipMigration` is `true`). If an error
+    /// occurs during this process, the keys will be destroyed, the migration is rolled
+    /// back and encryption at rest will remain disabled.
+    ///
+    /// - Parameters:
+    ///   - context: The context in which to perform the migration.
+    ///   - skipMigration: Whether the migration should be skipped. This is helpful for testing.
 
     public func enableEncryptionAtRest(
         context: NSManagedObjectContext,
@@ -217,7 +250,7 @@ public class EARService: EARServiceInterface {
         if skipMigration {
             WireLogger.ear.info("skipping migration")
             try enableEAR(context)
-        } else if let delegate = delegate {
+        } else if let delegate {
             WireLogger.ear.info("preparing for migration")
             try delegate.prepareForMigration { context in
                 try enableEAR(context)
@@ -226,6 +259,17 @@ public class EARService: EARServiceInterface {
             throw EARServiceFailure.cannotPerformMigration
         }
     }
+
+    /// Disable encryption at rest.
+    ///
+    /// Invoking this method will decrypt data in the database (unless `skipMigration` is `true`)
+    /// and destroy the encryption keys. If an error occurs during this process, the migration
+    /// will be rolled back, the keys will not be destroyed, and encryption at rest will remain
+    /// enabled.
+    ///
+    /// - Parameters:
+    ///   - context: The context in which to perform the migration.
+    ///   - skipMigration: Whether the migration should be skipped. This is helpful for testing.
 
     public func disableEncryptionAtRest(
         context: NSManagedObjectContext,
@@ -267,7 +311,7 @@ public class EARService: EARServiceInterface {
         if skipMigration {
             WireLogger.ear.info("skipping migration")
             try disableEAR(context)
-        } else if let delegate = delegate {
+        } else if let delegate {
             WireLogger.ear.info("preparing for migration")
             try delegate.prepareForMigration { context in
                 try disableEAR(context)
@@ -388,6 +432,8 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Public keys
 
+    /// Fetch both the primary and secondary public keys.
+
     public func fetchPublicKeys() throws -> EARPublicKeys? {
         guard isEAREnabled else {
             return nil
@@ -414,6 +460,15 @@ public class EARService: EARServiceInterface {
     }
 
     // MARK: - Private keys
+
+    /// Fetch the private keys.
+    ///
+    /// Access to the private keys is restricted. The secondary key is available in the
+    /// background if the device has been unlocked once. The primary key is only available
+    /// when the app is active in the foreground.
+    ///
+    /// - Parameter includingPrimary: Set to `true` to request also the primary private key.
+    /// - Returns: The private key(s) if encryption at rest is enabled and the keys are accessible.
 
     public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
         guard isEAREnabled else {
@@ -467,11 +522,21 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Lock / unlock database
 
+    /// Lock the database.
+    ///
+    /// After invoking this method, the contents of the database are not accessible
+    /// until the database is unlocked again.
+
     public func lockDatabase() {
         WireLogger.ear.info("locking database", attributes: .safePublic)
         setDatabaseKeyInAllContexts(nil)
         keyRepository.clearCache()
     }
+
+    /// Unlock the database.
+    ///
+    /// Invoking this method will allow access to the database. This will only succeed
+    /// the user has authenticated via biometrics.
 
     public func unlockDatabase() throws {
         do {

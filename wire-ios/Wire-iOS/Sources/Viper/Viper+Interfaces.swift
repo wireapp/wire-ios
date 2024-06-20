@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 // MARK: - Module
@@ -117,5 +116,4 @@ protocol RouterInterface: RouterPresenterInterface {
     /// A weak reference to the view controller
 
     var view: View! { get set }
-
 }

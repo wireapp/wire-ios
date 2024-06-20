@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import UserNotifications
+import WireUtilitiesSupport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -44,7 +45,8 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-        self.notificationCenter = UserNotificationCenterMock()
+
+        notificationCenter = .init()
         self.syncMOC.performAndWait {
             self.sut = LocalNotificationDispatcher(in: self.syncMOC)
         }
@@ -54,7 +56,7 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
          self.sut.failedMessageNotifications,
          self.sut.callingNotifications].forEach { $0.notificationCenter = notificationCenter }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.user1 = ZMUser.insertNewObject(in: self.syncMOC)
             self.user2 = ZMUser.insertNewObject(in: self.syncMOC)
             self.user1.remoteIdentifier = UUID.create()
@@ -94,7 +96,7 @@ extension LocalNotificationDispatcherTests {
     func testThatItCreatesNotificationFromMessagesIfNotActive() {
         // GIVEN
         let text = UUID.create().transportString()
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: Text(content: text)), senderID: self.user1.remoteIdentifier)
 
             // WHEN
@@ -117,7 +119,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatItCreatesNotificationFromSystemMessagesIfNotActive() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let messageTimer = MessageDestructionTimeoutValue.fiveMinutes
             let payload: [String: Any] = [
@@ -184,7 +186,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatWhenFailingAMessageItSchedulesANotification() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.conversation1.appendText(content: "bar") as! ZMClientMessage
             message.sender = self.user1
@@ -198,7 +200,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatItCancelsAllNotificationsForFailingMessagesWhenCancelingAllNotifications() {
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             let note1 = ZMLocalNotification(expiredMessageIn: conversation1, moc: syncMOC)!
             let note2 = ZMLocalNotification(expiredMessageIn: conversation1, moc: syncMOC)!
@@ -214,7 +216,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatItCancelsNotificationsForFailingMessagesWhenCancelingNotificationsForASpecificConversation() {
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             let note1 = ZMLocalNotification(expiredMessageIn: conversation1, moc: syncMOC)!
             let note2 = ZMLocalNotification(expiredMessageIn: conversation2, moc: syncMOC)!
@@ -237,7 +239,7 @@ extension LocalNotificationDispatcherTests {
         var note1: ZMLocalNotification!
         var note2: ZMLocalNotification!
 
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             let message = try! conversation1.appendText(content: "foo") as! ZMClientMessage
             message.sender = user1
@@ -253,14 +255,14 @@ extension LocalNotificationDispatcherTests {
             conversationOnUI?.markAsRead()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // THEN
             XCTAssertEqual(self.notificationCenter.removedNotifications, Set([note1.id.uuidString, note2.id.uuidString]))
         }
     }
 
     func testThatItSchedulesADefaultNotificationIfContentShouldNotBeVisible() {
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey)
             self.syncMOC.saveOrRollback()
@@ -281,7 +283,7 @@ extension LocalNotificationDispatcherTests {
 
     func testThatItDoesNotCreateNotificationForTwoMessageEventsWithTheSameNonce() {
         var event: ZMUpdateEvent!
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             event = createUpdateEvent(UUID.create(), conversationID: self.conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: Text(content: "foobar")), senderID: self.user1.remoteIdentifier)
 
@@ -295,7 +297,7 @@ extension LocalNotificationDispatcherTests {
             XCTAssertEqual(self.scheduledRequests.count, 1)
 
             // WHEN
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             self.sut.processEventsWhileInBackground([event])
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -308,7 +310,7 @@ extension LocalNotificationDispatcherTests {
 
     func testThatItDoesNotCreateNotificationForFileUploadEventsWithTheSameNonce() {
         var event: ZMUpdateEvent!
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             let url = Bundle(for: LocalNotificationDispatcherTests.self).url(forResource: "video", withExtension: "mp4")
             let audioMetadata = ZMAudioMetadata(fileURL: url!, duration: 100)
@@ -323,7 +325,7 @@ extension LocalNotificationDispatcherTests {
         XCTAssertEqual(self.sut.eventNotifications.notifications.count, 1)
         XCTAssertEqual(self.scheduledRequests.count, 1)
 
-        self.syncMOC.performGroupedBlockAndWait { [self] in
+        self.syncMOC.performGroupedAndWait { [self] in
             // WHEN
             self.sut.processEventsWhileInBackground([event])
         }
@@ -448,7 +450,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatEstimatedUnreadMentionCountIsIncreased_WhenProcessingTextMessageWhichMentionsSelfUser() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             let text = UUID.create().transportString()
             let selfUserMention = Mention(range: NSRange(), user: selfUser)
@@ -468,7 +470,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatEstimatedUnreadMentionCountIsIncreased_WhenProcessingTextMessageWhichRepliesToSelfUser() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // GIVEN
             let message = try! conversation1.appendText(content: "Hello") as! ZMOTRMessage
             let text = UUID.create().transportString()

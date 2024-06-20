@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
 
@@ -117,7 +117,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
 
 extension ConversationAudioMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        guard let message = message else { return }
+        guard let message else { return }
 
         delegate?.perform(action: action, for: message, view: self)
     }

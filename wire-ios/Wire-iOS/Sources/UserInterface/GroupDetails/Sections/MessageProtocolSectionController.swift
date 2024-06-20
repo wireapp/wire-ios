@@ -26,13 +26,15 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     // MARK: - Properties
 
     private let messageProtocol: MessageProtocol
+    private let ciphersuite: MLSCipherSuite?
     private let groupID: MLSGroupID?
 
     // MARK: - Life cycle
 
-    init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil) {
+    init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil, ciphersuite: MLSCipherSuite? = nil) {
         self.messageProtocol = messageProtocol
         self.groupID = groupID
+        self.ciphersuite = ciphersuite
         super.init()
     }
 
@@ -48,7 +50,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
-        guard let collectionView = collectionView else { return }
+        guard let collectionView else { return }
         Cell.register(in: collectionView)
     }
 
@@ -87,7 +89,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case (.mls, 1):
             cell.accessibilityIdentifier = "cell.groupdetails.cipher_suite"
             cell.title = L10n.Localizable.GroupDetails.MessageProtocol.cipherSuite
-            cell.status = "MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 (0x0001)"
+            cell.status = ciphersuite?.description ?? ""
             cell.allowMultilineStatus = true
 
         case (.mls, 2) where Bundle.developerModeEnabled:

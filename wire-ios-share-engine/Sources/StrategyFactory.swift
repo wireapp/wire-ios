@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireLinkPreview
 import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
-import WireLinkPreview
 
 final class StrategyFactory {
 

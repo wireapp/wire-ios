@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
+import WireDesign
+import WireSyncEngine
 
 extension ZMConversation: ShareDestination {
 
@@ -172,7 +172,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
     func showForwardFor(message: ZMConversationMessage?, from view: UIView?) {
         guard let userSession = ZMUserSession.shared(),
-              let message = message else { return }
+              let message else { return }
 
         endEditing()
 
@@ -191,7 +191,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
         let presenter: PopoverPresenterViewController? = (presentedViewController ?? UIApplication.shared.firstKeyWindow) as? PopoverPresenterViewController
 
-        if let presenter = presenter,
+        if let presenter,
            let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
             keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: presenter)
         }

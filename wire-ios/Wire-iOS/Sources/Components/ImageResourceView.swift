@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import FLAnimatedImage
+import Foundation
 import WireDataModel
 
 final class ImageResourceView: FLAnimatedImageView {
@@ -59,14 +59,14 @@ final class ImageResourceView: FLAnimatedImageView {
         reuseToken = token
         loadingView.isHidden = hideLoadingView || loadingView.isHidden || imageResource == nil
 
-        guard let imageResource = imageResource, imageResource.cacheIdentifier != nil else {
+        guard let imageResource, imageResource.cacheIdentifier != nil else {
             loadingView.isHidden = true
             completion?()
             return
         }
 
         imageResource.fetchImage(sizeLimit: imageSizeLimit, completion: { [weak self] mediaAsset, cacheHit in
-            guard token == self?.reuseToken, let `self` = self else { return }
+            guard token == self?.reuseToken, let self else { return }
 
             let update = {
                 self.loadingView.isHidden = hideLoadingView || mediaAsset != nil

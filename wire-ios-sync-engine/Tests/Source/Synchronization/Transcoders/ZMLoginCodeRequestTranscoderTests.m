@@ -23,7 +23,6 @@
 #import "MessagingTest.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import "ZMAuthenticationStatus.h"
-#import "ZMCredentials.h"
 #import "ZMAuthenticationStatus.h"
 #import "Tests-Swift.h"
 

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
@@ -27,7 +28,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private var token: NSObjectProtocol?
     var actionController: ConversationActionController?
     private var renameGroupSectionController: RenameGroupSectionController?
-    private var syncObserver: InitialSyncObserver!
+    private var initialSyncToken: (any NSObjectProtocol)!
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
@@ -59,9 +60,22 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
 
             token = ConversationChangeInfo.add(observer: self, for: conversation)
+
             if let session = ZMUserSession.shared() {
-                syncObserver = InitialSyncObserver(in: session) { [weak self] completed in
-                    self?.didCompleteInitialSync = completed
+                if session.hasCompletedInitialSync {
+                    didCompleteInitialSync = true
+                } else {
+                    let context = session.managedObjectContext
+
+                    initialSyncToken = NotificationInContext.addObserver(
+                        name: .initialSync,
+                        context: context.notificationContext
+                    ) { [weak self] _ in
+                        context.performGroupedBlock {
+                            self?.didCompleteInitialSync = true
+                            self?.initialSyncToken = nil
+                        }
+                    }
                 }
             }
         }
@@ -273,7 +287,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // Protocol details
         sections.append(MessageProtocolSectionController(
             messageProtocol: conversation.messageProtocol,
-            groupID: conversation.mlsGroupID
+            groupID: conversation.mlsGroupID,
+            ciphersuite: conversation.ciphersuite
         ))
 
         return sections
@@ -298,6 +313,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             navigationController?.popToRootViewController(animated: true)
         } else {
             updateUserE2EICertificationStatuses()
+        }
+
+        if changeInfo.mlsVerificationStatusChanged {
+            setupNavigatiomItem()
         }
     }
 

@@ -38,7 +38,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var lastRequestToShowConnectionRequest: UUID?
 
     func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?, in session: ZMUserSession) {
-        if let message = message {
+        if let message {
             lastRequestToShowMessage = (session, conversation, message)
         } else {
             lastRequestToShowConversation = (session, conversation)
@@ -70,7 +70,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
         // no-op
     }
 
-    func update(credentials: ZMCredentials) -> Bool {
+    func update(credentials: UserCredentials) -> Bool {
         return false
     }
 

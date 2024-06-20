@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class UpdateConnectionActionHandlerTests: MessagingTestBase {
 
@@ -38,7 +38,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForUpdatingConnection_APIV0() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.oneToOneConnection.to.remoteIdentifier!
             let action = UpdateConnectionAction(connection: self.oneToOneConnection,
@@ -56,7 +56,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForUpdatingConnection_APIV1() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.oneToOneConnection.to.qualifiedID!
             let action = UpdateConnectionAction(connection: self.oneToOneConnection,
@@ -91,7 +91,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessConnectionEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let newStatus: ZMConnectionStatus = .blocked
             let action = UpdateConnectionAction(connection: self.oneToOneConnection,
@@ -113,7 +113,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .blocked)
@@ -141,7 +141,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .blocked)
@@ -169,7 +169,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Helpers
 
     func assertFailure(_ expectedError: UpdateConnectionAction.Failure, on response: ZMTransportResponse) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection, newStatus: .accepted)
 

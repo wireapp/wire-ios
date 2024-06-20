@@ -32,7 +32,7 @@ struct RandomHandleGenerator {
 
         var possibleHandles = [String]()
 
-        if let normalized = normalized {
+        if let normalized {
             possibleHandles.append(normalized)
             possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 1).appendAllDigits())
             possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(numberOfDigits: 2, variations: 4))

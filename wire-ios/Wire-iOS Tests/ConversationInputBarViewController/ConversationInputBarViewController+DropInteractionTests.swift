@@ -16,27 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngineSupport
 import XCTest
+
 @testable import Wire
 
 final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
 
-    var userSession: UserSessionMock!
+    private var mockUserSession: UserSessionMock!
+    private var mockSecurityClassificationProviding: MockSecurityClassificationProviding!
 
     override func setUp() {
         super.setUp()
-        userSession = UserSessionMock()
+
+        mockUserSession = UserSessionMock()
+
+        mockSecurityClassificationProviding = MockSecurityClassificationProviding()
+        mockSecurityClassificationProviding.classificationUsersConversationDomain_MockValue = .notClassified
     }
 
     override func tearDown() {
-        userSession = nil
+        mockSecurityClassificationProviding = nil
+        mockUserSession = nil
         super.tearDown()
     }
 
     func testThatItHandlesDroppingFiles_FlagEnabled() {
         // GIVEN
         let mockConversation = MockInputBarConversationType()
-        let sut = ConversationInputBarViewController(conversation: mockConversation, userSession: userSession)
+        let sut = makeConversationInputBarViewController(conversation: mockConversation)
         let shareRestrictionManager = MediaShareRestrictionManagerMock(canFilesBeShared: true)
 
         // WHEN
@@ -49,7 +57,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
     func testThatItPreventsDroppingFiles_FlagDisabled() {
         // GIVEN
         let mockConversation = MockInputBarConversationType()
-        let sut = ConversationInputBarViewController(conversation: mockConversation, userSession: userSession)
+        let sut = makeConversationInputBarViewController(conversation: mockConversation)
         let shareRestrictionManager = MediaShareRestrictionManagerMock(canFilesBeShared: false)
 
         // WHEN
@@ -59,6 +67,14 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #file, line: #line)
     }
 
+    private func makeConversationInputBarViewController(conversation: MockInputBarConversationType) -> ConversationInputBarViewController {
+        ConversationInputBarViewController(
+            conversation: conversation,
+            userSession: mockUserSession,
+            classificationProvider: mockSecurityClassificationProviding,
+            networkStatusObservable: MockNetworkStatusObservable()
+        )
+    }
 }
 
 // MARK: - Helpers

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol IconImageStyle {
     var icon: StyleKitIcon? { get }
@@ -99,7 +100,7 @@ class IconImageView: UIImageView {
     }
 
     private func set(size: StyleKitIcon.Size?, color: UIColor?) {
-        guard let size = size, let color = color else {
+        guard let size, let color else {
             return
         }
 

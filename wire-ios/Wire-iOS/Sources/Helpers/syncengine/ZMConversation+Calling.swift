@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import class WireCommonComponents.NetworkStatus
 
 extension ZMConversation {
 
@@ -122,14 +122,21 @@ extension ZMConversation {
 
     func warnAboutNoInternetConnection() -> Bool {
         typealias VoiceNetworkErrorLocale = L10n.Localizable.Voice.NetworkError
-        guard AppDelegate.isOffline else {
+        guard case .unreachable = NetworkStatus.shared.reachability else {
             return false
         }
 
-        let internetConnectionAlert = UIAlertController.alertWithOKButton(title: VoiceNetworkErrorLocale.title,
-                                                                          message: VoiceNetworkErrorLocale.body)
+        let alert = UIAlertController(
+            title: VoiceNetworkErrorLocale.title,
+            message: VoiceNetworkErrorLocale.body,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
-        AppDelegate.shared.window?.rootViewController?.present(internetConnectionAlert, animated: true)
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
 
         return true
     }

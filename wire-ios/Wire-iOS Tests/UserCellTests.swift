@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireUtilities
 @testable import Wire
+import WireUtilities
+import XCTest
 
-final class UserCellTests: BaseSnapshotTestCase {
+final class UserCellTests: XCTestCase {
 
     // MARK: - Properties
 

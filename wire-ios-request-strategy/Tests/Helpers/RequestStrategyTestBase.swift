@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireDataModel
 import WireRequestStrategy
 import XCTest
-import WireDataModel
 
 extension ZMContextChangeTrackerSource {
     func notifyChangeTrackers(_ client: UserClient) {

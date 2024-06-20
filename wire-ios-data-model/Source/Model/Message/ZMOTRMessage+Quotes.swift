@@ -24,8 +24,8 @@ extension ZMOTRMessage {
 
     func establishRelationshipsForInsertedQuote(_ quote: Quote) {
 
-        guard let managedObjectContext = managedObjectContext,
-              let conversation = conversation,
+        guard let managedObjectContext,
+              let conversation,
               let quotedMessageId = UUID(uuidString: quote.quotedMessageID),
               let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: managedObjectContext) else { return }
 

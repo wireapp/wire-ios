@@ -37,7 +37,7 @@ final class AuthenticationInterfaceBuilder {
     var backendEnvironmentProvider: () -> BackendEnvironmentProvider
 
     var backendEnvironment: BackendEnvironmentProvider {
-        return backendEnvironmentProvider()
+        backendEnvironmentProvider()
     }
 
     // MARK: - Initialization
@@ -47,8 +47,10 @@ final class AuthenticationInterfaceBuilder {
      * - parameter featureProvider: The object to use when checking for features
      */
 
-    init(featureProvider: AuthenticationFeatureProvider,
-         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
+    init(
+        featureProvider: AuthenticationFeatureProvider,
+        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
+    ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
     }
@@ -83,13 +85,9 @@ final class AuthenticationInterfaceBuilder {
 
             } else {
                 let prefill: AuthenticationPrefilledCredentials?
-
-                if let credentials = credentials {
-                    // If we found the credentials of the expired session, pre-fill them
-                    let prefillType: AuthenticationCredentialsType = credentials.phoneNumber != nil && credentials.emailAddress == nil ? .phone : .email
-                    prefill = AuthenticationPrefilledCredentials(primaryCredentialsType: prefillType, credentials: credentials, isExpired: isSignedOut)
+                if let credentials, credentials.emailAddress != nil {
+                    prefill = AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
                 } else {
-                    // Otherwise, default to the email pre-fill screen.
                     prefill = nil
                 }
 
@@ -104,8 +102,8 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .provideCredentials(let credentialsFlowType, let prefill):
-            return makeCredentialsViewController(for: .login(credentialsFlowType, prefill))
+        case .provideCredentials(let prefill):
+            return makeCredentialsViewController(for: .login(prefill))
 
         case .createCredentials:
             return makeCredentialsViewController(for: .registration)
@@ -127,10 +125,6 @@ final class AuthenticationInterfaceBuilder {
             let backupStep = BackupRestoreStepDescription(context: context)
             return makeViewController(for: backupStep)
 
-        case .enterPhoneVerificationCode(let phoneNumber):
-            let verifyPhoneStep = VerifyPhoneStepDescription(phoneNumber: phoneNumber, allowChange: false)
-            return makeViewController(for: verifyPhoneStep)
-
         case .enterEmailVerificationCode(let email, _, _):
             let verifyEmailStep = VerifyEmailStepDescription(email: email, canChangeEmail: false)
             return makeViewController(for: verifyEmailStep)
@@ -150,16 +144,8 @@ final class AuthenticationInterfaceBuilder {
             let viewController = makeViewController(for: addUsernameStep)
             return viewController
 
-        case .enterActivationCode(let credentials, _):
-            let step: AuthenticationStepDescription
-
-            switch credentials {
-            case .email(let email):
-                step = VerifyEmailStepDescription(email: email)
-            case .phone(let phoneNumber):
-                step = VerifyPhoneStepDescription(phoneNumber: phoneNumber, allowChange: false)
-            }
-
+        case .enterActivationCode(let unverifiedEmail, _):
+            let step = VerifyEmailStepDescription(email: unverifiedEmail)
             return makeViewController(for: step)
 
         case .pendingEmailLinkVerification(let emailCredentials):
@@ -251,9 +237,6 @@ final class AuthenticationInterfaceBuilder {
      */
 
     private func makeCredentialsViewController(for flowType: AuthenticationCredentialsViewController.FlowType) -> AuthenticationCredentialsViewController {
-        let viewController = AuthenticationCredentialsViewController(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
-        viewController.configure(with: featureProvider)
-        return viewController
+        .init(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
     }
-
 }

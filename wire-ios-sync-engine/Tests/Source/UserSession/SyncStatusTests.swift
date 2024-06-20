@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 final class SyncStatusTests: MessagingTest {
 
@@ -318,6 +318,22 @@ final class SyncStatusTests: MessagingTest {
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
+    }
+
+    func testThatItRestartsQuickSyncWhenPushChannelWasOpenedAfterNotificationFetchBegan() {
+        // given
+        lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
+        sut.pushChannelDidOpen()
+        sut.determineInitialSyncPhase()
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
+        XCTAssertFalse(sut.needsToRestartQuickSync)
+
+        // when
+        let beforePushChannelEstablished = sut.pushChannelEstablishedDate?.addingTimeInterval(-.oneSecond)
+        sut.completedFetchingNotificationStream(fetchBeganAt: beforePushChannelEstablished)
+
+        // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
     }
 
     func testThatItRestartsQuickSyncWhenPushChannelOpens_PreviousInQuickSync() {

@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
-import WireTesting
 import WireDataModel
 import WireDataModelSupport
+import WireTesting
 import WireTransport.Testing
-import avs
-@testable import WireSyncEngineSupport
+import WireUtilitiesSupport
+
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
@@ -56,7 +58,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
         let mockContextStorage = MockLAContextStorable()
         mockContextStorage.clear_MockMethod = { }
@@ -78,12 +81,10 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: nil,
             userId: account.userIdentifier
         )
 
@@ -93,7 +94,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         )
 
         return userSession
@@ -154,7 +156,7 @@ extension IntegrationTest {
 
         pushRegistry = PushRegistryMock(queue: nil)
         application = ApplicationMock()
-        notificationCenter = UserNotificationCenterMock()
+        notificationCenter = .init()
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
         mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier, useCache: true)
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self
@@ -165,17 +167,17 @@ extension IntegrationTest {
 
     func setupTimers() {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
-            $0.zm_createMessageObfuscationTimer()
+            userSession?.syncManagedObjectContext.zm_createMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.zm_createMessageDeletionTimer()
     }
 
     func destroyTimers() {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
-            $0.zm_teardownMessageObfuscationTimer()
+            userSession?.syncManagedObjectContext.zm_teardownMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.performGroupedAndWait {
-            $0.zm_teardownMessageDeletionTimer()
+            userSession?.managedObjectContext.zm_teardownMessageDeletionTimer()
         }
     }
 
@@ -222,7 +224,7 @@ extension IntegrationTest {
     @objc
     func destroySessionManager() {
         destroyTimers()
-        userSession?.managedObjectContext.performGroupedAndWait { _ in
+        userSession?.managedObjectContext.performGroupedAndWait {
             self.userSession?.tearDown()
         }
         userSession = nil
@@ -266,7 +268,7 @@ extension IntegrationTest {
     @objc
     func createSessionManager() {
         guard
-            let application = application,
+            let application,
             let transportSession = mockTransportSession
         else {
             return XCTFail()
@@ -317,7 +319,7 @@ extension IntegrationTest {
     @objc
     func createSharedSearchDirectory() {
         guard sharedSearchDirectory == nil else { return }
-        guard let userSession = userSession else { XCTFail("Could not create shared SearchDirectory");  return }
+        guard let userSession else { XCTFail("Could not create shared SearchDirectory");  return }
         sharedSearchDirectory = SearchDirectory(userSession: userSession)
     }
 
@@ -472,18 +474,18 @@ extension IntegrationTest {
 
     @objc
     func login() -> Bool {
-        let credentials = ZMEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
         return login(withCredentials: credentials, ignoreAuthenticationFailures: false)
     }
 
     @objc(loginAndIgnoreAuthenticationFailures:)
     func login(ignoreAuthenticationFailures: Bool) -> Bool {
-        let credentials = ZMEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
         return login(withCredentials: credentials, ignoreAuthenticationFailures: ignoreAuthenticationFailures)
     }
 
     @objc
-    func login(withCredentials credentials: ZMCredentials, ignoreAuthenticationFailures: Bool = false) -> Bool {
+    func login(withCredentials credentials: UserCredentials, ignoreAuthenticationFailures: Bool = false) -> Bool {
         sessionManager?.unauthenticatedSession?.login(with: credentials)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         sessionManager?.unauthenticatedSession?.continueAfterBackupImportStep()
@@ -504,13 +506,13 @@ extension IntegrationTest {
 
     @objc(userForMockUser:)
     func user(for mockUser: MockUser) -> ZMUser? {
-        let uuid = mockUser.managedObjectContext!.performGroupedAndWait { _ in
+        let uuid = mockUser.managedObjectContext!.performGroupedAndWait {
             return UUID(transportString: mockUser.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMUser.sortedFetchRequest(with: predicate)
-        let result = userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMUser]
+        let result = try! userSession?.managedObjectContext.fetch(request) as? [ZMUser]
 
         if let user = result?.first {
             return user
@@ -521,14 +523,14 @@ extension IntegrationTest {
 
     @objc(conversationForMockConversation:)
     func conversation(for mockConversation: MockConversation) -> ZMConversation? {
-        let uuid = mockConversation.managedObjectContext!.performGroupedAndWait { _ in
+        let uuid = mockConversation.managedObjectContext!.performGroupedAndWait {
             return UUID(transportString: mockConversation.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
 
-        let result = userSession?.managedObjectContext.performAndWait { userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+        let result = userSession?.managedObjectContext.performAndWait { try! userSession?.managedObjectContext.fetch(request) as? [ZMConversation]
         }
 
         if let conversation = result?.first {
@@ -621,7 +623,7 @@ extension IntegrationTest {
         changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
 
         closePushChannelAndWaitUntilClosed()
-        changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
+        changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
         mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 

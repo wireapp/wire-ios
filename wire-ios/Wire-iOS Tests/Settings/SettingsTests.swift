@@ -17,33 +17,13 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class SettingsTests: XCTestCase {
+
     class override func tearDown() {
         Settings.shared.reset()
-    }
-
-    func testThatDateIsNilWhenInit() {
-        // GIVEN
-        Settings.shared.reset()
-
-        // WHEN
-        let lastPushAlertDate: Date? = Settings.shared[.lastPushAlertDate]
-
-        // THEN
-        XCTAssertNil(lastPushAlertDate)
-    }
-
-    func testThatDateCanBeWritten() {
-        // GIVEN
-        let date = Date()
-
-        // WHEN
-        Settings.shared[.lastPushAlertDate] = date
-
-        // THEN
-        XCTAssertEqual(date, Settings.shared[.lastPushAlertDate])
     }
 
     func testThatEnumCanBeWrittenAndReturnAnEnum() {

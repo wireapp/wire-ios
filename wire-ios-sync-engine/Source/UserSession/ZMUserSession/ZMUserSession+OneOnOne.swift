@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension ZMUserSession {
 
@@ -28,7 +29,7 @@ extension ZMUserSession {
 
     public func createTeamOneOnOne(
         with user: UserType,
-        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+        completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     ) {
         guard let viewUser = user.materialize(in: viewContext) else {
             completion(.failure(.userDoesNotExist))
@@ -68,8 +69,10 @@ extension ZMUserSession {
                 await self.viewContext.perform {
                     completion(.failure(error))
                 }
+            } catch {
+                WireLogger.mls.error("creating team 1:1 conversation failed: \(error))")
+                assertionFailure(String(reflecting: error))
             }
         }
     }
-
 }

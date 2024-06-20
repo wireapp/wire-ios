@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
 @testable import WireSyncEngine
+import XCTest
 
 class MockCookieStorage: CookieProvider {
 
@@ -373,7 +373,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             // and when
 
             // the user entered the password, we can proceed trying to register the client
-            self.sut.emailCredentials = ZMEmailCredentials(email: "john.doe@example.com", password: "123456789")
+            self.sut.emailCredentials = UserEmailCredentials(email: "john.doe@example.com", password: "123456789")
 
             // then
             XCTAssertEqual(sut.currentPhase, .waitingForPrekeys)

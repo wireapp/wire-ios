@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
 import UIKit
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class FileTransferView: UIView, TransferView {
     var fileMessage: ZMConversationMessage?
@@ -153,7 +153,7 @@ final class FileTransferView: UIView, TransferView {
         fileTypeIconView.setTemplateIcon(.document, size: .small)
 
         fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
-            guard let image = image else { return }
+            guard let image else { return }
 
             self?.fileTypeIconView.contentMode = .scaleAspectFit
             self?.fileTypeIconView.mediaAsset = image

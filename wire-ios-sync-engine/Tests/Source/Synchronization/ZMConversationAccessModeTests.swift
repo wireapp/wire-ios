@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
+import XCTest
 
 public class ZMConversationAccessModeTests: MessagingTest {
     override public func setUp() {
@@ -136,30 +136,6 @@ public class ZMConversationAccessModeTests: MessagingTest {
         XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/features/conversationGuestLinks")
         XCTAssertNil(request.payload)
-    }
-
-    func testThatItGeneratesCorrectCreateLinkRequest() {
-        // given
-        selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(hasRemoteId: true, team: .teamA, isGroup: true))
-        // when
-        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v0)
-        // then
-        XCTAssertEqual(request.method, .post)
-        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertNil(request.payload)
-    }
-
-    func testThatItGeneratesCorrectCreateLinkRequest_V4() {
-        // given
-        selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(hasRemoteId: true, team: .teamA, isGroup: true))
-        // when
-        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v4)
-        // then
-        XCTAssertEqual(request.method, .post)
-        XCTAssertEqual(request.path, "/v4/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertNotNil(request.payload)
     }
 
     func testThatItGeneratesCorrectDeleteLinkRequest() {

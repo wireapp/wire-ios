@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsE2EIdentityCertificateView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -68,14 +69,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             }
             Spacer()
         }
-        if let serialNumber = viewModel.serialNumber, serialNumber.isNonEmpty {
+        if let serialNumber = viewModel.serialNumber, !serialNumber.isEmpty {
             Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                 .padding(.top, ViewConstants.Padding.medium)
                 .padding(.bottom, ViewConstants.Padding.small)
             Text(serialNumber)
-            .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
+                .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
         }
     }
 

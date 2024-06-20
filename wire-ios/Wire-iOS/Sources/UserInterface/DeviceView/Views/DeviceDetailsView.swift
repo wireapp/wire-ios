@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsView: View {
 
@@ -70,7 +71,7 @@ struct DeviceDetailsView: View {
     @ViewBuilder
     var mlsView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature(viewModel.mlsCiphersuite?.signature.description ?? "").uppercased())
             DeviceMLSView(viewModel: viewModel)
                 .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
         }
@@ -80,7 +81,7 @@ struct DeviceDetailsView: View {
     var body: some View {
         ScrollView {
             if viewModel.isE2eIdentityEnabled {
-                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                if let thumbprint = viewModel.mlsThumbprint, !thumbprint.isEmpty {
                     mlsView
                 }
                 e2eIdentityCertificateView

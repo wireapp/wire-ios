@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import XCTest
+
 @testable import WireDataModel
 
 final class FeatureTests: ZMBaseManagedObjectTest {
+
+    private var context: NSManagedObjectContext { syncMOC }
 
     // MARK: - Tests
 
     func testThatItUpdatesFeature() {
         // given
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let defaultAppLock = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -35,21 +39,21 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // when
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.status = .disabled
             }
         }
 
         // then
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             let updatedAppLock = Feature.fetch(name: .appLock, context: context)
             XCTAssertEqual(updatedAppLock?.status, .disabled)
         }
     }
 
     func testThatItFetchesFeature() {
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             // when
             let defaultAppLock = Feature.fetch(name: .appLock, context: context)
 
@@ -60,14 +64,14 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameForced() {
         // given
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: false)
                 $0.hasInitialDefault = false
             }
         }
 
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -77,14 +81,14 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // when
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: true)
             }
         }
 
         // then
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -96,7 +100,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameNonForced() {
         // given
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: true)
                 $0.needsToNotifyUser = false
@@ -104,7 +108,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             }
         }
 
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -114,14 +118,14 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // when
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: false)
             }
         }
 
         // then
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .appLock, context: context) else {
                 XCTFail()
                 return
@@ -133,23 +137,23 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItNeedsToNotifyUser_AfterAChange() {
         // Given
-        syncMOC.performGroupedAndWait { _ in
-            let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.syncMOC)
+        context.performGroupedAndWait {
+            let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.context)
             defaultConferenceCalling?.status = .disabled
             defaultConferenceCalling?.hasInitialDefault = false
             XCTAssertNotNil(defaultConferenceCalling)
         }
 
         // When
-        syncMOC.performGroupedAndWait { _ in
-            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
+        context.performGroupedAndWait {
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.context) { feature in
                 feature.needsToNotifyUser = false
                 feature.status = .enabled
             }
         }
 
         // Then
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
                 XCTFail()
                 return
@@ -161,21 +165,21 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     func testThatItDoesNotNeedToNotifyUser_IfThePreviousValueIsDefault() {
         // Given
-        syncMOC.performGroupedAndWait { _ in
-            let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.syncMOC)
+        context.performGroupedAndWait {
+            let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.context)
             XCTAssertNotNil(defaultConferenceCalling)
             XCTAssertTrue(defaultConferenceCalling!.hasInitialDefault)
         }
 
         // When
-        syncMOC.performGroupedAndWait { _ in
-            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
+        context.performGroupedAndWait {
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.context) { feature in
                 feature.status = .enabled
             }
         }
 
         // Then
-        syncMOC.performGroupedAndWait { context in
+        context.performGroupedAndWait {
             guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
                 XCTFail()
                 return

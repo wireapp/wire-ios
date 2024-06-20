@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import MessageUI
 import UIKit
+import WireDesign
+import WireSyncEngine
 
 final class DeveloperOptionsController: UIViewController {
 

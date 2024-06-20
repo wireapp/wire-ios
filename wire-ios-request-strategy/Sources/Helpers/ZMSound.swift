@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AudioToolbox
+import Foundation
 
 public enum ZMSound: String, CustomStringConvertible {
     case None       = "silence"

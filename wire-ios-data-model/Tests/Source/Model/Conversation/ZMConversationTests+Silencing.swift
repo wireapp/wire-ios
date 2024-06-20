@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
@@ -54,7 +54,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
     }
 
     func testThatSilencingUpdatesPropertiesWhenPerformedOnSEContext() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)

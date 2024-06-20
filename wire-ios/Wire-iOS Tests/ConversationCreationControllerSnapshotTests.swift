@@ -17,10 +17,10 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
-final class ConversationCreationControllerSnapshotTests: BaseSnapshotTestCase {
+final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

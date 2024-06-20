@@ -18,13 +18,15 @@
 
 import Foundation
 
-extension DateProviding where Self == SystemDateProvider {
+extension CurrentDateProviding where Self == SystemDateProvider {
+
     /// Returns a new instance of `SystemDateProvider`.
     public static var system: Self { .init() }
 }
 
 /// Provides date values based on the system clock.
-public struct SystemDateProvider: DateProviding {
+public struct SystemDateProvider: CurrentDateProviding {
+
     public var now: Date { .now }
 
     public init() {}

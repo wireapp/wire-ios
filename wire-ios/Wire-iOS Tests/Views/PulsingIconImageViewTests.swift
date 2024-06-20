@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-@testable import WireCommonComponents
 @testable import Wire
+import WireCommonComponents
+import XCTest
 
 private class MockPulsingIconImageView: PulsingIconImageView {
     var didStartPulsing: Bool = false

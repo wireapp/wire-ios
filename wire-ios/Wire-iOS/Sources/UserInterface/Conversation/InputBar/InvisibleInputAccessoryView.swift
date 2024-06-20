@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 // Because the system manages the input accessory view lifecycle and positioning, we have to monitor what

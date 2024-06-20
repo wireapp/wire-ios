@@ -33,7 +33,7 @@ final class OperationLoopNewRequestObserver {
 
     deinit {
         notifications.removeAll()
-        if let token = token {
+        if let token {
             notificationCenter.removeObserver(token)
         }
     }

@@ -17,15 +17,16 @@
 //
 
 import Foundation
+
 @testable import Wire
 
 final class MockZMUserSession: NSObject, UserSessionInterface {
 
-    func perform(_ changes: @escaping () -> Swift.Void) {
+    func perform(_ changes: @escaping () -> Void) {
         changes()
     }
 
-    func enqueue(_ changes: @escaping () -> Swift.Void) {
+    func enqueue(_ changes: @escaping () -> Void) {
         changes()
     }
 

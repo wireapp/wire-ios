@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import Foundation
 @testable import WireDataModel
+import XCTest
 
 final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
 
@@ -50,19 +50,19 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
             preMigrationAction: { context in
                 insertDuplicateUsers(with: userId, domain: domain, in: context)
                 insertDuplicateUsers(with: otherDuplicateUsers.0, domain: otherDuplicateUsers.1, in: context)
-                _ = context.performGroupedAndWait({ context in
+                _ = context.performGroupedAndWait {
                     let user = ZMUser(context: context)
                     user.remoteIdentifier = uniqueUser1.0
                     user.domain = uniqueUser1.1
                     return user
-                })
+                }
 
-                _ = context.performGroupedAndWait({ context in
+                _ = context.performGroupedAndWait {
                     let user = ZMUser(context: context)
                     user.remoteIdentifier = uniqueUser2.0
                     user.domain = uniqueUser2.1
                     return user
-                })
+                }
 
                 try context.save()
 
@@ -70,7 +70,7 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                try context.performGroupedAndWait { [self] context in
+                try context.performGroupedAndWait {
                     // verify it deleted duplicates
                     var clients = try fetchUsers(with: userId, domain: domain, in: context)
                     XCTAssertEqual(clients.count, 1)
@@ -112,7 +112,7 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
                 XCTAssertEqual(clients.count, 2)
             },
             postMigrationAction: { context in
-                try context.performGroupedAndWait { [self] context in
+                try context.performGroupedAndWait {
                     // verify it deleted duplicates
                     var clients = try fetchUsers(with: userId, domain: domain, in: context)
 

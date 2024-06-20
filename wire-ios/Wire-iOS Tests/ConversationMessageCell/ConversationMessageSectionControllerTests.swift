@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireCommonComponents
 @testable import Wire
+import WireCommonComponents
+import XCTest
 
 final class ConversationMessageSectionControllerTests: XCTestCase {
 
@@ -43,9 +43,6 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                              searchQueries: [],
                                              previousMessageIsKnock: false,
                                              spacing: 0)
-
-        FontScheme.configure(with: .large)
-
     }
 
     // MARK: - tearDown

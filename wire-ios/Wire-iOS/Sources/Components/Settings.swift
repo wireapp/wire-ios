@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
-import WireSyncEngine
 import avs
+import Foundation
 import WireCommonComponents
+import WireSyncEngine
+import WireSystem
 
 enum SettingsLastScreen: Int {
     case none = 0
@@ -40,7 +40,6 @@ extension Notification.Name {
 enum SettingKey: String, CaseIterable {
     case disableMarkdown = "UserDefaultDisableMarkdown"
     case chatHeadsDisabled = "ZDevOptionChatHeadsDisabled"
-    case lastPushAlertDate = "LastPushAlertDate"
     case voIPNotificationsOnly = "VoIPNotificationsOnly"
     case lastViewedConversation = "LastViewedConversation"
     case colorScheme = "ColorScheme"
@@ -65,7 +64,6 @@ enum SettingKey: String, CaseIterable {
     case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
-    case didMigrateHockeySettingInitially = "DidMigrateHockeySettingInitially"
     case callingConstantBitRate = "CallingConstantBitRate"
     case disableLinkPreviews = "DisableLinkPreviews"
 }
@@ -144,19 +142,12 @@ class Settings {
     static var shared: Settings = Settings()
 
     init() {
-        migrateAppCenterAndOptOutSettingsToSharedDefaults()
+        ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
         restoreLastUsedAVSSettings()
 
         startLogging()
 
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
-    }
-
-    func migrateAppCenterAndOptOutSettingsToSharedDefaults() {
-        if !defaults.bool(forKey: SettingKey.didMigrateHockeySettingInitially.rawValue) {
-            ExtensionSettings.shared.disableLinkPreviews = Settings.disableLinkPreviews
-            defaults.set(true, forKey: SettingKey.didMigrateHockeySettingInitially.rawValue)
-        }
     }
 
     // Persist all the settings

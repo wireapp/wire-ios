@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireProtos
 import WireDataModel
-import WireUtilities
+import WireProtos
 @testable import WireRequestStrategy
+import WireUtilities
+import XCTest
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
 
@@ -46,7 +46,7 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
             let expectedMessage = Proteus_NewOtrMessage(
@@ -79,7 +79,7 @@ extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
         apiVersion = .v1
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
             let domain = "wire.com"

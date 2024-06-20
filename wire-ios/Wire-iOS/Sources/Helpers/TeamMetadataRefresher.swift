@@ -37,7 +37,7 @@ final class TeamMetadataRefresher {
     private let selfUserProvider: SelfUserProvider?
 
     private var isTimeoutExpired: Bool {
-        guard let dateOfLastRefresh = dateOfLastRefresh else { return true }
+        guard let dateOfLastRefresh else { return true }
         let intervalSinceLastRefresh = -dateOfLastRefresh.timeIntervalSinceNow
         return intervalSinceLastRefresh > refreshInterval
     }

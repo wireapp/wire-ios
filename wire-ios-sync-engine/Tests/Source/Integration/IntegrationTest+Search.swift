@@ -17,8 +17,8 @@
 //
 
 import WireMockTransport
-import XCTest
 import WireTesting
+import XCTest
 
 extension IntegrationTest {
 

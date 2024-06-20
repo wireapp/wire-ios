@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireUtilities
 import UIKit
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -68,7 +67,15 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
                 if error.domain == ZMObjectValidationErrorDomain &&
                     error.code == ZMManagedObjectValidationErrorCode.tooShort.rawValue {
 
-                    let alert = UIAlertController.alertWithOKButton(message: L10n.Localizable.Name.Guidance.tooshort)
+                    let alert = UIAlertController(
+                        title: nil,
+                        message: L10n.Localizable.Name.Guidance.tooshort,
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(
+                        title: L10n.Localizable.General.ok,
+                        style: .cancel
+                    ))
 
                     UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
 

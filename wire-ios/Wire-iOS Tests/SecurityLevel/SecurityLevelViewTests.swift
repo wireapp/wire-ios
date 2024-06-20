@@ -17,11 +17,13 @@
 //
 
 import SnapshotTesting
+import WireDesign
 import WireUtilities
 import XCTest
+
 @testable import Wire
 
-final class SecurityLevelViewTests: BaseSnapshotTestCase {
+final class SecurityLevelViewTests: XCTestCase {
 
     // MARK: - Properties
 

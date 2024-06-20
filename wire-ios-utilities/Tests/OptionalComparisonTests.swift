@@ -16,34 +16,134 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
 import XCTest
-import WireTesting
 
-class OptionalComparisonTests: XCTestCase {
+final class OptionalComparisonTests: XCTestCase {
 
-    func testThatItComparesTwoOptionalsGreaterThanAndLessThan() {
+    // MARK: OptionalComparison
+
+    func testPrependingNilAscending_given0And1() {
         // given
-        let operands: [(Int?, Int?, Bool)] = [
-            (1, 2, false),
-            (2, 1, true),
-            (nil, 0, false),
-            (nil, 1, false),
-            (0, nil, true),
-            (2, nil, true)
-        ]
+        let lhs = 0
+        let rhs = 1
+
+        // when
+        let result = OptionalComparison.prependingNilAscending(lhs: lhs, rhs: rhs)
 
         // then
-        operands.forEach { lhs, rhs, expected in
-            XCTAssertEqual(lhs > rhs, expected, "Comparison failed, expected \(String(describing: lhs)) to be greater than \(String(describing: rhs))")
-            XCTAssertEqual(lhs < rhs, !expected, "Comparison failed, expected \(String(describing: lhs)) to be less than \(String(describing: rhs))")
-        }
+        XCTAssertTrue(result)
     }
 
-    func testOptionalComparisonWhenBothOperandsAreNil() {
+    func testPrependingNilAscending_given1And1() {
+        // given
+        let lhs = 1
+        let rhs = 1
+
+        // when
+        let result = OptionalComparison.prependingNilAscending(lhs: lhs, rhs: rhs)
+
+        // then
+        XCTAssertFalse(result)
+    }
+
+    func testPrependingNilAscending_given1And0() {
+        // given
+        let lhs = 1
+        let rhs = 0
+
+        // when
+        let result = OptionalComparison.prependingNilAscending(lhs: lhs, rhs: rhs)
+
+        // then
+        XCTAssertFalse(result)
+    }
+
+    func testPrependingNilAscending_givenNilAnd0() {
+        // given
+        let lhs: Int? = nil
+        let rhs: Int? = 0
+
+        // when
+        let result = OptionalComparison.prependingNilAscending(lhs: lhs, rhs: rhs)
+
+        // then
+        XCTAssertTrue(result)
+    }
+
+    func testPrependingNilAscending_givenNilAndNil() {
+        // given
         let lhs: Int? = nil
         let rhs: Int? = nil
 
-        XCTAssertFalse(lhs > rhs)
-        XCTAssertFalse(lhs < rhs)
+        // when
+        let result = OptionalComparison.prependingNilAscending(lhs: lhs, rhs: rhs)
+
+        // then
+        XCTAssertFalse(result)
     }
+
+    func testPrependingNilAscending_given0AndNil() {
+        // given
+        let lhs: Int? = 0
+        let rhs: Int? = nil
+
+        // when
+        let result = OptionalComparison.prependingNilAscending(lhs: lhs, rhs: rhs)
+
+        // then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: Collection
+
+    func testSortedAscendingPrependingNilByKeyPath() {
+        // given
+        let values = [
+            MockBook(title: "B"),
+            MockBook(title: "A"),
+            MockBook(title: nil)
+        ]
+
+        // when
+        let result = values.sortedAscendingPrependingNil(by: \.title)
+
+        // then
+        XCTAssertEqual(
+            result,
+            [
+                MockBook(title: nil),
+                MockBook(title: "A"),
+                MockBook(title: "B")
+            ]
+        )
+    }
+
+    func testsortedAscendingPrependingNilByClosure() {
+        // given
+        let values = [
+            MockBook(title: "B"),
+            MockBook(title: "A"),
+            MockBook(title: nil)
+        ]
+
+        // when
+        let result = values.sortedAscendingPrependingNil { $0.title }
+
+        // then
+        XCTAssertEqual(
+            result,
+            [
+                MockBook(title: nil),
+                MockBook(title: "A"),
+                MockBook(title: "B")
+            ]
+        )
+    }
+}
+
+// MARK: - MockBook
+
+private struct MockBook: Equatable {
+    let title: String?
 }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
+
 @testable import WireDataModel
 
 class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
@@ -42,15 +42,15 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
     // MARK: - Tests
 
     func test_GroupsWithStaleKeyingMaterial() throws {
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait {
             // Given
-            let staleGroup1 = self.createMLSGroup(in: context)
+            let staleGroup1 = self.createMLSGroup(in: syncMOC)
             staleGroup1.lastKeyMaterialUpdate = .distantPast
 
-            let staleGroup2 = self.createMLSGroup(in: context)
+            let staleGroup2 = self.createMLSGroup(in: syncMOC)
             staleGroup2.lastKeyMaterialUpdate = Date().addingTimeInterval(.oneDay * -6)
 
-            let nonStaleGroup = self.createMLSGroup(in: context)
+            let nonStaleGroup = self.createMLSGroup(in: syncMOC)
             nonStaleGroup.lastKeyMaterialUpdate = Date().addingTimeInterval(.oneDay * -2)
 
             // When
@@ -61,7 +61,6 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(result.contains(staleGroup2.id))
             XCTAssertFalse(result.contains(nonStaleGroup.id))
         }
-
     }
 
     func test_KeyingMaterialUpdated() throws {
@@ -94,5 +93,4 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
@@ -118,7 +119,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
 extension ConversationFileMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        guard let message = message else { return }
+        guard let message else { return }
 
         delegate?.perform(action: action, for: message, view: self)
     }

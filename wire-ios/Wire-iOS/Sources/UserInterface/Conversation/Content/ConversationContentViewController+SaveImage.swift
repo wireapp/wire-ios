@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
@@ -26,7 +25,7 @@ extension ConversationContentViewController {
 
         let savableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
 
-        if let view = view {
+        if let view {
             let sourceView: UIView
 
             if let selectableView = view as? SelectableView {

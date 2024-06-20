@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import FLAnimatedImage
 import MobileCoreServices
 import Photos
-import FLAnimatedImage
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -105,7 +105,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     @objc
     func image(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
-        if let error = error {
+        if let error {
             zmLog.error("didFinishSavingWithError: \(error)")
         }
     }
@@ -113,7 +113,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     // MARK: - Video save callback
     @objc
     func video(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
-        if let error = error {
+        if let error {
             zmLog.error("Error saving video: \(error)")
         }
     }
@@ -153,7 +153,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: mediaAsset),
                                                          onConfirm: { [weak self] (editedImage: UIImage?) in
-                                                                guard let `self` = self else { return }
+                                                                guard let self else { return }
                                                                     self.dismiss(animated: true) {
                                                                     self.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
                                                                                                       isFromCamera: isFromCamera)
@@ -250,7 +250,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         hideCameraKeyboardViewController { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.dismiss(animated: true, completion: {
                 if let imageData = image.pngData() {
@@ -290,7 +290,7 @@ extension ConversationInputBarViewController {
                 self.mode = .textInput
             }
         } else {
-            let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+            let checker = PrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
                 showCameraAndPhotos()
             })
             checker.performAction()

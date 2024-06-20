@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
+import XCTest
 
 final class ValidatedTextFieldTests: XCTestCase {
     var sut: ValidatedTextField!
@@ -65,7 +65,7 @@ final class ValidatedTextFieldTests: XCTestCase {
 
     func testThatItShowsPasswordInputedAndConfirmButtonIsEnabled() {
         // GIVEN
-        sut.kind = .password(isNew: false)
+        sut.kind = .password(.nonEmpty, isNew: false)
 
         // WHEN
         sut.text = "Password"

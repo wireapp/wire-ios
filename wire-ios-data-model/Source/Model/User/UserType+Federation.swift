@@ -22,7 +22,7 @@ extension UserType {
 
     func isFederating(with otherUser: UserType) -> Bool {
         guard
-            let domain = domain,
+            let domain,
             let otherDomain = otherUser.domain
         else {
             return false

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
@@ -30,7 +30,7 @@ final class MockContainerViewController: UIViewController, NetworkStatusBarDeleg
 }
 
 /// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of ZMNetworkState with other UIView at the bottom.
-final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
 
     var sut: NetworkStatusViewController!
     var mockContainerViewController: MockContainerViewController!

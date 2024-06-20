@@ -18,11 +18,11 @@
 
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
+import avs
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
-import avs
 import WireCoreCrypto
+import WireSyncEngine
 
 enum ApplicationLaunchType {
     case unknown
@@ -55,7 +55,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
         TrackingOperation(),
-        AppCenterOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
@@ -79,7 +78,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return SessionManager.shared?.unauthenticatedSession
     }
 
-    var appCenterInitCompletion: Completion?
     var launchOptions: LaunchOptions = [:]
 
     static var shared: AppDelegate {
@@ -112,10 +110,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-        WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+        // Set up Datadog as logger
+        WireAnalytics.Datadog.enable()
 
-        DatadogWrapper.shared?.startMonitoring()
-        DatadogWrapper.shared?.log(level: .info, message: "start app")
+        WireLogger.appDelegate.info(
+            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))"
+        )
 
         // Initial log line to indicate the client version and build
         WireLogger.appDelegate.info(
@@ -283,10 +283,10 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
+
         guard let viewController = window?.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
-
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }

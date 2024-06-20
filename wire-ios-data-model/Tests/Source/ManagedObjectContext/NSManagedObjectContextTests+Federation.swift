@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 import XCTest
+
 @testable import WireDataModel
 
-class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
+final class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
 
     func testThatItMigratesUsersAndConversations() throws {
         // Given
@@ -32,9 +31,9 @@ class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
         XCTAssertNil(conversation.domain)
         XCTAssertNil(user.domain)
 
-        try uiMOC.performGroupedAndWait { moc in
+        try uiMOC.performGroupedAndWait {
             // When
-            XCTAssertNoThrow(try moc.migrateToFederation())
+            XCTAssertNoThrow(try uiMOC.migrateToFederation())
 
             // Then
             XCTAssertEqual(conversation.domain, domain)

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import WireTransport
 
 public extension MockTransportSession {
@@ -170,7 +170,6 @@ extension MockTransportSession: TransportSessionType {
     public func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {
 
     }
-
 }
 
 public extension MockTransportSession {

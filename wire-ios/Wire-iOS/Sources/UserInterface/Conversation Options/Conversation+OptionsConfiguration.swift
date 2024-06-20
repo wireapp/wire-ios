@@ -86,15 +86,37 @@ extension ZMConversation {
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            conversation.setAllowGuests(allowGuests, in: userSession) {
-                completion($0)
+
+            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
+                conversation: conversation,
+                allowGuests: allowGuests,
+                allowServices: conversation.allowServices
+            ) { result in
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
+
         }
 
         func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            conversation.setAllowServices(allowServices, in: userSession) {
-                completion($0)
+
+            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
+                conversation: conversation,
+                allowGuests: conversation.allowGuests,
+                allowServices: allowServices
+            ) { result in
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
+
         }
 
         func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
@@ -108,11 +130,7 @@ extension ZMConversation {
             }
         }
 
-        func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
-            conversation.updateAccessAndCreateWirelessLink(in: userSession, completion)
-        }
-
-        func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {
+        func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
             conversation.fetchWirelessLink(in: userSession, completion)
         }
 

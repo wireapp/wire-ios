@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
-import avs
 
 private let zmLog = ZMSLog(tag: "calling")
 

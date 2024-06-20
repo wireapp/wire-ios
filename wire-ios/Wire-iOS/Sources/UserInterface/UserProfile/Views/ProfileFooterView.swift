@@ -74,7 +74,7 @@ final class ProfileFooterView: ConversationDetailFooterView {
         self.rightActions = rightActions
 
         // Display the left action
-        if let leftAction = leftAction {
+        if let leftAction {
             leftButton.setTitle(leftAction.buttonText, for: .normal)
             leftIcon = leftAction.keyActionIcon
         }

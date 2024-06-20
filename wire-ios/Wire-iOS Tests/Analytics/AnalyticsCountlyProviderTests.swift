@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
 import Countly
+import XCTest
+
 @testable import Wire
 
 final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper {

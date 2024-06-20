@@ -295,7 +295,9 @@ final class CollectionsViewController: UIViewController {
         button.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
 
-        if !inOverviewMode && navigationController?.viewControllers.count > 1 {
+        if !inOverviewMode,
+           let count = navigationController?.viewControllers.count,
+           count > 1 {
             let backButton = CollectionsView.backButton()
             backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
@@ -562,7 +564,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             header.section = section
             header.totalItemsCount = UInt(moreElementsToSee(in: section) ? elements(for: section).count : 0)
             header.selectionAction = { [weak self] section in
-                guard let `self` = self else {
+                guard let self else {
                     return
                 }
                 let collectionController = CollectionsViewController(collection: self.collection, sections: section, messages: self.elements(for: section), fetchingDone: self.fetchingDone, userSession: userSession)
@@ -659,7 +661,11 @@ extension CollectionsViewController: CollectionCellMessageChangeDelegate {
 extension CollectionsViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if navigationController?.interactivePopGestureRecognizer == gestureRecognizer {
-            return navigationController?.viewControllers.count > 1
+            if let count = navigationController?.viewControllers.count, count > 1 {
+                return true
+            } else {
+                return false
+            }
         } else {
             return true
         }

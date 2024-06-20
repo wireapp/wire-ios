@@ -51,7 +51,7 @@ public protocol RegistrationStatusDelegate: AnyObject {
 
 protocol RegistrationStatusProtocol: AnyObject {
     /// The current registration phase.
-    var phase: RegistrationPhase { get }
+    var phase: RegistrationPhase? { get }
 
     /// An error occured during the current registration phase.
     func handleError(_ error: Error)
@@ -69,7 +69,7 @@ protocol RegistrationStatusProtocol: AnyObject {
 public class RegistrationStatus: RegistrationStatusProtocol {
 
     /// The current phase of registration.
-    public var phase: RegistrationPhase = .none
+    public var phase: RegistrationPhase? = .none
 
     /// Whether registration completed.
     public internal(set) var completedRegistration: Bool = false
@@ -84,8 +84,8 @@ public class RegistrationStatus: RegistrationStatusProtocol {
      * - parameter credentials: The credentials (phone or email) to activate.
      */
 
-    public func sendActivationCode(to credentials: UnverifiedCredentials) {
-        phase = .sendActivationCode(credentials: credentials)
+    public func sendActivationCode(to unverifiedEmail: String) {
+        phase = .sendActivationCode(unverifiedEmail: unverifiedEmail)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
@@ -95,8 +95,8 @@ public class RegistrationStatus: RegistrationStatusProtocol {
      * - parameter code: The activation code sent by the backend that needs to be verified.
      */
 
-    public func checkActivationCode(credentials: UnverifiedCredentials, code: String) {
-        phase = .checkActivationCode(credentials: credentials, code: code)
+    public func checkActivationCode(unverifiedEmail: String, code: String) {
+        phase = .checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 

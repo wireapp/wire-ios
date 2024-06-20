@@ -20,11 +20,7 @@ import Foundation
 import WireSyncEngine
 
 extension Notification.Name {
-    static let colorSchemeControllerDidApplyColorSchemeChange = Notification.Name("ColorSchemeControllerDidApplyColorSchemeChange")
-}
-
-extension NSNotification {
-    static let colorSchemeControllerDidApplyColorSchemeChange = Notification.Name.colorSchemeControllerDidApplyColorSchemeChange
+    static let colorSchemeControllerDidApplyColorSchemeChange = Self("ColorSchemeControllerDidApplyColorSchemeChange")
 }
 
 final class ColorSchemeController: NSObject {

@@ -56,7 +56,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             XCTAssertEqual(request.payload as? Payload, expectedPayload)
         }
 
-        if let expectedAcceptType = expectedAcceptType {
+        if let expectedAcceptType {
             XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType)
         }
 
@@ -135,7 +135,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             label: label,
             apiVersion: apiVersion
         )
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.handler.handleResponse(response, action: action)
         }
 
@@ -315,7 +315,7 @@ extension ActionHandlerTestBase {
     ) -> ZMTransportResponse {
         var payload = payload
 
-        if payload == nil, let label = label {
+        if payload == nil, let label {
             payload = ["label": label] as ZMTransportData
         }
 

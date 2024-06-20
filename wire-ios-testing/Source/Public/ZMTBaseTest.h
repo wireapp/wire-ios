@@ -32,16 +32,16 @@ typedef BOOL(^VerificationBlock)(void);
 /// Verify all mocks
 - (void)verifyMocksNow;
 
-- (void)setUp ZM_REQUIRES_SUPER;
-- (void)tearDown ZM_REQUIRES_SUPER;
+- (void)setUp;
+- (void)tearDown;
 
 /// Should be wrapped in call to @c XCTAssert()
-- (BOOL)waitOnMainLoopUntilBlock:(nonnull VerificationBlock)block timeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
+- (BOOL)waitOnMainLoopUntilBlock:(nonnull VerificationBlock)block timeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE("This is considered legacy code and should not be used.");
 
 /// Wait for a condition to be met, periodically verifying if the condition is met. It will verify at least once
-- (BOOL)waitWithTimeout:(NSTimeInterval)timeout verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN;
+- (BOOL)waitWithTimeout:(NSTimeInterval)timeout verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE("This is considered legacy code and should not be used.");
 /// Wait for a condition to be met, periodically verifying if the condition is met. It will verify at least once
-- (BOOL)waitUntilDate:(nonnull NSDate *)runUntil verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN;
+- (BOOL)waitUntilDate:(nonnull NSDate *)runUntil verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE("This is considered legacy code and should not be used.");
 
 /// Returns whether we are debugging the tests. This is enabled by setting the "DEBUG_TESTS" environment variable to 1
 + (BOOL)isDebuggingTests;
@@ -49,7 +49,7 @@ typedef BOOL(^VerificationBlock)(void);
 /// timer calculation - will be adjusted to device speed and whether we are debugging tests
 + (NSTimeInterval)timeToUseForOriginalTime:(NSTimeInterval)originalTime;
 /// spins the run loop for a reasonable time
-+ (void)performRunLoopTick;
++ (void)performRunLoopTick NS_SWIFT_UNAVAILABLE("This is considered legacy code and should not be used.");
 
 /// If this is set to true, we will ignore the debug flag for tests in timer (use this to test timer test failures)
 @property (nonatomic) BOOL ignoreTestDebugFlagForTestTimers;
@@ -64,7 +64,7 @@ typedef BOOL(^VerificationBlock)(void);
 - (void)spinMainQueueWithTimeout:(NSTimeInterval)timeout;
 
 /// Wait for all dispatch groups to be empty
-- (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
+- (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE_FROM_ASYNC("Don't use wait in async contexts!");
 
 - (XCTestExpectation *_Nonnull)customExpectationWithDescription:(NSString *_Nonnull)description NS_SWIFT_NAME(customExpectation(description:));
 
@@ -72,8 +72,8 @@ typedef BOOL(^VerificationBlock)(void);
 
 - (XCTestExpectation *_Nonnull)customKeyValueObservingExpectationForObject:(id _Nonnull)objectToObserve keyPath:(NSString *_Nonnull)keyPath expectedValue:(id  _Nullable)expectedValue;
 
-- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
-- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
+- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE_FROM_ASYNC("Don't use wait in async contexts!");
+- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN NS_SWIFT_UNAVAILABLE_FROM_ASYNC("Don't use wait in async contexts!");
 
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(nonnull void(^)(void))block;
@@ -102,7 +102,6 @@ typedef BOOL(^VerificationBlock)(void);
 
 @end
 
-
 @interface ZMTBaseTest (Asserts)
 
 - (void)assertDictionary:(nonnull NSDictionary *)d1 isEqualToDictionary:(nonnull NSDictionary *)d2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 failureRecorder:(nullable ZMTFailureRecorder *)failureRecorder;
@@ -111,4 +110,3 @@ typedef BOOL(^VerificationBlock)(void);
 - (void)assertArray:(nonnull NSArray *)a1 hasSameElementsAsArray:(nonnull NSArray *)a2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 failureRecorder:(nullable ZMTFailureRecorder *)failureRecorder;
 
 @end
-

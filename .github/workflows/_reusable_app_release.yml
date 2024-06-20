@@ -10,6 +10,13 @@ on:
       datadog_enabled:
         type: boolean
         default: false
+      skip_security_tests:
+        type: boolean
+        default: true
+      distribute_externals:
+        type: boolean
+        default: false
+
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -49,6 +56,14 @@ on:
         required: true
       C3_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
+      PLAYGROUND_TESTFLIGHT_LINK:
+        required: true
+      BETA_TESTFLIGHT_LINK:
+        required: true
+      COUNTLY_PRODUCTION_KEY:
+        required: true
+      COUNTLY_INTERNAL_KEY:
+        required: true  
       SUBMODULE_PAT:
         required: true
 
@@ -67,7 +82,7 @@ jobs:
       
   build_and_release:
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -96,8 +111,15 @@ jobs:
       C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
+      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
+      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
-
+      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+      
+      
     steps:
       - name: Add Masks
         run: |
@@ -128,12 +150,10 @@ jobs:
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
-      - name: Restore Bundler Cache
-        uses: actions/cache@v4
-        id: cache-bundler
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+          bundler-cache: true
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials
@@ -175,7 +195,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
       - name: Notify on Wire if failed
         if: failure()
         uses: 8398a7/action-slack@v3

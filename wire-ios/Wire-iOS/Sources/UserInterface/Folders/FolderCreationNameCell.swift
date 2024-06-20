@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import Foundation
+import WireDesign
 
 final class FolderCreationNameCell: UICollectionViewCell {
 

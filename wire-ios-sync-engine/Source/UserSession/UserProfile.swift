@@ -27,7 +27,7 @@ import Foundation
     func requestPhoneVerificationCode(phoneNumber: String)
 
     /// Requests phone number change, with a PIN received earlier
-    func requestPhoneNumberChange(credentials: ZMPhoneCredentials)
+    func requestPhoneNumberChange(credentials: UserPhoneCredentials)
 
     /// Requests phone number removal. Must still have an email set.
     func requestPhoneNumberRemoval()
@@ -40,7 +40,7 @@ import Foundation
     /// Requests to set an email and password, for a user that does not have either.
     /// Once this is called, we expect the user to eventually verify the email externally.
     /// - throws: if the email was already set, or if empty credentials are passed
-    func requestSettingEmailAndPassword(credentials: ZMEmailCredentials) throws
+    func requestSettingEmailAndPassword(credentials: UserEmailCredentials) throws
 
     /// Cancel setting email and password
     func cancelSettingEmailAndPassword()

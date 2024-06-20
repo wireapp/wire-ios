@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
+import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
@@ -92,7 +92,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
         XCTAssertEqual(performedAction.creatorClientID, selfUser.selfClient()?.remoteIdentifier)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, .allowGuests)
@@ -146,7 +146,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
         XCTAssertEqual(performedAction.creatorClientID, selfUser.selfClient()?.remoteIdentifier)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, ConversationAccessMode())
@@ -199,7 +199,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let performedAction = try XCTUnwrap(mockActionHandler.performedActions.first)
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)
@@ -278,6 +278,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
     func test_CreateGroupConversation_CreatesMLSGroup() throws {
         // Given
+        let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
         let groupID = MLSGroupID.random()
 
         syncMOC.performAndWait {
@@ -296,7 +297,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
-            // no op
+            return ciphersuite
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -325,7 +326,9 @@ final class ConversationServiceTests: MessagingTestBase {
             messageProtocol: .mls
         ) {
             switch $0 {
-            case .success:
+            case .success(let conversation):
+                XCTAssertEqual(conversation.mlsStatus, .ready)
+                XCTAssertEqual(conversation.ciphersuite, ciphersuite)
                 didFinish.fulfill()
 
             case .failure(let error):
@@ -376,7 +379,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
-            // no op
+            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -461,6 +464,7 @@ final class ConversationServiceTests: MessagingTestBase {
             self.syncMOC.performAndWait {
                 XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
             }
+            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         syncMOC.performAndWait {

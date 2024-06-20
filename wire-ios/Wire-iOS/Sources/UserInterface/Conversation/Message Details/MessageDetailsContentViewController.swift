@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription

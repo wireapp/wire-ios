@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import WireDesign
 import WireLinkPreview
+import XCTest
+
+@testable import Wire
 
 // MARK: - UIView extension
 
@@ -37,7 +39,7 @@ extension UIView {
 
 // MARK: - MessageReplyPreviewViewTests
 
-final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
+final class MessageReplyPreviewViewTests: XCTestCase {
 
     // MARK: - tearDown
 

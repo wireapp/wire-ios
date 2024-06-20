@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import Ziphy
 import FLAnimatedImage
+import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
+import Ziphy
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
     func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String)

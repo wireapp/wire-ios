@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class ConnectToBotURLActionProcessorTests: IntegrationTest {
+final class ConnectToBotURLActionProcessorTests: IntegrationTest {
 
     let serviceName = "Service ABC"
     let serviceIdentifier = UUID()
@@ -44,9 +44,12 @@ class ConnectToBotURLActionProcessorTests: IntegrationTest {
 
         let presentationDelegate = MockPresentationDelegate()
         let action = URLAction.connectBot(serviceUser: ServiceUserData(provider: serviceProvider, service: serviceIdentifier))
-        let sut = WireSyncEngine.ConnectToBotURLActionProcessor(contextprovider: userSession!,
-                                                                transportSession: mockTransportSession,
-                                                                eventProcessor: userSession!.updateEventProcessor!)
+        let sut = WireSyncEngine.ConnectToBotURLActionProcessor(
+            contextprovider: userSession!,
+            transportSession: mockTransportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            searchUsersCache: nil
+        )
 
         // when
         sut.process(urlAction: action, delegate: presentationDelegate)
@@ -64,9 +67,12 @@ class ConnectToBotURLActionProcessorTests: IntegrationTest {
         let unknownService = ServiceUserData(provider: UUID(), service: UUID())
         let presentationDelegate = MockPresentationDelegate()
         let action = URLAction.connectBot(serviceUser: unknownService)
-        let sut = WireSyncEngine.ConnectToBotURLActionProcessor(contextprovider: userSession!,
-                                                                transportSession: mockTransportSession,
-                                                                eventProcessor: userSession!.updateEventProcessor!)
+        let sut = WireSyncEngine.ConnectToBotURLActionProcessor(
+            contextprovider: userSession!,
+            transportSession: mockTransportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            searchUsersCache: nil
+        )
 
         // when
         sut.process(urlAction: action, delegate: presentationDelegate)

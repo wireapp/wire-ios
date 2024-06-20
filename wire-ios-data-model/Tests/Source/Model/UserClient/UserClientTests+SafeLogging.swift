@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {
     func testThatSafeRemoteIdentifierReturnsReadableHashOfRemoteIdentifier() {
         let uuid = UUID.create().transportString()
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = uuid
             XCTAssertEqual(uuid.readableHash, client.safeRemoteIdentifier.safeForLoggingDescription)
@@ -32,7 +32,7 @@ class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {
     }
 
     func testThatSafeRemoteIdentifierReturnsNilStringIfRemoteIdentifierIsNil() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             XCTAssertEqual("nil", client.safeRemoteIdentifier.safeForLoggingDescription)
         }

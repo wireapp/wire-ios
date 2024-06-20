@@ -17,11 +17,11 @@
 //
 
 import Combine
+import SwiftUI
 import WireCommonComponents
 import WireDataModel
-import SwiftUI
 
-/// A customized hosting controller for `DeviceDetailsView` and `ProfileDeviceDetailsView` in order to allow displaying
+/// A customized hosting controller for `DeviceDetailsView` and `OtherUserDeviceDetailsView` in order to allow displaying
 /// a custom navigation item title view and a debug menu button in the navigation bar.
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
 
@@ -31,7 +31,6 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationItemTitleObservation()
-        setupDebugMenuButtonIfNeeded()
     }
 
     private func setupNavigationItemTitleObservation() {
@@ -74,17 +73,5 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
         label.attributedText = deviceName
         label.font = FontSpec(.header, .semibold).font
         navigationItem.titleView = label
-    }
-
-    private func setupDebugMenuButtonIfNeeded() {
-
-        guard viewModel.isDebugMenuAvailable else { return }
-
-        let toggleDebugMenu = UIAction(title: "Debug") { [weak self] _ in
-            self?.viewModel.isDebugMenuPresented.toggle()
-        }
-        let button = UIButton(primaryAction: toggleDebugMenu)
-        button.titleLabel?.font = FontSpec(.normal, .regular).font
-        navigationItem.rightBarButtonItem = .init(customView: button)
     }
 }

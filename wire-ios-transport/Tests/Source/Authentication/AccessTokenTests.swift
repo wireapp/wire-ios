@@ -18,9 +18,9 @@
 
 import Foundation
 
-import XCTest
 import WireTesting
 @testable import WireTransport
+import XCTest
 
 final class AccessTokenTests: ZMTBaseTest {
 

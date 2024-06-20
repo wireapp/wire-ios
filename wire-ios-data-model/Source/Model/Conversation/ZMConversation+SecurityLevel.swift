@@ -424,7 +424,9 @@ extension ZMConversation {
         }
     }
 
-    private func discardPendingMessagesAfterPrivacyChanges() {
+    /// Discards all unsent messages since conversation's privacy changed.
+    @objc(discardPendingMessagesAfterPrivacyChanges)
+    public func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
@@ -434,14 +436,10 @@ extension ZMConversation {
     }
 
     /// Accepts the privacy changes (legal hold and/or degradation) and resend the pending messages.
-    @objc(acknowledgePrivacyWarningWithResendIntent:) public func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool) {
+    @objc(acknowledgePrivacyWarningAndResendMessages)
+    public func acknowledgePrivacyWarningAndResendMessages() {
         acknowledgePrivacyChanges()
-
-        if shouldResendMessages {
-            resendPendingMessagesAfterPrivacyChanges()
-        } else {
-            discardPendingMessagesAfterPrivacyChanges()
-        }
+        resendPendingMessagesAfterPrivacyChanges()
     }
 
     /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 
@@ -474,7 +472,7 @@ extension ZMConversation {
     }
 
     fileprivate var undeliveredMessages: [ZMOTRMessage] {
-        guard let managedObjectContext = managedObjectContext else { return [] }
+        guard let managedObjectContext else { return [] }
 
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
@@ -494,7 +492,13 @@ extension ZMConversation {
         undeliveredMessages += managedObjectContext.fetchOrAssert(request: assetFetchRequest) as [ZMOTRMessage]
 
         return undeliveredMessages.filter { message in
-            return message.serverTimestamp > timeoutLimit || message.updatedAt > timeoutLimit
+            if let serverTimestamp = message.serverTimestamp, serverTimestamp > timeoutLimit {
+                return true
+            }
+            if let updatedAt = message.updatedAt, updatedAt > timeoutLimit {
+                return true
+            }
+            return false
         }
     }
 
@@ -584,7 +588,7 @@ extension ZMConversation {
         case .addedClients(let clients, let message):
             affectedUsers = Set(clients.compactMap(\.user))
             addedClients = clients
-            if let message = message, message.conversation == self {
+            if let message, message.conversation == self {
                 timestamp = self.timestamp(before: message)
             } else {
                 timestamp = clients.compactMap(\.discoveryDate).first?.previousNearestTimestamp
@@ -641,11 +645,11 @@ extension ZMConversation {
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
         systemMessage.serverTimestamp = timestamp
-        if let duration = duration {
+        if let duration {
             systemMessage.duration = duration
         }
 
-        if let messageTimer = messageTimer {
+        if let messageTimer {
             systemMessage.messageTimer = NSNumber(value: messageTimer)
         }
 

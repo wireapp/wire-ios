@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)

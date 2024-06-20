@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import UniformTypeIdentifiers
 import CoreServices
+import UniformTypeIdentifiers
 @testable import WireUtilities
+import XCTest
 
 final class UTIHelperTests: XCTestCase {
 

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 @testable import WireDataModel
 
 class ClientMessageTests_Location: BaseZMMessageTests {

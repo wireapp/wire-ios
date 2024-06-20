@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireShareEngine
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireShareEngine
 
 typealias DegradationStrategyChoice = (DegradationStrategy) -> Void
 typealias SendingStateCallback = (_ type: SendingState) -> Void
@@ -99,19 +99,17 @@ final class SendController {
         self.progress = progress
 
         let completion: SendableCompletion = { [weak self] sendableResult in
-            guard let weakSelf = self else {
-                return
-            }
+            guard let self else { return }
 
             switch sendableResult {
             case .success(let sendables):
-                weakSelf.observer = SendableBatchObserver(sendables: sendables)
-                weakSelf.observer?.progressHandler = { [weak self] in
+                observer = SendableBatchObserver(sendables: sendables)
+                observer?.progressHandler = { [weak self] in
                     progress(.sending($0))
                     self?.tryToTimeout()
                 }
 
-                weakSelf.observer?.sentHandler = { [weak self] in
+                observer?.sentHandler = { [weak self] in
                     self?.cancelTimeout()
                     self?.sentAllSendables = true
                     progress(.done)
@@ -124,7 +122,7 @@ final class SendController {
         if unsentSendables.contains(where: { $0.needsPreparation }) {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
-                guard let `self` = self else { return }
+                guard let self else { return }
                 guard !self.isCancelled else {
                     return progress(.done)
                 }
@@ -201,7 +199,7 @@ final class SendController {
 
         let appendToMessages: (Sendable?) -> Void = { sendable in
             defer { sendingGroup.leave() }
-            guard let sendable = sendable else { return }
+            guard let sendable else { return }
             messages.append(sendable)
         }
 
@@ -215,7 +213,7 @@ final class SendController {
         let error = unsentSendables.compactMap(\.error).first
 
         sendingGroup.notify(queue: .main) {
-            if let error = error {
+            if let error {
                 completion(.failure(error))
             } else {
                 completion(.success(messages))

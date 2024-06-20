@@ -18,8 +18,9 @@
 
 import avs
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireDesign
+import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
@@ -30,12 +31,12 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    var isComingFromRegistration = false
-    var needToShowDataUsagePermissionDialog = false
     let wireSplitViewController: SplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
+    private(set) var mainTabBarController: UITabBarController!
     let conversationListViewController: ConversationListViewController
+    let conversationListWithFoldersViewController: ConversationListViewController
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
@@ -46,8 +47,6 @@ final class ZClientViewController: UIViewController {
     private var topOverlayViewController: UIViewController?
     private var contentTopRegularConstraint: NSLayoutConstraint!
     private var contentTopCompactConstraint: NSLayoutConstraint!
-    // init value = false which set to true, set to false after data usage permission dialog is displayed
-    var dataUsagePermissionDialogDisplayed = false
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
@@ -62,17 +61,29 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
-            selfUser: userSession.selfUser,
+            selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
             account: account,
-            selfUser: userSession.selfUser,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+        // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
+        conversationListWithFoldersViewController = .init(
+            account: account,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: true,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
+        conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
 
         colorSchemeController = .init(userSession: userSession)
 
@@ -83,8 +94,6 @@ final class ZClientViewController: UIViewController {
             name: "conversationMedia",
             userSession: userSession
         )
-        dataUsagePermissionDialogDisplayed = false
-        needToShowDataUsagePermissionDialog = false
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: [
             "media": "external "
@@ -174,18 +183,34 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-        wireSplitViewController.leftViewController = conversationListViewController
+
+        mainTabBarController = MainTabBarController(
+            contacts: .init(),
+            conversations: UINavigationController(rootViewController: conversationListViewController),
+            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
+            archive: .init()
+        )
+        wireSplitViewController.leftViewController = mainTabBarController
 
         if pendingInitialStateRestore {
             restoreStartupState()
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(colorSchemeControllerDidApplyChanges(_:)), name: NSNotification.colorSchemeControllerDidApplyColorSchemeChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
+            name: .colorSchemeControllerDidApplyColorSchemeChange,
+            object: nil
+        )
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
-            NotificationCenter.default.addObserver(self, selector: #selector(requestLoopNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingRequestLoopNotificationName), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(inconsistentStateNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingInconsistentStateNotificationName), object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requestLoopNotification(_:)),
+                name: .loggingRequestLoop,
+                object: nil
+            )
         }
 
         setupUserChangeInfoObserver()
@@ -242,7 +267,7 @@ final class ZClientViewController: UIViewController {
 
         // if changing from compact width to regular width, make sure current conversation is loaded
         if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
-            if let currentConversation = currentConversation {
+            if let currentConversation {
                 select(conversation: currentConversation)
             } else {
                 attemptToLoadLastViewedConversation(withFocus: false, animated: false)
@@ -321,7 +346,7 @@ final class ZClientViewController: UIViewController {
         var conversationRootController: ConversationRootViewController?
         if conversation === currentConversation,
            conversationRootController != nil {
-            if let message = message {
+            if let message {
                 conversationRootController?.scroll(to: message)
             }
         } else {
@@ -331,7 +356,6 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.hideArchivedConversations()
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 
@@ -401,7 +425,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
     private func reloadCurrentConversation() {
-        guard let currentConversation = currentConversation else { return }
+        guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
 
@@ -419,13 +443,6 @@ final class ZClientViewController: UIViewController {
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
         DebugAlert.showSendLogsMessage(message: "A request loop is going on at \(path)")
-    }
-
-    @objc
-    private func inconsistentStateNotification(_ notification: Notification?) {
-        if let userInfo = notification?.userInfo?[ZMLoggingDescriptionKey] {
-            DebugAlert.showSendLogsMessage(message: "We detected an inconsistent state: \(userInfo)")
-        }
     }
 
     /// Attempt to load the last viewed conversation associated with the current account.
@@ -513,7 +530,7 @@ final class ZClientViewController: UIViewController {
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
-        if let previousViewController = topOverlayViewController, let viewController = viewController {
+        if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -560,7 +577,7 @@ final class ZClientViewController: UIViewController {
                 self.topOverlayViewController = nil
                 self.updateSplitViewTopConstraint()
             }
-        } else if let viewController = viewController {
+        } else if let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -591,7 +608,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfUser,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)

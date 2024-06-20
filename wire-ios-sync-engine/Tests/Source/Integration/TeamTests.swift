@@ -32,7 +32,7 @@ final class TestTeamObserver: NSObject, TeamObserver {
     }
 
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
-        if let observedTeam = observedTeam, (changeInfo.team as? Team) != observedTeam {
+        if let observedTeam, (changeInfo.team as? Team) != observedTeam {
             return
         }
         notifications.append(changeInfo)

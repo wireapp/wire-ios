@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AVKit
+import Foundation
 
 extension Notification.Name {
     static let dismissingAVPlayer = Notification.Name("DismissingAVPlayer")

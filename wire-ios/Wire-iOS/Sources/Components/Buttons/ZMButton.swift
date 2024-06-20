@@ -51,7 +51,7 @@ final class ZMButton: LegacyButton {
 
     override var isHighlighted: Bool {
         didSet {
-            guard let style = style else { return }
+            guard let style else { return }
 
             applyStyle(style)
         }

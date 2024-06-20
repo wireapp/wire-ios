@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
 
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
@@ -606,7 +606,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItRefetchesRolesIfNoRoles() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -626,7 +626,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItRefetchesRolesIfRolesAreEmpty() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -647,7 +647,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesNotRefetchRolesIfRolesAreNotEmpty() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
 
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -656,8 +656,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             conversation.remoteIdentifier = UUID.create()
             conversation.conversationType = .group
             let role = Role.create(managedObjectContext: self.syncMOC, name: "foo", conversation: conversation)
-            var created = false
-            _ = Action.fetchOrCreate(with: "delete", role: role, in: self.syncMOC, created: &created)
+            let action = Action.fetchOrCreate(name: "delete", in: self.syncMOC)
+            role.actions.insert(action)
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: role)
 
             // when

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 // MARK: Call Quality View Controller Delegate
 protocol CallQualityViewControllerDelegate: AnyObject {

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
 import WireDataModel
 
 enum ConversationActionType {
@@ -250,7 +250,7 @@ final class ParticipantsCellViewModel {
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {
-        guard let font = font, let largeFont = largeFont else { return nil }
+        guard let font, let largeFont else { return nil }
 
         return ParticipantsStringFormatter(
             message: message, font: font,

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
 import avs
+import Foundation
 @testable import Wire
+import XCTest
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     var didCancelHitCount = 0
@@ -95,7 +95,7 @@ final class MockAudioRecorder: AudioRecorderType {
 
 }
 
-final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
+final class AudioRecordKeyboardViewControllerTests: XCTestCase {
 
     var sut: AudioRecordKeyboardViewController!
     var audioRecorder: MockAudioRecorder!

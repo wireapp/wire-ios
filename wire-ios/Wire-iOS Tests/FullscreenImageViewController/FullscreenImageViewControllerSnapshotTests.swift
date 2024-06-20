@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
-final class FullscreenImageViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     var sut: FullscreenImageViewController!
     var userSession: UserSessionMock!

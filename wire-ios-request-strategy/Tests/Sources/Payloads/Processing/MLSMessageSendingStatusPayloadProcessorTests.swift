@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
@@ -29,7 +29,7 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
         sut = MLSMessageSendingStatusPayloadProcessor()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser.domain = self.domain
         }
     }
@@ -40,7 +40,7 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatItAddsFailedToSendRecipients() throws {
-        try self.syncMOC.performGroupedAndWait { _ in
+        try self.syncMOC.performGroupedAndWait {
             // given
             guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
                 XCTFail("Failed to add message")

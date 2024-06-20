@@ -16,19 +16,50 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
-@testable import WireCommonComponents
+import SwiftUI
+import WireCommonComponents
+import XCTest
+
 @testable import Wire
 
-final class AccentColorPickerSnapshotTests: BaseSnapshotTestCase {
+final class AccentColorPickerSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
+    var sut: AccentColorPickerController!
+    var selfUser: MockUserType!
+    var userSession: UserSessionMock!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+
+        selfUser = MockUserType.createDefaultSelfUser()
+        selfUser.accentColorValue = AccentColor.default.rawValue
+        userSession = UserSessionMock(mockUser: selfUser)
+
+        sut = AccentColorPickerController(selfUser: selfUser, userSession: userSession)
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        selfUser = nil
+        userSession = nil
+        sut = nil
+        super.tearDown()
+    }
+
+    // MARK: - Snapshot Test
 
     func testItIsLaidOutCorrectly() {
-        // GIVEN
-        let sut = AccentColorPickerController()
+        // GIVEN && WHEN
+        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
 
         // THEN
-        verify(matching: sut)
+        verify(matching: sut.view)
     }
 
 }

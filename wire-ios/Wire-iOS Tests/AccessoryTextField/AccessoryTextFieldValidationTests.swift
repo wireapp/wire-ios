@@ -17,11 +17,14 @@
 //
 
 import XCTest
+
 @testable import Wire
 
-final class AccessoryTextFieldValidateionTests: XCTestCase {
-    var sut: ValidatedTextField!
-    var mockViewController: MockViewController!
+// MARK: - AccessoryTextFieldValidationTests
+
+final class AccessoryTextFieldValidationTests: XCTestCase {
+
+    // MARK: - MockViewController
 
     final class MockViewController: UIViewController, TextFieldValidationDelegate {
 
@@ -41,6 +44,13 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         }
     }
 
+    // MARK: - Properties
+
+    var sut: ValidatedTextField!
+    var mockViewController: MockViewController!
+
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
 
@@ -49,12 +59,16 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         sut.textFieldValidationDelegate = mockViewController
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         mockViewController = nil
         sut = nil
 
         super.tearDown()
     }
+
+    // MARK: - Helper methods
 
     private func checkSucceed(
         textFieldType: ValidatedTextField.Kind,
@@ -146,7 +160,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         )
     }
 
-    // MARK: - happy cases
+    // MARK: - Unit Tests - Happy cases
 
     func testThatConfirmButtonIsEnabledWhenThereIsText() {
         // GIVEN
@@ -170,7 +184,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThatSucceedAfterSendEditingChangedForPasswordTextField() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: false)
+        let type: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = "blahblah"
 
         // WHEN & THEN
@@ -195,7 +209,8 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         checkSucceed(textFieldType: type, text: text)
     }
 
-    // MARK: - unhappy cases
+    // MARK: - Unhappy cases
+
     func testThatOneCharacterNameIsInvalid() {
         // GIVEN
         let type: ValidatedTextField.Kind = .name(isTeam: false)
@@ -243,7 +258,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat7CharacterPasswordIsValid_Existing() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: false)
+        let type: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = String(repeating: "a", count: 7)
 
         // WHEN & THEN
@@ -252,7 +267,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat129CharacterPasswordIsValid_Existing() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: false)
+        let type: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = String(repeating: "a", count: 129)
 
         // WHEN & THEN
@@ -261,7 +276,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat7CharacterPasswordIsInvalid_New() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: true)
+        let type: ValidatedTextField.Kind = .password(.shared, isNew: true)
         let text = String(repeating: "a", count: 7)
         let missingRequiredClassesSet: Set<PasswordCharacterClass> = [.uppercase, .special, .digits]
 
@@ -273,7 +288,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat129CharacterPasswordIsInvalid_New() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: true)
+        let type: ValidatedTextField.Kind = .password(.accountRegistration, isNew: true)
         let text = String(repeating: "Aa1!", count: 129)
 
         // WHEN & THEN
@@ -284,7 +299,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThatPasswordIsSecuredWhenSetToPasswordType() {
         // GIVEN
-        let kind: ValidatedTextField.Kind = .password(isNew: false)
+        let kind: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = "This is a valid password"
 
         // WHEN

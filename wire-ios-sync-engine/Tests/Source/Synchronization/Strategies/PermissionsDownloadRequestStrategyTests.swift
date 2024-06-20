@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
 
-class PermissionsDownloadRequestStrategyTests: MessagingTest {
+final class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
     var sut: PermissionsDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -41,7 +41,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotCreateARequestIfThereIsNoMemberToBeRedownloaded() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .online
             let member = Member.insertNewObject(in: self.syncMOC)
@@ -57,7 +57,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCreatesAReuqestForAMemberThatNeedsToBeRedownloadItsMembersFromTheBackend() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let teamId = UUID.create(), userId = UUID.create()
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -79,7 +79,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotCreateARequestDuringSync() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let member = Member.insertNewObject(in: self.syncMOC)
             member.remoteIdentifier = .create()
@@ -125,7 +125,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertFalse(member.needsToBeUpdatedFromBackend)
             XCTAssertEqual(member.permissions, [.createConversation, .addRemoveConversationMember])
@@ -134,7 +134,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             self.boostrapChangeTrackers(with: member)
             XCTAssertNil(self.sut.nextRequestIfAllowed(for: .v0))
@@ -166,7 +166,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNil(Member.fetch(with: userid, in: self.syncMOC))
         }
@@ -174,7 +174,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
     // MARK: - Payload decoding
 
-    func testMembershipPayloadDecoding_AllFields() {
+    func testMembershipPayloadDecoding_AllFields() throws {
         // given
         let userID = UUID()
         let creatorID = UUID()
@@ -191,7 +191,8 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
         ]
 
         // when
-        let membershipPayload = WireSyncEngine.MembershipPayload(payload.rawJSON)
+        let rawJSON = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
+        let membershipPayload = WireSyncEngine.MembershipPayload(rawJSON)
 
         // then
         XCTAssertNotNil(membershipPayload)
@@ -202,7 +203,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
         XCTAssertEqual(membershipPayload?.permissions?.selfPermissions, 1587)
     }
 
-    func testMembershipPayloadDecoding_OnlyNonOptionalFields() {
+    func testMembershipPayloadDecoding_OnlyNonOptionalFields() throws {
         // given
         let userID = UUID()
 
@@ -211,7 +212,8 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
         ]
 
         // when
-        let membershipPayload = WireSyncEngine.MembershipPayload(payload.rawJSON)
+        let rawJSON = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
+        let membershipPayload = WireSyncEngine.MembershipPayload(rawJSON)
 
         // then
         XCTAssertNotNil(membershipPayload)
@@ -225,14 +227,6 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             $0.objectsDidChange(Set(objects))
         }
 
-    }
-
-}
-
-extension Dictionary {
-
-    var rawJSON: Data {
-        return try! JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
     }
 
 }

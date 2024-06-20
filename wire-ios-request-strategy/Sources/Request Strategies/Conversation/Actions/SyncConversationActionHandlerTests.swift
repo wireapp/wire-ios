@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
 
@@ -174,8 +174,8 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
             apiVersion: 2
         )
 
-        syncMOC.performGroupedAndWait { context in
-            XCTAssertNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: context))
+        syncMOC.performGroupedAndWait {
+            XCTAssertNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: syncMOC))
         }
 
         // When
@@ -183,8 +183,8 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { context in
-            XCTAssertNotNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: context))
+        syncMOC.performGroupedAndWait {
+            XCTAssertNotNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: syncMOC))
         }
     }
 

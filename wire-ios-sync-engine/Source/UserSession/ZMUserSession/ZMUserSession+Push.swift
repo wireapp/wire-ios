@@ -17,28 +17,9 @@
 //
 
 import Foundation
-import WireTransport
 import UserNotifications
 import WireRequestStrategy
-
-let PushChannelUserIDKey = "user"
-let PushChannelDataKey = "data"
-
-extension Dictionary {
-
-    public func accountId() -> UUID? {
-        guard let userInfoData = self[PushChannelDataKey as! Key] as? [String: Any] else {
-            Logging.push.safePublic("No data dictionary in notification userInfo payload")
-            return nil
-        }
-
-        guard let userIdString = userInfoData[PushChannelUserIDKey] as? String else {
-            return nil
-        }
-
-        return UUID(uuidString: userIdString)
-    }
-}
+import WireTransport
 
 struct PushTokenMetadata {
     let isSandbox: Bool

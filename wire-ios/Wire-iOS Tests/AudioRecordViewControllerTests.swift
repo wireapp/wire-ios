@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import avs
 @testable import Wire
+import XCTest
 
 private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
 
@@ -33,7 +33,7 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {}
 }
 
-final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
+final class AudioRecordViewControllerTests: XCTestCase {
 
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!

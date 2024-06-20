@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 @testable import WireRequestStrategy
+import WireTesting
 
 class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
 
@@ -40,7 +40,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     func testThatItDoesNotCreateANotificationForConversationRename() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let payload = [
                 "from": self.sender.remoteIdentifier!.transportString(),
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
@@ -66,7 +66,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
         //    "push.notification.member.join.self.noconversationname" = "%1$@ added you to a conversation";
 
         // given, when
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note1 = self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.selfUser])
             let note2 = self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.selfUser])
             let note3 = self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.selfUser, self.otherUser1])
@@ -82,7 +82,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationForParticipantAdd_Other() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.otherUser1]))
             XCTAssertNil(self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.otherUser1, self.otherUser2]))
             XCTAssertNil(self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.otherUser1]))
@@ -93,7 +93,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     func testThatItDoesNotCreateANotificationWhenTheUserLeaves() {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let event = self.createMemberLeaveUpdateEvent(UUID.create(), conversationID: self.groupConversation.remoteIdentifier!, users: [self.otherUser1], senderID: self.otherUser1.remoteIdentifier)
 
             // when
@@ -110,7 +110,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
         //    "push.notification.member.leave.self.noconversationname" = "%1$@ removed you from a conversation";
 
         // given, when
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let note1 = self.noteForParticipantsRemoved(self.groupConversation, aSender: self.sender, otherUsers: [self.selfUser])
             let note2 = self.noteForParticipantsRemoved(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.selfUser])
 
@@ -123,7 +123,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateNotificationsForParticipantRemoved_Other() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.noteForParticipantsRemoved(self.groupConversation, aSender: self.sender, otherUsers: [self.otherUser1]))
             XCTAssertNil(self.noteForParticipantsRemoved(self.groupConversation, aSender: self.sender, otherUsers: [self.otherUser1, self.otherUser2]))
             XCTAssertNil(self.noteForParticipantsRemoved(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.otherUser1]))

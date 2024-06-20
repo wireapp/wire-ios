@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModel
-import WireMockTransport
-import WireTesting
-import WireRequestStrategy
-import WireLinkPreview
 @testable import WireDataModelSupport
+import WireLinkPreview
+import WireMockTransport
+import WireRequestStrategy
 @testable import WireShareEngine
+import WireTesting
+import XCTest
 
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated

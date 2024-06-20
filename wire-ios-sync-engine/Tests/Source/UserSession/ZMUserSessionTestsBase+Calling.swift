@@ -18,8 +18,8 @@
 
 import Foundation
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 extension ZMUserSessionTestsBase {
 

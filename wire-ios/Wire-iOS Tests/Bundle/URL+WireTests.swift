@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTransport
 @testable import Wire
+import WireTransport
+import XCTest
 
 final class URL_WireTests: XCTestCase {
 
@@ -48,6 +48,7 @@ final class URL_WireTests: XCTestCase {
         XCTAssertEqual(URL.wr_createTeamFeatures, websiteURL.appendingPathComponent("teams/learnmore"))
         XCTAssertEqual(URL.wr_emailInUseLearnMore, websiteURL.appendingPathComponent("support/email-in-use"))
         XCTAssertEqual(URL.wr_termsOfServicesURL, websiteURL.appendingPathComponent("legal"))
+        XCTAssertEqual(URL.wr_legal, websiteURL.appendingPathComponent("legal"))
     }
 
     func testThatSupportURLsAreLoadedCorrectly() {

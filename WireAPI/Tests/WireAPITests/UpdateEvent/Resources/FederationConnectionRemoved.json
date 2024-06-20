@@ -1,0 +1,9 @@
+{
+    "type": "federation.connectionRemoved",
+    "data": {
+        "domains": [
+            "a.com",
+            "b.com"
+        ]
+    }
+}

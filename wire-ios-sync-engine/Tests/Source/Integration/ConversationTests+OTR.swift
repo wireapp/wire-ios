@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireTesting
 
-class ConversationTestsOTR_Swift: ConversationTestsBase {
+final class ConversationTestsOTR_Swift: ConversationTestsBase {
+
     func testThatItSendsFailedOTRMessageAfterMisingClientsAreFetchedButSessionIsNotCreated() {
         // GIVEN
         XCTAssertTrue(self.login())
@@ -26,7 +28,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         let conv = conversation(for: selfToUser1Conversation)
 
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
-            guard let `self` = self,
+            guard let self,
                 let path = (request.path as NSString?),
                 path.pathComponents.contains("prekeys") else { return nil }
 
@@ -80,7 +82,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         var message: ZMAssetClientMessage?
 
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
-            guard let `self` = self,
+            guard let self,
                 let path = request.path as NSString?,
                 path.pathComponents.contains("prekeys") else { return nil }
             let payload: NSDictionary = [
@@ -161,12 +163,16 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 // THEN
                 // check that we successfully decrypted messages
 
-                XCTAssert(conversation?.allMessages.count > 0)
+                guard let conversation else {
+                    XCTFail("expected 'conversation' available!")
+                    return
+                }
+                XCTAssert(conversation.allMessages.count > 0)
 
-                if conversation?.allMessages.count < 2 {
+                if conversation.allMessages.count < 2 {
                     XCTFail("message count is too low")
                 } else {
-                    let lastMessages = conversation?.lastMessages(limit: 2) as? [ZMClientMessage]
+                    let lastMessages = conversation.lastMessages(limit: 2) as? [ZMClientMessage]
 
                     let message1 = lastMessages?[1]
                     XCTAssertEqual(message1?.nonce, nonce1)
@@ -257,9 +263,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
             message = try! conversation?.appendText(content: "Where's everyone", mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
         }
 
-        XCTAssertTrue(waitOnMainLoop(until: {
-            return message?.isExpired ?? false
-        }, timeout: 0.5))
+        wait(forConditionToBeTrue: message?.isExpired ?? false, timeout: 5)
 
         XCTAssertEqual(message?.deliveryState, ZMDeliveryState.failedToSend)
         ZMMessage.setDefaultExpirationTime(defaultExpirationTime)
@@ -715,7 +719,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 )
                 XCTAssertNotNil(cause)
 
-                if let cause = cause {
+                if let cause {
                     XCTAssertEqual(ProteusError(rawValue: cause), ProteusError.decodeError)
                 }
 

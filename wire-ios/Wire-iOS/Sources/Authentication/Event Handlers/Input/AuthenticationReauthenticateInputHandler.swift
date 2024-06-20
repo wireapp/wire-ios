@@ -42,10 +42,6 @@ final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler
             // If we get `(EmailPasswordInput, AuthenticationProxyCredentialsInput?)`, start the email flow
             let request = AuthenticationLoginRequest.email(address: emailAndPassword.email, password: emailAndPassword.password)
             return [.startLoginFlow(request, proxyCredentials)]
-        } else if let fullNumber = (context as? PhoneNumber)?.fullNumber {
-            // If we get `PhoneNumber`, start the phone login flow
-            let request = AuthenticationLoginRequest.phoneNumber(fullNumber)
-            return [.startLoginFlow(request, nil)]
         } else {
             zmLog.error("Unable to handle context type: \(type(of: context))")
         }

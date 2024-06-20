@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -31,7 +30,7 @@ extension UIButton {
     func setIcon(_ iconType: StyleKitIcon?,
                  size: StyleKitIcon.Size,
                  for state: UIControl.State) {
-        guard let iconType = iconType else {
+        guard let iconType else {
             setImage(nil, for: state)
             return
         }

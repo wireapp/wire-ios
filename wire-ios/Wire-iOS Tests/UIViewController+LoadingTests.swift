@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 // MARK: - MockLoadingViewController
 
@@ -28,7 +28,7 @@ final class MockLoadingViewController: SpinnerCapableViewController {
 
 // MARK: - LoadingViewControllerTests
 
-final class LoadingViewControllerTests: BaseSnapshotTestCase {
+final class LoadingViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

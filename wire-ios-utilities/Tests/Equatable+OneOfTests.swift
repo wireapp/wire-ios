@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireUtilities
+import XCTest
 
 class EquatableOneOfTests: XCTestCase {
 

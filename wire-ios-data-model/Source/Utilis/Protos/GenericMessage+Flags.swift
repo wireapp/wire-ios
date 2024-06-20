@@ -22,7 +22,7 @@ import Foundation
 
 extension GenericMessage {
     var legalHoldStatus: LegalHoldStatus {
-        guard let content = content else { return .unknown }
+        guard let content else { return .unknown }
         switch content {
         case .ephemeral:
             return ephemeral.legalHoldStatus
@@ -42,7 +42,7 @@ extension GenericMessage {
     }
 
     public mutating func setLegalHoldStatus(_ status: LegalHoldStatus) {
-        guard let content = content else { return }
+        guard let content else { return }
         switch content {
         case .ephemeral:
             self.ephemeral.updateLegalHoldStatus(status)
@@ -62,7 +62,7 @@ extension GenericMessage {
     }
 
     public mutating func setExpectsReadConfirmation(_ value: Bool) {
-        guard let content = content else { return }
+        guard let content else { return }
         switch content {
         case .ephemeral:
             self.ephemeral.updateExpectsReadConfirmation(value)
@@ -82,7 +82,7 @@ extension GenericMessage {
 
 extension Ephemeral {
     public var legalHoldStatus: LegalHoldStatus {
-        guard let content = content else { return .unknown }
+        guard let content else { return .unknown }
         switch content {
         case let .text(value):
             return value.legalHoldStatus
@@ -98,7 +98,7 @@ extension Ephemeral {
     }
 
     public mutating func updateLegalHoldStatus(_ status: LegalHoldStatus) {
-        guard let content = content else { return }
+        guard let content else { return }
         switch content {
         case .text:
             self.text.legalHoldStatus = status
@@ -114,7 +114,7 @@ extension Ephemeral {
     }
 
     public mutating func updateExpectsReadConfirmation(_ value: Bool) {
-        guard let content = content else { return }
+        guard let content else { return }
         switch content {
         case .text:
             self.text.expectsReadConfirmation = value

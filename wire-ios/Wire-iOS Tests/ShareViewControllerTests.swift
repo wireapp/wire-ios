@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireLinkPreview
 @testable import Wire
+import WireLinkPreview
+import XCTest
 
 final class MockShareViewControllerConversation: SwiftMockConversation {}
 
@@ -34,7 +34,7 @@ extension MockShareViewControllerConversation: StableRandomParticipantsProvider 
 	}
 }
 
-final class ShareViewControllerTests: ZMSnapshotTestCase {
+final class ShareViewControllerTests: XCTestCase {
     private var groupConversation: MockShareViewControllerConversation!
     private var oneToOneConversation: MockShareViewControllerConversation!
     private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
