@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arhiva";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Razgovori počinju ovdje";
@@ -1041,6 +1043,7 @@
 "self.add_email_password" = "Dodajte adresu e-pošte i lozinku";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Uvjeti korištenja";
 "about.privacy.title" = "Pravilnik o zaštiti privatnosti";
 "about.license.title" = "Informacije o licenci";

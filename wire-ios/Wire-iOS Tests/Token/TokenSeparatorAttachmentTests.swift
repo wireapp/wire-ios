@@ -20,7 +20,7 @@ import SnapshotTesting
 @testable import Wire
 import XCTest
 
-final class TokenSeparatorAttachmentTests: BaseSnapshotTestCase {
+final class TokenSeparatorAttachmentTests: XCTestCase {
     var sut: TokenSeparatorAttachment!
 
     override func setUp() {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+@testable import WireAPI
 
 // Fixed mock ids to use in deterministic tests, such as snapshot tests.
 
@@ -33,4 +34,11 @@ extension UUID {
     static let mockID9 = UUID(uuidString: "2fa94c25-2725-4bcb-bcda-ad5a89e62d96")!
     static let mockID10 = UUID(uuidString: "0f970654-995c-4ac6-ae67-a6aafd420b9f")!
 
+}
+
+extension QualifiedID {
+
+    static let mockID1 = QualifiedID(uuid: .mockID1, domain: "example.com")
+    static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
+    static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")
 }

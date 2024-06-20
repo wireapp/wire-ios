@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 enum ConversationListState {
@@ -34,6 +35,8 @@ final class ConversationListViewController: UIViewController {
     /// internal View Model
     var state: ConversationListState = .conversationList
 
+    private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
+
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -43,9 +46,9 @@ final class ConversationListViewController: UIViewController {
 
     var startCallToken: Any?
 
-    var pushPermissionDeniedViewController: PermissionDeniedViewController?
+    weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
 
-    private let noConversationLabel: UILabel = {
+    private let noConversationLabel = {
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
@@ -61,12 +64,6 @@ final class ConversationListViewController: UIViewController {
 
     let listContentController: ConversationListContentController
 
-    let tabBar: ConversationListTabBar = {
-        let conversationListTabBar = ConversationListTabBar()
-        conversationListTabBar.showArchived = true
-        return conversationListTabBar
-    }()
-
     var userStatusViewController: UserStatusViewController?
     weak var titleViewLabel: UILabel?
     let networkStatusViewController = NetworkStatusViewController()
@@ -75,30 +72,38 @@ final class ConversationListViewController: UIViewController {
 
     convenience init(
         account: Account,
-        selfUser: SelfUserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
-        onboardingHint.arrowPointToView = tabBar
+        self.init(
+            viewModel: viewModel,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
     }
 
     required init(
         viewModel: ViewModel,
+        isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController = ConversationListContentController(
+            userSession: viewModel.userSession,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
+        )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
@@ -110,7 +115,6 @@ final class ConversationListViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
 
         setupListContentController()
-        setupTabBar()
         setupNoConversationLabel()
         setupOnboardingHint()
         setupNetworkStatusBar()
@@ -155,9 +159,6 @@ final class ConversationListViewController: UIViewController {
         }
 
         state = .conversationList
-        tabBar.selectedTab = listContentController.listViewModel.folderEnabled ? .folder : .list
-
-        closePushPermissionDialogIfNotNeeded()
 
         shouldAnimateNetworkStatusView = true
 
@@ -165,10 +166,13 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.updateE2EICertifiedStatus()
 
+        onboardingHint.arrowPointToView = tabBarController?.tabBar
+
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
 
-            ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
+            tabBarController?.delegate = self
+
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }
@@ -181,15 +185,6 @@ final class ConversationListViewController: UIViewController {
         })
 
         super.viewWillTransition(to: size, with: coordinator)
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        self.tabBar.subviews.forEach { barButton in
-            if let label = barButton.subviews[1] as? UILabel {
-                label.sizeToFit()
-            }
-        }
     }
 
     override var shouldAutorotate: Bool {
@@ -219,13 +214,6 @@ final class ConversationListViewController: UIViewController {
         contentContainer.addSubview(onboardingHint)
     }
 
-    private func setupTabBar() {
-        tabBar.delegate = self
-        contentContainer.addSubview(tabBar)
-        listContentController.listViewModel.restorationDelegate = tabBar
-        tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
-    }
-
     private func setupNetworkStatusBar() {
         networkStatusViewController.delegate = self
         add(networkStatusViewController, to: contentContainer)
@@ -236,7 +224,6 @@ final class ConversationListViewController: UIViewController {
 
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
         conversationList.translatesAutoresizingMaskIntoConstraints = false
-        tabBar.translatesAutoresizingMaskIntoConstraints = false
         noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
         onboardingHint.translatesAutoresizingMaskIntoConstraints = false
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -254,15 +241,11 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: tabBar.topAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
 
-            onboardingHint.bottomAnchor.constraint(equalTo: tabBar.topAnchor),
+            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
             onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
-
-            tabBar.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            tabBar.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            tabBar.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
 
             noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
@@ -312,19 +295,10 @@ final class ConversationListViewController: UIViewController {
         return startUIViewController
     }
 
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
-        guard showArchived != tabBar.showArchived else {
-            return
-        }
-        tabBar.showArchived = showArchived
-    }
-
-    func hideArchivedConversations() {
-        setState(.conversationList, animated: true)
-    }
-
-    func presentPeoplePicker() {
-        setState(.peoplePicker, animated: true)
+    func presentPeoplePicker(
+        completion: Completion? = nil
+    ) {
+        setState(.peoplePicker, animated: true, completion: completion)
     }
 
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
@@ -351,30 +325,28 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 }
 
-// MARK: - UITabBarDelegate
+// MARK: - UITabBarControllerDelegate
 
-extension ConversationListViewController: UITabBarDelegate {
+extension ConversationListViewController: UITabBarControllerDelegate {
 
-    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else { return }
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 
-        switch type {
+        switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
+        case .contacts:
+            presentPeoplePicker { [self] in
+                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
+            }
+        case .conversations, .folders:
+            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
         case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
+            setState(.archived, animated: true) { [self] in
+                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
+            }
+        case .none:
+            fallthrough
+        default:
+            fatalError("unexpected selected tab index")
         }
-    }
-}
-
-private extension UITabBarItem {
-
-    var type: TabBarItemType? {
-        .allCases.first { $0.rawValue == tag }
     }
 }
 
@@ -389,8 +361,8 @@ private extension NSAttributedString {
         paragraphStyle.alignment = .center
 
         let titleAttributes: [NSAttributedString.Key: Any] = [
-            NSAttributedString.Key.foregroundColor: UIColor.white,
-            NSAttributedString.Key.font: UIFont.smallMediumFont,
+            NSAttributedString.Key.foregroundColor: SemanticColors.Label.textDefault,
+            NSAttributedString.Key.font: UIFont.font(for: .h3),
             NSAttributedString.Key.paragraphStyle: paragraphStyle
         ]
 

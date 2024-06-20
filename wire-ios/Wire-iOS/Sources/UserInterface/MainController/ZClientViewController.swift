@@ -19,6 +19,7 @@
 import avs
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
@@ -30,12 +31,12 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    var isComingFromRegistration = false
-    var needToShowDataUsagePermissionDialog = false
     let wireSplitViewController: SplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
+    private(set) var mainTabBarController: UITabBarController!
     let conversationListViewController: ConversationListViewController
+    let conversationListWithFoldersViewController: ConversationListViewController
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
@@ -46,8 +47,6 @@ final class ZClientViewController: UIViewController {
     private var topOverlayViewController: UIViewController?
     private var contentTopRegularConstraint: NSLayoutConstraint!
     private var contentTopCompactConstraint: NSLayoutConstraint!
-    // init value = false which set to true, set to false after data usage permission dialog is displayed
-    var dataUsagePermissionDialogDisplayed = false
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
@@ -62,18 +61,29 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
-            selfUser: userSession.selfUser,
+            selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
             accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
             account: account,
-            selfUser: userSession.selfUser,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+        // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
+        conversationListWithFoldersViewController = .init(
+            account: account,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: true,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
+        conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
 
         colorSchemeController = .init(userSession: userSession)
 
@@ -84,8 +94,6 @@ final class ZClientViewController: UIViewController {
             name: "conversationMedia",
             userSession: userSession
         )
-        dataUsagePermissionDialogDisplayed = false
-        needToShowDataUsagePermissionDialog = false
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: [
             "media": "external "
@@ -175,7 +183,14 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-        wireSplitViewController.leftViewController = UINavigationController(rootViewController: conversationListViewController)
+
+        mainTabBarController = MainTabBarController(
+            contacts: .init(),
+            conversations: UINavigationController(rootViewController: conversationListViewController),
+            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
+            archive: .init()
+        )
+        wireSplitViewController.leftViewController = mainTabBarController
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -341,7 +356,6 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.hideArchivedConversations()
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 
@@ -378,13 +392,13 @@ final class ZClientViewController: UIViewController {
             if let rightViewController = self.wireSplitViewController.rightViewController,
                rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
-            } else if let presentedViewController = self.conversationListViewController.navigationController?.presentedViewController {
+            } else if let presentedViewController = self.conversationListViewController.presentedViewController {
                 // This is a workaround around the fact that the transitioningDelegate of the settings
                 // view controller is not called when the transition is not being performed animated.
                 // This sounds like a bug in UIKit (Radar incoming) as I would expect the custom animator
                 // being called with `transitionContext.isAnimated == false`. As this is not the case
                 // we have to restore the proper pre-presentation state here.
-                let conversationView = self.conversationListViewController.navigationController?.view
+                let conversationView = self.conversationListViewController.view
                 if let transform = conversationView?.layer.transform {
                     if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
@@ -594,7 +608,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfUser,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)
@@ -707,7 +721,7 @@ final class ZClientViewController: UIViewController {
 
     var isConversationListVisible: Bool {
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.navigationController?.presentedViewController == nil)
+        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(animated: Bool,

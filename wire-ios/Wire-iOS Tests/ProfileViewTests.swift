@@ -17,12 +17,13 @@
 //
 
 import WireDataModelSupport
+import WireDesign
 import WireSyncEngineSupport
 import XCTest
 
 @testable import Wire
 
-final class ProfileViewTests: BaseSnapshotTestCase {
+final class ProfileViewTests: XCTestCase {
 
     var userSession: UserSessionMock!
 

@@ -65,6 +65,7 @@ platform :ios do
         options[:upload_app_center] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Development')
         build_and_upload_app(options)
     end
@@ -74,10 +75,12 @@ platform :ios do
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
+        options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Playground')
         build_and_upload_app(options)
-        `export TEMP='APPCENTER_INSTALL_LINK=For \'Playground\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['PLAYGROUND_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Beta build"
@@ -86,9 +89,11 @@ platform :ios do
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
+        options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         save_app_name('Testflight Beta')
         build_and_upload_app(options)
-        `export TEMP='APPCENTER_INSTALL_LINK=For \'Beta\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Public AppStore build"
@@ -97,6 +102,7 @@ platform :ios do
         options[:upload_dsyms_to_app_center] = true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
+        options[:countly_api_key] = ENV['COUNTLY_PRODUCTION_KEY']
         save_app_name('Public AppStore Production')
         build_and_upload_app(options)
     end
@@ -313,14 +319,13 @@ platform :ios do
         else
             # DataDog values needs to go through WireCommonComponents
             enable_datadog_args = [
-            "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
-            "OTHER_PREPROCESSOR_FLAGS='DATADOG_IMPORT'"
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
+            xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
 
             build_app(
                 scheme: "Wire-iOS",
@@ -398,13 +403,20 @@ platform :ios do
     def upload_testflight(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
+        
+        # we add this group to get a review from Apple when we upload new build version
+        # in order to speed up distribution to real external groups
+        groups = ["Default External Testers"]
+        if build.send_to_externals
+            groups += options[:extra_distribution_groups]
+        end
 
         upload_to_testflight(
             api_key_path: appstoreconnect_api_key_file_path,
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             skip_waiting_for_build_processing: false,
             distribute_external: true,
-            groups: ["Default External Testers", "Externals - Non Wire Employees"],
+            groups: groups,
             submit_beta_review: true,
             changelog: changelog(build)
         )
@@ -457,7 +469,7 @@ platform :ios do
         )
 
         appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
-        `export TEMP='APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload to S3 (Automation builds)
@@ -530,6 +542,9 @@ class Build
     attr_reader :configuration
     attr_reader :enable_datadog
     attr_reader :skip_security_tests
+    # send to non-default external distribution list
+    attr_reader :send_to_externals
+    attr_reader :countly_api_key
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -549,6 +564,8 @@ class Build
             @git_branch = ENV['GITHUB_REF_NAME']
         end
 
+        @countly_api_key = options[:countly_api_key]
+        @send_to_externals = ENV['SEND_TO_EXTERNALS'] == "true" || ENV['SEND_TO_EXTERNALS'] == "1"
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
         @build_number = build_number
@@ -569,6 +586,10 @@ class Build
     end
 
     # Helpers
+
+    def countly_enabled
+        !@countly_api_key.nil? && !@countly_api_key.empty?
+    end
 
     def playground_build
         @build_type == "Playground"

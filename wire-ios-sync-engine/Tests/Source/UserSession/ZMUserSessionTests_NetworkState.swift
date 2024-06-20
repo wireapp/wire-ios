@@ -53,7 +53,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             flowManager: flowManagerMock,
             mediaManager: mediaManager,
             mlsService: mockMLSService,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
@@ -66,7 +65,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 

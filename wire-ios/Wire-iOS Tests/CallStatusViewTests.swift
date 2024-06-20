@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDesign
 import XCTest
+
+@testable import Wire
 
 struct MockStatusViewConfiguration: CallStatusViewInputType {
     var state: CallStatusViewState
@@ -29,7 +31,7 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
     var classification: SecurityClassification?
 }
 
-final class CallStatusViewTests: BaseSnapshotTestCase {
+final class CallStatusViewTests: XCTestCase {
 
     private var sut: CallStatusView!
 

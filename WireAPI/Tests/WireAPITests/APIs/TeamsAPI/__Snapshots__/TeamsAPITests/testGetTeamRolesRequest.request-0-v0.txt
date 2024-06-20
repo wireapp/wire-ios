@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/teams/213248a1-5499-418f-8173-5010d1c1e506/conversations/roles"
+  - method: get
+  - body: none

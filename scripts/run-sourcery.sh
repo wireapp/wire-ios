@@ -20,8 +20,8 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SCRIPTS_DIR="$REPO_ROOT/scripts"
-SOURCERY="$SCRIPTS_DIR/.build/artifacts/scripts/sourcery/sourcery/bin/sourcery"
+DIRECTORY="$REPO_ROOT/SourceryPlugin"
+SOURCERY="$DIRECTORY/.build/artifacts/sourceryplugin/sourcery/sourcery/bin/sourcery"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping Sourcery in CI environment"
@@ -29,7 +29,7 @@ if [ ! -z "${CI-}" ]; then
 fi
 
 if [[ ! -f "$SOURCERY" ]]; then
-    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+    xcrun --sdk macosx swift package --package-path "$DIRECTORY" resolve
 fi
 
 "$SOURCERY" "$@"

@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class CollectionLinkCell: CollectionCell {
     private var articleView: ArticleView? = .none

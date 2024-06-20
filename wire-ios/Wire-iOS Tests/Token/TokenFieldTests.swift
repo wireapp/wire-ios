@@ -17,10 +17,12 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireDesign
 import XCTest
 
-final class TokenFieldTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class TokenFieldTests: XCTestCase {
     var sut: TokenField!
 
     override func setUp() {

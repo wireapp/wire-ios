@@ -19,6 +19,7 @@
 import DifferenceKit
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
@@ -46,13 +47,19 @@ final class ConversationListContentController: UICollectionViewController, Popov
         NotificationCenter.default.removeObserver(self)
     }
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        isFolderStatePersistenceEnabled: Bool
+    ) {
         self.userSession = userSession
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-        self.listViewModel = ConversationListViewModel(userSession: userSession)
+        self.listViewModel = ConversationListViewModel(
+            userSession: userSession,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
+        )
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()

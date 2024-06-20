@@ -23,13 +23,13 @@ import Foundation
 @testable import WireSyncEngineSupport
 import XCTest
 
-class CertificateRevocationListsCheckerTests: XCTestCase {
+final class CertificateRevocationListsCheckerTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!
 
     private var sut: CertificateRevocationListsChecker!
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCRLAPI: MockCertificateRevocationListAPIProtocol!
-    private var mockConversationVerificationStatusUpdater: MockMLSConversationVerificationStatusUpdating!
+    private var mockMLSGroupVerification: MockMLSGroupVerificationProtocol!
     private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
     private var mockCRLExpirationDatesRepository: MockCRLExpirationDatesRepositoryProtocol!
     private var mockCoreDataStack: CoreDataStack!
@@ -46,14 +46,14 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         mockCoreDataStack = try await coreDataHelper.createStack()
 
         mockCRLAPI = MockCertificateRevocationListAPIProtocol()
-        mockConversationVerificationStatusUpdater = MockMLSConversationVerificationStatusUpdating()
+        mockMLSGroupVerification = MockMLSGroupVerificationProtocol()
         mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         mockCRLExpirationDatesRepository = MockCRLExpirationDatesRepositoryProtocol()
 
         sut = CertificateRevocationListsChecker(
             crlAPI: mockCRLAPI,
             crlExpirationDatesRepository: mockCRLExpirationDatesRepository,
-            mlsConversationsVerificationUpdater: mockConversationVerificationStatusUpdater,
+            mlsGroupVerification: mockMLSGroupVerification,
             selfClientCertificateProvider: mockSelfClientCertificateProvider,
             coreCryptoProvider: provider,
             context: mockCoreDataStack.syncContext
@@ -64,7 +64,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         sut = nil
         mockCoreCrypto = nil
         mockCRLAPI = nil
-        mockConversationVerificationStatusUpdater = nil
+        mockMLSGroupVerification = nil
         mockSelfClientCertificateProvider = nil
         mockCRLExpirationDatesRepository = nil
         mockCoreDataStack = nil
@@ -128,7 +128,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         )
 
         // It updates conversations verification statuses once (for dp2)
-        XCTAssertEqual(mockConversationVerificationStatusUpdater.updateAllStatuses_Invocations.count, 1)
+        XCTAssertEqual(mockMLSGroupVerification.updateAllConversations_Invocations.count, 1)
     }
 
     func testCheckNewCRLs_GivenNoNewCRLs() async throws {
@@ -152,7 +152,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         XCTAssertTrue(mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.isEmpty)
 
         // It doesn't update conversations verification statuses
-        XCTAssertTrue(mockConversationVerificationStatusUpdater.updateAllStatuses_Invocations.isEmpty)
+        XCTAssertTrue(mockMLSGroupVerification.updateAllConversations_Invocations.isEmpty)
     }
 
     // MARK: - Check Expired CRLs
@@ -229,7 +229,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         )
 
         // It updates conversations verification statuses for dp1
-        XCTAssertEqual(mockConversationVerificationStatusUpdater.updateAllStatuses_Invocations.count, 1)
+        XCTAssertEqual(mockMLSGroupVerification.updateAllConversations_Invocations.count, 1)
 
     }
 
@@ -260,7 +260,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { _, _ in }
 
         // Mock updating the conversation verification status
-        mockConversationVerificationStatusUpdater.updateAllStatuses_MockMethod = {}
+        mockMLSGroupVerification.updateAllConversations_MockMethod = { }
 
         // Mock getting a certificate for a self client
         mockSelfClientCertificateProvider.getCertificate_MockMethod = { return nil }

@@ -43,7 +43,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     // MARK: - Helpers
 
     func setCurrentVersion(_ version: Int?) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.setPersistentStoreMetadata(version, key: self.sut.lastRunVersionKey)
             self.syncMOC.saveOrRollback()
         }
@@ -64,7 +64,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     // MARK: - Tests
 
     func testItAppliesNoPatchesWhenThereIsNoPreviousVersion() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // Given no previous version
             self.setCurrentVersion(.none)
 
@@ -83,7 +83,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItAppliesOnlyNecessaryPatches() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // Given a previous version as 2
             self.setCurrentVersion(2)
 
@@ -106,7 +106,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     func testItAppliesFirstPatchSuccessfully() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // Given no patches were run previously (previous version is 0)
             self.setCurrentVersion(0)
 
@@ -125,7 +125,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     func testItOnlyAppliesPatchesOnce() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // Given no patches were run previously (previous version is 0)
             self.setCurrentVersion(0)
 

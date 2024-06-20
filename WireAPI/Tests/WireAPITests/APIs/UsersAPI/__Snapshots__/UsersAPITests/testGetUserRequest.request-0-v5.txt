@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v5/users/example.com/213248a1-5499-418f-8173-5010d1c1e506"
+  - method: get
+  - body: none

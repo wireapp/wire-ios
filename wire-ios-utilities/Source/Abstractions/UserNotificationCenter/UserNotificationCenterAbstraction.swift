@@ -18,7 +18,7 @@
 
 import UserNotifications
 
-// sourcery: AutoMockable
+// TODO [WPB-9200]: let Sourcery create the mock // sourcery: AutoMockable
 /// An abstraction of the `UNUserNotificationCenter` object to facilitate mocking for unit tests.
 public protocol UserNotificationCenterAbstraction {
 

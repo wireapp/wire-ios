@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
@@ -34,13 +35,13 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Initialization
 
     init(clients: [UserClient],
-         credentials: ZMCredentials?) {
-        let emailCredentials: ZMEmailCredentials? = credentials.flatMap {
+         credentials: UserCredentials?) {
+        let emailCredentials: UserEmailCredentials? = credentials.flatMap {
             guard let email = $0.email, let password = $0.password else {
                 return nil
             }
 
-            return ZMEmailCredentials(email: email, password: password)
+            return UserEmailCredentials(email: email, password: password)
         }
 
         clientListController = RemoveClientsViewController(
