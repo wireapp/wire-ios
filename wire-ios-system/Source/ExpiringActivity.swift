@@ -35,7 +35,7 @@ public struct ExpiringActivityNotAllowedToRun: Error { }
 /// calling [Task.checkCancellation](https://developer.apple.com/documentation/swift/task/checkcancellation()) at the appropriate time.
 ///
 /// - Parameters:
-///   - reason: Discription of what the activity does, helpful for debugging purposes.
+///   - reason: Description of what the activity does, helpful for debugging purposes.
 ///   - block: async operation which supports cancellation.
 
 public func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {

@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireSystem
 
-class MockExpiringActivityAPI: ExpiringActivityInterface {
+private class MockExpiringActivityAPI: ExpiringActivityInterface {
 
     typealias MethodCall = (_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) -> Void
 
@@ -63,7 +63,7 @@ class ExpiringActivityTests: XCTestCase {
                     try Task.checkCancellation()
                 }
             }
-            XCTFail("Expected an cancellation error to be thrown")
+            XCTFail("Expected a cancellation error to be thrown")
         } catch { }
     }
 
