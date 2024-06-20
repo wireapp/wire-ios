@@ -20,9 +20,22 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+/// Facilitate access to users related domain objects.
+///
+/// A repository provides an abstraction for the access and storage
+/// of domain models, concealing how and where the models are stored
+/// as well as the possible source(s) of the models.
+
 protocol UserRepositoryProtocol_ {
 
+    /// Fetch and persist all locally known users
+
     func pullKnownUsers() async throws
+
+    /// Fetch and persist a list of users
+    ///
+    /// - parameters:
+    ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
