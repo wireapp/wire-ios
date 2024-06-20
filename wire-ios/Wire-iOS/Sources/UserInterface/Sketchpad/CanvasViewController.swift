@@ -19,6 +19,7 @@
 import UIKit
 import WireCanvas
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - CanvasViewControllerDelegate - didExportImage

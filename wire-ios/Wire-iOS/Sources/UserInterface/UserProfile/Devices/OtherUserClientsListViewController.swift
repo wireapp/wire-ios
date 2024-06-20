@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireSyncEngine
 
 final class OtherUserClientsListViewController: UIViewController,

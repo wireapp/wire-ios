@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 /// A view modifier that customizes the background style of a list, providing compatibility for different iOS versions.
 struct ListBackgroundStyleModifier: ViewModifier {

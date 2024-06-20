@@ -20,6 +20,7 @@ import CoreLocation
 import MapKit
 import UIKit
 import WireDataModel
+import WireDesign
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
 
