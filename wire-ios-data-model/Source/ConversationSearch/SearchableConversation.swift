@@ -17,7 +17,8 @@
 //
 
 public protocol SearchableConversation {
+    associatedtype SearchableParticipant: SearchableConversationParticipant
 
     var searchableName: String { get }
-    var searchableParticipants: [SearchableConversationParticipant] { get }
+    var searchableParticipants: [SearchableParticipant] { get }
 }

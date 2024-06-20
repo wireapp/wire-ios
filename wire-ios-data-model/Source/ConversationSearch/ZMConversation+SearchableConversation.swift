@@ -22,7 +22,14 @@ extension ZMConversation: SearchableConversation {
         displayName ?? ""
     }
 
-    public var searchableParticipants: [any SearchableConversationParticipant] {
-        fatalError()
+    public var searchableParticipants: [ZMConversationSearchableParticipant] {
+        localParticipants
+            .map { localParticipant in
+                .init(searchableName: localParticipant.name ?? "")
+            }
     }
+}
+
+public struct ZMConversationSearchableParticipant: SearchableConversationParticipant {
+    public var searchableName: String
 }
