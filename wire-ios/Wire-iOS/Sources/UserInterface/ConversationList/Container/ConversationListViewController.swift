@@ -322,7 +322,15 @@ final class ConversationListViewController: UIViewController, UITabBarController
     }
 
     private func setupSearchController() {
-        navigationItem.searchController = .init(searchResultsController: .none)
+
+        let searchController = UISearchController(searchResultsController: .none)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.isTranslucent = false
+        searchController.delegate = self
+        searchController.searchResultsUpdater = self
+
+        navigationItem.searchController = searchController
     }
 
     // MARK: - No Contact Label Management
