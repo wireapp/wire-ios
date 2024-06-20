@@ -138,6 +138,7 @@ final class RemoveClientsViewController: UIViewController,
                     continuation.resume(returning: password)
                 })
             guard let alertController = requestPasswordController?.alertController else {
+                continuation.resume(returning: nil)
                 return
             }
 
