@@ -602,6 +602,11 @@ extension AppRootRouter: ApplicationStateObserving {
     func applicationDidBecomeActive() {
         updateOverlayWindowFrame()
         teamMetadataRefresher.triggerRefreshIfNeeded()
+
+        // Track app open event only if the user is logged in (authenticatedRouter is not nil)
+        if authenticatedRouter != nil {
+            analyticsSession?.trackEvent(.appOpen)
+        }
     }
 
     func applicationDidEnterBackground() {
