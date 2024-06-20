@@ -34,20 +34,20 @@ public struct ConversationProteusMessageAddEvent: Equatable {
 
     public let timestamp: Date
 
-    /// The base 64 encoded encrypted message.
+    /// The base 64 encoded message.
 
-    public let message: String
+    public var message: MessageContent
 
     /// The base 64 encoded external data.
 
-    public let externalData: String?
+    public var externalData: MessageContent?
 
-    /// The id of the user who sent the message.
+    /// The id of the user client who sent the message.
 
-    public let messageSenderID: UUID
+    public let messageSenderClientID: String
 
-    /// The id of the user who should receive the message.
+    /// The id of the user client who should receive the message.
 
-    public let messageRecipientID: UUID
+    public let messageRecipientClientID: String
 
 }

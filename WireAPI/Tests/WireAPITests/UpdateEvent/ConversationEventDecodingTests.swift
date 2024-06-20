@@ -426,10 +426,10 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
-            message: "foo",
-            externalData: "bar",
-            messageSenderID: senderID.uuid,
-            messageRecipientID: senderID.uuid
+            message: .ciphertext("foo"),
+            externalData: .ciphertext("bar"),
+            messageSenderClientID: "abc123",
+            messageRecipientClientID: "def456"
         )
 
         static let protocolUpdateEvent = ConversationProtocolUpdateEvent(
