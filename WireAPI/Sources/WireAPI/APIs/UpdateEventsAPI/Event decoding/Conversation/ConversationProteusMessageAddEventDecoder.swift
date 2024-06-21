@@ -34,7 +34,7 @@ struct ConversationProteusMessageAddEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
@@ -46,7 +46,7 @@ struct ConversationProteusMessageAddEventDecoder {
         return ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp,
+            timestamp: timestamp.date,
             message: payload.text,
             externalData: payload.data,
             messageSenderID: payload.sender,

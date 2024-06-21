@@ -6,7 +6,7 @@
         "label": "Alice's work phone",
         "model": "iPhone 20",
         "time": "2024-06-04T15:03:07.598Z",
-        "last_active": "2024-06-04T15:03:07.598Z",
+        "last_active": "2024-06-04T15:03:07Z",
         "type": "permanent",
         "cookie": "cookieData",
         "mls_public_keys": {

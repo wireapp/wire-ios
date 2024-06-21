@@ -441,7 +441,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(list.failed.count, 1)
 
         let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
+        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1620816722))
         XCTAssertEqual(conversation.cipherSuite, .MLS_128_DHKEMP256_AES128GCM_SHA256_P256)
     }
 
