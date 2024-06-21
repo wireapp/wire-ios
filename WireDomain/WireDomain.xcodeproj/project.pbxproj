@@ -27,6 +27,7 @@
 		162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623564F2C2B223100C6666C /* UserRepositoryTests.swift */; };
 		162356532C2B223B00C6666C /* UserRepository_.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356512C2B223B00C6666C /* UserRepository_.swift */; };
 		162356542C2B223B00C6666C /* UserRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356522C2B223B00C6666C /* UserRepositoryError.swift */; };
+		162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356562C2B22A300C6666C /* UserModelMappings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		1623564F2C2B223100C6666C /* UserRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryTests.swift; sourceTree = "<group>"; };
 		162356512C2B223B00C6666C /* UserRepository_.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository_.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
+		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 		017F67A22C20802300B6E02D /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				162356562C2B22A300C6666C /* UserModelMappings.swift */,
 				162356512C2B223B00C6666C /* UserRepository_.swift */,
 				162356522C2B223B00C6666C /* UserRepositoryError.swift */,
 				017F679D2C20802300B6E02D /* ConnectionsRepositiory.swift */,
@@ -407,6 +410,7 @@
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
+				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* UserRepository.swift in Sources */,
 			);
