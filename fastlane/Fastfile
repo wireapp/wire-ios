@@ -107,6 +107,18 @@ platform :ios do
         build_and_upload_app(options)
     end
     
+    desc "Build & Upload SZ AppStore build"
+    lane :appstore_sz_build do |options|
+        options[:build_type] = "AppStore"
+        options[:override_folder] = "SZ"
+        options[:s3_subfolder] = ENV['SZ_SUBFOLDER_PRODUCTION']
+        options[:upload_app_store] = true
+        options[:upload_app_center] = false
+        options[:produce_debug_builds] = false
+        save_app_name('SZ AppStore')
+        build_and_upload_app(options)
+    end
+
     desc "Build & Upload Col 1 Restricted AppStore build"
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
