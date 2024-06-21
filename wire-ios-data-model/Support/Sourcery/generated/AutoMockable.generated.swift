@@ -3654,6 +3654,48 @@ public class MockLAContextStorable: LAContextStorable {
 
 }
 
+public class MockLastEventIDRepositoryInterface: LastEventIDRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchLastEventID
+
+    public var fetchLastEventID_Invocations: [Void] = []
+    public var fetchLastEventID_MockMethod: (() -> UUID?)?
+    public var fetchLastEventID_MockValue: UUID??
+
+    public func fetchLastEventID() -> UUID? {
+        fetchLastEventID_Invocations.append(())
+
+        if let mock = fetchLastEventID_MockMethod {
+            return mock()
+        } else if let mock = fetchLastEventID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchLastEventID`")
+        }
+    }
+
+    // MARK: - storeLastEventID
+
+    public var storeLastEventID_Invocations: [UUID?] = []
+    public var storeLastEventID_MockMethod: ((UUID?) -> Void)?
+
+    public func storeLastEventID(_ id: UUID?) {
+        storeLastEventID_Invocations.append(id)
+
+        guard let mock = storeLastEventID_MockMethod else {
+            fatalError("no mock for `storeLastEventID`")
+        }
+
+        mock(id)
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle

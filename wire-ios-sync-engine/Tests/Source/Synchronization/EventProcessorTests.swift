@@ -51,7 +51,8 @@ class EventProcessorTests: MessagingTest {
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers
+            eventAsyncConsumers: mockEventAsyncConsumers,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
