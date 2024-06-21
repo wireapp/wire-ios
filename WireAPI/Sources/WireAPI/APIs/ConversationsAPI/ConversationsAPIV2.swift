@@ -33,7 +33,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
             method: .post,
             body: body
         )
-        let response = try await httpClient.executeRequest(request)
+        let response = try await self.httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationListV0.self)

@@ -23,6 +23,7 @@ import Foundation
 /// the client.
 
 public enum UpdateEvent: Equatable {
+
     /// A conversation event.
 
     case conversation(ConversationEvent)
@@ -46,4 +47,5 @@ public enum UpdateEvent: Equatable {
     /// An event that is not known by the client.
 
     case unknown(eventType: String)
+
 }

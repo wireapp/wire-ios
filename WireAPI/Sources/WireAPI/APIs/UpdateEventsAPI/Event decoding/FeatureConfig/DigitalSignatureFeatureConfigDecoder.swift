@@ -19,6 +19,7 @@
 import Foundation
 
 struct DigitalSignatureFeatureConfigDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> DigitalSignatureFeatureConfig {
@@ -29,4 +30,5 @@ struct DigitalSignatureFeatureConfigDecoder {
 
         return DigitalSignatureFeatureConfig(status: payload.status)
     }
+
 }

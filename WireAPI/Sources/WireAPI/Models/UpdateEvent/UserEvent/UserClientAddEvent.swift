@@ -21,7 +21,9 @@ import Foundation
 /// An event where a new self user client was added.
 
 public struct UserClientAddEvent: Equatable {
+
     /// The new user client.
 
     public let client: UserClient
+
 }

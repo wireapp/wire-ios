@@ -23,6 +23,7 @@ import struct WireAPI.HTTPRequest
 
 /// Provides convenience to snapshot `HTTPRequest` objects.
 struct HTTPRequestSnapshotHelper {
+
     /// Snapshot test a given request
     /// - Parameters:
     ///   - request: httpRequest to verify

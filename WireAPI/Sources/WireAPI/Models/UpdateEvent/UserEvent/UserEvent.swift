@@ -21,6 +21,7 @@ import Foundation
 /// An event concerning users.
 
 public enum UserEvent: Equatable {
+
     /// The self user has added a new client.
 
     case clientAdd(UserClientAddEvent)
@@ -68,4 +69,5 @@ public enum UserEvent: Equatable {
     /// A user's metadata was updated.
 
     case update(UserUpdateEvent)
+
 }

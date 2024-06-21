@@ -21,6 +21,7 @@ import Foundation
 /// A configuration for the *MLS Migration* feature.
 
 public struct MLSMigrationFeatureConfig: Equatable {
+
     /// The feature's status.
 
     public let status: FeatureConfigStatus
@@ -32,4 +33,5 @@ public struct MLSMigrationFeatureConfig: Equatable {
     /// The date until the migration has to finalise.
 
     public let finaliseRegardlessAfter: Date?
+
 }

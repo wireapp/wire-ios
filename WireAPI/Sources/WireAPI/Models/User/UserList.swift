@@ -21,6 +21,7 @@ import Foundation
 /// Response when retrieving a list users.
 
 public struct UserList: Equatable {
+
     /// List of users which were found and succesfully retrieved.
 
     public let found: [User]

@@ -21,6 +21,7 @@ import Foundation
 /// An event concerning conversations.
 
 public enum ConversationEvent {
+
     /// A new asset was added to a conversation.
 
     case assetAdd
@@ -100,4 +101,5 @@ public enum ConversationEvent {
     /// One or more users are typing in a conversation.
 
     case typing
+
 }

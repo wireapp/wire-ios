@@ -21,6 +21,7 @@ import Foundation
 /// An event where a user's team membership metadata was updated.
 
 public struct TeamMemberUpdateEvent: Equatable {
+
     /// The team id.
 
     public let teamID: UUID
@@ -28,4 +29,5 @@ public struct TeamMemberUpdateEvent: Equatable {
     /// The membership id.
 
     public let membershipID: UUID
+
 }

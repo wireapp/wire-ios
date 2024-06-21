@@ -21,7 +21,9 @@ import Foundation
 /// Errors originating from `ConnectionsAPI`.
 
 public enum ConnectionsAPIError: Error {
+
     /// Invalid body
 
     case invalidBody
+
 }

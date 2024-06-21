@@ -19,7 +19,9 @@
 import Foundation
 
 class BackendInfoAPIV2: BackendInfoAPIV1 {
+
     override func getBackendInfo() async throws -> BackendInfo {
+
         let request = HTTPRequest(
             path: path,
             method: .get
@@ -30,9 +32,11 @@ class BackendInfoAPIV2: BackendInfoAPIV1 {
             .success(code: 200, type: BackendInfoResponseV2.self)
             .parse(response)
     }
+
 }
 
 private struct BackendInfoResponseV2: Decodable, ToAPIModelConvertible {
+
     var domain: String
     var federation: Bool
     var supported: [UInt]
@@ -48,4 +52,5 @@ private struct BackendInfoResponseV2: Decodable, ToAPIModelConvertible {
             developmentVersions: Set(development.compactMap(APIVersion.init))
         )
     }
+
 }

@@ -19,6 +19,7 @@
 import Foundation
 
 class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
+
     let httpClient: HTTPClient
 
     init(httpClient: HTTPClient) {
@@ -57,4 +58,5 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
             .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
     }
+
 }

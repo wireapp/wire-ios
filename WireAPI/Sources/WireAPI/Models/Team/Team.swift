@@ -21,6 +21,7 @@ import Foundation
 /// Represents a team to which members can belong to.
 
 public struct Team: Identifiable, Equatable {
+
     /// The unique id of the team.
 
     public var id: UUID
@@ -70,4 +71,5 @@ public struct Team: Identifiable, Equatable {
         self.logoKey = logoKey
         self.splashScreenID = splashScreenID
     }
+
 }

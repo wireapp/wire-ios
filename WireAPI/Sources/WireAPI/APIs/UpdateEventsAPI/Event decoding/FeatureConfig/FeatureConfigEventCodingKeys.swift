@@ -19,6 +19,8 @@
 import Foundation
 
 enum FeatureConfigEventCodingKeys: String, CodingKey {
+
     case name
     case payload = "data"
+
 }

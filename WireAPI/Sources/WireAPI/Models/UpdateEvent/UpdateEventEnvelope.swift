@@ -21,6 +21,7 @@ import Foundation
 /// A container for update events.
 
 public struct UpdateEventEnvelope: Equatable {
+
     /// The id of the event.
 
     public let id: UUID
@@ -35,4 +36,5 @@ public struct UpdateEventEnvelope: Equatable {
     /// only sent through the push channel as it occurs.
 
     public let isTransient: Bool
+
 }

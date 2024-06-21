@@ -21,6 +21,7 @@ import Foundation
 /// An event concerning teams.
 
 public enum TeamEvent: Equatable {
+
     /// The self team was deleted.
 
     case delete
@@ -32,4 +33,5 @@ public enum TeamEvent: Equatable {
     /// A user's team membership was updated.
 
     case memberUpdate(TeamMemberUpdateEvent)
+
 }

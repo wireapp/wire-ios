@@ -21,6 +21,7 @@ import Foundation
 /// A http request to be sent to a server.
 
 public struct HTTPRequest: Equatable {
+
     /// The path of the endpoint.
 
     public var path: String
@@ -48,10 +49,13 @@ public struct HTTPRequest: Equatable {
     /// A type of http request.
 
     public enum Method {
+
         case delete
         case get
         case head
         case post
         case put
+
     }
+
 }

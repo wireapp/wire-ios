@@ -22,7 +22,9 @@ import Foundation
 /// properties was set.
 
 public struct UserPropertiesSetEvent: Equatable {
+
     /// The updated user property.
 
     public let property: UserProperty
+
 }

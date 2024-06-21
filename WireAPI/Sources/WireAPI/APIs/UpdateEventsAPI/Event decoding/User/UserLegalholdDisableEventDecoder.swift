@@ -19,6 +19,7 @@
 import Foundation
 
 struct UserLegalholdDisableEventDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserLegalholdDisableEvent {
@@ -29,4 +30,5 @@ struct UserLegalholdDisableEventDecoder {
 
         return UserLegalholdDisableEvent(userID: userID)
     }
+
 }

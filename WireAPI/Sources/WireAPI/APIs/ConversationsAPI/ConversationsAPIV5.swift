@@ -31,7 +31,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             method: .post,
             body: body
         )
-        let response = try await httpClient.executeRequest(request)
+        let response = try await self.httpClient.executeRequest(request)
 
         // Removed in v5: remove handling of error code 400
         return try ResponseParser()
@@ -44,9 +44,9 @@ class ConversationsAPIV5: ConversationsAPIV4 {
 
 private struct QualifiedConversationListV5: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found
+        case found = "found"
         case notFound = "not_found"
-        case failed
+        case failed = "failed"
     }
 
     let found: [ConversationV5]

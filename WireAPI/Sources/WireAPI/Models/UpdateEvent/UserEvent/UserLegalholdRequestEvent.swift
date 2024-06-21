@@ -22,6 +22,7 @@ import Foundation
 /// legalhold subject.
 
 public struct UserLegalholdRequestEvent: Equatable {
+
     /// The user id of the target legalhold subject.
 
     public let userID: UUID
@@ -33,4 +34,5 @@ public struct UserLegalholdRequestEvent: Equatable {
     /// The last prekey of the legalhold device.
 
     public let lastPrekey: Prekey
+
 }

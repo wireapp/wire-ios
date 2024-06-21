@@ -21,7 +21,9 @@ import Foundation
 /// An event where one of the self user's contacts has joined Wire.
 
 public struct UserContactJoinEvent: Equatable {
+
     /// The contact's name.
 
     public let name: String
+
 }

@@ -19,12 +19,14 @@
 import Foundation
 
 enum UserEventCodingKeys: String, CodingKey {
-    case client
-    case user
-    case id
+
+    case client = "client"
+    case user = "user"
+    case id = "id"
     case qualifiedID = "qualified_id"
-    case connection
+    case connection = "connection"
     case lastPrekey = "last_prekey"
     case propertyKey = "key"
     case propertyValue = "value"
+
 }

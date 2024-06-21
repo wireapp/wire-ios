@@ -21,6 +21,7 @@ import Foundation
 /// Client device for a user.
 
 public struct UserClient: Equatable, Identifiable, Codable {
+
     /// The unique id of the client.
 
     public let id: String
@@ -62,6 +63,7 @@ public struct UserClient: Equatable, Identifiable, Codable {
     public let capabilities: [UserClientCapability]
 
     enum CodingKeys: String, CodingKey {
+
         case id
         case type
         case activationDate = "time"
@@ -72,5 +74,7 @@ public struct UserClient: Equatable, Identifiable, Codable {
         case mlsPublicKeys = "mls_public_keys"
         case cookie
         case capabilities
+
     }
+
 }

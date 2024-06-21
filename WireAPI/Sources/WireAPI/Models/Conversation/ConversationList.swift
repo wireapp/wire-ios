@@ -18,6 +18,7 @@
 
 /// A list of conversations categorized by status.
 public struct ConversationList {
+
     /// Representing objects of resolved conversations.
     public let found: [Conversation]
 

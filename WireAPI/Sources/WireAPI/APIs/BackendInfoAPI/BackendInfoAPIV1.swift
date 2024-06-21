@@ -19,5 +19,7 @@
 import Foundation
 
 class BackendInfoAPIV1: BackendInfoAPIV0 {
+
     // No changes.
+
 }

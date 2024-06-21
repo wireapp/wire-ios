@@ -19,6 +19,7 @@
 import Foundation
 
 extension UpdateEvent {
+
     init(
         eventType: UserEventType,
         from decoder: any Decoder
@@ -74,4 +75,5 @@ extension UpdateEvent {
             self = .user(.update(event))
         }
     }
+
 }

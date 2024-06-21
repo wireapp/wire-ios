@@ -20,6 +20,7 @@
 import XCTest
 
 final class TeamEventDecodingTests: XCTestCase {
+
     private var decoder: JSONDecoder!
 
     override func setUp() {
@@ -61,6 +62,7 @@ final class TeamEventDecodingTests: XCTestCase {
     }
 
     private enum Scaffolding {
+
         static let memberLeaveEvent = TeamMemberLeaveEvent(
             teamID: UUID(uuidString: "6f96e56c-8b3b-4821-925a-457f62f9de32")!,
             userID: UUID(uuidString: "d6344976-f86c-4010-afe2-bc07447ab412")!
@@ -70,5 +72,7 @@ final class TeamEventDecodingTests: XCTestCase {
             teamID: UUID(uuidString: "6f96e56c-8b3b-4821-925a-457f62f9de32")!,
             membershipID: UUID(uuidString: "d6344976-f86c-4010-afe2-bc07447ab412")!
         )
+
     }
+
 }

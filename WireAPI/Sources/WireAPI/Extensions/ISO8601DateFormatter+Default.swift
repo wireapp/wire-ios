@@ -19,6 +19,7 @@
 import Foundation
 
 extension ISO8601DateFormatter {
+
     /// ISO8601 date formatter with internet date time and fractional seconds.
 
     static let `default` = {
@@ -26,4 +27,5 @@ extension ISO8601DateFormatter {
         dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return dateFormatter
     }()
+
 }

@@ -24,6 +24,7 @@ import Foundation
 /// success and failure results.
 
 struct ResponseParser<Success> {
+
     private typealias ParseBlock = (Int, Data) throws -> Success?
 
     private let decoder: JSONDecoder
@@ -31,12 +32,12 @@ struct ResponseParser<Success> {
 
     init(decoder: JSONDecoder = .defaultDecoder) {
         self.decoder = decoder
-        parseBlocks = []
+        self.parseBlocks = []
     }
 
     func success<Payload: Decodable & ToAPIModelConvertible>(
         code: Int,
-        type _: Payload.Type
+        type: Payload.Type
     ) -> ResponseParser<Success> where Payload.APIModel == Success {
         var copy = self
         copy.parseBlocks.append { actualCode, data in
@@ -77,4 +78,5 @@ struct ResponseParser<Success> {
         let failure = try decoder.decode(FailureResponse.self, from: data)
         throw failure
     }
+
 }

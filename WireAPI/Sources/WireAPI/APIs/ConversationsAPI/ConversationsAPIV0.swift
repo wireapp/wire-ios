@@ -19,6 +19,7 @@
 import Foundation
 
 class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
+
     // MARK: - Constants
 
     enum Constants {
@@ -82,7 +83,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             method: .post,
             body: body
         )
-        let response = try await httpClient.executeRequest(request)
+        let response = try await self.httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationListV0.self)
@@ -104,6 +105,7 @@ struct GetConversationsParametersV0: Encodable {
 // MARK: - Decodables
 
 private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
+
     enum CodingKeys: String, CodingKey {
         case conversationIdentifiers = "conversations"
         case pagingState = "paging_state"
@@ -127,9 +129,9 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 
 struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found
+        case found = "found"
         case notFound = "not_found"
-        case failed
+        case failed = "failed"
     }
 
     let found: [ConversationV0]

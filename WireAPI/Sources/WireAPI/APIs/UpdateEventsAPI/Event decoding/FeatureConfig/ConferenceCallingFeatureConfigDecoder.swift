@@ -19,6 +19,7 @@
 import Foundation
 
 struct ConferenceCallingFeatureConfigDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> ConferenceCallingFeatureConfig {
@@ -29,4 +30,5 @@ struct ConferenceCallingFeatureConfigDecoder {
 
         return ConferenceCallingFeatureConfig(status: payload.status)
     }
+
 }

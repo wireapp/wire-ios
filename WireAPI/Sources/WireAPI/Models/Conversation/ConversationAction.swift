@@ -21,6 +21,7 @@ import Foundation
 /// Represents the actions that ca be performed in a conversation.
 
 public enum ConversationAction: Hashable {
+
     /// The action of adding a new member to a conversation.
 
     case addConversationMember
@@ -56,4 +57,5 @@ public enum ConversationAction: Hashable {
     /// The action of deleting the conversation for all members.
 
     case deleteConversation
+
 }

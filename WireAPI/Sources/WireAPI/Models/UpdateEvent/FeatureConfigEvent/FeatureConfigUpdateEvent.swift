@@ -21,7 +21,9 @@ import Foundation
 /// An event where a feature config was updated.
 
 public struct FeatureConfigUpdateEvent: Equatable {
+
     /// The updated feature config.
 
     public let featureConfig: FeatureConfig
+
 }

@@ -19,6 +19,7 @@
 import Foundation
 
 struct ClassifiedDomainsFeatureConfigDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> ClassifiedDomainsFeatureConfig {
@@ -34,6 +35,9 @@ struct ClassifiedDomainsFeatureConfigDecoder {
     }
 
     private struct Payload: Decodable {
+
         let domains: Set<String>
+
     }
+
 }

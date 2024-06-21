@@ -22,6 +22,7 @@ import Foundation
 /// encrypted communication.
 
 public enum MessageProtocol: String, Codable {
+
     /// The Proetus messaging protocol.
 
     case proteus
@@ -29,4 +30,5 @@ public enum MessageProtocol: String, Codable {
     /// The Messaging Layer Security protocol.
 
     case mls
+
 }

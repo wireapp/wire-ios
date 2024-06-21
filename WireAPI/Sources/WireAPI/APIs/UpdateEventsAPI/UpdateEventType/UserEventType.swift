@@ -19,6 +19,7 @@
 import Foundation
 
 enum UserEventType: String {
+
     case clientAdd = "user.client-add"
     case clientRemove = "user.client-remove"
     case connection = "user.connection"
@@ -31,4 +32,5 @@ enum UserEventType: String {
     case propertiesDelete = "user.properties-delete"
     case pushRemove = "user.push-remove"
     case update = "user.update"
+
 }

@@ -19,5 +19,7 @@
 import Foundation
 
 enum ResponseParserError: Error {
+
     case missingPayload
+
 }

@@ -19,6 +19,7 @@
 import Foundation
 
 class ConnectionsAPIV5: ConnectionsAPIV4 {
+
     override var apiVersion: APIVersion {
         .v5
     }

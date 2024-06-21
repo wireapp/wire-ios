@@ -22,7 +22,9 @@ import Foundation
 /// properties was deleted.
 
 public struct UserPropertiesDeleteEvent: Equatable {
+
     /// The property key that was deleted.
 
     public let key: String
+
 }

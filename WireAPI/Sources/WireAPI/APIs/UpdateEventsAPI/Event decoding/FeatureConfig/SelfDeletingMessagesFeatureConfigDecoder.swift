@@ -19,6 +19,7 @@
 import Foundation
 
 struct SelfDeletingMessagesFeatureConfigDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> SelfDeletingMessagesFeatureConfig {
@@ -34,6 +35,9 @@ struct SelfDeletingMessagesFeatureConfigDecoder {
     }
 
     private struct Payload: Decodable {
+
         let enforcedTimeoutSeconds: UInt
+
     }
+
 }

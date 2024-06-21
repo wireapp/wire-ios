@@ -19,7 +19,9 @@
 import Foundation
 
 enum TeamEventType: String {
+
     case delete = "team.delete"
     case memberLeave = "team.member-leave"
     case memberUpdate = "team.member-update"
+
 }

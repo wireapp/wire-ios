@@ -19,6 +19,7 @@
 import Foundation
 
 class UpdateEventsAPIV5: UpdateEventsAPIV4 {
+
     override var apiVersion: APIVersion {
         .v5
     }
@@ -49,4 +50,5 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
             .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
     }
+
 }

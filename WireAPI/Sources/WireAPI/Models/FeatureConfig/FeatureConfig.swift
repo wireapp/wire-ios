@@ -21,6 +21,7 @@ import Foundation
 /// Configurations for various app features.
 
 public enum FeatureConfig: Equatable {
+
     /// Config for the *App Lock* feature.
     ///
     /// *App Lock* protects user content by locking the
@@ -101,4 +102,5 @@ public enum FeatureConfig: Equatable {
     /// An unknown feature.
 
     case unknown(featureName: String)
+
 }

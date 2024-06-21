@@ -19,9 +19,10 @@
 import Foundation
 
 extension UpdateEvent {
+
     init(
         eventType: ConversationEventType,
-        from _: any Decoder
+        from decoder: any Decoder
     ) throws {
         switch eventType {
         case .assetAdd:
@@ -85,4 +86,5 @@ extension UpdateEvent {
             self = .conversation(.typing)
         }
     }
+
 }

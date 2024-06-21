@@ -19,6 +19,7 @@
 import Foundation
 
 struct UserClientAddEventDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserClientAddEvent {
@@ -44,6 +45,7 @@ struct UserClientAddEventDecoder {
     }
 
     private struct Payload: Decodable {
+
         let id: String
         let type: UserClientType
         let activationDate: Date
@@ -56,6 +58,7 @@ struct UserClientAddEventDecoder {
         let capabilities: CapabilitiesList?
 
         enum CodingKeys: String, CodingKey {
+
             case id
             case type
             case activationDate = "time"
@@ -66,10 +69,15 @@ struct UserClientAddEventDecoder {
             case mlsPublicKeys = "mls_public_keys"
             case cookie
             case capabilities
+
         }
+
     }
 
     private struct CapabilitiesList: Decodable {
+
         let capabilities: [UserClientCapability]
+
     }
+
 }

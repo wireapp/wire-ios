@@ -21,7 +21,9 @@ import Foundation
 /// A configuration for the *Digital Signature* feature.
 
 public struct DigitalSignatureFeatureConfig: Codable, Equatable {
+
     /// The feature's status.
 
     public let status: FeatureConfigStatus
+
 }

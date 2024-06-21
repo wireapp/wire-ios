@@ -19,6 +19,7 @@
 import Foundation
 
 struct MLSFeatureConfigDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> MLSFeatureConfig {
@@ -38,10 +39,13 @@ struct MLSFeatureConfigDecoder {
     }
 
     private struct Payload: Decodable {
+
         let protocolToggleUsers: Set<UUID>
         let defaultProtocol: MessageProtocol
         let allowedCipherSuites: [MLSCipherSuite]
         let defaultCipherSuite: MLSCipherSuite
         let supportedProtocols: Set<MessageProtocol>
+
     }
+
 }

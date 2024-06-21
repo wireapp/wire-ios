@@ -20,6 +20,7 @@
 import XCTest
 
 final class FeatureConfigEventDecodingTests: XCTestCase {
+
     private var decoder: JSONDecoder!
 
     override func setUp() {
@@ -173,6 +174,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
     }
 
     private enum Scaffolding {
+
         static func date(from string: String) -> Date {
             ISO8601DateFormatter.default.date(from: string)!
         }
@@ -289,5 +291,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 )
             )
         )
+
     }
+
 }

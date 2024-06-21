@@ -19,6 +19,7 @@
 import Foundation
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
+
     let httpClient: HTTPClient
 
     init(httpClient: HTTPClient) {
@@ -62,6 +63,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
 }
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {
+
     let id: UserID
     let name: String
     let handle: String?
@@ -75,6 +77,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let legalholdStatus: LegalholdStatusV0
 
     enum CodingKeys: String, CodingKey {
+
         case id = "qualified_id"
         case name
         case handle
@@ -86,6 +89,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
         case expiresAt = "expires_at"
         case service
         case legalholdStatus = "legalhold_status"
+
     }
 
     func toAPIModel() -> User {
@@ -107,10 +111,13 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 }
 
 struct ListUsersRequestV0: Encodable {
+
     let qualifiedIds: [QualifiedID]
 
     enum CodingKeys: String, CodingKey {
+
         case qualifiedIds = "qualified_ids"
+
     }
 }
 
@@ -118,11 +125,12 @@ typealias ListUsersResponseV0 = [UserResponseV0]
 
 extension ListUsersResponseV0: ToAPIModelConvertible {
     func toAPIModel() -> UserList {
-        UserList(found: map { $0.toAPIModel() }, failed: [])
+        UserList(found: map({ $0.toAPIModel() }), failed: [])
     }
 }
 
 struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
+
     let id: UUID
     let provider: UUID
 

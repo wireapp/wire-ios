@@ -19,6 +19,7 @@
 import Foundation
 
 class BackendInfoAPIV0: BackendInfoAPI {
+
     let httpClient: HTTPClient
 
     init(httpClient: HTTPClient) {
@@ -38,9 +39,11 @@ class BackendInfoAPIV0: BackendInfoAPI {
             .success(code: 200, type: BackendInfoResponseV0.self)
             .parse(response)
     }
+
 }
 
 private struct BackendInfoResponseV0: Decodable, ToAPIModelConvertible {
+
     var domain: String
     var federation: Bool
     var supported: [UInt]
@@ -53,4 +56,5 @@ private struct BackendInfoResponseV0: Decodable, ToAPIModelConvertible {
             developmentVersions: []
         )
     }
+
 }

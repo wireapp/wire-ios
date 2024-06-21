@@ -21,6 +21,7 @@ import Foundation
 /// An event concerning federation between domains.
 
 public enum FederationEvent: Equatable {
+
     /// Two or more other domains have stopped federating
     /// with each other.
 
@@ -30,4 +31,5 @@ public enum FederationEvent: Equatable {
     /// domain.
 
     case delete(FederationDeleteEvent)
+
 }

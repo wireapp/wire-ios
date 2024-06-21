@@ -21,6 +21,7 @@ import Foundation
 /// A configuration for the *App Lock* feature.
 
 public struct AppLockFeatureConfig: Codable, Equatable {
+
     /// The feature's status.
 
     public let status: FeatureConfigStatus
@@ -33,4 +34,5 @@ public struct AppLockFeatureConfig: Codable, Equatable {
     /// the app should relock.
 
     public let inactivityTimeoutInSeconds: UInt
+
 }

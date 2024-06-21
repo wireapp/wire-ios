@@ -21,6 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning connections.
 public protocol ConnectionsAPI {
+
     /// Fetch all connections .
 
     func getConnections() async throws -> PayloadPager<Connection>

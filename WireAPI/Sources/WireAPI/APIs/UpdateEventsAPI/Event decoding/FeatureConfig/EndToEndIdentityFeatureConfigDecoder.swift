@@ -19,6 +19,7 @@
 import Foundation
 
 struct EndToEndIdentityFeatureConfigDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> EndToEndIdentityFeatureConfig {
@@ -35,7 +36,10 @@ struct EndToEndIdentityFeatureConfigDecoder {
     }
 
     private struct Payload: Decodable {
+
         let acmeDiscoveryUrl: String?
         let verificationExpiration: UInt
+
     }
+
 }

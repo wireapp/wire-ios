@@ -21,7 +21,9 @@ import Foundation
 /// A configuration for the *Conference Calling* feature.
 
 public struct ConferenceCallingFeatureConfig: Codable, Equatable {
+
     /// The feature's status.
 
     public let status: FeatureConfigStatus
+
 }

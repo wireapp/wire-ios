@@ -19,6 +19,7 @@
 import Foundation
 
 enum ConversationEventType: String {
+
     case assetAdd = "conversation.asset-add"
     case accessUpdate = "conversation.access-update"
     case clientMessageAdd = "conversation.client-message-add"
@@ -39,4 +40,5 @@ enum ConversationEventType: String {
     case receiptModeUpdate = "conversation.receipt-mode-update"
     case rename = "conversation.rename"
     case typing = "conversation.typing"
+
 }

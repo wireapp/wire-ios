@@ -21,7 +21,9 @@ import Foundation
 /// Errors originating from `UsersAPI`.
 
 public enum UsersAPIError: Error {
+
     /// User was not found.
 
     case userNotFound
+
 }

@@ -22,8 +22,10 @@ import Foundation
 /// with another backend.
 
 public struct FederationDeleteEvent: Equatable {
+
     /// The domain of the backend that is no longer
     /// federating with the self backend.
 
     public let domain: String
+
 }

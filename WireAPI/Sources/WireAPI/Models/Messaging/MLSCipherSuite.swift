@@ -21,6 +21,7 @@ import Foundation
 /// Available cipher suites in the MLS protocol.
 
 public enum MLSCipherSuite: Int, Codable {
+
     case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
 
     case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
@@ -34,4 +35,5 @@ public enum MLSCipherSuite: Int, Codable {
     case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
 
     case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
+
 }

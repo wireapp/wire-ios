@@ -21,6 +21,7 @@ import Foundation
 /// User profile for a user
 
 public struct User: Equatable {
+
     /// The unique id of the user
 
     public let id: UserID

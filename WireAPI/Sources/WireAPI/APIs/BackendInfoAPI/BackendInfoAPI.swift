@@ -19,7 +19,9 @@
 import Foundation
 
 public protocol BackendInfoAPI {
+
     /// Fetch the info of the local backend.
 
     func getBackendInfo() async throws -> BackendInfo
+
 }

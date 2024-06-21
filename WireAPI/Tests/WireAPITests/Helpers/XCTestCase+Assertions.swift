@@ -19,6 +19,7 @@
 import XCTest
 
 extension XCTestCase {
+
     /// Assert that an error is thrown when a block is performed.
     ///
     /// - Parameters:
@@ -28,9 +29,9 @@ extension XCTestCase {
     ///   - file: The file name of the invoking test.
     ///   - line: The line number when this assertion is made.
 
-    func XCTAssertThrowsError<E: Error & Equatable>(
+    func XCTAssertThrowsError<T, E: Error & Equatable>(
         _ expectedError: E,
-        when expression: @escaping () async throws -> some Any,
+        when expression: @escaping () async throws -> T,
         _ message: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -67,8 +68,8 @@ extension XCTestCase {
     ///   - line: The line number when this assertion is made.
     ///   - errorHandler: A handler for the thrown error.
 
-    func XCTAssertThrowsError(
-        _ expression: () async throws -> some Any,
+    func XCTAssertThrowsError<T>(
+        _ expression: () async throws -> T,
         _ message: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line,
@@ -85,4 +86,5 @@ extension XCTestCase {
             errorHandler(error)
         }
     }
+
 }

@@ -19,6 +19,7 @@
 import Foundation
 
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
+
     let httpClient: HTTPClient
 
     init(httpClient: HTTPClient) {
@@ -71,7 +72,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     func getTeamMembers(
         for teamID: Team.ID,
-        maxResults _: UInt
+        maxResults: UInt
     ) async throws -> [TeamMember] {
         var components = URLComponents(string: "\(basePath(for: teamID))/members")
         components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
@@ -114,9 +115,11 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .failure(code: 404, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
     }
+
 }
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {
+
     let id: UUID
     let name: String
     let creator: UUID
@@ -125,12 +128,14 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
     let binding: Bool?
 
     enum CodingKeys: String, CodingKey {
+
         case id
         case name
         case creator
         case icon
         case iconKey = "icon_key"
         case binding
+
     }
 
     func toAPIModel() -> Team {
@@ -143,9 +148,11 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
             splashScreenID: nil
         )
     }
+
 }
 
 struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
+
     let conversationRoles: [ConversationRoleResponseV0]
 
     enum CodingKeys: String, CodingKey {
@@ -155,15 +162,19 @@ struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> [ConversationRole] {
         conversationRoles.map { $0.toAPIModel() }
     }
+
 }
 
 struct ConversationRoleResponseV0: Decodable {
+
     let conversationRole: String?
     let actions: [ConversationActionResponseV0]
 
     enum CodingKeys: String, CodingKey {
+
         case conversationRole = "conversation_role"
         case actions
+
     }
 
     func toAPIModel() -> ConversationRole {
@@ -174,9 +185,11 @@ struct ConversationRoleResponseV0: Decodable {
             })
         )
     }
+
 }
 
 enum ConversationActionResponseV0: String, Decodable {
+
     case addConversationMember = "add_conversation_member"
     case removeConversationMember = "remove_conversation_member"
     case modifyConversationName = "modify_conversation_name"
@@ -190,39 +203,43 @@ enum ConversationActionResponseV0: String, Decodable {
     func toAPIModel() -> ConversationAction {
         switch self {
         case .addConversationMember:
-            .addConversationMember
+            return .addConversationMember
         case .removeConversationMember:
-            .removeConversationMember
+            return .removeConversationMember
         case .modifyConversationName:
-            .modifyConversationName
+            return .modifyConversationName
         case .modifyConversationMessageTimer:
-            .modifyConversationMessageTimer
+            return .modifyConversationMessageTimer
         case .modifyConversationReceiptMode:
-            .modifyConversationReceiptMode
+            return .modifyConversationReceiptMode
         case .modifyConversationAccess:
-            .modifyConversationAccess
+            return .modifyConversationAccess
         case .modifyOtherConversationMember:
-            .modifyOtherConversationMember
+            return .modifyOtherConversationMember
         case .leaveConversation:
-            .leaveConversation
+            return .leaveConversation
         case .deleteConversation:
-            .deleteConversation
+            return .deleteConversation
         }
     }
+
 }
 
 struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
+
     let hasMore: Bool
     let members: [TeamMemberResponseV0]
 
     func toAPIModel() -> [TeamMember] {
-        members.map {
+        return members.map {
             $0.toAPIModel()
         }
     }
+
 }
 
 struct TeamMemberResponseV0: Decodable {
+
     let user: UUID
     let permissions: PermissionsResponseV0?
     let createdBy: UUID?
@@ -230,11 +247,13 @@ struct TeamMemberResponseV0: Decodable {
     let legalholdStatus: LegalholdStatusV0?
 
     enum CodingKeys: String, CodingKey {
+
         case user
         case permissions
         case createdBy = "created_by"
         case createdAt = "created_at"
         case legalholdStatus = "legalhold_status"
+
     }
 
     func toAPIModel() -> TeamMember {
@@ -246,9 +265,11 @@ struct TeamMemberResponseV0: Decodable {
             permissions: permissions?.toAPIModel()
         )
     }
+
 }
 
 struct PermissionsResponseV0: Decodable {
+
     let copy: Int64
     let `self`: Int64
 
@@ -258,9 +279,11 @@ struct PermissionsResponseV0: Decodable {
             selfPermissions: self.`self`
         )
     }
+
 }
 
 enum LegalholdStatusV0: String, Decodable {
+
     case enabled
     case pending
     case disabled
@@ -269,21 +292,24 @@ enum LegalholdStatusV0: String, Decodable {
     func toAPIModel() -> LegalholdStatus {
         switch self {
         case .enabled:
-            .enabled
+            return .enabled
         case .pending:
-            .pending
+            return .pending
         case .disabled:
-            .disabled
+            return .disabled
         case .noConsent:
-            .noConsent
+            return .noConsent
         }
     }
+
 }
 
 struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
+
     let status: LegalholdStatusV0
 
     func toAPIModel() -> LegalholdStatus {
-        status.toAPIModel()
+        return status.toAPIModel()
     }
+
 }

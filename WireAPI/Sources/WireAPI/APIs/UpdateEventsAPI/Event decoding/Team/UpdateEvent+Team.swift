@@ -19,6 +19,7 @@
 import Foundation
 
 extension UpdateEvent {
+
     init(
         eventType: TeamEventType,
         from decoder: any Decoder
@@ -38,4 +39,5 @@ extension UpdateEvent {
             self = .team(.memberUpdate(event))
         }
     }
+
 }

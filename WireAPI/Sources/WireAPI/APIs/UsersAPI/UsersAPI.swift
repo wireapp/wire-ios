@@ -21,6 +21,7 @@ import Foundation
 /// An API access object for endpoints concerning users.
 
 public protocol UsersAPI {
+
     /// Get user details for a single user
     ///
     /// - Parameter userID: The id of the user.

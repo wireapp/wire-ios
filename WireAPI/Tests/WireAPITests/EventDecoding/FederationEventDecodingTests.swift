@@ -20,6 +20,7 @@
 import XCTest
 
 final class FederationEventDecodingTests: XCTestCase {
+
     private var decoder: JSONDecoder!
 
     override func setUp() {
@@ -61,6 +62,7 @@ final class FederationEventDecodingTests: XCTestCase {
     }
 
     private enum Scaffolding {
+
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
                 "a.com",
@@ -70,4 +72,5 @@ final class FederationEventDecodingTests: XCTestCase {
 
         static let deleteEvent = FederationDeleteEvent(domain: "foo.com")
     }
+
 }

@@ -19,6 +19,7 @@
 import Foundation
 
 class TeamsAPIV2: TeamsAPIV1 {
+
     override var apiVersion: APIVersion {
         .v2
     }
@@ -40,9 +41,11 @@ class TeamsAPIV2: TeamsAPIV1 {
             .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
+
 }
 
 struct TeamResponseV2: Decodable, ToAPIModelConvertible {
+
     let id: UUID
     let name: String
     let creator: UUID
@@ -54,6 +57,7 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
     let splashScreen: String?
 
     enum CodingKeys: String, CodingKey {
+
         case id
         case name
         case creator
@@ -61,6 +65,7 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
         case iconKey = "icon_key"
         case binding
         case splashScreen = "splash_screen"
+
     }
 
     func toAPIModel() -> Team {
@@ -73,4 +78,5 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
             splashScreenID: splashScreen
         )
     }
+
 }

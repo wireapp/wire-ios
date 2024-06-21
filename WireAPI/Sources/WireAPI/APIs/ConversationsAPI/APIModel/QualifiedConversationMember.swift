@@ -19,6 +19,7 @@
 import Foundation
 
 struct QualifiedConversationMember: Decodable, ToAPIModelConvertible {
+
     struct Service: Decodable, ToAPIModelConvertible {
         let id: UUID
         let provider: UUID

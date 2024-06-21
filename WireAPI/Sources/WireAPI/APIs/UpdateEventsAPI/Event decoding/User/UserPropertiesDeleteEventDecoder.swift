@@ -19,6 +19,7 @@
 import Foundation
 
 struct UserPropertiesDeleteEventDecoder {
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserPropertiesDeleteEvent {
@@ -29,4 +30,5 @@ struct UserPropertiesDeleteEventDecoder {
 
         return UserPropertiesDeleteEvent(key: key)
     }
+
 }

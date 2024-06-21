@@ -19,6 +19,7 @@
 import Foundation
 
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
+
     private enum Constants {
         static let batchSize = 500
     }
@@ -38,6 +39,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     func getConnections() async throws -> PayloadPager<Connection> {
+
         let pager = PayloadPager<Connection> { start in
 
             // body Params
@@ -62,6 +64,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 }
 
 private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
+
     enum CodingKeys: String, CodingKey {
         case connections
         case pagingState = "paging_state"
@@ -69,7 +72,7 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
     }
 
     var nextStartReference: String? {
-        pagingState
+        return pagingState
     }
 
     let connections: [ConnectionResponseV0]
@@ -86,6 +89,7 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
 }
 
 private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
+
     enum CodingKeys: String, CodingKey {
         case from
         case to

@@ -24,6 +24,7 @@ import Foundation
 /// to perform a specific set of actions in that conversation.
 
 public struct ConversationRole: Equatable {
+
     /// The name of the role.
 
     public let name: String
@@ -45,4 +46,5 @@ public struct ConversationRole: Equatable {
         self.name = name
         self.actions = actions
     }
+
 }

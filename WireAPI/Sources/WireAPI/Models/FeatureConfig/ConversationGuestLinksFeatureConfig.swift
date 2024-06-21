@@ -21,7 +21,9 @@ import Foundation
 /// A configuration for the *Conversation Guest Links* feature.
 
 public struct ConversationGuestLinksFeatureConfig: Codable, Equatable {
+
     /// The feature's status.
 
     public let status: FeatureConfigStatus
+
 }
