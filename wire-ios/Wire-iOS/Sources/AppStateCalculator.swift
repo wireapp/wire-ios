@@ -62,7 +62,6 @@ enum AppState: Equatable {
     }
 }
 
-<<<<<<< HEAD
 extension AppState: CustomDebugStringConvertible {
 
     var debugDescription: String {
@@ -93,8 +92,6 @@ extension AppState: CustomDebugStringConvertible {
     }
 }
 
-// sourcery: AutoMockable
-=======
 extension AppState: SafeForLoggingStringConvertible {
     var safeForLoggingDescription: String {
         switch self {
@@ -125,7 +122,7 @@ extension AppState: SafeForLoggingStringConvertible {
 
 }
 
->>>>>>> bed83ab999 (chore: add logs sending - WPB-9221 (#1538))
+// sourcery: AutoMockable
 protocol AppStateCalculatorDelegate: AnyObject {
     func appStateCalculator(
         _ appStateCalculator: AppStateCalculator,
@@ -187,13 +184,9 @@ final class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
-<<<<<<< HEAD
-        WireLogger.appState.debug("transitioning to app state: \(appState)")
-        delegate?.appStateCalculator(self, didCalculate: appState) {
-=======
+
         WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
-        delegate?.appStateCalculator(self, didCalculate: appState, completion: {
->>>>>>> bed83ab999 (chore: add logs sending - WPB-9221 (#1538))
+        delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
         }
     }

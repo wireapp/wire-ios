@@ -30,10 +30,10 @@ extension ZMAssetClientMessage: MLSMessage {
     public var logInformation: LogAttributes {
 
         return [
-            LogAttributesKey.nonce.rawValue: self.nonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.messageType.rawValue: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
 
     }
 }
@@ -47,10 +47,10 @@ extension GenericMessageEntity: MLSMessage {
     public var logInformation: LogAttributes {
 
         let logAttibutes: LogAttributes = [
-            LogAttributesKey.nonce.rawValue: self.message.safeIdForLoggingDescription,
-            LogAttributesKey.messageType.rawValue: self.message.safeTypeForLoggingDescription,
-            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+            .nonce: self.message.safeIdForLoggingDescription,
+            .messageType: self.message.safeTypeForLoggingDescription,
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
 
         return logAttibutes
     }

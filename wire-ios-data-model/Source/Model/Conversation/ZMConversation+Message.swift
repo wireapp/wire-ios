@@ -371,13 +371,13 @@ extension ZMConversation {
 
     private func append(_ message: ZMClientMessage, expires: Bool, hidden: Bool) throws {
         let logAttributes: LogAttributes = [
-            LogAttributesKey.nonce.rawValue: message.nonce.safeForLoggingDescription,
-            LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: self.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: self.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ]
 
         WireLogger.messaging.debug("appending message to conversation",
-                                   attributes: logAttributes)
+                                   attributes: logAttributes, .safePublic)
 
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext

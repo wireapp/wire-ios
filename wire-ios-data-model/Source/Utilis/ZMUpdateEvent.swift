@@ -42,11 +42,11 @@ extension ZMUpdateEvent {
     /// Attributes that can be attached to logs safely
     public var logAttributes: LogAttributes {
         [
-            LogAttributesKey.messageType.rawValue: safeType,
-            LogAttributesKey.eventId.rawValue: safeUUID,
-            LogAttributesKey.nonce.rawValue: messageNonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: safeLoggingConversationId
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+            LogAttributesKey.messageType: safeType,
+            LogAttributesKey.eventId: safeUUID,
+            LogAttributesKey.nonce: messageNonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId: safeLoggingConversationId
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 
     public var safeLoggingConversationId: String {

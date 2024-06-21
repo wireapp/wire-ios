@@ -125,13 +125,10 @@ public enum LogAttributesKey: String {
     case nonce = "message_nonce"
     case messageType = "message_type"
     case lastEventID = "last_event_id"
-<<<<<<< HEAD
-    case `public`
-    case tag
-=======
     case conversationId = "conversation_id"
     case syncPhase = "sync_phase"
->>>>>>> bed83ab999 (chore: add logs sending - WPB-9221 (#1538))
+    case `public`
+    case tag
 }
 
 public extension LogAttributes {

@@ -27,10 +27,10 @@ extension ZMClientMessage: ProteusMessage {
     public var logInformation: LogAttributes {
 
         return [
-            LogAttributesKey.nonce.rawValue: self.nonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.messageType.rawValue: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
 
     }
 }
