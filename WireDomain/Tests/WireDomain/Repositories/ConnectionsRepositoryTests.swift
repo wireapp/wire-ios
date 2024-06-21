@@ -17,12 +17,13 @@
 //
 
 import WireAPISupport
+import WireDataModel
 import WireDataModelSupport
-import WireSyncEngineSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireAPI
-@testable import WireSyncEngine
+@testable import WireDomain
 
 final class ConnectionsRepositoryTests: XCTestCase {
 
