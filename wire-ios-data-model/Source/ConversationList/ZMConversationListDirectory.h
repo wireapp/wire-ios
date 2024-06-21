@@ -22,7 +22,7 @@
 @protocol LabelType;
 
 @class Label;
-@class ZMConversationContainer;
+@class ZMConversationList;
 @class ZMSharableConversations;
 @class NSManagedObjectContext;
 
@@ -31,16 +31,16 @@
 
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *managedObjectContext;
 
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* unarchivedConversations; ///< archived, not pending
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* conversationsIncludingArchived; ///< unarchived, not pending,
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* archivedConversations; ///< archived, not pending
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* pendingConnectionConversations; ///< pending
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* oneToOneConversations;
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* groupConversations;
-@property (nonatomic, readonly, nonnull) ZMConversationContainer* favoriteConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* unarchivedConversations; ///< archived, not pending
+@property (nonatomic, readonly, nonnull) ZMConversationList* conversationsIncludingArchived; ///< unarchived, not pending,
+@property (nonatomic, readonly, nonnull) ZMConversationList* archivedConversations; ///< archived, not pending
+@property (nonatomic, readonly, nonnull) ZMConversationList* pendingConnectionConversations; ///< pending
+@property (nonatomic, readonly, nonnull) ZMConversationList* clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
+@property (nonatomic, readonly, nonnull) ZMConversationList* oneToOneConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* groupConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* favoriteConversations;
 
-@property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationContainer *> *listsByFolder;
+@property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *allFolders;
 
 

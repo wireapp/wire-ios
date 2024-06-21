@@ -93,7 +93,7 @@
 
 
 @interface ConversationListChangeObserver ()
-@property (nonatomic, weak) ZMConversationContainer *conversationList;
+@property (nonatomic, weak) ZMConversationList *conversationList;
 @property (nonatomic) id token;
 @end
 
@@ -101,7 +101,7 @@
 
 ZM_EMPTY_ASSERTING_INIT()
 
-- (instancetype)initWithConversationList:(ZMConversationContainer *)conversationList;
+- (instancetype)initWithConversationList:(ZMConversationList *)conversationList;
 {
     self = [super init];
     if(self) {
@@ -120,7 +120,7 @@ ZM_EMPTY_ASSERTING_INIT()
     }
 }
 
-- (void)conversationInsideList:(ZMConversationContainer *)list didChange:(ConversationChangeInfo *)changeInfo;
+- (void)conversationInsideList:(ZMConversationList *)list didChange:(ConversationChangeInfo *)changeInfo;
 {
     NOT_USED(list);
     [self.conversationChangeInfos addObject:changeInfo];

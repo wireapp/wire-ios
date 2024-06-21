@@ -2073,9 +2073,9 @@
     ZMConversation *conversation = [self insertConversationWithParticipants:users];
     [conversation appendMessageWithText:@"0"];
     
-    ZMConversationContainer *activeList = [ZMConversationContainer conversationsInUserSession:self.coreDataStack];
-    ZMConversationContainer *archivedList = [ZMConversationContainer archivedConversationsInUserSession:self.coreDataStack];
-    ZMConversationContainer *clearedList = [ZMConversationContainer clearedConversationsInUserSession:self.coreDataStack];
+    ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.coreDataStack];
+    ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.coreDataStack];
+    ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.coreDataStack];
     
     // when
     [conversation removeParticipantAndUpdateConversationStateWithUser:selfUser initiatingUser:nil];

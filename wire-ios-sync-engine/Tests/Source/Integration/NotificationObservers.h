@@ -43,7 +43,7 @@ typedef void(^ObserverCallback)(NSObject *note);
 
 
 @interface ConversationListChangeObserver : ChangeObserver <ZMConversationListObserver>
-- (instancetype)initWithConversationList:(ZMConversationContainer *)conversationList;
+- (instancetype)initWithConversationList:(ZMConversationList *)conversationList;
 @property (nonatomic) NSMutableArray *conversationChangeInfos;
 
 @end

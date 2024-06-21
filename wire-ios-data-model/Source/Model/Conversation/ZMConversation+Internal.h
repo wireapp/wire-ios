@@ -28,7 +28,7 @@
 @class ZMAssetClientMessage;
 @class ZMConnection;
 @class ZMUser;
-@class ZMConversationContainer;
+@class ZMConversationList;
 @class ZMLastRead;
 @class ZMCleared;
 @class ZMUpdateEvent;
@@ -85,11 +85,11 @@ NS_ASSUME_NONNULL_END
 
 @interface ZMConversation (Internal)
 
-+ (nonnull ZMConversationContainer *)conversationsIncludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
-+ (nonnull ZMConversationContainer *)archivedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
-+ (nonnull ZMConversationContainer *)clearedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
-+ (nonnull ZMConversationContainer *)conversationsExcludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
-+ (nonnull ZMConversationContainer *)pendingConversationsInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)conversationsIncludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)archivedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)clearedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)conversationsExcludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)pendingConversationsInContext:(nonnull NSManagedObjectContext *)moc;
 
 + (nonnull NSPredicate *)predicateForSearchQuery:(nonnull NSString *)searchQuery team:(nullable Team *)team moc:(nonnull NSManagedObjectContext *)moc;
 + (nonnull NSPredicate *)userDefinedNamePredicateForSearchString:(nonnull NSString *)searchString;

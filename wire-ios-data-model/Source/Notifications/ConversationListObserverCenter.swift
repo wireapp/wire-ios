@@ -59,7 +59,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Adds a conversationList to the objects to observe or replace any existing snapshot
-    @objc public func startObservingList(_ conversationList: ConversationContainer) {
+    @objc public func startObservingList(_ conversationList: ConversationList) {
         if listSnapshots[conversationList.identifier] == nil {
             zmLog.debug("Adding conversationList with identifier \(conversationList.identifier)")
         } else {
@@ -74,7 +74,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Removes the conversationList from the objects to observe
-    @objc public func removeConversationList(_ conversationList: ConversationContainer) {
+    @objc public func removeConversationList(_ conversationList: ConversationList) {
         zmLog.debug("Removing conversationList with identifier \(conversationList.identifier)")
         listSnapshots.removeValue(forKey: conversationList.identifier)
     }
@@ -227,14 +227,14 @@ extension ConversationListObserverCenter: TearDownCapable {
 class ConversationListSnapshot: NSObject {
 
     fileprivate var state: SetSnapshot<ZMConversation>
-    weak var conversationList: ConversationContainer?
+    weak var conversationList: ConversationList?
     fileprivate var tornDown = false
     var conversationChanges = [ConversationChangeInfo]()
     var needsToRecalculate = false
 
     private var managedObjectContext: NSManagedObjectContext
 
-    init(conversationList: ConversationContainer, managedObjectContext: NSManagedObjectContext) {
+    init(conversationList: ConversationList, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
         self.state = SetSnapshot(set: conversationList.toOrderedSetState(), moveType: .uiCollectionView)
         self.managedObjectContext = managedObjectContext
@@ -262,7 +262,7 @@ class ConversationListSnapshot: NSObject {
         zmLog.debug("Snapshot for list \(list.identifier) processed change, needsToRecalculate: \(needsToRecalculate)")
     }
 
-    private func updateDidRemoveConversation(list: ConversationContainer, changes: ConversationChangeInfo) -> Bool {
+    private func updateDidRemoveConversation(list: ConversationList, changes: ConversationChangeInfo) -> Bool {
         if !list.predicateMatchesConversation(changes.conversation) {
             list.removeConversations([changes.conversation])
             zmLog.debug("Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) from list \(list.identifier)")

@@ -38,7 +38,7 @@ class ConversationTests_List: ConversationTestsBase {
         let groupConversation = conversation(for: self.groupConversation)
 
         // then
-        let conversations = ConversationContainer.conversations(inUserSession: userSession!)
+        let conversations = ConversationList.conversations(inUserSession: userSession!)
         XCTAssertEqual(conversations.firstObject as? ZMConversation, extraConversation)
 
         let observer = ConversationListChangeObserver.init(conversationList: conversations)
@@ -78,7 +78,7 @@ class ConversationTests_List: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let conversationList = ConversationContainer.conversations(inUserSession: userSession!)
+        let conversationList = ConversationList.conversations(inUserSession: userSession!)
         let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
         _ = conversation1.allMessages // Make sure we've faulted in the messages
         let conversation2 = try XCTUnwrap(conversation(for: self.selfToUser2Conversation))
@@ -160,7 +160,7 @@ class ConversationTests_List: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let conversationList = ConversationContainer.conversations(inUserSession: userSession!)
+        let conversationList = ConversationList.conversations(inUserSession: userSession!)
         let conversationListChangeObserver = ConversationListChangeObserver.init(conversationList: conversationList)
 
         let oneToOneConversation = conversation(for: self.selfToUser1Conversation)
@@ -213,7 +213,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let conversationList = ConversationContainer.conversations(inUserSession: userSession!)
+        let conversationList = ConversationList.conversations(inUserSession: userSession!)
 
         self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())

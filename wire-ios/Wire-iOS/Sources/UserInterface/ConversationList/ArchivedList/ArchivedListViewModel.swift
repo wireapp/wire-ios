@@ -63,7 +63,7 @@ extension ArchivedListViewModel: ZMConversationListObserver {
         }
     }
 
-    func conversationInsideList(_ list: ConversationContainer, didChange changeInfo: ConversationChangeInfo) {
+    func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
         delegate?.archivedListViewModel(self, didUpdateConversationWithChange: changeInfo)
     }
 }

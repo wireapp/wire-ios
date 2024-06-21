@@ -26,7 +26,7 @@
 @class ZMTextMessage;
 @class ZMImageMessage;
 @class ZMKnockMessage;
-@class ZMConversationContainer;
+@class ZMConversationList;
 @class ZMFileMetadata;
 @class ZMLocationData;
 @class LinkMetadata;

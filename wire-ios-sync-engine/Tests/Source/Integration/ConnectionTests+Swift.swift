@@ -61,7 +61,7 @@ class ConnectionTests_Swift: IntegrationTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let active = ConversationContainer.conversations(inUserSession: userSession!)
+        let active = ConversationList.conversations(inUserSession: userSession!)
         let count = active?.items.count ?? 0
 
         listObserver = ConversationListChangeObserver(conversationList: active)

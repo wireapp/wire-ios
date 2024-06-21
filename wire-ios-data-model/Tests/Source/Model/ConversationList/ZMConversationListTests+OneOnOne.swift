@@ -57,7 +57,7 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
         let predicateFactory = ConversationPredicateFactory(selfTeam: team)
 
         // When
-        let sut = ConversationContainer(
+        let sut = ConversationList(
             allConversations: [oneOnOneConversation, fakeOneOnOne, unconnectedConversation],
             filteringPredicate: predicateFactory.predicateForOneToOneConversations(),
             managedObjectContext: uiMOC,
@@ -91,7 +91,7 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
         let predicateFactory = ConversationPredicateFactory(selfTeam: nil)
 
         // When
-        let sut = ConversationContainer(
+        let sut = ConversationList(
             allConversations: [groupConversation, invalidOneOnOneConversation],
             filteringPredicate: predicateFactory.predicateForOneToOneConversations(),
             managedObjectContext: uiMOC,

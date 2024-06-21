@@ -476,7 +476,7 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-fileprivate extension ConversationContainer {
+fileprivate extension ConversationList {
 
     var writeableConversations: [Conversation] {
         items.filter {

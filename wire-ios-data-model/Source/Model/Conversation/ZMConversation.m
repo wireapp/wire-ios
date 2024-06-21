@@ -603,27 +603,27 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self mutableSetValueForKey:ZMConversationAllMessagesKey];
 }
 
-+ (ZMConversationContainer *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.conversationsIncludingArchived;
 }
 
-+ (ZMConversationContainer *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.archivedConversations;
 }
 
-+ (ZMConversationContainer *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.clearedConversations;
 }
 
-+ (ZMConversationContainer *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.unarchivedConversations;
 }
 
-+ (ZMConversationContainer *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.pendingConnectionConversations;
 }

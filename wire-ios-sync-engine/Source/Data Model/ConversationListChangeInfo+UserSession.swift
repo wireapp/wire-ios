@@ -22,7 +22,7 @@ extension ConversationListChangeInfo {
 
     public static func add(
         observer: ZMConversationListObserver,
-        for list: ConversationContainer,
+        for list: ConversationList,
         userSession: ZMUserSession
     ) -> NSObjectProtocol {
         addListObserver(observer, for: list, managedObjectContext: userSession.managedObjectContext)

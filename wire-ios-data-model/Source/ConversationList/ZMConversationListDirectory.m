@@ -30,16 +30,16 @@ static NSString * const PendingKey = @"Pending";
 
 @interface ZMConversationListDirectory ()
 
-@property (nonatomic) ZMConversationContainer* unarchivedConversations;
-@property (nonatomic) ZMConversationContainer* conversationsIncludingArchived;
-@property (nonatomic) ZMConversationContainer* archivedConversations;
-@property (nonatomic) ZMConversationContainer* pendingConnectionConversations;
-@property (nonatomic) ZMConversationContainer* clearedConversations;
-@property (nonatomic) ZMConversationContainer* oneToOneConversations;
-@property (nonatomic) ZMConversationContainer* groupConversations;
-@property (nonatomic) ZMConversationContainer* favoriteConversations;
+@property (nonatomic) ZMConversationList* unarchivedConversations;
+@property (nonatomic) ZMConversationList* conversationsIncludingArchived;
+@property (nonatomic) ZMConversationList* archivedConversations;
+@property (nonatomic) ZMConversationList* pendingConnectionConversations;
+@property (nonatomic) ZMConversationList* clearedConversations;
+@property (nonatomic) ZMConversationList* oneToOneConversations;
+@property (nonatomic) ZMConversationList* groupConversations;
+@property (nonatomic) ZMConversationList* favoriteConversations;
 
-@property (nonatomic, readwrite) NSMutableDictionary<NSManagedObjectID *, ZMConversationContainer *> *listsByFolder;
+@property (nonatomic, readwrite) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic) FolderList *folderList;
 
 @property (nonatomic) ConversationPredicateFactory *factory;
@@ -66,38 +66,38 @@ static NSString * const PendingKey = @"Pending";
         self.folderList = [[FolderList alloc] initWithLabels:allFolders];
         self.listsByFolder = [self createListsFromFolders:allFolders allConversations:allConversations];
 
-        self.unarchivedConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                               filteringPredicate:[self.factory predicateForConversationsExcludingArchived]
                                                                             managedObjectContext:managedObjectContext
                                                                                      description:@"unarchivedConversations"];
-        self.archivedConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                             filteringPredicate:[self.factory predicateForArchivedConversations]
                                                                           managedObjectContext:managedObjectContext
                                                                                    description:@"archivedConversations"];
-        self.conversationsIncludingArchived = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                                      filteringPredicate:[self.factory predicateForConversationsIncludingArchived]
                                                                                    managedObjectContext:managedObjectContext
                                                                                             description:@"conversationsIncludingArchived"];
-        self.pendingConnectionConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                                      filteringPredicate:[self.factory predicateForPendingConversations]
                                                                                    managedObjectContext:managedObjectContext
                                                                                             description:@"pendingConnectionConversations"];
-        self.clearedConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                            filteringPredicate:[self.factory predicateForClearedConversations]
                                                                          managedObjectContext:managedObjectContext
                                                                                   description:@"clearedConversations"];
 
-        self.oneToOneConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.oneToOneConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                             filteringPredicate:[self.factory predicateForOneToOneConversations]
                                                                           managedObjectContext:managedObjectContext
                                                                                    description:@"oneToOneConversations"];
 
-        self.groupConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.groupConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                          filteringPredicate:[self.factory predicateForGroupConversations]
                                                                        managedObjectContext:managedObjectContext
                                                                                 description:@"groupConversations"];
 
-        self.favoriteConversations = [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+        self.favoriteConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                             filteringPredicate:[self.factory predicateForLabeledConversations:[Label fetchFavoriteLabelIn:managedObjectContext]]
                                                                           managedObjectContext:managedObjectContext
                                                                                    description:@"favorites"];
@@ -135,9 +135,9 @@ static NSString * const PendingKey = @"Pending";
     return listsByFolder;
 }
 
-- (ZMConversationContainer *)createListForFolder:(Label *)folder allConversations:(NSArray<ZMConversation *> *)allConversations
+- (ZMConversationList *)createListForFolder:(Label *)folder allConversations:(NSArray<ZMConversation *> *)allConversations
 {
-    return [[ZMConversationContainer alloc] initWithAllConversations:allConversations
+    return [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                   filteringPredicate:[self.factory predicateForLabeledConversations:folder]
                                                 managedObjectContext:self.managedObjectContext
                                                          description:folder.objectIDURLString
@@ -152,7 +152,7 @@ static NSString * const PendingKey = @"Pending";
 
     NSArray<ZMConversation *> *allConversations = [self fetchAllConversations:self.managedObjectContext];
     for (Label *label in labels) {
-        ZMConversationContainer *folderList = [self createListForFolder:label allConversations:allConversations];
+        ZMConversationList *folderList = [self createListForFolder:label allConversations:allConversations];
         self.listsByFolder[label.objectID] = folderList;
         [self.folderList insertLabel:label];
     }

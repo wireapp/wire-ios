@@ -19,8 +19,8 @@
 import CoreData
 
 /// A collection of conversation instances with additional infos.
-@objc(ZMConversationContainer) @objcMembers
-public final class ConversationContainer: NSObject {
+@objc(ZMConversationList) @objcMembers
+public final class ConversationList: NSObject {
 
     var count: Int {
         backingList.count
@@ -211,27 +211,27 @@ public final class ConversationContainer: NSObject {
         session.viewContext.conversationListDirectory().refetchAllLists(in: session.viewContext)
     }
 
-    public static func conversationsIncludingArchived(inUserSession session: ContextProvider?) -> ConversationContainer? {
+    public static func conversationsIncludingArchived(inUserSession session: ContextProvider?) -> ConversationList? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().conversationsIncludingArchived
     }
 
-    public static func conversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
+    public static func conversations(inUserSession session: ContextProvider?) -> ConversationList? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().unarchivedConversations
     }
 
-    public static func archivedConversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
+    public static func archivedConversations(inUserSession session: ContextProvider?) -> ConversationList? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().archivedConversations
     }
 
-    public static func pendingConnectionConversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
+    public static func pendingConnectionConversations(inUserSession session: ContextProvider?) -> ConversationList? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().pendingConnectionConversations
     }
 
-    public static func clearedConversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
+    public static func clearedConversations(inUserSession session: ContextProvider?) -> ConversationList? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().clearedConversations
     }
