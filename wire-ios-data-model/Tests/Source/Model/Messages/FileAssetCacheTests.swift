@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireDataModelSupport
+import WireTesting
 import XCTest
+
+@testable import WireDataModel
 
 class FileAssetCacheTests: XCTestCase {
 
@@ -46,7 +48,7 @@ class FileAssetCacheTests: XCTestCase {
         }
 
         location = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         try FileManager.default.removeItemIfExists(at: location!)
