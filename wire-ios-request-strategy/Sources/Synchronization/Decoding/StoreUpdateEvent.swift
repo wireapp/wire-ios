@@ -74,7 +74,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
         guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
-            WireLogger.updateEvent.error("could not store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
+            WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
             return nil
         }
 

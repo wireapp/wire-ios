@@ -157,8 +157,8 @@ actor EventProcessor: UpdateEventProcessor {
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
             for event in decryptedUpdateEvents {
-                WireLogger.updateEvent.info("process decrypted event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID,
-                                                                                    LogAttributesKey.nonce.rawValue: event.messageNonce])
+                WireLogger.updateEvent.info("process decrypted event", attributes: [.eventId: event.safeUUID,
+                                                                                    .nonce: event.messageNonce])
                 await syncContext.perform {
                     for eventConsumer in self.eventConsumers {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)

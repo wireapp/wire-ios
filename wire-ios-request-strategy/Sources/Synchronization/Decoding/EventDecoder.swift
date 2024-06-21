@@ -256,7 +256,7 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?
     ) {
         for (idx, event) in decryptedEvents.enumerated() {
-            WireLogger.updateEvent.info("store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
+            WireLogger.updateEvent.info("store event", attributes: [.eventId: event.safeUUID])
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
@@ -392,7 +392,7 @@ extension EventDecoder {
                 if !included {
                     WireLogger.updateEvent.warn(
                         "dropping stored event",
-                        attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID]
+                        attributes: [.eventId: event.safeUUID]
                     )
                 }
                 return included
