@@ -120,8 +120,8 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .deleteClient(let clients, let credentials):
-            return RemoveClientStepViewController(clients: clients, credentials: credentials)
+        case .deleteClient(let clients):
+            return RemoveClientStepViewController(clients: clients)
 
         case .noHistory(_, let context):
             let backupStep = BackupRestoreStepDescription(context: context)
