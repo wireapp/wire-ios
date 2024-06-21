@@ -101,6 +101,10 @@ extension WireDatadog: WireSystem.LoggerProtocol {
             attributes: plainAttributes
         )
     }
+
+    public var logFiles: [URL] {
+        []
+    }
 }
 
 #endif

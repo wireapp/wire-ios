@@ -512,7 +512,11 @@ extension MessagingTestBase {
     fileprivate func deleteAllFilesInCache() {
         let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
         files?.forEach {
-            try! FileManager.default.removeItem(at: $0)
+            do {
+                try FileManager.default.removeItem(at: $0)
+            } catch {
+                WireLogger.system.error("error deleting file  \($0.absoluteString) in cache: \(error)")
+            }
         }
     }
 }
