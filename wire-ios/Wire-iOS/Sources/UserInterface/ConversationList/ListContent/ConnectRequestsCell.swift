@@ -111,19 +111,13 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         guard let userSession = ZMUserSession.shared() else { return }
 
         let connectionRequests: ConversationList = .pendingConnectionConversations(inUserSession: userSession)
-
-        let newCount = connectionRequests.items.count
-
-        if newCount != currentConnectionRequestsCount {
-            let connectionUsers = connectionRequests.items.map { $0.oneOnOneUser }
-            if let users = connectionUsers as? [ZMUser] {
-                currentConnectionRequestsCount = newCount
-                let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(newCount)
-                itemView.configure(with: NSAttributedString(string: title), subtitle: NSAttributedString(), users: users)
-            }
+        let users = connectionRequests.items.compactMap(\.oneOnOneUser)
+        if users.count != currentConnectionRequestsCount {
+            currentConnectionRequestsCount = users.count
+            let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(users.count)
+            itemView.configure(with: NSAttributedString(string: title), subtitle: NSAttributedString(), users: users)
         }
     }
-
 }
 
 extension ConnectRequestsCell: ZMConversationListObserver {
