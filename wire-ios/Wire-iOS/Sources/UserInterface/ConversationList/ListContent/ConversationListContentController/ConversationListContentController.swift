@@ -317,7 +317,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         let item = listViewModel.item(for: indexPath)
         let cell: UICollectionViewCell
 
-        if item is ConversationListConnectRequestsItem,
+        if item is ConnectRequestsItem,
             let labelCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConnectionRequests, for: indexPath) as? ConnectRequestsCell {
             cell = labelCell
         } else if item is ZMConversation,
@@ -394,7 +394,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             selectConversationCompletion = nil
 
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
-        } else if item is ConversationListConnectRequestsItem {
+        } else if item is ConnectRequestsItem {
             ZClientViewController.shared?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {
             assertionFailure("Invalid item in conversation list view model!!")

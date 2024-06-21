@@ -22,10 +22,8 @@ import WireDataModel
 
 extension ZMConversation: ConversationListItem {}
 
-// Placeholder for conversation requests item
-final class ConversationListConnectRequestsItem: NSObject, ConversationListItem {}
-
 protocol ConversationListViewModelDelegate: AnyObject {
+
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?)
 
     func listViewModelShouldBeReloaded()
@@ -37,9 +35,9 @@ protocol ConversationListViewModelDelegate: AnyObject {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int)
 
     func reload<C>(
-    using stagedChangeset: StagedChangeset<C>,
-    interrupt: ((Changeset<C>) -> Bool)?,
-    setData: (C?) -> Void
+        using stagedChangeset: StagedChangeset<C>,
+        interrupt: ((Changeset<C>) -> Bool)?,
+        setData: (C?) -> Void
     )
 }
 

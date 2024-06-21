@@ -28,7 +28,7 @@ final class ConversationListViewModel {
 
     typealias SectionIdentifier = String
 
-    static let contactRequestsItem: ConversationListConnectRequestsItem = ConversationListConnectRequestsItem()
+    static let contactRequestsItem = ConnectRequestsItem()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
     private(set) var selectedItem: ConversationListItem? {
