@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ProfileViewController")
@@ -595,13 +596,31 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func presentError(_ error: LocalizedError) {
         typealias Strings = L10n.Localizable.Error.Connection
 
-        if let connectionError = error as? ConnectToUserError,
-           connectionError == .federationDenied {
-            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
-            UIAlertController.showErrorAlert(title: "", message: message)
+        let title: String?
+        let message: String?
+        let style: UIAlertAction.Style
+
+        if let connectionError = error as? ConnectToUserError, connectionError == .federationDenied {
+            title = nil
+            message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            style = .cancel
         } else {
-            presentLocalizedErrorAlert(error)
+            title = error.localizedDescription
+            message = error.failureReason
+            style = .default
         }
+
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: style
+        ))
+
+        present(alertController, animated: true)
     }
 
     func presentConversationCreationError(username: String) {
@@ -610,8 +629,13 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let alertController = UIAlertController(
             title: "",
             message: ConversationError.cannotStart(username, username),
-            alertAction: .ok()
+            preferredStyle: .alert
         )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
+
         present(alertController, animated: true, completion: nil)
     }
 

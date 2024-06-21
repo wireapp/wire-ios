@@ -17,10 +17,11 @@
 //
 
 import avs
-@testable import Wire
+import WireDesign
 import XCTest
 
-final class AudioEffectsPickerViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+final class AudioEffectsPickerViewControllerTests: XCTestCase {
     var sut: AudioEffectsPickerViewController! = .none
 
     override func tearDown() {

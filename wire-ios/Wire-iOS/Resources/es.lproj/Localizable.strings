@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archivar";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Los chats empiezan aquí";
@@ -1041,6 +1043,7 @@
 "self.add_email_password" = "Añadir email y contraseña";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Términos de uso";
 "about.privacy.title" = "Política de privacidad";
 "about.license.title" = "Información de licencia";

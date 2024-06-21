@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDesign
 import XCTest
 
-final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class UserSearchResultsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
     var sut: UserSearchResultsViewController!

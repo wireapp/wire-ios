@@ -20,7 +20,6 @@
 
 #import "MessagingTest.h"
 #import "ZMLoginTranscoder+Internal.h"
-#import "ZMCredentials.h"
 #import "ZMAuthenticationStatus.h"
 #import "NSError+ZMUserSession.h"
 #import "ZMUserSessionRegistrationNotification.h"
@@ -66,9 +65,9 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 @property (nonatomic) id mockClientRegistrationStatus;
 @property (nonatomic) id mockApplicationStatusDirectory;
 
-@property (nonatomic) ZMCredentials *testEmailCredentials;
-@property (nonatomic) ZMCredentials *testEmailCredentialsWithVerificationCode;
-@property (nonatomic) ZMCredentials *testPhoneNumberCredentials;
+@property (nonatomic) UserCredentials *testEmailCredentials;
+@property (nonatomic) UserCredentials *testEmailCredentialsWithVerificationCode;
+@property (nonatomic) UserCredentials *testPhoneNumberCredentials;
 @property (nonatomic) NSTimeInterval originalLoginTimerInterval;
 @property (nonatomic) id mockLocale;
 @property (nonatomic) MockUserInfoParser *mockUserInfoParser;
@@ -100,9 +99,8 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     self.sut = [[ZMLoginTranscoder alloc] initWithGroupQueue:self.groupQueue
                                         authenticationStatus:self.authenticationStatus];
 
-    self.testEmailCredentials = [ZMEmailCredentials credentialsWithEmail:TestEmail password:TestPassword];
-    self.testEmailCredentialsWithVerificationCode = [ZMEmailCredentials credentialsWithEmail:TestEmail password:TestPassword emailVerificationCode:TestEmailVerificationCode];
-
+    self.testEmailCredentials = [UserEmailCredentials credentialsWithEmail:TestEmail password:TestPassword];
+    self.testEmailCredentialsWithVerificationCode = [UserEmailCredentials credentialsWithEmail:TestEmail password:TestPassword emailVerificationCode:TestEmailVerificationCode];
 }
 
 - (void)tearDown {
@@ -286,7 +284,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
                               @"expires_in": @604800,
                               @"token_type": @"Bearer"
     };
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:200 transportSessionError:nil apiVersion:0];
 
     // when
@@ -303,7 +301,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *content = @{@"code":@403,
                               @"message":@"Invalid login credentials",
                               @"label":@"invalid-credentials"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
@@ -319,7 +317,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *content = @{@"code":@403,
                               @"message":@"Code Authentication Required",
                               @"label":@"code-authentication-required"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
@@ -335,7 +333,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *content = @{@"code":@403,
                               @"message":@"Code Authentication Failed",
                               @"label":@"code-authentication-failed"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678" emailVerificationCode: @"1234567"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678" emailVerificationCode: @"1234567"]];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
@@ -351,7 +349,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *content = @{@"code":@403,
                               @"message":@"Account pending activation",
                               @"label":@"pending-activation"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
 
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
@@ -368,7 +366,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *content = @{@"code":@403,
                               @"message":@"Account suspended.",
                               @"label":@"suspended"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
 
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
@@ -385,7 +383,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *content = @{@"code":@403,
                               @"message":@"Code Authentication Required",
                               @"label":@"code-authentication-required"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
@@ -405,7 +403,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
 
     // when
     [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
@@ -426,7 +424,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
                               @"expires_in": @604800,
                               @"token_type": @"Bearer"
     };
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
 
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:200 transportSessionError:nil apiVersion:0];
 

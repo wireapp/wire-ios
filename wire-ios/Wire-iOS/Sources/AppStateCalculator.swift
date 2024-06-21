@@ -62,6 +62,37 @@ enum AppState: Equatable {
     }
 }
 
+extension AppState: CustomDebugStringConvertible {
+
+    var debugDescription: String {
+        switch self {
+        case .retryStart:
+            "retryStart"
+        case .headless:
+            "headless"
+        case .locked:
+            "locked"
+        case .authenticated:
+            "authenticated"
+        case .unauthenticated(error: let error):
+            "unauthenticated"
+        case .blacklisted(reason: let reason):
+            "blacklisted"
+        case .jailbroken:
+            "jailbroken"
+        case .certificateEnrollmentRequired:
+            "certificateEnrollmentRequired"
+        case .databaseFailure(reason: let reason):
+            "databaseFailure"
+        case .migrating:
+            "migrating"
+        case .loading(account: let account, from: let from):
+            "loading"
+        }
+    }
+}
+
+// sourcery: AutoMockable
 protocol AppStateCalculatorDelegate: AnyObject {
     func appStateCalculator(
         _ appStateCalculator: AppStateCalculator,

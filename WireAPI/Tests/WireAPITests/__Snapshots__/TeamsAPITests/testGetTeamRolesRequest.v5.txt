@@ -1,4 +1,0 @@
-▿ HTTPRequest
-  - body: Optional<Data>.none
-  - method: Method.get
-  - path: "/v5/teams/213248a1-5499-418f-8173-5010d1c1e506/conversations/roles"

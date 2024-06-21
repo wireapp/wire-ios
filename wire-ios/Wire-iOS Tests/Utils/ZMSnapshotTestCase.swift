@@ -16,61 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import FBSnapshotTestCase
 import UIKit
 @testable import Wire
 import WireCommonComponents
+import XCTest
 
-extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
-    func wrapInTableView() -> UITableView {
-        let tableView = UITableView(frame: self.bounds, style: .plain)
-
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.layoutMargins = self.layoutMargins
-
-        let size = self.systemLayoutSizeFitting(CGSize(width: bounds.width, height: 0.0), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-        self.layoutSubviews()
-
-        self.bounds = CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height)
-        self.contentView.bounds = self.bounds
-
-        tableView.reloadData()
-        tableView.bounds = self.bounds
-        tableView.layoutIfNeeded()
-
-        NSLayoutConstraint.activate([
-            tableView.heightAnchor.constraint(equalToConstant: size.height)
-        ])
-
-        self.layoutSubviews()
-        return tableView
-    }
-
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.bounds.size.height
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return self
-    }
-}
-
-class ZMSnapshotTestCase: FBSnapshotTestCase {
-
-    typealias ConfigurationWithDeviceType = (_ view: UIView, _ isPad: Bool) -> Void
-    typealias Configuration = (_ view: UIView) -> Void
+class ZMSnapshotTestCase: XCTestCase {
 
     var uiMOC: NSManagedObjectContext!
     var coreDataStack: CoreDataStack!
@@ -94,16 +45,10 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
-        FontScheme.configure(with: .large)
 
         UIView.setAnimationsEnabled(false)
         accentColor = .red
         snapshotBackgroundColor = UIColor.clear
-
-        // Enable when the design of the view has changed in order to update the reference snapshots
-
-        recordMode = ProcessInfo.processInfo.environment["RECORDING_SNAPSHOTS"] == "YES"
-        usesDrawViewHierarchyInRect = true
 
         do {
             documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

@@ -29,7 +29,7 @@ import Foundation
     /// Requests to set an email and password, for a user that does not have either.
     /// Once this is called, we expect the user to eventually verify the email externally.
     /// - throws: if the email was already set, or if empty credentials are passed
-    func requestSettingEmailAndPassword(credentials: ZMEmailCredentials) throws
+    func requestSettingEmailAndPassword(credentials: UserEmailCredentials) throws
 
     /// Cancel setting email and password
     func cancelSettingEmailAndPassword()

@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
@@ -143,7 +143,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     func testVerifyEmailLinkTests() {
-        let credentials = ZMEmailCredentials(email: "test@example.com", password: "12345678")
+        let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 

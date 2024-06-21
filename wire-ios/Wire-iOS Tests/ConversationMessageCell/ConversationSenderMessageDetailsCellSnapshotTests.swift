@@ -17,10 +17,12 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireDesign
 import XCTest
 
-final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

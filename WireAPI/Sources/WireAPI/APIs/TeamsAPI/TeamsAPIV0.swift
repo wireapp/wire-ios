@@ -18,17 +18,20 @@
 
 import Foundation
 
-class TeamsAPIV0: TeamsAPI {
+class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     let httpClient: HTTPClient
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
     }
 
+    var apiVersion: APIVersion {
+        .v0
+    }
+
     func basePath(for teamID: Team.ID) -> String {
-        "/teams/\(teamID.transportString())"
+        "\(pathPrefix)/teams/\(teamID.transportString())"
     }
 
     // MARK: - Get team
@@ -240,7 +243,7 @@ struct TeamMemberResponseV0: Decodable {
     let user: UUID
     let permissions: PermissionsResponseV0?
     let createdBy: UUID?
-    let createdAt: Date?
+    let createdAt: UTCTimeMillis?
     let legalholdStatus: LegalholdStatusV0?
 
     enum CodingKeys: String, CodingKey {
@@ -256,7 +259,7 @@ struct TeamMemberResponseV0: Decodable {
     func toAPIModel() -> TeamMember {
         TeamMember(
             userID: user,
-            creationDate: createdAt,
+            creationDate: createdAt?.date,
             creatorID: createdBy,
             legalholdStatus: legalholdStatus?.toAPIModel(),
             permissions: permissions?.toAPIModel()

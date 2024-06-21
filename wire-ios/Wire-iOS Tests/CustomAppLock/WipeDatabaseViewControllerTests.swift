@@ -17,10 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class WipeDatabaseViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+final class WipeDatabaseViewControllerTests: XCTestCase {
 
     var sut: WipeDatabaseViewController!
 

@@ -197,7 +197,7 @@ public extension ZMConversation {
             argumentArray: [Self.mlsGroupIdKey, groupID.data]
         )
 
-        let result = context.executeFetchRequestOrAssert(request)
+        let result = try! context.fetch(request)
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
     }
@@ -212,7 +212,7 @@ public extension ZMConversation {
             argumentArray: [Self.commitPendingProposalDateKey]
         )
 
-        return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
+        return try! context.fetch(request) as? [ZMConversation] ?? []
     }
 
     static func fetchConversationsWithMLSGroupStatus(
@@ -242,7 +242,7 @@ public extension ZMConversation {
             .hasConversationType(.`self`), .isMLSConversation
         ])
 
-        let result = context.executeFetchRequestOrAssert(request)
+        let result = try! context.fetch(request)
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
     }

@@ -43,8 +43,8 @@ public class DiskDatabaseTest: ZMTBaseTest {
         super.setUp()
 
         accountId = .create()
-        cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-        sharedContainerURL = cacheURL.appendingPathComponent("\(UUID().uuidString)")
+        cacheURL = FileManager.default.randomCacheURL
+        sharedContainerURL = cacheURL.appendingPathComponent(UUID().uuidString)
         cleanUp()
         createDatabase()
         setupCaches()
@@ -68,7 +68,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         coreDataStack.viewContext.zm_userImageCache = UserImageLocalCache(location: nil)
         coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: cacheURL)
 
-        coreDataStack.syncContext.performGroupedBlockAndWait {
+        coreDataStack.syncContext.performGroupedAndWait {
             self.coreDataStack.syncContext.zm_fileAssetCache = self.coreDataStack.viewContext.zm_fileAssetCache
             self.coreDataStack.syncContext.zm_userImageCache = self.coreDataStack.viewContext.zm_userImageCache
         }
@@ -85,7 +85,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
             XCTAssertNil(error)
         }
 
-        self.moc.performGroupedBlockAndWait {
+        self.moc.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.moc)
             selfUser.remoteIdentifier = self.accountId
         }

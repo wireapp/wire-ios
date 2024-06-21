@@ -18,13 +18,14 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsButtonsView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
     @Binding var isCertificateViewPresented: Bool
 
     var getCertificateButton: some View {
-        SwiftUI.Button {
+        Button {
             Task {
                 await viewModel.enrollClient()
             }
@@ -36,7 +37,7 @@ struct DeviceDetailsButtonsView: View {
     }
 
     var updateCertificateButton: some View {
-        SwiftUI.Button {
+        Button {
             Task {
                 await viewModel.enrollClient()
             }
@@ -50,7 +51,7 @@ struct DeviceDetailsButtonsView: View {
     }
 
     var showCertificateButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                     isCertificateViewPresented = true
             },

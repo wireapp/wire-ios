@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import WireSyncEngineSupport
 import XCTest
 
@@ -23,7 +24,7 @@ import XCTest
 
 // MARK: - IncomingConnectionViewTests
 
-final class IncomingConnectionViewTests: BaseSnapshotTestCase {
+final class IncomingConnectionViewTests: XCTestCase {
 
     // MARK: - Properties
 

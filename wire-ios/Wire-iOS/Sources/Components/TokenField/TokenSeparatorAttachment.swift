@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
 

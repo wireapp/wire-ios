@@ -98,7 +98,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
         // no-op
     }
 
-    func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) -> Bool {
+    func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool {
         didUpdateCredentials = true
         return willAcceptUpdatedCredentials
     }
@@ -143,7 +143,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
     func testThatTriesToUpdateCredentials() {
         // given
-        let emailCredentials = ZMEmailCredentials(email: "hello@email.com", password: "123456")
+        let emailCredentials = UserEmailCredentials(email: "hello@email.com", password: "123456")
         mockDelegate.willAcceptUpdatedCredentials = true
 
         // when
@@ -157,7 +157,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMCredentials())
+        sut.login(with: UserCredentials())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -169,7 +169,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMEmailCredentials(email: "my@mail.com", password: "my-password"))
+        sut.login(with: UserEmailCredentials(email: "my@mail.com", password: "my-password"))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)

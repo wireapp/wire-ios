@@ -131,7 +131,7 @@
 - (void)testThatItCanDeleteClientsFromSettingsMenu
 {
     // given
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
     [self insertTwoSelfClientsOnMockTransporSession];
 
     [self.userSession performChanges:^{

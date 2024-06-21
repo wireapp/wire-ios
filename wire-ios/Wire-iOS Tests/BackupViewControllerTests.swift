@@ -16,18 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCommonComponents
+import WireDesign
 import XCTest
 
 @testable import Wire
 
 final class BackupViewControllerTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
-    }
 
     func testInitialState() {
         // GIVEN

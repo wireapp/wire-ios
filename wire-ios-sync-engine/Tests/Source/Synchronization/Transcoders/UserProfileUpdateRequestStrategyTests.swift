@@ -32,8 +32,8 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
         self.mockApplicationStatus.mockSynchronizationState = .online
         self.userProfileUpdateStatus = TestUserProfileUpdateStatus(managedObjectContext: self.uiMOC, analytics: MockAnalytics())
         self.sut = UserProfileUpdateRequestStrategy(managedObjectContext: self.uiMOC,
-                                              applicationStatus: self.mockApplicationStatus,
-                                              userProfileUpdateStatus: self.userProfileUpdateStatus)
+                                                    applicationStatus: self.mockApplicationStatus,
+                                                    userProfileUpdateStatus: self.userProfileUpdateStatus)
     }
 
     override func tearDown() {
@@ -60,7 +60,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCreatesARequestToUpdatePassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -98,7 +98,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCreatesARequestToUpdateEmailAfterUpdatingPassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
@@ -167,7 +167,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.path, "/users/handles")
         guard let payloadDictionary = request.payload?.asDictionary(),
-            let payloadHandles = payloadDictionary["handles"] as? [String]
+              let payloadHandles = payloadDictionary["handles"] as? [String]
         else {
             XCTFail()
             return
@@ -180,11 +180,120 @@ extension UserProfileUpdateRequestStrategyTests {
 // MARK: - Parsing response
 extension UserProfileUpdateRequestStrategyTests {
 
+    <<<<<<< HEAD
+    =======
+    // MARK: - Phone verification code
+    func testThatItCallsDidRequestPhoneVerificationCodeSuccessfully() {
+
+        // GIVEN
+        let phone = "+155523123123"
+        self.userProfileUpdateStatus.requestPhoneVerificationCode(phoneNumber: phone)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // WHEN
+        let request = self.sut.nextRequest(for: .v0)
+        request?.complete(with: self.successResponse())
+
+        // THEN
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidRequestPhoneVerificationCodeSuccessfully, 1)
+    }
+
+    func testThatItCallsDidFailPhoneVerificationCodeRequest() {
+
+        // GIVEN
+        let phone = "+155523123123"
+        self.userProfileUpdateStatus.requestPhoneVerificationCode(phoneNumber: phone)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // WHEN
+        let request = self.sut.nextRequest(for: .v0)
+        request?.complete(with: self.invalidPhoneNumberResponse())
+
+        // THEN
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.count, 1)
+        guard let error = self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.first else { return }
+        XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.invalidPhoneNumber.rawValue))
+    }
+
+    func testThatItGetsInvalidPhoneNumberErrorOnBadRequestResponse() {
+
+        // GIVEN
+        let phone = "+155523123123"
+        self.userProfileUpdateStatus.requestPhoneVerificationCode(phoneNumber: phone)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // WHEN
+        let request = self.sut.nextRequest(for: .v0)
+        request?.complete(with: self.badRequestResponse())
+
+        // THEN
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.count, 1)
+        guard let error = self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.first else { return }
+        XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.invalidPhoneNumber.rawValue))
+    }
+
+    func testThatItGetsDuplicatePhoneNumberErrorOnDuplicatePhoneNumber() {
+
+        // GIVEN
+        let phone = "+155523123123"
+        self.userProfileUpdateStatus.requestPhoneVerificationCode(phoneNumber: phone)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // WHEN
+        let request = self.sut.nextRequest(for: .v0)
+        request?.complete(with: self.keyExistsResponse())
+
+        // THEN
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.count, 1)
+        guard let error = self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.first else { return }
+        XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.phoneNumberIsAlreadyRegistered.rawValue))
+    }
+
+    // MARK: - Phone number change
+    func testThatItCallsDidChangePhoneSuccessfully() {
+
+        // GIVEN
+        let credentials = UserPhoneCredentials.credentials(phoneNumber: "+155523123123", verificationCode: "12345")
+        self.userProfileUpdateStatus.requestPhoneNumberChange(credentials: credentials)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // WHEN
+        let request = self.sut.nextRequest(for: .v0)
+        request?.complete(with: self.successResponse())
+
+        // THEN
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidChangePhoneSuccesfully, 1)
+    }
+
+    func testThatItCallsDidFailChangePhone() {
+
+        // GIVEN
+        let credentials = UserPhoneCredentials.credentials(phoneNumber: "+155523123123", verificationCode: "12345")
+        self.userProfileUpdateStatus.requestPhoneNumberChange(credentials: credentials)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // WHEN
+        let request = self.sut.nextRequest(for: .v0)
+        request?.complete(with: self.errorResponse())
+
+        // THEN
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailChangingPhone.count, 1)
+        guard let error = self.userProfileUpdateStatus.recordedDidFailPhoneVerificationCodeRequest.first else { return }
+        XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.unknownError.rawValue))
+    }
+
+    >>>>>>> develop
     // MARK: - Setting email and password
     func testThatCallsDidUpdatePasswordSuccessfully() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -200,7 +309,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatCallsDidUpdatePasswordSuccessfullyOn403() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -216,7 +325,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatCallsDidFailPasswordUpdateOn400() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -232,7 +341,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCallsDidUpdateEmailSuccessfullyWhenSettingEmailAndPassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
@@ -249,7 +358,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCallsDidFailEmailUpdateWithInvalidEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
@@ -268,7 +377,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCallsDidFailEmailUpdateWithDuplicatedEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
@@ -287,7 +396,7 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCallsDidFailEmailUpdateWithUnknownError() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
+        let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()

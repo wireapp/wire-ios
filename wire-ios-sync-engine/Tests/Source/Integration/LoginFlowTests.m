@@ -24,7 +24,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"
 
-#import "ZMCredentials.h"
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 
 extern NSTimeInterval DebugLoginFailureTimerOverride;
@@ -61,7 +60,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
 
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -83,7 +82,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
 
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -120,7 +119,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"wrong-password"];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"wrong-password"];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -159,7 +158,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -200,7 +199,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -227,7 +226,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     DebugLoginFailureTimerOverride = 0.2;
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:@"janet@fo.example.com" password:@"::FsdF:#$:fgsdAG"];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:@"janet@fo.example.com" password:@"::FsdF:#$:fgsdAG"];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     
     // then

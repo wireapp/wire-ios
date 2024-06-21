@@ -28,7 +28,7 @@ extension ZMUserSession {
     }
 
     @objc(setEmailCredentials:)
-    func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
+    func setEmailCredentials(_ emailCredentials: UserEmailCredentials?) {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
@@ -88,7 +88,7 @@ extension ZMUserSession {
         }
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,

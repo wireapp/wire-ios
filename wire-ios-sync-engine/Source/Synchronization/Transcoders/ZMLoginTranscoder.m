@@ -22,7 +22,6 @@
 
 #import "ZMLoginTranscoder+Internal.h"
 #import "ZMAuthenticationStatus.h"
-#import "ZMCredentials.h"
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMUserSessionRegistrationNotification.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
@@ -129,7 +128,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     if (authenticationStatus.currentPhase == ZMAuthenticationPhaseAuthenticated) {
         return nil;
     }
-    ZMCredentials *credentials = authenticationStatus.loginCredentials;
+    UserCredentials *credentials = authenticationStatus.loginCredentials;
     if(credentials == nil) {
         return nil;
     }

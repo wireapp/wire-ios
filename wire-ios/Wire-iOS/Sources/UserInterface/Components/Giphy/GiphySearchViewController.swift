@@ -20,6 +20,7 @@ import FLAnimatedImage
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 import Ziphy
 
