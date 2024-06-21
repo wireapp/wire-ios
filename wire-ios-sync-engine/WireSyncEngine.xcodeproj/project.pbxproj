@@ -820,8 +820,6 @@
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
 		01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusLog.swift; sourceTree = "<group>"; };
-		01F9D23C2C061ECC005A3357 /* ConnectionsRepositiory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositiory.swift; sourceTree = "<group>"; };
-		01F9D23E2C0624B4005A3357 /* ConnectionsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryError.swift; sourceTree = "<group>"; };
 		060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeCertificateEnrollmentUseCase.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
 		061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProviderTests.swift; sourceTree = "<group>"; };
@@ -1428,7 +1426,6 @@
 		EE67F6C7296F0622001D7C88 /* avs.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = avs.xcframework; path = ../Carthage/Build/avs.xcframework; sourceTree = "<group>"; };
 		EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamOneOnOneConversationUseCase.swift; sourceTree = "<group>"; };
 		EE8584DC2B6BD33B0045EAD4 /* ZMUserSession+OneOnOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+OneOnOne.swift"; sourceTree = "<group>"; };
-		EE88B02A2BF606590013F0BD /* TeamRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		EE88B04E2BF62B140013F0BD /* SelfSupportedProtocolsRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsRequestStrategy.swift; sourceTree = "<group>"; };
 		EE88B0502BF62B3F0013F0BD /* SupportedProtocolsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedProtocolsService.swift; sourceTree = "<group>"; };
 		EE8B934D2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetE2eIdentityCertificatesUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1443,7 +1440,6 @@
 		EECE27C329435FFE00419A8B /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
 		EECE27C5294362F100419A8B /* MockPushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushTokenService.swift; sourceTree = "<group>"; };
 		EEDDB6A32BCFC5E4009ECF97 /* WireSyncEngine.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireSyncEngine.docc; sourceTree = "<group>"; };
-		EEE076162BF36FEA00EAA7D2 /* TeamRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+AppLock.swift"; sourceTree = "<group>"; };
 		EEE186B5259CCA14008707CA /* SessionManager+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+AppLock.swift"; sourceTree = "<group>"; };
 		EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsUseCase.swift; sourceTree = "<group>"; };
@@ -2033,7 +2029,6 @@
 		5423B98C191A49CD0044347D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				EEE076152BF36FC900EAA7D2 /* Repositories */,
 				060C06662B7619C600B484C6 /* E2EI */,
 				EFF9403C2240FE12004F3115 /* DeepLink */,
 				54B2A0821DAE71F100BB40B1 /* Analytics */,
@@ -2851,18 +2846,6 @@
 				EE88B0502BF62B3F0013F0BD /* SupportedProtocolsService.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		EEE076152BF36FC900EAA7D2 /* Repositories */ = {
-			isa = PBXGroup;
-			children = (
-				01F9D23C2C061ECC005A3357 /* ConnectionsRepositiory.swift */,
-				01F9D23E2C0624B4005A3357 /* ConnectionsRepositoryError.swift */,
-				EEE076162BF36FEA00EAA7D2 /* TeamRepository.swift */,
-				EE88B02A2BF606590013F0BD /* TeamRepositoryError.swift */,
-			);
-			name = Repositories;
-			path = ../../WireDomain/WireDomain/Repositories;
 			sourceTree = "<group>";
 		};
 		EEE46E5528C5EF3B005F48D7 /* Use cases */ = {
