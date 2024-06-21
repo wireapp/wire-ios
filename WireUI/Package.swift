@@ -15,9 +15,6 @@ let package = Package(
             name: "WireConversationList",
             targets: ["WireConversationList"]),
         .library(
-            name: "WireConversationListSupport",
-            targets: ["WireConversationListSupport"]),
-        .library(
             name: "WireDesign",
             targets: ["WireDesign"]),
         .library(
@@ -27,8 +24,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
-        .package(url: "https://github.com/wireapp/DifferenceKit", from: "1.3.0"),
-        .package(path: "../SourceryPlugin")
+        .package(url: "https://github.com/wireapp/DifferenceKit", from: "1.3.0")
     ],
     targets: [
 
@@ -44,16 +40,6 @@ let package = Package(
                     package: "swift-snapshot-testing"
                 )
             ]),
-        .target(
-            name: "WireConversationListSupport",
-            dependencies: ["WireConversationList"],
-            plugins: [
-                .plugin(
-                    name: "SourceryPlugin",
-                    package: "SourceryPlugin"
-                )
-            ]
-        ),
 
         .target(
             name: "WireDesign"),
