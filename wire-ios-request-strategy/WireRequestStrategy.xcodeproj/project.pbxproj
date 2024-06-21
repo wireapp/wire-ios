@@ -2157,7 +2157,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1669017E1D707509000FE4AF /* Build configuration list for PBXNativeTarget "WireRequestStrategy" */;
 			buildPhases = (
-				630D41B52B07851000633867 /* Run Sourcery */,
 				166901671D707509000FE4AF /* Headers */,
 				166901651D707509000FE4AF /* Sources */,
 				166901661D707509000FE4AF /* Frameworks */,
@@ -2200,6 +2199,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EEA58F1F2B71179D006DEE32 /* Build configuration list for PBXNativeTarget "WireRequestStrategySupport" */;
 			buildPhases = (
+				59A85D8E2C256BD5005246ED /* Run Sourcery */,
 				EEA58F142B71179D006DEE32 /* Headers */,
 				EEA58F152B71179D006DEE32 /* Sources */,
 				EEA58F162B71179D006DEE32 /* Frameworks */,
@@ -2350,7 +2350,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		630D41B52B07851000633867 /* Run Sourcery */ = {
+		59A85D8E2C256BD5005246ED /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -2977,7 +2977,6 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3066,7 +3065,6 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
