@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationList
-import WireDataModel
+import Foundation
 
-extension ZMConversation: ConversationListItemTMP {}
+public /*struct*/ final class ConnectRequestsItemTMP: NSObject, ConversationListItemTMP {}

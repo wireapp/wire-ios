@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import Foundation // TODO: remove
 
-public /*struct*/ final class ConnectRequestsItem: NSObject, ConversationListItem {}
+/// Something which can be shown in the conversation list.
+public protocol ConversationListItemTMP: /*Hashable*/ NSObject {} // TODO: remove NSObject

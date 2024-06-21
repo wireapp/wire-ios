@@ -22,7 +22,7 @@ import WireDataModel
 
 protocol ConversationListViewModelDelegate: AnyObject {
 
-    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?)
+    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItemTMP?)
 
     func listViewModelShouldBeReloaded()
 

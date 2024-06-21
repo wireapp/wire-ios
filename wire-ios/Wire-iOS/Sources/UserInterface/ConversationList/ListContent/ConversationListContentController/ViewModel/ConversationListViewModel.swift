@@ -28,10 +28,10 @@ final class ConversationListViewModel {
 
     typealias SectionIdentifier = String
 
-    static let contactRequestsItem = ConnectRequestsItem()
+    static let contactRequestsItem = ConnectRequestsItemTMP()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
-    private(set) var selectedItem: ConversationListItem? {
+    private(set) var selectedItem: ConversationListItemTMP? {
         didSet {
             /// expand the section if selcted item is update
             guard let indexPath = self.indexPath(for: selectedItem),
@@ -176,7 +176,7 @@ final class ConversationListViewModel {
         return sections.first(where: { $0.kind == kind })?.elements.count ?? nil
     }
 
-    func section(at sectionIndex: Int) -> [ConversationListItem]? {
+    func section(at sectionIndex: Int) -> [ConversationListItemTMP]? {
         if sectionIndex >= sectionCount {
             return nil
         }
@@ -184,7 +184,7 @@ final class ConversationListViewModel {
         return sections[sectionIndex].elements.map(\.item)
     }
 
-    func item(for indexPath: IndexPath) -> ConversationListItem? {
+    func item(for indexPath: IndexPath) -> ConversationListItemTMP? {
         guard let items = section(at: indexPath.section),
               items.indices.contains(indexPath.item) else { return nil }
 
@@ -194,7 +194,7 @@ final class ConversationListViewModel {
     // swiftlint:disable todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
-    func indexPath(for item: ConversationListItem?) -> IndexPath? {
+    func indexPath(for item: ConversationListItemTMP?) -> IndexPath? {
         guard let item else { return nil }
 
         for (sectionIndex, section) in sections.enumerated() {
@@ -237,7 +237,7 @@ final class ConversationListViewModel {
     /// - Parameter indexPath: indexPath of the item to select
     /// - Returns: the item selected
     @discardableResult
-    func selectItem(at indexPath: IndexPath) -> ConversationListItem? {
+    func selectItem(at indexPath: IndexPath) -> ConversationListItemTMP? {
         let item = self.item(for: indexPath)
         select(itemToSelect: item)
         return item
@@ -399,7 +399,7 @@ final class ConversationListViewModel {
     }
 
     @discardableResult
-    func select(itemToSelect: ConversationListItem?) -> Bool {
+    func select(itemToSelect: ConversationListItemTMP?) -> Bool {
         guard let itemToSelect else {
             internalSelect(itemToSelect: nil)
             return false
@@ -420,7 +420,7 @@ final class ConversationListViewModel {
         return true
     }
 
-    private func internalSelect(itemToSelect: ConversationListItem?) {
+    private func internalSelect(itemToSelect: ConversationListItemTMP?) {
         selectedItem = itemToSelect
 
         if let itemToSelect {
@@ -623,7 +623,7 @@ extension ConversationListViewModel {
         ///
         /// - Parameter item: item to search
         /// - Returns: the index of the item
-        func index(for item: ConversationListItem) -> Int? {
+        func index(for item: ConversationListItemTMP) -> Int? {
             return items.firstIndex(of: SectionItem(item: item, kind: kind))
         }
 
@@ -757,10 +757,10 @@ extension ConversationListViewModel {
 
     /// make items has different hash in different sections
     struct SectionItem: Hashable, Differentiable {
-        let item: ConversationListItem
+        let item: ConversationListItemTMP
         let isFavorite: Bool
 
-        fileprivate init(item: ConversationListItem, kind: Section.Kind) {
+        fileprivate init(item: ConversationListItemTMP, kind: Section.Kind) {
             self.item = item
             self.isFavorite = kind == .favorites
         }

@@ -16,7 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation // TODO: remove
+public enum ConversationListItem {
+    case connectionRequest(ConnectionRequest)
+    case conversation(Conversation)
+}
 
-/// Something which can be shown in the conversation list.
-public protocol ConversationListItem: /*Hashable*/ NSObject {} // TODO: remove NSObject
+// MARK: ConversationListItem.ConnectionRequest
+
+extension ConversationListItem {
+
+    public struct ConnectionRequest {}
+}
+
+// MARK: ConversationListItem.Conversation
+
+extension ConversationListItem {
+
+    public struct Conversation {}
+}

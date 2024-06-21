@@ -22,14 +22,9 @@ let package = Package(
             targets: ["WireReusableUIComponents"])
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.1.0"
-        ),
-        .package(
-            url: "https://github.com/pointfreeco/swift-snapshot-testing",
-            from: "1.16.0"
-        )
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(url: "https://github.com/wireapp/DifferenceKit", from: "1.3.0")
     ],
     targets: [
 

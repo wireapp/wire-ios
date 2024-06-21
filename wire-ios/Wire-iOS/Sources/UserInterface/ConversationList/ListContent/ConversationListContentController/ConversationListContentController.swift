@@ -231,7 +231,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     }
 
     @discardableResult
-    func selectModelItem(_ itemToSelect: ConversationListItem?) -> Bool {
+    func selectModelItem(_ itemToSelect: ConversationListItemTMP?) -> Bool {
         return listViewModel.select(itemToSelect: itemToSelect)
     }
 
@@ -251,7 +251,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     // MARK: preview
 
-    private func openConversation(conversationListItem: ConversationListItem?) {
+    private func openConversation(conversationListItem: ConversationListItemTMP?) {
         focusOnNextSelection = true
         animateNextSelection = true
         selectModelItem(conversationListItem)
@@ -317,7 +317,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         let item = listViewModel.item(for: indexPath)
         let cell: UICollectionViewCell
 
-        if item is ConnectRequestsItem,
+        if item is ConnectRequestsItemTMP,
             let labelCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConnectionRequests, for: indexPath) as? ConnectRequestsCell {
             cell = labelCell
         } else if item is ZMConversation,
@@ -367,7 +367,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         header.folderBadge = listViewModel.folderBadge(at: section)
     }
 
-    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?) {
+    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItemTMP?) {
         defer {
             scrollToMessageOnNextSelection = nil
             focusOnNextSelection = false
@@ -394,7 +394,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             selectConversationCompletion = nil
 
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
-        } else if item is ConnectRequestsItem {
+        } else if item is ConnectRequestsItemTMP {
             ZClientViewController.shared?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {
             assertionFailure("Invalid item in conversation list view model!!")
