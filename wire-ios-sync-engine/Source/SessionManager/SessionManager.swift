@@ -856,7 +856,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
+<<<<<<< HEAD
             WireLogger.sessionManager.debug("Activated ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)")
+=======
+            log.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
+>>>>>>> bed83ab999 (chore: add logs sending - WPB-9221 (#1538))
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()

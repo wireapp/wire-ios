@@ -18,7 +18,21 @@
 
 import Foundation
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {}
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {
+    var logInformation: LogAttributes { get }
+}
 
-extension ZMClientMessage: ProteusMessage {}
+extension ZMClientMessage: ProteusMessage {
+
+    public var logInformation: LogAttributes {
+
+        return [
+            LogAttributesKey.nonce.rawValue: self.nonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType.rawValue: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+
+    }
+}
+
 extension ZMAssetClientMessage: ProteusMessage {}

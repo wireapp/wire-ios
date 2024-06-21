@@ -33,10 +33,20 @@
 /// @managedObjectContext The context on which changes are supposed to be performed on timer firing.
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
+<<<<<<< HEAD
 /// Starts a new timer if there is no existing one
 /// @param fireDate The date at which the timer should fire
 /// @param userInfo Additional info that should be added to the timer
 - (void)startTimerForMessageIfNeeded:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo;
+=======
+
+/// Starts a new timer
+/// - Parameters:
+///   - message: message passed to the timer's fireMethod
+///   - fireDate The date at which the timer should fire
+///   - userInfo: Additional info that should be added to the timer
+- (void)startTimerForMessage:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo NS_SWIFT_NAME(startTimer(for:fireDate:userInfo:));
+>>>>>>> bed83ab999 (chore: add logs sending - WPB-9221 (#1538))
 
 /// Stops an existing timer
 - (void)stopTimerForMessage:(ZMMessage *)message;

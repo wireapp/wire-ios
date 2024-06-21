@@ -17,13 +17,19 @@
 //
 
 import Foundation
-import WireSystem
-import WireUtilities
 
-extension UUID: SafeForLoggingStringConvertible {
+extension ZMMessageTimer {
+    /// Starts a new timer if there is no existing one
+    /// - Parameters:
+    ///   - message: message passed to the timer's fireMethod
+    ///   - fireDate The date at which the timer should fire
+    ///   - userInfo: Additional info that should be added to the timer
+    /// - Returns: True if timer was started, false otherwise
+    @discardableResult
+    public func startTimerIfNeeded(for message: ZMMessage, fireDate: Date, userInfo: [String: Any]) -> Bool {
+        guard !isTimerRunning(for: message) else { return false }
 
-    public var safeForLoggingDescription: String {
-        return transportString().redactedAndTruncated()
+        startTimer(for: message, fireDate: fireDate, userInfo: userInfo)
+        return true
     }
-
 }

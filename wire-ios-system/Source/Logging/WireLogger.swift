@@ -125,8 +125,13 @@ public enum LogAttributesKey: String {
     case nonce = "message_nonce"
     case messageType = "message_type"
     case lastEventID = "last_event_id"
+<<<<<<< HEAD
     case `public`
     case tag
+=======
+    case conversationId = "conversation_id"
+    case syncPhase = "sync_phase"
+>>>>>>> bed83ab999 (chore: add logs sending - WPB-9221 (#1538))
 }
 
 public extension LogAttributes {
@@ -233,5 +238,10 @@ public final class WireLoggerObjc: NSObject {
     @objc(logReceivedUpdateEventWithId:)
     static func logReceivedUpdateEvent(eventId: String) {
         WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
+    }
+
+    @objc(logSaveCoreDataError:)
+    static func logSaveCoreData(error: Error) {
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
     }
 }
