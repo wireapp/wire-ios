@@ -63,8 +63,8 @@ jobs:
               - 'wire-ios-transport/**'
             wire-ios-cryptobox:
               - 'wire-ios-cryptobox/**'
-            wire-ios-mock-transport:
-              - 'wire-ios-mock-transport/**'
+            wire-ios-mocktransport:
+              - 'wire-ios-mocktransport/**'
             wire-ios-protos:
               -  'wire-ios-protos/**'
             wire-ios-images:

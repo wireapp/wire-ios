@@ -62,7 +62,7 @@ class ConnectionsAPITests: XCTestCase {
                                             conversationId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
                                             qualifiedConversationId: QualifiedID(uuid: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
                                                                                  domain: "example.com"),
-                                            lastUpdate: try XCTUnwrap(ISO8601DateFormatter.default.date(from: "2021-05-12T10:52:02.671Z")),
+                                            lastUpdate: try XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")),
                                             status: .accepted)
         let connection = try XCTUnwrap(result?.first)
         XCTAssertEqual(connection, expectedConnection)

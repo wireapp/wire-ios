@@ -36,7 +36,7 @@ public struct User: Equatable {
 
     /// Team ID if the user belongs to a team
 
-    public let teamID: UUID
+    public let teamID: UUID?
 
     /// Color accent of the user
 
@@ -58,7 +58,7 @@ public struct User: Equatable {
     ///
     /// Only set of guest (ephemeral) users
 
-    public let expiresAt: String?
+    public let expiresAt: Date?
 
     /// Service information associated with this user
 

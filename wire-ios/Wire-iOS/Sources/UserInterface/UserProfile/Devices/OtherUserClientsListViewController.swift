@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireSyncEngine
 
 final class OtherUserClientsListViewController: UIViewController,
@@ -59,6 +60,10 @@ final class OtherUserClientsListViewController: UIViewController,
             layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
             layout.estimatedItemSize = CGSize(width: UIScreen.main.bounds.width, height: 1)
         }
+    }
+
+    deinit {
+        DeveloperToolsViewModel.context.currentUserClient = nil
     }
 
     @available(*, unavailable)
@@ -192,6 +197,8 @@ final class OtherUserClientsListViewController: UIViewController,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
+        DeveloperToolsViewModel.context.currentUserClient = client
+
         return DeviceInfoViewModel(
             title: title,
             addedDate: "",
@@ -202,9 +209,7 @@ final class OtherUserClientsListViewController: UIViewController,
             mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: true,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: Bundle.developerModeEnabled
+            conversationClientDetailsActions: deviceActionsHandler
         )
     }
 }

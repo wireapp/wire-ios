@@ -95,8 +95,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
                                             mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                                             isFromConversation: true,
                                             actionsHandler: deviceActions,
-                                            conversationClientDetailsActions: MockConversationUserClientDetailsActions(),
-                                            isDebugMenuAvailable: showDebugMenu)
+                                            conversationClientDetailsActions: MockConversationUserClientDetailsActions())
         viewModel.e2eIdentityCertificate = isE2eIdentityEnabled ? certificate : nil
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
