@@ -22,12 +22,9 @@ import WireCommonComponents
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
         private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
-        private let credentials: ZMEmailCredentials?
         private(set) var clients: [UserClient] = []
 
-        init(clientsList: [UserClient],
-             credentials: ZMEmailCredentials?) {
-            self.credentials = credentials
+        init(clientsList: [UserClient]) {
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
             super.init()
@@ -48,25 +45,16 @@ extension RemoveClientsViewController {
                 })
         }
 
-        func removeUserClient(_ userClient: UserClient) async throws {
+        func removeUserClient(_ userClient: UserClient, password: String) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
                 return userClient.remoteIdentifier
             }
             guard let clientId else {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
-            try await removeUserClientUseCase?.invoke(clientId: clientId, credentials: credentials?.emailCredentials)
-        }
-    }
-}
 
-private extension ZMEmailCredentials {
-    var emailCredentials: EmailCredentials? {
-        guard let email,
-              let password
-        else {
-            return nil
+            try await removeUserClientUseCase?.invoke(clientId: clientId,
+                                                      password: password)
         }
-        return EmailCredentials(email: email, password: password)
     }
 }

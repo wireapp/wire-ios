@@ -18,25 +18,10 @@
 
 import Foundation
 
-public class UserClientRequestFactory {
+public extension FileManager {
 
-    public init() {}
-
-    func deleteClientRequest(
-        clientId: String,
-        password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
-
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
-
-            return request
-        }
+    var randomCacheURL: URL? {
+        urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
+    }
 
 }

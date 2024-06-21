@@ -64,7 +64,6 @@ extension Settings {
             "URL",
             "EmoticonSubstitutionConfiguration",
             "URL Helper",
-            "Performance",
             "message-processing",
             "backend-environment",
             "Analytics",

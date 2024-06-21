@@ -53,19 +53,17 @@ final class RemoveClientsViewController: UIViewController,
 
         return nil
     }
+    private var requestPasswordController: RequestPasswordController?
 
     weak var delegate: RemoveClientsViewControllerDelegate?
     private var viewModel: RemoveClientsViewController.ViewModel
 
     // MARK: - Life cycle
 
-    required init(
-        clientsList: [UserClient],
-        credentials: ZMEmailCredentials? = .none
-    ) {
+    required init(clientsList: [UserClient]) {
         viewModel = RemoveClientsViewController.ViewModel(
-            clientsList: clientsList,
-            credentials: credentials)
+            clientsList: clientsList)
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -125,15 +123,38 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func removeUserClient(_ userClient: UserClient) async {
+        if let password = await presentRequestPasswordController() {
+            await removeUserClient(userClient, password: password)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func presentRequestPasswordController() async -> String? {
+        await withCheckedContinuation { continuation in
+            requestPasswordController = RequestPasswordController(
+                context: .removeDevice,
+                callback: { password in
+                    continuation.resume(returning: password)
+                })
+            guard let alertController = requestPasswordController?.alertController else {
+                continuation.resume(returning: nil)
+                return
+            }
+
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    private func removeUserClient(_ userClient: UserClient, password: String) async {
         isLoadingViewVisible = true
         do {
-            try await viewModel.removeUserClient(userClient)
-            isLoadingViewVisible = false
+            try await viewModel.removeUserClient(userClient, password: password)
             delegate?.finishedDeleting(self)
         } catch {
-            isLoadingViewVisible = false
             delegate?.failedToDeleteClients(error)
         }
+        isLoadingViewVisible = false
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -180,7 +201,7 @@ final class RemoveClientsViewController: UIViewController,
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let userClient = viewModel.clients[indexPath.row]
         Task {
-            await self.removeUserClient(userClient)
+            await removeUserClient(userClient)
         }
     }
 

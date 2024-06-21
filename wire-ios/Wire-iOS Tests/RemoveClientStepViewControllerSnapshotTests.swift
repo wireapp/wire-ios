@@ -34,8 +34,7 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
                                                        mockUserClient(),
                                                        mockUserClient(),
                                                        mockUserClient(),
-                                                       mockUserClient()],
-                                             credentials: ZMCredentials())
+                                                       mockUserClient()])
     }
 
     override func tearDown() {
