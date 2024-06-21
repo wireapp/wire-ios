@@ -222,10 +222,6 @@ public final class WireLoggerObjc: NSObject {
 
     @objc(logReceivedUpdateEventWithId:)
     static func logReceivedUpdateEvent(eventId: String) {
-        var mergedAttributes: LogAttributes = LogAttributes.safePublic
-
-        mergedAttributes.merge([LogAttributesKey.eventId.rawValue: eventId], uniquingKeysWith: { _, new in new })
-
-        WireLogger.updateEvent.info("received event", attributes: mergedAttributes)
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
     }
 }

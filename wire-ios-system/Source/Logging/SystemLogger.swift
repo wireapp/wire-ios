@@ -101,7 +101,7 @@ struct SystemLogger: LoggerProtocol {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
-        let message = "\(message.logDescription)\(attributesDescription(from: attributes))"
+        let message = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
         if mergedAttributes[.public] as? Bool == true {
             os_log(osLogType, log: logger, "%{public}@", message)
@@ -110,12 +110,12 @@ struct SystemLogger: LoggerProtocol {
         }
     }
 
-    private func attributesDescription(from attributes: LogAttributes?) -> String {
+    private func attributesDescription(from attributes: LogAttributes) -> String {
         var logAttributes = attributes
         // drop attributes used for visibility and category
-        logAttributes?.removeValue(forKey: "public")
-        logAttributes?.removeValue(forKey: "tag")
-        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
+        logAttributes.removeValue(forKey: .public)
+        logAttributes.removeValue(forKey: .tag)
+        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
     }
 }
 
