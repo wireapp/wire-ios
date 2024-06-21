@@ -26,6 +26,7 @@ protocol CellConfigurationConfigurable: Reusable {
 enum CellConfiguration {
     typealias Action = (UIView?) -> Void
     case linkHeader
+    case secureLinkHeader
     case leadingButton(title: String, identifier: String, action: Action)
     case loading
     case text(String)
@@ -51,6 +52,7 @@ enum CellConfiguration {
         switch self {
         case .iconToggle: return IconToggleSubtitleCell.self
         case .linkHeader: return LinkHeaderCell.self
+        case .secureLinkHeader: return SecureLinkHeaderCell.self
         case .leadingButton: return ActionCell.self
         case .loading: return LoadingIndicatorCell.self
         case .text: return TextCell.self
@@ -64,12 +66,14 @@ enum CellConfiguration {
         switch self {
         case .iconToggle,
              .linkHeader,
+             .secureLinkHeader,
              .loading,
              .text,
              .info,
              .appearance: return nil
         case let .leadingButton(_, _, action: action): return action
         case let .iconAction(_, _, _, action: action): return action
+
         }
     }
 
@@ -79,6 +83,7 @@ enum CellConfiguration {
         return [
             IconToggleSubtitleCell.self,
             LinkHeaderCell.self,
+            SecureLinkHeaderCell.self,
             ActionCell.self,
             LoadingIndicatorCell.self,
             TextCell.self,

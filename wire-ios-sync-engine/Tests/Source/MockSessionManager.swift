@@ -70,7 +70,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
         // no-op
     }
 
-    func update(credentials: ZMCredentials) -> Bool {
+    func update(credentials: UserCredentials) -> Bool {
         return false
     }
 

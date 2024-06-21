@@ -314,7 +314,7 @@ extension TopConversationsDirectoryTests {
             self.stopMeasuring()
 
             // clean up for the next block execution
-            self.uiMOC.executeFetchRequestOrAssert(ZMConversation.sortedFetchRequest()).forEach {
+            try! self.uiMOC.fetch(ZMConversation.sortedFetchRequest()).forEach {
                 self.uiMOC.delete($0 as! NSManagedObject)
             }
 

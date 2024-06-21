@@ -33,7 +33,7 @@ extension UserClientRequestFactory {
 
     public func registerClientRequest(
         _ client: UserClient,
-        credentials: ZMEmailCredentials?,
+        credentials: UserEmailCredentials?,
         cookieLabel: String,
         prekeys: [IdPrekeyTuple],
         lastRestortPrekey: IdPrekeyTuple,
@@ -201,7 +201,7 @@ extension UserClientRequestFactory {
     }
 
     /// Password needs to be set
-    public func deleteClientRequest(_ client: UserClient, credentials: ZMEmailCredentials?, apiVersion: APIVersion) -> ZMUpstreamRequest {
+    public func deleteClientRequest(_ client: UserClient, credentials: UserEmailCredentials?, apiVersion: APIVersion) -> ZMUpstreamRequest {
         let payload: [AnyHashable: Any]
 
         if let credentials,

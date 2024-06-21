@@ -17,11 +17,35 @@
 //
 
 import Foundation
+import WireAPI
 
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
-    public func pushChannelDidReceive(_ data: ZMTransportData) {
-        if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
+    public func pushChannelDidReceive(_ data: Data) {
+        if isDeveloperModeEnabled {
+            // TODO: [WPB-9612] remove event decoding monitoring.
+            // Since update event models aren't documented, we aren't yet completely sure
+            // that the new type-safe UpdateEvent model can successfully decode all event
+            // types. To test correctness, we try to decode every update event received
+            // through the push channel and simply log when it fails so we know how to
+            // fix it. Once we're sure it works, we should remove this.
+            do {
+                let decoder = JSONDecoder.defaultDecoder
+                _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
+            } catch {
+                WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
+            }
+        }
+
+        guard let transportData = try? JSONSerialization.jsonObject(
+            with: data,
+            options: []
+        ) as? ZMTransportData else {
+            WireLogger.updateEvent.error("failed to deserialize push channel data")
+            return
+        }
+
+        if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: transportData), !events.isEmpty {
             Logging.eventProcessing.info("Received \(events.count) events from push channel")
             events.forEach { $0.appendDebugInformation("from push channel (web socket)") }
 

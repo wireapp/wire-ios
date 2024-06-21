@@ -13,6 +13,7 @@ jobs:
   development:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      datadog_enabled: true
       fastlane_action: development
       is_cloud_build: true
     secrets: inherit

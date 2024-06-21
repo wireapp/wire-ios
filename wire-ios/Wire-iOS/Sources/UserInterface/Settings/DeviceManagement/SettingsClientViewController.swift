@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -51,7 +52,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     var userClientToken: NSObjectProtocol!
-    var credentials: ZMEmailCredentials?
+    var credentials: UserEmailCredentials?
 
     var tableView: UITableView!
     let topSeparator = OverflowSeparatorView()
@@ -63,14 +64,14 @@ final class SettingsClientViewController: UIViewController,
     convenience init(userClient: UserClient,
                      userSession: UserSession,
                      fromConversation: Bool,
-                     credentials: ZMEmailCredentials? = .none) {
+                     credentials: UserEmailCredentials? = .none) {
         self.init(userClient: userClient, userSession: userSession, credentials: credentials)
         self.fromConversation = fromConversation
     }
 
     required init(userClient: UserClient,
                   userSession: UserSession,
-                  credentials: ZMEmailCredentials? = .none) {
+                  credentials: UserEmailCredentials? = .none) {
         self.userSession = userSession
         self.viewModel = SettingsClientViewModel(userClient: userClient,
                                                  getUserClientFingerprint: userSession.getUserClientFingerprint)
