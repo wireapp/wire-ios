@@ -9069,6 +9069,7 @@
 		};
 		E64120D52C1C7A820097526C /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

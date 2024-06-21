@@ -28,12 +28,13 @@ final class ConversationListViewModel: NSObject {
     typealias SectionIdentifier = String
 
     fileprivate struct Section: DifferentiableSection {
+        typealias Conversation = ZMConversation
 
         var kind: Kind
-        var items: [SectionItem]
+        var items: [SectionItem<Conversation>]
         var collapsed: Bool
 
-        var elements: [SectionItem] {
+        var elements: [SectionItem<Conversation>] {
             return collapsed ? [] : items
         }
 
@@ -41,7 +42,7 @@ final class ConversationListViewModel: NSObject {
         ///
         /// - Parameter item: item to search
         /// - Returns: the index of the item
-        func index(for item: ConversationListItem) -> Int? {
+        func index(for item: Conversation) -> Int? {
             return items.firstIndex(of: SectionItem(item: item, kind: kind))
         }
 
@@ -53,7 +54,8 @@ final class ConversationListViewModel: NSObject {
             return kind.identifier
         }
 
-        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
+        init<C>(source: ConversationListViewModel.Section, elements: C)
+        where C: Collection, C.Element == SectionItem<ZMConversation> {
             self.kind = source.kind
             self.collapsed = source.collapsed
             items = Array(elements)
@@ -71,7 +73,7 @@ final class ConversationListViewModel: NSObject {
     static let contactRequestsItem: ConversationListConnectRequestsItem = ConversationListConnectRequestsItem()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
-    private(set) var selectedItem: ConversationListItem? {
+    private(set) var selectedItem: ZMConversation? {
         didSet {
             /// expand the section if selcted item is update
             guard let indexPath = self.indexPath(for: selectedItem),
@@ -106,15 +108,15 @@ final class ConversationListViewModel: NSObject {
     // Local copies of the lists.
     private var sections: [Section] = []
 
-    private typealias DiffKitSection = ArraySection<Int, SectionItem>
+    private typealias DiffKitSection = ArraySection<Int, SectionItem<ZMConversation>>
 
     /// make items has different hash in different sections
     struct SectionItem<Conversation>: Hashable, Differentiable
-    /* where Conversation: ConversationListItem */ {
-        let item: ConversationListItem // Conversation
+    where Conversation: ConversationListItem {
+        let item: Conversation
         let isFavorite: Bool
 
-        fileprivate init(item: ConversationListItem, kind: Section.Kind) {
+        fileprivate init(item: Conversation, kind: Section.Kind) {
             self.item = item
             self.isFavorite = kind == .favorites
         }
@@ -126,7 +128,7 @@ final class ConversationListViewModel: NSObject {
             hasher.combine(hashableItem)
         }
 
-        static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
+        static func == (lhs: Self, rhs: Self) -> Bool {
             return lhs.isFavorite == rhs.isFavorite &&
                    lhs.item == rhs.item
         }
@@ -260,7 +262,7 @@ final class ConversationListViewModel: NSObject {
     // swiftlint:disable todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
-    func indexPath(for item: ConversationListItem?) -> IndexPath? {
+    func indexPath(for item: ZMConversation?) -> IndexPath? {
         guard let item else { return nil }
 
         for (sectionIndex, section) in sections.enumerated() {
@@ -272,7 +274,7 @@ final class ConversationListViewModel: NSObject {
         return nil
     }
 
-    private static func newList(for kind: Section.Kind, conversationDirectory: ConversationDirectoryType) -> [SectionItem] {
+    private static func newList(for kind: Section.Kind, conversationDirectory: ConversationDirectoryType) -> [SectionItem<ZMConversation>] {
         let conversationListType: ConversationListType
         switch kind {
         case .contactRequests:
@@ -695,7 +697,7 @@ extension ConversationListViewModel.Section {
             hasher.combine(identifier)
         }
 
-        var identifier: SectionIdentifier {
+        var identifier: ConversationListViewModel.SectionIdentifier {
             switch self {
             case.folder(label: let label):
                 return label.remoteIdentifier?.transportString() ?? "folder"
