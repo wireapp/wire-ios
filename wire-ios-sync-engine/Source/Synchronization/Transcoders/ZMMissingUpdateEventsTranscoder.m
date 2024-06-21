@@ -19,7 +19,7 @@
 @import WireUtilities;
 @import WireTransport;
 @import WireRequestStrategy;
-
+@import WireDataModel;
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "WireSyncEngineLogs.h"
@@ -180,6 +180,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             if (!event.isTransient) {
                 latestEventId = event.uuid;
             }
+            [WireLoggerObjc logReceivedUpdateEventWithId:[event safeUUID]];
         }
     }
     
