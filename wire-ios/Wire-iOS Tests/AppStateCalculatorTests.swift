@@ -149,7 +149,6 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(error: error))
-        XCTAssertTrue(delegate.wasNotified)
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {

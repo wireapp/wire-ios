@@ -61,14 +61,7 @@ final class RemoveClientsViewController: UIViewController,
 
     // MARK: - Life cycle
 
-<<<<<<< HEAD
-    required init(
-        clientsList: [UserClient],
-        credentials: UserEmailCredentials? = .none
-    ) {
-=======
     required init(clientsList: [UserClient]) {
->>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
         viewModel = RemoveClientsViewController.ViewModel(
             clientsList: clientsList)
 

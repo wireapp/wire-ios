@@ -29,25 +29,12 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
     override func setUp() {
         super.setUp()
 
-<<<<<<< HEAD
         coreDataFixture = CoreDataFixture()
-        sut = RemoveClientStepViewController(
-            clients: [
-                mockUserClient(),
-                mockUserClient(),
-                mockUserClient(),
-                mockUserClient(),
-                mockUserClient()
-            ],
-            credentials: UserCredentials()
-        )
-=======
         sut = RemoveClientStepViewController(clients: [mockUserClient(),
                                                        mockUserClient(),
                                                        mockUserClient(),
                                                        mockUserClient(),
                                                        mockUserClient()])
->>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
     }
 
     override func tearDown() {

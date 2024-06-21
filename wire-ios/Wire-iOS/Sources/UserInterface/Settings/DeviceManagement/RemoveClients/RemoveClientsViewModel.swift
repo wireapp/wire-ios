@@ -22,18 +22,9 @@ import WireSyncEngine
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
         private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
-<<<<<<< HEAD
-        private let credentials: UserEmailCredentials?
-        private(set) var clients: [UserClient] = []
-
-        init(clientsList: [UserClient],
-             credentials: UserEmailCredentials?) {
-            self.credentials = credentials
-=======
         private(set) var clients: [UserClient] = []
 
         init(clientsList: [UserClient]) {
->>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
             super.init()
@@ -62,17 +53,8 @@ extension RemoveClientsViewController {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
 
-<<<<<<< HEAD
-private extension UserEmailCredentials {
-    var emailCredentials: EmailCredentials? {
-        guard let email,
-              let password
-        else {
-            return nil
-=======
             try await removeUserClientUseCase?.invoke(clientId: clientId,
                                                       password: password)
->>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
         }
     }
 }

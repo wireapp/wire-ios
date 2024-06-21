@@ -45,15 +45,9 @@ indirect enum AuthenticationFlowStep: Equatable {
     case switchBackend(url: URL)
 
     // Post Sign-In
-<<<<<<< HEAD
     case noHistory(credentials: UserCredentials?, context: NoHistoryContext)
-    case clientManagement(clients: [UserClient], credentials: UserCredentials?)
-    case deleteClient(clients: [UserClient], credentials: UserCredentials?)
-=======
-    case noHistory(credentials: ZMCredentials?, context: NoHistoryContext)
     case clientManagement(clients: [UserClient])
     case deleteClient(clients: [UserClient])
->>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
     case addEmailAndPassword
     case enrollE2EIdentity
     case enrollE2EIdentitySuccess(String)
