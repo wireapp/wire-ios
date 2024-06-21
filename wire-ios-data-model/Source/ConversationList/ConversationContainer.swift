@@ -34,7 +34,7 @@ public final class ConversationContainer: NSObject {
 
     private var backingList: [ZMConversation]
     private let conversationKeysAffectingSorting: NSSet
-    private let filteringPredicate: NSPredicate
+    private var filteringPredicate: NSPredicate
     private let sortDescriptors: [NSSortDescriptor]
     private let customDebugDescription: String
 
@@ -67,7 +67,7 @@ public final class ConversationContainer: NSObject {
         self.label = label
         sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
-        conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort()
+        conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
         backingList = Self.createBackingList(allConversations, filteringPredicate: filteringPredicate)
 
         super.init()
@@ -90,47 +90,32 @@ public final class ConversationContainer: NSObject {
         return NSSet(array: filtered).sortedArray(using: ZMConversation.defaultSortDescriptors()!) as! [ZMConversation]
     }
 
-    private static func calculateKeysAffectingPredicateAndSort() -> NSSet {
-        /*
-
-         NSMutableSet *keysAffectingSorting = [NSMutableSet set];
-         for (NSSortDescriptor *sd in self.sortDescriptors) {
-             NSString *key = sd.key;
-             if (key != nil) {
-                 [keysAffectingSorting addObject:key];
-             }
-         }
-         _conversationKeysAffectingSorting = [[keysAffectingSorting copy] setByAddingObject:ZMConversationListIndicatorKey];
-
-         */
-        fatalError()
+    private static func calculateKeysAffectingPredicateAndSort(_ sortDescriptors: [NSSortDescriptor]) -> NSSet {
+        let keysAffectingSorting = NSMutableSet()
+        for sd in sortDescriptors {
+            if let key = sd.key {
+                keysAffectingSorting.add(key)
+            }
+        }
+        return keysAffectingSorting.adding(ZMConversationListIndicatorKey) as NSSet
     }
 
     func recreate(
         allConversations: [ZMConversation],
         predicate: NSPredicate
     ) {
-        fatalError()
+        filteringPredicate = predicate
+        backingList = Self.createBackingList(backingList, filteringPredicate: predicate)
 
-        /*
-        self.filteringPredicate = predicate;
-        [self createBackingList:conversations];
-
-        [self.moc performBlockAndWait:^{
-            [self.moc.conversationListObserverCenter startObservingList:self];
-        }];
-         */
+        let managedObjectContext = managedObjectContext
+        managedObjectContext?.performAndWait {
+            managedObjectContext?.conversationListObserverCenter.startObservingList(self)
+        }
     }
 
     private func sortInsertConversation(_ conversation: ZMConversation) {
-        fatalError()
-        /*
-         NSUInteger const idx = [self.backingList indexOfObject:conversation
-                                                  inSortedRange:NSMakeRange(0, self.backingList.count)
-                                                        options:NSBinarySearchingInsertionIndex
-                                                usingComparator:self.comparator];
-         [self.backingList insertObject:conversation atIndex:idx];
-         */
+        let index = (backingList as NSArray).index(of: conversation, inSortedRange: NSRange(location: 0, length: backingList.count), options: .insertionIndex, usingComparator: comparator)
+        backingList.insert(conversation, at: index)
     }
 
     private var comparator: Comparator {
@@ -182,11 +167,9 @@ public final class ConversationContainer: NSObject {
     }
 
     func resort() {
-        let sortDescriptor = NSSortDescriptor(keyPath: \ZMConversation.self, ascending: true, comparator: comparator) as SortDescriptor
-        backingList.sorted(using: sortDescriptor)
-//        /SortDescr
-        // backingList = backingList.sorted(using: <#T##SortComparator#>)
-        fatalError()
+        let backingList = NSMutableArray(array: backingList)
+        backingList.sort(comparator: comparator)
+        self.backingList = backingList as! [ZMConversation]
     }
 
     // MARK: - ZMUpdates
