@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol UserClientAPI {
 
-    func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws
+    func deleteUserClient(clientId: String, password: String) async throws
 
 }
 
@@ -36,12 +36,12 @@ class UserClientAPIV0: UserClientAPI {
         return .v0
     }
 
-    func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws {
+    func deleteUserClient(clientId: String, password: String) async throws {
         let requestsFactory = UserClientRequestFactory()
 
         let request = requestsFactory.deleteClientRequest(
             clientId: clientId,
-            credentials: credentials,
+            password: password,
             apiVersion: apiVersion)
 
         let response = await httpClient.send(request)

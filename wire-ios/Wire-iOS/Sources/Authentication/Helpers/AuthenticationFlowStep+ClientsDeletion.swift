@@ -21,7 +21,11 @@ import WireSyncEngine
 
 extension AuthenticationFlowStep {
 
+<<<<<<< HEAD
     static func makeClientManagementStep(from error: NSError, credentials: UserCredentials?, statusProvider: AuthenticationStatusProvider?) -> AuthenticationFlowStep? {
+=======
+    static func makeClientManagementStep(from error: NSError, statusProvider: AuthenticationStatusProvider?) -> AuthenticationFlowStep? {
+>>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
         guard let userClientIDs = error.userInfo[ZMClientsKey] as? [NSManagedObjectID] else {
             return nil
         }
@@ -38,7 +42,7 @@ extension AuthenticationFlowStep {
             return object as? UserClient
         }
 
-        return .clientManagement(clients: clients, credentials: credentials)
+        return .clientManagement(clients: clients)
     }
 
 }

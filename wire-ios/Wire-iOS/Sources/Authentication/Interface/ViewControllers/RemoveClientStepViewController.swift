@@ -34,6 +34,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     // MARK: - Initialization
 
+<<<<<<< HEAD
     init(clients: [UserClient],
          credentials: UserCredentials?) {
         let emailCredentials: UserEmailCredentials? = credentials.flatMap {
@@ -47,6 +48,10 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         clientListController = RemoveClientsViewController(
             clientsList: clients,
             credentials: emailCredentials)
+=======
+    init(clients: [UserClient]) {
+        clientListController = RemoveClientsViewController(clientsList: clients)
+>>>>>>> ee5b2ed764 (fix: Unable to import backup - WPB-9372 (#1599))
 
         super.init(nibName: nil, bundle: nil)
     }
