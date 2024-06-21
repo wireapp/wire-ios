@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension UpdateEvent {
+extension UpdateEventDecodingProxy {
 
     init(
         eventType: TeamEventType,
@@ -28,15 +28,15 @@ extension UpdateEvent {
 
         switch eventType {
         case .delete:
-            self = .team(.delete)
+            updateEvent = .team(.delete)
 
         case .memberLeave:
             let event = try TeamMemberLeaveEventDecoder().decode(from: container)
-            self = .team(.memberLeave(event))
+            updateEvent = .team(.memberLeave(event))
 
         case .memberUpdate:
             let event = try TeamMemberUpdateEventDecoder().decode(from: container)
-            self = .team(.memberUpdate(event))
+            updateEvent = .team(.memberUpdate(event))
         }
     }
 

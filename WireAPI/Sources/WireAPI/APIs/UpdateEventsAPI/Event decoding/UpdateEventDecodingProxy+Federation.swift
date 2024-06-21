@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension UpdateEvent {
+extension UpdateEventDecodingProxy {
 
     init(
         eventType: FederationEventType,
@@ -29,11 +29,11 @@ extension UpdateEvent {
         switch eventType {
         case .connectionRemoved:
             let event = try FederationConnectionRemovedEventDecoder().decode(from: container)
-            self = .federation(.connectionRemoved(event))
+            updateEvent = .federation(.connectionRemoved(event))
 
         case .delete:
             let event = try FederationDeleteEventDecoder().decode(from: container)
-            self = .federation(.delete(event))
+            updateEvent = .federation(.delete(event))
         }
     }
 

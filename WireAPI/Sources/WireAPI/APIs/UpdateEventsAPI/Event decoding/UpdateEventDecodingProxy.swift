@@ -18,7 +18,27 @@
 
 import Foundation
 
-extension UpdateEvent: Decodable {
+/// A wrapper that provides custom decoding of update events from
+/// JSON payloads received from the backed.
+///
+/// The need for this wrapper arises from another need to persist
+/// update events in a database: to persist an update event we
+/// persist its encoded data, from which we need to decode it after
+/// fetching it from the database. This coding and decoding needs
+/// to be symmetric and for this we rely on the automatic conformance
+/// of `UpdateEvent`.
+///
+/// However, we still need to decode the update events from the JSON
+/// payloads we receive from the backend. This additional and manual
+/// decoding is provided by `UpdateEventDecodingProxy`.
+
+struct UpdateEventDecodingProxy: Decodable {
+
+    let updateEvent: UpdateEvent
+
+    init(updateEvent: UpdateEvent) {
+        self.updateEvent = updateEvent
+    }
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -42,10 +62,10 @@ extension UpdateEvent: Decodable {
                 try self.init(eventType: eventType, from: decoder)
 
             case .unknown(let eventType):
-                self = .unknown(eventType: eventType)
+                self.init(updateEvent: .unknown(eventType: eventType))
             }
         } catch {
-            throw UpdateEventDecodingError(
+            throw UpdateEventDecodingProxyError(
                 eventType: eventType,
                 decodingError: error
             )

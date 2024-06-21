@@ -38,7 +38,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserClientAdd")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -52,7 +55,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserClientRemove")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -66,7 +72,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserConnection")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -80,7 +89,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserContactJoin")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -94,7 +106,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserDelete")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -108,7 +123,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdDisable")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -122,7 +140,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdEnable")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -136,7 +157,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdRequest")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -150,7 +174,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetReadReceipts")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -164,7 +191,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetTypingIndicators")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -178,7 +208,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetConversationLabels")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -192,7 +225,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetUnknownProperty")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -206,7 +242,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesDelete")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -220,7 +259,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
