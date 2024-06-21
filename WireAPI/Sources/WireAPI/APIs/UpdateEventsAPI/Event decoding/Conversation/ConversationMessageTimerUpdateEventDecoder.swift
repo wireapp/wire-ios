@@ -34,7 +34,7 @@ struct ConversationMessageTimerUpdateEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
@@ -46,7 +46,7 @@ struct ConversationMessageTimerUpdateEventDecoder {
         return ConversationMessageTimerUpdateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp,
+            timestamp: timestamp.date,
             newTimer: payload.messageTimer
         )
     }
