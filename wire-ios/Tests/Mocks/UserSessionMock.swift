@@ -75,7 +75,7 @@ final class UserSessionMock: UserSession {
 
     var editableSelfUser: any EditableUserType & UserType
 
-    var mockConversationList: ZMConversationList?
+    var mockConversationList: ZMConversationContainer?
 
     var searchUsersCache: SearchUsersCache
     var contextProvider: ContextProvider?
@@ -190,22 +190,22 @@ final class UserSessionMock: UserSession {
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ZMConversationContainer
     ) -> NSObjectProtocol {
         return NSObject()
     }
 
-    func conversationList() -> ZMConversationList {
+    func conversationList() -> ZMConversationContainer {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+    func pendingConnectionConversationsInUserSession() -> ZMConversationContainer {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func archivedConversationsInUserSession() -> ZMConversationList {
+    func archivedConversationsInUserSession() -> ZMConversationContainer {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }

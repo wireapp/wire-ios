@@ -37,7 +37,7 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
 
     func testEmpty() {
 
-        userSessionMock.mockConversationList = ZMConversationList(
+        userSessionMock.mockConversationList = ZMConversationContainer(
             allConversations: [],
             filteringPredicate: .init(value: true),
             moc: .init(concurrencyType: .mainQueueConcurrencyType),
@@ -56,7 +56,7 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         let conversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
         conversation.userDefinedName = "Lorem Ipsum"
         conversation.isArchived = true
-        userSessionMock.mockConversationList = ZMConversationList(
+        userSessionMock.mockConversationList = ZMConversationContainer(
             allConversations: [conversation],
             filteringPredicate: .init(value: true),
             moc: .init(concurrencyType: .mainQueueConcurrencyType),

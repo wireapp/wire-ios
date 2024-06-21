@@ -28,11 +28,11 @@
 #import "Tests-Swift.h"
 
 
-@interface ZMConversationList (ObjectIDs)
+@interface ZMConversationContainer (ObjectIDs)
 
 @end
 
-@implementation ZMConversationList (ObjectIDs)
+@implementation ZMConversationContainer (ObjectIDs)
 
 - (NSArray <NSManagedObjectID *> *)objectIDs {
     return [self mapWithBlock:^NSManagedObjectID *(ZMConversation *conversation) {
@@ -299,7 +299,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    ZMConversationList *conversationList = [ZMConversationList conversationsInUserSession:self.userSession];
+    ZMConversationContainer *conversationList = [ZMConversationContainer conversationsInUserSession:self.userSession];
     
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation>  _Nonnull __strong __unused session) {
         [groupConversation addUsersByUser:self.user1 addedUsers:@[self.selfUser]];
@@ -325,8 +325,8 @@
 {
     // given
     XCTAssertTrue([self login]);
-    ZMConversationList *convList1 = [ZMConversationList conversationsInUserSession:self.userSession];
-    ZMConversationList *convList2 = [ZMConversationList archivedConversationsInUserSession:self.userSession];
+    ZMConversationContainer *convList1 = [ZMConversationContainer conversationsInUserSession:self.userSession];
+    ZMConversationContainer *convList2 = [ZMConversationContainer archivedConversationsInUserSession:self.userSession];
     
     ConversationListChangeObserver *convListener1 = [[ConversationListChangeObserver alloc] initWithConversationList:convList1];
     ConversationListChangeObserver *convListener2 = [[ConversationListChangeObserver alloc] initWithConversationList:convList2];
@@ -352,11 +352,11 @@
     MockUser *mockUser = [self createPendingConnectionFromUserWithName:@"Hans" uuid:NSUUID.createUUID];
     ZMUser *realUser = [self userForMockUser:mockUser];
     
-    ZMConversationList *pending = [ZMConversationList pendingConnectionConversationsInUserSession:self.userSession];
+    ZMConversationContainer *pending = [ZMConversationContainer pendingConnectionConversationsInUserSession:self.userSession];
     XCTAssertEqual(pending.count, 1u);
     ZMConversation *pendingConnversation = pending.lastObject;
 
-    ZMConversationList *activeConversations = [ZMConversationList conversationsInUserSession:self.userSession];
+    ZMConversationContainer *activeConversations = [ZMConversationContainer conversationsInUserSession:self.userSession];
     NSUInteger activeCount = activeConversations.count;
     ConversationListChangeObserver *activeObserver = [[ConversationListChangeObserver alloc] initWithConversationList:activeConversations];
     ConversationListChangeObserver *pendingObserver = [[ConversationListChangeObserver alloc] initWithConversationList:pending];
@@ -621,7 +621,7 @@
     XCTAssertEqualObjects(conversation.connectedUser, user1);
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
 
-    ZMConversationList *active = [ZMConversationList conversationsInUserSession:self.userSession];
+    ZMConversationContainer *active = [ZMConversationContainer conversationsInUserSession:self.userSession];
     XCTAssertEqual(active.count, 5u);
     XCTAssertTrue([active containsObject:conversation]);
 

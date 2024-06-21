@@ -22,10 +22,8 @@
 #import "ZMUser.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMConversationList+Internal.h"
 #import "ZMConnection+Internal.h"
 #import "ZMConversation+Internal.h"
-#import "ZMConversationList+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 #import "WireDataModelTests-Swift.h"
 
@@ -2075,9 +2073,9 @@
     ZMConversation *conversation = [self insertConversationWithParticipants:users];
     [conversation appendMessageWithText:@"0"];
     
-    ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.coreDataStack];
-    ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.coreDataStack];
-    ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.coreDataStack];
+    ZMConversationContainer *activeList = [ZMConversationContainer conversationsInUserSession:self.coreDataStack];
+    ZMConversationContainer *archivedList = [ZMConversationContainer archivedConversationsInUserSession:self.coreDataStack];
+    ZMConversationContainer *clearedList = [ZMConversationContainer clearedConversationsInUserSession:self.coreDataStack];
     
     // when
     [conversation removeParticipantAndUpdateConversationStateWithUser:selfUser initiatingUser:nil];

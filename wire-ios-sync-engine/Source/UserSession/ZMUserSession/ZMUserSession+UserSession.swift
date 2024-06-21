@@ -192,7 +192,7 @@ extension ZMUserSession: UserSession {
 
     public func addConversationListObserver(
         _ observer: ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ZMConversationContainer
     ) -> NSObjectProtocol {
         return ConversationListChangeInfo.add(
             observer: observer,
@@ -201,15 +201,15 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public func conversationList() -> ZMConversationList {
+    public func conversationList() -> ZMConversationContainer {
         return .conversations(inUserSession: self)
     }
 
-    public func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+    public func pendingConnectionConversationsInUserSession() -> ZMConversationContainer {
         return .pendingConnectionConversations(inUserSession: self)
     }
 
-    public func archivedConversationsInUserSession() -> ZMConversationList {
+    public func archivedConversationsInUserSession() -> ZMConversationContainer {
         return .archivedConversations(inUserSession: self)
     }
 

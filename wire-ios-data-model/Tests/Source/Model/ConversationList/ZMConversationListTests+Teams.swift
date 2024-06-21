@@ -366,7 +366,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
 }
 
-extension ZMConversationList {
+extension ZMConversationContainer {
 
     var setValue: Set<ZMConversation> {
         return Set(arrayValue)

@@ -168,14 +168,14 @@ public protocol UserSession: AnyObject {
 
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ZMConversationContainer
     ) -> NSObjectProtocol
 
-    func conversationList() -> ZMConversationList
+    func conversationList() -> ZMConversationContainer
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList
+    func pendingConnectionConversationsInUserSession() -> ZMConversationContainer
 
-    func archivedConversationsInUserSession() -> ZMConversationList
+    func archivedConversationsInUserSession() -> ZMConversationContainer
 
     var ringingCallConversation: ZMConversation? { get }
 

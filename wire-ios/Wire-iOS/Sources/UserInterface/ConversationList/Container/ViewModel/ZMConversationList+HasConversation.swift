@@ -18,12 +18,12 @@
 
 import WireSyncEngine
 
-extension ZMConversationList {
+extension ZMConversationContainer {
 
     static var hasConversations: Bool {
         guard let session = ZMUserSession.shared() else { return false }
 
-        let conversationsCount = ZMConversationList.conversations(inUserSession: session).count + ZMConversationList.pendingConnectionConversations(inUserSession: session).count
+        let conversationsCount = ZMConversationContainer.conversations(inUserSession: session).count + ZMConversationContainer.pendingConnectionConversations(inUserSession: session).count
         return conversationsCount > 0
     }
 }

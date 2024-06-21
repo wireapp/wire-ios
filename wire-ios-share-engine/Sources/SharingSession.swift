@@ -476,7 +476,7 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-fileprivate extension ZMConversationList {
+fileprivate extension ZMConversationContainer {
     var writeableConversations: [Conversation] {
         return self.filter {
             if let conversation = $0 as? ZMConversation {

@@ -35,8 +35,6 @@
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
 
-#import "ZMConversationList+Internal.h"
-
 #import "ZMConversationListDirectory.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 #import "NSPredicate+ZMSearch.h"
@@ -605,27 +603,27 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self mutableSetValueForKey:ZMConversationAllMessagesKey];
 }
 
-+ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationContainer *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.conversationsIncludingArchived;
 }
 
-+ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationContainer *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.archivedConversations;
 }
 
-+ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationContainer *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.clearedConversations;
 }
 
-+ (ZMConversationList *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationContainer *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.unarchivedConversations;
 }
 
-+ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationContainer *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
 {
     return moc.conversationListDirectory.pendingConnectionConversations;
 }

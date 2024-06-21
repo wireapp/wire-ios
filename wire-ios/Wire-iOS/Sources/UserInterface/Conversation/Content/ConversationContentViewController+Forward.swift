@@ -134,7 +134,7 @@ extension ZMConversationMessage {
     }
 }
 
-extension ZMConversationList {/// TODO mv to DM
+extension ZMConversationContainer {/// TODO mv to DM
     func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
         return map { $0 as! ZMConversation }.filter { (conversation: ZMConversation) -> (Bool) in
             return (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
@@ -176,7 +176,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
         endEditing()
 
-        let conversations = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession ).shareableConversations(excluding: message.conversationLike)
+        let conversations = ZMConversationContainer.conversationsIncludingArchived(inUserSession: userSession ).shareableConversations(excluding: message.conversationLike)
 
         let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
             shareable: message as! ZMMessage,

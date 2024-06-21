@@ -100,7 +100,7 @@ final class SearchTests: IntegrationTest {
 
         XCTAssertTrue(login())
 
-        let pendingConnections = ZMConversationList.pendingConnectionConversations(inUserSession: userSession!)
+        let pendingConnections = ZMConversationContainer.pendingConnectionConversations(inUserSession: userSession!)
         XCTAssertEqual(pendingConnections.count, 1)
     }
 

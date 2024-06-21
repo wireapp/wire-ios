@@ -999,8 +999,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         let selfUser = ZMUser.selfUser(inUserSession: session)
         let teamObserver = TeamChangeInfo.add(observer: self, for: nil, managedObjectContext: session.managedObjectContext)
         let selfObserver = UserChangeInfo.add(observer: self, for: selfUser, in: session.managedObjectContext)
-        let conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: session), userSession: session)
-        let connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: session), userSession: session)
+        let conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationContainer.conversations(inUserSession: session), userSession: session)
+        let connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationContainer.pendingConnectionConversations(inUserSession: session), userSession: session)
         let unreadCountObserver = NotificationInContext.addObserver(name: .AccountUnreadCountDidChangeNotification,
                                                                     context: account) { [weak self] note in
             guard let account = note.context as? Account else { return }

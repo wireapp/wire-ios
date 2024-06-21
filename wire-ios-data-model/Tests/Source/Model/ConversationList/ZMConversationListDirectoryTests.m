@@ -220,7 +220,7 @@
 - (void)testThatItReturnsAllConversations;
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     NSSet *expected = [NSSet setWithArray:@[self.archivedGroupConversation,
                                             self.archivedOneToOneConversation,
                                             self.groupConversation,
@@ -238,7 +238,7 @@
 - (void)testThatItReturnsUnarchivedConversations;
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.unarchivedConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.unarchivedConversations;
     NSSet *expected = [NSSet setWithArray:@[self.groupConversation,
                                             self.oneToOneConversation,
                                             self.outgoingPendingConnectionConversation,
@@ -255,7 +255,7 @@
 - (void)testThatItReturnsArchivedConversations;
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.archivedConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.archivedConversations;
     NSSet *expected = [NSSet setWithArray:@[self.archivedGroupConversation, self.archivedOneToOneConversation]];
     
     // then
@@ -265,7 +265,7 @@
 - (void)testThatItReturnsPendingConversations;
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.pendingConnectionConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.pendingConnectionConversations;
     NSSet *expected = [NSSet setWithArray:@[self.incomingPendingConnectionConversation]];
     
     // then
@@ -275,8 +275,8 @@
 - (void)testThatItKeepsReturningTheSameObject
 {
     // when
-    ZMConversationList * list1 = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
-    ZMConversationList * list2 = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
+    ZMConversationContainer * list1 = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
+    ZMConversationContainer * list2 = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     
     //then
     XCTAssertEqual(list1, list2);
@@ -285,7 +285,7 @@
 - (void)testThatItReturnsClearedConversations
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.clearedConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.clearedConversations;
     NSSet *expected = [NSSet setWithArray:@[self.clearedConversation]];
     
     // then
@@ -295,7 +295,7 @@
 - (void)testThatItNotReturnsClearedConversationsIn_ConversationsIncludingArchived
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     NSSet *expected = [NSSet setWithArray:@[self.clearedConversation]];
     
     // then
@@ -306,7 +306,7 @@
 - (void)testThatItsReturnsGroupConversations
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.groupConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.groupConversations;
     NSSet *expected = [NSSet setWithArray:@[self.groupConversation, self.favoritedConversation]];
     
     // then
@@ -316,7 +316,7 @@
 - (void)testThatItsReturnsOneToOneConversations
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.oneToOneConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.oneToOneConversations;
     NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation, self.oneToOneConversationInTeam, self.outgoingPendingConnectionConversation, self.serviceConversation]];
 
     // then
@@ -326,7 +326,7 @@
 - (void)testThatItReturnsFavoritedConveration
 {
     // when
-    ZMConversationList *list = self.uiMOC.conversationListDirectory.favoriteConversations;
+    ZMConversationContainer *list = self.uiMOC.conversationListDirectory.favoriteConversations;
     NSSet *expected = [NSSet setWithArray:@[self.favoritedConversation]];
 
     // then

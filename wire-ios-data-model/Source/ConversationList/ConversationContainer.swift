@@ -19,8 +19,8 @@
 import CoreData
 
 /// A collection of conversation instances with additional infos.
-@objc(ZMConversationList) @objcMembers
-public final class ConversationList: NSObject {
+@objc(ZMConversationContainer) @objcMembers
+public final class ConversationContainer: NSObject {
 
     var count: Int {
         backingList.count
@@ -28,9 +28,9 @@ public final class ConversationList: NSObject {
 
     weak var managedObjectContext: NSManagedObjectContext?
 
-    private let identifier: String
-    private let label: Label?
-    private let items: [ZMConversation]
+    let identifier: String
+    let label: Label?
+    var items: [ZMConversation] { backingList }
 
     private var backingList: [ZMConversation]
     private let conversationKeysAffectingSorting: NSSet
@@ -53,7 +53,7 @@ public final class ConversationList: NSObject {
         )
     }
 
-    private init(
+    init(
         allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
@@ -69,6 +69,8 @@ public final class ConversationList: NSObject {
 
         conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort()
         backingList = Self.createBackingList(allConversations)
+
+        super.init()
 
         managedObjectContext.performAndWait {
             managedObjectContext.conversationListObserverCenter.startObservingList(self)
@@ -195,7 +197,7 @@ public final class ConversationList: NSObject {
         filteringPredicate.evaluate(with: conversation)
     }
 
-    func sortingIsAffectedByConversationKeys(_ conversationKeys: Set<AnyHashable>) -> Bool {
+    func sortingIsAffected(byConversationKeys conversationKeys: Set<AnyHashable>) -> Bool {
         conversationKeysAffectingSorting.intersects(conversationKeys)
     }
 
@@ -231,31 +233,31 @@ public final class ConversationList: NSObject {
          [session.viewContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.viewContext];
      }
 
-     + (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ContextProvider>)session
+     + (ZMConversationContainer *)conversationsIncludingArchivedInUserSession:(id<ContextProvider>)session
      {
          VerifyReturnNil(session != nil);
          return session.viewContext.conversationListDirectory.conversationsIncludingArchived;
      }
 
-     + (ZMConversationList *)conversationsInUserSession:(id<ContextProvider>)session
+     + (ZMConversationContainer *)conversationsInUserSession:(id<ContextProvider>)session
      {
          VerifyReturnNil(session != nil);
          return session.viewContext.conversationListDirectory.unarchivedConversations;
      }
 
-     + (ZMConversationList *)archivedConversationsInUserSession:(id<ContextProvider>)session
+     + (ZMConversationContainer *)archivedConversationsInUserSession:(id<ContextProvider>)session
      {
          VerifyReturnNil(session != nil);
          return session.viewContext.conversationListDirectory.archivedConversations;
      }
 
-     + (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ContextProvider>)session
+     + (ZMConversationContainer *)pendingConnectionConversationsInUserSession:(id<ContextProvider>)session
      {
          VerifyReturnNil(session != nil);
          return session.viewContext.conversationListDirectory.pendingConnectionConversations;
      }
 
-     + (ZMConversationList *)clearedConversationsInUserSession:(id<ContextProvider>)session
+     + (ZMConversationContainer *)clearedConversationsInUserSession:(id<ContextProvider>)session
      {
          VerifyReturnNil(session != nil);
          return session.viewContext.conversationListDirectory.clearedConversations;

@@ -60,7 +60,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         updateAppearance()
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationContainer.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
 
         setNeedsUpdateConstraints()
@@ -110,7 +110,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     func updateAppearance() {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let connectionRequests = ZMConversationList.pendingConnectionConversations(inUserSession: userSession)
+        let connectionRequests = ZMConversationContainer.pendingConnectionConversations(inUserSession: userSession)
 
         let newCount: Int = connectionRequests.count
 
