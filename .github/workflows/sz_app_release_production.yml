@@ -8,6 +8,6 @@ jobs:
   sz_production:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
-      fastlane_action: appstore_sz_prod
+      fastlane_action: appstore_sz_build
       # no options are specified, as using defaults values is fine here
     secrets: inherit
