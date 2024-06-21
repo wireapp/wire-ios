@@ -18,22 +18,17 @@
 
 import DifferenceKit
 import WireConversationList
-import WireConversationListSupport
 import XCTest
 
 @testable import Wire
 
-final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
+final class MockConversationListViewModelDelegate: ConversationListViewModelDelegate {
 
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateSectionAt sectionIndex: Int) {
         // no-op
     }
 
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool) {
-        // no-op
-    }
-
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateForReloadSectionAt sectionIndex: Int) {
         // no-op
     }
 

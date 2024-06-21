@@ -71,9 +71,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         super.loadView()
 
         listViewModel.delegate = self
-
         setupViews()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -102,11 +100,11 @@ final class ConversationListContentController: UICollectionViewController, Popov
     }
 
     private func activeMediaPlayerChanged() {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
                 (cell as? ConversationListCell)?.updateAppearance()
             }
-        })
+        }
     }
 
     func reload() {
@@ -359,35 +357,20 @@ extension ConversationListContentController: UICollectionViewDelegateFlowLayout 
 
 extension ConversationListContentController: ConversationListViewModelDelegate {
 
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
-        guard let header = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: section)) as? ConversationListHeaderView else {
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateSectionAt sectionIndex: Int) {
+        guard let header = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) as? ConversationListHeaderView else {
             return
         }
 
-        header.folderBadge = listViewModel.folderBadge(at: section)
+        header.folderBadge = listViewModel.folderBadge(at: sectionIndex)
     }
 
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem) {
-        guard case .tmp(let item_) = item else { fatalError() } // TODO: fix
-        let item = Optional(item_)
+        guard case .tmp(let item) = item else { fatalError() } // TODO: fix
 
         defer {
             scrollToMessageOnNextSelection = nil
             focusOnNextSelection = false
-        }
-
-        guard let item else {
-            // Deselect all items in the collection view
-            let indexPaths = collectionView.indexPathsForSelectedItems
-            (indexPaths as NSArray?)?.enumerateObjects({ obj, _, _ in
-                if let obj = obj as? IndexPath {
-                    self.collectionView.deselectItem(at: obj, animated: false)
-                }
-            })
-            ZClientViewController.shared?.loadPlaceholderConversationController(animated: true)
-            ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
-
-            return
         }
 
         if let conversation = item as? ZMConversation {
@@ -411,22 +394,10 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         reload()
     }
 
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool) {
-        let reloadClosure = {
-            self.collectionView.reloadSections(IndexSet(integer: section))
-            self.ensureCurrentSelection()
-        }
-
-        if animated {
-            reloadClosure()
-        } else {
-            UIView.performWithoutAnimation {
-                reloadClosure()
-            }
-        }
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateForReloadSectionAt sectionIndex: Int) {
+        collectionView.reloadSections(IndexSet(integer: sectionIndex))
+        ensureCurrentSelection()
     }
-
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {}
 
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,

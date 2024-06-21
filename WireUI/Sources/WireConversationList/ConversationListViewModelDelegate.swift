@@ -18,7 +18,6 @@
 
 import DifferenceKit
 
-// sourcery: AutoMockable
 public protocol ConversationListViewModelDelegate: AnyObject {
 
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem)
@@ -27,11 +26,8 @@ public protocol ConversationListViewModelDelegate: AnyObject {
 
     func listViewModelShouldBeReloaded()
 
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool)
-
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool)
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int)
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateForReloadSectionAt sectionIndex: Int)
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateSectionAt sectionIndex: Int)
 
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,

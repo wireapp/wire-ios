@@ -41,17 +41,10 @@ final class ConversationListViewModel_: ConversationListViewModel {
         }
     }
 
-    weak var delegate: ConversationListViewModelDelegate? {
-        didSet {
-            delegateFolderEnableState(newState: state)
-        }
-    }
+    weak var delegate: ConversationListViewModelDelegate?
 
     var folderEnabled: Bool {
-        get {
-            return state.folderEnabled
-        }
-
+        get { state.folderEnabled }
         set {
             guard newValue != state.folderEnabled else { return }
 
@@ -59,7 +52,6 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
             updateAllSections()
             delegate?.listViewModelShouldBeReloaded()
-            delegateFolderEnableState(newState: state)
         }
     }
 
@@ -117,10 +109,6 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
         setupObservers()
         updateAllSections()
-    }
-
-    private func delegateFolderEnableState(newState: State) {
-        delegate?.listViewModel(self, didChangeFolderEnabled: folderEnabled)
     }
 
     private func setupObservers() {
@@ -361,16 +349,16 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
         var newValue: [Section]
         if let kind,
-            let sectionNumber = self.sectionNumber(for: kind) {
+            let sectionIndex = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel_.newList(for: kind, conversationDirectory: conversationDirectory)
 
-            newValue[sectionNumber].items = newList
+            newValue[sectionIndex].items = newList
 
             // Refresh the section header(since it may be hidden if the sectio is empty) when a section becomes empty/from empty to non-empty
-            if sections[sectionNumber].items.isEmpty || newList.isEmpty {
+            if sections[sectionIndex].items.isEmpty || newList.isEmpty {
                 sections = newValue
-                delegate?.listViewModel(self, didUpdateSectionForReload: sectionNumber, animated: true)
+                delegate?.conversationListViewModel(self, didUpdateForReloadSectionAt: sectionIndex)
                 return
             }
         } else {
@@ -390,12 +378,11 @@ final class ConversationListViewModel_: ConversationListViewModel {
             })
         }
 
-        if let kind,
-           let sectionNumber = sectionNumber(for: kind) {
-            delegate?.listViewModel(self, didUpdateSection: sectionNumber)
+        if let kind, let sectionIndex = sectionNumber(for: kind) {
+            delegate?.conversationListViewModel(self, didUpdateSectionAt: sectionIndex)
         } else {
-            sections.enumerated().forEach {
-                delegate?.listViewModel(self, didUpdateSection: $0.offset)
+            sections.indices.forEach { sectionIndex in
+                delegate?.conversationListViewModel(self, didUpdateSectionAt: sectionIndex)
             }
         }
     }
@@ -487,7 +474,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
             })
         } else {
             sections = newValue
-            delegate?.listViewModel(self, didUpdateSectionForReload: sectionIndex, animated: true)
+            delegate?.conversationListViewModel(self, didUpdateForReloadSectionAt: sectionIndex)
         }
     }
 
