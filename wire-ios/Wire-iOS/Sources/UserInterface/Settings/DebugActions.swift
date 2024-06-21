@@ -103,7 +103,7 @@ enum DebugActions {
     static func sendBrokenMessage(_ type: SettingsCellDescriptorType) {
         guard
             let userSession = ZMUserSession.shared(),
-            let conversation = ConversationContainer.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationContainer.conversationsIncludingArchived(inUserSession: userSession)!.items.first
             else {
                 return
         }
@@ -124,7 +124,7 @@ enum DebugActions {
         guard
             amount > 0,
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationContainer.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationContainer.conversationsIncludingArchived(inUserSession: userSession)!.items.first
             else {
                 return
         }
@@ -267,7 +267,7 @@ enum DebugActions {
 
     static func appendMessagesToDatabase(count: Int) {
         guard let userSession = ZMUserSession.shared() else { return }
-        let conversation = ConversationContainer.conversations(inUserSession: userSession).firstObject! as! ZMConversation
+        let conversation = ConversationContainer.conversations(inUserSession: userSession)!.items.first!
         let conversationId = conversation.objectID
 
         let syncContext = userSession.syncManagedObjectContext

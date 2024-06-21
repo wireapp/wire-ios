@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class PersonalAccountView: BaseAccountView {
 
@@ -48,8 +49,8 @@ final class PersonalAccountView: BaseAccountView {
         }
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationContainer.conversations(inUserSession: userSession), userSession: userSession)
-            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationContainer.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationContainer.conversations(inUserSession: userSession)!, userSession: userSession)
+            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ConversationContainer.pendingConnectionConversations(inUserSession: userSession)!, userSession: userSession)
         }
 
         self.imageViewContainer.addSubview(userImageView)

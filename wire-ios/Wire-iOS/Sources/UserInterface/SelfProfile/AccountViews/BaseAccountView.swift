@@ -187,7 +187,7 @@ extension BaseAccountView: ZMConversationListObserver {
         updateAppearance()
     }
 
-    func conversationInsideList(_ list: ZMConversationContainer, didChange changeInfo: ConversationChangeInfo) {
+    func conversationInsideList(_ list: ConversationContainer, didChange changeInfo: ConversationChangeInfo) {
         updateAppearance()
     }
 }

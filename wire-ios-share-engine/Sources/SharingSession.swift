@@ -476,14 +476,14 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-fileprivate extension ZMConversationContainer {
+fileprivate extension ConversationContainer {
+
     var writeableConversations: [Conversation] {
-        return self.filter {
+        items.filter {
             if let conversation = $0 as? ZMConversation {
                 return !conversation.isReadOnly
             }
             return false
-        }.compactMap { $0 as? Conversation }
+        }
     }
-
 }

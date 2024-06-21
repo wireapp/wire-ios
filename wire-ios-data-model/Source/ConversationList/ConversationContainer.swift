@@ -26,11 +26,11 @@ public final class ConversationContainer: NSObject {
         backingList.count
     }
 
-    weak var managedObjectContext: NSManagedObjectContext?
+    public weak var managedObjectContext: NSManagedObjectContext?
 
     let identifier: String
     let label: Label?
-    var items: [ZMConversation] { backingList }
+    public var items: [ZMConversation] { backingList }
 
     private var backingList: [ZMConversation]
     private let conversationKeysAffectingSorting: NSSet
@@ -38,7 +38,7 @@ public final class ConversationContainer: NSObject {
     private let sortDescriptors: [NSSortDescriptor]
     private let customDebugDescription: String
 
-    convenience init(
+    public convenience init(
         allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
@@ -53,7 +53,7 @@ public final class ConversationContainer: NSObject {
         )
     }
 
-    init(
+    public init(
         allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
@@ -226,31 +226,31 @@ public final class ConversationContainer: NSObject {
 
     // MARK: - UserSession
 
-    static func refetchAllListsInUserSession(_ session: ContextProvider) {
+    public static func refetchAllLists(inUserSession session: ContextProvider) {
         session.viewContext.conversationListDirectory().refetchAllLists(in: session.viewContext)
     }
 
-    static func conversationsIncludingArchivedInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+    public static func conversationsIncludingArchived(inUserSession session: ContextProvider?) -> ConversationContainer? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().conversationsIncludingArchived
     }
 
-    static func conversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+    public static func conversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().unarchivedConversations
     }
 
-    static func archivedConversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+    public static func archivedConversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().archivedConversations
     }
 
-    static func pendingConnectionConversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+    public static func pendingConnectionConversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().pendingConnectionConversations
     }
 
-    static func clearedConversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+    public static func clearedConversations(inUserSession session: ContextProvider?) -> ConversationContainer? {
         guard let session else { return nil }
         return session.viewContext.conversationListDirectory().clearedConversations
     }

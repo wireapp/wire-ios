@@ -61,8 +61,8 @@ class ConnectionTests_Swift: IntegrationTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let active = ZMConversationContainer.conversations(inUserSession: userSession!)
-        let count = active.count
+        let active = ConversationContainer.conversations(inUserSession: userSession!)
+        let count = active?.items.count ?? 0
 
         listObserver = ConversationListChangeObserver(conversationList: active)
 
@@ -92,7 +92,7 @@ class ConnectionTests_Swift: IntegrationTest {
         conv2 = realUser2?.oneToOneConversation
         XCTAssertNotNil(conv2)
 
-        XCTAssertEqual(active.count, count + 2)
+        XCTAssertEqual(active?.items.count, count + 2)
 
         let observer = ConversationChangeObserver()
         tokens.append(ConversationChangeInfo.add(observer: observer, for: conv1))
