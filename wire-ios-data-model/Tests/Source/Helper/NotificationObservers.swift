@@ -107,10 +107,10 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
 
     public var notifications = [ConversationListChangeInfo]()
     public var observerCallback: ((ConversationListChangeInfo) -> Void)?
-    unowned var conversationList: ZMConversationContainer
+    unowned var conversationList: ConversationContainer
     var token: NSObjectProtocol?
 
-    init(conversationList: ZMConversationContainer, managedObjectContext: NSManagedObjectContext) {
+    init(conversationList: ConversationContainer, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
         super.init()
         self.token = ConversationListChangeInfo.addListObserver(self, for: conversationList, managedObjectContext: managedObjectContext)

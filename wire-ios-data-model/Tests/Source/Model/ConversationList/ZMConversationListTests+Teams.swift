@@ -164,7 +164,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         // when refresing the list
         sut.recreate(
-            withAllConversations: [conversation1, conversation2],
+            allConversations: [conversation1, conversation2],
             predicate: factory.predicateForConversationsIncludingArchived()
         )
 
@@ -366,7 +366,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
 }
 
-extension ZMConversationContainer {
+extension ConversationContainer {
 
     var setValue: Set<ZMConversation> {
         return Set(arrayValue)

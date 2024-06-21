@@ -38,7 +38,7 @@ public final class ConversationContainer: NSObject {
     private let sortDescriptors: [NSSortDescriptor]
     private let customDebugDescription: String
 
-    private convenience init(
+    convenience init(
         allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
