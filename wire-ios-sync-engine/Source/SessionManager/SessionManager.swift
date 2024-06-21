@@ -203,6 +203,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
     public weak var loginDelegate: LoginDelegate?
+    public var analyticsSessionConfiguration: AnalyticsSessionConfiguration
 
     public internal(set) var activeUserSession: ZMUserSession? {
         willSet {
@@ -335,7 +336,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         isUnauthenticatedTransportSessionReady: Bool = false,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
-        deleteUserLogs: @escaping () -> Void
+        deleteUserLogs: @escaping () -> Void,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -391,7 +393,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
-            deleteUserLogs: deleteUserLogs
+            deleteUserLogs: deleteUserLogs,
+            analyticsSessionConfiguration: analyticsSessionConfiguration
         )
 
         configureBlacklistDownload()
@@ -452,7 +455,8 @@ public final class SessionManager: NSObject, SessionManagerType {
          isUnauthenticatedTransportSessionReady: Bool = false,
          sharedUserDefaults: UserDefaults,
          minTLSVersion: String? = nil,
-         deleteUserLogs: (() -> Void)? = nil
+         deleteUserLogs: (() -> Void)? = nil,
+         analyticsSessionConfiguration: AnalyticsSessionConfiguration
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -513,6 +517,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             self.notificationsTracker = nil
         }
+
+        self.analyticsSessionConfiguration = analyticsSessionConfiguration
 
         super.init()
 
@@ -939,6 +945,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
                 let userSession = self.startBackgroundSession(
                     for: account,
+                    analyticsSessionConfiguration: analyticsSessionConfiguration,
                     with: coreDataStack
                 )
 
@@ -1060,7 +1067,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
-    private func startBackgroundSession(for account: Account, with coreDataStack: CoreDataStack) -> ZMUserSession {
+    private func startBackgroundSession(
+        for account: Account,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration,
+        with coreDataStack: CoreDataStack
+    ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig,
             useLegacyPushNotifications: shouldProcessLegacyPushes
@@ -1070,6 +1081,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
+            analyticsSessionConfiguration: analyticsSessionConfiguration,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled
         ) else {

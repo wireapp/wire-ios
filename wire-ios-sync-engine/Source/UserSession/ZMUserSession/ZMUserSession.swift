@@ -18,10 +18,20 @@
 
 import Combine
 import Foundation
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireSystem
 
+public struct AnalyticsSessionConfiguration {
+    public let countlyKey: String
+    public let host: URL
+
+    public init(countlyKey: String, host: URL) {
+        self.countlyKey = countlyKey
+        self.host = host
+    }
+}
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate
 & UserSessionLogoutDelegate
@@ -77,6 +87,8 @@ public final class ZMUserSession: NSObject {
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
+
+    private var analyticsSession: AnalyticsSession?
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -384,6 +396,13 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+
+        if let config = dependencies.analyticsSessionConfiguration {
+            self.analyticsSession = AnalyticsSession(appKey: config.countlyKey, host: config.host)
+            self.analyticsSession?.startSession()
+        } else {
+            self.analyticsSession = nil
+        }
     }
 
     func setup(

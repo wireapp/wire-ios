@@ -18,8 +18,10 @@
 
 final class UserSessionDependencies {
     var caches: Caches
+    var analyticsSessionConfiguration: AnalyticsSessionConfiguration?
 
-    init(caches: Caches) {
+    init(caches: Caches, analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil) {
         self.caches = caches
+        self.analyticsSessionConfiguration = analyticsSessionConfiguration
     }
 }

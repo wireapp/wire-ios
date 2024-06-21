@@ -33,7 +33,6 @@ final class AppRootRouter: NSObject {
 
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
-    var analyticsSession: AnalyticsSession?
 
     private var authenticationCoordinator: AuthenticationCoordinator?
     private var switchingAccountRouter: SwitchingAccountRouter
@@ -84,12 +83,6 @@ final class AppRootRouter: NSObject {
         sessionManager.foregroundNotificationResponder = foregroundNotificationFilter
         sessionManager.switchingDelegate = switchingAccountRouter
         sessionManager.presentationDelegate = urlActionRouter
-
-        if !ProcessInfo.processInfo.isRunningTests {
-            if let countlyKey = Bundle.countlyAppKey, let host = BackendEnvironment.shared.countlyURL {
-                self.analyticsSession = AnalyticsSession(appKey: countlyKey, host: host)
-            }
-        }
 
         super.init()
 
@@ -233,9 +226,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 userSession: userSession,
                 completion: completion
             )
-
-            analyticsSession?.startSession()
-            analyticsSession?.trackEvent(.appOpen)
 
         case .headless:
             showLaunchScreen(completion: completion)
@@ -602,11 +592,6 @@ extension AppRootRouter: ApplicationStateObserving {
     func applicationDidBecomeActive() {
         updateOverlayWindowFrame()
         teamMetadataRefresher.triggerRefreshIfNeeded()
-
-        // Track app open event only if the user is logged in (authenticatedRouter is not nil)
-        if authenticatedRouter != nil {
-            analyticsSession?.trackEvent(.appOpen)
-        }
     }
 
     func applicationDidEnterBackground() {

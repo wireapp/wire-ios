@@ -28,7 +28,7 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         config.appKey = appKey
         config.host = host.absoluteString
 
-        countly = .sharedInstance()
+        countly = .init()
         countly.start(with: config)
     }
 
