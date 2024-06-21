@@ -68,7 +68,7 @@ public final class ConversationContainer: NSObject {
         sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
         conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort()
-        backingList = Self.createBackingList(allConversations)
+        backingList = Self.createBackingList(allConversations, filteringPredicate: filteringPredicate)
 
         super.init()
 
@@ -85,12 +85,9 @@ public final class ConversationContainer: NSObject {
         }
     }
 
-    private static func createBackingList(_ conversations: [ZMConversation]) -> [ZMConversation] {
-        fatalError()
-        /*
-        NSArray *filtered = [conversations filteredArrayUsingPredicate:self.filteringPredicate];
-        self.backingList = [[filtered sortedArrayUsingDescriptors:[ZMConversation defaultSortDescriptors]] mutableCopy];
-         */
+    private static func createBackingList(_ conversations: [ZMConversation], filteringPredicate: NSPredicate) -> [ZMConversation] {
+        let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
+        return NSSet(array: filtered).sortedArray(using: ZMConversation.defaultSortDescriptors()!) as! [ZMConversation]
     }
 
     private static func calculateKeysAffectingPredicateAndSort() -> NSSet {
@@ -137,25 +134,25 @@ public final class ConversationContainer: NSObject {
     }
 
     private var comparator: Comparator {
-        fatalError()
+        let sortDescriptors = sortDescriptors
+        return {
+            let c0 = $0 as! ZMConversation
+            let c1 = $1 as! ZMConversation
 
-        /*
-         return ^NSComparisonResult(ZMConversation *c1, ZMConversation* c2){
-             if(c1.conversationListIndicator == ZMConversationListIndicatorActiveCall && c2.conversationListIndicator != ZMConversationListIndicatorActiveCall) {
-                 return NSOrderedAscending;
-             } else if(c2.conversationListIndicator == ZMConversationListIndicatorActiveCall && c1.conversationListIndicator != ZMConversationListIndicatorActiveCall) {
-                 return NSOrderedDescending;
-             }
+            if c0.conversationListIndicator == .activeCall && c1.conversationListIndicator != .activeCall {
+                return .orderedAscending
+            } else if c1.conversationListIndicator == .activeCall && c0.conversationListIndicator != .activeCall {
+                return .orderedDescending
+            }
 
-             for (NSSortDescriptor *sd in self.sortDescriptors) {
-                 NSComparisonResult const r = [sd compareObject:c1 toObject:c2];
-                 if (r != NSOrderedSame) {
-                     return r;
-                 }
-             }
-             return NSOrderedSame;
-         };
-         */
+            for sd in sortDescriptors {
+                let result = sd.compare(c0, to: c1)
+                if result != .orderedSame {
+                    return result
+                }
+            }
+            return .orderedSame
+        }
     }
 
     func object(at index: Int) -> ZMConversation? {
@@ -185,10 +182,11 @@ public final class ConversationContainer: NSObject {
     }
 
     func resort() {
+        let sortDescriptor = NSSortDescriptor(keyPath: \ZMConversation.self, ascending: true, comparator: comparator) as SortDescriptor
+        backingList.sorted(using: sortDescriptor)
+//        /SortDescr
+        // backingList = backingList.sorted(using: <#T##SortComparator#>)
         fatalError()
-        /*
-         [self.backingList sortUsingComparator:self.comparator];
-         */
     }
 
     // MARK: - ZMUpdates
