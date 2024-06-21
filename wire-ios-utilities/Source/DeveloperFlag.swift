@@ -31,6 +31,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
+    case ssoLoginRedirect
 
     public var description: String {
         switch self {
@@ -60,6 +61,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .forceCRLExpiryAfterOneMinute:
             return "Turn on to force CRLs to expire after 1 minute"
+
+        case .ssoLoginRedirect:
+            return "Automatically redirect to SSO login when you're on the landing page"
         }
     }
 
@@ -100,6 +104,8 @@ public enum DeveloperFlag: String, CaseIterable {
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"
+        case .ssoLoginRedirect:
+            return "SSOLoginRedirectEnabled"
         }
     }
 

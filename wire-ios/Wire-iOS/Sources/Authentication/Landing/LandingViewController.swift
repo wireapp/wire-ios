@@ -272,6 +272,10 @@ final class LandingViewController: AuthenticationStepViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         UIAccessibility.post(notification: .screenChanged, argument: logoView)
+
+        if DeveloperFlag.ssoLoginRedirect.isOn {
+            self.delegate?.landingViewControllerDidChooseSSOLogin()
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

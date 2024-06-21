@@ -28,6 +28,8 @@
 	<string>${CREATE_MLS_GROUP_ENABLED}</string>
 	<key>ProteusByCoreCryptoEnabled</key>
 	<string>${PROTEUS_BY_CORECRYPTO_ENABLED}</string>
+	<key>SSOLoginRedirectEnabled</key>
+	<string>$(SSO_LOGIN_REDIRECT_ENABLED)</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>

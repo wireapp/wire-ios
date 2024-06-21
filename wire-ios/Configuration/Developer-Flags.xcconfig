@@ -21,3 +21,5 @@ PROTEUS_BY_CORECRYPTO_ENABLED=1
 MLS_ENABLED=0
 // Shows the toggle to choose MLS as messaging protocol when creating a group
 CREATE_MLS_GROUP_ENABLED=0
+// Automatically redirect to SSO page on the landing screen if enabled
+SSO_LOGIN_REDIRECT_ENABLED=0
