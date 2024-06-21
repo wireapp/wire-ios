@@ -226,42 +226,32 @@ public final class ConversationContainer: NSObject {
 
     // MARK: - UserSession
 
-    /*
+    static func refetchAllListsInUserSession(_ session: ContextProvider) {
+        session.viewContext.conversationListDirectory().refetchAllLists(in: session.viewContext)
+    }
 
-     + (void)refetchAllListsInUserSession:(id<ContextProvider>)session;
-     {
-         [session.viewContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.viewContext];
-     }
+    static func conversationsIncludingArchivedInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().conversationsIncludingArchived
+    }
 
-     + (ZMConversationContainer *)conversationsIncludingArchivedInUserSession:(id<ContextProvider>)session
-     {
-         VerifyReturnNil(session != nil);
-         return session.viewContext.conversationListDirectory.conversationsIncludingArchived;
-     }
+    static func conversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().unarchivedConversations
+    }
 
-     + (ZMConversationContainer *)conversationsInUserSession:(id<ContextProvider>)session
-     {
-         VerifyReturnNil(session != nil);
-         return session.viewContext.conversationListDirectory.unarchivedConversations;
-     }
+    static func archivedConversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().archivedConversations
+    }
 
-     + (ZMConversationContainer *)archivedConversationsInUserSession:(id<ContextProvider>)session
-     {
-         VerifyReturnNil(session != nil);
-         return session.viewContext.conversationListDirectory.archivedConversations;
-     }
+    static func pendingConnectionConversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().pendingConnectionConversations
+    }
 
-     + (ZMConversationContainer *)pendingConnectionConversationsInUserSession:(id<ContextProvider>)session
-     {
-         VerifyReturnNil(session != nil);
-         return session.viewContext.conversationListDirectory.pendingConnectionConversations;
-     }
-
-     + (ZMConversationContainer *)clearedConversationsInUserSession:(id<ContextProvider>)session
-     {
-         VerifyReturnNil(session != nil);
-         return session.viewContext.conversationListDirectory.clearedConversations;
-     }
-
-     */
+    static func clearedConversationsInUserSession(_ session: ContextProvider?) -> ConversationContainer? {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().clearedConversations
+    }
 }

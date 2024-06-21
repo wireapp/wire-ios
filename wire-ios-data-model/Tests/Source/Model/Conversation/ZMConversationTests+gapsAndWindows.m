@@ -69,8 +69,8 @@
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationContainer conversationsInUserSession:self.coreDataStack];
-    
+    NSArray *fetchedConversations = [[ZMConversationContainer conversationsInUserSession:self.coreDataStack] items];
+
     // then
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(1u, fetchedConversations.count);
@@ -106,8 +106,8 @@
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationContainer pendingConnectionConversationsInUserSession:self.coreDataStack];
-    
+    NSArray *fetchedConversations = [[ZMConversationContainer pendingConnectionConversationsInUserSession:self.coreDataStack] items];
+
     // then
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(1u, fetchedConversations.count);
@@ -128,8 +128,8 @@
     [self.uiMOC processPendingChanges];
 
     // when
-    NSArray *fetchedConversations = [ZMConversationContainer conversationsIncludingArchivedInUserSession:self.coreDataStack];
-    
+    NSArray *fetchedConversations = [[ZMConversationContainer conversationsIncludingArchivedInUserSession:self.coreDataStack] items];
+
     // then
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(2u, fetchedConversations.count);
@@ -150,7 +150,7 @@
     XCTAssertTrue([self.uiMOC saveOrRollback]);
 
     // when
-    NSArray *fetchedConversations = [ZMConversationContainer conversationsIncludingArchivedInUserSession:self.coreDataStack];
+    NSArray *fetchedConversations = [[ZMConversationContainer conversationsIncludingArchivedInUserSession:self.coreDataStack] items];
     
     // then
     XCTAssertNotNil(fetchedConversations);

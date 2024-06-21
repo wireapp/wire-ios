@@ -408,7 +408,7 @@
     invalidConversation.conversationType = ZMConversationTypeInvalid;
     
     // when
-    NSArray *conversationsInContext = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *conversationsInContext = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     
     // then
     XCTAssertEqualObjects(conversationsInContext, @[oneToOneConversation]);

@@ -58,7 +58,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 2u);
     NSArray *expected = @[c2, c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -74,7 +74,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
 
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 1u);
     NSArray *expected = @[c2];
     AssertArraysContainsSameObjects(list, expected);
@@ -91,7 +91,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c1, c2, c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -111,7 +111,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
-    NSArray *list = [ZMConversation archivedConversationsInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation archivedConversationsInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 1u);
     NSArray *expected = @[c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -130,7 +130,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 0u);
 }
 
@@ -153,7 +153,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
-    NSArray *list = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsExcludingArchivedInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 2u);
     NSArray *expected = @[c1, c2];
     AssertArraysContainsSameObjects(list, expected);
@@ -173,7 +173,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c2, c1, c3];
     XCTAssertEqualObjects(list, expected);
@@ -186,7 +186,7 @@
     c1.conversationType = ZMConversationTypeGroup;
     c1.lastModifiedDate = [[NSDate date] dateByAddingTimeInterval:10];
     
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *list = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     XCTAssert([self.uiMOC saveOrRollback]);
     
     ConversationListChangeObserver *obs = [[ConversationListChangeObserver alloc] initWithConversationList:(ZMConversationContainer *)list managedObjectContext:self.uiMOC];
@@ -249,8 +249,8 @@
     ZMConversationContainer *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c1, c2, c3];
-    AssertArraysContainsSameObjects(list, expected);
-    
+    AssertArraysContainsSameObjects(list.items, expected);
+
     // when
     ConversationListChangeObserver *observer = [[ConversationListChangeObserver alloc] initWithConversationList:list managedObjectContext:self.uiMOC];
     
@@ -261,7 +261,7 @@
     // then
     XCTAssertEqual(list.count, 4u);
     expected = @[c1, c2, c3, c4];
-    AssertArraysContainsSameObjects(list, expected);
+    AssertArraysContainsSameObjects(list.items, expected);
     (void)observer;
 }
 
@@ -535,7 +535,7 @@
     ZMConversationContainer *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC];
     
     XCTAssertEqual(activeList.count, 1u);
-    XCTAssertEqualObjects(activeList.firstObject, c1);
+    XCTAssertEqualObjects(activeList.items.firstObject, c1);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 0u);
 
@@ -550,7 +550,7 @@
     XCTAssertEqual(activeList.count, 0u);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 1u);
-    XCTAssertEqualObjects(clearedList.firstObject, c1);
+    XCTAssertEqualObjects(clearedList.items.firstObject, c1);
 }
 
 - (void)testThatClearingConversationDoesNotClearOtherConversations
@@ -578,7 +578,7 @@
     XCTAssertTrue([c2.allMessages containsObject:message2]);
 
     XCTAssertEqual(activeList.count, 2u);
-    XCTAssertEqualObjects([NSSet setWithArray:activeList], conversations);
+    XCTAssertEqualObjects([NSSet setWithArray:activeList.items], conversations);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 0u);
 
@@ -598,7 +598,7 @@
     XCTAssertEqual(activeList.count, 1u);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 1u);
-    XCTAssertEqualObjects(clearedList.firstObject, c1);
+    XCTAssertEqualObjects(clearedList.items.firstObject, c1);
 
 }
 
@@ -622,7 +622,7 @@
     XCTAssertEqual(activeList.count, 0u);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 1u);
-    XCTAssertEqualObjects(clearedList.firstObject, c1);
+    XCTAssertEqualObjects(clearedList.items.firstObject, c1);
 
     XCTAssertTrue([self.uiMOC saveOrRollback]);
 
@@ -634,7 +634,7 @@
     XCTAssertTrue([self.uiMOC saveOrRollback]);
 
     XCTAssertEqual(activeList.count, 1u);
-    XCTAssertEqualObjects(activeList.firstObject, c1);
+    XCTAssertEqualObjects(activeList.items.firstObject, c1);
     XCTAssertEqual(archivedList.count, 0u);
     XCTAssertEqual(clearedList.count, 0u);
 }
