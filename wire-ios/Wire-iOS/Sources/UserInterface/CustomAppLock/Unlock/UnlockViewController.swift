@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 protocol UnlockViewControllerDelegate: AnyObject {
@@ -56,7 +57,7 @@ final class UnlockViewController: UIViewController {
     }()
 
     lazy var validatedTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(isNew: false), delegate: self, setNewColors: true)
+        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(.nonEmpty, isNew: false), delegate: self, setNewColors: true)
         textField.placeholder = Unlock.Textfield.placeholder
         textField.delegate = self
         textField.accessibilityIdentifier = "unlock_screen.text_field.enter_passcode"

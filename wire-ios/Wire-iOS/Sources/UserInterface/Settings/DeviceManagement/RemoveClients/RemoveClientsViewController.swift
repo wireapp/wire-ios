@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {
@@ -61,7 +62,7 @@ final class RemoveClientsViewController: UIViewController,
 
     required init(
         clientsList: [UserClient],
-        credentials: ZMEmailCredentials? = .none
+        credentials: UserEmailCredentials? = .none
     ) {
         viewModel = RemoveClientsViewController.ViewModel(
             clientsList: clientsList,

@@ -41,12 +41,15 @@ struct APISnapshotHelper<API> {
     /// This will generate one snapshot reference for each version.
     ///
     /// - Parameters:
+    ///   - httpClient: A mock http client. Use this to mock http responses that may be needed
+    ///     during the `when` block. A new client is invokes for each api version.
     ///   - block: Some code that should invoke a method of the given api to generate a request.
     ///   - file: The file invoking the test.
     ///   - function: The method invoking the test.
     ///   - line: The line invoking the test.
 
     func verifyRequestForAllAPIVersions(
+        httpClient: (() throws -> HTTPClientMock)? = nil,
         when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
@@ -54,6 +57,7 @@ struct APISnapshotHelper<API> {
     ) async throws {
         try await verifyRequest(
             for: APIVersion.allCases,
+            httpClient: httpClient,
             when: block,
             file: file,
             function: function,
@@ -68,6 +72,8 @@ struct APISnapshotHelper<API> {
     ///
     /// - Parameters:
     ///   - apiVersions: A sequence of api versions to test.
+    ///   - httpClient: A mock http client. Use this to mock http responses that may be needed
+    ///     during the `when` block. A new client is invokes for each api version.
     ///   - block: Some code that should invoke a method of the given api to generate a request.
     ///   - file: The file invoking the test.
     ///   - function: The method invoking the test.
@@ -75,6 +81,7 @@ struct APISnapshotHelper<API> {
 
     func verifyRequest(
         for apiVersions: any Sequence<APIVersion>,
+        httpClient: (() throws -> HTTPClientMock)? = nil,
         when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
@@ -83,6 +90,7 @@ struct APISnapshotHelper<API> {
         for apiVersion in apiVersions {
             try await verifyRequest(
                 apiVersion: apiVersion,
+                httpClient: httpClient?() ?? .init(),
                 when: block,
                 file: file,
                 function: function,
@@ -100,6 +108,8 @@ struct APISnapshotHelper<API> {
     ///
     /// - Parameters:
     ///   - apiVersion: API version to test.
+    ///   - httpClient: A mock http client. Use this to mock http responses that may be needed
+    ///     during the `when` block.
     ///   - block: Some code that should invoke a method of the given api to generate a request.
     ///   - file: The file invoking the test.
     ///   - function: The method invoking the test.
@@ -107,24 +117,31 @@ struct APISnapshotHelper<API> {
 
     private func verifyRequest(
         apiVersion: APIVersion,
+        httpClient: HTTPClientMock,
         when block: (API) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
         line: UInt = #line
     ) async throws {
-        let httpClient = HTTPClientMock()
         let sut = buildAPI(httpClient, apiVersion)
         try? await block(sut)
 
-        let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
-        let name = "v\(apiVersion.rawValue)"
+        guard !httpClient.receivedRequests.isEmpty else {
+            XCTFail("no requests to snapshot", file: file, line: line)
+            return
+        }
 
-        await httpRequestHelper.verifyRequest(
-            request: request,
-            resourceName: name,
-            file: file,
-            function: function,
-            line: line
-        )
+        for (index, request) in httpClient.receivedRequests.enumerated() {
+            let name = "request-\(index)-v\(apiVersion.rawValue)"
+
+            await httpRequestHelper.verifyRequest(
+                request: request,
+                resourceName: name,
+                file: file,
+                function: function,
+                line: line
+            )
+        }
     }
+
 }

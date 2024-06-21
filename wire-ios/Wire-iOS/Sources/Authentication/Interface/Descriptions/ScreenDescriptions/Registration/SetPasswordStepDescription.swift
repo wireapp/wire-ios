@@ -33,7 +33,7 @@ final class SetPasswordStepDescription: DefaultValidatingStepDescription {
         backButton = BackButtonDescription()
         let textField = TextFieldDescription(placeholder: L10n.Localizable.Password.placeholder.capitalized,
                                              actionDescription: L10n.Localizable.General.next,
-                                             kind: .password(isNew: true))
+                                             kind: .password(.accountRegistration, isNew: true))
         textField.useDeferredValidation = true
         mainView = textField
         headline = L10n.Localizable.Team.Password.headline

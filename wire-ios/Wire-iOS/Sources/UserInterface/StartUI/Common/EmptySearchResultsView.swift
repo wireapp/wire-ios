@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import UIKit
 import WireCommonComponents
+import WireDesign
 
 // MARK: - EmptySearchResultsViewState
 
