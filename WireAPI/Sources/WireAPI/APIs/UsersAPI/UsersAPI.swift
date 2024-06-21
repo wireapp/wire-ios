@@ -18,9 +18,9 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// An API access object for endpoints concerning users.
 
-// sourcery: AutoMockable
 public protocol UsersAPI {
 
     /// Get user details for a single user
