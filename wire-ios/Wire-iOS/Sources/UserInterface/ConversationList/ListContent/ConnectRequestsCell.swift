@@ -60,7 +60,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         updateAppearance()
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession)!, userSession: userSession)
+            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
 
         setNeedsUpdateConstraints()
@@ -110,19 +110,12 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     func updateAppearance() {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let connectionRequests = ConversationList.pendingConnectionConversations(inUserSession: userSession)
+        let connectionRequests: ConversationList = .pendingConnectionConversations(inUserSession: userSession)
 
-        let newCount = connectionRequests?.items.count ?? 0
+        let newCount = connectionRequests.items.count
 
         if newCount != currentConnectionRequestsCount {
-            let connectionUsers = connectionRequests.map { conversation in
-                if let conversation = conversation as? ZMConversation {
-                    return conversation.oneOnOneUser
-                } else {
-                    return nil
-                }
-            }
-
+            let connectionUsers = connectionRequests.items.map { $0.oneOnOneUser }
             if let users = connectionUsers as? [ZMUser] {
                 currentConnectionRequestsCount = newCount
                 let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(newCount)
