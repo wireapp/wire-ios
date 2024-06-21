@@ -361,7 +361,9 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     self?.startCompanyLoginFlowIfPossible(linkCode: code)
                 }
             case .startSSOFlow:
-                startAutomaticSSOFlow()
+                activateNetworkSessions { [weak self] _ in
+                    self?.startAutomaticSSOFlow()
+                }
 
             case .startLoginFlow(let request, let credentials):
                 startLoginFlow(request: request, proxyCredentials: credentials)
