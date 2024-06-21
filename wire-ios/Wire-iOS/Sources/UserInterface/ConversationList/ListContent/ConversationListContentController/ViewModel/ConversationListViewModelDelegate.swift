@@ -20,8 +20,6 @@ import DifferenceKit
 import WireConversationList
 import WireDataModel
 
-extension ZMConversation: ConversationListItem {}
-
 protocol ConversationListViewModelDelegate: AnyObject {
 
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?)

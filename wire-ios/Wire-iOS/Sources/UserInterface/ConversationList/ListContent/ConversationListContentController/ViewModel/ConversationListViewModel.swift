@@ -224,7 +224,11 @@ final class ConversationListViewModel {
             conversationListType = .folder(label)
         }
 
-        return conversationDirectory.conversations(by: conversationListType).filter({ !$0.hasIncompleteMetadata }).map({ SectionItem(item: $0, kind: kind) })
+        return conversationDirectory.conversations(by: conversationListType)
+            .filter { !$0.hasIncompleteMetadata }
+            .map { conversation in
+                SectionItem(item: conversation, kind: kind)
+            }
 
     }
 

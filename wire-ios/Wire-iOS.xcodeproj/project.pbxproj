@@ -302,6 +302,7 @@
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
 		590407042C2575060009542C /* WireConversationList in Frameworks */ = {isa = PBXBuildFile; productRef = 590407032C2575060009542C /* WireConversationList */; };
+		590407062C257B3B0009542C /* ZMConversation+ConversationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590407052C257B3B0009542C /* ZMConversation+ConversationItem.swift */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
@@ -2370,6 +2371,7 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
+		590407052C257B3B0009542C /* ZMConversation+ConversationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+ConversationItem.swift"; sourceTree = "<group>"; };
 		590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+addressBook.swift"; sourceTree = "<group>"; };
 		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
 		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -6362,6 +6364,7 @@
 			children = (
 				EF4265882333BA7500DDAD0A /* ConversationListViewModel.swift */,
 				EF42658A2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift */,
+				590407052C257B3B0009542C /* ZMConversation+ConversationItem.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -10136,6 +10139,7 @@
 				A9EB722323C1581A00DA8240 /* ContactsViewController.swift in Sources */,
 				EF98987620C6AAD2005680C5 /* ClientColorVariantProtocol.swift in Sources */,
 				16519D8B232108EF00C9D76D /* ConversationActionController+DeleteGroup.swift in Sources */,
+				590407062C257B3B0009542C /* ZMConversation+ConversationItem.swift in Sources */,
 				06ADEA062BD22D40008BA0B3 /* RemoveClientsViewModel.swift in Sources */,
 				871BC2571D34F8F800DF0793 /* NavigationTransition.swift in Sources */,
 				8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */,
