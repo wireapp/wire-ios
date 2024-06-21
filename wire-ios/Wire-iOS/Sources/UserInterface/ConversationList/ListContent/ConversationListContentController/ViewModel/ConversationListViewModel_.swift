@@ -24,7 +24,7 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
 
-final class ConversationListViewModel {
+final class ConversationListViewModel_: ConversationListViewModel {
 
     typealias SectionIdentifier = String
 
@@ -72,12 +72,12 @@ final class ConversationListViewModel {
     private lazy var _state: State = {
         guard isFolderStatePersistenceEnabled else { return .init() }
 
-        guard let persistentPath = ConversationListViewModel.persistentURL,
+        guard let persistentPath = ConversationListViewModel_.persistentURL,
             let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
 
         do {
-            return try JSONDecoder().decode(ConversationListViewModel.State.self, from: jsonData)
+            return try JSONDecoder().decode(ConversationListViewModel_.State.self, from: jsonData)
         } catch {
             log.error("restore state error: \(error)")
             return State()
@@ -112,6 +112,8 @@ final class ConversationListViewModel {
     ) {
         self.userSession = userSession
         self.isFolderStatePersistenceEnabled = isFolderStatePersistenceEnabled
+
+        super.init()
 
         setupObservers()
         updateAllSections()
@@ -361,7 +363,7 @@ final class ConversationListViewModel {
         if let kind,
             let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
-            let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            let newList = ConversationListViewModel_.newList(for: kind, conversationDirectory: conversationDirectory)
 
             newValue[sectionNumber].items = newList
 
@@ -424,7 +426,7 @@ final class ConversationListViewModel {
         selectedItem = itemToSelect
 
         if let itemToSelect {
-            delegate?.listViewModel(self, didSelectItem: itemToSelect)
+            delegate?.conversationListViewModel(self, didSelect: .tmp(itemToSelect))
         }
     }
 
@@ -521,13 +523,13 @@ final class ConversationListViewModel {
 
         guard isFolderStatePersistenceEnabled,
               let jsonString = state.jsonString,
-              let persistentDirectory = ConversationListViewModel.persistentDirectory,
+              let persistentDirectory = ConversationListViewModel_.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 
         try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
-            try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)
+            try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel_.persistentFilename), atomically: true, encoding: .utf8)
         } catch {
             log.error("error writing ConversationListViewModel to \(directoryURL): \(error)")
         }
@@ -547,7 +549,7 @@ final class ConversationListViewModel {
     static var persistentURL: URL? {
         guard let persistentDirectory else { return nil }
 
-        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
+        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel_.persistentFilename)
     }
 }
 
@@ -557,7 +559,7 @@ private let log = ZMSLog(tag: "ConversationListViewModel")
 
 // MARK: - ConversationDirectoryObserver
 
-extension ConversationListViewModel: ConversationDirectoryObserver {
+extension ConversationListViewModel_: ConversationDirectoryObserver {
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {
 
         if changeInfo.reloaded {
@@ -607,7 +609,7 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
 // MARK: ConversationListViewModel.Section
 
-extension ConversationListViewModel {
+extension ConversationListViewModel_ {
 
     fileprivate struct Section: DifferentiableSection {
 
@@ -627,7 +629,7 @@ extension ConversationListViewModel {
             return items.firstIndex(of: SectionItem(item: item, kind: kind))
         }
 
-        func isContentEqual(to source: ConversationListViewModel.Section) -> Bool {
+        func isContentEqual(to source: ConversationListViewModel_.Section) -> Bool {
             return kind == source.kind
         }
 
@@ -635,7 +637,7 @@ extension ConversationListViewModel {
             return kind.identifier
         }
 
-        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
+        init<C>(source: ConversationListViewModel_.Section, elements: C) where C: Collection, C.Element == SectionItem {
             self.kind = source.kind
             self.collapsed = source.collapsed
             items = Array(elements)
@@ -644,14 +646,14 @@ extension ConversationListViewModel {
         init(kind: Kind,
              conversationDirectory: ConversationDirectoryType,
              collapsed: Bool) {
-            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            items = ConversationListViewModel_.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
             self.collapsed = collapsed
         }
     }
 }
 
-extension ConversationListViewModel.Section {
+extension ConversationListViewModel_.Section {
 
     enum Kind: Equatable, Hashable {
 
@@ -677,7 +679,7 @@ extension ConversationListViewModel.Section {
             hasher.combine(identifier)
         }
 
-        var identifier: ConversationListViewModel.SectionIdentifier {
+        var identifier: ConversationListViewModel_.SectionIdentifier {
             switch self {
             case.folder(label: let label):
                 return label.remoteIdentifier?.transportString() ?? "folder"
@@ -730,7 +732,7 @@ extension ConversationListViewModel.Section {
             }
         }
 
-        static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
+        static func == (lhs: ConversationListViewModel_.Section.Kind, rhs: ConversationListViewModel_.Section.Kind) -> Bool {
             switch (lhs, rhs) {
             case (.conversations, .conversations):
                 return true
@@ -753,7 +755,7 @@ extension ConversationListViewModel.Section {
 
 // MARK: ConversationListViewModel.SectionItem
 
-extension ConversationListViewModel {
+extension ConversationListViewModel_ {
 
     /// make items has different hash in different sections
     struct SectionItem: Hashable, Differentiable {

@@ -17,12 +17,13 @@
 //
 
 import DifferenceKit
-import WireConversationList
-import WireDataModel
 
-protocol ConversationListViewModelDelegate: AnyObject {
+// sourcery: AutoMockable
+public protocol ConversationListViewModelDelegate: AnyObject {
 
-    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItemTMP?)
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem)
+
+    // TODO: make non-optional
 
     func listViewModelShouldBeReloaded()
 
@@ -37,8 +38,4 @@ protocol ConversationListViewModelDelegate: AnyObject {
         interrupt: ((Changeset<C>) -> Bool)?,
         setData: (C?) -> Void
     )
-}
-
-protocol ConversationListViewModelRestorationDelegate: AnyObject {
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool)
 }

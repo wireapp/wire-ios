@@ -32,7 +32,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     weak var popoverPointToView: UIView?
 
     weak var contentDelegate: ConversationListContentDelegate?
-    let listViewModel: ConversationListViewModel
+    let listViewModel: ConversationListViewModel_
     private var focusOnNextSelection = false
     private var animateNextSelection = false
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
@@ -53,7 +53,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-        self.listViewModel = ConversationListViewModel(
+        self.listViewModel = ConversationListViewModel_(
             userSession: userSession,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
         )
@@ -209,7 +209,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         if listViewModel.numberOfItems(inSection: 0) > 0 {
 
             focusOnNextSelection = focus
-            selectModelItem(ConversationListViewModel.contactRequestsItem)
+            selectModelItem(ConversationListViewModel_.contactRequestsItem)
             return true
         }
         return false
@@ -367,7 +367,10 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         header.folderBadge = listViewModel.folderBadge(at: section)
     }
 
-    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItemTMP?) {
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem) {
+        guard case .tmp(let item_) = item else { fatalError() } // TODO: fix
+        let item = Optional(item_)
+
         defer {
             scrollToMessageOnNextSelection = nil
             focusOnNextSelection = false

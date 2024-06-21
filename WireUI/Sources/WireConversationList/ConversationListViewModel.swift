@@ -16,24 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationListItem {
-    case connectionRequest(ConnectionRequest)
-    case conversation(Conversation)
+open
+/*public final*/ class ConversationListViewModel {
 
-    // TODO: remove
-    case tmp(ConversationListItemTMP)
-}
-
-// MARK: ConversationListItem.ConnectionRequest
-
-extension ConversationListItem {
-
-    public struct ConnectionRequest {}
-}
-
-// MARK: ConversationListItem.Conversation
-
-extension ConversationListItem {
-
-    public struct Conversation {}
+    public init() {}
 }
