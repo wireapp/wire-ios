@@ -30,7 +30,7 @@ final class SessionManagerTests: IntegrationTest {
     private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
 
     private var cachesDirectoryPath: URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        FileManager.default.randomCacheURL!
     }
 
     var mockDelegate: MockSessionManagerDelegate!

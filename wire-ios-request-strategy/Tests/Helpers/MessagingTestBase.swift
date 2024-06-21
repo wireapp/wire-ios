@@ -506,7 +506,7 @@ extension MessagingTestBase {
 extension MessagingTestBase {
 
     private var cacheFolder: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.randomCacheURL!
     }
 
     fileprivate func deleteAllFilesInCache() {
