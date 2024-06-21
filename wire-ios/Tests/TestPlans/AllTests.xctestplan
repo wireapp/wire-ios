@@ -80,6 +80,14 @@
         "identifier" : "WireDesignTests",
         "name" : "WireDesignTests"
       }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:..\/WireUI",
+        "identifier" : "WireConversationListTests",
+        "name" : "WireConversationListTests"
+      }
     }
   ],
   "version" : 1

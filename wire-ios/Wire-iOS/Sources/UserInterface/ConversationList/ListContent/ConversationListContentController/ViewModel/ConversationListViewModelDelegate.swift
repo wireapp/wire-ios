@@ -17,10 +17,8 @@
 //
 
 import DifferenceKit
+import WireConversationList
 import WireDataModel
-
-/// a item which can be presented in the conversaton list
-protocol ConversationListItem: NSObject {}
 
 extension ZMConversation: ConversationListItem {}
 

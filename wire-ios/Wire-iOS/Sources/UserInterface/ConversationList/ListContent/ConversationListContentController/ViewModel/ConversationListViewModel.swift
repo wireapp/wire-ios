@@ -18,152 +18,15 @@
 
 import DifferenceKit
 import Foundation
+import WireConversationList
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
 
-final class ConversationListViewModel: NSObject {
+final class ConversationListViewModel {
 
     typealias SectionIdentifier = String
-
-    fileprivate struct Section: DifferentiableSection {
-
-        enum Kind: Equatable, Hashable {
-
-            /// for incoming requests
-            case contactRequests
-
-            /// for self pending requests / conversations
-            case conversations
-
-            /// one to one conversations
-            case contacts
-
-            /// group conversations
-            case groups
-
-            /// favorites
-            case favorites
-
-            /// conversations in folders
-            case folder(label: LabelType)
-
-            func hash(into hasher: inout Hasher) {
-                hasher.combine(identifier)
-            }
-
-            var identifier: SectionIdentifier {
-                switch self {
-                case.folder(label: let label):
-                    return label.remoteIdentifier?.transportString() ?? "folder"
-                default:
-                    return canonicalName
-                }
-            }
-
-            var obfuscatedName: String {
-                switch self {
-                case .folder:
-                    return "user-defined-folder"
-
-                default:
-                    return canonicalName
-                }
-            }
-
-            var canonicalName: String {
-                switch self {
-                case .contactRequests:
-                    return "contactRequests"
-                case .conversations:
-                    return "conversations"
-                case .contacts:
-                    return "contacts"
-                case .groups:
-                    return "groups"
-                case .favorites:
-                    return "favorites"
-                case .folder(label: let label):
-                    return label.name ?? "folder"
-                }
-            }
-
-            var localizedName: String? {
-                switch self {
-                case .conversations:
-                    return nil
-                case .contactRequests:
-                    return L10n.Localizable.List.Section.requests
-                case .contacts:
-                    return L10n.Localizable.List.Section.contacts
-                case .groups:
-                    return L10n.Localizable.List.Section.groups
-                case .favorites:
-                    return L10n.Localizable.List.Section.favorites
-                case .folder(label: let label):
-                    return label.name
-                }
-            }
-
-            static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
-                switch (lhs, rhs) {
-                case (.conversations, .conversations):
-                    return true
-                case (.contactRequests, .contactRequests):
-                    return true
-                case (.contacts, .contacts):
-                    return true
-                case (.groups, .groups):
-                    return true
-                case (.favorites, .favorites):
-                    return true
-                case (.folder(let lhsLabel), .folder(let rhsLabel)):
-                    return lhsLabel === rhsLabel
-                default:
-                    return false
-                }
-            }
-        }
-
-        var kind: Kind
-        var items: [SectionItem]
-        var collapsed: Bool
-
-        var elements: [SectionItem] {
-            return collapsed ? [] : items
-        }
-
-        /// ref to AggregateArray, we return the first found item's index
-        ///
-        /// - Parameter item: item to search
-        /// - Returns: the index of the item
-        func index(for item: ConversationListItem) -> Int? {
-            return items.firstIndex(of: SectionItem(item: item, kind: kind))
-        }
-
-        func isContentEqual(to source: ConversationListViewModel.Section) -> Bool {
-            return kind == source.kind
-        }
-
-        var differenceIdentifier: String {
-            return kind.identifier
-        }
-
-        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
-            self.kind = source.kind
-            self.collapsed = source.collapsed
-            items = Array(elements)
-        }
-
-        init(kind: Kind,
-             conversationDirectory: ConversationDirectoryType,
-             collapsed: Bool) {
-            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
-            self.kind = kind
-            self.collapsed = collapsed
-        }
-    }
 
     static let contactRequestsItem: ConversationListConnectRequestsItem = ConversationListConnectRequestsItem()
 
@@ -204,29 +67,6 @@ final class ConversationListViewModel: NSObject {
     private var sections: [Section] = []
 
     private typealias DiffKitSection = ArraySection<Int, SectionItem>
-
-    /// make items has different hash in different sections
-    struct SectionItem: Hashable, Differentiable {
-        let item: ConversationListItem
-        let isFavorite: Bool
-
-        fileprivate init(item: ConversationListItem, kind: Section.Kind) {
-            self.item = item
-            self.isFavorite = kind == .favorites
-        }
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(isFavorite)
-
-            let hashableItem: NSObject = item
-            hasher.combine(hashableItem)
-        }
-
-        static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
-            return lhs.isFavorite == rhs.isFavorite &&
-                   lhs.item == rhs.item
-        }
-    }
 
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
@@ -272,8 +112,6 @@ final class ConversationListViewModel: NSObject {
     ) {
         self.userSession = userSession
         self.isFolderStatePersistenceEnabled = isFolderStatePersistenceEnabled
-
-        super.init()
 
         setupObservers()
         updateAllSections()
@@ -760,5 +598,179 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
         return kind
 
+    }
+}
+
+// MARK: ConversationListViewModel.Section
+
+extension ConversationListViewModel {
+
+    fileprivate struct Section: DifferentiableSection {
+
+        var kind: Kind
+        var items: [SectionItem]
+        var collapsed: Bool
+
+        var elements: [SectionItem] {
+            return collapsed ? [] : items
+        }
+
+        /// ref to AggregateArray, we return the first found item's index
+        ///
+        /// - Parameter item: item to search
+        /// - Returns: the index of the item
+        func index(for item: ConversationListItem) -> Int? {
+            return items.firstIndex(of: SectionItem(item: item, kind: kind))
+        }
+
+        func isContentEqual(to source: ConversationListViewModel.Section) -> Bool {
+            return kind == source.kind
+        }
+
+        var differenceIdentifier: String {
+            return kind.identifier
+        }
+
+        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
+            self.kind = source.kind
+            self.collapsed = source.collapsed
+            items = Array(elements)
+        }
+
+        init(kind: Kind,
+             conversationDirectory: ConversationDirectoryType,
+             collapsed: Bool) {
+            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.kind = kind
+            self.collapsed = collapsed
+        }
+    }
+}
+
+extension ConversationListViewModel.Section {
+
+    enum Kind: Equatable, Hashable {
+
+        /// for incoming requests
+        case contactRequests
+
+        /// for self pending requests / conversations
+        case conversations
+
+        /// one to one conversations
+        case contacts
+
+        /// group conversations
+        case groups
+
+        /// favorites
+        case favorites
+
+        /// conversations in folders
+        case folder(label: LabelType)
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(identifier)
+        }
+
+        var identifier: ConversationListViewModel.SectionIdentifier {
+            switch self {
+            case.folder(label: let label):
+                return label.remoteIdentifier?.transportString() ?? "folder"
+            default:
+                return canonicalName
+            }
+        }
+
+        var obfuscatedName: String {
+            switch self {
+            case .folder:
+                return "user-defined-folder"
+
+            default:
+                return canonicalName
+            }
+        }
+
+        var canonicalName: String {
+            switch self {
+            case .contactRequests:
+                return "contactRequests"
+            case .conversations:
+                return "conversations"
+            case .contacts:
+                return "contacts"
+            case .groups:
+                return "groups"
+            case .favorites:
+                return "favorites"
+            case .folder(label: let label):
+                return label.name ?? "folder"
+            }
+        }
+
+        var localizedName: String? {
+            switch self {
+            case .conversations:
+                return nil
+            case .contactRequests:
+                return L10n.Localizable.List.Section.requests
+            case .contacts:
+                return L10n.Localizable.List.Section.contacts
+            case .groups:
+                return L10n.Localizable.List.Section.groups
+            case .favorites:
+                return L10n.Localizable.List.Section.favorites
+            case .folder(label: let label):
+                return label.name
+            }
+        }
+
+        static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
+            switch (lhs, rhs) {
+            case (.conversations, .conversations):
+                return true
+            case (.contactRequests, .contactRequests):
+                return true
+            case (.contacts, .contacts):
+                return true
+            case (.groups, .groups):
+                return true
+            case (.favorites, .favorites):
+                return true
+            case (.folder(let lhsLabel), .folder(let rhsLabel)):
+                return lhsLabel === rhsLabel
+            default:
+                return false
+            }
+        }
+    }
+}
+
+// MARK: ConversationListViewModel.SectionItem
+
+extension ConversationListViewModel {
+
+    /// make items has different hash in different sections
+    struct SectionItem: Hashable, Differentiable {
+        let item: ConversationListItem
+        let isFavorite: Bool
+
+        fileprivate init(item: ConversationListItem, kind: Section.Kind) {
+            self.item = item
+            self.isFavorite = kind == .favorites
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(isFavorite)
+
+            let hashableItem: NSObject = item
+            hasher.combine(hashableItem)
+        }
+
+        static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
+            return lhs.isFavorite == rhs.isFavorite &&
+                   lhs.item == rhs.item
+        }
     }
 }

@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "AF54B71A-6385-47D1-8018-0590A1BD7A74",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireConversationListTests",
+        "name" : "WireConversationListTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -301,6 +301,7 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
+		590407042C2575060009542C /* WireConversationList in Frameworks */ = {isa = PBXBuildFile; productRef = 590407032C2575060009542C /* WireConversationList */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
@@ -4037,6 +4038,7 @@
 				E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */,
 				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
+				590407042C2575060009542C /* WireConversationList in Frameworks */,
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				59CD83E52C22CE9800186022 /* WireDesign in Frameworks */,
@@ -8719,6 +8721,7 @@
 				595D304A2BF923B30064A018 /* WireAPI */,
 				592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */,
 				59CD83E42C22CE9800186022 /* WireDesign */,
+				590407032C2575060009542C /* WireConversationList */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11778,6 +11781,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
+		};
+		590407032C2575060009542C /* WireConversationList */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireConversationList;
 		};
 		592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;

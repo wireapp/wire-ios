@@ -18,6 +18,7 @@
 
 import DifferenceKit
 import UIKit
+import WireConversationList
 import WireDataModel
 import WireDesign
 import WireSyncEngine
@@ -43,10 +44,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     let userSession: UserSession
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     init(
         userSession: UserSession,
         isFolderStatePersistenceEnabled: Bool
@@ -67,7 +64,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func loadView() {

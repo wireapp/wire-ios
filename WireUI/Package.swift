@@ -12,6 +12,9 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "WireConversationList",
+            targets: ["WireConversationList"]),
+        .library(
             name: "WireDesign",
             targets: ["WireDesign"]),
         .library(
@@ -29,6 +32,18 @@ let package = Package(
         )
     ],
     targets: [
+
+        .target(
+            name: "WireConversationList"),
+        .testTarget(
+            name: "WireConversationListTests",
+            dependencies: [
+                "WireConversationList",
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
+            ]),
 
         .target(
             name: "WireDesign"),
