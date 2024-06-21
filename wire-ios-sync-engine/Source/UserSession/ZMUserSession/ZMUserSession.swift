@@ -938,6 +938,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
+    func trackAppOpenEvent() {
+        analyticsSession?.trackEvent(.appOpen)
+    }
+
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
