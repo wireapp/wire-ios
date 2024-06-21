@@ -19,7 +19,7 @@
 import WireDataModel
 import XCTest
 
-final class ZMConversationListDirectoryTests_: XCTestCase {
+final class ZMConversationListDirectoryTests: XCTestCase {
 
     func testThatItReturnsAllConversations() {
 
