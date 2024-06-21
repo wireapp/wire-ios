@@ -27,7 +27,7 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
 
         // Only handle canNotRegisterMoreClients errors
         guard
-            let error = error,
+            let error,
             error.userSessionErrorCode == .canNotRegisterMoreClients,
             let nextStep = AuthenticationFlowStep.makeClientManagementStep(
                 from: error,

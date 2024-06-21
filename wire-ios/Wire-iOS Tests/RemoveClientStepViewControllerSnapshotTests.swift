@@ -30,11 +30,15 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
         super.setUp()
 
         coreDataFixture = CoreDataFixture()
-        sut = RemoveClientStepViewController(clients: [mockUserClient(),
-                                                       mockUserClient(),
-                                                       mockUserClient(),
-                                                       mockUserClient(),
-                                                       mockUserClient()])
+        sut = RemoveClientStepViewController(
+            clients: [
+                mockUserClient(),
+                mockUserClient(),
+                mockUserClient(),
+                mockUserClient(),
+                mockUserClient()
+            ]
+        )
     }
 
     override func tearDown() {
