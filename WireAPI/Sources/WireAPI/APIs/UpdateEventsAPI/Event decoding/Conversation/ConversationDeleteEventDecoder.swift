@@ -34,14 +34,14 @@ struct ConversationDeleteEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
         return ConversationDeleteEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp
+            timestamp: timestamp.date
         )
     }
 

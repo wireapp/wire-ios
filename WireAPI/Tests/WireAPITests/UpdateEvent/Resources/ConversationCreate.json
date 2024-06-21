@@ -21,7 +21,7 @@
         "group_id": "group_id",
         "cipher_suite": 2,
         "epoch": 123,
-        "epoch_timestamp": "2024-06-04T15:03:07.598Z",
+        "epoch_timestamp": "2024-06-04T15:03:07Z",
         "creator": "6d88b1b9-f882-4990-ade5-86643fc6006e",
         "members": {
             "others": [

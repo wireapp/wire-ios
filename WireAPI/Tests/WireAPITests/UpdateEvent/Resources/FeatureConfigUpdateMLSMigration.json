@@ -3,8 +3,8 @@
     "name": "mlsMigration",
     "data": {
         "config": {
-            "startTime": "2024-06-04T15:03:07.598Z",
-            "finaliseRegardlessAfter": "2025-06-04T15:03:07.598Z"
+            "startTime": "2024-06-04T15:03:07Z",
+            "finaliseRegardlessAfter": "2025-06-04T15:03:07Z"
         },
         "lockStatus": "unlocked",
         "status": "enabled",

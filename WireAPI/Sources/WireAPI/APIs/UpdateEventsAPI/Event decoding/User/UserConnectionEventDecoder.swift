@@ -41,7 +41,7 @@ struct UserConnectionEventDecoder {
                 receiverQualifiedId: connection.qualifiedTo,
                 conversationId: connection.conversationID,
                 qualifiedConversationId: connection.qualifiedConversationID,
-                lastUpdate: connection.lastUpdate,
+                lastUpdate: connection.lastUpdate.date,
                 status: connection.status
             )
         )
@@ -60,7 +60,7 @@ struct UserConnectionEventDecoder {
         let qualifiedTo: QualifiedID?
         let conversationID: UUID?
         let qualifiedConversationID: QualifiedID?
-        let lastUpdate: Date
+        let lastUpdate: UTCTime
         let status: ConnectionStatus
 
         enum CodingKeys: String, CodingKey {

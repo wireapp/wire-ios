@@ -25,7 +25,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -176,7 +176,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
-            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
 
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
@@ -277,8 +277,8 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
             featureConfig: .mlsMigration(
                 MLSMigrationFeatureConfig(
                     status: .enabled,
-                    startTime: date(from: "2024-06-04T15:03:07.598Z"),
-                    finaliseRegardlessAfter: date(from: "2025-06-04T15:03:07.598Z")
+                    startTime: date(from: "2024-06-04T15:03:07Z"),
+                    finaliseRegardlessAfter: date(from: "2025-06-04T15:03:07Z")
                 )
             )
         )

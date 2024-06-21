@@ -176,7 +176,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: Date?
+    var lastEventTime: UTCTimeMillis?
     var legacyAccessRole: ConversationAccessRoleLegacy?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
@@ -208,7 +208,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: legacyAccessRole,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime?.date
         )
     }
 }

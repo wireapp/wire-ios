@@ -34,7 +34,7 @@ struct ConversationMemberLeaveEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
@@ -46,7 +46,7 @@ struct ConversationMemberLeaveEventDecoder {
         return ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp,
+            timestamp: timestamp.date,
             removedUserIDs: payload.userIDs,
             reason: payload.reason ?? .left
         )

@@ -25,7 +25,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -245,8 +245,12 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static func date(from string: String) -> Date {
+        static func fractionalDate(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
 
         static let conversationID = ConversationID(
@@ -259,7 +263,7 @@ final class ConversationEventDecodingTests: XCTestCase {
             domain: "example.com"
         )
 
-        static let timestamp = date(from: "2024-06-04T15:03:07.598Z")
+        static let timestamp = fractionalDate(from: "2024-06-04T15:03:07.598Z")
 
         static let accessUpdateEvent = ConversationAccessUpdateEvent(
             conversationID: conversationID,
@@ -291,7 +295,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                 mlsGroupID: "group_id",
                 cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 epoch: 123,
-                epochTimestamp: timestamp,
+                epochTimestamp: date(from: "2024-06-04T15:03:07Z"),
                 creator: UUID(uuidString: "6d88b1b9-f882-4990-ade5-86643fc6006e")!,
                 members: Conversation.Members(
                     others: [
@@ -341,7 +345,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                 accessRoles: [.teamMember],
                 legacyAccessRole: .nonActivated,
                 lastEvent: "lastEvent",
-                lastEventTime: date(from: "1970-01-01T00:00:00.000Z")
+                lastEventTime: fractionalDate(from: "1970-01-01T00:00:00.000Z")
             )
         )
 

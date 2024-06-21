@@ -25,7 +25,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -231,19 +231,23 @@ final class UserEventDecodingTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static func date(from string: String) -> Date {
+        static func fractionalDate(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
 
         static let clientAddEvent = UserClientAddEvent(
             client: UserClient(
                 id: "2a1fd72806d84e26",
                 type: .permanent,
-                activationDate: date(from: "2024-06-04T15:03:07.598Z"),
+                activationDate: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
                 label: "Alice's work phone",
                 model: "iPhone 20",
                 deviceClass: .phone,
-                lastActiveDate: date(from: "2024-06-04T15:03:07.598Z"),
+                lastActiveDate: date(from: "2024-06-04T15:03:07Z"),
                 mlsPublicKeys: MLSPublicKeys(
                     ed25519: "ed25519_key",
                     ed448: "ed448_key",
@@ -274,7 +278,7 @@ final class UserEventDecodingTests: XCTestCase {
                     uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     domain: "example.com"
                 ),
-                lastUpdate: date(from: "2024-06-05T08:34:21.766Z"),
+                lastUpdate: date(from: "2024-06-05T08:34:21Z"),
                 status: .accepted
             )
         )
