@@ -27,6 +27,10 @@ struct SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
 
+    var logFiles: [URL] {
+        return []
+    }
+
     var lastReportTime: Date? {
         get {
             guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval else { return nil }
@@ -35,31 +39,6 @@ struct SystemLogger: LoggerProtocol {
         set {
             UserDefaults.standard.set(newValue?.timeIntervalSince1970, forKey: "com.wire.log.lastReportTime")
         }
-    }
-
-    var fileLogger = FileLogger()
-
-    func persist(fileDestination: FileLoggerDestination) async {
-        var entries: [String] = []
-
-        do {
-            let store = try OSLogStore(scope: .currentProcessIdentifier)
-            let position: OSLogPosition
-            if let lastReportTime {
-                position = store.position(date: lastReportTime)
-            } else {
-                position = store.position(timeIntervalSinceLatestBoot: 0)
-            }
-            entries = try store
-                .getEntries(at: position)
-                .compactMap { $0 as? OSLogEntryLog }
-                .filter { $0.subsystem == Bundle.main.bundleIdentifier! }
-                .map { "[\($0.date.formatted(.iso8601))] [\($0.category)] \($0.composedMessage)" }
-        } catch {
-            warn(error.localizedDescription, attributes: .safePublic)
-        }
-
-        fileLogger.write(entries: entries, to: fileDestination.log)
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -120,42 +99,3 @@ struct SystemLogger: LoggerProtocol {
 }
 
 private var loggers: [String: OSLog] = [:]
-
-public class FileLogger {
-
-    var updatingHandle: FileHandle?
-
-    func write(entries: [String], to url: URL?) {
-        guard let currentLogPath = url?.path else { return }
-
-        let manager = FileManager.default
-
-        if !manager.fileExists(atPath: currentLogPath) {
-            manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
-            // if there was no file, force to recreate the fileHandle
-            updatingHandle = nil
-        }
-
-        if updatingHandle == nil {
-            updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
-            updatingHandle?.seekToEndOfFile()
-        }
-
-        do {
-            if let data = entries.joined(separator: "\n").data(using: .utf8) {
-                try updatingHandle?.write(contentsOf: data)
-            }
-        } catch {
-            updatingHandle = nil
-        }
-    }
-
-    func closeFile() {
-        updatingHandle?.closeFile()
-        updatingHandle = nil
-    }
-
-    deinit {
-        closeFile()
-    }
-}

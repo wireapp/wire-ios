@@ -19,16 +19,21 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider?.addTag(key, value: value)
-    }
 
-    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
+    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
 
     public let tag: String
 
     public init(tag: String = "") {
         self.tag = tag
+    }
+
+    public var logFiles: [URL] {
+        Self.provider?.logFiles ?? []
+    }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        Self.provider?.addTag(key, value: value)
     }
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -107,7 +112,6 @@ public struct WireLogger: LoggerProtocol {
         case critical
 
     }
-
 }
 
 public typealias LogAttributes = [LogAttributesKey: Encodable]
@@ -138,15 +142,21 @@ public protocol LoggerProtocol {
     func error(_ message: any LogConvertible, attributes: LogAttributes...)
     func critical(_ message: any LogConvertible, attributes: LogAttributes...)
 
-    func persist(fileDestination: FileLoggerDestination) async
+    var logFiles: [URL] { get }
 
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {
+    func attributesDescription(from attributes: [LogAttributes]) -> String {
+        var logAttributes = flattenArray(attributes)
 
-    public func persist(fileDestination: FileLoggerDestination) async {}
+        // drop attributes used for visibility and category
+        logAttributes.removeValue(forKey: LogAttributesKey.public)
+        logAttributes.removeValue(forKey: LogAttributesKey.tag)
+        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
+    }
 
     /// helper method to transform attributes array to single LogAttributes
     /// - note: if same key is contained accross multiple attributes, the latest one is taken
