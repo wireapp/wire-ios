@@ -1,6 +1,6 @@
 # ``WireDomain``
 
-Domain layer where Business logic
+Domain layer containing business logic.
 
 ## Overview
 
