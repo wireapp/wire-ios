@@ -80,11 +80,21 @@ struct SystemLogger: LoggerProtocol {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
+        let message = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
+
         if mergedAttributes[.public] as? Bool == true {
-            os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
+            os_log(osLogType, log: logger, "%{public}@", message)
         } else {
-            os_log(osLogType, log: logger, "\(message.logDescription)")
+            os_log(osLogType, log: logger, "\(message)")
         }
+    }
+
+    private func attributesDescription(from attributes: LogAttributes) -> String {
+        var logAttributes = attributes
+        // drop attributes used for visibility and category
+        logAttributes.removeValue(forKey: .public)
+        logAttributes.removeValue(forKey: .tag)
+        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
     }
 }
 
