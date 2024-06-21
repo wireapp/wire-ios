@@ -400,7 +400,7 @@ public final class AVSWrapper: AVSWrapperType {
             if !isMLSConference {
 
                 // This handler is called once per call, but the participants may be added or removed from the
-                // conversation during this time.  Therefore we store the completion so that it can be re-invoked
+                // conversation during this time. Therefore we store the completion so that it can be re-invoked
                 // with an updated client list.
                 let completion: (String) -> Void = { (clients: String) in
                     wcall_set_clients_for_conv(handle, conversationIdRef, clients)
