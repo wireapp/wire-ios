@@ -16,20 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_BUILD_NUMBER = 999999
-SSO_URL_SCHEME = wire-sso-alpha
-WIRE_URL_SCHEME = wire
-WIRE_BUNDLE_ID = com.wearezeta.zclient.alpha
+import Countly
 
-//Code Signing
-CODE_SIGN_IDENTITY = Apple Development
+public struct AnalyticsSession: AnalyticsSessionProtocol {
 
-DEVELOPMENT_TEAM = EDF3JCE8BC
-PROVISIONING_PROFILE_SPECIFIER_APP = Wire iOS Alpha
-PROVISIONING_PROFILE_SPECIFIER_SHARE_EXT = Wire iOS Alpha Share Extension
-PROVISIONING_PROFILE_SPECIFIER_NOTIFICATION_EXT = Wire iOS Alpha Notification Service Extension
+    let countly: WireCountly
 
-// App icon from asset bundle
-APPICON_NAME = AppIcon-Debug
+    public init(appKey: String, host: URL) {
 
-COUNTLY_APP_KEY = 37cc418a6fc07403b0a918252133c15b95486883
+        let config = CountlyConfig()
+        config.appKey = appKey
+        config.host = host.absoluteString
+
+        countly = .sharedInstance()
+        countly.start(with: config)
+    }
+
+    public func startSession() {
+        countly.beginSession()
+    }
+
+    public func endSession() {
+        countly.endSession()
+    }
+
+    public func trackEvent(_ event: AnalyticEvent) {
+        countly.recordEvent(event.rawValue)
+    }
+}

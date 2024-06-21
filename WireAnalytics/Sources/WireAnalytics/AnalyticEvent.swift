@@ -16,20 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_BUILD_NUMBER = 999999
-SSO_URL_SCHEME = wire-sso-alpha
-WIRE_URL_SCHEME = wire
-WIRE_BUNDLE_ID = com.wearezeta.zclient.alpha
+/// All possible analytic events that can be tracked
 
-//Code Signing
-CODE_SIGN_IDENTITY = Apple Development
+public enum AnalyticEvent: String {
 
-DEVELOPMENT_TEAM = EDF3JCE8BC
-PROVISIONING_PROFILE_SPECIFIER_APP = Wire iOS Alpha
-PROVISIONING_PROFILE_SPECIFIER_SHARE_EXT = Wire iOS Alpha Share Extension
-PROVISIONING_PROFILE_SPECIFIER_NOTIFICATION_EXT = Wire iOS Alpha Notification Service Extension
+    case appOpen
 
-// App icon from asset bundle
-APPICON_NAME = AppIcon-Debug
-
-COUNTLY_APP_KEY = 37cc418a6fc07403b0a918252133c15b95486883
+}
