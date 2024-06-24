@@ -213,7 +213,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let conversationList = ConversationList.conversations(inUserSession: userSession!)
+        let conversationList: ConversationList = .conversations(inUserSession: userSession!)
 
         self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
@@ -224,7 +224,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        XCTAssertEqual(oneToOneConversation, conversationList[0] as? ZMConversation)
+        XCTAssertEqual(oneToOneConversation, conversationList.items[0])
         let conversationListChangeObserver = ConversationListChangeObserver.init(conversationList: conversationList)
 
         // when
@@ -254,7 +254,7 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertEqual(moves.count, 1)
         XCTAssertEqual(moves.first?.to, 0)
 
-        XCTAssertEqual(newConnectionConversation, conversationList[0] as? ZMConversation)
-        XCTAssertEqual(oneToOneConversation, conversationList[1] as? ZMConversation)
+        XCTAssertEqual(newConnectionConversation, conversationList.items[0])
+        XCTAssertEqual(oneToOneConversation, conversationList.items[1])
     }
 }

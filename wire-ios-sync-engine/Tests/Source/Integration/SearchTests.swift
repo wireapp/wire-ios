@@ -101,7 +101,7 @@ final class SearchTests: IntegrationTest {
         XCTAssertTrue(login())
 
         let pendingConnections = ConversationList.pendingConnectionConversations(inUserSession: userSession!)
-        XCTAssertEqual(pendingConnections.count, 1)
+        XCTAssertEqual(pendingConnections.items.count, 1)
     }
 
     func testThatItNotifiesObserversWhenTheConnectionStatusChanges_InsertedUser() {
