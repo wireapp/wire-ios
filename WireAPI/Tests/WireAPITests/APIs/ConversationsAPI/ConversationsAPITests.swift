@@ -375,7 +375,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(list.failed.count, 1)
 
         let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.accessRoles, ["team_member"])
+        XCTAssertEqual(conversation.accessRoles, [.teamMember])
         XCTAssertNil(conversation.legacyAccessRole)
     }
 
@@ -441,8 +441,8 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(list.failed.count, 1)
 
         let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
-        XCTAssertEqual(conversation.cipherSuite, 0)
+        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1620816722))
+        XCTAssertEqual(conversation.cipherSuite, .MLS_128_DHKEMP256_AES128GCM_SHA256_P256)
     }
 
     func testGetConversations_givenV5AndSuccessResponse503() async throws {

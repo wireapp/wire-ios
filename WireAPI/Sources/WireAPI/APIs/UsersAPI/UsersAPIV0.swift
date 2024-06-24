@@ -67,12 +67,12 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let id: UserID
     let name: String
     let handle: String?
-    let teamID: UUID
+    let teamID: UUID?
     let accentID: Int
     let assets: [UserAsset]
     let deleted: Bool?
     let email: String?
-    let expiresAt: String?
+    let expiresAt: UTCTimeMillis?
     let service: ServiceResponseV0?
     let legalholdStatus: LegalholdStatusV0
 
@@ -102,7 +102,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             assets: assets,
             deleted: deleted,
             email: email,
-            expiresAt: expiresAt,
+            expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus],
             legalholdStatus: legalholdStatus.toAPIModel()

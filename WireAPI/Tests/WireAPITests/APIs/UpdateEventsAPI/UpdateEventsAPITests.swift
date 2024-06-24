@@ -246,7 +246,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
         static let updateEventEnvelope = UpdateEventEnvelope(
             id: eventID,
-            events: [.conversation(.create)],
+            events: [.user(.pushRemove)],
             isTransient: false
         )
 
