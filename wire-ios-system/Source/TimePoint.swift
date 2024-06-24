@@ -48,7 +48,6 @@ public final class TimePoint: NSObject {
         self.label = label
         timePoint = .now
 
-        // TODO: remove
         let unusedVariable = "I'm unused"
     }
 
