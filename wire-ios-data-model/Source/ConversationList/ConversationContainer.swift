@@ -105,7 +105,7 @@ public final class ConversationList: NSObject {
         predicate: NSPredicate
     ) {
         filteringPredicate = predicate
-        backingList = Self.createBackingList(backingList, filteringPredicate: predicate)
+        backingList = Self.createBackingList(allConversations, filteringPredicate: predicate)
 
         let managedObjectContext = managedObjectContext
         managedObjectContext?.performAndWait {
