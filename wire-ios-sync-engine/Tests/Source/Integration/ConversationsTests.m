@@ -353,7 +353,7 @@
     ZMUser *realUser = [self userForMockUser:mockUser];
     
     ZMConversationList *pending = [ZMConversationList pendingConnectionConversationsInUserSession:self.userSession];
-    XCTAssertEqual(pending.count, 1u);
+    XCTAssertEqual(pending.items.count, 1u);
     ZMConversation *pendingConnversation = pending.items.lastObject;
 
     ZMConversationList *activeConversations = [ZMConversationList conversationsInUserSession:self.userSession];
@@ -366,7 +366,7 @@
     WaitForAllGroupsToBeEmpty(0.5f);
 
     //then
-    XCTAssertEqual(pending.count, 0u);
+    XCTAssertEqual(pending.items.count, 0u);
     XCTAssertEqual(activeConversations.items.count, activeCount + 1u);
     XCTAssertTrue([activeConversations.items containsObject:pendingConnversation]);
     XCTAssertEqualObjects(activeConversations.items.firstObject, pendingConnversation);

@@ -334,7 +334,7 @@
     XCTAssertTrue([self login]);
     
     ZMConversationList *conversationList = [ZMConversationList conversationsInUserSession:self.userSession];
-    XCTAssertEqual(conversationList.count, 3u);
+    XCTAssertEqual(conversationList.items.count, 3u);
     ConversationListChangeObserver *conversationListObserver = [[ConversationListChangeObserver alloc] initWithConversationList:conversationList];
     
     ZMConversationList *pendingConversationsList = [ZMConversationList pendingConnectionConversationsInUserSession:self.userSession];

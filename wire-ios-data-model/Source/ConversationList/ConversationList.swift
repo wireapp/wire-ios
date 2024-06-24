@@ -22,21 +22,14 @@ import CoreData
 @objc(ZMConversationList) @objcMembers
 public final class ConversationList: NSObject {
 
-    var count: Int {
-        backingList.count
-    }
-
     public weak var managedObjectContext: NSManagedObjectContext?
 
     let identifier: String
     let label: Label?
-    public var items: [ZMConversation] { backingList }
-
-    private var backingList: [ZMConversation]
+    private(set) var items: [ZMConversation]
     private let conversationKeysAffectingSorting: NSSet
     private var filteringPredicate: NSPredicate
     private let sortDescriptors: [NSSortDescriptor]
-    private let customDebugDescription: String
 
     public convenience init(
         allConversations: [ZMConversation],
@@ -63,12 +56,11 @@ public final class ConversationList: NSObject {
         self.filteringPredicate = filteringPredicate
         self.managedObjectContext = managedObjectContext
         identifier = description
-        customDebugDescription = identifier
         self.label = label
         sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
         conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        backingList = Self.createBackingList(allConversations, filteringPredicate: filteringPredicate)
+        items = Self.createItems(allConversations, filteringPredicate: filteringPredicate)
 
         super.init()
 
@@ -85,7 +77,7 @@ public final class ConversationList: NSObject {
         }
     }
 
-    private static func createBackingList(_ conversations: [ZMConversation], filteringPredicate: NSPredicate) -> [ZMConversation] {
+    private static func createItems(_ conversations: [ZMConversation], filteringPredicate: NSPredicate) -> [ZMConversation] {
         let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
         return NSSet(array: filtered).sortedArray(using: ZMConversation.defaultSortDescriptors()!) as! [ZMConversation]
     }
@@ -105,7 +97,7 @@ public final class ConversationList: NSObject {
         predicate: NSPredicate
     ) {
         filteringPredicate = predicate
-        backingList = Self.createBackingList(allConversations, filteringPredicate: predicate)
+        items = Self.createItems(allConversations, filteringPredicate: predicate)
 
         let managedObjectContext = managedObjectContext
         managedObjectContext?.performAndWait {
@@ -114,8 +106,8 @@ public final class ConversationList: NSObject {
     }
 
     private func sortInsertConversation(_ conversation: ZMConversation) {
-        let index = (backingList as NSArray).index(of: conversation, inSortedRange: NSRange(location: 0, length: backingList.count), options: .insertionIndex, usingComparator: comparator)
-        backingList.insert(conversation, at: index)
+        let index = (items as NSArray).index(of: conversation, inSortedRange: NSRange(location: 0, length: items.count), options: .insertionIndex, usingComparator: comparator)
+        items.insert(conversation, at: index)
     }
 
     private var comparator: Comparator {
@@ -141,15 +133,15 @@ public final class ConversationList: NSObject {
     }
 
     func object(at index: Int) -> ZMConversation? {
-        guard backingList.indices.contains(index) else {
+        guard items.indices.contains(index) else {
             assertionFailure("index out of bounds")
             return nil
         }
-        return backingList[index]
+        return items[index]
     }
 
     func index(of conversation: ZMConversation) -> Int? {
-        backingList.firstIndex(of: conversation)
+        items.firstIndex(of: conversation)
     }
 
     func shortDescription() -> String {
@@ -157,7 +149,7 @@ public final class ConversationList: NSObject {
             format: "<%@: %p> %@ (predicate: %@)",
             String(describing: Self.self),
             self,
-            customDebugDescription,
+            identifier,
             filteringPredicate
         )
     }
@@ -167,9 +159,9 @@ public final class ConversationList: NSObject {
     }
 
     public func resort() {
-        let backingList = NSMutableArray(array: backingList)
-        backingList.sort(comparator: comparator)
-        self.backingList = backingList as! [ZMConversation]
+        let items = NSMutableArray(array: items)
+        items.sort(comparator: comparator)
+        self.items = items as! [ZMConversation]
     }
 
     // MARK: - ZMUpdates
@@ -183,21 +175,21 @@ public final class ConversationList: NSObject {
     }
 
     func resortConversation(_ conversation: ZMConversation) {
-        if let index = backingList.firstIndex(of: conversation) {
-            backingList.remove(at: index)
+        if let index = items.firstIndex(of: conversation) {
+            items.remove(at: index)
         }
         sortInsertConversation(conversation)
     }
 
     func removeConversations(_ conversations: Set<ZMConversation>) {
-        backingList.removeAll { conversation in
+        items.removeAll { conversation in
             conversations.contains(conversation)
         }
     }
 
     func insertConversations(_ conversations: Set<ZMConversation>) {
         var conversations = conversations
-        backingList.forEach { conversation in
+        items.forEach { conversation in
             conversations.remove(conversation)
         }
         conversations.forEach { conversation in

@@ -53,7 +53,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.count, 1)
+        XCTAssertEqual(sut.items.count, 1)
         XCTAssertEqual(sut.items, [group])
     }
 
@@ -70,7 +70,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.count, 2)
+        XCTAssertEqual(sut.items.count, 2)
         XCTAssertEqual(Set(sut.items), [group, otherGroup])
     }
 
@@ -86,7 +86,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.count, 4)
+        XCTAssertEqual(sut.items.count, 4)
         XCTAssertEqual(Set(sut.items), [conversation1, conversation2, archived1, archived2])
     }
 
@@ -102,7 +102,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.archivedConversations(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.count, 2)
+        XCTAssertEqual(sut.items.count, 2)
         XCTAssertEqual(Set(sut.items), [archived1, archived2])
     }
 
@@ -118,7 +118,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsExcludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.count, 2)
+        XCTAssertEqual(sut.items.count, 2)
         XCTAssertEqual(Set(sut.items), [conversation1, conversation2])
     }
 
@@ -137,7 +137,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.items, [conversation2, conversation1, conversation3])
+        XCTAssertEqual(sut.items.items, [conversation2, conversation1, conversation3])
     }
 
     func testThatItRecreatesListsAndTokensForTeamConversations() {
@@ -235,7 +235,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         // then
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
-        XCTAssertEqual(sut.count, 3)
+        XCTAssertEqual(sut.items.count, 3)
         XCTAssertEqual(sut.items, [conversation2, conversation1, conversation3])
         let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
 
@@ -245,7 +245,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssert(uiMOC.saveOrRollback())
 
         // then
-        XCTAssertEqual(sut.count, 3)
+        XCTAssertEqual(sut.items.count, 3)
         XCTAssertEqual(sut.items, [conversation3, conversation2, conversation1])
         XCTAssertEqual(observer.notifications.count, 1)
     }
@@ -260,11 +260,11 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         // then
         let unarchivedList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
-        XCTAssertEqual(unarchivedList.count, 3)
+        XCTAssertEqual(unarchivedList.items.count, 3)
         XCTAssertEqual(Set(unarchivedList.items), [conversation2, conversation1, conversation3])
 
         let archivedList = ZMConversation.archivedConversations(in: uiMOC)
-        XCTAssertEqual(archivedList.count, 1)
+        XCTAssertEqual(archivedList.items.count, 1)
         XCTAssertEqual(archivedList.items, [conversation4])
 
         XCTAssert(uiMOC.saveOrRollback())
@@ -278,11 +278,11 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssert(uiMOC.saveOrRollback())
 
         // then
-        XCTAssertEqual(unarchivedList.count, 2)
+        XCTAssertEqual(unarchivedList.items.count, 2)
         XCTAssertEqual(Set(unarchivedList.items), [conversation3, conversation1])
         XCTAssertEqual(unarchivedObserver.notifications.count, 1)
 
-        XCTAssertEqual(archivedList.count, 2)
+        XCTAssertEqual(archivedList.items.count, 2)
         XCTAssertEqual(Set(archivedList.items), [conversation4, conversation2])
         XCTAssertEqual(archivedObserver.notifications.count, 1)
     }
@@ -299,10 +299,10 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let archivedList = ZMConversation.archivedConversations(in: uiMOC)
         let clearedList = ZMConversation.clearedConversations(in: uiMOC)
 
-        XCTAssertEqual(activeList.count, 1)
+        XCTAssertEqual(activeList.items.count, 1)
         XCTAssertEqual(activeList.items, [conversation1])
-        XCTAssertEqual(archivedList.count, 0)
-        XCTAssertEqual(clearedList.count, 0)
+        XCTAssertEqual(archivedList.items.count, 0)
+        XCTAssertEqual(clearedList.items.count, 0)
         XCTAssert(uiMOC.saveOrRollback())
 
         // when
@@ -310,9 +310,9 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssert(uiMOC.saveOrRollback())
 
         // then
-        XCTAssertEqual(activeList.count, 0)
-        XCTAssertEqual(archivedList.count, 0)
-        XCTAssertEqual(clearedList.count, 1)
+        XCTAssertEqual(activeList.items.count, 0)
+        XCTAssertEqual(archivedList.items.count, 0)
+        XCTAssertEqual(clearedList.items.count, 1)
         XCTAssertEqual(clearedList.items, [conversation1])
     }
 
@@ -327,7 +327,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
             let archivedList = ZMConversation.archivedConversations(in: uiMOC)
             let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
             XCTAssertEqual(archivedList.items, [conversation])
-            XCTAssertEqual(activeList.count, 0)
+            XCTAssertEqual(activeList.items.count, 0)
         }
 
         // when
@@ -339,7 +339,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
             let archivedList = ZMConversation.archivedConversations(in: uiMOC)
             let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
             XCTAssertEqual(activeList.items, [conversation])
-            XCTAssertEqual(archivedList.count, 0)
+            XCTAssertEqual(archivedList.items.count, 0)
         }
     }
 
