@@ -49,10 +49,16 @@ public final class StoredUpdateEvent: NSManagedObject {
     @NSManaged
     public var isTransient: Bool
 
-    /// The events payload.
+    /// The event payload.
 
+    @available(*, deprecated, message: "use `eventData` instead")
     @NSManaged
     public var payload: NSDictionary?
+
+    /// The encoded data of the event payload.
+
+    @NSManaged
+    public var eventData: Data?
 
     /// Whether the event payload is encrypted (see `Encryption at Rest`).
 

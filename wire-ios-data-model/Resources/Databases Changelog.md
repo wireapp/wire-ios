@@ -54,6 +54,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
  
 ## ZMEventModel
 
+### 5.0
+
+* add optional binary data attributed called `eventData` to store json data of new `WireAPI.UpdateEvent`s. This replaces the dictionary `payload` which contains the old `ZMUpdateEvent` payloads.
+
 ### 4.0
 
 TBD
