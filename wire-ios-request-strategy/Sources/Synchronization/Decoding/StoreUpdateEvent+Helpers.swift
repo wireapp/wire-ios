@@ -120,16 +120,6 @@ extension StoredUpdateEvent {
         return result
     }
 
-    /// Returns the highest index of all stored events
-
-    public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: StoredUpdateEvent.entityName)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
-        fetchRequest.fetchBatchSize = 1
-        let result = context.fetchOrAssert(request: fetchRequest)
-        return result.first?.sortIndex ?? 0
-    }
-
     static func nextEventBatch(
         size: Int,
         privateKeys: EARPrivateKeys?,

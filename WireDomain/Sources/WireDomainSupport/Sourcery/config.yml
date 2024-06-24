@@ -6,5 +6,5 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["WireDomain"]
-  autoMockableImports: ["WireDataModel"]
+  autoMockableImports: ["WireDataModel", "WireAPI"]
  

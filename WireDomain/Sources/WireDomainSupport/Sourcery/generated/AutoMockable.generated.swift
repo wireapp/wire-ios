@@ -32,6 +32,7 @@ import AppKit
 #endif
 
 import WireDataModel
+import WireAPI
 
 @testable import WireDomain
 
@@ -54,6 +55,37 @@ import WireDataModel
 
 
 
+
+class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - decryptEvents
+
+    var decryptEventsIn_Invocations: [UpdateEventEnvelope] = []
+    var decryptEventsIn_MockError: Error?
+    var decryptEventsIn_MockMethod: ((UpdateEventEnvelope) async throws -> [UpdateEvent])?
+    var decryptEventsIn_MockValue: [UpdateEvent]?
+
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
+        decryptEventsIn_Invocations.append(eventEnvelope)
+
+        if let error = decryptEventsIn_MockError {
+            throw error
+        }
+
+        if let mock = decryptEventsIn_MockMethod {
+            return try await mock(eventEnvelope)
+        } else if let mock = decryptEventsIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptEventsIn`")
+        }
+    }
+
+}
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 

@@ -24,6 +24,11 @@
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
 		01D0DD012C1C90E90076CB1C /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 01D0DD002C1C90E90076CB1C /* WireAPI */; };
 		01D0DD032C1C90E90076CB1C /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 01D0DD022C1C90E90076CB1C /* WireAPISupport */; };
+		EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */; };
+		EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */; };
+		EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */; };
+		EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */; };
+		EE57A7052C2997090096F242 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE57A7042C2997090096F242 /* WireAPI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +67,10 @@
 		01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireDomain.docc; sourceTree = "<group>"; };
 		01D0DCFC2C1C8F9B0076CB1C /* WireDomain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireDomain.xctestplan; sourceTree = "<group>"; };
+		EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepository.swift; sourceTree = "<group>"; };
+		EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptor.swift; sourceTree = "<group>"; };
+		EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptor.swift; sourceTree = "<group>"; };
+		EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE57A7052C2997090096F242 /* WireAPI in Frameworks */,
 				0151580E2C2083D700590D24 /* WireDomain.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,6 +112,7 @@
 			children = (
 				017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */,
 				017F67982C20801800B6E02D /* TeamRepositoryTests.swift */,
+				EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -122,6 +133,7 @@
 				017F679F2C20802300B6E02D /* TeamRepository.swift */,
 				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
 				017F67A12C20802300B6E02D /* UserRepository.swift */,
+				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -129,6 +141,7 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EE57A6FC2C298F280096F242 /* Event Decryption */,
 				017F67A22C20802300B6E02D /* Repositories */,
 			);
 			path = WireDomain;
@@ -209,6 +222,15 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		EE57A6FC2C298F280096F242 /* Event Decryption */ = {
+			isa = PBXGroup;
+			children = (
+				EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */,
+				EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */,
+			);
+			path = "Event Decryption";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -245,6 +267,9 @@
 				017F67932C207A9100B6E02D /* PBXTargetDependency */,
 			);
 			name = WireDomainSupport;
+			packageProductDependencies = (
+				EE57A7042C2997090096F242 /* WireAPI */,
+			);
 			productName = WireDomainSupport;
 			productReference = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -394,12 +419,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* UserRepository.swift in Sources */,
+				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
+				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,6 +435,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 			);
@@ -807,6 +836,10 @@
 		01D0DD022C1C90E90076CB1C /* WireAPISupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
+		};
+		EE57A7042C2997090096F242 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

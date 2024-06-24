@@ -49,5 +49,34 @@ public struct ConversationProteusMessageAddEvent: Equatable, Codable {
     /// The id of the user client who should receive the message.
 
     public let messageRecipientClientID: String
+    
+    /// Create a new `ConversationProteusMessageAddEvent`.
+    ///
+    /// - Parameters:
+    ///   - conversationID: The id of the conversation.
+    ///   - senderID: The id of the user who sent the message.
+    ///   - timestamp: When the message was sent.
+    ///   - message: The base 64 encoded message.
+    ///   - externalData: The base 64 encoded external data.
+    ///   - messageSenderClientID: The id of the user client who sent the message.
+    ///   - messageRecipientClientID:  The id of the user client who should receive the message.
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        message: MessageContent,
+        externalData: MessageContent? = nil,
+        messageSenderClientID: String,
+        messageRecipientClientID: String
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.message = message
+        self.externalData = externalData
+        self.messageSenderClientID = messageSenderClientID
+        self.messageRecipientClientID = messageRecipientClientID
+    }
 
 }
