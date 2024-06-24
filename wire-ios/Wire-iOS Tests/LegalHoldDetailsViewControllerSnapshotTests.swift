@@ -73,7 +73,25 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
-        helper.verifyInAllColorSchemes(createSut: sut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut(),
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut(),
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testOtherUserUnderLegalHold() {
@@ -88,8 +106,28 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             return self.sut.wrapInNavigationController()
         }
 
+        let sut = createSut()
+
         // THEN
-        helper.verifyInAllColorSchemes(createSut: createSut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
 }
