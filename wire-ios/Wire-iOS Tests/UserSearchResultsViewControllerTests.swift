@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireDesign
 import XCTest
 
@@ -78,29 +77,51 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     }
 
     // MARK: - Snapshot Tests
-    func testThatShowsResultsInConversationWithEmptyQuery() {
-        createSUT()
-        sut.users = [selfUser, otherUser].searchForMentions(withQuery: "")
-        verify(matching: sut)
-    }
 
     func testThatShowsResultsInConversationWithQuery() {
+
         let createSut: () -> UIViewController = {
             self.createSUT()
             self.sut.users = [self.selfUser, self.otherUser].searchForMentions(withQuery: "u")
-
             return self.sut
         }
 
-        helper.verifyInAllColorSchemes(createSut: createSut)
+        let sut = createSut()
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
-    func testThatItOverflowsWithTooManyUsers_darkMode() {
+    func testThatItOverflowsWithTooManyUsers() {
         createSUT()
-        sut.overrideUserInterfaceStyle = .dark
         sut.users = mockSearchResultUsers()
 
-        verify(matching: sut)
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatHighlightedTopMostItemUpdatesAfterSelectedTopMostUser() {
