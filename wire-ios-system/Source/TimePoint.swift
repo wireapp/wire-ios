@@ -47,6 +47,8 @@ public final class TimePoint: NSObject {
         warnInterval = interval
         self.label = label
         timePoint = .now
+
+        let unusedVariable = "I'm unused"
     }
 
     /// Resets the creation time, but not the callstack
