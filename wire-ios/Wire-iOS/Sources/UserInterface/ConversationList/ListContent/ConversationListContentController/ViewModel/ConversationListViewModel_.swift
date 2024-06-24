@@ -584,13 +584,17 @@ extension ConversationListViewModel_: ConversationDirectoryObserver {
         case .favorites:
             kind = .favorites
         case .folder(let label):
-            kind = .folder(label: label)
+            kind = .folder(
+                label: .init(
+                    remoteIdentifier: label.remoteIdentifier,
+                    name: label.name
+                )
+            )
         case .archived:
             kind = nil
         }
 
         return kind
-
     }
 }
 
@@ -660,81 +664,64 @@ extension ConversationListViewModel_.Section {
         case favorites
 
         /// conversations in folders
-        case folder(label: LabelType)
+        case folder(label: Label)
 
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(identifier)
+        struct Label: Hashable {
+            var remoteIdentifier: UUID?
+            // var kind: Label.Kind
+            var name: String?
         }
 
         var identifier: ConversationListViewModel_.SectionIdentifier {
             switch self {
             case.folder(label: let label):
-                return label.remoteIdentifier?.transportString() ?? "folder"
+                label.remoteIdentifier?.transportString() ?? "folder"
             default:
-                return canonicalName
+                canonicalName
             }
         }
 
         var obfuscatedName: String {
             switch self {
             case .folder:
-                return "user-defined-folder"
+                "user-defined-folder"
 
             default:
-                return canonicalName
+                canonicalName
             }
         }
 
         var canonicalName: String {
             switch self {
             case .contactRequests:
-                return "contactRequests"
+                "contactRequests"
             case .conversations:
-                return "conversations"
+                "conversations"
             case .contacts:
-                return "contacts"
+                "contacts"
             case .groups:
-                return "groups"
+                "groups"
             case .favorites:
-                return "favorites"
+                "favorites"
             case .folder(label: let label):
-                return label.name ?? "folder"
+                label.name ?? "folder"
             }
         }
 
         var localizedName: String? {
             switch self {
             case .conversations:
-                return nil
+                nil
             case .contactRequests:
-                return L10n.Localizable.List.Section.requests
+                L10n.Localizable.List.Section.requests
             case .contacts:
-                return L10n.Localizable.List.Section.contacts
+                L10n.Localizable.List.Section.contacts
             case .groups:
-                return L10n.Localizable.List.Section.groups
+                L10n.Localizable.List.Section.groups
             case .favorites:
-                return L10n.Localizable.List.Section.favorites
+                L10n.Localizable.List.Section.favorites
             case .folder(label: let label):
-                return label.name
-            }
-        }
-
-        static func == (lhs: ConversationListViewModel_.Section.Kind, rhs: ConversationListViewModel_.Section.Kind) -> Bool {
-            switch (lhs, rhs) {
-            case (.conversations, .conversations):
-                return true
-            case (.contactRequests, .contactRequests):
-                return true
-            case (.contacts, .contacts):
-                return true
-            case (.groups, .groups):
-                return true
-            case (.favorites, .favorites):
-                return true
-            case (.folder(let lhsLabel), .folder(let rhsLabel)):
-                return lhsLabel === rhsLabel
-            default:
-                return false
+                label.name
             }
         }
     }
@@ -754,6 +741,7 @@ extension ConversationListViewModel_ {
             self.isFavorite = kind == .favorites
         }
 
+        // TODO: remove
         func hash(into hasher: inout Hasher) {
             hasher.combine(isFavorite)
 
@@ -761,6 +749,7 @@ extension ConversationListViewModel_ {
             hasher.combine(hashableItem)
         }
 
+        // TODO: remove
         static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
             return lhs.isFavorite == rhs.isFavorite &&
                    lhs.item == rhs.item

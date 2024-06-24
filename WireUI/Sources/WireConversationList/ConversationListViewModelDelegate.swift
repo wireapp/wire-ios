@@ -21,13 +21,10 @@ import DifferenceKit
 public protocol ConversationListViewModelDelegate: AnyObject {
 
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem)
-
-    // TODO: make non-optional
-
-    func listViewModelShouldBeReloaded()
-
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateForReloadSectionAt sectionIndex: Int)
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateSectionAt sectionIndex: Int)
+
+    func listViewModelShouldBeReloaded()
 
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,
