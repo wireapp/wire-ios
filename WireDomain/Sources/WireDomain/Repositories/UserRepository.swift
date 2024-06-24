@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 public protocol UserRepositoryProtocol {

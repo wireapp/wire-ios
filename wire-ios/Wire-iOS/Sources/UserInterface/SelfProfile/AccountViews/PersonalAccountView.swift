@@ -49,8 +49,8 @@ final class PersonalAccountView: BaseAccountView {
         }
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversations(inUserSession: userSession)!, userSession: userSession)
-            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession)!, userSession: userSession)
+            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversations(inUserSession: userSession), userSession: userSession)
+            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
 
         self.imageViewContainer.addSubview(userImageView)

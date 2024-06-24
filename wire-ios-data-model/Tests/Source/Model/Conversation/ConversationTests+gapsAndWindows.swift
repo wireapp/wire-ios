@@ -40,7 +40,7 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
-        XCTAssertEqual(conversations.count, 1)
+        XCTAssertEqual(conversations.items.count, 1)
         let fetchedConversation = conversations.items[0]
         XCTAssertEqual(fetchedConversation.conversationType, .group)
         XCTAssertEqual(conversation?.objectID, fetchedConversation.objectID)
