@@ -167,6 +167,7 @@ public final class E2EIService: E2EIServiceInterface {
             certificateChain: certificateChain
         )
 
+        // print("MyTest: \(crlDistributionPoints)")
         if let crlDistributionPoints {
             onNewCRLsDistributionPointsSubject.send(crlDistributionPoints)
         }

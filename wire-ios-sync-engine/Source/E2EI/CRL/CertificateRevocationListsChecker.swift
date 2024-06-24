@@ -86,6 +86,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             !crlExpirationDatesRepository.crlExpirationDateExists(for: $0)
         }
 
+        // print("MyTest newDistributionPoints count: \(newDistributionPoints.count)")
         await checkCertificateRevocationLists(from: newDistributionPoints)
     }
 

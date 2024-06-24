@@ -42,6 +42,7 @@ public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
         publisher.sink { [weak self] distributionPoints in
             let cRLsChecker = self?.cRLsChecker
             Task {
+                // print("MyTest distributionPoints count: \(distributionPoints.urls.count)")
                 await cRLsChecker?.checkNewCRLs(from: distributionPoints)
             }
         }
