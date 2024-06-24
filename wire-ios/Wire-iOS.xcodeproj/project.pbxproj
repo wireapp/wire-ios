@@ -1380,7 +1380,6 @@
 		E9C014EB2BFBCB11002574FC /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EA2BFBCB11002574FC /* PickerView.swift */; };
 		E9C014ED2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */; };
 		E9C014EF2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */; };
-		E9C014F32BFBF17D002574FC /* SnapshotHelper+LightAndDarkMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014F22BFBF17D002574FC /* SnapshotHelper+LightAndDarkMode.swift */; };
 		E9C0B3532B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */; };
 		E9C0B3552B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3542B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift */; };
 		E9C0B3572B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3562B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift */; };
@@ -3469,7 +3468,6 @@
 		E9C014EA2BFBCB11002574FC /* PickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerView.swift; sourceTree = "<group>"; };
 		E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EphemeralKeyboardViewController+UIAlertController.swift"; sourceTree = "<group>"; };
 		E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EphemeralKeyboardViewController+InputBarConversation.swift"; sourceTree = "<group>"; };
-		E9C014F22BFBF17D002574FC /* SnapshotHelper+LightAndDarkMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapshotHelper+LightAndDarkMode.swift"; sourceTree = "<group>"; };
 		E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenamedSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3542B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationNewDeviceSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3562B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCell.swift; sourceTree = "<group>"; };
@@ -8184,7 +8182,6 @@
 			children = (
 				EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */,
 				EF2121992292EEF3006C4293 /* XCTestCase+SnapshotTesting.swift */,
-				E9C014F22BFBF17D002574FC /* SnapshotHelper+LightAndDarkMode.swift */,
 				E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */,
 			);
 			path = SwiftSnapshotTesting;
@@ -10720,7 +10717,6 @@
 				EF05948422DF07240079B8E1 /* XCTestCase+AccentColor.swift in Sources */,
 				2545AEBE2B864253007B5721 /* (null) in Sources */,
 				EF17B0D0223A6692006252A8 /* MediaPreviewViewSnapshotTests.swift in Sources */,
-				E9C014F32BFBF17D002574FC /* SnapshotHelper+LightAndDarkMode.swift in Sources */,
 				EF27CDA020C161500077FE55 /* ClientListViewControllerTests.swift in Sources */,
 				5E62802E22258A120039A8AB /* IncomingRequestFooterTests.swift in Sources */,
 				EF17B0E4223AB9F5006252A8 /* MediaBarSnapshotTests.swift in Sources */,
