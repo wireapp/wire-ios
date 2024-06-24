@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {

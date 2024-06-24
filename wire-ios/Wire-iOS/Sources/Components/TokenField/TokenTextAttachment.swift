@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     let token: Token<NSObjectProtocol>

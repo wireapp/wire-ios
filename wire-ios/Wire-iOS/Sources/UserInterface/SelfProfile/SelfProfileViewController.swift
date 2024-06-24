@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 /// The first page of the user settings.

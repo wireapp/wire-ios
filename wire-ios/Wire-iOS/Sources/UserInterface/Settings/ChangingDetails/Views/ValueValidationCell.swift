@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 /**
  * A cell to show a value validation in the settings.

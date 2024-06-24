@@ -961,6 +961,8 @@
 		017962AB2B853C8600D6C7B6 /* Databases Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Databases Changelog.md"; sourceTree = "<group>"; };
 		0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseRemoteIdentifierUniquenessTests.swift; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
+		017F67952C207EDB00B6E02D /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
+		017F67962C207EDB00B6E02D /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
 		01B6A89E2B16252300E409A0 /* zmessaging2.111.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.111.0.xcdatamodel; sourceTree = "<group>"; };
 		01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-111-0.wiredatabase"; sourceTree = "<group>"; };
@@ -2181,6 +2183,8 @@
 		594EB2FE2B1E31D30022A5CD /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
+				017F67952C207EDB00B6E02D /* AutoMockable.stencil */,
+				017F67962C207EDB00B6E02D /* config.yml */,
 				594EB2FF2B1E31D30022A5CD /* generated */,
 			);
 			path = Sourcery;

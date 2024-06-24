@@ -500,7 +500,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         [handlerGroup enter];
         if (nil != queue) {
             [queue performGroupedBlock:^{
-                ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
+                ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:6 label:label];
                 handler.block(taskIdentifier);
                 [tp warnIfLongerThanInterval];
                 [handlerGroup leave];
@@ -550,7 +550,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                                    self.path,
                                    @(response.HTTPStatus)
                 ];
-                ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
+                ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:6 label:label];
                 handler.block(response);
                 [tp warnIfLongerThanInterval];
                 if (group) {
