@@ -513,7 +513,7 @@ public class MockSelfClientCertificateProviderProtocol: SelfClientCertificatePro
     public var hasCertificate: Bool {
         get async {
             hasCertificateCallsCount += 1
-            if let hasCertificateClosure {
+            if let hasCertificateClosure = hasCertificateClosure {
                 return await hasCertificateClosure()
             } else {
                 return underlyingHasCertificate
@@ -1069,33 +1069,6 @@ public class MockUserProfile: UserProfile {
             return mock
         } else {
             fatalError("no mock for `addObserver`")
-        }
-    }
-
-}
-
-public class MockUserRepositoryProtocol: UserRepositoryProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchSelfUser
-
-    public var fetchSelfUser_Invocations: [Void] = []
-    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
-    public var fetchSelfUser_MockValue: ZMUser?
-
-    public func fetchSelfUser() -> ZMUser {
-        fetchSelfUser_Invocations.append(())
-
-        if let mock = fetchSelfUser_MockMethod {
-            return mock()
-        } else if let mock = fetchSelfUser_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchSelfUser`")
         }
     }
 
