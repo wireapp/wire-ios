@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
