@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A container of conversations used by the `ConversationSearchUseCase`.
+/// A mutable container of conversations used by the `ConversationSearchUseCase`.
 public protocol SearchableConversationContainer {
     associatedtype Conversation: SearchableConversation
 

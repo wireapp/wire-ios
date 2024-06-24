@@ -37,148 +37,6 @@ final class ConversationListViewModel: NSObject {
         didSet { reloadConversationList() }
     }
 
-    fileprivate struct Section<Conversation>: DifferentiableSection
-    where Conversation: ConversationListItem {
-
-        enum Kind: Equatable, Hashable {
-
-            /// for incoming requests
-            case contactRequests
-
-            /// for self pending requests / conversations
-            case conversations
-
-            /// one to one conversations
-            case contacts
-
-            /// group conversations
-            case groups
-
-            /// favorites
-            case favorites
-
-            /// conversations in folders
-            case folder(label: LabelType)
-
-            func hash(into hasher: inout Hasher) {
-                hasher.combine(identifier)
-            }
-
-            var identifier: SectionIdentifier {
-                switch self {
-                case .folder(label: let label):
-                    return label.remoteIdentifier?.transportString() ?? "folder"
-                default:
-                    return canonicalName
-                }
-            }
-
-            var obfuscatedName: String {
-                switch self {
-                case .folder:
-                    return "user-defined-folder"
-
-                default:
-                    return canonicalName
-                }
-            }
-
-            var canonicalName: String {
-                switch self {
-                case .contactRequests:
-                    return "contactRequests"
-                case .conversations:
-                    return "conversations"
-                case .contacts:
-                    return "contacts"
-                case .groups:
-                    return "groups"
-                case .favorites:
-                    return "favorites"
-                case .folder(label: let label):
-                    return label.name ?? "folder"
-                }
-            }
-
-            var localizedName: String? {
-                switch self {
-                case .conversations:
-                    return nil
-                case .contactRequests:
-                    return L10n.Localizable.List.Section.requests
-                case .contacts:
-                    return L10n.Localizable.List.Section.contacts
-                case .groups:
-                    return L10n.Localizable.List.Section.groups
-                case .favorites:
-                    return L10n.Localizable.List.Section.favorites
-                case .folder(label: let label):
-                    return label.name
-                }
-            }
-
-            static func == (lhs: ConversationListViewModel.Section<Conversation>.Kind, rhs: ConversationListViewModel.Section<Conversation>.Kind) -> Bool {
-                switch (lhs, rhs) {
-                case (.conversations, .conversations):
-                    return true
-                case (.contactRequests, .contactRequests):
-                    return true
-                case (.contacts, .contacts):
-                    return true
-                case (.groups, .groups):
-                    return true
-                case (.favorites, .favorites):
-                    return true
-                case (.folder(let lhsLabel), .folder(let rhsLabel)):
-                    return lhsLabel === rhsLabel
-                default:
-                    return false
-                }
-            }
-        }
-
-        var kind: Kind
-        var items: [SectionItem<Conversation>]
-        var collapsed: Bool
-
-        var elements: [SectionItem<Conversation>] {
-            return collapsed ? [] : items
-        }
-
-        /// ref to AggregateArray, we return the first found item's index
-        ///
-        /// - Parameter item: item to search
-        /// - Returns: the index of the item
-        func index(for item: Conversation) -> Int? {
-            return items.firstIndex(of: SectionItem(item: item, kind: kind))
-        }
-
-        func isContentEqual(to source: ConversationListViewModel.Section) -> Bool {
-            return kind == source.kind
-        }
-
-        var differenceIdentifier: String {
-            return kind.identifier
-        }
-
-        init<C>(source: ConversationListViewModel.Section, elements: C)
-        where C: Collection, C.Element == SectionItem<Conversation> {
-            self.kind = source.kind
-            self.collapsed = source.collapsed
-            items = Array(elements)
-        }
-
-        init(
-            kind: Kind,
-            conversationDirectory: ConversationDirectoryType,
-            collapsed: Bool
-        ) {
-            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
-            self.kind = kind
-            self.collapsed = collapsed
-        }
-    }
-
     static let contactRequestsItem: ConversationListConnectRequestsItem = ConversationListConnectRequestsItem()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
@@ -757,6 +615,7 @@ private let log = ZMSLog(tag: "ConversationListViewModel")
 // MARK: - ConversationDirectoryObserver
 
 extension ConversationListViewModel: ConversationDirectoryObserver {
+
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {
 
         if changeInfo.reloaded {
@@ -801,6 +660,138 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
         return kind
 
+    }
+}
+
+extension ConversationListViewModel {
+
+    fileprivate struct Section<Conversation>: DifferentiableSection
+    where Conversation: ConversationListItem {
+
+        var kind: Kind
+        var items: [SectionItem<Conversation>]
+        var collapsed: Bool
+
+        var elements: [SectionItem<Conversation>] {
+            return collapsed ? [] : items
+        }
+
+        /// ref to AggregateArray, we return the first found item's index
+        ///
+        /// - Parameter item: item to search
+        /// - Returns: the index of the item
+        func index(for item: Conversation) -> Int? {
+            return items.firstIndex(of: SectionItem(item: item, kind: kind))
+        }
+
+        func isContentEqual(to source: ConversationListViewModel.Section) -> Bool {
+            return kind == source.kind
+        }
+
+        var differenceIdentifier: String {
+            return kind.identifier
+        }
+
+        init<C>(source: ConversationListViewModel.Section, elements: C)
+        where C: Collection, C.Element == SectionItem<Conversation> {
+            self.kind = source.kind
+            self.collapsed = source.collapsed
+            items = Array(elements)
+        }
+
+        init(
+            kind: Kind,
+            conversationDirectory: ConversationDirectoryType,
+            collapsed: Bool
+        ) {
+            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.kind = kind
+            self.collapsed = collapsed
+        }
+    }
+}
+
+extension ConversationListViewModel.Section {
+
+    typealias Identifier = String
+
+    enum Kind: Hashable {
+
+        struct Label: Hashable {
+            var remoteIdentifier: UUID?
+            var name: String?
+        }
+
+        /// for incoming requests
+        case contactRequests
+
+        /// for self pending requests / conversations
+        case conversations
+
+        /// one to one conversations
+        case contacts
+
+        /// group conversations
+        case groups
+
+        /// favorites
+        case favorites
+
+        /// conversations in folders
+        case folder(label: Label)
+
+        var identifier: ConversationListViewModel.Section.Identifier {
+            switch self {
+            case .folder(label: let label):
+                label.remoteIdentifier?.transportString() ?? "folder"
+            default:
+                canonicalName
+            }
+        }
+
+        var obfuscatedName: String {
+            switch self {
+            case .folder:
+                "user-defined-folder"
+
+            default:
+                canonicalName
+            }
+        }
+
+        var canonicalName: String {
+            switch self {
+            case .contactRequests:
+                "contactRequests"
+            case .conversations:
+                "conversations"
+            case .contacts:
+                "contacts"
+            case .groups:
+                "groups"
+            case .favorites:
+                "favorites"
+            case .folder(label: let label):
+                label.name ?? "folder"
+            }
+        }
+
+        var localizedName: String? {
+            switch self {
+            case .conversations:
+                nil
+            case .contactRequests:
+                L10n.Localizable.List.Section.requests
+            case .contacts:
+                L10n.Localizable.List.Section.contacts
+            case .groups:
+                L10n.Localizable.List.Section.groups
+            case .favorites:
+                L10n.Localizable.List.Section.favorites
+            case .folder(label: let label):
+                label.name
+            }
+        }
     }
 }
 
