@@ -77,7 +77,25 @@ final class UserCellTests: XCTestCase {
         )
         sut.accessoryIconView.isHidden = false
 
-        helper.verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     // MARK: - Snapshot Tests
@@ -217,7 +235,25 @@ final class UserCellTests: XCTestCase {
         sut.configure(with: config, selfUser: user)
 
         // THEN
-        helper.verifyViewInAllColorSchemes(matching: sut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testUserScreenSharingInsideOngoingVideoCall() {
@@ -231,7 +267,26 @@ final class UserCellTests: XCTestCase {
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
 
-        helper.verifyViewInAllColorSchemes(matching: sut)
+        // THEN
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     // MARK: unit test

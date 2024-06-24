@@ -61,14 +61,34 @@ final class GroupConversationCellTests: XCTestCase {
         return groupConversation
     }
 
-    private func verify(conversation: GroupConversationCellConversation,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    private func verify(
+        conversation: GroupConversationCellConversation,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         sut.configure(conversation: conversation)
 
-        helper.verifyViewInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     func testOneToOneConversation() {

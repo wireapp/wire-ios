@@ -51,16 +51,74 @@ final class SecurityLevelViewTests: XCTestCase {
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)
-        helper.verifyViewInAllColorSchemes(matching: sut)
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersWithClassified() {
         sut.configure(with: .classified)
-        helper.verifyViewInAllColorSchemes(matching: sut)
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItDoesNotRenderWithNone() {
         sut.configure(with: .none)
-        helper.verifyViewInAllColorSchemes(matching: sut)
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
+
 }

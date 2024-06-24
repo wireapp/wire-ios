@@ -49,14 +49,50 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .invite
 
-        helper.verifyViewInAllColorSchemes(matching: sut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testForOpenButton() {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .open
 
-        helper.verifyViewInAllColorSchemes(matching: sut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testForOpenButtonWithALongUsername() {
@@ -65,7 +101,25 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = user
         sut.action = .open
 
-        helper.verifyViewInAllColorSchemes(matching: sut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testForNoSubtitle() {
@@ -75,6 +129,25 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = user
         sut.action = .open
 
-        helper.verifyViewInAllColorSchemes(matching: sut)
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
+
 }
