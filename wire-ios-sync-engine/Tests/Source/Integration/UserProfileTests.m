@@ -109,7 +109,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -148,7 +148,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -181,7 +181,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -227,7 +227,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -261,7 +261,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -295,7 +295,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
