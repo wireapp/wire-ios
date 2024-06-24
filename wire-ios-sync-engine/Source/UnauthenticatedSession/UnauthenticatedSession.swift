@@ -143,5 +143,4 @@ extension UnauthenticatedSession: UserInfoParser {
         self.authenticationStatus.authenticationCookieData = userInfo.cookieData
         self.delegate?.session(session: self, createdAccount: account)
     }
-
 }

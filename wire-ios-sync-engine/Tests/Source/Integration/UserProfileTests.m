@@ -100,15 +100,28 @@
     XCTAssertEqual(selfUser.zmAccentColor, accentColor);
 }
 
-@end
+- (BOOL)loginAndRemoveEmail
+{
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail
+                                                                          password:IntegrationTest.SelfUserPassword];
+    BOOL success = [self loginWithCredentials:credentials ignoreAuthenticationFailures:NO];
 
-
-@implementation UserProfileTests (ChangeEmailAndPhoneAtSecondLogin)
+    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
+        NOT_USED(session);
+        self.selfUser.email = nil;
+        self.selfUser.password = nil;
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    return success;
+}
 
 - (void)disable_testThatItCanSetEmailAndPassword
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
+    XCTAssert([self loginAndRemoveEmail]);
     UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
@@ -148,6 +161,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
+    XCTAssert([self loginAndRemoveEmail]);
     UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
@@ -181,6 +195,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
+    XCTAssert([self loginAndRemoveEmail]);
     UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
@@ -226,8 +241,9 @@
 - (void)testThatItNotifiesWhenFailingToSetTheEmailBecauseOfGenericError
 {
     // given
-    NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:@"foobar@geraterwerwer.dsf.example.com"
+                                                                          password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -261,6 +277,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
+    XCTAssert([self loginAndRemoveEmail]);
     UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
@@ -295,6 +312,7 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
+    XCTAssert([self loginAndRemoveEmail]);
     UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
@@ -326,4 +344,3 @@
 }
 
 @end
-
