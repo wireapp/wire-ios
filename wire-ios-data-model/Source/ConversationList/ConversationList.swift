@@ -26,7 +26,7 @@ public final class ConversationList: NSObject {
 
     let identifier: String
     let label: Label?
-    private(set) var items: [ZMConversation]
+    public private(set) var items: [ZMConversation]
     private let conversationKeysAffectingSorting: NSSet
     private var filteringPredicate: NSPredicate
     private let sortDescriptors: [NSSortDescriptor]
