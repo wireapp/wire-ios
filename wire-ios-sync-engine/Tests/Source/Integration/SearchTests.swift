@@ -100,7 +100,7 @@ final class SearchTests: IntegrationTest {
 
         XCTAssertTrue(login())
 
-        let pendingConnections = ConversationList.pendingConnectionConversations(inUserSession: userSession!)
+        let pendingConnections: ConversationList = .pendingConnectionConversations(inUserSession: userSession!)
         XCTAssertEqual(pendingConnections.items.count, 1)
     }
 

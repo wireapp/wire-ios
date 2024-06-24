@@ -142,7 +142,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.0
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
         if: ${{ inputs.wire-ios-system || inputs.all }}
         with:
           results: xcodebuild-wire-ios-system.xcresult

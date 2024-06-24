@@ -38,8 +38,8 @@ class ConversationTests_List: ConversationTestsBase {
         let groupConversation = conversation(for: self.groupConversation)
 
         // then
-        let conversations = ConversationList.conversations(inUserSession: userSession!)
-        XCTAssertEqual(conversations.firstObject as? ZMConversation, extraConversation)
+        let conversations: ConversationList = .conversations(inUserSession: userSession!)
+        XCTAssertEqual(conversations.items.first, extraConversation)
 
         let observer = ConversationListChangeObserver.init(conversationList: conversations)
 
@@ -55,7 +55,7 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(conversations.firstObject as? ZMConversation, groupConversation)
+        XCTAssertEqual(conversations.items.first, groupConversation)
 
         XCTAssertGreaterThanOrEqual(observer!.notifications.count, 1)
 
@@ -78,7 +78,7 @@ class ConversationTests_List: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let conversationList = ConversationList.conversations(inUserSession: userSession!)
+        let conversationList: ConversationList = .conversations(inUserSession: userSession!)
         let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
         _ = conversation1.allMessages // Make sure we've faulted in the messages
         let conversation2 = try XCTUnwrap(conversation(for: self.selfToUser2Conversation))
@@ -97,7 +97,7 @@ class ConversationTests_List: ConversationTestsBase {
         // when
         let observer = ConversationListChangeObserver.init(conversationList: conversationList)
         observer?.clearNotifications()
-        let previousIndex1 = conversationList.index(of: conversation1)
+        let previousIndex1 = try XCTUnwrap(conversationList.items.firstIndex(of: conversation1))
 
         self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText1, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce1)
@@ -108,14 +108,14 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(conversationList[0] as? ZMConversation, conversation1)
+        XCTAssertEqual(conversationList.items[0], conversation1)
         XCTAssertGreaterThanOrEqual(observer!.notifications.count, 1)
         let note1 = observer?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertEqual(note1.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex1), to: 0))
 
         let receivedMessage1 = conversation1.lastMessage
         XCTAssertEqual(receivedMessage1?.textMessageData?.messageText, messageText1)
-        let previousIndex2 = conversationList.index(of: conversation2)
+        let previousIndex2 = try XCTUnwrap(conversationList.items.firstIndex(of: conversation2))
 
         // send second message
         self.mockTransportSession.performRemoteChanges { _ in
@@ -127,14 +127,14 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(conversationList[0] as? ZMConversation, conversation2)
+        XCTAssertEqual(conversationList.items[0], conversation2)
         XCTAssertGreaterThanOrEqual(observer!.notifications.count, 2)
         let note2 = observer?.notifications[1] as! ConversationListChangeInfo
         XCTAssertEqual(note2.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex2), to: 0))
 
         let receivedMessage2 = conversation2.lastMessage
         XCTAssertEqual(receivedMessage2?.textMessageData?.messageText, messageText2)
-        let previousIndex3 = conversationList.index(of: conversation1)
+        let previousIndex3 = try XCTUnwrap(conversationList.items.firstIndex(of: conversation1))
 
         // send first message again
 
@@ -147,7 +147,7 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(conversationList[0] as? ZMConversation, conversation1)
+        XCTAssertEqual(conversationList.items[0], conversation1)
         XCTAssertGreaterThanOrEqual(observer!.notifications.count, 3)
         let note3 = observer?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertEqual(note3.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex3), to: 0))
@@ -156,11 +156,11 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertEqual(receivedMessage3?.textMessageData?.messageText, messageText3)
     }
 
-    func testThatReceivingAPingInAConversationThatIsNotAtTheTopBringsItToTheTop() {
+    func testThatReceivingAPingInAConversationThatIsNotAtTheTopBringsItToTheTop() throws {
         // given
         XCTAssertTrue(login())
 
-        let conversationList = ConversationList.conversations(inUserSession: userSession!)
+        let conversationList: ConversationList = .conversations(inUserSession: userSession!)
         let conversationListChangeObserver = ConversationListChangeObserver.init(conversationList: conversationList)
 
         let oneToOneConversation = conversation(for: self.selfToUser1Conversation)
@@ -175,9 +175,9 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         conversationListChangeObserver?.clearNotifications()
-        XCTAssertNotEqual(oneToOneConversation, conversationList[0] as? ZMConversation) // make sure conversation is not on top
+        XCTAssertNotEqual(oneToOneConversation, conversationList.items[0]) // make sure conversation is not on top
 
-        let oneToOneIndex = conversationList.index(of: oneToOneConversation!)
+        let oneToOneIndex = try XCTUnwrap(conversationList.items.firstIndex(of: oneToOneConversation!))
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
@@ -190,7 +190,7 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(oneToOneConversation, conversationList[0] as? ZMConversation) // make sure conversation is not on top
+        XCTAssertEqual(oneToOneConversation, conversationList.items[0]) // make sure conversation is not on top
         let note = conversationListChangeObserver?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertNotNil(note)
 
