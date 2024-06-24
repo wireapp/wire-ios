@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class UserCellTests: BaseSnapshotTestCase {
+final class UserCellTests: XCTestCase {
 
     // MARK: - Properties
 

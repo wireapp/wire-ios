@@ -18,6 +18,8 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning connections.
 public protocol ConnectionsAPI {
 
     /// Fetch all connections .

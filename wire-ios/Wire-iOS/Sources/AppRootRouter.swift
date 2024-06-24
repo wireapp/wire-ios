@@ -227,7 +227,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             )
         case .headless:
             showLaunchScreen(completion: completion)
-        case .loading(account: let toAccount, from: let fromAccount):
+        case .loading:
             completion()
         case let .locked(userSession):
             screenCurtain.userSession = userSession
@@ -417,7 +417,7 @@ extension AppRootRouter {
             return
         }
 
-        TrackingManager.shared.disableCrashSharing = true
+        TrackingManager.shared.disableCrashSharing = false
         TrackingManager.shared.disableAnalyticsSharing = false
         Analytics.shared.provider?.selfUser = selfUser
     }
@@ -429,20 +429,10 @@ extension AppRootRouter {
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
-        let isTeamMember: Bool
-        if let user = SelfUser.provider?.providedSelfUser {
-            isTeamMember = user.isTeamMember
-        } else {
-            assertionFailure("expected available 'user'!")
-            isTeamMember = false
-        }
-
-        let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
             userSession: userSession,
-            needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
@@ -535,14 +525,30 @@ extension AppRootRouter {
 
         switch reason {
         case .sessionExpired:
-            rootViewController.presentAlertWithOKButton(
+            let alert = UIAlertController(
                 title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
-                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message)
+                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
+
+            rootViewController.present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
-            rootViewController.presentAlertWithOKButton(
+            let alert = UIAlertController(
                 title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
-                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message)
+                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel
+            ))
+
+            rootViewController.present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
@@ -612,7 +618,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         NSAttributedString.invalidateParagraphStyle()
         NSAttributedString.invalidateMarkdownStyle()
         ConversationListCell.invalidateCachedCellSize()
-        FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
+        FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
         rootViewController.redrawAllFonts()
     }

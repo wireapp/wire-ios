@@ -25,6 +25,10 @@ on:
         type: boolean
         default: false
         required: false
+      wire-domain:
+          type: boolean
+          default: false
+          required: false
       wire-ios-transport:
         type: boolean
         default: false
@@ -115,12 +119,10 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-      - name: Restore Bundler Cache
-        uses: actions/cache@v3
-        id: cache-bundler
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+          bundler-cache: true
 
       - name: Setup workspace
         run: |
@@ -239,6 +241,16 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
           
+      
+      - name: Test WireDomain
+        if: ${{ inputs.wire-domain || inputs.all }}
+        run: |
+          echo "WireDomain has changes"
+          echo "Building WireDomain..."
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
+          echo "Testing WireDomain..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
+          exit ${PIPESTATUS[0]}
       - name: Test WireRequestStrategy
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         run: |

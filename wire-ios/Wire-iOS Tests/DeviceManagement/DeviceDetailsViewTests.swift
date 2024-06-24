@@ -17,12 +17,12 @@
 //
 
 import SwiftUI
-@testable import Wire
 import WireRequestStrategySupport
-import WireSyncEngineSupport
 import XCTest
 
-final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+@testable import Wire
+
+final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()
@@ -68,7 +68,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
 
-        let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        let emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 
         let deviceActionsHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
@@ -90,9 +90,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: deviceActionsHandler
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient

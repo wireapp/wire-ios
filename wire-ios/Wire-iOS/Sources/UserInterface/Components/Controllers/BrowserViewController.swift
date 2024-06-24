@@ -18,6 +18,7 @@
 
 import Foundation
 import SafariServices
+import WireDesign
 
 final class BrowserViewController: SFSafariViewController {
 

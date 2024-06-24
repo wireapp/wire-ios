@@ -25,15 +25,9 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     let httpClient: HTTPClient
-    let fetchLimit: Int
 
-    convenience init(httpClient: HTTPClient) {
-        self.init(httpClient: httpClient, batchSize: Constants.batchSize)
-    }
-
-    init(httpClient: HTTPClient, batchSize: Int) {
+    init(httpClient: HTTPClient) {
         self.httpClient = httpClient
-        self.fetchLimit = Constants.batchSize
     }
 
     var apiVersion: APIVersion {
@@ -111,7 +105,7 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     let qualifiedTo: QualifiedID?
     let conversationID: UUID?
     let qualifiedConversationID: QualifiedID?
-    let lastUpdate: Date
+    let lastUpdate: UTCTimeMillis
     let status: ConnectionStatus
 
     func toAPIModel() -> Connection {
@@ -121,7 +115,7 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
             receiverQualifiedId: qualifiedTo,
             conversationId: conversationID,
             qualifiedConversationId: qualifiedConversationID,
-            lastUpdate: lastUpdate,
+            lastUpdate: lastUpdate.date,
             status: status
         )
     }

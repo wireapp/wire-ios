@@ -19,6 +19,7 @@
 import SafariServices
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {

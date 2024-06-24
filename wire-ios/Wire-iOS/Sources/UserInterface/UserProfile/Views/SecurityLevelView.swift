@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class SecurityLevelView: UIView {
@@ -194,8 +195,6 @@ private struct SecurityLevelViewRepresentable: UIViewRepresentable {
     @State var classification: SecurityClassification?
 
     func makeUIView(context: Context) -> SecurityLevelView {
-        FontScheme.configure(with: .large)
-
         let view = SecurityLevelView()
         view.configure(with: classification)
         return view

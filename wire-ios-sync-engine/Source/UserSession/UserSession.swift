@@ -116,7 +116,11 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: SelfUserType { get }
+    var selfUser: any UserType { get }
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable { get }
+
+    var editableSelfUser: any UserType & EditableUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -246,6 +250,10 @@ public protocol UserSession: AnyObject {
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
+
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

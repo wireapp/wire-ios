@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arsip";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Percakapan dimulai di sini";
@@ -1041,6 +1043,7 @@
 "self.add_email_password" = "Tambahkan alamat email dan sandi";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Aturan Penggunaan";
 "about.privacy.title" = "Kebijakan Privasi";
 "about.license.title" = "Informasi Lisensi";

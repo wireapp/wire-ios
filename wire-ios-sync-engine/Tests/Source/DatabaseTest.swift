@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTesting
 
 class DatabaseTest: ZMTBaseTest {
 
@@ -46,7 +47,8 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.randomCacheURL!
+
     }
 
     private func cleanUp() {
@@ -76,7 +78,7 @@ class DatabaseTest: ZMTBaseTest {
         uiMOC.zm_fileAssetCache = fileAssetCache
         uiMOC.zm_userImageCache = userImageCache
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.zm_fileAssetCache = fileAssetCache
             self.uiMOC.zm_userImageCache = userImageCache
         }

@@ -646,7 +646,7 @@ extension AuthenticationCoordinator {
 
             switch request {
             case .email(let address, let password):
-                let credentials = ZMEmailCredentials(email: address, password: password)
+                let credentials = UserEmailCredentials(email: address, password: password)
                 self?.presenter?.isLoadingViewVisible = true
                 self?.stateController.transition(to: .authenticateEmailCredentials(credentials))
                 self?.unauthenticatedSession.login(with: credentials)
@@ -677,7 +677,7 @@ extension AuthenticationCoordinator {
         unauthenticatedSession.requestEmailVerificationCodeForLogin(email: email)
     }
 
-    private func requestEmailLogin(with credentials: ZMEmailCredentials) {
+    private func requestEmailLogin(with credentials: UserEmailCredentials) {
         presenter?.isLoadingViewVisible = true
         stateController.transition(to: .authenticateEmailCredentials(credentials))
         unauthenticatedSession.login(with: credentials)
@@ -705,7 +705,7 @@ extension AuthenticationCoordinator {
     private func continueFlow(withVerificationCode code: String) {
         switch stateController.currentStep {
         case .enterEmailVerificationCode(let email, let password, _):
-            let credentials = ZMEmailCredentials(email: email, password: password, emailVerificationCode: code)
+            let credentials = UserEmailCredentials(email: email, password: password, emailVerificationCode: code)
             requestEmailLogin(with: credentials)
         case .enterActivationCode(let unverifiedEmail, let user):
             activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
@@ -717,7 +717,7 @@ extension AuthenticationCoordinator {
     // MARK: - Add Email And Password
 
     /// Sets th e-mail and password credentials for the current user.
-    private func setEmailCredentialsForCurrentUser(_ credentials: ZMEmailCredentials) {
+    private func setEmailCredentialsForCurrentUser(_ credentials: UserEmailCredentials) {
         guard case .addEmailAndPassword = stateController.currentStep else {
             log.error("Cannot save e-mail and password outside of designated step.")
             return
@@ -740,7 +740,7 @@ extension AuthenticationCoordinator {
     }
 
     @discardableResult
-    private func setCredentialsWithProfile(_ profile: UserProfile, credentials: ZMEmailCredentials) -> Bool {
+    private func setCredentialsWithProfile(_ profile: UserProfile, credentials: UserEmailCredentials) -> Bool {
         do {
             try profile.requestSettingEmailAndPassword(credentials: credentials)
             return true
@@ -882,6 +882,9 @@ extension AuthenticationCoordinator {
                     }
                     executeAction(.presentAlert(alert))
                 }
+            } catch {
+                WireLogger.authentication.error("failed to update MLS migration status: \(error)")
+                assertionFailure(String(reflecting: error))
             }
         }
     }
