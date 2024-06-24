@@ -39,22 +39,65 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
     }
 
     func testWarningThatAppLockIsActive() {
-        helper.verifyInAllColorSchemes(createSut: {
-            AppLockChangeWarningViewController(
+        let createSut: () -> UIViewController = {
+            return AppLockChangeWarningViewController(
                 isAppLockActive: true,
-                userSession: userSession
+                userSession: self.userSession
             )
-        })
+        }
 
+        let sut = createSut()
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+            matching: sut,
+            named: "LightTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+            matching: sut,
+            named: "DarkTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
     }
 
     func testWarningThatAppLockIsNotActive() {
-        helper.verifyInAllColorSchemes(createSut: {
-            AppLockChangeWarningViewController(
+        let createSut: () -> UIViewController = {
+            return AppLockChangeWarningViewController(
                 isAppLockActive: false,
-                userSession: userSession
+                userSession: self.userSession
             )
-        })
+        }
+
+        let sut = createSut()
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+            matching: sut,
+            named: "LightTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+            matching: sut,
+            named: "DarkTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
     }
 
 }
