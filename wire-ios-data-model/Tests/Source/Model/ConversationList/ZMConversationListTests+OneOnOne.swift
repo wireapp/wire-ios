@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
@@ -65,8 +66,7 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
         )
 
         // Then
-        let results = try XCTUnwrap(sut as? [ZMConversation])
-        XCTAssertEqual(Set(results), [oneOnOneConversation, fakeOneOnOne, unconnectedConversation])
+        XCTAssertEqual(Set(sut.items), [oneOnOneConversation, fakeOneOnOne, unconnectedConversation])
     }
 
     func testThatItDoesNotReturnNonOneOnOneConversations() throws {
@@ -99,8 +99,6 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
         )
 
         // Then
-        let results = try XCTUnwrap(sut as? [ZMConversation])
-        XCTAssertEqual(results, [])
+        XCTAssertEqual(sut.items, [])
     }
-
 }
