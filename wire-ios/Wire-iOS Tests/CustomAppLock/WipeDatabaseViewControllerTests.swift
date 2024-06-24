@@ -26,7 +26,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: WipeDatabaseViewController!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - tearDown
 
@@ -50,7 +50,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
         }
 
         let sut = createSut()
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

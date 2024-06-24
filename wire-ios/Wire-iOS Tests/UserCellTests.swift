@@ -29,7 +29,7 @@ final class UserCellTests: XCTestCase {
     private var teamID = UUID()
     private var conversation: MockGroupDetailsConversation!
     private var mockUser: MockUserType!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -77,7 +77,7 @@ final class UserCellTests: XCTestCase {
         )
         sut.accessoryIconView.isHidden = false
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -87,7 +87,7 @@ final class UserCellTests: XCTestCase {
                 line: line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -235,7 +235,7 @@ final class UserCellTests: XCTestCase {
         sut.configure(with: config, selfUser: user)
 
         // THEN
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -245,7 +245,7 @@ final class UserCellTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -268,7 +268,7 @@ final class UserCellTests: XCTestCase {
         sut.configure(with: config, selfUser: user)
 
         // THEN
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -278,7 +278,7 @@ final class UserCellTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

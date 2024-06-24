@@ -30,7 +30,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     private var selfUser: MockUserType!
     private var otherUser: MockUserType!
 
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: setUp
 
@@ -88,7 +88,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
 
         let sut = createSut()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -98,7 +98,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -113,7 +113,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         createSUT()
         sut.users = mockSearchResultUsers()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

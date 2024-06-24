@@ -24,7 +24,7 @@ final class GroupConversationCellTests: XCTestCase {
 
     private var sut: GroupConversationCell!
     private var otherUser: MockUserType!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -70,7 +70,7 @@ final class GroupConversationCellTests: XCTestCase {
 
         sut.configure(conversation: conversation)
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -80,7 +80,7 @@ final class GroupConversationCellTests: XCTestCase {
                 line: line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

@@ -28,7 +28,7 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -52,7 +52,7 @@ final class SecurityLevelViewTests: XCTestCase {
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -62,7 +62,7 @@ final class SecurityLevelViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -76,7 +76,7 @@ final class SecurityLevelViewTests: XCTestCase {
     func testThatItRendersWithClassified() {
         sut.configure(with: .classified)
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -86,7 +86,7 @@ final class SecurityLevelViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -100,7 +100,7 @@ final class SecurityLevelViewTests: XCTestCase {
     func testThatItDoesNotRenderWithNone() {
         sut.configure(with: .none)
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -110,7 +110,7 @@ final class SecurityLevelViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

@@ -26,7 +26,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var userSession: UserSessionMock!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -48,7 +48,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
 
         let sut = createSut()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
             matching: sut,
@@ -58,7 +58,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
             line: #line
         )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
             matching: sut,
@@ -79,7 +79,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
 
         let sut = createSut()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
             matching: sut,
@@ -89,7 +89,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
             line: #line
         )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
             matching: sut,

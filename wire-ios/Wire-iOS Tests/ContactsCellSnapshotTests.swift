@@ -26,7 +26,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: ContactsCell!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -49,7 +49,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .invite
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -59,7 +59,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -74,7 +74,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = SwiftMockLoader.mockUsers()[0]
         sut.action = .open
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -84,7 +84,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -101,7 +101,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = user
         sut.action = .open
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -111,7 +111,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -129,7 +129,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
         sut.user = user
         sut.action = .open
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -139,7 +139,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

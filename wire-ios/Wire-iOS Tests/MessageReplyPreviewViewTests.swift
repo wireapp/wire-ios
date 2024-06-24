@@ -40,7 +40,7 @@ extension UIView {
 
 final class MessageReplyPreviewViewTests: XCTestCase {
 
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - tearDown
 
@@ -62,7 +62,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         let sut = message.replyPreview()!.prepareForSnapshot()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -72,7 +72,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -87,7 +87,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "😀🌮")
         let sut = message.replyPreview()!.prepareForSnapshot()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -97,7 +97,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -111,7 +111,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     func testThatItRendersMention() {
         let sut = mentionMessage().replyPreview()!.prepareForSnapshot()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -121,7 +121,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -136,7 +136,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed.")
         let sut = message.replyPreview()!.prepareForSnapshot()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -146,7 +146,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -161,7 +161,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let message = MockMessageFactory.fileTransferMessage()
         let sut = message.replyPreview()!.prepareForSnapshot()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -171,7 +171,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -186,7 +186,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let message = MockMessageFactory.locationMessage()
         let sut = message.replyPreview()!.prepareForSnapshot()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -196,7 +196,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
@@ -221,7 +221,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let previewView = message.replyPreview()!
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: previewView.prepareForSnapshot(),
@@ -231,7 +231,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: previewView.prepareForSnapshot(),
@@ -249,7 +249,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let previewView = try XCTUnwrap(message.replyPreview())
         XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: previewView.prepareForSnapshot(),
@@ -259,7 +259,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: previewView.prepareForSnapshot(),
@@ -278,7 +278,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let previewView = message.replyPreview()!
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: previewView.prepareForSnapshot(),
@@ -288,7 +288,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: previewView.prepareForSnapshot(),

@@ -42,7 +42,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     private var userSession: UserSessionMock!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -81,7 +81,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
         let sut = createSut()
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -91,7 +91,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

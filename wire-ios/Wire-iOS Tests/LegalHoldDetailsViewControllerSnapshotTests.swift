@@ -28,7 +28,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     private var sut: LegalHoldDetailsViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
-    private let helper = SnapshotHelper()
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -73,7 +73,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut(),
@@ -83,7 +83,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut(),
@@ -109,7 +109,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         let sut = createSut()
 
         // THEN
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -119,7 +119,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
 
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
