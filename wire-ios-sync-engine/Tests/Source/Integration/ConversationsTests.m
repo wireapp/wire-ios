@@ -35,7 +35,7 @@
 @implementation ZMConversationList (ObjectIDs)
 
 - (NSArray <NSManagedObjectID *> *)objectIDs {
-    return [self mapWithBlock:^NSManagedObjectID *(ZMConversation *conversation) {
+    return [[self items] mapWithBlock:^NSManagedObjectID *(ZMConversation *conversation) {
         return conversation.objectID;
     }];
 }
@@ -314,7 +314,7 @@
     ZMConversation *newConv = [self conversationForMockConversation:groupConversation];
     ZMUser *user = [self userForMockUser:self.selfUser];
 
-    XCTAssertEqualObjects(conversationList.firstObject, newConv);
+    XCTAssertEqualObjects(conversationList.items.firstObject, newConv);
     XCTAssertTrue([newConv.localParticipants containsObject:user]);
 }
 
@@ -354,10 +354,10 @@
     
     ZMConversationList *pending = [ZMConversationList pendingConnectionConversationsInUserSession:self.userSession];
     XCTAssertEqual(pending.count, 1u);
-    ZMConversation *pendingConnversation = pending.lastObject;
+    ZMConversation *pendingConnversation = pending.items.lastObject;
 
     ZMConversationList *activeConversations = [ZMConversationList conversationsInUserSession:self.userSession];
-    NSUInteger activeCount = activeConversations.count;
+    NSUInteger activeCount = activeConversations.items.count;
     ConversationListChangeObserver *activeObserver = [[ConversationListChangeObserver alloc] initWithConversationList:activeConversations];
     ConversationListChangeObserver *pendingObserver = [[ConversationListChangeObserver alloc] initWithConversationList:pending];
     
@@ -367,10 +367,10 @@
 
     //then
     XCTAssertEqual(pending.count, 0u);
-    XCTAssertEqual(activeConversations.count, activeCount + 1u);
-    XCTAssertTrue([activeConversations containsObject:pendingConnversation]);
-    XCTAssertEqualObjects(activeConversations.firstObject, pendingConnversation);
-    
+    XCTAssertEqual(activeConversations.items.count, activeCount + 1u);
+    XCTAssertTrue([activeConversations.items containsObject:pendingConnversation]);
+    XCTAssertEqualObjects(activeConversations.items.firstObject, pendingConnversation);
+
     NSInteger deletionsCount = 0;
     for (ConversationListChangeInfo *note in pendingObserver.notifications) {
         deletionsCount += note.deletedIndexes.count;
@@ -622,8 +622,8 @@
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
 
     ZMConversationList *active = [ZMConversationList conversationsInUserSession:self.userSession];
-    XCTAssertEqual(active.count, 5u);
-    XCTAssertTrue([active containsObject:conversation]);
+    XCTAssertEqual(active.items.count, 5u);
+    XCTAssertTrue([active.items containsObject:conversation]);
 
     ConversationListChangeObserver *observer = [[ConversationListChangeObserver alloc] initWithConversationList:active];
     
@@ -635,8 +635,8 @@
     XCTAssertTrue(user1.isBlocked);
     XCTAssertEqual(user1.connection.status, ZMConnectionStatusBlocked);
 
-    XCTAssertEqual(active.count, 4u);
-    XCTAssertFalse([active containsObject:conversation]);
+    XCTAssertEqual(active.items.count, 4u);
+    XCTAssertFalse([active.items containsObject:conversation]);
     (void)observer;
 }
 

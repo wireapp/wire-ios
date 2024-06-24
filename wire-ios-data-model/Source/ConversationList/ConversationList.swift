@@ -166,7 +166,7 @@ public final class ConversationList: NSObject {
         shortDescription() + "\n" + super.description
     }
 
-    func resort() {
+    public func resort() {
         let backingList = NSMutableArray(array: backingList)
         backingList.sort(comparator: comparator)
         self.backingList = backingList as! [ZMConversation]
