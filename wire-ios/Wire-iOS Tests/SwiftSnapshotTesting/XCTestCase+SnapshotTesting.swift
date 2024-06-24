@@ -232,6 +232,7 @@ extension XCTestCase {
         }
     }
 
+    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIViewController,
                 customSize: CGSize? = nil,
                 named name: String? = nil,
@@ -259,6 +260,7 @@ extension XCTestCase {
         XCTAssertNil(failure, file: file, line: line)
     }
 
+    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIView,
                 named name: String? = nil,
                 file: StaticString = #file,
@@ -274,7 +276,6 @@ extension XCTestCase {
                                      line: line)
 
         XCTAssertNil(failure, file: file, line: line)
-
     }
 
     func verify(matching value: UIImage,
