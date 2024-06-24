@@ -62,7 +62,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         let users: [MockUserType] = (0..<20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
-
             return user
         }
 
@@ -80,7 +79,27 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             return sut.wrapInNavigationController()
         }
 
-        helper.verifyInAllColorSchemes(createSut: createSut)
+        let sut = createSut()
+
+        helper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        helper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersALotOfUsers_WithoutNames() {
