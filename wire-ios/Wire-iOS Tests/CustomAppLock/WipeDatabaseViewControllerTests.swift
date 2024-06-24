@@ -28,13 +28,6 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
     private var sut: WipeDatabaseViewController!
     private let helper = SnapshotHelper()
 
-    // MARK: - setUp
-
-    override func setUp() {
-        super.setUp()
-        FontScheme.configure(with: .large)
-    }
-
     // MARK: - tearDown
 
     override func tearDown() {

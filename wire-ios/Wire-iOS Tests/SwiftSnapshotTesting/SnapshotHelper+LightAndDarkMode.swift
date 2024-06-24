@@ -172,31 +172,4 @@ extension SnapshotHelper {
         )
     }
 
-    /// Verifies the appearance of a view in light mode.
-    ///
-    /// - Parameters:
-    ///   - createSut: A closure that creates and returns the view to be tested.
-    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
-    ///   - file: The invoking file name.
-    ///   - testName: The name of the reference image.
-    ///   - line: The invoking line number.
-
-    func verifyViewInLightScheme(
-        createSut: () -> UIView,
-        name: String? = nil,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-        verify(
-            matching: createSut(),
-            named: name,
-            file: file,
-            testName: testName,
-            line: line
-        )
-    }
-
 }

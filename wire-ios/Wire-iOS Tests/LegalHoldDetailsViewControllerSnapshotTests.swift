@@ -34,7 +34,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType

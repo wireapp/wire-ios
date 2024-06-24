@@ -138,6 +138,72 @@ struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
+    /// Verifies a `UIViewController`.
+    ///
+    /// - Parameters:
+    ///   - value: The `UIViewController` to test.
+    ///   - size: An optional `CGSize` to specify a custom size for the snapshot. Defaults to `nil`.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - recording: A `Bool` indicating whether to record a new reference snapshot. Defaults to `false`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
+
+    func verify(
+        matching value: UIViewController,
+        size: CGSize? = nil,
+        named name: String? = nil,
+        record recording: Bool = false,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
+
+        let failure = verifySnapshot(
+            matching: value,
+            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            named: name,
+            record: recording,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
+
+        XCTAssertNil(failure, file: file, line: line)
+    }
+
+    ///    Verifiy a`UIView`.
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIView` to test.
+    ///        - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    func verify(
+        matching value: UIView,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+
+        let failure = verifySnapshot(
+            matching: value,
+            as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            named: name,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
+
+        XCTAssertNil(failure, file: file, line: line)
+    }
+
     /// Verifies that a given `UIView` renders correctly across all supported Dynamic Type content size categories.
     ///
     /// - Parameters:

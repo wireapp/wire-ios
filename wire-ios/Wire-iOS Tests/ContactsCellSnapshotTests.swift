@@ -32,7 +32,6 @@ final class ContactsCellSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
         XCTestCase.accentColor = .blue
         sut = ContactsCell()
     }
