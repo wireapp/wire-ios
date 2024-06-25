@@ -155,10 +155,11 @@ final class SearchResultsViewController: UIViewController {
     let federationSection = FederationSectionController()
 
     lazy var topPeopleSection: TopPeopleSectionController = {
-        let userSession = (userSession as? ZMUserSession)
+        let zmUserSession = (userSession as? ZMUserSession)
 
         return TopPeopleSectionController(
-            topConversationsDirectory: userSession?.topConversationsDirectory
+            topConversationsDirectory: zmUserSession?.topConversationsDirectory,
+            userSession: userSession
         )
     }()
 
