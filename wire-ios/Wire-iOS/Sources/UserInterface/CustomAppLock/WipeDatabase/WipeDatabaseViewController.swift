@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol WipeDatabaseUserInterface: AnyObject {
     func presentConfirmAlert()

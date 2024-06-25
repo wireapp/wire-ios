@@ -41,8 +41,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
             mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
             isFromConversation: false,
             actionsHandler: mockDeviceActionsHandler,
-            conversationClientDetailsActions: mockConversationUserClientDetailsActions,
-            isDebugMenuAvailable: false
+            conversationClientDetailsActions: mockConversationUserClientDetailsActions
         )
     }
 
