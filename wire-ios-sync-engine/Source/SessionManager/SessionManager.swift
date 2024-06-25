@@ -945,7 +945,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
                 let userSession = self.startBackgroundSession(
                     for: account,
-                    analyticsSessionConfiguration: analyticsSessionConfiguration,
                     with: coreDataStack
                 )
 
@@ -1069,7 +1068,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     // Creates the user session for @c account given, calls @c completion when done.
     private func startBackgroundSession(
         for account: Account,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         with coreDataStack: CoreDataStack
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
