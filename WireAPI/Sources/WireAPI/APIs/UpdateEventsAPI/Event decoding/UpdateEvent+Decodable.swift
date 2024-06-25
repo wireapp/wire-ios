@@ -24,24 +24,31 @@ extension UpdateEvent: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let eventType = try container.decode(String.self, forKey: .eventType)
 
-        switch UpdateEventType(eventType) {
-        case .conversation(let eventType):
-            try self.init(eventType: eventType, from: decoder)
+        do {
+            switch UpdateEventType(eventType) {
+            case .conversation(let eventType):
+                try self.init(eventType: eventType, from: decoder)
 
-        case .featureConfig(let eventType):
-            try self.init(eventType: eventType, from: decoder)
+            case .featureConfig(let eventType):
+                try self.init(eventType: eventType, from: decoder)
 
-        case .federation(let eventType):
-            try self.init(eventType: eventType, from: decoder)
+            case .federation(let eventType):
+                try self.init(eventType: eventType, from: decoder)
 
-        case .user(let eventType):
-            try self.init(eventType: eventType, from: decoder)
+            case .user(let eventType):
+                try self.init(eventType: eventType, from: decoder)
 
-        case .team(let eventType):
-            try self.init(eventType: eventType, from: decoder)
+            case .team(let eventType):
+                try self.init(eventType: eventType, from: decoder)
 
-        case .unknown(let eventType):
-            self = .unknown(eventType: eventType)
+            case .unknown(let eventType):
+                self = .unknown(eventType: eventType)
+            }
+        } catch {
+            throw UpdateEventDecodingError(
+                eventType: eventType,
+                decodingError: error
+            )
         }
     }
 

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDescription {
 

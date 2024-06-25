@@ -34,7 +34,7 @@ class FakeGroupQueue: NSObject, ZMSGroupQueue {
 
 // MARK: - Tests
 
-class PushNotificationStatusTests: MessagingTestBase {
+final class PushNotificationStatusTests: MessagingTestBase {
 
     var sut: PushNotificationStatus!
     var lastEventIDRepository: LastEventIDRepository!

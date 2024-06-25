@@ -53,23 +53,23 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         let clientId = "222"
         try await createSelfClient(clientId: clientId)
         let expectation = XCTestExpectation(description: "should call deleteUserClient")
-        userClientAPI.deleteUserClientClientIdCredentials_MockMethod = {_, _ in
+        userClientAPI.deleteUserClientClientIdPassword_MockMethod = {_, _ in
             // Then
             expectation.fulfill()
         }
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
         // When
-        try await sut.invoke(clientId: clientId, credentials: EmailCredentials(email: "", password: ""))
+        try await sut.invoke(clientId: clientId, password: "")
     }
 
     func testThatItDoesNotRemoveUserClient_WhenClientDoesNotExistLocally() async throws {
         // Given
-        userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
+        userClientAPI.deleteUserClientClientIdPassword_MockMethod = { _, _ in }
 
         // When / Then
         await assertItThrows(error: RemoveUserClientError.clientDoesNotExistLocally) {
-            try await sut.invoke(clientId: "", credentials: EmailCredentials(email: "", password: ""))
+            try await sut.invoke(clientId: "", password: "")
         }
     }
 
@@ -77,12 +77,12 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         // Given
         let clientId = "222"
         try await createSelfClient(clientId: clientId)
-        userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
-        userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.clientToDeleteNotFound
+        userClientAPI.deleteUserClientClientIdPassword_MockMethod = { _, _ in }
+        userClientAPI.deleteUserClientClientIdPassword_MockError = RemoveUserClientError.clientToDeleteNotFound
 
         // When / Then
         await assertItThrows(error: RemoveUserClientError.clientToDeleteNotFound) {
-            try await sut.invoke(clientId: clientId, credentials: EmailCredentials(email: "", password: ""))
+            try await sut.invoke(clientId: clientId, password: "")
         }
     }
 
@@ -90,12 +90,12 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         // Given
         let clientId = "222"
         try await createSelfClient(clientId: clientId)
-        userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
-        userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.invalidCredentials
+        userClientAPI.deleteUserClientClientIdPassword_MockMethod = { _, _ in }
+        userClientAPI.deleteUserClientClientIdPassword_MockError = RemoveUserClientError.invalidCredentials
 
         // When / Then
         await assertItThrows(error: RemoveUserClientError.invalidCredentials) {
-            try await sut.invoke(clientId: clientId, credentials: EmailCredentials(email: "", password: ""))
+            try await sut.invoke(clientId: clientId, password: "")
         }
     }
 

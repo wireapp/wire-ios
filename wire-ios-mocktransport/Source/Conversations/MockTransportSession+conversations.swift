@@ -25,7 +25,7 @@ extension MockTransportSession {
     public func fetchConversation(with identifier: String) -> MockConversation? {
         let request = MockConversation.sortedFetchRequest()
         request.predicate = NSPredicate(format: "identifier == %@", identifier.lowercased())
-        let conversations = managedObjectContext.executeFetchRequestOrAssert(request) as? [MockConversation]
+        let conversations = try! managedObjectContext.fetch(request) as? [MockConversation]
         return conversations?.first
     }
 
@@ -318,7 +318,7 @@ extension MockTransportSession {
     private func fetchConversation(selfUserIdentifier: String) -> MockConversation? {
         let request = MockConversation.sortedFetchRequest()
         request.predicate = NSPredicate(format: "selfIdentifier == %@", selfUserIdentifier.lowercased())
-        let conversations = managedObjectContext.executeFetchRequestOrAssert(request) as? [MockConversation]
+        let conversations = try! managedObjectContext.fetch(request) as? [MockConversation]
         return conversations?.first
     }
 }

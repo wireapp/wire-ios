@@ -29,6 +29,8 @@
 - (void)leave;
 - (void)notifyOnQueue:(dispatch_queue_t _Nonnull)queue block:(dispatch_block_t _Nonnull)block;
 - (long)waitWithTimeout:(dispatch_time_t)timeout;
+- (long)waitWithDeltaFromNow:(unsigned long long)nanoseconds;
+- (long)waitWithTimeoutForever;
 - (long)waitForInterval:(NSTimeInterval)timeout;
 - (void)asyncOnQueue:(dispatch_queue_t _Nonnull)queue block:(dispatch_block_t _Nonnull)block;
 

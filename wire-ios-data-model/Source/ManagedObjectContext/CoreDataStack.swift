@@ -19,6 +19,7 @@
 import CoreData
 import Foundation
 import WireSystem
+import WireUtilities
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
@@ -45,7 +46,6 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
-
 }
 
 extension URL {
@@ -233,7 +233,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
-                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
+                let tp = TimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
 
                 do {

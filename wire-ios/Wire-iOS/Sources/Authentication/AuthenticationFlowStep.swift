@@ -40,20 +40,20 @@ indirect enum AuthenticationFlowStep: Equatable {
     // Sign-In
     case provideCredentials(AuthenticationPrefilledCredentials?)
     case enterEmailVerificationCode(email: String, password: String, isResend: Bool)
-    case authenticateEmailCredentials(ZMEmailCredentials)
+    case authenticateEmailCredentials(UserEmailCredentials)
     case companyLogin
     case switchBackend(url: URL)
 
     // Post Sign-In
-    case noHistory(credentials: ZMCredentials?, context: NoHistoryContext)
-    case clientManagement(clients: [UserClient], credentials: ZMCredentials?)
-    case deleteClient(clients: [UserClient], credentials: ZMCredentials?)
+    case noHistory(credentials: UserCredentials?, context: NoHistoryContext)
+    case clientManagement(clients: [UserClient])
+    case deleteClient(clients: [UserClient])
     case addEmailAndPassword
     case enrollE2EIdentity
     case enrollE2EIdentitySuccess(String)
     case addUsername
-    case registerEmailCredentials(ZMEmailCredentials, isResend: Bool)
-    case pendingEmailLinkVerification(ZMEmailCredentials)
+    case registerEmailCredentials(UserEmailCredentials, isResend: Bool)
+    case pendingEmailLinkVerification(UserEmailCredentials)
     case pendingInitialSync
 
     // Registration
