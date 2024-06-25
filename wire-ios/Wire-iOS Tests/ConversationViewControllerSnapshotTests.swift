@@ -24,10 +24,11 @@ import XCTest
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
-    var sut: ConversationViewController!
-    var mockConversation: ZMConversation!
-    var serviceUser: ZMUser!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: ConversationViewController!
+    private var mockConversation: ZMConversation!
+    private var serviceUser: ZMUser!
+    private var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
     private var imageTransformerMock: MockImageTransformer!
 
@@ -40,15 +41,14 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     override func setUp() {
         super.setUp()
 
+        mockMainCoordinator = .init()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.contextProvider = coreDataStack
         userSession.mockConversationList = ZMConversationList(
             allConversations: [mockConversation!],
-            filteringPredicate: NSPredicate(
-                value: true
-            ),
+            filteringPredicate: NSPredicate(value: true),
             moc: uiMOC,
             description: "all conversations"
         )
@@ -66,6 +66,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
             visibleMessage: nil,
             zClientViewController: zClientViewController,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             classificationProvider: mockClassificationProvider,
             networkStatusObservable: MockNetworkStatusObservable()
         )
@@ -76,6 +77,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         serviceUser = nil
         coreDataFixture = nil
         imageTransformerMock = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }

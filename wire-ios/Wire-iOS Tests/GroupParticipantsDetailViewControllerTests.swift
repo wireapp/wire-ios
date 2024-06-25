@@ -17,8 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
@@ -40,11 +41,13 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
+        mockMainCoordinator = .init()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
     }
@@ -52,6 +55,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
     override func tearDown() {
         SelfUser.provider = nil
         userSession = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -70,14 +74,15 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-		let createSut: () -> UIViewController = {
+        let createSut: () -> UIViewController = { [self] in
             let sut = GroupParticipantsDetailViewController(
                 selectedParticipants: selected,
                 conversation: conversation,
-                userSession: self.userSession
+                userSession: userSession,
+                mainCoordinator: mockMainCoordinator
             )
-			return sut.wrapInNavigationController()
-		}
+            return sut.wrapInNavigationController()
+        }
 
         verifyInAllColorSchemes(createSut: createSut)
     }
@@ -99,11 +104,12 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-        let createSut: () -> UIViewController = {
+        let createSut: () -> UIViewController = { [self] in
             let sut = GroupParticipantsDetailViewController(
                 selectedParticipants: selected,
                 conversation: conversation,
-                userSession: self.userSession
+                userSession: userSession,
+                mainCoordinator: mockMainCoordinator
             )
             return sut.wrapInNavigationController()
         }
@@ -119,7 +125,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         let sut = GroupParticipantsDetailViewController(
             selectedParticipants: [],
             conversation: conversation,
-            userSession: self.userSession
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []

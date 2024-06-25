@@ -26,7 +26,8 @@ private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController, PopoverPresenter {
-    // PopoverPresenter
+
+    private weak var mainCoordinator: MainCoordinator?
     weak var presentedPopover: UIPopoverPresentationController?
     weak var popoverPointToView: UIView?
     private(set) weak var zClientViewController: ZClientViewController?
@@ -45,10 +46,12 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     init(
         userSession: UserSession,
+        mainCoordinator: MainCoordinator,
         isFolderStatePersistenceEnabled: Bool,
         zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
 
         let flowLayout = BoundsAwareFlowLayout()
@@ -390,7 +393,11 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         }
 
         if let conversation = item as? ZMConversation {
-            ZClientViewController.shared?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+            if let scrollToMessageOnNextSelection {
+                mainCoordinator?.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+            } else {
+                mainCoordinator?.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+            }
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if item is ConversationListConnectRequestsItem {
             zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)

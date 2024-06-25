@@ -75,6 +75,7 @@ final class ConversationListViewController: UIViewController {
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
+        mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
@@ -89,6 +90,7 @@ final class ConversationListViewController: UIViewController {
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
             zClientViewController: zClientViewController,
+            mainCoordinator: mainCoordinator,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
     }
@@ -97,6 +99,7 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         isFolderStatePersistenceEnabled: Bool,
         zClientViewController: ZClientViewController,
+        mainCoordinator: MainCoordinator,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
@@ -105,6 +108,7 @@ final class ConversationListViewController: UIViewController {
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
             zClientViewController: zClientViewController
         )

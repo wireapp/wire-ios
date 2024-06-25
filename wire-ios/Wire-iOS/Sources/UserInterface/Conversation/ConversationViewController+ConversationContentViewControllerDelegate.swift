@@ -135,6 +135,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ controller: ConversationContentViewController,
         presentGuestOptionsFrom sourceView: UIView
     ) {
+        guard let mainCoordinator else { return }
         guard conversation.conversationType == .group else {
             zmLog.error("Illegal Operation: Trying to show guest options for non-group conversation")
             return
@@ -143,6 +144,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
@@ -154,6 +156,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ controller: ConversationContentViewController,
         presentServicesOptionFrom sourceView: UIView
     ) {
+        guard let mainCoordinator else { return }
         guard conversation.conversationType == .group else {
             zmLog.error("Illegal Operation: Trying to show services options for non-group conversation")
             return
@@ -162,6 +165,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()

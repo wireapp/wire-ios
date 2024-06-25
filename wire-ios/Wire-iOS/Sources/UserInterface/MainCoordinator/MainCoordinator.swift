@@ -16,4 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZClientViewController: MainCoordinator {}
+import WireDataModel
+
+// TODO: remove AnyObject
+protocol MainCoordinator: AnyObject {
+
+    func openConversation(
+        _ conversation: ZMConversation,
+        focusOnView focus: Bool,
+        animated: Bool
+    )
+
+    func openConversation<Message>(
+        _ conversation: ZMConversation,
+        scrollTo message: Message,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) where Message: ZMConversationMessage
+}

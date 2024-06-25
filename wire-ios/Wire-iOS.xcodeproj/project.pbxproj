@@ -358,6 +358,7 @@
 		59A27BAE2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */; };
 		59A27BB02C2ACC8F00195393 /* TopOverlayPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */; };
 		59A27BB32C2ACCDA00195393 /* TopOverlayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */; };
+		59A27BB82C2ADAB200195393 /* MockMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */; };
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
@@ -2413,6 +2414,7 @@
 		59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+MainCoordinator.swift"; sourceTree = "<group>"; };
 		59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopOverlayPresenting.swift; sourceTree = "<group>"; };
 		59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopOverlayPresenter.swift; sourceTree = "<group>"; };
+		59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainCoordinator.swift; sourceTree = "<group>"; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
@@ -4724,6 +4726,7 @@
 				5902F8E12BF7B14F00F1D392 /* ConversationList */,
 				5922E92C2BA06889001A7B01 /* E2EIdentity */,
 				598108B12B7F6D4E0021A0A9 /* GroupDetails */,
+				59A27BB42C2AD9FC00195393 /* MainCoordinator */,
 			);
 			path = UserInterface;
 			sourceTree = "<group>";
@@ -4765,6 +4768,23 @@
 				59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */,
 			);
 			path = TopOverlayPresenter;
+			sourceTree = "<group>";
+		};
+		59A27BB42C2AD9FC00195393 /* MainCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */,
+			);
+			path = MainCoordinator;
+			sourceTree = "<group>";
+		};
+		59A27BB72C2ADA3400195393 /* MainCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				59A27BAB2C2AC6F000195393 /* MainCoordinator.swift */,
+				59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */,
+			);
+			path = MainCoordinator;
 			sourceTree = "<group>";
 		};
 		59D8A62D2B7A75A0008236FF /* AccountViews */ = {
@@ -6629,6 +6649,7 @@
 				8FC8517F199245760008B66B /* Conversation */,
 				8FC851C0199245760008B66B /* ConversationList */,
 				8FC851E3199245760008B66B /* MainController */,
+				59A27BB72C2ADA3400195393 /* MainCoordinator */,
 				59A27BB12C2ACCC200195393 /* TopOverlayPresenter */,
 				87DCF4951D34E9E600BB420F /* Location */,
 				87DCF4A01D34EA4500BB420F /* StartUI */,
@@ -6806,7 +6827,6 @@
 		8FC851E3199245760008B66B /* MainController */ = {
 			isa = PBXGroup;
 			children = (
-				59A27BAB2C2AC6F000195393 /* MainCoordinator.swift */,
 				598D6CC02BF34CF500809AFA /* MainTabBarController.swift */,
 				877798AB205A8EF500898A5E /* ZClientViewController.swift */,
 				EE52988F26B7FB21001A6D03 /* ZClientViewController+ConferenceCallingAvailabilty.swift */,
@@ -6816,7 +6836,6 @@
 				1687C0FB2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift */,
 				1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */,
 				0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */,
-				59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */,
 			);
 			path = MainController;
 			sourceTree = "<group>";
@@ -7853,8 +7872,8 @@
 		E6F442FE2B16018D00D2B08A /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
-				5915B9532BF4B88300215817 /* PermissionDeniedHint */,
 				E6F442FF2B16019500D2B08A /* Conversation */,
+				5915B9532BF4B88300215817 /* PermissionDeniedHint */,
 			);
 			path = UserInterface;
 			sourceTree = "<group>";
@@ -10694,6 +10713,7 @@
 				EF223F5D2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift in Sources */,
 				E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				EF2FEDC8228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift in Sources */,
+				59A27BB82C2ADAB200195393 /* MockMainCoordinator.swift in Sources */,
 				D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */,
 				876AE7601C159A9C00E3E743 /* StringFingerprintTests.swift in Sources */,
 				E6C25FCE2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,

@@ -23,6 +23,7 @@ import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
+    private weak var mainCoordinator: MainCoordinator?
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
     let viewModel: GroupParticipantsDetailViewModel
@@ -43,8 +44,10 @@ final class GroupParticipantsDetailViewController: UIViewController {
     init(
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: MainCoordinator
     ) {
+        self.mainCoordinator = mainCoordinator
 
         viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
@@ -202,10 +205,13 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
+        guard let mainCoordinator else { return }
+
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
             conversation: viewModel.conversation,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
         )
 
         detailsViewController.delegate = self
@@ -225,8 +231,7 @@ extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            // TODO: inject ZClientViewController
-            ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
+            self.mainCoordinator?.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

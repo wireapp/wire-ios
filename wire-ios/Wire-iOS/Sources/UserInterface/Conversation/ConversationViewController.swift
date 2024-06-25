@@ -22,6 +22,8 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
+
+    private(set) weak var mainCoordinator: MainCoordinator?
     unowned let zClientViewController: ZClientViewController
     private let visibleMessage: ZMConversationMessage?
 
@@ -89,9 +91,11 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
+            guard let mainCoordinator else { break }
             viewController = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,
+                mainCoordinator: mainCoordinator,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
@@ -108,8 +112,9 @@ final class ConversationViewController: UIViewController {
     required init(
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
-        zClientViewController: ZClientViewController,
+        zClientViewController: ZClientViewController, // TODO: remove
         userSession: UserSession,
+        mainCoordinator: MainCoordinator,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
     ) {
@@ -117,6 +122,7 @@ final class ConversationViewController: UIViewController {
         self.visibleMessage = visibleMessage
         self.zClientViewController = zClientViewController
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         contentViewController = ConversationContentViewController(conversation: conversation,
                                                                   message: visibleMessage,
                                                                   mediaPlaybackManager: zClientViewController.mediaPlaybackManager,

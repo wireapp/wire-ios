@@ -21,6 +21,7 @@ import WireDataModel
 import WireSyncEngine
 import class WireCommonComponents.NetworkStatus
 
+// TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
 
     var isCallingSupported: Bool {
@@ -87,7 +88,6 @@ extension ZMConversation {
 
     }
 
-    // TODO: move out of extension to ZMConversation!
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
 
         typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call

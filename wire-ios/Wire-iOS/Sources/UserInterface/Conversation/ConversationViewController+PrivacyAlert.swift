@@ -168,11 +168,12 @@ extension ConversationViewController {
             let navigationController = profileViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
-        } else if conversation.conversationType == .group {
+        } else if conversation.conversationType == .group, let mainCoordinator {
             let participantsViewController = GroupParticipantsDetailViewController(
                 selectedParticipants: [],
                 conversation: conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             let navigationController = participantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
