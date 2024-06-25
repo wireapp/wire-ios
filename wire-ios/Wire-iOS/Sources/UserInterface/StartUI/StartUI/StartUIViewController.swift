@@ -201,7 +201,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     func showKeyboardIfNeeded() {
-        let conversationCount = userSession.conversationList().count
+        let conversationCount = userSession.conversationList().items.count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             searchController.searchBar.becomeFirstResponder()
         }
