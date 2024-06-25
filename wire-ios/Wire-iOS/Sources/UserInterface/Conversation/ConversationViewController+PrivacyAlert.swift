@@ -168,7 +168,7 @@ extension ConversationViewController {
             let navigationController = profileViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
-        } else if conversation.conversationType == .group, let mainCoordinator {
+        } else if conversation.conversationType == .group {
             let participantsViewController = GroupParticipantsDetailViewController(
                 selectedParticipants: [],
                 conversation: conversation,

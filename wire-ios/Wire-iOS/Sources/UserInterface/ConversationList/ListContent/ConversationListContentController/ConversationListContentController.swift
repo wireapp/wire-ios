@@ -27,7 +27,7 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController, PopoverPresenter {
 
-    private weak var mainCoordinator: MainCoordinator?
+    private let mainCoordinator: MainCoordinating
     weak var presentedPopover: UIPopoverPresentationController?
     weak var popoverPointToView: UIView?
     private(set) weak var zClientViewController: ZClientViewController?
@@ -46,7 +46,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     init(
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: MainCoordinating,
         isFolderStatePersistenceEnabled: Bool,
         zClientViewController: ZClientViewController?
     ) {
@@ -394,9 +394,9 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 
         if let conversation = item as? ZMConversation {
             if let scrollToMessageOnNextSelection {
-                mainCoordinator?.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
-                mainCoordinator?.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             }
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if item is ConversationListConnectRequestsItem {

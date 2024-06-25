@@ -354,11 +354,11 @@
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
-		59A27BAC2C2AC6F000195393 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAB2C2AC6F000195393 /* MainCoordinator.swift */; };
-		59A27BAE2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */; };
+		59A27BAC2C2AC6F000195393 /* MainCoordinating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAB2C2AC6F000195393 /* MainCoordinating.swift */; };
 		59A27BB02C2ACC8F00195393 /* TopOverlayPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */; };
 		59A27BB32C2ACCDA00195393 /* TopOverlayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */; };
 		59A27BB82C2ADAB200195393 /* MockMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */; };
+		59A27BBB2C2ADC4C00195393 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB92C2ADC2900195393 /* MainCoordinator.swift */; };
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
@@ -2410,11 +2410,11 @@
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
-		59A27BAB2C2AC6F000195393 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
-		59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+MainCoordinator.swift"; sourceTree = "<group>"; };
+		59A27BAB2C2AC6F000195393 /* MainCoordinating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinating.swift; sourceTree = "<group>"; };
 		59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopOverlayPresenting.swift; sourceTree = "<group>"; };
 		59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopOverlayPresenter.swift; sourceTree = "<group>"; };
 		59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainCoordinator.swift; sourceTree = "<group>"; };
+		59A27BB92C2ADC2900195393 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
@@ -4781,8 +4781,8 @@
 		59A27BB72C2ADA3400195393 /* MainCoordinator */ = {
 			isa = PBXGroup;
 			children = (
-				59A27BAB2C2AC6F000195393 /* MainCoordinator.swift */,
-				59A27BAD2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift */,
+				59A27BAB2C2AC6F000195393 /* MainCoordinating.swift */,
+				59A27BB92C2ADC2900195393 /* MainCoordinator.swift */,
 			);
 			path = MainCoordinator;
 			sourceTree = "<group>";
@@ -9580,7 +9580,7 @@
 				EF22DC7F224BC5C2001EDE8E /* UIViewController+Alert.swift in Sources */,
 				5E0FB21B2057F50C00FD9867 /* CallQualitySurveyReview.swift in Sources */,
 				0619FBBB258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift in Sources */,
-				59A27BAC2C2AC6F000195393 /* MainCoordinator.swift in Sources */,
+				59A27BAC2C2AC6F000195393 /* MainCoordinating.swift in Sources */,
 				EEAC0A1621AD98BA00BE5F5D /* ConversationCreateOptionsSectionController.swift in Sources */,
 				0665DF6E28E494360094482B /* ImagePickerManager.swift in Sources */,
 				BFF8CBE02126E98900DB0330 /* InteractiveModalTransition.swift in Sources */,
@@ -9731,7 +9731,6 @@
 				876113E41DD1DD6B007F5969 /* SketchToolbar.swift in Sources */,
 				59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */,
 				2572EC5D2B148EE50075A7BE /* DeviceDetailsBottomView.swift in Sources */,
-				59A27BAE2C2AC74100195393 /* ZClientViewController+MainCoordinator.swift in Sources */,
 				E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */,
 				EFA145F4231EA4980073BA5E /* ConversationListViewController.swift in Sources */,
 				D5173573201764DD00B473CE /* UIAlertAction+Convenience.swift in Sources */,
@@ -9849,6 +9848,7 @@
 				877A32601E892A100017DD9A /* ConversationListAccessoryView.swift in Sources */,
 				5EE73BF5212419ED0032986D /* AuthenticationCoordinator+Registration.swift in Sources */,
 				EE7E0E762109FE9200787C65 /* ParticipantsStringFormatter.swift in Sources */,
+				59A27BBB2C2ADC4C00195393 /* MainCoordinator.swift in Sources */,
 				068DCC5D29C0C09B00F7E4F1 /* MessageSendFailureView.swift in Sources */,
 				87AC33CD2182064F00069C79 /* ReplyComposingView.swift in Sources */,
 				0685008526B36BBC00721F80 /* VideoMessageRestrictionView.swift in Sources */,

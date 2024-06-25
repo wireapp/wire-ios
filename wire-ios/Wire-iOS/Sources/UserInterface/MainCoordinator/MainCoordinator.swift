@@ -17,20 +17,28 @@
 //
 
 import WireDataModel
+import WireSystem
 
-// TODO: remove AnyObject
-protocol MainCoordinator: AnyObject {
+struct MainCoordinator_: MainCoordinating {
 
-    func openConversation(
-        _ conversation: ZMConversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    )
+    weak var zClientViewController: ZClientViewController?
+
+    func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
+        guard let zClientViewController else {
+            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
+        }
+        zClientViewController.load(conversation, scrollTo: nil, focusOnView: focus, animated: animated)
+    }
 
     func openConversation<Message>(
         _ conversation: ZMConversation,
         scrollTo message: Message,
         focusOnView focus: Bool,
         animated: Bool
-    ) where Message: ZMConversationMessage
+    ) where Message: ZMConversationMessage {
+        guard let zClientViewController else {
+            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
+        }
+        zClientViewController.load(conversation, scrollTo: message, focusOnView: focus, animated: animated)
+    }
 }

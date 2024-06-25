@@ -23,7 +23,7 @@ import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
-    private weak var mainCoordinator: MainCoordinator?
+    private let mainCoordinator: MainCoordinating
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
     let viewModel: GroupParticipantsDetailViewModel
@@ -45,7 +45,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator
+        mainCoordinator: MainCoordinating
     ) {
         self.mainCoordinator = mainCoordinator
 
@@ -205,7 +205,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
-        guard let mainCoordinator else { return }
 
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
@@ -231,7 +230,7 @@ extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            self.mainCoordinator?.openConversation(conversation, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

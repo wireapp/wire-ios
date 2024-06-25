@@ -22,7 +22,7 @@ import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    private weak var mainCoordinator: MainCoordinator?
+    private let mainCoordinator: MainCoordinating
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -45,7 +45,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: MainCoordinating,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
@@ -347,7 +347,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
-        guard let mainCoordinator, let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else { return }
 
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
@@ -463,7 +463,7 @@ extension GroupDetailsViewController: ViewControllerDismisser {
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            self.mainCoordinator?.openConversation(conversation, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

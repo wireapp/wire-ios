@@ -57,7 +57,7 @@ final class ConversationRootViewController: UIViewController {
             visibleMessage: message as? ZMMessage,
             zClientViewController: clientViewController,
             userSession: userSession,
-            mainCoordinator: clientViewController,
+            mainCoordinator: MainCoordinator_(zClientViewController: clientViewController),
             classificationProvider: ZMUserSession.shared(),
             networkStatusObservable: NetworkStatus.shared
         )

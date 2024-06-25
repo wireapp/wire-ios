@@ -23,7 +23,7 @@ import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 
-    private(set) weak var mainCoordinator: MainCoordinator?
+    let mainCoordinator: MainCoordinating
     unowned let zClientViewController: ZClientViewController
     private let visibleMessage: ZMConversationMessage?
 
@@ -91,7 +91,6 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
-            guard let mainCoordinator else { break }
             viewController = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,
@@ -114,7 +113,7 @@ final class ConversationViewController: UIViewController {
         visibleMessage: ZMMessage?,
         zClientViewController: ZClientViewController, // TODO: remove
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: MainCoordinating,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
     ) {

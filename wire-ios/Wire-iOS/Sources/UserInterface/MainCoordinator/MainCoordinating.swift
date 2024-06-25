@@ -18,18 +18,18 @@
 
 import WireDataModel
 
-extension ZClientViewController: MainCoordinator {
+protocol MainCoordinating {
 
-    func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
-        load(conversation, scrollTo: nil, focusOnView: focus, animated: animated)
-    }
+    func openConversation(
+        _ conversation: ZMConversation,
+        focusOnView focus: Bool,
+        animated: Bool
+    )
 
     func openConversation<Message>(
         _ conversation: ZMConversation,
         scrollTo message: Message,
         focusOnView focus: Bool,
         animated: Bool
-    ) where Message: ZMConversationMessage {
-        load(conversation, scrollTo: message, focusOnView: focus, animated: animated)
-    }
+    ) where Message: ZMConversationMessage
 }

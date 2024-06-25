@@ -20,7 +20,7 @@ import WireDataModel
 
 @testable import Wire
 
-final class MockMainCoordinator: MainCoordinator {
+final class MockMainCoordinator: MainCoordinating {
 
     func openConversation(
         _ conversation: ZMConversation,
