@@ -80,7 +80,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
                 for: alice
             )
 
-
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID.uuid,
                 domain: Scaffolding.conversationID.domain,
