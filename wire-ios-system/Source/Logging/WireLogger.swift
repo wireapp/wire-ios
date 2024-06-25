@@ -31,6 +31,8 @@ public struct WireLogger: LoggerProtocol {
         self.tag = tag
     }
 
+    // MARK: - LoggerProtocol
+
     public var logFiles: [URL] {
         Self.provider.logFiles
     }
@@ -41,79 +43,48 @@ public struct WireLogger: LoggerProtocol {
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        log(level: .debug, message: message, attributes: attributes)
+        Self.provider.debug(message, attributes: finalizedAttributes(attributes))
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        log(level: .info, message: message, attributes: attributes)
+        Self.provider.info(message, attributes: finalizedAttributes(attributes))
     }
 
     public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        log(level: .notice, message: message, attributes: attributes)
+        Self.provider.notice(message, attributes: finalizedAttributes(attributes))
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        log(level: .warn, message: message, attributes: attributes)
+        Self.provider.warn(message, attributes: finalizedAttributes(attributes))
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        log(level: .error, message: message, attributes: attributes)
+        Self.provider.error(message, attributes: finalizedAttributes(attributes))
     }
 
     public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        log(level: .critical, message: message, attributes: attributes)
+        Self.provider.critical(message, attributes: finalizedAttributes(attributes))
     }
+
+    // MARK: - Private Helpers
 
     private func shouldLogMessage(_ message: LogConvertible) -> Bool {
         return !message.logDescription.isEmpty
     }
 
-    private func log(
-        level: LogLevel,
-        message: LogConvertible,
-        attributes: [LogAttributes]
-    ) {
-        var mergedAttributes = flattenArray(attributes)
+    private func finalizedAttributes(_ attributes: [LogAttributes]) -> LogAttributes {
+        var finalizedAttributes = flattenArray(attributes)
 
         if !tag.isEmpty {
-            mergedAttributes[.tag] = tag
+            finalizedAttributes[.tag] = tag
         }
 
-        switch level {
-        case .debug:
-            Self.provider.debug(message, attributes: mergedAttributes)
-
-        case .info:
-            Self.provider.info(message, attributes: mergedAttributes)
-
-        case .notice:
-            Self.provider.notice(message, attributes: mergedAttributes)
-
-        case .warn:
-            Self.provider.warn(message, attributes: mergedAttributes)
-
-        case .error:
-            Self.provider.error(message, attributes: mergedAttributes)
-
-        case .critical:
-            Self.provider.critical(message, attributes: mergedAttributes)
-        }
-    }
-
-    private enum LogLevel {
-
-        case debug
-        case info
-        case notice
-        case warn
-        case error
-        case critical
-
+        return finalizedAttributes
     }
 
     // MARK: Static Functions
@@ -122,6 +93,8 @@ public struct WireLogger: LoggerProtocol {
         provider.addLogger(logger)
     }
 }
+
+// MARK: -
 
 public typealias LogAttributes = [LogAttributesKey: Encodable]
 
