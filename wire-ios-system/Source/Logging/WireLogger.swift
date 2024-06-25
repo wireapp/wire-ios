@@ -164,17 +164,3 @@ extension String: LogConvertible {
     }
 
 }
-
-/// Class to proxy WireLogger methods to Objective-C
-@objcMembers
-public final class WireLoggerObjc: NSObject {
-
-    static func assertionDumpLog(_ message: String) {
-        WireLogger.system.critical(message, attributes: .safePublic)
-    }
-
-    @objc(logReceivedUpdateEventWithId:)
-    static func logReceivedUpdateEvent(eventId: String) {
-        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
-    }
-}
