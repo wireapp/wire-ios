@@ -61,6 +61,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut = ConversationListViewController(
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: false,
+            zClientViewController: .init(account: account, userSession: userSession),
             selfProfileViewControllerBuilder: .mock
         )
         tabBarController = MainTabBarController(
