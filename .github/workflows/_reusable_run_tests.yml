@@ -142,7 +142,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-system || inputs.all }}
         with:
           results: xcodebuild-wire-ios-system.xcresult
@@ -159,7 +159,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-testing || inputs.all }}
         with:
           results: xcodebuild-wire-ios-testing.xcresult
@@ -176,7 +176,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-utilities.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
         with:
           results: xcodebuild-wire-ios-utilities.xcresult
@@ -193,7 +193,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty --report junit --output build/reports/WireCryptobox.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
         with:
           results: xcodebuild-wire-ios-cryptobox.xcresult
@@ -210,7 +210,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-transport.log | bundle exec xcpretty --report junit --output build/reports/WireTransport.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-transport || inputs.all }}
         with:
           results: xcodebuild-wire-ios-transport.xcresult
@@ -227,7 +227,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty --report junit --output build/reports/WireLinkPreview.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
         with:
           results: xcodebuild-wire-ios-link-preview.xcresult
@@ -244,7 +244,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-images.log | bundle exec xcpretty --report junit --output build/reports/WireImages.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-images || inputs.all }}
         with:
           results: xcodebuild-wire-ios-images.xcresult
@@ -261,7 +261,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-protos.log | bundle exec xcpretty
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-protos || inputs.all }}
         with:
           results: xcodebuild-wire-ios-protos.xcresult
@@ -278,7 +278,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty --report junit --output build/reports/WireMockTransport.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
         with:
           results: xcodebuild-wire-ios-mocktransport.xcresult
@@ -294,7 +294,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-data-model.log | bundle exec xcpretty --report junit --output build/reports/WireDataModel.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
         with:
           results: xcodebuild-wire-ios-data-model.xcresult
@@ -311,7 +311,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-api || inputs.all }}
         with:
           results: xcodebuild-wire-api.xcresult
@@ -328,7 +328,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-domain || inputs.all }}
         with:
           results: xcodebuild-wire-domain.xcresult
@@ -345,7 +345,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty --report junit --output build/reports/WireRequestStrategy.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         with:
           results: xcodebuild-wire-ios-request-strategy.xcresult
@@ -362,7 +362,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty --report junit --output build/reports/WireShareEngine.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
         with:
           results: xcodebuild-wire-ios-share-engine.xcresult
@@ -379,7 +379,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty --report junit --output build/reports/WireSyncEngine.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
         with:
           results: xcodebuild-wire-ios-sync-engine.xcresult
@@ -396,7 +396,7 @@ jobs:
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-EN.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios || inputs.all }}
         with:
           results: xcodebuild-wire-ios.xcresult
@@ -432,7 +432,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty --report junit --output build/reports/WireNotificationEngine.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
         with:
           results: xcodebuild-wire-ios-notification-engine.xcresult
