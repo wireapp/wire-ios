@@ -303,8 +303,6 @@ private extension AppDelegate {
             let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
             let configuration = SessionManagerConfiguration.load(from: url),
-            let countlyKey = Bundle.countlyAppKey,
-            let host = BackendEnvironment.shared.countlyURL,
             let mediaManager = AVSMediaManager.sharedInstance()
         else {
             return nil
@@ -316,7 +314,10 @@ private extension AppDelegate {
         // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let analyticsSessionConfiguration = AnalyticsSessionConfiguration(countlyKey: countlyKey, host: host)
+        let analyticsSessionConfiguration = AnalyticsSessionConfiguration(
+            countlyKey: Bundle.countlyAppKey,
+            host: BackendEnvironment.shared.countlyURL
+        )
 
         let sessionManager = SessionManager(
             maxNumberAccounts: maxNumberAccounts,

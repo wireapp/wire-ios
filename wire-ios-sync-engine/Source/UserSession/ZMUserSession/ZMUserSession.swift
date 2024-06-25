@@ -24,10 +24,10 @@ import WireRequestStrategy
 import WireSystem
 
 public struct AnalyticsSessionConfiguration {
-    public let countlyKey: String
-    public let host: URL
+    public let countlyKey: String?
+    public let host: URL?
 
-    public init(countlyKey: String, host: URL) {
+    public init(countlyKey: String?, host: URL?) {
         self.countlyKey = countlyKey
         self.host = host
     }
@@ -419,10 +419,12 @@ public final class ZMUserSession: NSObject {
             contactCount: selfUser.membership?.team?.members.count
         )
 
-        if let config = dependencies.analyticsSessionConfiguration {
+        if let config = dependencies.analyticsSessionConfiguration,
+           let countlyKey = config.countlyKey,
+           let host = config.host {
             self.analyticsSession = AnalyticsSession(
-                appKey: config.countlyKey,
-                host: config.host,
+                appKey: countlyKey,
+                host: host,
                 userProfile: analyticsUserProfile
             )
             self.analyticsSession?.startSession()
@@ -431,7 +433,7 @@ public final class ZMUserSession: NSObject {
 
     @objc private func handleAppDidBecomeActive() {
         analyticsSession?.trackEvent(.appOpen)
-        }
+    }
 
     func setup(
         eventProcessor: (any UpdateEventProcessor)?,
