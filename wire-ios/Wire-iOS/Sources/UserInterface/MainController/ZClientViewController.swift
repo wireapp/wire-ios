@@ -531,8 +531,9 @@ final class ZClientViewController: UIViewController {
 
     }
 
+    // TODO: move into ZClientViewController+TopOverlayPresenter.swift
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
-        topOverlayViewController?.willMove(toParent: nil)
+        topOverlayViewController?.willMove(toParent: nil) // TODO: is it deallocated?
 
         if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
