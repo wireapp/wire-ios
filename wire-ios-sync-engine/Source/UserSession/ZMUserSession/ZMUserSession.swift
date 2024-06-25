@@ -401,8 +401,6 @@ public final class ZMUserSession: NSObject {
 
         setupAnalyticsSession()
 
-        self.analyticsSession?.startSession()
-
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAppDidBecomeActive),
@@ -498,6 +496,8 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        self.analyticsSession?.startSession()
 
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
