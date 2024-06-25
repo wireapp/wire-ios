@@ -24,7 +24,6 @@ import WireSyncEngine
 final class ConversationViewController: UIViewController {
 
     let mainCoordinator: MainCoordinating
-    unowned let zClientViewController: ZClientViewController
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -111,20 +110,19 @@ final class ConversationViewController: UIViewController {
     required init(
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
-        zClientViewController: ZClientViewController, // TODO: remove
         userSession: UserSession,
         mainCoordinator: MainCoordinating,
+        mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
     ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
-        self.zClientViewController = zClientViewController
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         contentViewController = ConversationContentViewController(conversation: conversation,
                                                                   message: visibleMessage,
-                                                                  mediaPlaybackManager: zClientViewController.mediaPlaybackManager,
+                                                                  mediaPlaybackManager: mediaPlaybackManager,
                                                                   userSession: userSession)
 
         inputBarController = ConversationInputBarViewController(
@@ -134,7 +132,7 @@ final class ConversationViewController: UIViewController {
             networkStatusObservable: networkStatusObservable
         )
 
-        mediaBarViewController = MediaBarViewController(mediaPlaybackManager: zClientViewController.mediaPlaybackManager)
+        mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
 
         titleView = ConversationTitleView(conversation: conversation, interactive: true)
 
@@ -442,7 +440,7 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        zClientViewController.showConversation(mlsConversation, at: nil)
+        mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
     }
 
     // MARK: - ParticipantsPopover

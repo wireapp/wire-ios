@@ -32,6 +32,7 @@ final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
     let mainCoordinator: MainCoordinating
+    weak var zClientViewController: ZClientViewController?
 
     /// internal View Model
     var state: ConversationListState = .conversationList
@@ -105,6 +106,7 @@ final class ConversationListViewController: UIViewController {
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
+        self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
@@ -172,7 +174,7 @@ final class ConversationListViewController: UIViewController {
 
         shouldAnimateNetworkStatusView = true
 
-        ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
+        zClientViewController?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
 
@@ -183,7 +185,7 @@ final class ConversationListViewController: UIViewController {
 
             tabBarController?.delegate = self
 
-            ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
+            zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }
 

@@ -23,7 +23,6 @@ struct TopOverlayPresenter: TopOverlayPresenting {
     var rootViewController: UIViewController
 
     private var zClientViewController: ZClientViewController? {
-        // TODO: try to not use the `firstChild` helper
         guard let zClientViewController = rootViewController.firstChild(ofType: ZClientViewController.self) else {
             assertionFailure("there should be at least one instance of `ZClientViewController`")
             return nil
@@ -33,7 +32,6 @@ struct TopOverlayPresenter: TopOverlayPresenting {
     }
 
     func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
-        // TODO: move implementation here if possible
         zClientViewController?.setTopOverlay(to: viewController, animated: animated)
     }
 

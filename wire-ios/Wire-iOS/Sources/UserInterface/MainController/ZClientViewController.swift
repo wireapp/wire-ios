@@ -357,7 +357,13 @@ final class ZClientViewController: UIViewController {
                 conversationRootController?.scroll(to: message)
             }
         } else {
-            conversationRootController = ConversationRootViewController(conversation: conversation, message: message, clientViewController: self, userSession: userSession)
+            conversationRootController = ConversationRootViewController(
+                conversation: conversation,
+                message: message,
+                userSession: userSession,
+                mainCoordinator: MainCoordinator_(zClientViewController: self),
+                mediaPlaybackManager: mediaPlaybackManager
+            )
         }
 
         currentConversation = conversation
@@ -435,7 +441,13 @@ final class ZClientViewController: UIViewController {
     private func reloadCurrentConversation() {
         guard let currentConversation else { return }
 
-        let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
+        let currentConversationViewController = ConversationRootViewController(
+            conversation: currentConversation,
+            message: nil,
+            userSession: userSession,
+            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mediaPlaybackManager: mediaPlaybackManager
+        )
 
         // Need to reload conversation to apply color scheme changes
         pushContentViewController(currentConversationViewController)
@@ -471,9 +483,9 @@ final class ZClientViewController: UIViewController {
 
             // dispatch async here because it has to happen after the collection view has finished
             // laying out for the first time
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.conversationListViewController.scrollToCurrentSelection(animated: false)
-            })
+            }
 
             return true
 
@@ -535,9 +547,8 @@ final class ZClientViewController: UIViewController {
 
     }
 
-    // TODO: move into ZClientViewController+TopOverlayPresenter.swift
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
-        topOverlayViewController?.willMove(toParent: nil) // TODO: is it deallocated?
+        topOverlayViewController?.willMove(toParent: nil)
 
         if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)

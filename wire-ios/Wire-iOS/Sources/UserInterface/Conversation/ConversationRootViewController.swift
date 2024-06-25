@@ -46,18 +46,19 @@ final class ConversationRootViewController: UIViewController {
 
     // MARK: - Init
 
-    init(conversation: ZMConversation,
-         message: ZMConversationMessage?,
-         clientViewController: ZClientViewController,
-         userSession: UserSession
+    init(
+        conversation: ZMConversation,
+        message: ZMConversationMessage?,
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating,
+        mediaPlaybackManager: MediaPlaybackManager?
     ) {
-
         let conversationController = ConversationViewController(
             conversation: conversation,
             visibleMessage: message as? ZMMessage,
-            zClientViewController: clientViewController,
             userSession: userSession,
-            mainCoordinator: MainCoordinator_(zClientViewController: clientViewController),
+            mainCoordinator: mainCoordinator,
+            mediaPlaybackManager: mediaPlaybackManager,
             classificationProvider: ZMUserSession.shared(),
             networkStatusObservable: NetworkStatus.shared
         )
@@ -89,7 +90,7 @@ final class ConversationRootViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     // MARK: - Override methods
