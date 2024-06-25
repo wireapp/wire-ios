@@ -29,6 +29,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     // PopoverPresenter
     weak var presentedPopover: UIPopoverPresentationController?
     weak var popoverPointToView: UIView?
+    private(set) weak var zClientViewController: ZClientViewController?
 
     weak var contentDelegate: ConversationListContentDelegate?
     let listViewModel: ConversationListViewModel
@@ -43,15 +44,14 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     let userSession: UserSession
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     init(
         userSession: UserSession,
-        isFolderStatePersistenceEnabled: Bool
+        isFolderStatePersistenceEnabled: Bool,
+        zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession
+        self.zClientViewController = zClientViewController
+
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
@@ -67,7 +67,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func loadView() {
@@ -384,21 +384,20 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
                     self.collectionView.deselectItem(at: obj, animated: false)
                 }
             })
-            ZClientViewController.shared?.loadPlaceholderConversationController(animated: true)
-            ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
+            zClientViewController?.loadPlaceholderConversationController(animated: true)
+            zClientViewController?.transitionToList(animated: true, completion: nil)
 
             return
         }
 
         if let conversation = item as? ZMConversation {
 
-            // Actually load the new view controller and optionally focus on it
-            ZClientViewController.shared?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection, completion: selectConversationCompletion)
+            zClientViewController?.openConversation(remoteIdentifier: conversation.remoteIdentifier)
             selectConversationCompletion = nil
 
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if item is ConversationListConnectRequestsItem {
-            ZClientViewController.shared?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
+            zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {
             assertionFailure("Invalid item in conversation list view model!!")
         }

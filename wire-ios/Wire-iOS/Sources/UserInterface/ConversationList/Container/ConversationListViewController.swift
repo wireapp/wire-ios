@@ -102,7 +102,8 @@ final class ConversationListViewController: UIViewController {
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
-            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            zClientViewController: .shared! // TODO: fix force unwrap
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
