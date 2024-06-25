@@ -17,9 +17,10 @@
 //
 
 import Foundation
-@testable import Wire
 import WireAnalytics
 import XCTest
+
+@testable import Wire
 
 final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!

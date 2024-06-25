@@ -86,46 +86,46 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
         case type
     }
 
-    var access: [String]?
-    var accessRoles: [String]?
-    var cipherSuite: UInt16? // New field
+    var access: Set<ConversationAccessMode>?
+    var accessRoles: Set<ConversationAccessRole>?
+    var cipherSuite: MLSCipherSuite? // New field
     var creator: UUID?
     var epoch: UInt?
-    var epochTimestamp: Date? // New field
+    var epochTimestamp: UTCTime? // New field
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: String?
+    var lastEventTime: UTCTimeMillis?
     var members: QualifiedConversationMembers?
-    var messageProtocol: String?
+    var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?
     var name: String?
     var qualifiedID: QualifiedID?
     var readReceiptMode: Int?
     var teamID: UUID?
-    var type: Int?
+    var type: ConversationType?
 
     func toAPIModel() -> Conversation {
         Conversation(
+            id: id,
+            qualifiedID: qualifiedID,
+            teamID: teamID,
+            type: type,
+            messageProtocol: messageProtocol,
+            mlsGroupID: mlsGroupID,
+            cipherSuite: cipherSuite,
+            epoch: epoch,
+            epochTimestamp: epochTimestamp?.date,
+            creator: creator,
+            members: members.map { $0.toAPIModel() },
+            name: name,
+            messageTimer: messageTimer,
+            readReceiptMode: readReceiptMode,
             access: access,
             accessRoles: accessRoles,
-            cipherSuite: cipherSuite,
-            creator: creator,
-            epoch: epoch,
-            epochTimestamp: epochTimestamp,
-            id: id,
-            lastEvent: lastEvent,
-            lastEventTime: lastEventTime,
             legacyAccessRole: nil,
-            members: members.map { $0.toAPIModel() },
-            messageProtocol: messageProtocol,
-            messageTimer: messageTimer,
-            mlsGroupID: mlsGroupID,
-            name: name,
-            qualifiedID: qualifiedID,
-            readReceiptMode: readReceiptMode,
-            teamID: teamID,
-            type: type
+            lastEvent: lastEvent,
+            lastEventTime: lastEventTime?.date
         )
     }
 }
