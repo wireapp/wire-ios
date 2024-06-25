@@ -341,12 +341,12 @@ final class ZClientViewController: UIViewController {
     ///   - focus: focus on view or not
     ///   - animated: animated or not
     ///   - completion: optional completion handler
-    func load(_ conversation: ZMConversation,
-              scrollTo message: ZMConversationMessage?,
-              focusOnView focus: Bool,
-              animated: Bool,
-              completion: Completion? = nil) {
-
+    func load(
+        _ conversation: ZMConversation,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) {
         var conversationRootController: ConversationRootViewController?
         if conversation === currentConversation,
            conversationRootController != nil {
@@ -360,7 +360,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
+        pushContentViewController(conversationRootController, focusOnView: focus, animated: animated)
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {

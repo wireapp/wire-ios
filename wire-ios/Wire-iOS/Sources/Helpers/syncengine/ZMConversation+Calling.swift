@@ -87,6 +87,7 @@ extension ZMConversation {
 
     }
 
+    // TODO: move out of extension to ZMConversation!
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
 
         typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
@@ -98,22 +99,19 @@ extension ZMConversation {
         }
 
         let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
-
         if networkInfo.qualityType() == .type2G {
+
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,
                 preferredStyle: .alert
             )
-
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { _ in
+            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default) { _ in
                 handler(false)
-            }))
-
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { _ in
+            })
+            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
                 handler(true)
-            }))
-
+            })
             ZClientViewController.shared?.present(badConnectionController, animated: true)
         } else {
             handler(false)

@@ -36,7 +36,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
     private var focusOnNextSelection = false
     private var animateNextSelection = false
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
-    private var selectConversationCompletion: Completion?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
@@ -222,11 +221,9 @@ final class ConversationListContentController: UICollectionViewController, Popov
         selectModelItem(nil)
     }
 
-    // TODO: remove completion
-    func select(_ conversation: ZMConversation?, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: Completion?) -> Bool {
+    func select(_ conversation: ZMConversation?, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
         focusOnNextSelection = focus
 
-        selectConversationCompletion = completion
         animateNextSelection = animated
         scrollToMessageOnNextSelection = message
 
@@ -393,10 +390,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         }
 
         if let conversation = item as? ZMConversation {
-
-            ZClientViewController.shared?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection, completion: selectConversationCompletion)
-            selectConversationCompletion = nil
-
+            ZClientViewController.shared?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if item is ConversationListConnectRequestsItem {
             zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)

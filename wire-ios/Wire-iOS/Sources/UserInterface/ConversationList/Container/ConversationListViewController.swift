@@ -310,8 +310,7 @@ final class ConversationListViewController: UIViewController {
             conversation,
             scrollTo: message,
             focusOnView: focus,
-            animated: animated,
-            completion: nil
+            animated: animated
         )
     }
 
