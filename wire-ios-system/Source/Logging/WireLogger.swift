@@ -93,38 +93,3 @@ public struct WireLogger: LoggerProtocol {
         provider.addLogger(logger)
     }
 }
-
-// MARK: -
-
-public typealias LogAttributes = [LogAttributesKey: Encodable]
-
-public enum LogAttributesKey: String {
-    case selfClientId = "self_client_id"
-    case selfUserId = "self_user_id"
-    case recipientID = "recipient_id"
-    case eventId = "event_id"
-    case senderUserId = "sender_user_id"
-    case nonce = "message_nonce"
-    case messageType = "message_type"
-    case lastEventID = "last_event_id"
-    case `public`
-    case tag
-}
-
-public extension LogAttributes {
-    static var safePublic = [LogAttributesKey.public: true]
-}
-
-public protocol LogConvertible {
-
-    var logDescription: String { get }
-
-}
-
-extension String: LogConvertible {
-
-    public var logDescription: String {
-        return self
-    }
-
-}
