@@ -141,6 +141,13 @@ jobs:
           echo "Testing WireSystem..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-system || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-system.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireTesting
         if: ${{ inputs.wire-ios-testing || inputs.all }}
@@ -151,6 +158,13 @@ jobs:
           echo "Testing WireTesting..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-testing || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-testing.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireUtilities
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
@@ -161,6 +175,13 @@ jobs:
           echo "Testing WireUtilities..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-utilities.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-utilities || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-utilities.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireCryptobox
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
@@ -171,6 +192,13 @@ jobs:
           echo "Testing WireCryptobox..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty --report junit --output build/reports/WireCryptobox.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-cryptobox.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireTransport
         if: ${{ inputs.wire-ios-transport || inputs.all }}
@@ -181,6 +209,13 @@ jobs:
           echo "Testing WireTransport..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-transport.log | bundle exec xcpretty --report junit --output build/reports/WireTransport.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-transport || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-transport.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireLinkPreview
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
@@ -191,6 +226,13 @@ jobs:
           echo "Testing WireLinkPreview..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty --report junit --output build/reports/WireLinkPreview.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-link-preview.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireImages
         if: ${{ inputs.wire-ios-images || inputs.all }}
@@ -202,6 +244,13 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-images.log | bundle exec xcpretty --report junit --output build/reports/WireImages.junit
           exit ${PIPESTATUS[0]}
 
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-images || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-images.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireProtos
         if: ${{ inputs.wire-ios-protos || inputs.all }}
         run: |
@@ -211,6 +260,13 @@ jobs:
           echo "Testing WireProtos..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-protos.log | bundle exec xcpretty
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-protos || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-protos.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireMockTransport
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
@@ -221,6 +277,13 @@ jobs:
           echo "Testing WireMockTransport..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty --report junit --output build/reports/WireMockTransport.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-mocktransport.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireDataModel
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
@@ -230,6 +293,13 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -resultBundlePath xcodebuild-wire-ios-data-model.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-data-model.log | bundle exec xcpretty --report junit --output build/reports/WireDataModel.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-data-model || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-data-model.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireAPI
         if: ${{ inputs.wire-api || inputs.all }}
@@ -241,6 +311,13 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
 
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-api || inputs.all }}
+        with:
+          results: xcodebuild-wire-api.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireDomain
         if: ${{ inputs.wire-domain || inputs.all }}
         run: |
@@ -251,6 +328,13 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
           exit ${PIPESTATUS[0]}
 
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-domain || inputs.all }}
+        with:
+          results: xcodebuild-wire-domain.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireRequestStrategy
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         run: |
@@ -260,6 +344,13 @@ jobs:
           echo "Testing WireRequestStrategy..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty --report junit --output build/reports/WireRequestStrategy.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-request-strategy.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test WireShareEngine
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
@@ -271,6 +362,13 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty --report junit --output build/reports/WireShareEngine.junit
           exit ${PIPESTATUS[0]}
 
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-share-engine.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireSyncEngine
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
         run: |
@@ -280,6 +378,13 @@ jobs:
           echo "Testing WireSyncEngine..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty --report junit --output build/reports/WireSyncEngine.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-sync-engine.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test Wire-iOS
         if: ${{ inputs.wire-ios || inputs.all }}
@@ -290,6 +395,13 @@ jobs:
           echo "Testing Wire-iOS..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-EN.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Test Wire-iOS German Locale Tests
         if: ${{ inputs.wire-ios || inputs.all }}
@@ -319,6 +431,13 @@ jobs:
           echo "Testing WireNotificationEngine..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty --report junit --output build/reports/WireNotificationEngine.junit
           exit ${PIPESTATUS[0]}
+
+      - uses: tbartelmess/analyze-xcoderesults-action@0.1.1
+        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-notification-engine.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Test Reports as Artifacts
         uses: actions/upload-artifact@v3
