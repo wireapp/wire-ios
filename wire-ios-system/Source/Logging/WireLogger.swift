@@ -27,7 +27,7 @@ public struct WireLogger: LoggerProtocol {
 
     // MARK: - Initialization
 
-    public init(tag: String = "") {
+    public init(tag: String) {
         self.tag = tag
     }
 
