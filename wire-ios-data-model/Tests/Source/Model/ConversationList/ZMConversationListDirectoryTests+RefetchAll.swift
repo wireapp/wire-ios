@@ -59,13 +59,13 @@ final class ZMConversationListDirectoryTests_RefetchAll: XCTestCase {
             let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
             selfUser.membership = membership
 
-            XCTAssertTrue(sut.conversationsIncludingArchived.setValue.isEmpty)
+            XCTAssertTrue(sut.conversationsIncludingArchived.items.isEmpty)
 
             // WHEN
             sut.refetchAllLists(in: coreDataStack.viewContext)
 
             // THEN
-            XCTAssertEqual(sut.conversationsIncludingArchived.setValue, [oneToOneTeamConversation])
+            XCTAssertEqual(sut.conversationsIncludingArchived.items, [oneToOneTeamConversation])
         }
     }
 

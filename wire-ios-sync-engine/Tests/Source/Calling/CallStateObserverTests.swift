@@ -470,14 +470,13 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         // > "Other"
         // > "Main"             (Muted)
 
-        let list = syncMOC.performAndWait {
+        let list: ConversationList = syncMOC.performAndWait {
             // this is expected to be done on viewContext,
             // but test needs to check on syncMoc
             ZMConversation.conversationsExcludingArchived(in: syncMOC)
         }
 
-        if let first = list.firstObject as? ZMConversation,
-            let last = list.lastObject as? ZMConversation {
+        if let first = list.items.first, let last = list.items.last {
             XCTAssertEqual(first, otherConvo!)
             XCTAssertEqual(last, self.conversation)
         } else {
@@ -504,13 +503,11 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         // > "Main"     (JOIN)  (Muted)
         // > "Other"
 
-        if let first = list.firstObject as? ZMConversation,
-            let last = list.lastObject as? ZMConversation {
+        if let first = list.items.first, let last = list.items.last {
             XCTAssertEqual(first, self.conversation)
             XCTAssertEqual(last, otherConvo!)
         } else {
             XCTFail()
         }
     }
-
 }

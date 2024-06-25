@@ -35,8 +35,6 @@
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
 
-#import "ZMConversationList+Internal.h"
-
 #import "ZMConversationListDirectory.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 #import "NSPredicate+ZMSearch.h"

@@ -65,20 +65,20 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
     public func conversations(by type: ConversationListType) -> [ZMConversation] {
         switch type {
         case .archived:
-            return archivedConversations as! [ZMConversation]
+            return archivedConversations.items
         case .unarchived:
-            return unarchivedConversations as! [ZMConversation]
+            return unarchivedConversations.items
         case .pending:
-            return pendingConnectionConversations as! [ZMConversation]
+            return pendingConnectionConversations.items
         case .contacts:
-            return oneToOneConversations as! [ZMConversation]
+            return oneToOneConversations.items
         case .groups:
-            return groupConversations as! [ZMConversation]
+            return groupConversations.items
         case .favorites:
-            return favoriteConversations as! [ZMConversation]
+            return favoriteConversations.items
         case .folder(let label):
             guard let objectID = (label as? Label)?.objectID else { return [] } // TODO jacob make optional?
-            return listsByFolder[objectID] as? [ZMConversation] ?? []
+            return (listsByFolder[objectID] as? ConversationList)?.items ?? []
         }
     }
 

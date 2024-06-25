@@ -68,7 +68,7 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         let conversations = sut.conversationsIncludingArchived
 
         // then
-        XCTAssertEqual(conversations.setValue, [teamConversation1, teamConversation2, archivedTeamConversation, conversationWithoutTeam, otherTeamConversation, otherTeamArchivedConversation])
+        XCTAssertEqual(Set(conversations.items), [teamConversation1, teamConversation2, archivedTeamConversation, conversationWithoutTeam, otherTeamConversation, otherTeamArchivedConversation])
     }
 
     func testThatItReturnsArchivedConversationsInATeam() {
@@ -79,7 +79,7 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         let conversations = sut.archivedConversations
 
         // then
-        XCTAssertEqual(conversations.setValue, [archivedTeamConversation, otherTeamArchivedConversation])
+        XCTAssertEqual(Set(conversations.items), [archivedTeamConversation, otherTeamArchivedConversation])
     }
 
     func testThatItReturnsClearedConversationsInATeam() {
@@ -90,7 +90,7 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         let conversations = sut.clearedConversations
 
         // then
-        XCTAssertEqual(conversations.setValue, [clearedTeamConversation])
+        XCTAssertEqual(conversations.items, [clearedTeamConversation])
     }
 
     func testThatItDoesNotIncludeClearedConversationsInConversationsIncludingArchived() {
@@ -101,7 +101,7 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         let conversations = sut.conversationsIncludingArchived
 
         // then
-        XCTAssertFalse(conversations.setValue.contains(clearedTeamConversation))
+        XCTAssertFalse(conversations.items.contains(clearedTeamConversation))
     }
 
     // MARK: - Helper

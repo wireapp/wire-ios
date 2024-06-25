@@ -126,11 +126,11 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssertTrue(login())
 
         // I am faulting conversation, will maintain the "message" relations as faulted
-        let conversationList = ZMConversationList.conversations(inUserSession: userSession!)
+        let conversationList: ConversationList = .conversations(inUserSession: userSession!)
         let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
-        let previousIndex = conversationList.index(of: conversation1)
+        let previousIndex = try XCTUnwrap(conversationList.items.firstIndex(of: conversation1))
 
-        XCTAssertEqual(conversationList.count, 5)
+        XCTAssertEqual(conversationList.items.count, 5)
 
         let observer = ConversationListChangeObserver.init(conversationList: conversationList)
 

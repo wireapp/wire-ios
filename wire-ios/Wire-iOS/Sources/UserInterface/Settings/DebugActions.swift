@@ -77,7 +77,7 @@ enum DebugActions {
         guard let userSession = ZMUserSession.shared() else { return }
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
-        if let convo = (ZMConversationList.conversations(inUserSession: userSession) as! [ZMConversation])
+        if let convo = (ConversationList.conversations(inUserSession: userSession) as! [ZMConversation])
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
@@ -103,7 +103,7 @@ enum DebugActions {
     static func sendBrokenMessage(_ type: SettingsCellDescriptorType) {
         guard
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
             else {
                 return
         }
@@ -124,7 +124,7 @@ enum DebugActions {
         guard
             amount > 0,
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
             else {
                 return
         }
@@ -267,7 +267,7 @@ enum DebugActions {
 
     static func appendMessagesToDatabase(count: Int) {
         guard let userSession = ZMUserSession.shared() else { return }
-        let conversation = ZMConversationList.conversations(inUserSession: userSession).firstObject! as! ZMConversation
+        let conversation = ConversationList.conversations(inUserSession: userSession).items.first!
         let conversationId = conversation.objectID
 
         let syncContext = userSession.syncManagedObjectContext
