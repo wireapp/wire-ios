@@ -43,11 +43,12 @@ extension WireAnalytics {
         }
 
         /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available, the function just returns.
+        /// Should be called early and only once per session ( app or extensions)!
         public static func enable() {
             guard let shared else { return }
 
             shared.enable()
-            WireLogger.addDatadog(shared)
+            WireLogger.addLogger(shared)
         }
     }
 }
