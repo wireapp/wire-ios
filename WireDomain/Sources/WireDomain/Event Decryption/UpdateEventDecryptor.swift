@@ -124,7 +124,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 return
             }
 
-            // TODO: look at this, make sure the error codes are correct.
             conversation.appendDecryptionFailedSystemMessage(
                 at: eventData.timestamp,
                 sender: sender,
