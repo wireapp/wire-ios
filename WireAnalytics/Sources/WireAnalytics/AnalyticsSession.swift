@@ -57,9 +57,7 @@ public struct AnalyticsUserProfile {
 
 public struct AnalyticsSession: AnalyticsSessionProtocol {
 
-    let countly: WireCountly
-    let appKey: String
-    let host: URL
+    private let countly: WireCountly
     private var userProfile: AnalyticsUserProfile?
 
     public init(
@@ -67,8 +65,6 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         host: URL,
         userProfile: AnalyticsUserProfile
     ) {
-        self.appKey = appKey
-        self.host = host
         self.userProfile = userProfile
 
         let config = WireCountlyConfig()
