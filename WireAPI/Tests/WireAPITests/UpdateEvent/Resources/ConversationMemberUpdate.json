@@ -1,0 +1,23 @@
+{
+    "type": "conversation.member-update",
+    "qualified_conversation": {
+        "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
+        "domain": "example.com"
+    },
+    "qualified_from": {
+        "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+        "domain": "example.com"
+    },
+    "time": "2024-06-04T15:03:07.598Z",
+    "data": {
+        "qualified_target": {
+            "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+            "domain": "example.com"
+        },
+        "conversation_role": "admin",
+        "otr_muted_status": 1,
+        "otr_muted_ref": "2024-06-04T15:03:07.598Z",
+        "otr_archived": true,
+        "otr_archived_ref": "2024-06-04T15:03:07.598Z"
+    }
+}

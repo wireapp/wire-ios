@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 protocol IncomingRequestFooterViewDelegate: AnyObject {
 

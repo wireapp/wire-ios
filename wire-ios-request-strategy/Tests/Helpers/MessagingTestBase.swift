@@ -456,7 +456,7 @@ extension MessagingTestBase {
         selfClient.remoteIdentifier = "baddeed"
         selfClient.user = user
 
-        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: "PersistedClientId")
+        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         selfClient.type = .permanent
         self.syncMOC.saveOrRollback()
         return selfClient
@@ -506,13 +506,17 @@ extension MessagingTestBase {
 extension MessagingTestBase {
 
     private var cacheFolder: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.randomCacheURL!
     }
 
     fileprivate func deleteAllFilesInCache() {
         let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
         files?.forEach {
-            try! FileManager.default.removeItem(at: $0)
+            do {
+                try FileManager.default.removeItem(at: $0)
+            } catch {
+                WireLogger.system.error("error deleting file  \($0.absoluteString) in cache: \(error)")
+            }
         }
     }
 }
