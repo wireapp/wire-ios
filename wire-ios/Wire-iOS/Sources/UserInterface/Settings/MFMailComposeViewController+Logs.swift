@@ -69,7 +69,7 @@ extension MFMailComposeViewController {
             }
         }
 
-        var logFiles = WireLogger.provider?.logFiles ?? []
+        var logFiles = WireLogger.logFiles
         logFiles.append(contentsOf: ZMSLog.pathsForExistingLogs)
 
         if let data = FileManager.default.zipData(from: logFiles) {
