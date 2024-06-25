@@ -60,7 +60,7 @@ public final class ConversationList: NSObject {
         sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
         conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        items = Self.createItems(allConversations, filteringPredicate: filteringPredicate)
+        items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
 
         super.init()
 
@@ -77,9 +77,13 @@ public final class ConversationList: NSObject {
         }
     }
 
-    private static func createItems(_ conversations: [ZMConversation], filteringPredicate: NSPredicate) -> [ZMConversation] {
+    private static func createItems(
+        _ conversations: [ZMConversation],
+        _ filteringPredicate: NSPredicate,
+        _ sortDescriptors: [NSSortDescriptor]
+    ) -> [ZMConversation] {
         let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
-        return NSSet(array: filtered).sortedArray(using: ZMConversation.defaultSortDescriptors()!) as! [ZMConversation]
+        return NSSet(array: filtered).sortedArray(using: sortDescriptors) as! [ZMConversation]
     }
 
     private static func calculateKeysAffectingPredicateAndSort(_ sortDescriptors: [NSSortDescriptor]) -> NSSet {
@@ -97,7 +101,7 @@ public final class ConversationList: NSObject {
         predicate: NSPredicate
     ) {
         filteringPredicate = predicate
-        items = Self.createItems(allConversations, filteringPredicate: predicate)
+        items = Self.createItems(allConversations, predicate, sortDescriptors)
 
         let managedObjectContext = managedObjectContext
         managedObjectContext?.performAndWait {
