@@ -390,8 +390,6 @@ public final class ZMUserSession: NSObject {
 
         super.init()
 
-        setupAnalyticsSession()
-
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAppDidBecomeActive),
@@ -498,6 +496,8 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        setupAnalyticsSession()
 
         self.analyticsSession?.startSession()
 
