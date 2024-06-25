@@ -43,6 +43,7 @@
 		064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */; };
 		0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */; };
 		0658F5AD25D16EA900DD6859 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */; };
+		06593A7A2C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06593A792C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift */; };
 		065A591E2BEA219E008487CF /* OtherUserDeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065A591D2BEA219E008487CF /* OtherUserDeviceDetailsView.swift */; };
 		065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065A5AE0279B07AC002D4D1E /* NotificationService.swift */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -2090,6 +2091,7 @@
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+OpenURL.swift"; sourceTree = "<group>"; };
+		06593A792C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartClientLimitErrorHandler.swift; sourceTree = "<group>"; };
 		065A591D2BEA219E008487CF /* OtherUserDeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherUserDeviceDetailsView.swift; sourceTree = "<group>"; };
 		065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Notification Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		065A5AE0279B07AC002D4D1E /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -5132,6 +5134,7 @@
 				5EE73BE52122C6DC0032986D /* AuthenticationStartAddAccountEventHandler.swift */,
 				16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */,
 				1695B9DB2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift */,
+				06593A792C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift */,
 			);
 			path = "Flow Start";
 			sourceTree = "<group>";
@@ -9641,6 +9644,7 @@
 				D525426F209363DC001C04C1 /* CallActionAppearance.swift in Sources */,
 				D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */,
 				5E3A6C25206A4E4A00907484 /* LocationPreviewController.swift in Sources */,
+				06593A7A2C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift in Sources */,
 				EE01D08825ADA3D5001DB205 /* AppLockModule.Interactor.swift in Sources */,
 				E964168628997173007F9756 /* ButtonStyle.swift in Sources */,
 				BF8ECC2D1E570A920015177D /* UIActivityViewController+FileSaving.swift in Sources */,
