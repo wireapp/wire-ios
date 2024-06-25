@@ -191,9 +191,10 @@ final class ConversationListViewModel_: ConversationListViewModel {
         switch kind {
         case .contactRequests:
             conversationListType = .pending
+            let status: ConversationStatus! = nil
             return conversationDirectory.conversations(by: conversationListType).isEmpty
             ? []
-            : [SectionItem(item: contactRequestsItem, kind: kind)]
+            : [SectionItem(status: status, item: contactRequestsItem, kind: kind)]
         case .conversations:
             conversationListType = .unarchived
         case .contacts:
@@ -210,7 +211,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
         return conversationDirectory.conversations(by: conversationListType)
             .filter { !$0.hasIncompleteMetadata }
             .map { conversation in
-                SectionItem(item: conversation, kind: kind)
+                SectionItem(status: conversation.status, item: conversation, kind: kind)
             }
     }
 
@@ -616,7 +617,8 @@ extension ConversationListViewModel_ {
         /// - Parameter item: item to search
         /// - Returns: the index of the item
         func index(for item: ConversationListItemTMP) -> Int? {
-            items.firstIndex(of: SectionItem(item: item, kind: kind))
+            // TODO: does only ZMConversation conform to ConversationListItemTMP?
+            items.firstIndex(of: SectionItem(status: (item as! ZMConversation).status, item: item, kind: kind))
         }
 
         func isContentEqual(to source: ConversationListViewModel_.Section) -> Bool {
@@ -734,16 +736,24 @@ extension ConversationListViewModel_ {
 
     /// make items has different hash in different sections
     struct SectionItem: Hashable, Differentiable {
+
+        let status: ConversationStatus
         let item: ConversationListItemTMP
         let isFavorite: Bool
 
-        fileprivate init(item: ConversationListItemTMP, kind: Section.Kind) {
+        fileprivate init(
+            status: ConversationStatus,
+            item: ConversationListItemTMP,
+            kind: Section.Kind
+        ) {
+            self.status = status
             self.item = item
             self.isFavorite = kind == .favorites
         }
 
         // TODO: remove
         func hash(into hasher: inout Hasher) {
+            // hasher.combine(status)
             hasher.combine(isFavorite)
 
             let hashableItem: NSObject = item
@@ -752,8 +762,9 @@ extension ConversationListViewModel_ {
 
         // TODO: remove
         static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
-            return lhs.isFavorite == rhs.isFavorite &&
-                   lhs.item == rhs.item
+            return // lhs.status == rhs.status &&
+            lhs.isFavorite == rhs.isFavorite &&
+            lhs.item == rhs.item
         }
     }
 }
