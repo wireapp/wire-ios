@@ -115,42 +115,6 @@ public extension LogAttributes {
     static var safePublic = [LogAttributesKey.public: true]
 }
 
-public protocol LoggerProtocol {
-
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...)
-    func info(_ message: any LogConvertible, attributes: LogAttributes...)
-    func notice(_ message: any LogConvertible, attributes: LogAttributes...)
-    func warn(_ message: any LogConvertible, attributes: LogAttributes...)
-    func error(_ message: any LogConvertible, attributes: LogAttributes...)
-    func critical(_ message: any LogConvertible, attributes: LogAttributes...)
-
-    var logFiles: [URL] { get }
-
-    /// Add an attribute, value to each logs - DataDog only
-    func addTag(_ key: LogAttributesKey, value: String?)
-}
-
-extension LoggerProtocol {
-    func attributesDescription(from attributes: [LogAttributes]) -> String {
-        var logAttributes = flattenArray(attributes)
-
-        // drop attributes used for visibility and category
-        logAttributes.removeValue(forKey: LogAttributesKey.public)
-        logAttributes.removeValue(forKey: LogAttributesKey.tag)
-        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
-    }
-
-    /// helper method to transform attributes array to single LogAttributes
-    /// - note: if same key is contained accross multiple attributes, the latest one is taken
-    public func flattenArray(_ attributes: [LogAttributes]) -> LogAttributes {
-        var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
-        }
-        return mergedAttributes
-    }
-}
-
 public protocol LogConvertible {
 
     var logDescription: String { get }

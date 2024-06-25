@@ -48,6 +48,7 @@
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
 		E66F22ED2C2ADC6B005FD57E /* WireLogger+Instances.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66F22EC2C2ADC6B005FD57E /* WireLogger+Instances.swift */; };
 		E66F22EF2C2ADCD0005FD57E /* WireLoggerObjc.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */; };
+		E66F22F12C2ADD33005FD57E /* LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66F22F02C2ADD33005FD57E /* LoggerProtocol.swift */; };
 		E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */; };
 		EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC832BD1585500F7853F /* WireSystem.docc */; };
 		EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */; };
@@ -133,6 +134,7 @@
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
 		E66F22EC2C2ADC6B005FD57E /* WireLogger+Instances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireLogger+Instances.swift"; sourceTree = "<group>"; };
 		E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLoggerObjc.swift; sourceTree = "<group>"; };
+		E66F22F02C2ADD33005FD57E /* LoggerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerProtocol.swift; sourceTree = "<group>"; };
 		E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
 		EE9AEC832BD1585500F7853F /* WireSystem.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireSystem.docc; sourceTree = "<group>"; };
 		EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Temporary.swift"; sourceTree = "<group>"; };
@@ -174,13 +176,14 @@
 		01CB030B2A0CED010000CFF2 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */,
+				013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */,
+				01CB030D2A0CED010000CFF2 /* Flow.swift */,
+				E66F22F02C2ADD33005FD57E /* LoggerProtocol.swift */,
+				16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */,
 				01CB030C2A0CED010000CFF2 /* WireLogger.swift */,
 				E66F22EC2C2ADC6B005FD57E /* WireLogger+Instances.swift */,
 				E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */,
-				01CB030D2A0CED010000CFF2 /* Flow.swift */,
-				16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */,
-				013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */,
-				013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 				013334B92C204A7D002D97DB /* CocoaLumberjackLogger.swift in Sources */,
 				D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */,
 				59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */,
+				E66F22F12C2ADD33005FD57E /* LoggerProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
