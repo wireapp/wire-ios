@@ -392,7 +392,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 
         if let conversation = item as? ZMConversation {
 
-            zClientViewController?.openConversation(remoteIdentifier: conversation.remoteIdentifier)
+            ZClientViewController.shared?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection, completion: selectConversationCompletion)
             selectConversationCompletion = nil
 
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)

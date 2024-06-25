@@ -219,16 +219,14 @@ extension GroupParticipantsDetailViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true, completion: completion)
     }
-
 }
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            // TODO: implement
-            fatalError("TODO")
-            // ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
+            // TODO: inject ZClientViewController
+            ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
         }
     }
 }

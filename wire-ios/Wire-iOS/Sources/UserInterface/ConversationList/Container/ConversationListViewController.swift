@@ -74,6 +74,7 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
+        zClientViewController: ZClientViewController,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
@@ -87,6 +88,7 @@ final class ConversationListViewController: UIViewController {
         self.init(
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            zClientViewController: zClientViewController,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
     }
@@ -94,6 +96,7 @@ final class ConversationListViewController: UIViewController {
     required init(
         viewModel: ViewModel,
         isFolderStatePersistenceEnabled: Bool,
+        zClientViewController: ZClientViewController,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
@@ -103,7 +106,7 @@ final class ConversationListViewController: UIViewController {
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
-            zClientViewController: .shared! // TODO: fix force unwrap
+            zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 

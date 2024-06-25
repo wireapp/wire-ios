@@ -50,6 +50,7 @@ final class ZClientViewController: UIViewController {
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
+        zClientViewController: self,
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         isFolderStatePersistenceEnabled: false,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
@@ -60,6 +61,7 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
+            zClientViewController: self,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             isFolderStatePersistenceEnabled: true,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
@@ -326,13 +328,6 @@ final class ZClientViewController: UIViewController {
     func loadPlaceholderConversationController(animated: Bool, completion: @escaping Completion) {
         currentConversation = nil
         pushContentViewController(animated: animated, completion: completion)
-    }
-
-    func openConversation(remoteIdentifier: UUID) {
-
-        let conversation = ZMConversation.fetchSelfMLSConversation(in: <#T##NSManagedObjectContext#>)
-
-        zClientViewController?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection, completion: selectConversationCompletion)
     }
 
     /// Load and optionally show a conversation, but don't change the list selection.  This is the place to put
