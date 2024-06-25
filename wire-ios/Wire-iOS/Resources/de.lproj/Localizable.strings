@@ -1040,7 +1040,6 @@
 "self.add_email_password" = "E-Mail-Adresse und Passwort hinzufügen";
 
 // About screen
-"about.legal.title" = "Datenschutz und AGB";
 "about.tos.title" = "Nutzungsbedingungen";
 "about.privacy.title" = "Datenschutzrichtlinie";
 "about.license.title" = "Lizenzen";
