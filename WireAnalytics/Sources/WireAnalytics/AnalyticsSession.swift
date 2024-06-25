@@ -18,49 +18,6 @@
 
 import Countly
 
-/// A structure representing a user's profile for analytics purposes.
-
-public struct AnalyticsUserProfile {
-
-    /// The unique identifier for the user's analytics profile.
-    public let analyticsIdentifier: String
-
-    /// The team information for the user.
-    public let teamInfo: TeamInfo?
-
-    /// The number of contacts the user has.
-    public let contactCount: Int?
-
-    public init(
-        analyticsIdentifier: String,
-        teamInfo: TeamInfo? = nil,
-        contactCount: Int? = nil
-    ) {
-        self.analyticsIdentifier = analyticsIdentifier
-        self.teamInfo = teamInfo
-        self.contactCount = contactCount
-    }
-}
-
-/// A struct representing information about the user's team.
-public struct TeamInfo {
-
-    /// The identifier for the team the user belongs to.
-    public let id: String
-
-    /// The role of the user within the team.
-    public let role: String
-
-    /// The size of the team the user belongs to.
-    public let size: Int
-
-    public init(id: String, role: String, size: Int) {
-        self.id = id
-        self.role = role
-        self.size = size
-    }
-}
-
 public struct AnalyticsSession: AnalyticsSessionProtocol {
 
     private let countly: WireCountly
