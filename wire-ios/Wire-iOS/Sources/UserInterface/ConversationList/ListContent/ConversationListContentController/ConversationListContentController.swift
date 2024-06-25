@@ -222,6 +222,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         selectModelItem(nil)
     }
 
+    // TODO: remove completion
     func select(_ conversation: ZMConversation?, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: Completion?) -> Bool {
         focusOnNextSelection = focus
 
@@ -235,7 +236,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     @discardableResult
     func selectModelItem(_ itemToSelect: ConversationListItem?) -> Bool {
-        return listViewModel.select(itemToSelect: itemToSelect)
+        listViewModel.select(itemToSelect: itemToSelect)
     }
 
     // MARK: - UICollectionViewDelegate
@@ -245,10 +246,11 @@ final class ConversationListContentController: UICollectionViewController, Popov
         return true
     }
 
-    override func collectionView(_ collectionView: UICollectionView,
-                                 didSelectItemAt indexPath: IndexPath) {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
         selectionFeedbackGenerator.selectionChanged()
-
         openConversation(conversationListItem: listViewModel.item(for: indexPath))
     }
 

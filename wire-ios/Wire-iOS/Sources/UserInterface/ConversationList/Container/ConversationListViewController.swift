@@ -305,13 +305,13 @@ final class ConversationListViewController: UIViewController {
         setState(.peoplePicker, animated: true, completion: completion)
     }
 
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
+    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
         listContentController.select(
             conversation,
             scrollTo: message,
             focusOnView: focus,
             animated: animated,
-            completion: completion
+            completion: nil
         )
     }
 

@@ -698,21 +698,21 @@ final class ZClientViewController: UIViewController {
     ///   - message: scroll to  this message
     ///   - focus: focus on the view or not
     ///   - animated: perform animation or not
-    ///   - completion: the completion block
-    func select(conversation: ZMConversation,
-                scrollTo message: ZMConversationMessage? = nil,
-                focusOnView focus: Bool,
-                animated: Bool,
-                completion: Completion? = nil) {
-        dismissAllModalControllers(callback: { [weak self] in
+    func select(
+        conversation: ZMConversation,
+        scrollTo message: ZMConversationMessage? = nil,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) {
+        dismissAllModalControllers { [weak self] in
             guard
+                let self,
                 !conversation.isDeleted,
                 conversation.managedObjectContext != nil
-            else {
-                return
-            }
-            self?.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
-        })
+            else { return }
+
+            conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+        }
     }
 
     func select(conversation: ZMConversation) {

@@ -56,8 +56,7 @@ extension ZClientViewController {
             select(conversation: conversation,
                    scrollTo: message,
                    focusOnView: true,
-                   animated: true,
-                   completion: nil)
+                   animated: true)
         default:
             break
         }
@@ -66,5 +65,4 @@ extension ZClientViewController {
     func showConversationList() {
         transitionToList(animated: true, completion: nil)
     }
-
 }
