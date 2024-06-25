@@ -99,7 +99,10 @@ final class NetworkStatusViewController: UIViewController {
 
         if let userSession = ZMUserSession.shared() {
             enqueue(state: viewState(from: userSession.networkState))
-            networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(self, userSession: userSession)
+            networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+                self,
+                notificationContext: userSession.managedObjectContext.notificationContext
+            )
         }
 
         networkStatusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnNetworkStatusBar)))
