@@ -98,10 +98,3 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         countly.recordEvent(event.rawValue)
     }
 }
-
-// Extension to logRound
-extension Int {
-    func logRound() -> Int {
-        return Int(log2(Double(self)).rounded())
-    }
-}
