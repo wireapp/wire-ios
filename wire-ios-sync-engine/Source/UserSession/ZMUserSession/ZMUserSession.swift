@@ -401,6 +401,8 @@ public final class ZMUserSession: NSObject {
 
         setupAnalyticsSession()
 
+        self.analyticsSession?.startSession()
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAppDidBecomeActive),
@@ -411,23 +413,23 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupAnalyticsSession() {
-        let analyticsUserProfile: AnalyticsUserProfile = AnalyticsUserProfile(
-            analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
-            teamID: selfUser.membership?.team?.remoteIdentifier?.uuidString,
-            teamRole: selfUser.teamRole.analyticsValue,
-            teamSize: selfUser.membership?.team?.members.count,
-            contactCount: selfUser.membership?.team?.members.count
-        )
-
         if let config = dependencies.analyticsSessionConfiguration,
            let countlyKey = config.countlyKey,
            let host = config.host {
+            let analyticsUserProfile = AnalyticsUserProfile(
+                analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
+                teamID: selfUser.membership?.team?.remoteIdentifier?.uuidString,
+                teamRole: selfUser.teamRole.analyticsValue,
+                teamSize: selfUser.membership?.team?.members.count,
+                contactCount: selfUser.membership?.team?.members.count
+            )
+
             self.analyticsSession = AnalyticsSession(
                 appKey: countlyKey,
                 host: host,
                 userProfile: analyticsUserProfile
             )
-            self.analyticsSession?.startSession()
+
         }
     }
 
