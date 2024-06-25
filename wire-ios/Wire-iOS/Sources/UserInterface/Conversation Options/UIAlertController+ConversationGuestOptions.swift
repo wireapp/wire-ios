@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 enum GuestLinkType {
     case secure

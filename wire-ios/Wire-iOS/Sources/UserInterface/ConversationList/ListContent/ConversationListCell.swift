@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireDesign
 import WireSyncEngine
 
 typealias MatcherConversation = Conversation & ConversationStatusProvider & TypingStatusProvider & VoiceChannelProvider

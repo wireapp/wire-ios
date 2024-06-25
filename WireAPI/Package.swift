@@ -59,7 +59,7 @@ let package = Package(
                 .process("APIs/TeamsAPI/Resources"),
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),
-                .process("EventDecoding/Resources")
+                .process("UpdateEvent/Resources")
             ]
         )
     ]

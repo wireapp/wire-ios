@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		013334B92C204A7D002D97DB /* CocoaLumberjackLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */; };
+		013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */; };
 		013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */; };
 		01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030C2A0CED010000CFF2 /* WireLogger.swift */; };
 		01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030D2A0CED010000CFF2 /* Flow.swift */; };
@@ -30,10 +32,9 @@
 		54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F249C61BB9242900040600 /* ZMSDispatchGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F249C71BB9242900040600 /* ZMSDispatchGroup.m */; };
 		54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54FF9F111C48F67300B29ACE /* ZMSTimePoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */; };
 		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
 		59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */; };
+		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86E02BF4DB9B00FC5438 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
@@ -79,6 +80,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaLumberjackLogger.swift; sourceTree = "<group>"; };
 		013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregatedLogger.swift; sourceTree = "<group>"; };
 		01CB030C2A0CED010000CFF2 /* WireLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireLogger.swift; sourceTree = "<group>"; };
 		01CB030D2A0CED010000CFF2 /* Flow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
@@ -113,10 +115,9 @@
 		54F249C71BB9242900040600 /* ZMSDispatchGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSDispatchGroup.m; sourceTree = "<group>"; };
 		54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSGroupQueue.h; sourceTree = "<group>"; };
 		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSTimePoint.h; sourceTree = "<group>"; };
-		54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTimePoint.m; sourceTree = "<group>"; };
 		59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
 		59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDateProviding.swift; sourceTree = "<group>"; };
+		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSystemSupport.h; sourceTree = "<group>"; };
 		598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -143,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
 				E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -174,6 +176,7 @@
 				E68BFB882C1B30AA00EE8A3C /* WireLogger+Datadog.swift */,
 				01CB030D2A0CED010000CFF2 /* Flow.swift */,
 				16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */,
+				013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */,
 				013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */,
 			);
 			path = Logging;
@@ -230,6 +233,7 @@
 				01CB030B2A0CED010000CFF2 /* Logging */,
 				F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */,
 				F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */,
+				594450552BDFE8BF003ACC98 /* TimePoint.swift */,
 				EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */,
 				5473E7C71B31A95A00C6A937 /* WireSystem.h */,
 				548662451B344AAB00298EFD /* ZMSAsserts.h */,
@@ -244,8 +248,6 @@
 				54D573691DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift */,
 				096A3A1C1B67CEF700565001 /* ZMSLogging.h */,
 				096A3A1D1B67CEF700565001 /* ZMSLogging.m */,
-				54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */,
-				54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -359,7 +361,6 @@
 				54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */,
 				54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */,
 				548662461B344AAB00298EFD /* ZMSAsserts.h in Headers */,
-				54FF9F111C48F67300B29ACE /* ZMSTimePoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +391,9 @@
 			dependencies = (
 			);
 			name = WireSystem;
+			packageProductDependencies = (
+				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
+			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
 			productType = "com.apple.product-type.framework";
@@ -464,6 +468,9 @@
 				Base,
 			);
 			mainGroup = 3ECC34C31AD430BB0089FD4B;
+			packageReferences = (
+				013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
+			);
 			productRefGroup = 3ECC34E61AD433520089FD4B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -572,6 +579,7 @@
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
 				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
+				594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				E68BFB892C1B30AA00EE8A3C /* WireLogger+Datadog.swift in Sources */,
 				EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */,
@@ -579,9 +587,9 @@
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
-				54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */,
 				54D5736A1DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift in Sources */,
 				5442AB7F1CA29CC000BC099C /* ZMSAsserts.swift in Sources */,
+				013334B92C204A7D002D97DB /* CocoaLumberjackLogger.swift in Sources */,
 				D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */,
 				59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */,
 			);
@@ -906,6 +914,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.8.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3ECC34C41AD430BB0089FD4B /* Project object */;
 }

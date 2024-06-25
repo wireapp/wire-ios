@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class CollectionsView: UIView {
     var collectionViewLayout: CollectionViewLeftAlignedFlowLayout!
