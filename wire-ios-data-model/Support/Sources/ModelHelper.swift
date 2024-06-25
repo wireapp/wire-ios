@@ -197,10 +197,12 @@ public struct ModelHelper {
     @discardableResult
     public func createGroupConversation(
         id: UUID = .init(),
+        domain: String? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = id
+        conversation.domain = domain
         conversation.conversationType = .group
         return conversation
     }

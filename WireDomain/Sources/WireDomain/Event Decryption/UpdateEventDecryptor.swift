@@ -35,14 +35,25 @@ protocol UpdateEventDecryptorProtocol {
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
-    private let proteusService: any ProteusServiceInterface
+    private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
     private let context: NSManagedObjectContext
 
     init(
         proteusService: any ProteusServiceInterface,
         context: NSManagedObjectContext
     ) {
-        self.proteusService = proteusService
+        self.proteusMessageDecryptor = ProteusMessageDecryptor(
+            proteusService: proteusService,
+            managedObjectContext: context
+        )
+        self.context = context
+    }
+
+    init(
+        proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
+        context: NSManagedObjectContext
+    ) {
+        self.proteusMessageDecryptor = proteusMessageDecryptor
         self.context = context
     }
 
@@ -63,12 +74,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 )
 
                 do {
-                    let decryptor = ProteusMessageDecryptor(
-                        proteusService: proteusService,
-                        managedObjectContext: context
-                    )
-
-                    let decryptedEventData = try await decryptor.decryptedEventData(from: eventData)
+                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
 
                 } catch let error as ProteusError {

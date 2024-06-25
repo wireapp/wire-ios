@@ -56,6 +56,37 @@ import WireAPI
 
 
 
+class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - decryptedEventData
+
+    var decryptedEventDataFrom_Invocations: [ConversationProteusMessageAddEvent] = []
+    var decryptedEventDataFrom_MockError: Error?
+    var decryptedEventDataFrom_MockMethod: ((ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent)?
+    var decryptedEventDataFrom_MockValue: ConversationProteusMessageAddEvent?
+
+    func decryptedEventData(from eventData: ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent {
+        decryptedEventDataFrom_Invocations.append(eventData)
+
+        if let error = decryptedEventDataFrom_MockError {
+            throw error
+        }
+
+        if let mock = decryptedEventDataFrom_MockMethod {
+            return try await mock(eventData)
+        } else if let mock = decryptedEventDataFrom_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptedEventDataFrom`")
+        }
+    }
+
+}
+
 class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
 
     // MARK: - Life cycle

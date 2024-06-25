@@ -34,7 +34,6 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
 
     var context: NSManagedObjectContext {
         stack.eventContext

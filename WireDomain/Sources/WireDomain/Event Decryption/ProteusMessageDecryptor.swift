@@ -20,16 +20,22 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-struct ProteusMessageDecryptor {
+// sourcery: AutoMockable
+/// Decrypt proteus messages.
+protocol ProteusMessageDecryptorProtocol {
+    
+    /// Decrypt a proteus message.
+    ///
+    /// - Parameter eventData: A payload containing the encrypted message.
+    /// - Returns: The payload containing the decrypted message.
 
-    enum Failure: Error {
+    func decryptedEventData(
+        from eventData: ConversationProteusMessageAddEvent
+    ) async throws -> ConversationProteusMessageAddEvent
 
-            case selfClientNotFound
-            case senderClientNotFound
-            case proteusSessionIDNotFound
-            case senderFailedToEncrypt
+}
 
-        }
+struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
     let proteusService: any ProteusServiceInterface
     let managedObjectContext: NSManagedObjectContext
@@ -61,7 +67,7 @@ struct ProteusMessageDecryptor {
 
         // Validate ciphertext.
         guard ciphertext != ZMFailedToCreateEncryptedMessagePayloadString else {
-            throw Failure.senderFailedToEncrypt
+            throw ProteusMessageDecryptorError.senderFailedToEncrypt
         }
 
         // TODO: What about external data?
@@ -97,7 +103,7 @@ struct ProteusMessageDecryptor {
     ) async throws -> Context {
         try await managedObjectContext.perform { [managedObjectContext] in
             guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() else {
-                throw Failure.selfClientNotFound
+                throw ProteusMessageDecryptorError.selfClientNotFound
             }
 
             let senderUser = ZMUser.fetchOrCreate(
@@ -111,7 +117,7 @@ struct ProteusMessageDecryptor {
                 forUser: senderUser,
                 createIfNeeded: true
             ) else {
-                throw Failure.selfClientNotFound
+                throw ProteusMessageDecryptorError.selfClientNotFound
             }
 
             if senderClient.isInserted {
@@ -121,7 +127,7 @@ struct ProteusMessageDecryptor {
             }
 
             guard let proteusSessionID = senderClient.proteusSessionID else {
-                throw Failure.proteusSessionIDNotFound
+                throw ProteusMessageDecryptorError.proteusSessionIDNotFound
             }
 
             return (selfClient, senderUser, senderClient, proteusSessionID)
