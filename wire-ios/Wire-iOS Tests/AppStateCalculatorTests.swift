@@ -139,6 +139,18 @@ final class AppStateCalculatorTests: XCTestCase {
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
+    func testThatAppStateChanges_OnDidFailToLogin_CanNotRegisterMoreClients() {
+        // GIVEN
+        let error = NSError(code: ZMUserSessionErrorCode.canNotRegisterMoreClients, userInfo: nil)
+        sut.applicationDidBecomeActive()
+
+        // WHEN
+        sut.sessionManagerDidFailToLogin(error: error)
+
+        // THEN
+        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+    }
+
     func testThatAppStateChanges_OnSessionLockChange() {
 
         // GIVEN

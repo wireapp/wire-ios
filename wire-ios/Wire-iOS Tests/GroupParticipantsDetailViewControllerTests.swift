@@ -17,8 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
@@ -40,7 +41,8 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    var userSession: UserSessionMock!
+    private var userSession: UserSessionMock!
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -52,7 +54,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
     override func tearDown() {
         SelfUser.provider = nil
         userSession = nil
-
         super.tearDown()
     }
 
@@ -61,7 +62,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         let users: [MockUserType] = (0..<20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
-
             return user
         }
 
@@ -70,16 +70,36 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-		let createSut: () -> UIViewController = {
+        let createSut: () -> UIViewController = {
             let sut = GroupParticipantsDetailViewController(
                 selectedParticipants: selected,
                 conversation: conversation,
                 userSession: self.userSession
             )
-			return sut.wrapInNavigationController()
-		}
+            return sut.wrapInNavigationController()
+        }
 
-        verifyInAllColorSchemes(createSut: createSut)
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersALotOfUsers_WithoutNames() {
