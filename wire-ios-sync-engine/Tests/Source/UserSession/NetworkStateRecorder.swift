@@ -16,30 +16,60 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireSyncEngine
 
-@objcMembers
-public class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
+@objc
+public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
 
-    var stateChanges: [ZMNetworkState] = []
+    // MARK: Properties
+
+    private var _stateChanges: [ZMNetworkState] = []
+
+    private let queue = DispatchQueue(label: "NetworkStateRecorder.queue", qos: .userInitiated)
+
+    private let notificationCenter: NotificationCenter = .default
+    private var selfUnregisteringToken: SelfUnregisteringNotificationCenterToken?
+
+    var stateChanges: [ZMNetworkState] {
+        queue.sync {
+            _stateChanges
+        }
+    }
+
+    @objc
     var stateChanges_objc: [NSNumber] {
-        stateChanges.map { NSNumber(value: $0.rawValue) }
+        queue.sync {
+            _stateChanges.map { NSNumber(value: $0.rawValue) }
+        }
     }
 
-    var observerToken: Any?
+    // MARK: Methods
 
-    public override init() {
-        super.init()
+    @objc
+    public func observe() {
+        let token = notificationCenter.addObserver(
+            forName: ZMNetworkAvailabilityChangeNotification.name,
+            object: nil,
+            queue: nil
+        ) { [weak self] notification in
+            let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! ZMNetworkState
+            self?.didChangeAvailability(newState: networkState)
+        }
+        selfUnregisteringToken = .init(token, notificationCenter: notificationCenter)
     }
 
-    init(userSession: ZMUserSession) {
-        super.init()
-
-        observerToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(self, userSession: userSession)
+    @objc
+    public func observe(in notificationContext: NotificationContext) {
+        selfUnregisteringToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            self,
+            notificationContext: notificationContext
+        )
     }
 
     public func didChangeAvailability(newState: ZMNetworkState) {
-        stateChanges.append(newState)
+        queue.async {
+            self._stateChanges.append(newState)
+        }
     }
 
 }

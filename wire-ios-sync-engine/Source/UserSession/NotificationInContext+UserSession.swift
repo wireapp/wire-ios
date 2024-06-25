@@ -18,33 +18,6 @@
 
 import WireDataModel
 
-extension ZMUserSession: NotificationContext { } // Mark ZMUserSession as valid notification context
-
-// MARK: - Network Availability
-
-@objcMembers public class ZMNetworkAvailabilityChangeNotification: NSObject {
-
-    private static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
-
-    private static let stateKey = "networkState"
-
-    public static func addNetworkAvailabilityObserver(_ observer: ZMNetworkAvailabilityObserver, userSession: ZMUserSession) -> Any {
-        return NotificationInContext.addObserver(name: name,
-                                                 context: userSession) { [weak observer] note in
-            observer?.didChangeAvailability(newState: note.userInfo[stateKey] as! ZMNetworkState)
-        }
-    }
-
-    public static func notify(networkState: ZMNetworkState, userSession: ZMUserSession) {
-        NotificationInContext(name: name, context: userSession, userInfo: [stateKey: networkState]).post()
-    }
-
-}
-
-@objc public protocol ZMNetworkAvailabilityObserver: NSObjectProtocol {
-    func didChangeAvailability(newState: ZMNetworkState)
-}
-
 // MARK: - Typing
 
 private let typingNotificationUsersKey = "typingUsers"
