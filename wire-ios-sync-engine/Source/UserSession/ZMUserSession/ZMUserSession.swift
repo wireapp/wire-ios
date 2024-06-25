@@ -23,15 +23,6 @@ import WireDataModel
 import WireRequestStrategy
 import WireSystem
 
-public struct AnalyticsSessionConfiguration {
-    public let countlyKey: String?
-    public let host: URL?
-
-    public init(countlyKey: String?, host: URL?) {
-        self.countlyKey = countlyKey
-        self.host = host
-    }
-}
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate
 & UserSessionLogoutDelegate
