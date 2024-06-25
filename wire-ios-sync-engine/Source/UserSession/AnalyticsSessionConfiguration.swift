@@ -21,12 +21,11 @@
 
 public struct AnalyticsSessionConfiguration {
 
-    public let countlyKey: String?
-    public let host: URL?
+    public let countlyKey: String
+    public let host: URL
 
-    public init(countlyKey: String?, host: URL?) {
+    public init(countlyKey: String, host: URL) {
         self.countlyKey = countlyKey
         self.host = host
     }
-
 }

@@ -400,9 +400,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupAnalyticsSession() {
-        guard let config = dependencies.analyticsSessionConfiguration,
-              let countlyKey = config.countlyKey,
-              let host = config.host else {
+        guard let config = dependencies.analyticsSessionConfiguration else {
             return
         }
 
@@ -425,8 +423,8 @@ public final class ZMUserSession: NSObject {
         )
 
         self.analyticsSession = AnalyticsSession(
-            appKey: countlyKey,
-            host: host,
+            appKey: config.countlyKey,
+            host: config.host,
             userProfile: analyticsUserProfile
         )
     }
