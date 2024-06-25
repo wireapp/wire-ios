@@ -292,7 +292,7 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?
     ) {
         for (idx, event) in decryptedEvents.enumerated() {
-            WireLogger.updateEvent.info("store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
+            WireLogger.updateEvent.info("store event", attributes: event.logAttributes)
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
@@ -427,10 +427,7 @@ extension EventDecoder {
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
                 let included = genericMessage.hasAvailability
                 if !included {
-                    WireLogger.updateEvent.warn(
-                        "dropping stored event",
-                        attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID]
-                    )
+                    WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)
                 }
                 return included
             }
