@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public protocol LabelType: NSObjectProtocol { // TODO: ? make concrete type which conforms to equatable?
+public protocol LabelType: NSObjectProtocol {
 
     var remoteIdentifier: UUID? { get }
     var kind: Label.Kind { get }

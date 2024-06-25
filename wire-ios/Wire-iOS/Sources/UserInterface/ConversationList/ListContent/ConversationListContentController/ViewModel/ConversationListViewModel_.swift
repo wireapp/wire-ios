@@ -655,7 +655,7 @@ extension ConversationListViewModel_ {
 
 extension ConversationListViewModel_.Section {
 
-    enum Kind: Equatable, Hashable {
+    enum Kind: Hashable {
 
         /// for incoming requests
         case contactRequests
@@ -674,12 +674,6 @@ extension ConversationListViewModel_.Section {
 
         /// conversations in folders
         case folder(label: Label)
-
-        struct Label: Hashable {
-            var remoteIdentifier: UUID?
-            // var kind: Label.Kind
-            var name: String?
-        }
 
         var identifier: ConversationListViewModel_.SectionIdentifier {
             switch self {
