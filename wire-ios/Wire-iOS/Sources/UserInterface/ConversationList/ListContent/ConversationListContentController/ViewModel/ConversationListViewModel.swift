@@ -565,10 +565,8 @@ final class ConversationListViewModel: WireConversationList.ConversationListView
     private func internalSelect(itemToSelect: ConversationListItemTMP?) {
         selectedItem = itemToSelect
 
-        if let itemToSelect {
-            // TODO: fix
-            fatalError("TODO")
-            // delegate?.conversationListViewModel(self, didSelectItemAt: <#T##IndexPath#>)
+        if let itemToSelect, let indexPath = indexPath(for: itemToSelect) {
+            delegate?.conversationListViewModel(self, didSelectItemAt: indexPath)
         }
     }
 
