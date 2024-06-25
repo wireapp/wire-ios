@@ -138,7 +138,120 @@ struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
-    private func snapshotDirectory(file: StaticString = #file) -> String {
+    /// Verifies a `UIViewController`.
+    ///
+    /// - Parameters:
+    ///   - value: The `UIViewController` to test.
+    ///   - size: An optional `CGSize` to specify a custom size for the snapshot. Defaults to `nil`.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - recording: A `Bool` indicating whether to record a new reference snapshot. Defaults to `false`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
+
+    func verify(
+        matching value: UIViewController,
+        size: CGSize? = nil,
+        named name: String? = nil,
+        record recording: Bool = false,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
+
+        let failure = verifySnapshot(
+            matching: value,
+            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            named: name,
+            record: recording,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
+
+        XCTAssertNil(failure, file: file, line: line)
+    }
+
+    ///    Verifiy a`UIView`.
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIView` to test.
+    ///        - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    func verify(
+        matching value: UIView,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+
+        let failure = verifySnapshot(
+            matching: value,
+            as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            named: name,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
+
+        XCTAssertNil(failure, file: file, line: line)
+    }
+
+    /// Verifies that a given `UIView` renders correctly across all supported Dynamic Type content size categories.
+    ///
+    /// - Parameters:
+    ///   - value: The `UIView` instance that you want to verify.
+    ///   - name: The name of the reference image.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
+
+    func verifyForDynamicType(
+        matching value: UIView,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        [
+            "extra-small": UIContentSizeCategory.extraSmall,
+            "small": .small,
+            "medium": .medium,
+            "large": .large,
+            "extra-large": .extraLarge,
+            "extra-extra-large": .extraExtraLarge,
+            "extra-extra-extra-large": .extraExtraExtraLarge,
+            "accessibility-medium": .accessibilityMedium,
+            "accessibility-large": .accessibilityLarge,
+            "accessibility-extra-large": .accessibilityExtraLarge,
+            "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
+            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
+        ].forEach { name, contentSize in
+            let failure = verifySnapshot(
+                matching: value,
+                as: .image(
+                    traits: .init(preferredContentSizeCategory: contentSize)
+                ),
+                named: name,
+                snapshotDirectory: snapshotDirectory(file: file),
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+            XCTAssertNil(failure, file: file, line: line)
+        }
+
+    }
+
+    func snapshotDirectory(file: StaticString = #file) -> String {
         let fileName = "\(file)"
         let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
         return path
