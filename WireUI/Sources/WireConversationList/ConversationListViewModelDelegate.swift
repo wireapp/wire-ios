@@ -17,10 +17,11 @@
 //
 
 import DifferenceKit
+import Foundation
 
 public protocol ConversationListViewModelDelegate: AnyObject {
 
-    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem)
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelectItemAt indexPath: IndexPath)
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateForReloadSectionAt sectionIndex: Int)
     func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateSectionAt sectionIndex: Int)
 

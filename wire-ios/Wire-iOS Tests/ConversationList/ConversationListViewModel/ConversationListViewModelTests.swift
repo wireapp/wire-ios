@@ -44,7 +44,7 @@ final class MockConversationListViewModelDelegate: ConversationListViewModelDele
         // no-op
     }
 
-    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem) {
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelectItemAt indexPath: IndexPath) {
         // no-op
     }
 

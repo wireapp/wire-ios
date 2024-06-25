@@ -349,15 +349,15 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
 extension ConversationListContentController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: listViewModel.sectionHeaderVisible(section: section) ? CGFloat.ConversationListSectionHeader.height : 0)
+        CGSize(width: collectionView.bounds.size.width, height: listViewModel.sectionHeaderVisible(section: section) ? CGFloat.ConversationListSectionHeader.height : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
+        layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        .zero
     }
 }
 
@@ -371,29 +371,26 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         header.folderBadge = listViewModel.folderBadge(at: sectionIndex)
     }
 
-    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelect item: ConversationListItem) {
-        guard case .tmp(let item) = item else { fatalError() } // TODO: fix
+    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelectItemAt indexPath: IndexPath) {
 
-        defer {
-            scrollToMessageOnNextSelection = nil
-            focusOnNextSelection = false
-        }
+        let item = (viewModel as! ConversationListViewModel_).item(at: indexPath)
+        switch item {
 
-        if let conversation = item as? ZMConversation {
+        case .conversation(let conversation):
             if let scrollToMessageOnNextSelection {
                 mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
                 mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             }
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
-        } else if item is ConnectRequestsItemTMP {
+
+        case .connectionRequest:
             zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
-        } else {
-            assertionFailure("Invalid item in conversation list view model!!")
         }
-        // Make sure the correct item is selected in the list, without triggering a collection view
-        // callback
+
         ensureCurrentSelection()
+        scrollToMessageOnNextSelection = nil
+        focusOnNextSelection = false
     }
 
     func listViewModelShouldBeReloaded() {
@@ -415,6 +412,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 }
 
 // MARK: iOS 12- peek pop
+// TODO: remove
 extension ConversationListContentController: UIViewControllerPreviewingDelegate {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
@@ -444,13 +442,11 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
 
 extension ConversationListContentController: ConversationListCellDelegate {
     func indexPath(for cell: ConversationListCell) -> IndexPath? {
-        return collectionView.indexPath(for: cell)
+        collectionView.indexPath(for: cell)
     }
 
     func conversationListCellOverscrolled(_ cell: ConversationListCell) {
-        guard let conversation = cell.conversation as? ZMConversation else {
-            return
-        }
+        guard let conversation = cell.conversation as? ZMConversation else { return }
 
         contentDelegate?.conversationListContentController(self, wantsActionMenuFor: conversation, fromSourceView: cell)
     }

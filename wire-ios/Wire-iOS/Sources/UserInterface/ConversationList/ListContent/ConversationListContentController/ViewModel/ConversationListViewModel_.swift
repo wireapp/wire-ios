@@ -27,6 +27,7 @@ import WireSystem
 final class ConversationListViewModel_: ConversationListViewModel {
 
     typealias SectionIdentifier = String
+    typealias ConversationListItem = WireConversationList.ConversationListItem<ZMConversation>
 
     static let contactRequestsItem = ConnectRequestsItemTMP()
 
@@ -169,6 +170,10 @@ final class ConversationListViewModel_: ConversationListViewModel {
               items.indices.contains(indexPath.item) else { return nil }
 
         return items[indexPath.item]
+    }
+
+    func item(at indexPath: IndexPath) -> ConversationListItem {
+        fatalError("TODO")
     }
 
     // swiftlint:disable todo_requires_jira_link
@@ -413,7 +418,8 @@ final class ConversationListViewModel_: ConversationListViewModel {
         selectedItem = itemToSelect
 
         if let itemToSelect {
-            delegate?.conversationListViewModel(self, didSelect: .tmp(itemToSelect))
+            // TODO: fix
+            // delegate?.conversationListViewModel(self, didSelect: .tmp(itemToSelect))
         }
     }
 

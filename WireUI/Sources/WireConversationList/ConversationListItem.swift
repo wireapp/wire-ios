@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationListItem {
+public enum ConversationListItem<Conversation> {
     case connectionRequest(ConnectionRequest)
     case conversation(Conversation)
-
-    // TODO: remove
-    case tmp(ConversationListItemTMP)
 }
 
 // MARK: ConversationListItem.ConnectionRequest
