@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireRequestStrategy
 import WireSyncEngine
 
@@ -508,7 +509,10 @@ private extension UIAlertController {
                                                 message: message,
                                                 preferredStyle: .alert)
 
-        alertController.addAction(.ok(style: .cancel))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
                                                 style: .default,
                                                 handler: legalHoldLearnMoreHandler))

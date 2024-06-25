@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-extension SwiftUI.Button {
+extension Button {
 
     init(
         hapticFeedbackStyle: UINotificationFeedbackGenerator.FeedbackType,

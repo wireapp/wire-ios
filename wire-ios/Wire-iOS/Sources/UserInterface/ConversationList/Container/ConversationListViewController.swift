@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 enum ConversationListState {
@@ -71,7 +72,7 @@ final class ConversationListViewController: UIViewController {
 
     convenience init(
         account: Account,
-        selfUser: SelfUserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         isFolderStatePersistenceEnabled: Bool,
@@ -79,7 +80,7 @@ final class ConversationListViewController: UIViewController {
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
@@ -172,7 +173,6 @@ final class ConversationListViewController: UIViewController {
 
             tabBarController?.delegate = self
 
-            ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }

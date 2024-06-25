@@ -20,7 +20,7 @@ import XCTest
 
 @testable import Wire
 
-final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: XCTestCase {
 
     func testThatItShouldShowAppropriateMessage_WhenEnrolE2eIdentityIsSuccessful() {
         let sut = SuccessfulCertificateEnrollmentViewController(isUpdateMode: false)

@@ -34,7 +34,7 @@ extension SessionManager: VoIPPushManagerDelegate {
         notificationsTracker?.registerReceivedPush()
 
         guard
-            let accountId = payload.accountId(),
+            let accountId = accountId(from: payload),
             let account = self.accountManager.account(with: accountId),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
@@ -82,6 +82,23 @@ extension SessionManager: VoIPPushManagerDelegate {
         }
     }
 
+    // MARK: Helpers
+
+    private func accountId(from dictionary: [AnyHashable: Any]) -> UUID? {
+        let pushChannelDataKey = "data"
+        let pushChannelUserIDKey = "user"
+
+        guard let userInfoData = dictionary[pushChannelDataKey] as? [String: Any] else {
+            Logging.push.safePublic("No data dictionary in notification userInfo payload")
+            return nil
+        }
+
+        guard let userIdString = userInfoData[pushChannelUserIDKey] as? String else {
+            return nil
+        }
+
+        return UUID(uuidString: userIdString)
+    }
 }
 
 private extension VoIPPushPayload {

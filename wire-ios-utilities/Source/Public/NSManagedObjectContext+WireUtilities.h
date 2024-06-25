@@ -56,11 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// is not running (e.g. blocked by a deadlock), the block and all its captured variables
 /// will be retained, otherwise it will eventually be released.
 /// @attention: Be *very careful* not to create deadlocks.
-- (void)performGroupedBlockAndWait:(dispatch_block_t _Null_unspecified)block;
+- (void)performGroupedBlockAndWait:(dispatch_block_t _Null_unspecified)block NS_SWIFT_UNAVAILABLE("Use `performGroupedAndWait<T>(_:)`");
 
 /// Executes a fetch request and asserts in case of error
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
+- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
 
 - (NSArray<ZMSDispatchGroup*>*_Nonnull)enterAllGroups;
 - (void)leaveAllGroups:(NSArray <ZMSDispatchGroup*>*_Null_unspecified)groups;

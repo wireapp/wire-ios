@@ -265,7 +265,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     private func deleteClient() {
-        assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
+        guard let managedObjectContext else { return }
+
+        assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
         let user = self.user
@@ -292,7 +294,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
 
         // delete the object
-        managedObjectContext?.delete(self)
+        managedObjectContext.delete(self)
     }
 
     /// Checks if there is an existing session with the self client.

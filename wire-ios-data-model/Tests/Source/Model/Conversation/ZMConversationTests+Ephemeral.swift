@@ -145,15 +145,15 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
         // Given
         let featureRepository = FeatureRepository(context: self.syncMOC)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             featureRepository.storeSelfDeletingMessages(.init(status: .disabled, config: .init()))
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(featureRepository.fetchSelfDeletingMesssages().status, .disabled)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .groupConversation)
@@ -168,11 +168,11 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
         // Given
         let featureRepository = FeatureRepository(context: self.syncMOC)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             featureRepository.storeSelfDeletingMessages(.init(status: .enabled, config: .init(enforcedTimeoutSeconds: 300)))
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let feature = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(feature.status, .enabled)
             XCTAssertEqual(feature.config.enforcedTimeoutSeconds, 300)

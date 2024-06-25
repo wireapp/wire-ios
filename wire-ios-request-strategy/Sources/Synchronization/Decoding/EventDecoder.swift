@@ -55,7 +55,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
         super.init()
-        self.eventMOC.performGroupedBlockAndWait {
+        self.eventMOC.performGroupedAndWait {
             self.createReceivedPushEventIDsStoreIfNecessary()
         }
     }
@@ -256,6 +256,7 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?
     ) {
         for (idx, event) in decryptedEvents.enumerated() {
+            WireLogger.updateEvent.info("store event", attributes: [.eventId: event.safeUUID])
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
@@ -328,12 +329,11 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
-        eventMOC.performGroupedBlockAndWait {
+        await eventMOC.performGrouped {
             storedEvents.forEach(self.eventMOC.delete(_:))
             self.eventMOC.saveOrRollback()
         }
     }
-
 }
 
 // MARK: - List of already received event IDs
@@ -388,7 +388,14 @@ extension EventDecoder {
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
-                return genericMessage.hasAvailability
+                let included = genericMessage.hasAvailability
+                if !included {
+                    WireLogger.updateEvent.warn(
+                        "dropping stored event",
+                        attributes: [.eventId: event.safeUUID]
+                    )
+                }
+                return included
             }
 
             return true
@@ -400,7 +407,7 @@ extension EventDecoder {
 
     /// Discards the list of already received events
     public func discardListOfAlreadyReceivedPushEventIDs() {
-        self.eventMOC.performGroupedBlockAndWait {
+        self.eventMOC.performGroupedAndWait {
             self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
         }
     }

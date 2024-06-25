@@ -33,70 +33,70 @@ final class ConversationTests: ZMConversationTestsBase {
         return conversation
     }
 
-    func testThatItFindsConversationByUserDefinedNameDiacriticsWithSymbol() {
+    func testThatItFindsConversationByUserDefinedNameDiacriticsWithSymbol() throws {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
 
         // when
 
         let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "@Sømebôdy", selfUser: selfUser))
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         // then
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result.first as? ZMConversation, conversation)
     }
 
-    func testThatItFindsConversationByUserDefinedNameDiacritics() {
+    func testThatItFindsConversationByUserDefinedNameDiacritics() throws {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
 
         // when
 
         let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy", selfUser: selfUser))
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         // then
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result.first as? ZMConversation, conversation)
     }
 
-    func testThatItFindsConversationByUserDefinedNameWithPunctuationCharacter() {
+    func testThatItFindsConversationByUserDefinedNameWithPunctuationCharacter() throws {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "[Feature] [9:30]")
 
         // when
 
         let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "9:3", selfUser: selfUser))
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         // then
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result.first as? ZMConversation, conversation)
     }
 
-    func testThatItFindsConversationWithQueryStringWithTrailingSpace() {
+    func testThatItFindsConversationWithQueryStringWithTrailingSpace() throws {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
 
         // when
 
         let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy ", selfUser: selfUser))
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         // then
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result.first as? ZMConversation, conversation)
     }
 
-    func testThatItFindsConversationWithQueryStringWithWords() {
+    func testThatItFindsConversationWithQueryStringWithWords() throws {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ to")
 
         // when
 
         let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy to", selfUser: selfUser))
-        let result = uiMOC.executeFetchRequestOrAssert(request)
+        let result = try uiMOC.fetch(request)
 
         // then
         XCTAssertEqual(result.count, 1)
@@ -152,7 +152,7 @@ extension ConversationTests {
         let oldLastRead = Date()
         let newLastRead = oldLastRead.addingTimeInterval(100)
 
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
             XCTAssertNotNil(selfUserID)
 
@@ -181,7 +181,7 @@ extension ConversationTests {
             // when
             ZMClientMessage.createOrUpdate(from: event!, in: syncMOC, prefetchResult: nil)
         }
-        self.syncMOC.performGroupedAndWait {_ in
+        self.syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(updatedConversation!.lastReadServerTimeStamp!.timeIntervalSince1970, newLastRead.timeIntervalSince1970, accuracy: 1.5)
         }
@@ -189,7 +189,7 @@ extension ConversationTests {
 
     func testThatItRemovesTheMessageWhenItReceivesAHidingMessage() throws {
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
 
             // given
             let messageID = UUID.create()
@@ -226,7 +226,7 @@ extension ConversationTests {
 
     func testThatItRemovesImageAssetsWhenItReceivesADeletionMessage() throws {
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
 
             // given
             let messageID = UUID.create()
@@ -275,7 +275,7 @@ extension ConversationTests {
 
     func testThatItRemovesFileAssetsWhenItReceivesADeletionMessage() throws {
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
 
             // given
             let messageID = UUID.create()
@@ -328,7 +328,7 @@ extension ConversationTests {
     }
 
     func testThatItDoesNotRemovesANonExistingMessageWhenItReceivesADeletionMessage() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
 
             // given
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
@@ -365,7 +365,7 @@ extension ConversationTests {
 
     func testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotFromSelfUser() throws {
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
 
             // given
             let messageID = UUID.create()
@@ -403,7 +403,7 @@ extension ConversationTests {
 
     func testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotInTheSelfConversation() throws {
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
 
             // given
             let messageID = UUID.create()

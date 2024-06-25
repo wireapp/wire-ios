@@ -28,7 +28,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     }
 
     func testThatItFetchesConversationWithGroupID() throws {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // Given
             BackendInfo.isFederationEnabled = false
             let groupID = MLSGroupID(.init([1, 2, 3]))
@@ -43,7 +43,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     }
 
     func testThatItFetchesConversationWithGroupID_FederationEnabled() throws {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // Given
             BackendInfo.isFederationEnabled = true
             let groupID = MLSGroupID(.init([1, 2, 3]))

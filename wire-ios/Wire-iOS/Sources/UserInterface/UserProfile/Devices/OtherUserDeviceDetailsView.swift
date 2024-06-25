@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct OtherUserDeviceDetailsView: View {
 
@@ -143,22 +144,6 @@ struct OtherUserDeviceDetailsView: View {
                 )
             }
         }
-        .alert("Debug options", isPresented: $viewModel.isDebugMenuPresented, actions: {
-            Button("Delete Device", action: {
-                  viewModel.onDeleteDeviceTapped()
-              })
-            Button("Duplicate Session", action: {
-                  viewModel.onDuplicateClientTapped()
-              })
-            Button("Corrupt Session", action: {
-                viewModel.onCorruptSessionTapped()
-            })
-            Button("Cancel", role: .cancel, action: {
-                viewModel.isDebugMenuPresented.toggle()
-            })
-        }, message: {
-            Text("Tap to perform an action")
-        })
     }
 
     @ViewBuilder

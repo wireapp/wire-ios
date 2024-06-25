@@ -17,11 +17,12 @@
 //
 
 @import WireImages;
+@import WireUtilities;
 
-#import "ZMUser.h"
-#import "ZMEditableUserType.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMUser+OneOnOne.h"
+#import <WireDataModel/ZMUser.h>
+#import <WireDataModel/ZMEditableUserType.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
+#import <WireDataModel/ZMUser+OneOnOne.h>
 
 @class ZMConnection;
 @class Team;

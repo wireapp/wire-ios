@@ -40,7 +40,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatAtCreationAMessageIsNotCausingDegradation_SyncMoc() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
 
@@ -55,7 +55,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatItSetsMessageAsCausingDegradation() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -74,7 +74,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatItDoesNotSetDeliveryReceiptAsCausingDegradation() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMClientMessage
@@ -101,7 +101,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatItResetsMessageAsCausingDegradation() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -121,7 +121,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatItResetsDegradedConversationWhenRemovingAllMessages() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -152,7 +152,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatItResetsDegradedConversationWhenClearingDegradedMessagesOnConversation() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -174,7 +174,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 
     func testThatItResetsOnlyDegradedConversationWhenClearingDegradedMessagesOnThatConversation() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -213,7 +213,7 @@ extension ZMOTRMessage_SecurityDegradationTests {
         self.uiMOC.saveOrRollback()
 
         // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let syncMessage = try! self.syncMOC.existingObject(with: message.objectID) as! ZMOTRMessage
             syncMessage.causedSecurityLevelDegradation = true
             self.syncMOC.saveOrRollback()
@@ -229,7 +229,7 @@ extension ZMOTRMessage_SecurityDegradationTests {
         let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
         self.uiMOC.saveOrRollback()
         var userInfo: [String: Any] = [:]
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let syncMessage = try! self.syncMOC.existingObject(with: message.objectID) as! ZMOTRMessage
             syncMessage.causedSecurityLevelDegradation = true
             self.syncMOC.saveOrRollback()
@@ -244,7 +244,7 @@ extension ZMOTRMessage_SecurityDegradationTests {
     }
 
     func testThatItPreservesMessagesMargedOnSyncMOCAfterMerge() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage

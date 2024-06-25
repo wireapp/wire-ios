@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
-import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 extension ZMUser {

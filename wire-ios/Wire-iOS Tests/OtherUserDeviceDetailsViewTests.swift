@@ -21,7 +21,7 @@ import SwiftUI
 import WireRequestStrategySupport
 import XCTest
 
-final class OtherUserDeviceDetailsViewTests: BaseSnapshotTestCase {
+final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()
@@ -83,7 +83,7 @@ final class OtherUserDeviceDetailsViewTests: BaseSnapshotTestCase {
             certificate = .mockInvalid
         }
 
-        let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        let emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         let deviceActions = MockDeviceDetailsViewActions()
         deviceActions.getProteusFingerPrint_MockValue = proteusKeyFingerPrint
         let viewModel = DeviceInfoViewModel(title: "some title",
@@ -95,8 +95,7 @@ final class OtherUserDeviceDetailsViewTests: BaseSnapshotTestCase {
                                             mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                                             isFromConversation: true,
                                             actionsHandler: deviceActions,
-                                            conversationClientDetailsActions: MockConversationUserClientDetailsActions(),
-                                            isDebugMenuAvailable: showDebugMenu)
+                                            conversationClientDetailsActions: MockConversationUserClientDetailsActions())
         viewModel.e2eIdentityCertificate = isE2eIdentityEnabled ? certificate : nil
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
