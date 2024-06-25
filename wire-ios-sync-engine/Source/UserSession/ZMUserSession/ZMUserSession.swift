@@ -397,8 +397,22 @@ public final class ZMUserSession: NSObject {
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
 
+        super.init()
+
+        setupAnalyticsSession()
+    }
+
+    private func setupAnalyticsSession() {
+        let analyticsUserProfile: AnalyticsUserProfile = AnalyticsUserProfile(
+            analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
+            teamID: selfUser.membership?.team?.remoteIdentifier?.uuidString,
+            teamRole: TeamRole.stringValue(from: selfUser.teamRole.rawValue),
+            teamSize: selfUser.membership?.team?.members.count,
+            contactCount: selfUser.membership?.team?.members.count
+        )
+
         if let config = dependencies.analyticsSessionConfiguration {
-            self.analyticsSession = AnalyticsSession(appKey: config.countlyKey, host: config.host)
+            self.analyticsSession = AnalyticsSession(appKey: config.countlyKey, host: config.host, userProfile: analyticsUserProfile)
             self.analyticsSession?.startSession()
         } else {
             self.analyticsSession = nil
