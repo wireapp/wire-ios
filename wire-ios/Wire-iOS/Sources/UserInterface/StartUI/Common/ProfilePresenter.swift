@@ -25,12 +25,14 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
+    let mainCoordinator: MainCoordinating
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
 
-    override init() {
+    init(mainCoordinator: MainCoordinating) {
+        self.mainCoordinator = mainCoordinator
         super.init()
 
         NotificationCenter.default.addObserver(self,

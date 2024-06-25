@@ -16,27 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public class UserClientRequestFactory {
+protocol MainCoordinating {
 
-    public init() {}
+    func openConversation(
+        _ conversation: ZMConversation,
+        focusOnView focus: Bool,
+        animated: Bool
+    )
 
-    func deleteClientRequest(
-        clientId: String,
-        password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
+    func openConversation<Message>(
+        _ conversation: ZMConversation,
+        scrollTo message: Message,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) where Message: ZMConversationMessage
 
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
-
-            return request
-        }
-
+    func showConversationList()
 }

@@ -16,29 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+import UIKit
 
-extension AuthenticationFlowStep {
+struct TopOverlayPresenter: TopOverlayPresenting {
 
-    static func makeClientManagementStep(from error: NSError, statusProvider: AuthenticationStatusProvider?) -> AuthenticationFlowStep? {
-        guard let userClientIDs = error.userInfo[ZMClientsKey] as? [NSManagedObjectID] else {
+    var rootViewController: UIViewController
+
+    private var zClientViewController: ZClientViewController? {
+        guard let zClientViewController = rootViewController.firstChild(ofType: ZClientViewController.self) else {
+            assertionFailure("there should be at least one instance of `ZClientViewController`")
             return nil
         }
 
-        let clients: [UserClient] = userClientIDs.compactMap {
-            guard let session = statusProvider?.sharedUserSession else {
-                return nil
-            }
-
-            guard let object = try? session.managedObjectContext.existingObject(with: $0) else {
-                return nil
-            }
-
-            return object as? UserClient
-        }
-
-        return .clientManagement(clients: clients)
+        return zClientViewController
     }
 
+    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
+        zClientViewController?.setTopOverlay(to: viewController, animated: animated)
+    }
+
+    func dismissTopOverlay(animated: Bool) {
+        zClientViewController?.setTopOverlay(to: nil, animated: animated)
+    }
 }

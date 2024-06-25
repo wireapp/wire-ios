@@ -203,6 +203,7 @@ public extension WireLogger {
     static let featureConfigs = WireLogger(tag: "feature-configurations")
     static let keychain = WireLogger(tag: "keychain")
     static let localStorage = WireLogger(tag: "local-storage")
+    static let mainCoordinator = WireLogger(tag: "main-coordinator")
     static let messaging = WireLogger(tag: "messaging")
     static let mls = WireLogger(tag: "mls")
     static let notifications = WireLogger(tag: "notifications")

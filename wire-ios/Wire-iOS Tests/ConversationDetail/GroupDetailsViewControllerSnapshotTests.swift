@@ -16,19 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
-    var sut: GroupDetailsViewController!
-    var mockConversation: MockGroupDetailsConversation!
-    var mockSelfUser: MockUserType!
-    var otherUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: GroupDetailsViewController!
+    private var mockConversation: MockGroupDetailsConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+
+        mockMainCoordinator = .init()
+
         mockConversation = MockGroupDetailsConversation()
         mockConversation.displayName = "iOS Team"
         mockConversation.securityLevel = .notSecure
@@ -54,6 +59,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser = nil
         otherUser = nil
         userSession = nil
+        mockMainCoordinator = nil
+
         super.tearDown()
     }
 
@@ -86,6 +93,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -105,6 +113,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -131,6 +140,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -150,6 +160,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -168,6 +179,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -188,6 +200,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -206,6 +219,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -225,6 +239,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -244,11 +259,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
         verify(matching: sut.wrapInNavigationController())
     }
-
 }

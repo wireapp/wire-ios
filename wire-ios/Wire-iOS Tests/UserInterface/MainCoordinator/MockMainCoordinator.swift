@@ -16,27 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public class UserClientRequestFactory {
+@testable import Wire
 
-    public init() {}
+final class MockMainCoordinator: MainCoordinating {
 
-    func deleteClientRequest(
-        clientId: String,
-        password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
+    func openConversation(
+        _ conversation: ZMConversation,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) {
+        fatalError("Mock method not implemented")
+    }
 
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
+    func openConversation<Message>(
+        _ conversation: ZMConversation,
+        scrollTo message: Message,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) where Message: ZMConversationMessage {
+        fatalError("Mock method not implemented")
+    }
 
-            return request
-        }
-
+    func showConversationList() {
+        fatalError("Mock method not implemented")
+    }
 }

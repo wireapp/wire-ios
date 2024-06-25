@@ -24,6 +24,7 @@ import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
+    private let account: Account
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
@@ -31,12 +32,47 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController: SplitViewController = SplitViewController()
+    let wireSplitViewController = SplitViewController()
 
+    // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: UITabBarController!
-    let conversationListViewController: ConversationListViewController
-    let conversationListWithFoldersViewController: ConversationListViewController
+
+    private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
+        .init(
+            selfUser: userSession.editableSelfUser,
+            userRightInterfaceType: UserRight.self,
+            userSession: userSession,
+            accountSelector: SessionManager.shared
+        )
+    }
+    // TODO: make completely private
+    private(set) lazy var conversationListViewController = ConversationListViewController(
+        account: account,
+        selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
+        userSession: userSession,
+        zClientViewController: self,
+        mainCoordinator: MainCoordinator_(zClientViewController: self),
+        isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+        isFolderStatePersistenceEnabled: false,
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+    )
+    // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
+    private lazy var conversationListWithFoldersViewController = {
+        let viewController = ConversationListViewController(
+            account: account,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
+            userSession: userSession,
+            zClientViewController: self,
+            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: true,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
+        viewController.listContentController.listViewModel.folderEnabled = true
+        return viewController
+    }()
+
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
@@ -58,46 +94,17 @@ final class ZClientViewController: UIViewController {
         account: Account,
         userSession: UserSession
     ) {
+        self.account = account
         self.userSession = userSession
-
-        let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
-            selfUser: userSession.editableSelfUser,
-            userRightInterfaceType: UserRight.self,
-            userSession: userSession,
-            accountSelector: SessionManager.shared
-        )
-        conversationListViewController = .init(
-            account: account,
-            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-            isFolderStatePersistenceEnabled: false,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
-        )
-        // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
-        conversationListWithFoldersViewController = .init(
-            account: account,
-            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-            isFolderStatePersistenceEnabled: true,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
-        )
-        conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
 
         colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
         proximityMonitorManager = ProximityMonitorManager()
-        mediaPlaybackManager = MediaPlaybackManager(
-            name: "conversationMedia",
-            userSession: userSession
-        )
+        mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
 
-        AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: [
-            "media": "external "
-        ])
+        AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: ["media": "external "])
 
         if let appGroupIdentifier = Bundle.main.appGroupIdentifier,
            let remoteIdentifier = userSession.selfUser.remoteIdentifier {
@@ -125,13 +132,12 @@ final class ZClientViewController: UIViewController {
         }
 
         setupAppearance()
-
         createLegalHoldDisclosureController()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     deinit {
@@ -338,11 +344,12 @@ final class ZClientViewController: UIViewController {
     ///   - focus: focus on view or not
     ///   - animated: animated or not
     ///   - completion: optional completion handler
-    func load(_ conversation: ZMConversation,
-              scrollTo message: ZMConversationMessage?,
-              focusOnView focus: Bool,
-              animated: Bool,
-              completion: Completion? = nil) {
+    func load(
+        _ conversation: ZMConversation,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) {
         var conversationRootController: ConversationRootViewController?
         if conversation === currentConversation,
            conversationRootController != nil {
@@ -350,13 +357,19 @@ final class ZClientViewController: UIViewController {
                 conversationRootController?.scroll(to: message)
             }
         } else {
-            conversationRootController = ConversationRootViewController(conversation: conversation, message: message, clientViewController: self, userSession: userSession)
+            conversationRootController = ConversationRootViewController(
+                conversation: conversation,
+                message: message,
+                userSession: userSession,
+                mainCoordinator: MainCoordinator_(zClientViewController: self),
+                mediaPlaybackManager: mediaPlaybackManager
+            )
         }
 
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
+        pushContentViewController(conversationRootController, focusOnView: focus, animated: animated)
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
@@ -373,6 +386,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: MainCoordinator_(zClientViewController: self),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -427,7 +441,13 @@ final class ZClientViewController: UIViewController {
     private func reloadCurrentConversation() {
         guard let currentConversation else { return }
 
-        let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
+        let currentConversationViewController = ConversationRootViewController(
+            conversation: currentConversation,
+            message: nil,
+            userSession: userSession,
+            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mediaPlaybackManager: mediaPlaybackManager
+        )
 
         // Need to reload conversation to apply color scheme changes
         pushContentViewController(currentConversationViewController)
@@ -463,9 +483,9 @@ final class ZClientViewController: UIViewController {
 
             // dispatch async here because it has to happen after the collection view has finished
             // laying out for the first time
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.conversationListViewController.scrollToCurrentSelection(animated: false)
-            })
+            }
 
             return true
 
@@ -694,21 +714,21 @@ final class ZClientViewController: UIViewController {
     ///   - message: scroll to  this message
     ///   - focus: focus on the view or not
     ///   - animated: perform animation or not
-    ///   - completion: the completion block
-    func select(conversation: ZMConversation,
-                scrollTo message: ZMConversationMessage? = nil,
-                focusOnView focus: Bool,
-                animated: Bool,
-                completion: Completion? = nil) {
-        dismissAllModalControllers(callback: { [weak self] in
+    func select(
+        conversation: ZMConversation,
+        scrollTo message: ZMConversationMessage? = nil,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) {
+        dismissAllModalControllers { [weak self] in
             guard
+                let self,
                 !conversation.isDeleted,
                 conversation.managedObjectContext != nil
-            else {
-                return
-            }
-            self?.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
-        })
+            else { return }
+
+            conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+        }
     }
 
     func select(conversation: ZMConversation) {

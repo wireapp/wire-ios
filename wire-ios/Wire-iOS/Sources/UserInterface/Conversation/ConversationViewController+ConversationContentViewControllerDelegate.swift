@@ -143,6 +143,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
@@ -162,6 +163,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()

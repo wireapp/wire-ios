@@ -43,6 +43,7 @@
 		064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */; };
 		0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */; };
 		0658F5AD25D16EA900DD6859 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */; };
+		06593A7A2C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06593A792C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift */; };
 		065A591E2BEA219E008487CF /* OtherUserDeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065A591D2BEA219E008487CF /* OtherUserDeviceDetailsView.swift */; };
 		065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065A5AE0279B07AC002D4D1E /* NotificationService.swift */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -355,6 +356,11 @@
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
+		59A27BAC2C2AC6F000195393 /* MainCoordinating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAB2C2AC6F000195393 /* MainCoordinating.swift */; };
+		59A27BB02C2ACC8F00195393 /* TopOverlayPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */; };
+		59A27BB32C2ACCDA00195393 /* TopOverlayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */; };
+		59A27BB82C2ADAB200195393 /* MockMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */; };
+		59A27BBB2C2ADC4C00195393 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A27BB92C2ADC2900195393 /* MainCoordinator.swift */; };
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
@@ -2088,6 +2094,7 @@
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+OpenURL.swift"; sourceTree = "<group>"; };
+		06593A792C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartClientLimitErrorHandler.swift; sourceTree = "<group>"; };
 		065A591D2BEA219E008487CF /* OtherUserDeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherUserDeviceDetailsView.swift; sourceTree = "<group>"; };
 		065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Notification Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		065A5AE0279B07AC002D4D1E /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -2406,6 +2413,11 @@
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
+		59A27BAB2C2AC6F000195393 /* MainCoordinating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinating.swift; sourceTree = "<group>"; };
+		59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopOverlayPresenting.swift; sourceTree = "<group>"; };
+		59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopOverlayPresenter.swift; sourceTree = "<group>"; };
+		59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainCoordinator.swift; sourceTree = "<group>"; };
+		59A27BB92C2ADC2900195393 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
@@ -4718,6 +4730,7 @@
 				5902F8E12BF7B14F00F1D392 /* ConversationList */,
 				5922E92C2BA06889001A7B01 /* E2EIdentity */,
 				598108B12B7F6D4E0021A0A9 /* GroupDetails */,
+				59A27BB42C2AD9FC00195393 /* MainCoordinator */,
 			);
 			path = UserInterface;
 			sourceTree = "<group>";
@@ -4750,6 +4763,32 @@
 				59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */,
 			);
 			path = UserStatus;
+			sourceTree = "<group>";
+		};
+		59A27BB12C2ACCC200195393 /* TopOverlayPresenter */ = {
+			isa = PBXGroup;
+			children = (
+				59A27BB22C2ACCDA00195393 /* TopOverlayPresenter.swift */,
+				59A27BAF2C2ACC8F00195393 /* TopOverlayPresenting.swift */,
+			);
+			path = TopOverlayPresenter;
+			sourceTree = "<group>";
+		};
+		59A27BB42C2AD9FC00195393 /* MainCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */,
+			);
+			path = MainCoordinator;
+			sourceTree = "<group>";
+		};
+		59A27BB72C2ADA3400195393 /* MainCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				59A27BAB2C2AC6F000195393 /* MainCoordinating.swift */,
+				59A27BB92C2ADC2900195393 /* MainCoordinator.swift */,
+			);
+			path = MainCoordinator;
 			sourceTree = "<group>";
 		};
 		59D8A62D2B7A75A0008236FF /* AccountViews */ = {
@@ -5128,6 +5167,7 @@
 				5EE73BE52122C6DC0032986D /* AuthenticationStartAddAccountEventHandler.swift */,
 				16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */,
 				1695B9DB2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift */,
+				06593A792C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift */,
 			);
 			path = "Flow Start";
 			sourceTree = "<group>";
@@ -6614,6 +6654,8 @@
 				8FC8517F199245760008B66B /* Conversation */,
 				8FC851C0199245760008B66B /* ConversationList */,
 				8FC851E3199245760008B66B /* MainController */,
+				59A27BB72C2ADA3400195393 /* MainCoordinator */,
+				59A27BB12C2ACCC200195393 /* TopOverlayPresenter */,
 				87DCF4951D34E9E600BB420F /* Location */,
 				87DCF4A01D34EA4500BB420F /* StartUI */,
 				87DCF47B1D34E9BA00BB420F /* ContactsUI */,
@@ -7835,8 +7877,8 @@
 		E6F442FE2B16018D00D2B08A /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
-				5915B9532BF4B88300215817 /* PermissionDeniedHint */,
 				E6F442FF2B16019500D2B08A /* Conversation */,
+				5915B9532BF4B88300215817 /* PermissionDeniedHint */,
 			);
 			path = UserInterface;
 			sourceTree = "<group>";
@@ -9545,6 +9587,7 @@
 				EF22DC7F224BC5C2001EDE8E /* UIViewController+Alert.swift in Sources */,
 				5E0FB21B2057F50C00FD9867 /* CallQualitySurveyReview.swift in Sources */,
 				0619FBBB258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift in Sources */,
+				59A27BAC2C2AC6F000195393 /* MainCoordinating.swift in Sources */,
 				EEAC0A1621AD98BA00BE5F5D /* ConversationCreateOptionsSectionController.swift in Sources */,
 				0665DF6E28E494360094482B /* ImagePickerManager.swift in Sources */,
 				BFF8CBE02126E98900DB0330 /* InteractiveModalTransition.swift in Sources */,
@@ -9633,6 +9676,7 @@
 				D525426F209363DC001C04C1 /* CallActionAppearance.swift in Sources */,
 				D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */,
 				5E3A6C25206A4E4A00907484 /* LocationPreviewController.swift in Sources */,
+				06593A7A2C238B9F0049441E /* AuthenticationStartClientLimitErrorHandler.swift in Sources */,
 				EE01D08825ADA3D5001DB205 /* AppLockModule.Interactor.swift in Sources */,
 				E964168628997173007F9756 /* ButtonStyle.swift in Sources */,
 				BF8ECC2D1E570A920015177D /* UIActivityViewController+FileSaving.swift in Sources */,
@@ -9811,6 +9855,7 @@
 				877A32601E892A100017DD9A /* ConversationListAccessoryView.swift in Sources */,
 				5EE73BF5212419ED0032986D /* AuthenticationCoordinator+Registration.swift in Sources */,
 				EE7E0E762109FE9200787C65 /* ParticipantsStringFormatter.swift in Sources */,
+				59A27BBB2C2ADC4C00195393 /* MainCoordinator.swift in Sources */,
 				068DCC5D29C0C09B00F7E4F1 /* MessageSendFailureView.swift in Sources */,
 				87AC33CD2182064F00069C79 /* ReplyComposingView.swift in Sources */,
 				0685008526B36BBC00721F80 /* VideoMessageRestrictionView.swift in Sources */,
@@ -9881,6 +9926,7 @@
 				D39210A12A1C9C8700FA616A /* ReactionSectionViewController.swift in Sources */,
 				87DCF4941D34E9BA00BB420F /* ZMAddressBookContact+LocalInvitation.swift in Sources */,
 				EF7E96F0214BFBE100475C63 /* ContactsViewController+UITableViewDelegate.swift in Sources */,
+				59A27BB02C2ACC8F00195393 /* TopOverlayPresenting.swift in Sources */,
 				87AAE4231E43234A00E1D13A /* MessagePresenter+ConversationImages.swift in Sources */,
 				5E65A7A5213048AB008BFCC0 /* UserEmailUpdateFailureErrorHandler.swift in Sources */,
 				16271BC61D9EB12E00689486 /* TypingIndicatorView.swift in Sources */,
@@ -10071,6 +10117,7 @@
 				D50892FB2056BD51004D3AE2 /* ZMUser+ExpirationTimeFormatting.swift in Sources */,
 				5502C6E222B7B729000684B7 /* LegalHoldAlertFactory.swift in Sources */,
 				EEAC0A1221AD875900BE5F5D /* ConversationCreateNameSectionController.swift in Sources */,
+				59A27BB32C2ACCDA00195393 /* TopOverlayPresenter.swift in Sources */,
 				546EEA8D2536DDF500195097 /* URLActionRouter.swift in Sources */,
 				870815881BF4EAD100D321BC /* SettingsTableViewController.swift in Sources */,
 				A9C33DFE23D0704F0069C8BB /* MediaPlaybackManager.swift in Sources */,
@@ -10674,6 +10721,7 @@
 				EF223F5D2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift in Sources */,
 				E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				EF2FEDC8228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift in Sources */,
+				59A27BB82C2ADAB200195393 /* MockMainCoordinator.swift in Sources */,
 				D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */,
 				876AE7601C159A9C00E3E743 /* StringFingerprintTests.swift in Sources */,
 				E6C25FCE2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,

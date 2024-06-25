@@ -172,7 +172,8 @@ extension ConversationViewController {
             let participantsViewController = GroupParticipantsDetailViewController(
                 selectedParticipants: [],
                 conversation: conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             let navigationController = participantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet

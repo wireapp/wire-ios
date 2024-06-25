@@ -16,27 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-public class UserClientRequestFactory {
-
-    public init() {}
-
-    func deleteClientRequest(
-        clientId: String,
-        password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
-
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
-
-            return request
-        }
-
+// sourcery: AutoMockable
+protocol TopOverlayPresenting {
+    func presentTopOverlay(_ viewController: UIViewController, animated: Bool)
+    func dismissTopOverlay(animated: Bool)
 }
