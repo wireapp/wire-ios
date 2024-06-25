@@ -191,126 +191,6 @@ extension XCTestCase {
                        line: line)
     }
 
-    // MARK: - verify the snapshots in both dark and light scheme
-
-    func verifyInAllColorSchemes(createSut: () -> UIViewController,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
-
-        verifyInDarkScheme(createSut: createSut,
-                           name: "DarkTheme",
-                           file: file,
-                           testName: testName,
-                           line: line)
-
-        verifyInLightScheme(createSut: createSut,
-                            name: "LightTheme",
-                            file: file,
-                            testName: testName,
-                            line: line)
-    }
-
-    func verifyViewInDarkScheme(createSut: () -> UIView,
-                                name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: createSut(),
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyViewInLightScheme(createSut: () -> UIView,
-                                 name: String? = nil,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-        verify(matching: createSut(),
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInDarkScheme(createSut: () -> UIViewController,
-                            name: String? = nil,
-                            file: StaticString = #file,
-                            testName: String = #function,
-                            line: UInt = #line) {
-
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .dark
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInLightScheme(createSut: () -> UIViewController,
-                             name: String? = nil,
-                             file: StaticString = #file,
-                             testName: String = #function,
-                             line: UInt = #line) {
-
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInAllColorSchemes(matching: UIView,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
-        if var themeable = matching as? Themeable {
-            themeable.colorSchemeVariant = .light
-            matching.overrideUserInterfaceStyle = .light
-
-            verify(matching: matching,
-                   named: "LightTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-            themeable.colorSchemeVariant = .dark
-            matching.overrideUserInterfaceStyle = .dark
-
-            verify(matching: matching,
-                   named: "DarkTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-        } else {
-            matching.overrideUserInterfaceStyle = .light
-
-            verify(matching: matching,
-                   named: "LightTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-
-            matching.overrideUserInterfaceStyle = .dark
-
-            verify(matching: matching,
-                   named: "DarkTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
-    }
-
 }
 
 extension XCTestCase {
@@ -352,6 +232,7 @@ extension XCTestCase {
         }
     }
 
+    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIViewController,
                 customSize: CGSize? = nil,
                 named name: String? = nil,
@@ -379,6 +260,7 @@ extension XCTestCase {
         XCTAssertNil(failure, file: file, line: line)
     }
 
+    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIView,
                 named name: String? = nil,
                 file: StaticString = #file,
@@ -394,39 +276,6 @@ extension XCTestCase {
                                      line: line)
 
         XCTAssertNil(failure, file: file, line: line)
-
-    }
-
-    func verifyForDynamicType(matching value: UIView,
-                              named name: String? = nil,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-        [
-            "extra-small": UIContentSizeCategory.extraSmall,
-            "small": .small,
-            "medium": .medium,
-            "large": .large,
-            "extra-large": .extraLarge,
-            "extra-extra-large": .extraExtraLarge,
-            "extra-extra-extra-large": .extraExtraExtraLarge,
-            "accessibility-medium": .accessibilityMedium,
-            "accessibility-large": .accessibilityLarge,
-            "accessibility-extra-large": .accessibilityExtraLarge,
-            "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
-            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
-        ].forEach { name, contentSize in
-            let failure = verifySnapshot(matching: value,
-                                         as: .image(precision: precision, perceptualPrecision: perceptualPrecision, traits: .init(preferredContentSizeCategory: contentSize)),
-                                         named: name,
-                                         snapshotDirectory: snapshotDirectory(file: file),
-                                         file: file,
-                                         testName: testName,
-                                         line: line)
-
-            XCTAssertNil(failure, file: file, line: line)
-        }
-
     }
 
     func verify(matching value: UIImage,

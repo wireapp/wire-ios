@@ -16,28 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public typealias LogAttributes = [LogAttributesKey: Encodable]
 
-@objcMembers
-public final class SelfUnregisteringNotificationCenterToken: NSObject {
+public enum LogAttributesKey: String {
+    case selfClientId = "self_client_id"
+    case selfUserId = "self_user_id"
+    case recipientID = "recipient_id"
+    case eventId = "event_id"
+    case senderUserId = "sender_user_id"
+    case nonce = "message_nonce"
+    case messageType = "message_type"
+    case lastEventID = "last_event_id"
+    case `public`
+    case tag
+}
 
-    private let notificationCenter: NotificationCenter
-    private let token: NSObjectProtocol
-
-    public init(_ token: NSObjectProtocol) {
-        self.notificationCenter = .default
-        self.token = token
-    }
-
-    public init(
-        _ token: NSObjectProtocol,
-        notificationCenter: NotificationCenter
-    ) {
-        self.notificationCenter = notificationCenter
-        self.token = token
-    }
-
-    deinit {
-        notificationCenter.removeObserver(token)
-    }
+public extension LogAttributes {
+    static var safePublic = [LogAttributesKey.public: true]
 }

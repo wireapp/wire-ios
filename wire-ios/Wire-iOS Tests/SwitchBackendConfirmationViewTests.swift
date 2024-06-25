@@ -21,7 +21,7 @@ import XCTest
 
 final class SwitchBackendConfirmationViewTests: XCTestCase {
 
-    let helper = SnapshotHelper()
+    let snapshotHelper = SnapshotHelper()
         .withLayout(.device(config: .iPhone13))
 
     private func createSUT() -> SwitchBackendConfirmationView {
@@ -38,13 +38,13 @@ final class SwitchBackendConfirmationViewTests: XCTestCase {
     }
 
     func testLightUI() {
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: createSUT)
     }
 
     func testDarkUI() {
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: createSUT)
     }

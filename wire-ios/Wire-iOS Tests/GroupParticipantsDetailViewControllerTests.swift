@@ -43,6 +43,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     private var mockMainCoordinator: MockMainCoordinator!
     private var userSession: UserSessionMock!
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -65,7 +66,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         let users: [MockUserType] = (0..<20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
-
             return user
         }
 
@@ -84,7 +84,27 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             return sut.wrapInNavigationController()
         }
 
-        verifyInAllColorSchemes(createSut: createSut)
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersALotOfUsers_WithoutNames() {
@@ -104,17 +124,14 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-        let createSut: () -> UIViewController = { [self] in
-            let sut = GroupParticipantsDetailViewController(
-                selectedParticipants: selected,
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mockMainCoordinator
-            )
-            return sut.wrapInNavigationController()
-        }
+        let sut = GroupParticipantsDetailViewController(
+            selectedParticipants: selected,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        )
 
-        verify(matching: createSut())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     func testEmptyState() {
@@ -134,7 +151,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         sut.participantsDidChange()
 
         // then
-        let wrapped = sut.wrapInNavigationController()
-        verify(matching: wrapped)
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 }
