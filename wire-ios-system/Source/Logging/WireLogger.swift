@@ -16,24 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 public struct WireLogger: LoggerProtocol {
 
-    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
+    private static var provider = AggregatedLogger(loggers: [
+        SystemLogger(),
+        CocoaLumberjackLogger()
+    ])
 
     public let tag: String
+
+    // MARK: - Initialization
 
     public init(tag: String = "") {
         self.tag = tag
     }
 
     public var logFiles: [URL] {
-        Self.provider?.logFiles ?? []
+        Self.provider.logFiles
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider?.addTag(key, value: value)
+        Self.provider.addTag(key, value: value)
     }
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -67,7 +70,7 @@ public struct WireLogger: LoggerProtocol {
     }
 
     private func shouldLogMessage(_ message: LogConvertible) -> Bool {
-        return Self.provider != nil && !message.logDescription.isEmpty
+        return !message.logDescription.isEmpty
     }
 
     private func log(
@@ -83,22 +86,22 @@ public struct WireLogger: LoggerProtocol {
 
         switch level {
         case .debug:
-            Self.provider?.debug(message, attributes: mergedAttributes)
+            Self.provider.debug(message, attributes: mergedAttributes)
 
         case .info:
-            Self.provider?.info(message, attributes: mergedAttributes)
+            Self.provider.info(message, attributes: mergedAttributes)
 
         case .notice:
-            Self.provider?.notice(message, attributes: mergedAttributes)
+            Self.provider.notice(message, attributes: mergedAttributes)
 
         case .warn:
-            Self.provider?.warn(message, attributes: mergedAttributes)
+            Self.provider.warn(message, attributes: mergedAttributes)
 
         case .error:
-            Self.provider?.error(message, attributes: mergedAttributes)
+            Self.provider.error(message, attributes: mergedAttributes)
 
         case .critical:
-            Self.provider?.critical(message, attributes: mergedAttributes)
+            Self.provider.critical(message, attributes: mergedAttributes)
         }
     }
 
@@ -111,6 +114,12 @@ public struct WireLogger: LoggerProtocol {
         case error
         case critical
 
+    }
+
+    // MARK: Static Functions
+
+    public static func addLogger(_ logger: LoggerProtocol) {
+        provider.addLogger(logger)
     }
 }
 
