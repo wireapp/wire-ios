@@ -400,6 +400,14 @@ public final class ZMUserSession: NSObject {
         super.init()
 
         setupAnalyticsSession()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
     }
 
     private func setupAnalyticsSession() {
@@ -418,6 +426,10 @@ public final class ZMUserSession: NSObject {
             self.analyticsSession = nil
         }
     }
+
+    @objc private func handleAppDidBecomeActive() {
+        analyticsSession?.trackEvent(.appOpen)
+        }
 
     func setup(
         eventProcessor: (any UpdateEventProcessor)?,
@@ -950,10 +962,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
-    }
-
-    func trackAppOpenEvent() {
-        analyticsSession?.trackEvent(.appOpen)
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
