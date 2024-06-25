@@ -17,13 +17,16 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 class AppLockChangeWarningViewControllerTests: XCTestCase {
 
     // MARK: - Properties
-    var userSession: UserSessionMock!
+
+    private var userSession: UserSessionMock!
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -36,22 +39,65 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
     }
 
     func testWarningThatAppLockIsActive() {
-        verifyInAllColorSchemes(createSut: {
-            AppLockChangeWarningViewController(
+        let createSut: () -> UIViewController = {
+            return AppLockChangeWarningViewController(
                 isAppLockActive: true,
-                userSession: userSession
+                userSession: self.userSession
             )
-        })
+        }
 
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+            matching: sut,
+            named: "LightTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+            matching: sut,
+            named: "DarkTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
     }
 
     func testWarningThatAppLockIsNotActive() {
-        verifyInAllColorSchemes(createSut: {
-            AppLockChangeWarningViewController(
+        let createSut: () -> UIViewController = {
+            return AppLockChangeWarningViewController(
                 isAppLockActive: false,
-                userSession: userSession
+                userSession: self.userSession
             )
-        })
+        }
+
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+            matching: sut,
+            named: "LightTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+            matching: sut,
+            named: "DarkTheme",
+            file: #file,
+            testName: #function,
+            line: #line
+        )
     }
 
 }

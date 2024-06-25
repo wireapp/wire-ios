@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class GroupConversationCellTests: XCTestCase {
 
-    var sut: GroupConversationCell!
-    var otherUser: MockUserType!
+    private var sut: GroupConversationCell!
+    private var otherUser: MockUserType!
+    private let snapshotHelper = SnapshotHelper()
 
     override func setUp() {
         super.setUp()
@@ -59,14 +61,34 @@ final class GroupConversationCellTests: XCTestCase {
         return groupConversation
     }
 
-    private func verify(conversation: GroupConversationCellConversation,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    private func verify(
+        conversation: GroupConversationCellConversation,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         sut.configure(conversation: conversation)
 
-        verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     func testOneToOneConversation() {
