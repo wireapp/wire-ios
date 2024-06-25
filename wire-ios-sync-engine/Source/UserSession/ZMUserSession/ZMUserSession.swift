@@ -420,10 +420,12 @@ public final class ZMUserSession: NSObject {
         )
 
         if let config = dependencies.analyticsSessionConfiguration {
-            self.analyticsSession = AnalyticsSession(appKey: config.countlyKey, host: config.host, userProfile: analyticsUserProfile)
+            self.analyticsSession = AnalyticsSession(
+                appKey: config.countlyKey,
+                host: config.host,
+                userProfile: analyticsUserProfile
+            )
             self.analyticsSession?.startSession()
-        } else {
-            self.analyticsSession = nil
         }
     }
 
