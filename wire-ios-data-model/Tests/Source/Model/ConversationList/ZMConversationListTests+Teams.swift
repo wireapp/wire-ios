@@ -137,7 +137,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.items.items, [conversation2, conversation1, conversation3])
+        XCTAssertEqual(sut.items, [conversation2, conversation1, conversation3])
     }
 
     func testThatItRecreatesListsAndTokensForTeamConversations() {
