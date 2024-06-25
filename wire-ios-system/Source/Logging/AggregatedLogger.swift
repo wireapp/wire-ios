@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public final class AggregatedLogger: LoggerProtocol {
+    private var loggers: [any LoggerProtocol]
 
-public class AggregatedLogger: LoggerProtocol {
-    private var loggers: [LoggerProtocol] = []
-
-    init(loggers: [LoggerProtocol]) {
+    init(loggers: [any LoggerProtocol]) {
         self.loggers = loggers
     }
 
-    public var logFiles: [URL] {
-        return loggers.reduce(into: [], { $0 += $1.logFiles })
+    func addLogger(_ logger: any LoggerProtocol) {
+        loggers.append(logger)
     }
 
-    public func addLogger(_ logger: LoggerProtocol) {
-        self.loggers.append(logger)
+    // MARK: - LoggerProtocol
+
+    public var logFiles: [URL] {
+        return loggers.reduce(into: [], { $0 += $1.logFiles })
     }
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
