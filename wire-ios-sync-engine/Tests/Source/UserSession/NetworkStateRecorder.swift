@@ -16,21 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 @testable import WireSyncEngine
 
-@objcMembers
+@objc
 public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
 
-    private(set) var stateChanges: [ZMNetworkState] = []
-    var stateChanges_objc: [NSNumber] {
-        stateChanges.map { NSNumber(value: $0.rawValue) }
-    }
+    // MARK: Properties
+
+    private var _stateChanges: [ZMNetworkState] = []
+
+    private let queue = DispatchQueue(label: "NetworkStateRecorder.queue", qos: .userInitiated)
 
     private let notificationCenter: NotificationCenter = .default
     private var selfUnregisteringToken: SelfUnregisteringNotificationCenterToken?
 
+    var stateChanges: [ZMNetworkState] {
+        queue.sync {
+            _stateChanges
+        }
+    }
+
+    @objc
+    var stateChanges_objc: [NSNumber] {
+        queue.sync {
+            _stateChanges.map { NSNumber(value: $0.rawValue) }
+        }
+    }
+
+    // MARK: Methods
+
+    @objc
     public func observe() {
         let token = notificationCenter.addObserver(
             forName: ZMNetworkAvailabilityChangeNotification.name,
@@ -43,6 +58,7 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
         selfUnregisteringToken = .init(token, notificationCenter: notificationCenter)
     }
 
+    @objc
     public func observe(in notificationContext: NotificationContext) {
         selfUnregisteringToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
             self,
@@ -51,7 +67,9 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
     }
 
     public func didChangeAvailability(newState: ZMNetworkState) {
-        stateChanges.append(newState)
+        queue.async {
+            self._stateChanges.append(newState)
+        }
     }
 
 }
