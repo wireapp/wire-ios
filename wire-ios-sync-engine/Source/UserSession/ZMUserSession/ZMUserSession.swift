@@ -406,7 +406,7 @@ public final class ZMUserSession: NSObject {
         let analyticsUserProfile: AnalyticsUserProfile = AnalyticsUserProfile(
             analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
             teamID: selfUser.membership?.team?.remoteIdentifier?.uuidString,
-            teamRole: TeamRole.stringValue(from: selfUser.teamRole.rawValue),
+            teamRole: selfUser.teamRole.analyticsValue,
             teamSize: selfUser.membership?.team?.members.count,
             contactCount: selfUser.membership?.team?.members.count
         )

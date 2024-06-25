@@ -20,17 +20,14 @@ import WireDataModel
 
 extension TeamRole {
 
-    static func stringValue(from intValue: Int) -> String {
-        if let role = TeamRole(rawValue: intValue) {
-            switch role {
-            case .partner:
-                return "external"
-            case .member, .admin, .owner:
-                return "member"
-            case .none:
-                return "wireless"
-            }
+    var analyticsValue: String {
+        switch self {
+        case .partner:
+          return "external"
+        case .member, .admin, .owner:
+          return "member"
+        case .none:
+          return "wireless"
         }
-        return "unknown"
-    }
+      }
 }
