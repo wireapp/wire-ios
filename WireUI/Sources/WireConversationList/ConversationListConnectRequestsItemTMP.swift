@@ -16,16 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import ObjectiveC
 
-extension ZMConversation {
-
-    func unarchive(userSession: ZMUserSessionInterface? = ZMUserSession.shared(),
-                   completionHandler: Completion? = nil) {
-        guard let userSession else { return }
-
-        userSession.enqueueChanges({
-            self.isArchived = false
-        }, completionHandler: completionHandler)
-    }
-}
+public final class ConversationListConnectRequestsItemTMP: NSObject, ConversationListItemTMP {}

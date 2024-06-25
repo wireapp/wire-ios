@@ -24,12 +24,149 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
 
-final class ConversationListViewModel_: ConversationListViewModel {
+final class ConversationListViewModel: WireConversationList.ConversationListViewModel {
 
     typealias SectionIdentifier = String
-    typealias ConversationListItem = WireConversationList.ConversationListItem<ZMConversation>
 
-    static let contactRequestsItem = ConnectRequestsItemTMP()
+    fileprivate struct Section: DifferentiableSection {
+
+        enum Kind: Equatable, Hashable {
+
+            /// for incoming requests
+            case contactRequests
+
+            /// for self pending requests / conversations
+            case conversations
+
+            /// one to one conversations
+            case contacts
+
+            /// group conversations
+            case groups
+
+            /// favorites
+            case favorites
+
+            /// conversations in folders
+            case folder(label: LabelType)
+
+            func hash(into hasher: inout Hasher) {
+                hasher.combine(identifier)
+            }
+
+            var identifier: SectionIdentifier {
+                switch self {
+                case.folder(label: let label):
+                    label.remoteIdentifier?.transportString() ?? "folder"
+                default:
+                    canonicalName
+                }
+            }
+
+            var obfuscatedName: String {
+                switch self {
+                case .folder:
+                    "user-defined-folder"
+
+                default:
+                    canonicalName
+                }
+            }
+
+            var canonicalName: String {
+                switch self {
+                case .contactRequests:
+                    "contactRequests"
+                case .conversations:
+                    "conversations"
+                case .contacts:
+                    "contacts"
+                case .groups:
+                    "groups"
+                case .favorites:
+                    "favorites"
+                case .folder(label: let label):
+                    label.name ?? "folder"
+                }
+            }
+
+            var localizedName: String? {
+                switch self {
+                case .conversations:
+                    nil
+                case .contactRequests:
+                    L10n.Localizable.List.Section.requests
+                case .contacts:
+                    L10n.Localizable.List.Section.contacts
+                case .groups:
+                    L10n.Localizable.List.Section.groups
+                case .favorites:
+                    L10n.Localizable.List.Section.favorites
+                case .folder(label: let label):
+                    label.name
+                }
+            }
+
+            static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
+                switch (lhs, rhs) {
+                case (.conversations, .conversations):
+                    true
+                case (.contactRequests, .contactRequests):
+                    true
+                case (.contacts, .contacts):
+                    true
+                case (.groups, .groups):
+                    true
+                case (.favorites, .favorites):
+                    true
+                case (.folder(let lhsLabel), .folder(let rhsLabel)):
+                    lhsLabel === rhsLabel
+                default:
+                    false
+                }
+            }
+        }
+
+        var kind: Kind
+        var items: [SectionItem]
+        var collapsed: Bool
+
+        var elements: [SectionItem] {
+            collapsed ? [] : items
+        }
+
+        /// ref to AggregateArray, we return the first found item's index
+        ///
+        /// - Parameter item: item to search
+        /// - Returns: the index of the item
+        func index(for item: ConversationListItemTMP) -> Int? {
+            items.firstIndex(of: SectionItem(item: item, kind: kind))
+        }
+
+        func isContentEqual(to source: ConversationListViewModel.Section) -> Bool {
+            kind == source.kind
+        }
+
+        var differenceIdentifier: String {
+            kind.identifier
+        }
+
+        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
+            self.kind = source.kind
+            self.collapsed = source.collapsed
+            items = Array(elements)
+        }
+
+        init(kind: Kind,
+             conversationDirectory: ConversationDirectoryType,
+             collapsed: Bool) {
+            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.kind = kind
+            self.collapsed = collapsed
+        }
+    }
+
+    static let contactRequestsItem = ConversationListConnectRequestsItemTMP()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
     private(set) var selectedItem: ConversationListItemTMP? {
@@ -61,16 +198,39 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
     private typealias DiffKitSection = ArraySection<Int, SectionItem>
 
+    /// make items has different hash in different sections
+    struct SectionItem: Hashable, Differentiable {
+        let item: ConversationListItemTMP
+        let isFavorite: Bool
+
+        fileprivate init(item: ConversationListItemTMP, kind: Section.Kind) {
+            self.item = item
+            self.isFavorite = kind == .favorites
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(isFavorite)
+
+            let hashableItem: NSObject = item
+            hasher.combine(hashableItem)
+        }
+
+        static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
+            return lhs.isFavorite == rhs.isFavorite &&
+                   lhs.item == rhs.item
+        }
+    }
+
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
         guard isFolderStatePersistenceEnabled else { return .init() }
 
-        guard let persistentPath = ConversationListViewModel_.persistentURL,
+        guard let persistentPath = ConversationListViewModel.persistentURL,
             let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
 
         do {
-            return try JSONDecoder().decode(ConversationListViewModel_.State.self, from: jsonData)
+            return try JSONDecoder().decode(ConversationListViewModel.State.self, from: jsonData)
         } catch {
             log.error("restore state error: \(error)")
             return State()
@@ -128,6 +288,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
         guard sections.indices.contains(sectionIndex) else { return nil }
+
         return sections[sectionIndex].kind
     }
 
@@ -150,6 +311,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
     func numberOfItems(inSection sectionIndex: Int) -> Int {
         guard sections.indices.contains(sectionIndex),
               !collapsed(at: sectionIndex) else { return 0 }
+
         return sections[sectionIndex].elements.count
     }
 
@@ -172,10 +334,6 @@ final class ConversationListViewModel_: ConversationListViewModel {
         return items[indexPath.item]
     }
 
-    func item(at indexPath: IndexPath) -> ConversationListItem {
-        fatalError("TODO")
-    }
-
     // swiftlint:disable todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
@@ -196,10 +354,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
         switch kind {
         case .contactRequests:
             conversationListType = .pending
-            let status: ConversationStatus! = nil
-            return conversationDirectory.conversations(by: conversationListType).isEmpty
-            ? []
-            : [SectionItem(status: status, item: contactRequestsItem, kind: kind)]
+            return conversationDirectory.conversations(by: conversationListType).isEmpty ? [] : [SectionItem(item: contactRequestsItem, kind: kind)]
         case .conversations:
             conversationListType = .unarchived
         case .contacts:
@@ -209,15 +364,14 @@ final class ConversationListViewModel_: ConversationListViewModel {
         case .favorites:
             conversationListType = .favorites
         case .folder(label: let label):
-            // TODO: fix
-            conversationListType = .folder(label as! LabelType)
+            conversationListType = .folder(label)
         }
 
+        // TODO: remove force-cast
         return conversationDirectory.conversations(by: conversationListType)
             .filter { !$0.hasIncompleteMetadata }
-            .map { conversation in
-                SectionItem(status: conversation.status, item: conversation, kind: kind)
-            }
+            .map { SectionItem(item: $0 as! ConversationListItemTMP, kind: kind) }
+
     }
 
     /// Select the item at an index path
@@ -324,14 +478,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
                      .groups,
                      .contacts]
 
-            let folders: [Section.Kind] = conversationDirectory.allFolders.map { folder in
-                .folder(
-                    label: .init(
-                        remoteIdentifier: folder.remoteIdentifier,
-                        name: folder.name
-                    )
-                )
-            }
+            let folders: [Section.Kind] = conversationDirectory.allFolders.map({ .folder(label: $0) })
             kinds.append(contentsOf: folders)
         } else {
             kinds = [.contactRequests,
@@ -341,7 +488,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
         return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
     }
 
-    private func sectionNumber(for kind: Section.Kind) -> Int? {
+    private func sectionIndex(for kind: Section.Kind) -> Int? {
         for (index, section) in sections.enumerated() where section.kind == kind {
             return index
         }
@@ -354,9 +501,9 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
         var newValue: [Section]
         if let kind,
-            let sectionIndex = self.sectionNumber(for: kind) {
+            let sectionIndex = self.sectionIndex(for: kind) {
             newValue = sections
-            let newList = ConversationListViewModel_.newList(for: kind, conversationDirectory: conversationDirectory)
+            let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
 
             newValue[sectionIndex].items = newList
 
@@ -383,7 +530,8 @@ final class ConversationListViewModel_: ConversationListViewModel {
             })
         }
 
-        if let kind, let sectionIndex = sectionNumber(for: kind) {
+        if let kind,
+           let sectionIndex = sectionIndex(for: kind) {
             delegate?.conversationListViewModel(self, didUpdateSectionAt: sectionIndex)
         } else {
             sections.indices.forEach { sectionIndex in
@@ -419,18 +567,19 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
         if let itemToSelect {
             // TODO: fix
-            // delegate?.conversationListViewModel(self, didSelect: .tmp(itemToSelect))
+            fatalError("TODO")
+            // delegate?.conversationListViewModel(self, didSelectItemAt: <#T##IndexPath#>)
         }
     }
 
     // MARK: - folder badge
 
     func folderBadge(at sectionIndex: Int) -> Int {
-        return sections[sectionIndex].items.filter {
-            // TODO: remove cast
-            let status = ($0.item as? ZMConversation)?.status
-            return status?.messagesRequiringAttention.isEmpty == false && status?.showingAllMessages == true
-        }.count
+        return sections[sectionIndex].items.filter({
+             let status = ($0.item as? ZMConversation)?.status
+             return status?.messagesRequiringAttention.isEmpty == false &&
+                    status?.showingAllMessages == true
+        }).count
     }
 
     // MARK: - collapse section
@@ -457,7 +606,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
         guard let kind = self.kind(of: sectionIndex) else { return }
         guard self.collapsed(at: sectionIndex) != collapsed else { return }
-        guard let sectionNumber = self.sectionNumber(for: kind) else { return }
+        guard let sectionIndex = self.sectionIndex(for: kind) else { return }
 
         if collapsed {
             state.collapsed.insert(kind.identifier)
@@ -466,7 +615,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
         }
 
         var newValue = sections
-        newValue[sectionNumber] = Section(kind: kind, conversationDirectory: conversationDirectory, collapsed: collapsed)
+        newValue[sectionIndex] = Section(kind: kind, conversationDirectory: conversationDirectory, collapsed: collapsed)
 
         if batchUpdate {
             let changeset = StagedChangeset(source: sections, target: newValue)
@@ -516,13 +665,13 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
         guard isFolderStatePersistenceEnabled,
               let jsonString = state.jsonString,
-              let persistentDirectory = ConversationListViewModel_.persistentDirectory,
+              let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 
         try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
-            try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel_.persistentFilename), atomically: true, encoding: .utf8)
+            try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)
         } catch {
             log.error("error writing ConversationListViewModel to \(directoryURL): \(error)")
         }
@@ -542,7 +691,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
     static var persistentURL: URL? {
         guard let persistentDirectory else { return nil }
 
-        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel_.persistentFilename)
+        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
     }
 }
 
@@ -552,7 +701,7 @@ private let log = ZMSLog(tag: "ConversationListViewModel")
 
 // MARK: - ConversationDirectoryObserver
 
-extension ConversationListViewModel_: ConversationDirectoryObserver {
+extension ConversationListViewModel: ConversationDirectoryObserver {
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {
 
         if changeInfo.reloaded {
@@ -590,181 +739,12 @@ extension ConversationListViewModel_: ConversationDirectoryObserver {
         case .favorites:
             kind = .favorites
         case .folder(let label):
-            kind = .folder(
-                label: .init(
-                    remoteIdentifier: label.remoteIdentifier,
-                    name: label.name
-                )
-            )
+            kind = .folder(label: label)
         case .archived:
             kind = nil
         }
 
         return kind
-    }
-}
 
-// MARK: ConversationListViewModel.Section
-
-extension ConversationListViewModel_ {
-
-    fileprivate struct Section: DifferentiableSection {
-
-        var kind: Kind
-        var items: [SectionItem]
-        var collapsed: Bool
-
-        var elements: [SectionItem] {
-            return collapsed ? [] : items
-        }
-
-        /// ref to AggregateArray, we return the first found item's index
-        ///
-        /// - Parameter item: item to search
-        /// - Returns: the index of the item
-        func index(for item: ConversationListItemTMP) -> Int? {
-            // TODO: does only ZMConversation conform to ConversationListItemTMP?
-            items.firstIndex(of: SectionItem(status: (item as! ZMConversation).status, item: item, kind: kind))
-        }
-
-        func isContentEqual(to source: ConversationListViewModel_.Section) -> Bool {
-            kind == source.kind
-        }
-
-        var differenceIdentifier: String {
-            kind.identifier
-        }
-
-        init<C>(source: ConversationListViewModel_.Section, elements: C) where C: Collection, C.Element == SectionItem {
-            self.kind = source.kind
-            self.collapsed = source.collapsed
-            items = Array(elements)
-        }
-
-        init(
-            kind: Kind,
-            conversationDirectory: ConversationDirectoryType,
-            collapsed: Bool
-        ) {
-            items = ConversationListViewModel_.newList(for: kind, conversationDirectory: conversationDirectory)
-            self.kind = kind
-            self.collapsed = collapsed
-        }
-    }
-}
-
-extension ConversationListViewModel_.Section {
-
-    enum Kind: Hashable {
-
-        /// for incoming requests
-        case contactRequests
-
-        /// for self pending requests / conversations
-        case conversations
-
-        /// one to one conversations
-        case contacts
-
-        /// group conversations
-        case groups
-
-        /// favorites
-        case favorites
-
-        /// conversations in folders
-        case folder(label: Label)
-
-        var identifier: ConversationListViewModel_.SectionIdentifier {
-            switch self {
-            case.folder(label: let label):
-                label.remoteIdentifier?.transportString() ?? "folder"
-            default:
-                canonicalName
-            }
-        }
-
-        var obfuscatedName: String {
-            switch self {
-            case .folder:
-                "user-defined-folder"
-
-            default:
-                canonicalName
-            }
-        }
-
-        var canonicalName: String {
-            switch self {
-            case .contactRequests:
-                "contactRequests"
-            case .conversations:
-                "conversations"
-            case .contacts:
-                "contacts"
-            case .groups:
-                "groups"
-            case .favorites:
-                "favorites"
-            case .folder(label: let label):
-                label.name ?? "folder"
-            }
-        }
-
-        var localizedName: String? {
-            switch self {
-            case .conversations:
-                nil
-            case .contactRequests:
-                L10n.Localizable.List.Section.requests
-            case .contacts:
-                L10n.Localizable.List.Section.contacts
-            case .groups:
-                L10n.Localizable.List.Section.groups
-            case .favorites:
-                L10n.Localizable.List.Section.favorites
-            case .folder(label: let label):
-                label.name
-            }
-        }
-    }
-}
-
-// MARK: ConversationListViewModel.SectionItem
-
-extension ConversationListViewModel_ {
-
-    /// make items has different hash in different sections
-    struct SectionItem: Hashable, Differentiable {
-
-        let status: ConversationStatus
-        let item: ConversationListItemTMP
-        let isFavorite: Bool
-
-        fileprivate init(
-            status: ConversationStatus,
-            item: ConversationListItemTMP,
-            kind: Section.Kind
-        ) {
-            self.status = status
-            self.item = item
-            self.isFavorite = kind == .favorites
-        }
-
-        // TODO: remove
-        func hash(into hasher: inout Hasher) {
-            // hasher.combine(status)
-            hasher.combine(isFavorite)
-
-            let hashableItem: NSObject = item
-            hasher.combine(hashableItem)
-        }
-
-        // TODO: remove
-        static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
-            return // lhs.status == rhs.status &&
-            lhs.isFavorite == rhs.isFavorite &&
-            lhs.item == rhs.item
-        }
     }
 }

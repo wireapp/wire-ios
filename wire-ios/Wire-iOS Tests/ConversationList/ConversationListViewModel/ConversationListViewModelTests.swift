@@ -17,18 +17,15 @@
 //
 
 import DifferenceKit
-import WireConversationList
+@testable import Wire
 import XCTest
 
-@testable import Wire
-
-final class MockConversationListViewModelDelegate: ConversationListViewModelDelegate {
-
-    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateSectionAt sectionIndex: Int) {
+final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
+    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
         // no-op
     }
 
-    func conversationListViewModel(_ viewModel: ConversationListViewModel, didUpdateForReloadSectionAt sectionIndex: Int) {
+    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool) {
         // no-op
     }
 
@@ -44,18 +41,18 @@ final class MockConversationListViewModelDelegate: ConversationListViewModelDele
         // no-op
     }
 
-    func conversationListViewModel(_ viewModel: ConversationListViewModel, didSelectItemAt indexPath: IndexPath) {
+    func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?) {
         // no-op
     }
 
-    func listViewModel(_ model: ConversationListViewModel_?, didUpdateConversationWithChange change: ConversationChangeInfo?) {
+    func listViewModel(_ model: ConversationListViewModel?, didUpdateConversationWithChange change: ConversationChangeInfo?) {
         // no-op
     }
 }
 
 final class ConversationListViewModelTests: XCTestCase {
 
-    var sut: ConversationListViewModel_!
+    var sut: ConversationListViewModel!
     var mockUserSession: UserSessionMock!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
     var mockBar: MockBar!
@@ -71,7 +68,7 @@ final class ConversationListViewModelTests: XCTestCase {
         removeViewModelState()
         mockBar = MockBar()
         mockUserSession = UserSessionMock()
-        sut = ConversationListViewModel_(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
+        sut = ConversationListViewModel(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
 
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
@@ -92,7 +89,7 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func removeViewModelState() {
-        guard let persistentURL = ConversationListViewModel_.persistentURL else { return }
+        guard let persistentURL = ConversationListViewModel.persistentURL else { return }
 
         try? FileManager.default.removeItem(at: persistentURL)
     }
@@ -302,7 +299,7 @@ final class ConversationListViewModelTests: XCTestCase {
 final class MockBar: ConversationListViewModelRestorationDelegate {
     var folderEnabled: Bool = false
 
-    func listViewModel(_ model: ConversationListViewModel_?, didRestoreFolderEnabled enabled: Bool) {
+    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
         folderEnabled = enabled
     }
 }

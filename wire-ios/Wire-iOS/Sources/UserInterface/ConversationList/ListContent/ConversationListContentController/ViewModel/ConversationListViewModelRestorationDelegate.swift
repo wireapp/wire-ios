@@ -17,5 +17,5 @@
 //
 
 protocol ConversationListViewModelRestorationDelegate: AnyObject {
-    func listViewModel(_ model: ConversationListViewModel_?, didRestoreFolderEnabled enabled: Bool)
+    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool)
 }
