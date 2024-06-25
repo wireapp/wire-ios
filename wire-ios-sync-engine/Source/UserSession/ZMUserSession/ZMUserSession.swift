@@ -402,24 +402,35 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupAnalyticsSession() {
-        if let config = dependencies.analyticsSessionConfiguration,
-           let countlyKey = config.countlyKey,
-           let host = config.host {
-            let analyticsUserProfile = AnalyticsUserProfile(
-                analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
-                teamID: selfUser.membership?.team?.remoteIdentifier?.uuidString,
-                teamRole: selfUser.teamRole.analyticsValue,
-                teamSize: selfUser.membership?.team?.members.count,
-                contactCount: selfUser.membership?.team?.members.count
-            )
-
-            self.analyticsSession = AnalyticsSession(
-                appKey: countlyKey,
-                host: host,
-                userProfile: analyticsUserProfile
-            )
-
+        guard let config = dependencies.analyticsSessionConfiguration,
+              let countlyKey = config.countlyKey,
+              let host = config.host else {
+            return
         }
+
+        let teamInfo: TeamInfo? = {
+            guard let team = selfUser.membership?.team,
+                  let teamID = team.remoteIdentifier?.uuidString else {
+                return nil
+            }
+
+            let teamRole = selfUser.teamRole.analyticsValue
+            let teamSize = team.members.count
+
+            return TeamInfo(id: teamID, role: teamRole, size: teamSize)
+        }()
+
+        let analyticsUserProfile = AnalyticsUserProfile(
+            analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
+            teamInfo: teamInfo,
+            contactCount: selfUser.membership?.team?.members.count
+        )
+
+        self.analyticsSession = AnalyticsSession(
+            appKey: countlyKey,
+            host: host,
+            userProfile: analyticsUserProfile
+        )
     }
 
     @objc private func handleAppDidBecomeActive() {

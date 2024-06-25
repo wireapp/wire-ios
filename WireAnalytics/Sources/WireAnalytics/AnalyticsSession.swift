@@ -25,34 +25,40 @@ public struct AnalyticsUserProfile {
     /// The unique identifier for the user's analytics profile.
     public let analyticsIdentifier: String
 
-    /// The identifier for the team the user belongs to.
-    public let teamID: String?
-
-    /// The role of the user within the team.
-    public let teamRole: String
-
-    /// The size of the team the user belongs to.
-    public let teamSize: Int?
+    /// The team information for the user.
+    public let teamInfo: TeamInfo?
 
     /// The number of contacts the user has.
     public let contactCount: Int?
 
     public init(
         analyticsIdentifier: String,
-        teamID: String? = nil,
-        teamRole: String,
-        teamSize: Int? = nil,
+        teamInfo: TeamInfo? = nil,
         contactCount: Int? = nil
     ) {
-
         self.analyticsIdentifier = analyticsIdentifier
-        self.teamID = teamID
-        self.teamRole = teamRole
-        self.teamSize = teamSize
+        self.teamInfo = teamInfo
         self.contactCount = contactCount
-
     }
+}
 
+/// A struct representing information about the user's team.
+public struct TeamInfo {
+
+    /// The identifier for the team the user belongs to.
+    public let id: String
+
+    /// The role of the user within the team.
+    public let role: String
+
+    /// The size of the team the user belongs to.
+    public let size: Int
+
+    public init(id: String, role: String, size: Int) {
+        self.id = id
+        self.role = role
+        self.size = size
+    }
 }
 
 public struct AnalyticsSession: AnalyticsSessionProtocol {
@@ -74,12 +80,15 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         self.countly.start(with: config)
         self.countly.changeDeviceID(withMerge: userProfile.analyticsIdentifier)
 
-        let properties: [String: String] = [
-            "team_team_id": userProfile.teamID ?? "",
-            "team_user_type": userProfile.teamRole,
-            "team_team_size": userProfile.teamSize.map { String($0) } ?? "",
+        var properties: [String: String] = [
             "user_contacts": userProfile.contactCount.map { String($0.logRound()) } ?? ""
         ]
+
+        if let teamInfo = userProfile.teamInfo {
+            properties["team_team_id"] = teamInfo.id
+            properties["team_user_type"] = teamInfo.role
+            properties["team_team_size"] = String(teamInfo.size)
+        }
 
         for (key, value) in properties {
             WireCountly.user().set(key, value: value)
