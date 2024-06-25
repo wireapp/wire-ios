@@ -89,6 +89,10 @@ public struct WireLogger: LoggerProtocol {
 
     // MARK: Static Functions
 
+    public static var logFiles: [URL] {
+        provider.logFiles
+    }
+
     public static func addLogger(_ logger: LoggerProtocol) {
         provider.addLogger(logger)
     }
