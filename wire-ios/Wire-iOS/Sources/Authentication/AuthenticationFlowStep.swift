@@ -46,8 +46,8 @@ indirect enum AuthenticationFlowStep: Equatable {
 
     // Post Sign-In
     case noHistory(credentials: UserCredentials?, context: NoHistoryContext)
-    case clientManagement(clients: [UserClient], credentials: UserCredentials?)
-    case deleteClient(clients: [UserClient], credentials: UserCredentials?)
+    case clientManagement(clients: [UserClient])
+    case deleteClient(clients: [UserClient])
     case addEmailAndPassword
     case enrollE2EIdentity
     case enrollE2EIdentitySuccess(String)

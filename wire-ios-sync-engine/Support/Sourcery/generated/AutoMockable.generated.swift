@@ -421,22 +421,22 @@ public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtoco
 
     // MARK: - invoke
 
-    public var invokeClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
-    public var invokeClientIdCredentials_MockError: Error?
-    public var invokeClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var invokeClientIdPassword_MockError: Error?
+    public var invokeClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
 
-    public func invoke(clientId: String, credentials: EmailCredentials?) async throws {
-        invokeClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+    public func invoke(clientId: String, password: String) async throws {
+        invokeClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
-        if let error = invokeClientIdCredentials_MockError {
+        if let error = invokeClientIdPassword_MockError {
             throw error
         }
 
-        guard let mock = invokeClientIdCredentials_MockMethod else {
-            fatalError("no mock for `invokeClientIdCredentials`")
+        guard let mock = invokeClientIdPassword_MockMethod else {
+            fatalError("no mock for `invokeClientIdPassword`")
         }
 
-        try await mock(clientId, credentials)
+        try await mock(clientId, password)
     }
 
 }

@@ -322,6 +322,7 @@ extension AppRootRouter {
             self.authenticationCoordinator == nil ||
                 error?.userSessionErrorCode == .addAccountRequested ||
                 error?.userSessionErrorCode == .accountDeleted ||
+                error?.userSessionErrorCode == .canNotRegisterMoreClients ||
                 error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
             let sessionManager = SessionManager.shared
         else {

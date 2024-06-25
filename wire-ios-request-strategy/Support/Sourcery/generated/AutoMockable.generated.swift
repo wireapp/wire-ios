@@ -1091,22 +1091,22 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
-    public var deleteUserClientClientIdCredentials_MockError: Error?
-    public var deleteUserClientClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_MockError: Error?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws {
-        deleteUserClientClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+    public func deleteUserClient(clientId: String, password: String) async throws {
+        deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
-        if let error = deleteUserClientClientIdCredentials_MockError {
+        if let error = deleteUserClientClientIdPassword_MockError {
             throw error
         }
 
-        guard let mock = deleteUserClientClientIdCredentials_MockMethod else {
-            fatalError("no mock for `deleteUserClientClientIdCredentials`")
+        guard let mock = deleteUserClientClientIdPassword_MockMethod else {
+            fatalError("no mock for `deleteUserClientClientIdPassword`")
         }
 
-        try await mock(clientId, credentials)
+        try await mock(clientId, password)
     }
 
 }
