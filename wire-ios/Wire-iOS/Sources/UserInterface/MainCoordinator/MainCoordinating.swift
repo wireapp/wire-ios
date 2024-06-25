@@ -32,4 +32,6 @@ protocol MainCoordinating {
         focusOnView focus: Bool,
         animated: Bool
     ) where Message: ZMConversationMessage
+
+    func showConversationList()
 }

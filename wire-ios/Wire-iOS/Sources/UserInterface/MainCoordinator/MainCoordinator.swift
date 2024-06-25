@@ -41,4 +41,11 @@ struct MainCoordinator_: MainCoordinating {
         }
         zClientViewController.load(conversation, scrollTo: message, focusOnView: focus, animated: animated)
     }
+
+    func showConversationList() {
+        guard let zClientViewController else {
+            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
+        }
+        zClientViewController.showConversationList()
+    }
 }

@@ -31,6 +31,7 @@ enum ConversationListState {
 final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
+    let mainCoordinator: MainCoordinating
 
     /// internal View Model
     var state: ConversationListState = .conversationList
@@ -103,6 +104,7 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
+        self.mainCoordinator = mainCoordinator
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
@@ -138,7 +140,7 @@ final class ConversationListViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -298,7 +300,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
+        let startUIViewController = StartUIViewController(
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
         startUIViewController.delegate = viewModel
         return startUIViewController
     }

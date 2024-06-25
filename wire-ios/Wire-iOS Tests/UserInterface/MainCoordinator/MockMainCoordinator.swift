@@ -38,4 +38,8 @@ final class MockMainCoordinator: MainCoordinating {
     ) where Message: ZMConversationMessage {
         fatalError("Mock method not implemented")
     }
+
+    func showConversationList() {
+        fatalError("Mock method not implemented")
+    }
 }
