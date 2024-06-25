@@ -77,19 +77,11 @@ final class ConversationListViewModel_: ConversationListViewModel {
     }()
 
     private var state: State {
-        get {
-            return _state
-        }
-
+        get { _state }
         set {
-            /// simulate willSet
-
-            /// assign
             if newValue != _state {
                 _state = newValue
             }
-
-            /// simulate didSet
             saveState(state: _state)
         }
     }
@@ -116,7 +108,7 @@ final class ConversationListViewModel_: ConversationListViewModel {
     }
 
     func sectionHeaderTitle(sectionIndex: Int) -> String? {
-        return kind(of: sectionIndex)?.localizedName
+        kind(of: sectionIndex)?.localizedName
     }
 
     /// return true if seaction header is visible.
@@ -135,7 +127,6 @@ final class ConversationListViewModel_: ConversationListViewModel {
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
         guard sections.indices.contains(sectionIndex) else { return nil }
-
         return sections[sectionIndex].kind
     }
 
@@ -144,26 +135,25 @@ final class ConversationListViewModel_: ConversationListViewModel {
     /// - Parameter sectionIndex: section index of the collection view
     /// - Returns: canonical name
     func sectionCanonicalName(of sectionIndex: Int) -> String? {
-        return kind(of: sectionIndex)?.canonicalName
+        kind(of: sectionIndex)?.canonicalName
     }
 
     func obfuscatedSectionName(of sectionIndex: Int) -> String? {
-        return kind(of: sectionIndex)?.obfuscatedName
+        kind(of: sectionIndex)?.obfuscatedName
     }
 
     var sectionCount: Int {
-        return sections.count
+        sections.count
     }
 
     func numberOfItems(inSection sectionIndex: Int) -> Int {
         guard sections.indices.contains(sectionIndex),
               !collapsed(at: sectionIndex) else { return 0 }
-
         return sections[sectionIndex].elements.count
     }
 
     private func numberOfItems(of kind: Section.Kind) -> Int? {
-        return sections.first(where: { $0.kind == kind })?.elements.count ?? nil
+        sections.first(where: { $0.kind == kind })?.elements.count ?? nil
     }
 
     func section(at sectionIndex: Int) -> [ConversationListItemTMP]? {
@@ -201,7 +191,9 @@ final class ConversationListViewModel_: ConversationListViewModel {
         switch kind {
         case .contactRequests:
             conversationListType = .pending
-            return conversationDirectory.conversations(by: conversationListType).isEmpty ? [] : [SectionItem(item: contactRequestsItem, kind: kind)]
+            return conversationDirectory.conversations(by: conversationListType).isEmpty
+            ? []
+            : [SectionItem(item: contactRequestsItem, kind: kind)]
         case .conversations:
             conversationListType = .unarchived
         case .contacts:
@@ -211,7 +203,8 @@ final class ConversationListViewModel_: ConversationListViewModel {
         case .favorites:
             conversationListType = .favorites
         case .folder(label: let label):
-            conversationListType = .folder(label)
+            // TODO: fix
+            conversationListType = .folder(label as! LabelType)
         }
 
         return conversationDirectory.conversations(by: conversationListType)
@@ -219,7 +212,6 @@ final class ConversationListViewModel_: ConversationListViewModel {
             .map { conversation in
                 SectionItem(item: conversation, kind: kind)
             }
-
     }
 
     /// Select the item at an index path
@@ -326,7 +318,14 @@ final class ConversationListViewModel_: ConversationListViewModel {
                      .groups,
                      .contacts]
 
-            let folders: [Section.Kind] = conversationDirectory.allFolders.map({ .folder(label: $0) })
+            let folders: [Section.Kind] = conversationDirectory.allFolders.map { folder in
+                .folder(
+                    label: .init(
+                        remoteIdentifier: folder.remoteIdentifier,
+                        name: folder.name
+                    )
+                )
+            }
             kinds.append(contentsOf: folders)
         } else {
             kinds = [.contactRequests,
@@ -420,11 +419,11 @@ final class ConversationListViewModel_: ConversationListViewModel {
     // MARK: - folder badge
 
     func folderBadge(at sectionIndex: Int) -> Int {
-        return sections[sectionIndex].items.filter({
-             let status = ($0.item as? ZMConversation)?.status
-             return status?.messagesRequiringAttention.isEmpty == false &&
-                    status?.showingAllMessages == true
-        }).count
+        return sections[sectionIndex].items.filter {
+            // TODO: remove cast
+            let status = ($0.item as? ZMConversation)?.status
+            return status?.messagesRequiringAttention.isEmpty == false && status?.showingAllMessages == true
+        }.count
     }
 
     // MARK: - collapse section
@@ -617,15 +616,15 @@ extension ConversationListViewModel_ {
         /// - Parameter item: item to search
         /// - Returns: the index of the item
         func index(for item: ConversationListItemTMP) -> Int? {
-            return items.firstIndex(of: SectionItem(item: item, kind: kind))
+            items.firstIndex(of: SectionItem(item: item, kind: kind))
         }
 
         func isContentEqual(to source: ConversationListViewModel_.Section) -> Bool {
-            return kind == source.kind
+            kind == source.kind
         }
 
         var differenceIdentifier: String {
-            return kind.identifier
+            kind.identifier
         }
 
         init<C>(source: ConversationListViewModel_.Section, elements: C) where C: Collection, C.Element == SectionItem {
@@ -634,9 +633,11 @@ extension ConversationListViewModel_ {
             items = Array(elements)
         }
 
-        init(kind: Kind,
-             conversationDirectory: ConversationDirectoryType,
-             collapsed: Bool) {
+        init(
+            kind: Kind,
+            conversationDirectory: ConversationDirectoryType,
+            collapsed: Bool
+        ) {
             items = ConversationListViewModel_.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
             self.collapsed = collapsed
