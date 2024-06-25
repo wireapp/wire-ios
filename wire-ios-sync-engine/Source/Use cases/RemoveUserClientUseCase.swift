@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
 
-    func invoke(clientId: String, credentials: EmailCredentials?) async throws
+    func invoke(clientId: String, password: String) async throws
 
 }
 
@@ -43,7 +43,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     // MARK: - Public interface
 
-    func invoke(clientId: String, credentials: EmailCredentials?) async throws {
+    func invoke(clientId: String, password: String) async throws {
         let userClient = await syncContext.perform {
             return UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
         }
@@ -52,7 +52,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         }
 
         do {
-            try await userClientAPI.deleteUserClient(clientId: clientId, credentials: credentials)
+            try await userClientAPI.deleteUserClient(clientId: clientId, password: password)
             await didDeleteClient(userClient)
 
         } catch let networkError as NetworkError {
