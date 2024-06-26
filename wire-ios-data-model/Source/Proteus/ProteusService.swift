@@ -236,7 +236,7 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     public func generatePrekey(id: UInt16) async throws -> String {
-        logger.info("generating prekey")
+        logger.info("generating prekey with id: \(id)")
 
         do {
             return try await coreCrypto.perform { try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString() }
