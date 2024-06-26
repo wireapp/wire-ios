@@ -352,5 +352,4 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     }
 
-
 }
