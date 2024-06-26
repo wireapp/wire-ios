@@ -16,27 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public protocol LogConvertible {
 
-public class UserClientRequestFactory {
+    var logDescription: String { get }
 
-    public init() {}
+}
 
-    func deleteClientRequest(
-        clientId: String,
-        password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
+extension String: LogConvertible {
 
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
-
-            return request
-        }
+    public var logDescription: String {
+        return self
+    }
 
 }

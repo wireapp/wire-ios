@@ -21,7 +21,7 @@ import XCTest
 
 final class SwitchBackendConfirmationViewTests: XCTestCase {
 
-    var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()

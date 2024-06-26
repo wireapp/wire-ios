@@ -232,6 +232,7 @@ extension XCTestCase {
         }
     }
 
+    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIView,
                 named name: String? = nil,
                 file: StaticString = #file,

@@ -29,7 +29,6 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     private var serviceUser: MockServiceUserType!
     private var selfUser: MockUserType!
     private var otherUser: MockUserType!
-
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp

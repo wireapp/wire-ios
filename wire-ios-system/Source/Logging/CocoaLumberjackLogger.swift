@@ -20,7 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-public class CocoaLumberjackLogger: LoggerProtocol {
+final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
 
@@ -31,31 +31,31 @@ public class CocoaLumberjackLogger: LoggerProtocol {
         DDLog.add(fileLogger)
     }
 
-    public var logFiles: [URL] {
+    var logFiles: [URL] {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    public func debug(_ message: LogConvertible, attributes: LogAttributes...) {
+    func debug(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes...) {
+    func info(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes...) {
+    func notice(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes...) {
+    func warn(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warning)
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes...) {
+    func error(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes...) {
+    func critical(_ message: LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 

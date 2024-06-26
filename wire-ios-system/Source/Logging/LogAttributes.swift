@@ -16,27 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public typealias LogAttributes = [LogAttributesKey: Encodable]
 
-public class UserClientRequestFactory {
+public enum LogAttributesKey: String {
+    case selfClientId = "self_client_id"
+    case selfUserId = "self_user_id"
+    case recipientID = "recipient_id"
+    case eventId = "event_id"
+    case senderUserId = "sender_user_id"
+    case nonce = "message_nonce"
+    case messageType = "message_type"
+    case lastEventID = "last_event_id"
+    case `public`
+    case tag
+}
 
-    public init() {}
-
-    func deleteClientRequest(
-        clientId: String,
-        password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
-
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
-
-            return request
-        }
-
+public extension LogAttributes {
+    static var safePublic = [LogAttributesKey.public: true]
 }

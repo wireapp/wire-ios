@@ -45,12 +45,12 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.contextProvider = coreDataStack
-        userSession.mockConversationList = ZMConversationList(
+        userSession.mockConversationList = ConversationList(
             allConversations: [mockConversation!],
             filteringPredicate: NSPredicate(
                 value: true
             ),
-            moc: uiMOC,
+            managedObjectContext: uiMOC,
             description: "all conversations"
         )
 
