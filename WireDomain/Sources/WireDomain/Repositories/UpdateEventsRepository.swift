@@ -41,7 +41,6 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let eventContext: NSManagedObjectContext
     private let jsonEncoder = JSONEncoder()
 
-    // TODO: rename to 'protocol`
     private let lastEventIDRepository: any LastEventIDRepositoryInterface
 
     init(
