@@ -17,20 +17,12 @@
 //
 
 import SwiftUI
+import WireDesign
 
-// #DCE0E3 Gray-40 light
-// #34373D Gray-90 dark
-private let accountImageViewBorderColor = UIColor {
-    $0.userInterfaceStyle == .dark
-    ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1)
-    : .init(red: 0.86, green: 0.88, blue: 0.89, alpha: 1)
-}
-
-// #34373D Gray-90 dark
-// clear light
+private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 private let availabilityIndicatorBackgroundColor = UIColor {
     $0.userInterfaceStyle == .dark
-    ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1)
+    ? BaseColorPalette.Grays.gray90
     : .clear
 }
 
