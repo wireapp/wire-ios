@@ -16,28 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public protocol LogConvertible {
 
-@objcMembers
-public final class SelfUnregisteringNotificationCenterToken: NSObject {
+    var logDescription: String { get }
 
-    private let notificationCenter: NotificationCenter
-    private let token: NSObjectProtocol
+}
 
-    public init(_ token: NSObjectProtocol) {
-        self.notificationCenter = .default
-        self.token = token
+extension String: LogConvertible {
+
+    public var logDescription: String {
+        return self
     }
 
-    public init(
-        _ token: NSObjectProtocol,
-        notificationCenter: NotificationCenter
-    ) {
-        self.notificationCenter = notificationCenter
-        self.token = token
-    }
-
-    deinit {
-        notificationCenter.removeObserver(token)
-    }
 }

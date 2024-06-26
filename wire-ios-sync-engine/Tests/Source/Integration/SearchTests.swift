@@ -100,8 +100,8 @@ final class SearchTests: IntegrationTest {
 
         XCTAssertTrue(login())
 
-        let pendingConnections = ZMConversationList.pendingConnectionConversations(inUserSession: userSession!)
-        XCTAssertEqual(pendingConnections.count, 1)
+        let pendingConnections: ConversationList = .pendingConnectionConversations(inUserSession: userSession!)
+        XCTAssertEqual(pendingConnections.items.count, 1)
     }
 
     func testThatItNotifiesObserversWhenTheConnectionStatusChanges_InsertedUser() {
