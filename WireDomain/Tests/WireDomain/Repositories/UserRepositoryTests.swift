@@ -27,7 +27,7 @@ import XCTest
 
 class UserRepositoryTests: XCTestCase {
 
-    var sut: UserRepository_!
+    var sut: UserRepository!
     var usersAPI: MockUsersAPI!
 
     var stack: CoreDataStack!
@@ -42,7 +42,7 @@ class UserRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
-        sut = UserRepository_(
+        sut = UserRepository(
             context: context,
             usersAPI: usersAPI
         )
