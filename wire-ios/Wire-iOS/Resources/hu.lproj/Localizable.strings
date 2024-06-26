@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archívum";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "A beszélgetések itt kezdődnek";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "E-mail cím és jelszó hozzáadása";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Felhasználási feltételek";
 "about.privacy.title" = "Adatvédelmi Nyilatkozat";
 "about.license.title" = "Licenc információ";
