@@ -24,11 +24,13 @@ import XCTest
 ///
 /// Create variations of the snapshot behavior using the "with" methods.
 
-struct SnapshotHelper {
+public struct SnapshotHelper {
 
     private var perceptualPrecision: Float = 0.98
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
+
+    public init() {}
 
     // MARK: - Create variations
 
@@ -39,7 +41,7 @@ struct SnapshotHelper {
     /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value of 0 indicates no precision.
     /// - Returns: A copy of the current helper with the new perceptual precision.
 
-    func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
+    public func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
         var helper = self
         helper.perceptualPrecision = perceptualPrecision
         return helper
@@ -50,7 +52,7 @@ struct SnapshotHelper {
     /// - Parameter layout: The desired snapshot layout.
     /// - Returns: A copy of the current helper with a new layout.
 
-    func withLayout(_ layout: SwiftUISnapshotLayout) -> Self {
+    public func withLayout(_ layout: SwiftUISnapshotLayout) -> Self {
         var helper = self
         helper.layout = layout
         return helper
@@ -61,7 +63,7 @@ struct SnapshotHelper {
     /// - Parameter style: The desired user interface style.
     /// - Returns: A copy of the current helper with a new user interface style.
 
-    func withUserInterfaceStyle(_ style: UIUserInterfaceStyle) -> Self {
+    public func withUserInterfaceStyle(_ style: UIUserInterfaceStyle) -> Self {
         var helper = self
         helper.traits = UITraitCollection(traitsFrom: [
             helper.traits,
@@ -75,7 +77,7 @@ struct SnapshotHelper {
     /// - Parameter category: The desired preferred content size category.
     /// - Returns: A copy of the current helper with a new preferred content size category.
 
-    func withPreferredContentSizeCategory(_ category: UIContentSizeCategory) -> Self {
+    public func withPreferredContentSizeCategory(_ category: UIContentSizeCategory) -> Self {
         var helper = self
         helper.traits = UITraitCollection(traitsFrom: [
             helper.traits,
@@ -94,7 +96,7 @@ struct SnapshotHelper {
     ///   - line: The invoking line numer.
     ///   - createView: A closure that provides the view to test.
 
-    func verify<View: SwiftUI.View>(
+    public func verify<View: SwiftUI.View>(
         testName: String = #function,
         file: StaticString = #file,
         line: UInt = #line,
@@ -116,7 +118,7 @@ struct SnapshotHelper {
     ///   - file: The invoking file name.
     ///   - line: The invoking line numer.
 
-    func verify<View: SwiftUI.View>(
+    public func verify<View: SwiftUI.View>(
         matching value: View,
         testName: String = #function,
         file: StaticString = #file,
@@ -149,7 +151,7 @@ struct SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - line: The invoking line number.
 
-    func verify(
+    public func verify(
         matching value: UIViewController,
         size: CGSize? = nil,
         named name: String? = nil,
@@ -183,7 +185,7 @@ struct SnapshotHelper {
     ///        - testName: The name of the reference image.
     ///        - line: The invoking line number.
 
-    func verify(
+    public func verify(
         matching value: UIView,
         named name: String? = nil,
         file: StaticString = #file,
@@ -213,7 +215,7 @@ struct SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - line: The invoking line number.
 
-    func verifyForDynamicType(
+    public func verifyForDynamicType(
         matching value: UIView,
         named name: String? = nil,
         file: StaticString = #file,
@@ -251,10 +253,9 @@ struct SnapshotHelper {
 
     }
 
-    func snapshotDirectory(file: StaticString = #file) -> String {
+    public func snapshotDirectory(file: StaticString = #file) -> String {
         let fileName = "\(file)"
         let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
         return path
     }
-
 }
