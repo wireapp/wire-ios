@@ -1,15 +1,15 @@
 options:
   outputPath: "./com.mono0926.LicensePlist.Output"
   cartfilePath: Cartfile
-  packagePaths:
-    - scripts/Package.swift # add more
+  # packagePaths:
+  #   - scripts/Package.swift
   # packageSourcesPath: "./SourcePackages"
   xcworkspacePath: "*.xcworkspace"
-  prefix: com.mono0926.LicensePlist
+  prefix: Licenses
   # gitHubToken: YOUR_GITHUB_TOKEN
-  force: false
+  force: true
   addVersionNumbers: true
   htmlPath: licenses.html
-  # suppressOpeningDirectory: false
+  suppressOpeningDirectory: true
   # failIfMissingLicense: true
   sandboxMode: false
