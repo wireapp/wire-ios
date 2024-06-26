@@ -194,6 +194,7 @@ public final class ZMUserSession: NSObject {
             crlAPI: CertificateRevocationListAPI(),
             mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            e2eiFeature: e2eiFeature,
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
         )

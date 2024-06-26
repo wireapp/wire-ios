@@ -49,7 +49,7 @@ public extension Feature {
             public let acmeDiscoveryUrl: String?
             public let verificationExpiration: UInt
             public let crlProxy: String?
-            public let useProxyOnMobile: Bool
+            public let useProxyOnMobile: Bool?
 
             public init(
                 acmeDiscoveryUrl: String? = nil,
@@ -60,6 +60,7 @@ public extension Feature {
                     self.verificationExpiration = verificationExpiration
                     self.crlProxy = crlProxy
                     self.useProxyOnMobile = useProxyOnMobile ?? false
+                    print("MyTest crlProxy: \(crlProxy)")
                 }
 
         }
