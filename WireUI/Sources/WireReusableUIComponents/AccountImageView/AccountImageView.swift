@@ -259,31 +259,40 @@ struct AccountImageView_Previews: PreviewProvider {
     }
 
     @ViewBuilder
-    static func previewWithNavigationBar(_ accountType: AccountImageView.AccountType, _ availability: Availability?) -> some View {
+    static func previewWithNavigationBar(
+        _ accountType: AccountImageView.AccountType,
+        _ availability: Availability?
+    ) -> some View {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    AccountImageViewRepresentable(accountImage, accountType, availability)
-                        .scaleEffect(6)
-                    Spacer()
-                }
-                Spacer()
-            }
-            .navigationTitle("Conversations")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        //
-                    } label: {
-                        AccountImageViewRepresentable(accountImage, accountType, availability)
-                            .padding(.horizontal)
+            AccountImageViewRepresentable(accountImage, accountType, availability)
+                .center()
+                .scaleEffect(6)
+                .navigationTitle("Conversations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {} label: {
+                            AccountImageViewRepresentable(accountImage, accountType, availability)
+                                .padding(.horizontal)
+                        }
                     }
                 }
+        }
+    }
+}
+
+extension View {
+
+    fileprivate func center() -> some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                self
+                Spacer()
             }
+            Spacer()
         }
     }
 }
@@ -305,11 +314,7 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> AccountImageView {
-        let view = AccountImageView()
-        view.accountImage = accountImage
-        view.accountType = accountType
-        view.availability = availability
-        return view
+        .init()
     }
 
     func updateUIView(_ view: AccountImageView, context: Context) {
