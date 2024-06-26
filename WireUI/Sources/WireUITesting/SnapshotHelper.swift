@@ -30,7 +30,7 @@ public struct SnapshotHelper {
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
-    private var snapshotDirectory = ""
+    private var snapshotReferenceDirectory = ""
 
     public init() {}
 
@@ -90,12 +90,12 @@ public struct SnapshotHelper {
 
     /// Create a copy of the current helper with the overriden snapshot directory.
     ///
-    /// - Parameter snapshotDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
         var helper = self
-        helper.snapshotDirectory = snapshotDirectory
+        helper.snapshotReferenceDirectory = snapshotDirectory
         return helper
     }
 
@@ -266,9 +266,14 @@ public struct SnapshotHelper {
 
     }
 
-    public func snapshotDirectory(file: StaticString = #file) -> String {
-        let fileName = "\(file)"
-        let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
-        return path
+    private func snapshotDirectory(file: StaticString = #file) -> String {
+
+        var snapshotReferenceDirectory = snapshotReferenceDirectory
+        if snapshotReferenceDirectory.isEmpty {
+            snapshotReferenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
+        }
+
+        let filePath = URL(fileURLWithPath: "\(file)").deletingPathExtension().lastPathComponent
+        return NSString.path(withComponents: [snapshotReferenceDirectory, filePath])
     }
 }
