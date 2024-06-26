@@ -30,14 +30,14 @@ struct EndToEndIdentityFeatureConfigDecoder {
 
         return EndToEndIdentityFeatureConfig(
             status: payload.status,
-            acmeDiscoveryURL: payload.config.acmeDiscoveryUrl,
+            acmeDiscoveryURL: payload.config.acmeDiscoveryURL,
             verificationExpiration: payload.config.verificationExpiration
         )
     }
 
     private struct Payload: Decodable {
 
-        let acmeDiscoveryUrl: String?
+        let acmeDiscoveryURL: String?
         let verificationExpiration: UInt
 
     }

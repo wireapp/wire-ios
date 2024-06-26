@@ -55,15 +55,15 @@ class ConnectionsAPITests: XCTestCase {
         let result = try await iterator.next()
 
         // Then
-        let expectedConnection = Connection(senderId: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!,
-                                            receiverId: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
-                                            receiverQualifiedId: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
-                                                                             domain: "example.com"),
-                                            conversationId: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
-                                            qualifiedConversationId: QualifiedID(uuid: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+        let expectedConnection = try Connection(senderID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!,
+                                                receiverID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                                                receiverQualifiedID: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                                                                                  domain: "example.com"),
-                                            lastUpdate: try XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")),
-                                            status: .accepted)
+                                                conversationID: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                                qualifiedConversationID: QualifiedID(uuid: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                                                                     domain: "example.com"),
+                                                lastUpdate: XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")),
+                                                status: .accepted)
         let connection = try XCTUnwrap(result?.first)
         XCTAssertEqual(connection, expectedConnection)
     }
@@ -85,7 +85,6 @@ class ConnectionsAPITests: XCTestCase {
             _ = try await iterator.next()
             XCTFail("Expected error")
         } catch {
-
             let error = try XCTUnwrap(error as? ConnectionsAPIError)
             XCTAssertEqual(error, .invalidBody)
         }
@@ -100,7 +99,7 @@ class ConnectionsAPITests: XCTestCase {
             let response = HTTPClientMock.PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
             requestIndex += 1
 
-            return HTTPResponse(code: 200, payload: try response.data())
+            return try HTTPResponse(code: 200, payload: response.data())
         }
 
         // WHEN

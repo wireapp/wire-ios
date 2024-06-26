@@ -1,5 +1,9 @@
 --exclude Carthage, DerivedData
 
+--extensionacl on-declarations
+--ifdef outdent
+--stripunusedargs unnamed-only
+
 --enable acronyms
 --enable blankLineAfterSwitchCase
 
