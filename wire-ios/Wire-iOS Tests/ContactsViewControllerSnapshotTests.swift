@@ -59,8 +59,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForNoSearchResult() {
@@ -72,8 +71,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForContactsWithoutSections() {
@@ -85,8 +83,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForContactsAndIndexSectionBarAreShown() {
@@ -99,8 +96,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Methods

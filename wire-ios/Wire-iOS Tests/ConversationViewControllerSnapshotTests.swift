@@ -59,15 +59,12 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
         let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
 
-        let mockClassificationProvider = MockSecurityClassificationProviding()
-        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
-
         sut = ConversationViewController(
             conversation: mockConversation,
             visibleMessage: nil,
             zClientViewController: zClientViewController,
             userSession: userSession,
-            classificationProvider: mockClassificationProvider,
+            classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()
         )
     }
@@ -83,8 +80,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     }
 
     func testForInitState() {
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
 
@@ -130,8 +126,7 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
@@ -145,8 +140,7 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatGuestsBarControllerIsVisibleIfExternalsAndServicesArePresent() {
@@ -165,8 +159,7 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        snapshotHelper
-            .verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }
