@@ -121,7 +121,6 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
             if senderClient.isInserted {
                 senderClient.discoveryDate = eventData.timestamp
-                // TODO: rename 'markClientAsUntrusted`.
                 selfClient.addNewClientToIgnored(senderClient)
             }
 
