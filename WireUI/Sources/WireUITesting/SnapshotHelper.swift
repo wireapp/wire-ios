@@ -36,7 +36,7 @@ public struct SnapshotHelper {
 
     // MARK: - Create variations
 
-    /// Create a copy of the current helper with new perceptual precision.
+    /// Creates a copy of the current helper with new perceptual precision.
     ///
     /// Perceptual precision is the threshold at which two pixels are considered to be the same.
     ///
@@ -49,7 +49,7 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Create a copy of the current helper with a new layout.
+    /// Creates a copy of the current helper with a new layout.
     ///
     /// - Parameter layout: The desired snapshot layout.
     /// - Returns: A copy of the current helper with a new layout.
@@ -60,7 +60,7 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Create a copy of the current helper with a user interface style.
+    /// Creates a copy of the current helper with a user interface style.
     ///
     /// - Parameter style: The desired user interface style.
     /// - Returns: A copy of the current helper with a new user interface style.
@@ -74,7 +74,7 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Create a copy of the current helper with a preferred content size category.
+    /// Creates a copy of the current helper with a preferred content size category.
     ///
     /// - Parameter category: The desired preferred content size category.
     /// - Returns: A copy of the current helper with a new preferred content size category.
@@ -88,7 +88,7 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Create a copy of the current helper with the overriden snapshot directory.
+    /// Creates a copy of the current helper with the overriden snapshot directory.
     ///
     /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
     /// - Returns: A copy of the current helper with a new snapshot directory.
@@ -98,6 +98,15 @@ public struct SnapshotHelper {
         helper.snapshotReferenceDirectory = snapshotDirectory
         return helper
     }
+
+    /// Creates a copy of the current helper with the snapshot directory set to a path relative to the specified test case file.
+    ///
+    /// Example: from a provided value of `./WireUI/Tests/WireReusableUIComponentsTests/AccountImageView/AccountImageViewSnapshotTests.swift`
+    /// the last two path components are deleted and `Resources/ReferenceImages` is appended, resulting in the
+    /// value `/Users/christoph/Developer/wireapp/wire-ios0/WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages`.
+    ///
+    /// - Parameter testCaseFile: Specify `#file` in your test case file.
+    /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(relativeTo testCaseFile: String) -> Self {
 
