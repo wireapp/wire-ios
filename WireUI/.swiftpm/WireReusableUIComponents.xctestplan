@@ -9,6 +9,12 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "SNAPSHOT_REFERENCE_DIR",
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
     "testExecutionOrdering" : "random"

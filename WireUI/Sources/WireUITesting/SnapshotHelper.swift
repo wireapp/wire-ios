@@ -29,6 +29,8 @@ public struct SnapshotHelper {
     private var perceptualPrecision: Float = 0.98
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
+    /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
+    private var snapshotDirectory = ""
 
     public init() {}
 
@@ -83,6 +85,17 @@ public struct SnapshotHelper {
             helper.traits,
             UITraitCollection(preferredContentSizeCategory: category)
         ])
+        return helper
+    }
+
+    /// Create a copy of the current helper with the overriden snapshot directory.
+    ///
+    /// - Parameter snapshotDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Returns: A copy of the current helper with a new snapshot directory.
+
+    public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
+        var helper = self
+        helper.snapshotDirectory = snapshotDirectory
         return helper
     }
 
