@@ -86,7 +86,22 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testPullPendingEvents() async throws {
+    func testItThrowsErrorWhenPullingPendingEventsWithoutLastEventID() async throws {
+        // Given no last event id.
+        lastEventIDRepository.fetchLastEventID_MockValue = .some(nil)
+
+        do {
+            // When
+            try await sut.pullPendingEvents()
+            XCTFail("expected an error, but none was thrown")
+        } catch UpdateEventsRepositoryError.lastEventIDMissing {
+            // Then it threw the right error.
+        } catch {
+            XCTFail("unexpected error: \(error)")
+        }
+    }
+
+    func testItPullPendingEvents() async throws {
         // Given some events already in the db.
         try await insertStoredEventEnvelopes()
 

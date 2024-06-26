@@ -60,8 +60,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func pullPendingEvents() async throws {
         // We want all events since this event.
         guard let lastEventID = lastEventIDRepository.fetchLastEventID() else {
-            // TODO: what to do if it's nil?
-            return
+            throw UpdateEventsRepositoryError.lastEventIDMissing
         }
 
         // We'll insert new events from this index.
