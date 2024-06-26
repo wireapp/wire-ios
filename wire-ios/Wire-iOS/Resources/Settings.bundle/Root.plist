@@ -6,6 +6,14 @@
 	<array>
 		<dict>
 			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+			<key>Title</key>
+			<string>Licenses</string>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist</string>
+		</dict>
+		<dict>
+			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
 			<string>Only register for VoIP notifications</string>

@@ -1,15 +1,11 @@
+# Documentation https://github.com/mono0926/LicensePlist
+
 options:
-  outputPath: "./com.mono0926.LicensePlist.Output"
+  outputPath: ./wire-ios/Wire-iOS/Resources/Settings.bundle
   cartfilePath: Cartfile
-  # packagePaths:
-  #   - scripts/Package.swift
-  # packageSourcesPath: "./SourcePackages"
-  xcworkspacePath: "*.xcworkspace"
-  prefix: Licenses
-  # gitHubToken: YOUR_GITHUB_TOKEN
   force: true
   addVersionNumbers: true
-  htmlPath: licenses.html
   suppressOpeningDirectory: true
   # failIfMissingLicense: true
-  sandboxMode: false
+  sandboxMode: true
+  packageSourcesPath: TestDownload
