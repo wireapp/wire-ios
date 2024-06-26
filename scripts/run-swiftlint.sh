@@ -32,4 +32,4 @@ if [[ ! -f "$SWIFTLINT" ]]; then
     xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
 fi
 
-"$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
+"$SWIFTLINT" --quiet --config "$REPO_ROOT/.swiftlint.yml" "$@"
