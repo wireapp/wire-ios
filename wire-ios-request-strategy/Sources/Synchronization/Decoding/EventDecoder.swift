@@ -89,7 +89,7 @@ extension EventDecoder {
             let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
 
             // Get the highest index of events in the DB
-            let lastIndex = StoredUpdateEvent.highestIndex(in: self.eventMOC)
+            let lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
             return (filteredEvents, lastIndex)
         }
 

@@ -609,7 +609,6 @@
 		EE86678E2A56CF77005CBEA4 /* ZMConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE86678D2A56CF77005CBEA4 /* ZMConversation.swift */; };
 		EE8B09AD25B86AB10057E85C /* AppLockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8B09AC25B86AB10057E85C /* AppLockError.swift */; };
 		EE8B09AF25B86BB20057E85C /* AppLockPasscodePreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8B09AE25B86BB20057E85C /* AppLockPasscodePreference.swift */; };
-		EE8BBCA62C2988CF0041A73C /* StoreUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8BBCA52C2988CF0041A73C /* StoreUpdateEvent.swift */; };
 		EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9622954A02400F58B79 /* WireProtos.framework */; };
 		EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */; };
 		EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9692954A03100F58B79 /* WireTransport.framework */; };
@@ -1577,7 +1576,6 @@
 		EE86678D2A56CF77005CBEA4 /* ZMConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMConversation.swift; sourceTree = "<group>"; };
 		EE8B09AC25B86AB10057E85C /* AppLockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockError.swift; sourceTree = "<group>"; };
 		EE8B09AE25B86BB20057E85C /* AppLockPasscodePreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockPasscodePreference.swift; sourceTree = "<group>"; };
-		EE8BBCA52C2988CF0041A73C /* StoreUpdateEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreUpdateEvent.swift; sourceTree = "<group>"; };
 		EE8DA9622954A02400F58B79 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA9692954A03100F58B79 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2624,7 +2622,6 @@
 		EE8BBCA42C2988C40041A73C /* ZMEventModel */ = {
 			isa = PBXGroup;
 			children = (
-				EE8BBCA52C2988CF0041A73C /* StoreUpdateEvent.swift */,
 				EE3F97552C2B130800668DF1 /* StoredEventEnvelope.swift */,
 			);
 			path = ZMEventModel;
@@ -4496,7 +4493,6 @@
 				F9A706C31CAEE01D00C2F5FE /* UserImageLocalCache.swift in Sources */,
 				16519D36231D1BB200C9D76D /* ZMConversation+Deletion.swift in Sources */,
 				1626344B20D935C0000D4063 /* ZMConversation+Timestamps.swift in Sources */,
-				EE8BBCA62C2988CF0041A73C /* StoreUpdateEvent.swift in Sources */,
 				87C125F71EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift in Sources */,
 				F9A706B21CAEE01D00C2F5FE /* NewUnreadMessageChangeInfos.swift in Sources */,
 				EE8B09AF25B86BB20057E85C /* AppLockPasscodePreference.swift in Sources */,

@@ -19,11 +19,41 @@
 import CoreData
 import Foundation
 
-extension StoredUpdateEvent {
+@objc(StoredUpdateEvent)
+public final class StoredUpdateEvent: NSManagedObject {
+
+    private static let entityName = "StoredUpdateEvent"
+    private static let SortIndexKey = "sortIndex"
 
     /// The key under which the event payload is encrypted by the public key.
 
     static let encryptedPayloadKey = "encryptedPayload"
+
+    // MARK: - Properties
+
+    @NSManaged
+    var uuidString: String?
+
+    @NSManaged
+    var debugInformation: String?
+
+    @NSManaged
+    var isTransient: Bool
+
+    @NSManaged
+    var payload: NSDictionary?
+
+    @NSManaged
+    var isEncrypted: Bool
+
+    @NSManaged
+    var isCallEvent: Bool
+
+    @NSManaged
+    var source: Int16
+
+    @NSManaged
+    var sortIndex: Int64
 
     // MARK: - Creation
 
@@ -43,7 +73,7 @@ extension StoredUpdateEvent {
         index: Int64,
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
-        guard let storedEvent = insertNewObject(context) else {
+        guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
             WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
             return nil
         }
@@ -63,13 +93,6 @@ extension StoredUpdateEvent {
         )
 
         return storedEvent
-    }
-
-    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        return NSEntityDescription.insertNewObject(
-            forEntityName: StoredUpdateEvent.entityName,
-            into: context
-        ) as? StoredUpdateEvent
     }
 
     private static func encryptIfNeeded(
@@ -97,6 +120,13 @@ extension StoredUpdateEvent {
         storedEvent.isEncrypted = true
     }
 
+    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
+        return NSEntityDescription.insertNewObject(
+            forEntityName: self.entityName,
+            into: context
+        ) as? StoredUpdateEvent
+    }
+
     // MARK: - Retrieving
 
     /// Returns stored events sorted by and up until (including) the defined `stopIndex`
@@ -107,7 +137,7 @@ extension StoredUpdateEvent {
         batchSize: Int,
         callEventsOnly: Bool
     ) -> [StoredUpdateEvent] {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: StoredUpdateEvent.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
         fetchRequest.fetchLimit = batchSize
         fetchRequest.returnsObjectsAsFaults = false
@@ -118,6 +148,16 @@ extension StoredUpdateEvent {
 
         let result = context.fetchOrAssert(request: fetchRequest)
         return result
+    }
+
+    /// Returns the highest index of all stored events
+
+    public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
+        fetchRequest.fetchBatchSize = 1
+        let result = context.fetchOrAssert(request: fetchRequest)
+        return result.first?.sortIndex ?? 0
     }
 
     static func nextEventBatch(
