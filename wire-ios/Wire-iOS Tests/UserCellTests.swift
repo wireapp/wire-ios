@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireUtilities
 import XCTest
+
+@testable import Wire
 
 final class UserCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: UserCell!
-    var teamID = UUID()
-    var conversation: MockGroupDetailsConversation!
-    var mockUser: MockUserType!
+    private var sut: UserCell!
+    private var teamID = UUID()
+    private var conversation: MockGroupDetailsConversation!
+    private var mockUser: MockUserType!
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -67,7 +69,7 @@ final class UserCellTests: XCTestCase {
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(
-            userStatus: .init(user: mockUser, isE2EICertified: false),
+            userStatus: .init(user: mockUser, isE2EICertified: isE2EICertified),
             user: mockUser,
             userIsSelfUser: mockUser.isSelfUser,
             isSelfUserPartOfATeam: selfUser.hasTeam,
@@ -75,7 +77,25 @@ final class UserCellTests: XCTestCase {
         )
         sut.accessoryIconView.isHidden = false
 
-        verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     // MARK: - Snapshot Tests
@@ -213,10 +233,27 @@ final class UserCellTests: XCTestCase {
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testUserScreenSharingInsideOngoingVideoCall() {
@@ -229,8 +266,27 @@ final class UserCellTests: XCTestCase {
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
-        sut.overrideUserInterfaceStyle = .dark
-        verifyInAllColorSchemes(matching: sut)
+
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     // MARK: unit test
