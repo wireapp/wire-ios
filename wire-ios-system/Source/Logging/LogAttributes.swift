@@ -16,14 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
+public typealias LogAttributes = [LogAttributesKey: Encodable]
 
-extension ConversationList {
+public enum LogAttributesKey: String {
+    case selfClientId = "self_client_id"
+    case selfUserId = "self_user_id"
+    case recipientID = "recipient_id"
+    case eventId = "event_id"
+    case senderUserId = "sender_user_id"
+    case nonce = "message_nonce"
+    case messageType = "message_type"
+    case lastEventID = "last_event_id"
+    case `public`
+    case tag
+}
 
-    static var hasConversations: Bool {
-        guard let session = ZMUserSession.shared() else { return false }
-
-        let conversationsCount = (ConversationList.conversations(inUserSession: session)?.items.count ?? 0) + (ConversationList.pendingConnectionConversations(inUserSession: session)?.items.count ?? 0)
-        return conversationsCount > 0
-    }
+public extension LogAttributes {
+    static var safePublic = [LogAttributesKey.public: true]
 }

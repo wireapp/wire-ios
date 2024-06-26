@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
+public protocol LogConvertible {
 
-extension ConversationList {
+    var logDescription: String { get }
 
-    static var hasConversations: Bool {
-        guard let session = ZMUserSession.shared() else { return false }
+}
 
-        let conversationsCount = (ConversationList.conversations(inUserSession: session)?.items.count ?? 0) + (ConversationList.pendingConnectionConversations(inUserSession: session)?.items.count ?? 0)
-        return conversationsCount > 0
+extension String: LogConvertible {
+
+    public var logDescription: String {
+        return self
     }
+
 }
