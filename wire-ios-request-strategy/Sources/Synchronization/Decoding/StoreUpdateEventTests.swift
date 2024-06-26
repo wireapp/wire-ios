@@ -405,7 +405,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
             _ = try self.createStoredEvents(indices: [0, 1, 2])
 
             // When we query the highest index.
-            let highestIndex = StoredUpdateEvent.highestIndex(in: self.eventMOC)
+            let highestIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
             // Then
             XCTAssertEqual(highestIndex, 2)
