@@ -9112,7 +9112,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-licenseplist.sh --config-path .license_plist.yml\n";
+			shellScript = "../scripts/run-licenseplist.sh --config-path ../.license_plist.yml\n";
 		};
 		E96301B82B4EDFE700726CDB /* Run SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
