@@ -18,6 +18,22 @@
 
 import SwiftUI
 
+// #DCE0E3 Gray-40 light
+// #34373D Gray-90 dark
+private let accountImageViewBorderColor = UIColor {
+    $0.userInterfaceStyle == .dark
+    ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1)
+    : .init(red: 0.86, green: 0.88, blue: 0.89, alpha: 1)
+}
+
+// #34373D Gray-90 dark
+// clear light
+private let availabilityIndicatorBackgroundColor = UIColor {
+    $0.userInterfaceStyle == .dark
+    ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1)
+    : .clear
+}
+
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
 private let availabilityIndicatorRadius: CGFloat = 8.75 / 2
@@ -143,19 +159,11 @@ public final class AccountImageView: UIView {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
         accountImageViewWrapper.layer.borderWidth = 1
-        accountImageViewWrapper.layer.borderColor = UIColor {
-            $0.userInterfaceStyle == .dark
-            ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1) // #34373D Gray-90 dark
-            : .init(red: 0.86, green: 0.88, blue: 0.89, alpha: 1) // #DCE0E3 Gray-40 light
-        }.cgColor
+        accountImageViewWrapper.layer.borderColor = accountImageViewBorderColor.cgColor
 
         // update the background view of the activitiy indicator view
         availabilityIndicatorBackgroundView.layer.cornerRadius = availabilityIndicatorBackgroundView.frame.height / 2
-        availabilityIndicatorBackgroundView.backgroundColor = .init {
-            $0.userInterfaceStyle == .dark
-            ? .init(red: 0.20, green: 0.22, blue: 0.24, alpha: 1) // #34373D Gray-90 dark
-            : .clear
-        }
+        availabilityIndicatorBackgroundView.backgroundColor = availabilityIndicatorBackgroundColor
     }
 
     private func updateAccountImage() {
