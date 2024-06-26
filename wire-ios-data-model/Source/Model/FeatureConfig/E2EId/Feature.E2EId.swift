@@ -59,7 +59,7 @@ public extension Feature {
                     self.acmeDiscoveryUrl = acmeDiscoveryUrl
                     self.verificationExpiration = verificationExpiration
                     self.crlProxy = crlProxy
-                    self.useProxyOnMobile = useProxyOnMobile ?? false
+                    self.useProxyOnMobile = useProxyOnMobile
                 }
 
         }
