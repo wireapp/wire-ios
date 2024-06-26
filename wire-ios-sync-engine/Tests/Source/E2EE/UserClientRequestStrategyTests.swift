@@ -426,6 +426,7 @@ extension UserClientRequestStrategyTests {
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
             client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
+            client.preKeysRangeMax = 5
             client.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
             self.sut.managedObjectContext!.saveOrRollback()
             self.sut.notifyChangeTrackers(client)
@@ -438,6 +439,7 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertNotNil(self.clientUpdateStatus.prekeys)
+            XCTAssertEqual(self.clientUpdateStatus.prekeys?.first?.id, 6)
         }
     }
 

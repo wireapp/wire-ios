@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "檔案";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "從這裡開始對話";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "新增電子郵件信箱和密碼";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "使用條款";
 "about.privacy.title" = "隱私權原則";
 "about.license.title" = "許可證資訊";
