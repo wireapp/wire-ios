@@ -49,7 +49,7 @@ public struct ConversationProteusMessageAddEvent: Equatable, Codable {
     /// The id of the user client who should receive the message.
 
     public let messageRecipientClientID: String
-    
+
     /// Create a new `ConversationProteusMessageAddEvent`.
     ///
     /// - Parameters:

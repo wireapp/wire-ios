@@ -18,10 +18,18 @@
 
 import Foundation
 
-extension UpdateEventEnvelope: ToAPIModelConvertible {
+struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
 
-    func toAPIModel() -> Self {
-        self
+    let id: UUID
+    let payload: [UpdateEventDecodingProxy]?
+    let transient: Bool?
+
+    func toAPIModel() -> UpdateEventEnvelope {
+        UpdateEventEnvelope(
+            id: id,
+            events: (payload ?? []).map(\.updateEvent),
+            isTransient: transient ?? false
+        )
     }
 
 }

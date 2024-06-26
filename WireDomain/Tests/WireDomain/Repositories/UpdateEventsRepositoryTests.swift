@@ -68,19 +68,17 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await super.tearDown()
     }
 
-    private func insertStoredEvents() async throws {
+    private func insertStoredEventEnvelopes() async throws {
         try await context.perform { [context] in
-            let storedEvent1 = StoredUpdateEvent(context: context)
-            storedEvent1.uuidString = Scaffolding.storedEventID1.uuidString
-            storedEvent1.sortIndex = 0
+            let encoder = JSONEncoder()
 
-            let storedEvent2 = StoredUpdateEvent(context: context)
-            storedEvent2.uuidString = Scaffolding.storedEventID2.uuidString
-            storedEvent2.sortIndex = 1
+            let storedEventEnvelope1 = StoredEventEnvelope(context: context)
+            storedEventEnvelope1.data = try encoder.encode(Scaffolding.envelope1)
+            storedEventEnvelope1.sortIndex = 0
 
-            let storedEvent3 = StoredUpdateEvent(context: context)
-            storedEvent3.uuidString = Scaffolding.storedEventID3.uuidString
-            storedEvent3.sortIndex = 2
+            let storedEventEnvelope2 = StoredEventEnvelope(context: context)
+            storedEventEnvelope2.data = try encoder.encode(Scaffolding.envelope2)
+            storedEventEnvelope2.sortIndex = 1
 
             try context.save()
         }
@@ -90,7 +88,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
     func testPullPendingEvents() async throws {
         // Given some events already in the db.
-        try await insertStoredEvents()
+        try await insertStoredEventEnvelopes()
 
         // There is a last event id.
         lastEventIDRepository.fetchLastEventID_MockValue = Scaffolding.lastEventID
@@ -131,42 +129,52 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decryptorInvocations[0].id, Scaffolding.envelope1.id)
-        XCTAssertEqual(decryptorInvocations[1].id, Scaffolding.envelope2.id)
-        XCTAssertEqual(decryptorInvocations[2].id, Scaffolding.envelope3.id)
-        XCTAssertEqual(decryptorInvocations[3].id, Scaffolding.envelope4.id)
+        XCTAssertEqual(decryptorInvocations[0].id, Scaffolding.envelope3.id)
+        XCTAssertEqual(decryptorInvocations[1].id, Scaffolding.envelope4.id)
+        XCTAssertEqual(decryptorInvocations[2].id, Scaffolding.envelope5.id)
+        XCTAssertEqual(decryptorInvocations[3].id, Scaffolding.envelope6.id)
 
         // Then there should now be 7 persisted events in the right order.
         try await context.perform { [context] in
-            let request = NSFetchRequest<StoredUpdateEvent>(entityName: StoredUpdateEvent.entityName)
-            request.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
-            let storedEvents = try context.fetch(request)
+            let request = StoredEventEnvelope.sortedFetchRequest(asending: true)
+            let storedEventEnvelopes = try context.fetch(request)
 
-            guard storedEvents.count == 7 else {
-                XCTFail("expected 7 stored events, got \(storedEvents.count)")
+            guard storedEventEnvelopes.count == 6 else {
+                XCTFail("expected 6 stored events, got \(storedEventEnvelopes.count)")
                 return
             }
 
-            XCTAssertEqual(storedEvents[0].uuidString, Scaffolding.storedEventID1.uuidString)
-            XCTAssertEqual(storedEvents[0].sortIndex, 0)
+            let decoder = JSONDecoder()
 
-            XCTAssertEqual(storedEvents[1].uuidString, Scaffolding.storedEventID2.uuidString)
-            XCTAssertEqual(storedEvents[1].sortIndex, 1)
+            let data1 = try XCTUnwrap(storedEventEnvelopes[0].data)
+            let storedEnvelope1 = try decoder.decode(UpdateEventEnvelope.self, from: data1)
+            XCTAssertEqual(storedEnvelope1, Scaffolding.envelope1)
+            XCTAssertEqual(storedEventEnvelopes[0].sortIndex, 0)
 
-            XCTAssertEqual(storedEvents[2].uuidString, Scaffolding.storedEventID3.uuidString)
-            XCTAssertEqual(storedEvents[2].sortIndex, 2)
+            let data2 = try XCTUnwrap(storedEventEnvelopes[1].data)
+            let storedEnvelope2 = try decoder.decode(UpdateEventEnvelope.self, from: data2)
+            XCTAssertEqual(storedEnvelope2, Scaffolding.envelope2)
+            XCTAssertEqual(storedEventEnvelopes[1].sortIndex, 1)
 
-            XCTAssertEqual(storedEvents[3].uuidString, Scaffolding.id1.uuidString)
-            XCTAssertEqual(storedEvents[3].sortIndex, 3)
+            let data3 = try XCTUnwrap(storedEventEnvelopes[2].data)
+            let storedEnvelope3 = try decoder.decode(UpdateEventEnvelope.self, from: data3)
+            XCTAssertEqual(storedEnvelope3, Scaffolding.envelope3)
+            XCTAssertEqual(storedEventEnvelopes[2].sortIndex, 2)
 
-            XCTAssertEqual(storedEvents[4].uuidString, Scaffolding.id2.uuidString)
-            XCTAssertEqual(storedEvents[4].sortIndex, 4)
+            let data4 = try XCTUnwrap(storedEventEnvelopes[3].data)
+            let storedEnvelope4 = try decoder.decode(UpdateEventEnvelope.self, from: data4)
+            XCTAssertEqual(storedEnvelope4, Scaffolding.envelope4)
+            XCTAssertEqual(storedEventEnvelopes[3].sortIndex, 3)
 
-            XCTAssertEqual(storedEvents[5].uuidString, Scaffolding.id3.uuidString)
-            XCTAssertEqual(storedEvents[5].sortIndex, 5)
+            let data5 = try XCTUnwrap(storedEventEnvelopes[4].data)
+            let storedEnvelope5 = try decoder.decode(UpdateEventEnvelope.self, from: data5)
+            XCTAssertEqual(storedEnvelope5, Scaffolding.envelope5)
+            XCTAssertEqual(storedEventEnvelopes[4].sortIndex, 4)
 
-            XCTAssertEqual(storedEvents[6].uuidString, Scaffolding.id4.uuidString)
-            XCTAssertEqual(storedEvents[6].sortIndex, 6)
+            let data6 = try XCTUnwrap(storedEventEnvelopes[5].data)
+            let storedEnvelope6 = try decoder.decode(UpdateEventEnvelope.self, from: data6)
+            XCTAssertEqual(storedEnvelope6, Scaffolding.envelope6)
+            XCTAssertEqual(storedEventEnvelopes[5].sortIndex, 5)
         }
 
         // The the last update event id was persisted for each non-transient envelope.
@@ -177,9 +185,9 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(lastEventIDInvocations[0], Scaffolding.id1)
-        XCTAssertEqual(lastEventIDInvocations[1], Scaffolding.id3)
-        XCTAssertEqual(lastEventIDInvocations[2], Scaffolding.id4)
+        XCTAssertEqual(lastEventIDInvocations[0], Scaffolding.id3)
+        XCTAssertEqual(lastEventIDInvocations[1], Scaffolding.id5)
+        XCTAssertEqual(lastEventIDInvocations[2], Scaffolding.id6)
     }
 
 }
@@ -203,38 +211,41 @@ private enum Scaffolding {
 
     // MARK: - Pending events
 
-    static let page1 = PayloadPager<UpdateEventEnvelope>.Page(
-        element: [envelope1, envelope2],
-        hasMore: true,
-        nextStart: "page2"
-    )
-
-    static let page2 = PayloadPager<UpdateEventEnvelope>.Page(
-        element: [envelope3, envelope4],
-        hasMore: false,
-        nextStart: ""
-    )
+    // 6 envelopes, the first 2 will be already stored in the DB
+    // and the rest will come from the backend.
 
     static let envelope1 = UpdateEventEnvelope(
         id: id1,
-        events: [.conversation(.proteusMessageAdd(proteusMessage1))],
+        events: [.user(.pushRemove)],
         isTransient: false
     )
 
     static let envelope2 = UpdateEventEnvelope(
         id: id2,
         events: [.user(.pushRemove)],
-        isTransient: true
+        isTransient: false
     )
 
     static let envelope3 = UpdateEventEnvelope(
         id: id3,
-        events: [.conversation(.proteusMessageAdd(proteusMessage2))],
+        events: [.conversation(.proteusMessageAdd(proteusMessage1))],
         isTransient: false
     )
 
     static let envelope4 = UpdateEventEnvelope(
         id: id4,
+        events: [.user(.pushRemove)],
+        isTransient: true
+    )
+
+    static let envelope5 = UpdateEventEnvelope(
+        id: id5,
+        events: [.conversation(.proteusMessageAdd(proteusMessage2))],
+        isTransient: false
+    )
+
+    static let envelope6 = UpdateEventEnvelope(
+        id: id6,
         events: [.conversation(.proteusMessageAdd(proteusMessage3))],
         isTransient: false
     )
@@ -269,18 +280,28 @@ private enum Scaffolding {
         messageRecipientClientID: selfClientID
     )
 
-    static let storedEventID1 = UUID(uuidString: "c340c7b5-0aec-48a2-a86b-61d9cb384c8b")!
-    static let storedEventID2 = UUID(uuidString: "d92f875d-9599-4469-886e-39addaffdad7")!
-    static let storedEventID3 = UUID(uuidString: "a826994f-082b-4d1e-9655-df8e1c7dccbf")!
-
-    static let id1 = UUID(uuidString: "000e7674-6fbe-4099-b081-10c5757c37f2")!
-    static let id2 = UUID(uuidString: "94d2dbb9-7a81-411d-b009-41a58cdae13b")!
-    static let id3 = UUID(uuidString: "9ec9d043-150b-4b4e-b916-33bf04e8c74f")!
-    static let id4 = UUID(uuidString: "9924114a-9773-436e-b1f8-b7cf32385ca2")!
+    static let id1 = UUID(uuidString: "d92f875d-9599-4469-886e-39addaffdad7")!
+    static let id2 = UUID(uuidString: "a826994f-082b-4d1e-9655-df8e1c7dccbf")!
+    static let id3 = UUID(uuidString: "000e7674-6fbe-4099-b081-10c5757c37f2")!
+    static let id4 = UUID(uuidString: "94d2dbb9-7a81-411d-b009-41a58cdae13b")!
+    static let id5 = UUID(uuidString: "9ec9d043-150b-4b4e-b916-33bf04e8c74f")!
+    static let id6 = UUID(uuidString: "9924114a-9773-436e-b1f8-b7cf32385ca2")!
 
     static let time30SecondsAgo = Date(timeIntervalSinceNow: -30)
     static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
     static let time10SecondsAgo = Date(timeIntervalSinceNow: -10)
+
+    static let page1 = PayloadPager<UpdateEventEnvelope>.Page(
+        element: [envelope3, envelope4],
+        hasMore: true,
+        nextStart: "page2"
+    )
+
+    static let page2 = PayloadPager<UpdateEventEnvelope>.Page(
+        element: [envelope5, envelope6],
+        hasMore: false,
+        nextStart: ""
+    )
 
 }
 

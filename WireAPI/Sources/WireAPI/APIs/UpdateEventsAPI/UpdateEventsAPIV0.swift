@@ -53,7 +53,7 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: UpdateEventEnvelope.self)
+            .success(code: 200, type: UpdateEventEnvelopeV0.self)
             .failure(code: 400, error: UpdateEventsAPIError.invalidClient)
             .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)

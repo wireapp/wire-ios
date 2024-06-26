@@ -20,7 +20,7 @@ import Foundation
 
 /// A container for update events.
 
-public struct UpdateEventEnvelope: Equatable {
+public struct UpdateEventEnvelope: Equatable, Codable {
 
     /// The id of the event envelope.
 
@@ -28,7 +28,7 @@ public struct UpdateEventEnvelope: Equatable {
 
     /// The event payloads.
 
-    public let events: [UpdateEvent]
+    public var events: [UpdateEvent]
 
     /// Whether this event envelope is transient.
     ///
@@ -36,7 +36,7 @@ public struct UpdateEventEnvelope: Equatable {
     /// only sent through the push channel as it occurs.
 
     public let isTransient: Bool
-    
+
     /// Create a new `UpdateEventEnvelope`.
     ///
     /// - Parameters:

@@ -66,9 +66,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         }
 
         // We'll insert new events from this index.
-        var currentIndex = await eventContext.perform { [eventContext] in
-            StoredUpdateEvent.highestIndex(in: eventContext) + 1
-        }
+        var currentIndex = try await indexOfLastEventEnvelope() + 1
 
         // Events are fetched in batches.
         for try await envelopes in eventsAPI.getUpdateEvents(
@@ -76,41 +74,49 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             sinceEventID: lastEventID
         ) {
             for envelope in envelopes {
-                // We can only decrypt once so store the decrypted event for later retrieval.
-                for decryptedEvent in try await eventDecryptor.decryptEvents(in: envelope) {
-                    try await persistEvent(
-                        decryptedEvent,
-                        id: envelope.id,
-                        index: currentIndex
-                    )
+                // We can only decrypt once so store the decrypted events for later retrieval.
+                var decryptedEnvelope = envelope
+                decryptedEnvelope.events = try await eventDecryptor.decryptEvents(in: envelope)
 
-                    currentIndex += 1
-                }
+                try await persistEventEnvelope(
+                    decryptedEnvelope,
+                    index: currentIndex
+                )
+
+                currentIndex += 1
 
                 if !envelope.isTransient {
                     // Update the last event id so we don't refetch the same events.
+                    // Transient events aren't stored in the backend's event stream.
                     lastEventIDRepository.storeLastEventID(envelope.id)
                 }
             }
         }
     }
 
-    private func persistEvent(
-        _ event: UpdateEvent,
-        id: UUID,
+    private func indexOfLastEventEnvelope() async throws -> Int64 {
+        try await eventContext.perform { [eventContext] in
+            let request = StoredEventEnvelope.sortedFetchRequest(asending: false)
+            request.fetchBatchSize = 1
+            let lastEnvelope = try eventContext.fetch(request).first
+            return lastEnvelope?.sortIndex ?? 0
+        }
+    }
+
+    private func persistEventEnvelope(
+        _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws {
         try await eventContext.perform { [eventContext, jsonEncoder] in
-            let data = try jsonEncoder.encode(event)
+            let data = try jsonEncoder.encode(eventEnvelope)
 
             if let string = String(data: data, encoding: .utf8) {
                 print("persisting event: \(string)")
             }
 
-            let storedEvent = StoredUpdateEvent(context: eventContext)
-            storedEvent.uuidString = id.uuidString
-            storedEvent.sortIndex = index
-            storedEvent.eventData = data
+            let storedEventEnvelope = StoredEventEnvelope(context: eventContext)
+            storedEventEnvelope.data = data
+            storedEventEnvelope.sortIndex = index
             try eventContext.save()
         }
     }
