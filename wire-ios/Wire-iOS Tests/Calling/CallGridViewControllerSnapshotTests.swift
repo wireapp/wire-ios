@@ -51,9 +51,11 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     var stubProvider = StreamStubProvider()
     var mockHintView: MockCallGridHintNotificationLabel!
     var allParticipantsNames = ["Alice", "Bob", "Carol", "Chuck", "Craig", "Dan", "Erin", "Eve", "Faythe"]
+    var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
         mediaManager = ZMMockAVSMediaManager()
         configuration = MockCallGridViewControllerInput()
@@ -79,6 +81,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mediaManager = nil
         mockHintView = nil
@@ -105,7 +108,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
         createSut()
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testActiveSpeakersIndicators_OneToOne() {
@@ -119,7 +122,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut()
 
         // Then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testActiveSpeakersIndicators_Conference() {
@@ -134,7 +137,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut()
 
         // Then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testVideoStoppedBorder_DoesntAppear_OneToOne() {
@@ -148,7 +151,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut()
 
         // Then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testVideoStoppedBorder_Appears_Conference() {
@@ -163,7 +166,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut()
 
         // Then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForBadNetwork() {
@@ -172,7 +175,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testHintView() {
@@ -180,7 +183,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut(hideHintView: false)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testHintViewWithNetworkQualityView() {
@@ -189,7 +192,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut(hideHintView: false)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testPagingIndicator() {
@@ -202,7 +205,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Hint update

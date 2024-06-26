@@ -29,13 +29,14 @@ final class ProfileViewControllerTests: XCTestCase {
     private var mockUser: MockUser!
     private var selfUser: MockUser!
     private var mockViewModel: MockProfileViewControllerViewModeling!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .blue
-
+        snapshotHelper = SnapshotHelper()
         let teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
         selfUser.handle = "georgejohnson"
@@ -63,6 +64,7 @@ final class ProfileViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockUser = nil
         selfUser = nil
@@ -77,7 +79,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(viewModel: mockViewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_UserWithoutName() {
@@ -92,7 +94,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(viewModel: mockViewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_WithLegalHold_InNavigationController() {
@@ -105,7 +107,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.viewDidAppear(false)
 
         // THEN
-        verify(matching: navWrapperController)
+        snapshotHelper.verify(matching: navWrapperController)
     }
 
     func test_ProfileInfo_BottomAction_OpenOneToOne() {
@@ -114,7 +116,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.updateFooterActionsViews([.openOneToOne])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_BottomAction_OpenSelfProfile() {
@@ -126,7 +128,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.updateFooterActionsViews([.openSelfProfile])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_BottomAction_RemoveFromGroup() {
@@ -135,7 +137,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.updateFooterActionsViews([.removeFromGroup])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_BottomAction_Multiple() {
@@ -144,7 +146,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.updateFooterActionsViews([.openOneToOne, .block(isBlocked: false)])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_HasClientListTab_IncomingRequest() {
@@ -159,7 +161,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(viewModel: mockViewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_HasClientListTab_IncomingRequest_Classified() {
@@ -175,7 +177,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(viewModel: mockViewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_HasClientListTab_IncomingRequest_NotClassified() {
@@ -191,7 +193,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(viewModel: mockViewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_ProfileInfo_NonTeamMember_BottomAction_Connect() {
@@ -210,7 +212,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.updateFooterActionsViews([.connect])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_OneToOneContext_HasClientListTab_BottomAction_CreateGroup() {
@@ -223,7 +225,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut.updateFooterActionsViews([.createGroup])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_DeviceListContext_HasClientListTab() {
@@ -235,7 +237,7 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(viewModel: mockViewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: Data Refresh tests

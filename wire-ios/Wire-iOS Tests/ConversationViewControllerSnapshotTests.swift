@@ -29,6 +29,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     var serviceUser: ZMUser!
     var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
+    var snapshotHelper: SnapshotHelper!
     private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
@@ -39,7 +40,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
@@ -72,6 +73,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         serviceUser = nil
         coreDataFixture = nil
@@ -81,7 +83,8 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper
+            .verify(matching: sut)
     }
 }
 
@@ -127,7 +130,8 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        verify(matching: sut)
+        snapshotHelper
+            .verify(matching: sut)
     }
 
     func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
@@ -141,7 +145,8 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        verify(matching: sut)
+        snapshotHelper
+            .verify(matching: sut)
     }
 
     func testThatGuestsBarControllerIsVisibleIfExternalsAndServicesArePresent() {
@@ -160,7 +165,8 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        verify(matching: sut)
+        snapshotHelper
+            .verify(matching: sut)
     }
 
 }
