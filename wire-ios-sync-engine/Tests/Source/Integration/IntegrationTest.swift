@@ -58,7 +58,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
         let mockContextStorage = MockLAContextStorable()
         mockContextStorage.clear_MockMethod = { }
@@ -93,7 +94,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         )
 
         return userSession
@@ -510,7 +512,7 @@ extension IntegrationTest {
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMUser.sortedFetchRequest(with: predicate)
-        let result = userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMUser]
+        let result = try! userSession?.managedObjectContext.fetch(request) as? [ZMUser]
 
         if let user = result?.first {
             return user
@@ -528,7 +530,7 @@ extension IntegrationTest {
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
 
-        let result = userSession?.managedObjectContext.performAndWait { userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+        let result = userSession?.managedObjectContext.performAndWait { try! userSession?.managedObjectContext.fetch(request) as? [ZMConversation]
         }
 
         if let conversation = result?.first {

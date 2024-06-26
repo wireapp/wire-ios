@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 private let verifiedShieldImage = WireStyleKit.imageOfShieldverified
 

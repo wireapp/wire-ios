@@ -1,7 +1,7 @@
 require 'json'
 
 xcode_summary.inline_mode = true
-xcode_summary.report 'WireiOS.xcresult'
+xcode_summary.report 'xcodebuild-wire-ios.xcresult'
 
 # add extra warning
 result = xcode_summary.warning_error_count 'WireiOS.xcresult'

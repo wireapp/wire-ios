@@ -19,7 +19,7 @@
 @import WireUtilities;
 @import WireTransport;
 @import WireRequestStrategy;
-
+@import WireDataModel;
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "WireSyncEngineLogs.h"
@@ -135,7 +135,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             timestamp = [event.timestamp dateByAddingTimeInterval:-offset];
         }
         
-        NSArray <ZMConversation *> *conversations = [self.managedObjectContext executeFetchRequestOrAssert:[ZMConversation sortedFetchRequest]];
+        NSArray <ZMConversation *> *conversations = (NSArray <ZMConversation *> *) [self.managedObjectContext executeFetchRequestOrAssert:[ZMConversation sortedFetchRequest]];
         for (ZMConversation *conversation in conversations) {
             if (nil == timestamp) {
                 // In case we did not receive a payload we will add 1/10th to the last modified date of
@@ -161,7 +161,8 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (NSUUID *)processUpdateEventsAndReturnLastNotificationIDFromResponse:(ZMTransportResponse *)response
 {
-    ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:10 label:NSStringFromClass(self.class)];
+    NSString *tpLabel = NSStringFromClass(self.class);
+    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:10 label:tpLabel];
     NSArray *eventsDictionaries = [self.class eventDictionariesFromPayload:response.payload];
 
     NSMutableArray<ZMUpdateEvent *> *parsedEvents = [NSMutableArray array];
@@ -179,6 +180,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             if (!event.isTransient) {
                 latestEventId = event.uuid;
             }
+            [WireLoggerObjc logReceivedUpdateEventWithId:[event safeUUID]];
         }
     }
     

@@ -40,16 +40,16 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
-        XCTAssertEqual(conversations.count, 1)
-        let fetchedConversation = conversations[0] as? ZMConversation
-        XCTAssertEqual(fetchedConversation?.conversationType, .group)
-        XCTAssertEqual(conversation?.objectID, fetchedConversation?.objectID)
+        XCTAssertEqual(conversations.items.count, 1)
+        let fetchedConversation = conversations.items[0]
+        XCTAssertEqual(fetchedConversation.conversationType, .group)
+        XCTAssertEqual(conversation?.objectID, fetchedConversation.objectID)
 
         let expectedParticipants = Set<AnyHashable>([user1, user2, user3, selfUser])
         XCTAssertEqual(expectedParticipants, conversation?.localParticipants)
     }
 
-    func testThatItInsertsANewConversationInUIContext() {
+    func testThatItInsertsANewConversationInUIContext() throws {
         // given
 
         let user1 = ZMUser.insertNewObject(in: uiMOC)
@@ -66,7 +66,7 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         XCTAssertNotNil(conversation)
 
         let fetchRequest = ZMConversation.sortedFetchRequest()
-        let conversations = uiMOC.executeFetchRequestOrAssert(fetchRequest)
+        let conversations = try uiMOC.fetch(fetchRequest)
 
         XCTAssertEqual(conversations.count, 1)
         let fetchedConversation = conversations[0] as? ZMConversation

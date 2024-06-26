@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import CoreLocation
 import WireDataModel
 import WireSyncEngine
 
@@ -96,6 +97,81 @@ public class MockAccountSelector: AccountSelector {
         }
 
         mock(account, completion)
+    }
+
+}
+
+class MockAppLocationManagerProtocol: AppLocationManagerProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - delegate
+
+    var delegate: AppLocationManagerDelegate?
+
+    // MARK: - authorizationStatus
+
+    var authorizationStatus: CLAuthorizationStatus {
+        get { return underlyingAuthorizationStatus }
+        set(value) { underlyingAuthorizationStatus = value }
+    }
+
+    var underlyingAuthorizationStatus: CLAuthorizationStatus!
+
+    // MARK: - userLocationAuthorized
+
+    var userLocationAuthorized: Bool {
+        get { return underlyingUserLocationAuthorized }
+        set(value) { underlyingUserLocationAuthorized = value }
+    }
+
+    var underlyingUserLocationAuthorized: Bool!
+
+
+    // MARK: - requestLocationAuthorization
+
+    var requestLocationAuthorization_Invocations: [Void] = []
+    var requestLocationAuthorization_MockMethod: (() -> Void)?
+
+    func requestLocationAuthorization() {
+        requestLocationAuthorization_Invocations.append(())
+
+        guard let mock = requestLocationAuthorization_MockMethod else {
+            fatalError("no mock for `requestLocationAuthorization`")
+        }
+
+        mock()
+    }
+
+    // MARK: - startUpdatingLocation
+
+    var startUpdatingLocation_Invocations: [Void] = []
+    var startUpdatingLocation_MockMethod: (() -> Void)?
+
+    func startUpdatingLocation() {
+        startUpdatingLocation_Invocations.append(())
+
+        guard let mock = startUpdatingLocation_MockMethod else {
+            fatalError("no mock for `startUpdatingLocation`")
+        }
+
+        mock()
+    }
+
+    // MARK: - stopUpdatingLocation
+
+    var stopUpdatingLocation_Invocations: [Void] = []
+    var stopUpdatingLocation_MockMethod: (() -> Void)?
+
+    func stopUpdatingLocation() {
+        stopUpdatingLocation_Invocations.append(())
+
+        guard let mock = stopUpdatingLocation_MockMethod else {
+            fatalError("no mock for `stopUpdatingLocation`")
+        }
+
+        mock()
     }
 
 }

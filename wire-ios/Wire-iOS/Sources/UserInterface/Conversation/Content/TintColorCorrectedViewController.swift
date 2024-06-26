@@ -18,6 +18,7 @@
 
 import SafariServices
 import UIKit
+import WireDesign
 
 final class TintColorOverrider: NSObject {
     private var windowTintColor: UIColor?
