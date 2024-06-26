@@ -60,7 +60,7 @@ open class AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {

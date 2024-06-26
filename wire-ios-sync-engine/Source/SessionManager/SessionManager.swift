@@ -203,7 +203,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
     public weak var loginDelegate: LoginDelegate?
-    public var analyticsSessionConfiguration: AnalyticsSessionConfiguration
+    public var analyticsSessionConfiguration: AnalyticsSessionConfiguration?
 
     public internal(set) var activeUserSession: ZMUserSession? {
         willSet {
@@ -337,7 +337,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -456,7 +456,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          sharedUserDefaults: UserDefaults,
          minTLSVersion: String? = nil,
          deleteUserLogs: (() -> Void)? = nil,
-         analyticsSessionConfiguration: AnalyticsSessionConfiguration
+         analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
