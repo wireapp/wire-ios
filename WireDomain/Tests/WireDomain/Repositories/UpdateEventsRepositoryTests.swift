@@ -304,9 +304,3 @@ private enum Scaffolding {
     )
 
 }
-
-struct TestError: Error {
-
-    let message: String
-
-}

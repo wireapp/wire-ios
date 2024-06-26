@@ -24,6 +24,7 @@
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
 		01D0DD012C1C90E90076CB1C /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 01D0DD002C1C90E90076CB1C /* WireAPI */; };
 		01D0DD032C1C90E90076CB1C /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 01D0DD022C1C90E90076CB1C /* WireAPISupport */; };
+		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */; };
 		EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */; };
 		EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */; };
@@ -70,6 +71,7 @@
 		01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireDomain.docc; sourceTree = "<group>"; };
 		01D0DCFC2C1C8F9B0076CB1C /* WireDomain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireDomain.xctestplan; sourceTree = "<group>"; };
+		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorTests.swift; sourceTree = "<group>"; };
 		EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepository.swift; sourceTree = "<group>"; };
 		EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptor.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 		017F679A2C20801800B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EE0E117C2C2C4076004BBD29 /* Helpers */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
 				017F67992C20801800B6E02D /* Repositories */,
 			);
@@ -227,6 +230,14 @@
 				017F679A2C20801800B6E02D /* WireDomain */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				EE0E117D2C2C4080004BBD29 /* TestError.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		EE57A6FC2C298F280096F242 /* Event Decryption */ = {
@@ -440,6 +451,7 @@
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
+				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
