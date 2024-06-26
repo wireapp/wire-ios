@@ -31,7 +31,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             method: .post,
             body: body
         )
-        let response = try await httpClient.executeRequest(request)
+       let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationListV3.self) // Change in v3
