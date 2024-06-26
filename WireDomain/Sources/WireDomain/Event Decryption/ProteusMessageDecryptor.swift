@@ -87,8 +87,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
         if didCreateSession {
             await managedObjectContext.perform {
-                // TODO: rename 'decrementNumberOfRemainingProteusKeys
-                context.selfClient.decrementNumberOfRemainingKeys()
+                context.selfClient.decrementNumberOfRemainingProteusKeys()
                 context.selfClient.updateSecurityLevelAfterDiscovering([context.senderClient])
             }
         }
