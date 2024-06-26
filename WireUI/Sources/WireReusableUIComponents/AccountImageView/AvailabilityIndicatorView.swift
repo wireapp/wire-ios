@@ -122,34 +122,35 @@ final class AvailabilityIndicatorView: UIView {
     }
 }
 
+// MARK: AvailabilityIndicatorView + init(availability:)
+
+extension AvailabilityIndicatorView {
+
+    public convenience init(availability: Availability) {
+        self.init()
+        self.availability = availability
+        setNeedsLayout()
+    }
+}
+
 // MARK: - Previews
 
-struct AvailabilityIndicatorView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        VStack {
-            AvailabilityIndicatorViewRepresentable(.none)
-            AvailabilityIndicatorViewRepresentable(.available)
-            AvailabilityIndicatorViewRepresentable(.away)
-            AvailabilityIndicatorViewRepresentable(.busy)
-        }
-        .background(Color(UIColor.systemGray2))
+@available(iOS 17, *)
+#Preview {
+    VStack {
+        AvailabilityIndicatorViewRepresentable(availability: .none)
+        AvailabilityIndicatorViewRepresentable(availability: .available)
+        AvailabilityIndicatorViewRepresentable(availability: .away)
+        AvailabilityIndicatorViewRepresentable(availability: .busy)
     }
+    .background(Color(UIColor.systemGray2))
 }
 
 private struct AvailabilityIndicatorViewRepresentable: UIViewRepresentable {
 
-    private(set) var availability: Availability?
+    @State private(set) var availability: Availability?
 
-    init(_ availability: Availability?) {
-        self.availability = availability
-    }
-
-    func makeUIView(context: Context) -> AvailabilityIndicatorView {
-        let view = AvailabilityIndicatorView()
-        view.availability = availability
-        return view
-    }
+    func makeUIView(context: Context) -> AvailabilityIndicatorView { .init() }
 
     func updateUIView(_ view: AvailabilityIndicatorView, context: Context) {
         view.availability = availability
