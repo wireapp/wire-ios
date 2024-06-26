@@ -957,7 +957,6 @@
 		A98ECDF1232A94DD006A57FD /* ConversationListViewControllerViewModelSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98ECDF0232A94DD006A57FD /* ConversationListViewControllerViewModelSnapshotTests.swift */; };
 		A98ECDF3232A9564006A57FD /* MockConversationListContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98ECDF2232A9564006A57FD /* MockConversationListContainer.swift */; };
 		A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A993719023F7461600881564 /* UIView+ExtendedBlockAnimations.swift */; };
-		A99E3E922519F41500E4FD3E /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0ACA91FA20D7C001B2B9D /* AnalyticsTests.swift */; };
 		A9A3B1EB24D823CC001AF38E /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1E824D823CB001AF38E /* UnlockViewController.swift */; };
 		A9A3B1F324D9A009001AF38E /* WipeCompletionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1F224D9A009001AF38E /* WipeCompletionViewController.swift */; };
 		A9A3B1FC24D9B1E2001AF38E /* WireLogoInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1FB24D9B1E1001AF38E /* WireLogoInfoView.swift */; };
@@ -2888,7 +2887,6 @@
 		87AC77DA1DE48C01009F6D56 /* Copyable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
 		87AC9F551C0749FB00E1ED6F /* TailEditingTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TailEditingTextField.swift; sourceTree = "<group>"; };
 		87AE8BDB207B99540058715E /* BackupPasswordViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupPasswordViewControllerTests.swift; sourceTree = "<group>"; };
-		87B0ACA91FA20D7C001B2B9D /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		87B48EBD20A050AA00DBAD9D /* ViewControllerDismisser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerDismisser.swift; sourceTree = "<group>"; };
 		87B8C33B1DF9788B0015EC89 /* BrowserOpening.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserOpening.swift; sourceTree = "<group>"; };
 		87B8C33C1DF9788B0015EC89 /* LinkOpener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkOpener.swift; sourceTree = "<group>"; };
@@ -7010,7 +7008,6 @@
 		A99E3E8D2519F23700E4FD3E /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
-				87B0ACA91FA20D7C001B2B9D /* AnalyticsTests.swift */,
 				A9EDC142252225B2009DB9E1 /* AnalyticsCallingTrackerTests.swift */,
 			);
 			path = Analytics;
@@ -10477,7 +10474,6 @@
 				1E98C81B1BD1719500C7A7A2 /* ContactsDataSourceTests.swift in Sources */,
 				162E8C631CF5D68A004B4F45 /* AudioProcessingTests.swift in Sources */,
 				BF58ABEF1D23F3CD00D5FF14 /* ModalTopBarTests.swift in Sources */,
-				A99E3E922519F41500E4FD3E /* AnalyticsTests.swift in Sources */,
 				EFE6151C2260E4AA006D48ED /* MultiParagraphSnapshotTests.swift in Sources */,
 				EE7F466925B1CD60001B3EE4 /* AppLockModule.MockSession.swift in Sources */,
 				D337012828996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift in Sources */,
