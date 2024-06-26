@@ -28,6 +28,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
+            .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
     }
 
