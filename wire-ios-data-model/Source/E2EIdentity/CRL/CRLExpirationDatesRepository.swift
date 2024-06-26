@@ -91,7 +91,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
             guard
                 let expirationDate = expirationDate,
-                let url = URL(string: distributionPoint) // use proxy
+                let url = URL(string: distributionPoint)
             else {
                 continue
             }

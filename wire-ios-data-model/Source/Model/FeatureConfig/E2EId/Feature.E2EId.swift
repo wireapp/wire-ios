@@ -60,7 +60,6 @@ public extension Feature {
                     self.verificationExpiration = verificationExpiration
                     self.crlProxy = crlProxy
                     self.useProxyOnMobile = useProxyOnMobile ?? false
-                    print("MyTest crlProxy: \(crlProxy)")
                 }
 
         }
