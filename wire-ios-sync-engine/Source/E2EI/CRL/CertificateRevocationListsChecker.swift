@@ -32,7 +32,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let e2eiFeature: Feature.E2EI
+    private let featureRepository: FeatureRepositoryInterface
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -50,7 +50,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlAPI: CertificateRevocationListAPIProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        e2eiFeature: Feature.E2EI,
+        featureRepository: FeatureRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -59,7 +59,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
             mlsConversationsVerificationUpdater: mlsConversationsVerificationUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
-            e2eiFeature: e2eiFeature,
+            featureRepository: featureRepository,
             coreCryptoProvider: coreCryptoProvider,
             context: context
         )
@@ -70,7 +70,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        e2eiFeature: Feature.E2EI,
+        featureRepository: FeatureRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -78,7 +78,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         self.crlExpirationDatesRepository = crlExpirationDatesRepository
         self.mlsConversationsVerificationUpdater = mlsConversationsVerificationUpdater
         self.selfClientCertificateProvider = selfClientCertificateProvider
-        self.e2eiFeature = e2eiFeature
+        self.featureRepository = featureRepository
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
     }
@@ -113,13 +113,19 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
+        let e2eiFeatureConfig = await context.perform {
+            self.featureRepository.fetchE2EI().config
+        }
+        let proxyCRLProvider = ProxyCRLProvider(
+            shouldUseProxy: e2eiFeatureConfig.useProxyOnMobile ?? false,
+            proxyURLString: e2eiFeatureConfig.crlProxy)
 
         var shouldNotifyAboutRevokedCertificate = false
+
         for distributionPoint in distributionPoints {
             do {
-                // fetch the CRL from the distribution point (with proxy if needed)
-                let crlUrl = withProxyIfNeeded(distributionPoint: distributionPoint)
-                let crlData = try await crlAPI.getRevocationList(from: crlUrl)
+                let crlURL = proxyCRLProvider.getURL(from: distributionPoint)
+                let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
                 let registration = try await coreCrypto.perform {
@@ -148,20 +154,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         if shouldNotifyAboutRevokedCertificate {
             await notifyAboutRevokedCertificateIfNeeded()
         }
-    }
-
-    private func withProxyIfNeeded(distributionPoint: URL) -> URL {
-        guard let shouldUseProxy = e2eiFeature.config.useProxyOnMobile,
-              shouldUseProxy,
-              let crlProxyString = e2eiFeature.config.crlProxy
-        else {
-            return distributionPoint
-        }
-
-        var crlProxy = URL(fileURLWithPath: crlProxyString)
-        let appendComponents = URLComponents(url: distributionPoint, resolvingAgainstBaseURL: false)
-
-        return crlProxy.appendingPathComponent(appendComponents?.host ?? "")
     }
 
     private func hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: Date) -> Bool {
@@ -199,22 +191,4 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
 public extension Notification.Name {
     static let presentRevokedCertificateWarningAlert = Notification.Name("presentRevokedCertificateWarningAlert")
-}
-
-extension Set where Element == URL {
-
-    private func withProxyIfNeeded(shouldUseProxy: Bool, proxyURL: URL?) -> Set<URL>? {
-//        guard let shouldUseProxy = e2eiFeature.config.useProxyOnMobile,
-//              shouldUseProxy,
-//              let crlProxyString = e2eiFeature.config.crlProxy
-//        else {
-//            return distributionPoint
-//        }
-//
-//        var crlProxy = URL(fileURLWithPath: crlProxyString)
-//        let appendComponents = URLComponents(url: distributionPoint, resolvingAgainstBaseURL: false)
-//
-//        return crlProxy.appendingPathComponent(appendComponents?.host ?? "")
-        return nil
-    }
 }
