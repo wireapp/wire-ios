@@ -108,6 +108,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
+    private var notificationContext: any NotificationContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     private let encryptionService: MLSEncryptionServiceInterface
@@ -152,6 +153,7 @@ public final class MLSService: MLSServiceInterface {
 
     public convenience init(
         context: NSManagedObjectContext,
+        notificationContext: any NotificationContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         featureRepository: FeatureRepositoryInterface,
@@ -161,6 +163,7 @@ public final class MLSService: MLSServiceInterface {
     ) {
         self.init(
             context: context,
+            notificationContext: notificationContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
@@ -174,6 +177,7 @@ public final class MLSService: MLSServiceInterface {
 
     init(
         context: NSManagedObjectContext,
+        notificationContext: any NotificationContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
@@ -194,6 +198,7 @@ public final class MLSService: MLSServiceInterface {
         )
 
         self.context = context
+        self.notificationContext = notificationContext
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
@@ -224,24 +229,6 @@ public final class MLSService: MLSServiceInterface {
 
     deinit {
         keyMaterialUpdateCheckTimer?.invalidate()
-    }
-
-    // MARK: - Public keys
-
-    private func fetchBackendPublicKeys() async -> BackendMLSPublicKeys? {
-        logger.info("fetching backend public keys")
-
-        guard let notificationContext = context?.notificationContext else {
-            logger.warn("can't fetch backend public keys: notification context is missing")
-            return nil
-        }
-
-        do {
-            return try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
-        } catch {
-            logger.warn("failed to fetch backend public keys: \(String(describing: error))")
-            return nil
-        }
     }
 
     // MARK: - Conference info for subconversations
@@ -454,52 +441,15 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
     ) async throws -> MLSCipherSuite {
-        logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
-
-        let ciphersuiteRawValue = await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue
-
-        guard let ciphersuite = MLSCipherSuite(rawValue: ciphersuiteRawValue) else {
-            throw MLSGroupCreationError.invalidCiphersuite
-        }
-
-        do {
-            let externalSenders: [Data]
-            if let parentGroupID {
-                // Anyone in the parent conversation can create a subconversation,
-                // even people from different domains. We need to make sure that
-                // the external senders is the same as the parent, otherwise we
-                // won't be able to decrypt external remove proposals from the
-                // owning domain.
-                externalSenders = try await coreCrypto.perform {
-                    [try await $0.getExternalSender(conversationId: parentGroupID.data)]
-                }
-            } else if let backendPublicKeys = await fetchBackendPublicKeys() {
-                externalSenders = backendPublicKeys.externalSenderKey(for: ciphersuite)
-            } else {
-                throw MLSGroupCreationError.failedToGetExternalSenders
-            }
-            let config = ConversationConfiguration(
-                ciphersuite: UInt16(ciphersuite.rawValue),
-                externalSenders: externalSenders,
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
-            )
-
-            try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: UInt16(ciphersuite.rawValue))
-                try await $0.createConversation(
-                    conversationId: groupID.data,
-                    creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
-                    config: config
-                )
-            }
-        } catch {
-            logger.warn("failed to create group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw MLSGroupCreationError.failedToCreateGroup
-        }
-
-        staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
-
-        return ciphersuite
+        let useCase = CreateMLSGroupUseCase(
+            parentGroupID: parentGroupID,
+            defaultCipherSuite: await featureRepository.fetchMLS().config.defaultCipherSuite,
+            coreCrypto: try await coreCrypto,
+            staleKeyMaterialDetector: staleKeyMaterialDetector,
+            actionsProvider: actionsProvider,
+            notificationContext: notificationContext
+        )
+        return try await useCase.invoke(groupID: groupID)
     }
 
     public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
@@ -1542,6 +1492,12 @@ public final class MLSService: MLSServiceInterface {
                 context: notificationContext
             )
 
+            await subconversationGroupIDRepository.storeSubconversationGroupID(
+                subgroup.groupID,
+                forType: .conference,
+                parentGroupID: parentID
+            )
+
             if subgroup.epoch <= 0 {
                 try await createSubgroup(
                     with: subgroup.groupID,
@@ -1562,12 +1518,6 @@ public final class MLSService: MLSServiceInterface {
                     subgroupID: subgroup.groupID
                 )
             }
-
-            await subconversationGroupIDRepository.storeSubconversationGroupID(
-                subgroup.groupID,
-                forType: .conference,
-                parentGroupID: parentID
-            )
 
             return subgroup.groupID
         } catch {

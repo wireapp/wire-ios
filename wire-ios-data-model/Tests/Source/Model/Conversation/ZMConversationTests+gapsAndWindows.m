@@ -17,8 +17,7 @@
 //
 
 #import "ZMConversationTests.h"
-#import "ZMConversationList+Internal.h"
-
+@import WireDataModel.Swift;
 
 @interface ZMConversationGapsAndWindowTests : ZMConversationTestsBase
 @end
@@ -70,8 +69,8 @@
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsInUserSession:self.coreDataStack];
-    
+    NSArray *fetchedConversations = [[ZMConversationList conversationsInUserSession:self.coreDataStack] items];
+
     // then
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(1u, fetchedConversations.count);
@@ -107,8 +106,8 @@
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList pendingConnectionConversationsInUserSession:self.coreDataStack];
-    
+    NSArray *fetchedConversations = [[ZMConversationList pendingConnectionConversationsInUserSession:self.coreDataStack] items];
+
     // then
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(1u, fetchedConversations.count);
@@ -129,8 +128,8 @@
     [self.uiMOC processPendingChanges];
 
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack];
-    
+    NSArray *fetchedConversations = [[ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack] items];
+
     // then
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(2u, fetchedConversations.count);
@@ -151,7 +150,7 @@
     XCTAssertTrue([self.uiMOC saveOrRollback]);
 
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack];
+    NSArray *fetchedConversations = [[ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack] items];
     
     // then
     XCTAssertNotNil(fetchedConversations);

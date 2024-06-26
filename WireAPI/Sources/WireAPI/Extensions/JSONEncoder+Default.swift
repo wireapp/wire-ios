@@ -24,12 +24,11 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
+
+        #if DEBUG
+        // This is needed so we can deterministically snapshot request bodies.
         encoder.outputFormatting = .sortedKeys
-        encoder.dateEncodingStrategy = .custom({ date, encoder in
-            var container = encoder.singleValueContainer()
-            let transportString = ISO8601DateFormatter.fractionalInternetDateTime.string(from: date)
-            try container.encode(transportString)
-        })
+        #endif
 
         return encoder
     }
