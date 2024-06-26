@@ -8,4 +8,3 @@ options:
   suppressOpeningDirectory: true
   # failIfMissingLicense: true
   sandboxMode: true
-  packageSourcesPath: TestDownload

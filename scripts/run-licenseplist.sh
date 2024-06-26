@@ -20,9 +20,45 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 DIRECTORY="$REPO_ROOT/scripts"
 LICENSEPLIST="$DIRECTORY/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
+PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
+DOWNLOADS_DIR="$REPO_ROOT/DerivedData/LicensePlist-tmp"
+
+
+# Resolve Executable
 
 if [[ ! -f "$LICENSEPLIST" ]]; then
+
+echo ""
+echo "ℹ️  Resolve Executable"
+
 xcrun --sdk macosx swift package --package-path "$DIRECTORY" resolve
+
 fi
 
-"$LICENSEPLIST" "$@"
+
+# Resolve Dependencies
+
+echo ""
+echo "ℹ️  Resolve Dependencies"
+
+( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+
+
+# Copy Dependencies
+
+echo ""
+echo "ℹ️  Copy Dependencies"
+
+rm -rf "$DOWNLOADS_DIR"
+
+cp -R "$PACKAGES_DIR" "$DOWNLOADS_DIR"
+
+cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$DOWNLOADS_DIR/checkouts"
+
+
+# Generate Licenses
+
+echo ""
+echo "ℹ️  Generate Licenses"
+
+"$LICENSEPLIST" --sandbox-mode --package-sources-path "$DOWNLOADS_DIR" "$@"
