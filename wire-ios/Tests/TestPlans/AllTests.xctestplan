@@ -62,7 +62,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:..\/WireUI",
         "identifier" : "WireReusableUIComponentsTests",
@@ -70,7 +69,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:..\/WireUI",
         "identifier" : "WireDesignTests",
