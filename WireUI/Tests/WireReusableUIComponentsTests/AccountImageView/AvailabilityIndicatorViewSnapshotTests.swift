@@ -28,13 +28,8 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         sut = .init(frame: .init(x: 0, y: 0, width: 20, height: 20))
-        var pathComponents = URL(fileURLWithPath: #file)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .pathComponents
-        pathComponents.append(contentsOf: ["Resources", "ReferenceImages"])
         snapshotHelper = .init()
-            .withSnapshotDirectory(NSString.path(withComponents: pathComponents))
+            .withSnapshotDirectory(relativeTo: #file)
     }
 
     override func tearDown() {

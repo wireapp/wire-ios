@@ -99,6 +99,17 @@ public struct SnapshotHelper {
         return helper
     }
 
+    public func withSnapshotDirectory(relativeTo testCaseFile: String) -> Self {
+
+        var pathComponents = URL(fileURLWithPath: testCaseFile)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .pathComponents
+        pathComponents.append(contentsOf: ["Resources", "ReferenceImages"])
+        let snapshotDirectory = NSString.path(withComponents: pathComponents)
+        return withSnapshotDirectory(snapshotDirectory)
+    }
+
     // MARK: - Verify views
 
     /// Verify a SwiftUI view.

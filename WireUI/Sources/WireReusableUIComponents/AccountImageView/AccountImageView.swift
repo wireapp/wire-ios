@@ -239,14 +239,12 @@ extension AccountImageView {
 
 // MARK: - Previews
 
-private typealias AccountType = AccountImageView.AccountType
-
 @available(iOS 16.0, *)
 struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            ForEach(AccountType.allCases, id: \.self) { accountType in
+            ForEach(AccountImageView.AccountType.allCases, id: \.self) { accountType in
 
                 previewWithNavigationBar(accountType, .none)
                     .previewDisplayName("\(accountType)")
@@ -261,7 +259,7 @@ struct AccountImageView_Previews: PreviewProvider {
     }
 
     @ViewBuilder
-    fileprivate static func previewWithNavigationBar(_ accountType: AccountType, _ availability: Availability?) -> some View {
+    static func previewWithNavigationBar(_ accountType: AccountImageView.AccountType, _ availability: Availability?) -> some View {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
             VStack {
@@ -293,12 +291,12 @@ struct AccountImageView_Previews: PreviewProvider {
 private struct AccountImageViewRepresentable: UIViewRepresentable {
 
     private(set) var accountImage: UIImage
-    private(set) var accountType: AccountType
+    private(set) var accountType: AccountImageView.AccountType
     private(set) var availability: Availability?
 
     init(
         _ accountImage: UIImage,
-        _ accountType: AccountType,
+        _ accountType: AccountImageView.AccountType,
         _ availability: Availability?
     ) {
         self.accountImage = accountImage
