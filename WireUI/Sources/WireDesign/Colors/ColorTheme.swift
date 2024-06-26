@@ -24,7 +24,9 @@ public enum ColorTheme {
         public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark)
         public static let primaryVariant = UIColor(light: .blue50Light, dark: .blue800Dark)
         public static let error = UIColor(light: .red500Light, dark: .red500Dark)
-        // TODO: continue, see Figma App Colors
+        public static let warning = UIColor(light: .amber500Light, dark: .amber500Dark)
+        public static let positive = UIColor(light: .green500Light, dark: .green500Dark)
+        // TODO: make complete, see Figma App Colors
     }
 
     public enum Strokes {

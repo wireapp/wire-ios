@@ -17,30 +17,11 @@
 //
 
 import SwiftUI
+import WireDesign
 
-// #1D7833 light
-// #30DB5B dark
-private let availableColor = UIColor {
-    $0.userInterfaceStyle == .dark
-    ? .init(red: 0.19, green: 0.86, blue: 0.36, alpha: 1)
-    : .init(red: 0.11, green: 0.47, blue: 0.20, alpha: 1)
-}
-
-// #C20013 light
-// #FF7770 dark
-private let awayColor = UIColor {
-    $0.userInterfaceStyle == .dark
-    ? .init(red: 1.00, green: 0.47, blue: 0.44, alpha: 1)
-    : .init(red: 0.76, green: 0.00, blue: 0.07, alpha: 1)
-}
-
-// #A25915 light
-// #FFD426 dark
-private let busyColor = UIColor {
-    $0.userInterfaceStyle == .dark
-    ? .init(red: 1.00, green: 0.83, blue: 0.15, alpha: 1)
-    : .init(red: 0.64, green: 0.35, blue: 0.08, alpha: 1)
-}
+private let availableColor = ColorTheme.Base.positive
+private let awayColor = ColorTheme.Base.error
+private let busyColor = ColorTheme.Base.warning
 
 // in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
 private let awayRelativeBorderSize = 2.0 / 4.375
