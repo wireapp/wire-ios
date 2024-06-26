@@ -59,13 +59,13 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Adds a conversationList to the objects to observe or replace any existing snapshot
-    @objc public func startObservingList(_ conversationList: ZMConversationList) {
+    @objc public func startObservingList(_ conversationList: ConversationList) {
         if listSnapshots[conversationList.identifier] == nil {
             zmLog.debug("Adding conversationList with identifier \(conversationList.identifier)")
         } else {
             zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
             zmLog.ifDebug {
-                (conversationList as Array).forEach {
+                conversationList.items.forEach {
                     zmLog.debug("Conversation in \(conversationList.identifier) includes: \(String(describing: $0.objectID)) with type: \($0.conversationType.rawValue)")
                 }
             }
@@ -74,7 +74,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Removes the conversationList from the objects to observe
-    @objc public func removeConversationList(_ conversationList: ZMConversationList) {
+    @objc public func removeConversationList(_ conversationList: ConversationList) {
         zmLog.debug("Removing conversationList with identifier \(conversationList.identifier)")
         listSnapshots.removeValue(forKey: conversationList.identifier)
     }
@@ -227,14 +227,14 @@ extension ConversationListObserverCenter: TearDownCapable {
 class ConversationListSnapshot: NSObject {
 
     fileprivate var state: SetSnapshot<ZMConversation>
-    weak var conversationList: ZMConversationList?
+    weak var conversationList: ConversationList?
     fileprivate var tornDown = false
     var conversationChanges = [ConversationChangeInfo]()
     var needsToRecalculate = false
 
     private var managedObjectContext: NSManagedObjectContext
 
-    init(conversationList: ZMConversationList, managedObjectContext: NSManagedObjectContext) {
+    init(conversationList: ConversationList, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
         self.state = SetSnapshot(set: conversationList.toOrderedSetState(), moveType: .uiCollectionView)
         self.managedObjectContext = managedObjectContext
@@ -246,7 +246,7 @@ class ConversationListSnapshot: NSObject {
         guard let list = conversationList else { return }
 
         let conversation = changes.conversation
-        if list.contains(conversation) {
+        if list.items.contains(conversation) {
             // list contains conversation and needs to be updated
             if !updateDidRemoveConversation(list: list, changes: changes) {
                 conversationChanges.append(changes)
@@ -262,7 +262,7 @@ class ConversationListSnapshot: NSObject {
         zmLog.debug("Snapshot for list \(list.identifier) processed change, needsToRecalculate: \(needsToRecalculate)")
     }
 
-    private func updateDidRemoveConversation(list: ZMConversationList, changes: ConversationChangeInfo) -> Bool {
+    private func updateDidRemoveConversation(list: ConversationList, changes: ConversationChangeInfo) -> Bool {
         if !list.predicateMatchesConversation(changes.conversation) {
             list.removeConversations([changes.conversation])
             zmLog.debug("Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) from list \(list.identifier)")
@@ -280,7 +280,7 @@ class ConversationListSnapshot: NSObject {
         guard let list = conversationList else { return }
 
         let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0) })
-        let conversationsToRemove = Set(deleted.filter { list.contains($0) })
+        let conversationsToRemove = Set(deleted.filter { list.items.contains($0) })
         zmLog.debug("List \(list.identifier) is inserting \(conversationsToInsert.count) and deletes \(conversationsToRemove.count) conversations")
 
         list.insertConversations(conversationsToInsert)
