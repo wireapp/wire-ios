@@ -21,11 +21,11 @@ import XCTest
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
-    var sut: GroupDetailsViewController!
-    var mockConversation: MockGroupDetailsConversation!
-    var mockSelfUser: MockUserType!
-    var otherUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var sut: GroupDetailsViewController!
+    private var mockConversation: MockGroupDetailsConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
