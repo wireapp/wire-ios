@@ -39,6 +39,8 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
 
     func testAllAvailabilities() {
 
+        XCTFail("check if CI runs this test")
+
         for availability in Availability.allCases + [Availability?.none] {
 
             // Given
