@@ -156,7 +156,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             let alice = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.aliceID.uuid,
-                    domain:Scaffolding.aliceID.domain,
+                    domain: Scaffolding.aliceID.domain,
                     in: context
                 )
             )
@@ -254,7 +254,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
 private enum Scaffolding {
 
     static let localDomain = "local.com"
-    
+
     static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
     static let selfClientID = "abcd1234"
 

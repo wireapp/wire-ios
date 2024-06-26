@@ -72,7 +72,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
                 in: context
             )
 
-            let _ = modelHelper.createClient(
+            _ = modelHelper.createClient(
                 id: Scaffolding.aliceClientID1,
                 for: alice
             )
@@ -207,7 +207,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
         try await context.perform { [context] in
             let selfClient = try XCTUnwrap(ZMUser.selfUser(in: context).selfClient())
-            
+
             // Then the self clients remaining keys were decremented
             XCTAssertEqual(selfClient.numberOfKeysRemaining, Scaffolding.selfClientNumberOfKeys - 1)
 
@@ -259,7 +259,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
                 )
             )
 
-            let _ = modelHelper.createClient(
+            _ = modelHelper.createClient(
                 id: Scaffolding.aliceClientID2,
                 for: alice
             )

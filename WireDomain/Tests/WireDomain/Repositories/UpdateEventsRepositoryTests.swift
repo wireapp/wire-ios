@@ -179,7 +179,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
         // The the last update event id was persisted for each non-transient envelope.
         let lastEventIDInvocations = lastEventIDRepository.storeLastEventID_Invocations
-        
+
         guard lastEventIDInvocations.count == 3 else {
             XCTFail("expected 3 invocations, got \(lastEventIDInvocations.count)")
             return

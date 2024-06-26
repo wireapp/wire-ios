@@ -23,7 +23,7 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Decrypt proteus messages.
 protocol ProteusMessageDecryptorProtocol {
-    
+
     /// Decrypt a proteus message.
     ///
     /// - Parameter eventData: A payload containing the encrypted message.
