@@ -128,7 +128,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         WireLogger.push.info(
-"application did register for remote notifications, storing standard token",
+            "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
         pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
@@ -172,7 +172,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch launchType {
         case .url,
-             .push:
+                .push:
             break
         default:
             launchType = .direct
@@ -314,10 +314,18 @@ private extension AppDelegate {
         // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let analyticsSessionConfiguration = AnalyticsSessionConfiguration(
-            countlyKey: Bundle.countlyAppKey,
-            host: BackendEnvironment.shared.countlyURL
-        )
+        let countlyKey = Bundle.countlyAppKey
+        let host = BackendEnvironment.shared.countlyURL
+
+        let analyticsSessionConfiguration: AnalyticsSessionConfiguration?
+        if let countlyKey, let host {
+            analyticsSessionConfiguration = AnalyticsSessionConfiguration(
+                countlyKey: countlyKey,
+                host: host
+            )
+        } else {
+            analyticsSessionConfiguration = nil
+        }
 
         let sessionManager = SessionManager(
             maxNumberAccounts: maxNumberAccounts,
