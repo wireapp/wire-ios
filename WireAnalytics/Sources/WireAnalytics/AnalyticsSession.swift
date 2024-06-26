@@ -27,7 +27,6 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         host: URL,
         userProfile: AnalyticsUserProfile
     ) {
-
         let config = WireCountlyConfig()
         config.appKey = appKey
         config.host = host.absoluteString
@@ -37,18 +36,10 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         self.countly.start(with: config)
         self.countly.changeDeviceID(withMerge: userProfile.analyticsIdentifier)
 
-        var properties: [String: String] = [
-            "user_contacts": userProfile.contactCount.map { String($0.logRound()) } ?? ""
-        ]
-
         if let teamInfo = userProfile.teamInfo {
-            properties["team_team_id"] = teamInfo.id
-            properties["team_user_type"] = teamInfo.role
-            properties["team_team_size"] = String(teamInfo.size)
-        }
-
-        for (key, value) in properties {
-            WireCountly.user().set(key, value: value)
+            WireCountly.user().set("team_team_id", value: teamInfo.id)
+            WireCountly.user().set("team_user_type", value: teamInfo.role)
+            WireCountly.user().set("team_team_size", value: String(teamInfo.size.logRound()))
         }
     }
 

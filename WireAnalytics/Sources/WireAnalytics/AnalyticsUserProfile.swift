@@ -26,16 +26,11 @@ public struct AnalyticsUserProfile {
     /// The team information for the user.
     public let teamInfo: TeamInfo?
 
-    /// The number of contacts the user has.
-    public let contactCount: Int?
-
     public init(
         analyticsIdentifier: String,
-        teamInfo: TeamInfo? = nil,
-        contactCount: Int? = nil
+        teamInfo: TeamInfo? = nil
     ) {
         self.analyticsIdentifier = analyticsIdentifier
         self.teamInfo = teamInfo
-        self.contactCount = contactCount
     }
 }
