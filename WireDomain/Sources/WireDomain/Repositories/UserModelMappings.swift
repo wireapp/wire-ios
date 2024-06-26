@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 extension Collection where Element == WireDataModel.QualifiedID {
 
