@@ -20,13 +20,15 @@ import SnapshotTesting
 import XCTest
 
 @testable import Wire
+
 final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: LegalHoldDetailsViewController!
-    var selfUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var sut: LegalHoldDetailsViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -71,7 +73,25 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
-        verifyInAllColorSchemes(createSut: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut(),
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut(),
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testOtherUserUnderLegalHold() {
@@ -86,8 +106,28 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             return self.sut.wrapInNavigationController()
         }
 
+        let sut = createSut()
+
         // THEN
-        verifyInAllColorSchemes(createSut: createSut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
 }

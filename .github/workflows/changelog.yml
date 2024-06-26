@@ -12,11 +12,11 @@ on:
       changelog-name:
         description: "The name of the changelog file"
         value: ${{ jobs.changelog.outputs.changelog-name }}
-    
+
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
-  LANG: en_US.UTF-8     
+  LANG: en_US.UTF-8
 
 jobs:
   changelog:
@@ -32,14 +32,16 @@ jobs:
       - name: 'Tag regex'
         id: regex
         run: |
-          if ${{ inputs.is_cloud_build }}; then
+          if [ "true" == "${IS_CLOUD_BUILD}" ]; then
             echo "regex='appstore/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
-          else 
+          else
             echo "regex='bk_build/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
           fi
+        env:
+          IS_CLOUD_BUILD: ${{ inputs.is_cloud_build }}
       - name: 'Calculate diff between HEAD and latest tag'
         run: echo "HEAD_TAG_DIFF=$(git diff HEAD $(git tag | grep -E '${{ env.regex }}' | tail -n 1) | wc -l | xargs)" >> "$GITHUB_ENV"
-      
+
       - name: 'Set current Git tag to HEAD'
         if: "${{ env.HEAD_TAG_DIFF != '0' }}"
         run: echo "CURRENT_TAG=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
@@ -66,9 +68,9 @@ jobs:
           npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
 
       - name: 'Set date variable'
-        id: date          
+        id: date
         run: echo "date=$(date +%s%N)" >> $GITHUB_OUTPUT
-  
+
       - name: 'Upload changelog'
         id: upload-file
         uses: actions/upload-artifact@v4

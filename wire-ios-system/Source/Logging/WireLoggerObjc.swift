@@ -18,29 +18,16 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol UserRepositoryProtocol {
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+public final class WireLoggerObjc: NSObject {
 
-    func fetchSelfUser() -> ZMUser
-
-}
-
-public final class UserRepository: UserRepositoryProtocol {
-
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
-
-    public init(context: NSManagedObjectContext) {
-        self.context = context
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
     }
 
-    // MARK: - Methods
-
-    public func fetchSelfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
+    @objc(logReceivedUpdateEventWithId:)
+    static func logReceivedUpdateEvent(eventId: String) {
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
     }
-
 }

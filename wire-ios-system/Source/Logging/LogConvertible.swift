@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireLogger {
-    public static func addDatadog(_ datadog: LoggerProtocol) {
-        if let aggregatedLogger = Self.provider as? AggregatedLogger {
-            aggregatedLogger.addLogger(datadog)
-        } else {
-            Self.provider = datadog
-        }
+public protocol LogConvertible {
+
+    var logDescription: String { get }
+
+}
+
+extension String: LogConvertible {
+
+    public var logDescription: String {
+        return self
     }
+
 }
