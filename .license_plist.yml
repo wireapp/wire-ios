@@ -6,7 +6,7 @@ options:
   force: true
   addVersionNumbers: true
   suppressOpeningDirectory: true
-  # failIfMissingLicense: true
+  failIfMissingLicense: true
   sandboxMode: true
 
 manual:
