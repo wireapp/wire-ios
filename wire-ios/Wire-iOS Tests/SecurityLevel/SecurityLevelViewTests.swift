@@ -28,12 +28,13 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = SecurityLevelView()
         sut.backgroundColor = SemanticColors.View.backgroundDefaultWhite
         sut.translatesAutoresizingMaskIntoConstraints = true
@@ -43,6 +44,7 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
