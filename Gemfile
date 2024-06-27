@@ -6,7 +6,9 @@ gem 'fastlane'
 gem 'git'
 gem 'httparty'
 gem 'xcode-install'
+gem 'mutex_m'
 gem 'danger'
+gem 'danger-xcodebuild'
 gem 'danger-xcode_summary'
 
 
