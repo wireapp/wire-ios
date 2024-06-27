@@ -21,14 +21,20 @@ import SnapshotTesting
 import XCTest
 
 final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         _ = waitForGroupsToBeEmpty([coreDataFixture.dispatchGroup])
         coreDataFixture = nil
         super.tearDown()
@@ -38,22 +44,22 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testThatItRendersMissedCallFromSelfUser() {
         let missedCell = missedCallCell(fromSelf: true)
-        verify(matching: missedCell)
+        snapshotHelper.verify(matching: missedCell)
     }
 
     func testThatItRendersMissedCallFromOtherUser() {
         let missedCell = missedCallCell(fromSelf: false)
-        verify(matching: missedCell)
+        snapshotHelper.verify(matching: missedCell)
     }
 
     func testThatItRendersMissedCallFromSelfUserInGroup() {
         let missedCell = missedCallCell(fromSelf: true, inGroup: true)
-        verify(matching: missedCell)
+        snapshotHelper.verify(matching: missedCell)
     }
 
     func testThatItRendersMissedCallFromOtherUserInGroup() {
         let missedCell = missedCallCell(fromSelf: false, inGroup: true)
-        verify(matching: missedCell)
+        snapshotHelper.verify(matching: missedCell)
     }
 
     // MARK: - Helper
