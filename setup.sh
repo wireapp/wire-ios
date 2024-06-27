@@ -71,9 +71,11 @@ fi
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
-if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
+if [[ -z "${CI-}" ]]; then
+    # Local Machine
     echo "Skipping AWS CLI install because not running on CI"
 else
+    # CI
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
 fi 
 echo ""
@@ -84,9 +86,11 @@ echo "ℹ️  Fetching submodules..."
 echo ""
 
 echo "ℹ️  Installing bundler and Ruby dependencies..."
-if [[ -n "${CI-}" ]]; then # skip cache bootstrap for CI
+if [[ -n "${CI-}" ]]; then
+    # CI
     echo "Skipping install since CI is defined"
 else
+    # Local machine
     which bundle || gem install bundler
     bundle check || bundle install
 fi
@@ -101,9 +105,11 @@ scripts/postprocess.sh
 echo ""
 
 echo "ℹ️  Generate Licenses"
-if [[ "${CI-}" ]]; then # skip cache bootstrap for CI
+if [[ "${CI-}" ]]; then
+    # CI
     scripts/run-licenseplist.sh --config-path ".license_plist.yml"
 else
+    # Local Machine
     echo "Skipping as CI is not is defined"
 fi
 echo ""
