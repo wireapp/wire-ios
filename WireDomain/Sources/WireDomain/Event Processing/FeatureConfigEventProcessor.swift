@@ -37,7 +37,7 @@ protocol FeatureConfigEventProcessorProtocol {
 struct FeatureConfigEventProcessor {
 
     func processEvent(_ event: FeatureConfigEvent) async throws {
-        assertionFailure("not implemented")
+        assertionFailure("not implemented yet")
     }
 
 }

@@ -37,7 +37,7 @@ protocol UserEventProcessorProtocol {
 struct UserEventProcessor {
 
     func processEvent(_ event: UserEvent) async throws {
-        assertionFailure("not implemented")
+        assertionFailure("not implemented yet")
     }
 
 }

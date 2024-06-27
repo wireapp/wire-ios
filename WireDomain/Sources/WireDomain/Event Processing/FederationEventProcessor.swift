@@ -37,7 +37,7 @@ protocol FederationEventProcessorProtocol {
 struct FederationEventProcessor {
 
     func processEvent(_ event: FederationEvent) async throws {
-        assertionFailure("not implemented")
+        assertionFailure("not implemented yet")
     }
 
 }
