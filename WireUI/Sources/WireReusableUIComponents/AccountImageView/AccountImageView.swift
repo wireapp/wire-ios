@@ -84,7 +84,7 @@ public final class AccountImageView: UIView {
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        if #unavailable(iOS 17.0) {
+        if #unavailable(iOS 17.0), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
             updateAvailabilityIndicator()
         }
     }
