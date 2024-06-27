@@ -167,7 +167,6 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         }
     }
 
-
     func testItDecryptsAnEventFromANewSenderAndUpdatesSecurityLevel() async throws {
         // Given
         try await context.perform { [context] in

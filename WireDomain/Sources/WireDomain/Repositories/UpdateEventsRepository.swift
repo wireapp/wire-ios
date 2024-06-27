@@ -120,4 +120,3 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
 }
-

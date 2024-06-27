@@ -31,8 +31,8 @@ import UIKit
 import AppKit
 #endif
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 @testable import WireDomain
 
