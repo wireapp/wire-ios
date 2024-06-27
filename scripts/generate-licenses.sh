@@ -17,6 +17,21 @@ set -Eeuo pipefail
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 
+# Technical Details
+# 
+# The tool `LicensePlist`` has two modes that differ in essence:
+# 
+# 1. No Sandbox Mode / Online
+# This mode requests all Swift Packages from the remote URLs, which seems convenient at first.
+# However, it quickly reaches the GitHub API limit and suggests providing a GitHub token.
+# Nevertheless, during development, I ran into API limits again because the project fetches 25+ licenses in parallel.
+#
+# 2. Sandbox Mode / Offline
+# This mode allows you to work offline by providing a source path.
+# Unfortunately, it seems to look only for Swift Packages and can no longer find the Carthage licenses.
+# Therefore, the implemented workaround is to merge the SPM and Carthage folders into one temporary folder and generate licenses from it.
+# Additionally, SPM binaries are not supported, so you need to download the LICENSE file manually and add it to the configuration.
+
 REPO_ROOT=$(git rev-parse --show-toplevel)
 LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
 PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
