@@ -418,8 +418,7 @@ public final class ZMUserSession: NSObject {
 
         let analyticsUserProfile = AnalyticsUserProfile(
             analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
-            teamInfo: teamInfo,
-            contactCount: selfUser.membership?.team?.members.count
+            teamInfo: teamInfo
         )
 
         self.analyticsSession = AnalyticsSession(
@@ -495,9 +494,11 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
 
-        setupAnalyticsSession()
+        if !ProcessInfo.processInfo.isRunningTests {
+            setupAnalyticsSession()
 
-        self.analyticsSession?.startSession()
+            self.analyticsSession?.startSession()
+        }
 
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
