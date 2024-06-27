@@ -21,14 +21,27 @@ import XCTest
 @testable import Wire
 
 final class ButtonTests: XCTestCase {
-    var sut: Wire.LegacyButton!
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: LegacyButton!
+
+    // MARK: - setUp
 
     override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = .init(legacyStyle: .empty, fontSpec: .smallLightFont)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
+        super.tearDown()
     }
 
     func testForLongTitleCanBeWrapped() {
@@ -50,7 +63,7 @@ final class ButtonTests: XCTestCase {
         sut.legacyStyle = .full
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForStyleChangedToEmpty() {
@@ -62,6 +75,6 @@ final class ButtonTests: XCTestCase {
         sut.legacyStyle = .empty
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
