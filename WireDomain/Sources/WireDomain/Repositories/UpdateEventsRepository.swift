@@ -36,8 +36,8 @@ protocol UpdateEventsRepositoryProtocol {
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     private let selfClientID: String
-    private let eventsAPI: any UpdateEventsAPI
-    private let eventDecryptor: any UpdateEventDecryptorProtocol
+    private let updateEventsAPI: any UpdateEventsAPI
+    private let updateEventDecryptor: any UpdateEventDecryptorProtocol
     private let eventContext: NSManagedObjectContext
     private let jsonEncoder = JSONEncoder()
 
@@ -45,14 +45,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     init(
         selfClientID: String,
-        eventsAPI: any UpdateEventsAPI,
-        eventDecryptor: any UpdateEventDecryptorProtocol,
+        updateEventsAPI: any UpdateEventsAPI,
+        updateEventDecryptor: any UpdateEventDecryptorProtocol,
         eventContext: NSManagedObjectContext,
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
         self.selfClientID = selfClientID
-        self.eventsAPI = eventsAPI
-        self.eventDecryptor = eventDecryptor
+        self.updateEventsAPI = updateEventsAPI
+        self.updateEventDecryptor = updateEventDecryptor
         self.eventContext = eventContext
         self.lastEventIDRepository = lastEventIDRepository
     }
@@ -67,14 +67,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         var currentIndex = try await indexOfLastEventEnvelope() + 1
 
         // Events are fetched in batches.
-        for try await envelopes in eventsAPI.getUpdateEvents(
+        for try await envelopes in updateEventsAPI.getUpdateEvents(
             selfClientID: selfClientID,
             sinceEventID: lastEventID
         ) {
             for envelope in envelopes {
                 // We can only decrypt once so store the decrypted events for later retrieval.
                 var decryptedEnvelope = envelope
-                decryptedEnvelope.events = try await eventDecryptor.decryptEvents(in: envelope)
+                decryptedEnvelope.events = try await updateEventDecryptor.decryptEvents(in: envelope)
 
                 try await persistEventEnvelope(
                     decryptedEnvelope,
@@ -94,7 +94,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     private func indexOfLastEventEnvelope() async throws -> Int64 {
         try await eventContext.perform { [eventContext] in
-            let request = StoredEventEnvelope.sortedFetchRequest(asending: false)
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: false)
             request.fetchBatchSize = 1
             let lastEnvelope = try eventContext.fetch(request).first
             return lastEnvelope?.sortIndex ?? 0
@@ -112,7 +112,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 print("persisting event: \(string)")
             }
 
-            let storedEventEnvelope = StoredEventEnvelope(context: eventContext)
+            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
             storedEventEnvelope.data = data
             storedEventEnvelope.sortIndex = index
             try eventContext.save()

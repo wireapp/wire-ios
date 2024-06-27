@@ -574,7 +574,7 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
-		EE3F97562C2B130800668DF1 /* StoredEventEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F97552C2B130800668DF1 /* StoredEventEnvelope.swift */; };
+		EE3F97562C2B130800668DF1 /* StoredUpdateEventEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F97552C2B130800668DF1 /* StoredUpdateEventEnvelope.swift */; };
 		EE42938A252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */; };
 		EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */; };
 		EE42938E252C460000E70670 /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938D252C460000E70670 /* Changes.swift */; };
@@ -1538,7 +1538,7 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
-		EE3F97552C2B130800668DF1 /* StoredEventEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredEventEnvelope.swift; sourceTree = "<group>"; };
+		EE3F97552C2B130800668DF1 /* StoredUpdateEventEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredUpdateEventEnvelope.swift; sourceTree = "<group>"; };
 		EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+ManagedObjectObservation.swift"; sourceTree = "<group>"; };
 		EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectObserverToken.swift; sourceTree = "<group>"; };
 		EE42938D252C460000E70670 /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
@@ -2622,7 +2622,7 @@
 		EE8BBCA42C2988C40041A73C /* ZMEventModel */ = {
 			isa = PBXGroup;
 			children = (
-				EE3F97552C2B130800668DF1 /* StoredEventEnvelope.swift */,
+				EE3F97552C2B130800668DF1 /* StoredUpdateEventEnvelope.swift */,
 			);
 			path = ZMEventModel;
 			sourceTree = "<group>";
@@ -4396,7 +4396,7 @@
 				E6E5043D2BC542C5004948E7 /* EARServiceDelegate.swift in Sources */,
 				E6E504402BC542C5004948E7 /* PrivateEARKeyDescription.swift in Sources */,
 				EF1F4F542301634500E4872C /* ZMSystemMessage+ChildMessages.swift in Sources */,
-				EE3F97562C2B130800668DF1 /* StoredEventEnvelope.swift in Sources */,
+				EE3F97562C2B130800668DF1 /* StoredUpdateEventEnvelope.swift in Sources */,
 				F943BC2D1E88FEC80048A768 /* ChangedIndexes.swift in Sources */,
 				7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */,
 				63BEF5872A2636BC00F482E8 /* MLSConferenceInfo.swift in Sources */,

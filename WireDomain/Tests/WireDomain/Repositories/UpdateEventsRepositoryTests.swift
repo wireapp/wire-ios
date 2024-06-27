@@ -28,8 +28,8 @@ import XCTest
 final class UpdateEventsRepositoryTests: XCTestCase {
 
     var sut: UpdateEventsRepository!
-    var eventsAPI: MockUpdateEventsAPI!
-    var eventDecryptor: MockUpdateEventDecryptorProtocol!
+    var updateEventsAPI: MockUpdateEventsAPI!
+    var updateEventDecryptor: MockUpdateEventDecryptorProtocol!
     var lastEventIDRepository: MockLastEventIDRepositoryInterface!
 
     var stack: CoreDataStack!
@@ -42,26 +42,26 @@ final class UpdateEventsRepositoryTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        eventsAPI = MockUpdateEventsAPI()
-        eventDecryptor = MockUpdateEventDecryptorProtocol()
+        updateEventsAPI = MockUpdateEventsAPI()
+        updateEventDecryptor = MockUpdateEventDecryptorProtocol()
         lastEventIDRepository = MockLastEventIDRepositoryInterface()
         sut = UpdateEventsRepository(
             selfClientID: Scaffolding.selfClientID,
-            eventsAPI: eventsAPI,
-            eventDecryptor: eventDecryptor,
+            updateEventsAPI: updateEventsAPI,
+            updateEventDecryptor: updateEventDecryptor,
             eventContext: context,
             lastEventIDRepository: lastEventIDRepository
         )
 
         // Base mocks
-        eventDecryptor.decryptEventsIn_MockMethod = { $0.events }
+        updateEventDecryptor.decryptEventsIn_MockMethod = { $0.events }
         lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
     }
 
     override func tearDown() async throws {
         stack = nil
-        eventsAPI = nil
-        eventDecryptor = nil
+        updateEventsAPI = nil
+        updateEventDecryptor = nil
         lastEventIDRepository = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -72,11 +72,11 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await context.perform { [context] in
             let encoder = JSONEncoder()
 
-            let storedEventEnvelope1 = StoredEventEnvelope(context: context)
+            let storedEventEnvelope1 = StoredUpdateEventEnvelope(context: context)
             storedEventEnvelope1.data = try encoder.encode(Scaffolding.envelope1)
             storedEventEnvelope1.sortIndex = 0
 
-            let storedEventEnvelope2 = StoredEventEnvelope(context: context)
+            let storedEventEnvelope2 = StoredUpdateEventEnvelope(context: context)
             storedEventEnvelope2.data = try encoder.encode(Scaffolding.envelope2)
             storedEventEnvelope2.sortIndex = 1
 
@@ -109,7 +109,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         lastEventIDRepository.fetchLastEventID_MockValue = Scaffolding.lastEventID
 
         // There are two pages of events waiting to be pulled.
-        eventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page1") { start in
+        updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page1") { start in
             switch start {
             case "page1":
                 return Scaffolding.page1
@@ -126,7 +126,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await sut.pullPendingEvents()
 
         // Then we used the api to fetch pending events.
-        let apiInvocations = eventsAPI.getUpdateEventsSelfClientIDSinceEventID_Invocations
+        let apiInvocations = updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_Invocations
 
         guard apiInvocations.count == 1 else {
             XCTFail("expected 1 invocation, got \(apiInvocations.count)")
@@ -137,7 +137,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(apiInvocations[0].sinceEventID, Scaffolding.lastEventID)
 
         // Then the events were decrypted, one call per envelope.
-        let decryptorInvocations = eventDecryptor.decryptEventsIn_Invocations
+        let decryptorInvocations = updateEventDecryptor.decryptEventsIn_Invocations
 
         guard decryptorInvocations.count == 4 else {
             XCTFail("expected 4 invocations, got \(decryptorInvocations.count)")
@@ -151,7 +151,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
         // Then there should now be 7 persisted events in the right order.
         try await context.perform { [context] in
-            let request = StoredEventEnvelope.sortedFetchRequest(asending: true)
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
             let storedEventEnvelopes = try context.fetch(request)
 
             guard storedEventEnvelopes.count == 6 else {

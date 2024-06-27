@@ -56,7 +56,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 5.0
 
-* add new `StoredEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
+* add new `StoredUpdateEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
 
 ### 4.0
 

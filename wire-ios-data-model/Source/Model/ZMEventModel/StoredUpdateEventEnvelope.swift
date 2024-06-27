@@ -27,11 +27,11 @@ import Foundation
 /// that aren't immediately processed should be persisted as soon as possible.
 /// This ensures that they can be retrieved later for processing.
 
-public final class StoredEventEnvelope: NSManagedObject {
+public final class StoredUpdateEventEnvelope: NSManagedObject {
 
     /// The name of the associated Core Data entity.
 
-    public static let entityName = "StoredEventEnvelope"
+    public static let entityName = "StoredUpdateEventEnvelope"
 
     /// The encoded data of the event envelope.
 
@@ -50,11 +50,11 @@ public final class StoredEventEnvelope: NSManagedObject {
     /// - Parameter asending: Whether the results are returned in ascending order.
     /// - Returns: A fetch request sorted by the `sortIndex`.
 
-    public static func sortedFetchRequest(asending: Bool) -> NSFetchRequest<StoredEventEnvelope> {
-        let request = NSFetchRequest<StoredEventEnvelope>(entityName: entityName)
+    public static func sortedFetchRequest(asending: Bool) -> NSFetchRequest<StoredUpdateEventEnvelope> {
+        let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
         request.sortDescriptors = [
             NSSortDescriptor(
-                keyPath: \StoredEventEnvelope.sortIndex,
+                keyPath: \StoredUpdateEventEnvelope.sortIndex,
                 ascending: asending
             )
         ]
