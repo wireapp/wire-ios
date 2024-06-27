@@ -63,20 +63,22 @@ xcrun --sdk macosx swift package --package-path scripts resolve
 echo "" 
 
 echo "ℹ️  Installing ImageMagick..."
-if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
-    echo "Skipping ImageMagick install because not running on CI"
-else
+if [[ -n "${CI-}" ]]; then
+    # CI
     which identify || brew install ImageMagick
+else
+    # Local Machine
+    echo "Skipping ImageMagick install because not running on CI"
 fi 
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
-if [[ -z "${CI-}" ]]; then
-    # Local Machine
-    echo "Skipping AWS CLI install because not running on CI"
-else
+if [[ -n "${CI-}" ]]; then
     # CI
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
+else
+    # Local Machine
+    echo "Skipping AWS CLI install because not running on CI"
 fi 
 echo ""
 
@@ -105,7 +107,7 @@ scripts/postprocess.sh
 echo ""
 
 echo "ℹ️  Generate Licenses"
-if [[ "${CI-}" ]]; then
+if [[ -n "${CI-}" ]]; then
     # CI
     scripts/run-licenseplist.sh
 else
