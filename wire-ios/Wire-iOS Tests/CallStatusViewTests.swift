@@ -234,7 +234,9 @@ final class CallStatusViewTests: XCTestCase {
         )
 
         // THEN
-        snapshotHelper.verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testEstablishedBriefLight() {
