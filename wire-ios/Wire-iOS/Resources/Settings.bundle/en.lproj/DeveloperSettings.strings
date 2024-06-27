@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-"LICENSES" = "Licenses";
-"DEVELOPER SETTINGS" = "Developer Settings";
+"ENABLE_LOGGING" = "Enable Assert Logging";
+"ENABLE_NETWORK_LOGGING" = "Network Logging (Internal builds)";
+"BUILD_INFO" = "Build Info";
+"USE_DEVELOPER_LOGIN_UI" = "Use Developer Login UI";
+"USE_WEBDAV_DESIGN" = "Use WebDav server";
+"USE_MARKDOWN" = "Disable Markdown";
