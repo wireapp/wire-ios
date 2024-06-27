@@ -123,13 +123,11 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            let context = userSession.managedObjectContext
-
             initialSyncObserverToken = NotificationInContext.addObserver(
                 name: .initialSync,
-                context: context.notificationContext
+                context: userSession.notificationContext
             ) { [weak self] _ in
-                context.performGroupedBlock {
+                userSession.managedObjectContext.performGroupedBlock {
                     self?.requestMarketingConsentIfNeeded()
                 }
             }

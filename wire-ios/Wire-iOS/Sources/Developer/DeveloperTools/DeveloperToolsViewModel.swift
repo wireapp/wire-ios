@@ -110,6 +110,12 @@ final class DeveloperToolsViewModel: ObservableObject {
     var alertTitle: String?
     var alertBody: String?
 
+    // MARK: - Computed
+
+    private var userSession: ZMUserSession? {
+        ZMUserSession.shared()
+    }
+
     // MARK: - Life cycle
 
     init(
@@ -301,9 +307,8 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func checkRegisteredTokens() {
         guard
-            let selfClient,
-            let clientID = selfClient.remoteIdentifier,
-            let context = selfClient.managedObjectContext?.notificationContext
+            let clientID = selfClient?.remoteIdentifier,
+            let context = userSession?.notificationContext
         else {
             return
         }
@@ -361,13 +366,13 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var selfUser: ZMUser? {
-        guard let session = ZMUserSession.shared() else { return nil }
-        return ZMUser.selfUser(inUserSession: session)
+        guard let userSession else { return nil }
+        return ZMUser.selfUser(inUserSession: userSession)
     }
 
     private var selfClient: UserClient? {
-        guard let session = ZMUserSession.shared() else { return nil }
-        return session.selfUserClient
+        guard let userSession else { return nil }
+        return userSession.selfUserClient
     }
 
     private func stopFederatingBella() {

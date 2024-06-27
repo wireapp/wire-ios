@@ -99,7 +99,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
         return NotificationInContext.addObserver(
             name: DatabaseEncryptionLockNotification.notificationName,
-            context: managedObjectContext.notificationContext,
+            context: notificationContext,
             queue: .main
         ) { note in
             guard let note = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification else { return }
@@ -118,7 +118,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
             self?.earService.lockDatabase()
 
-            if let notificationContext = self?.managedObjectContext.notificationContext {
+            if let notificationContext = self?.notificationContext {
                 DatabaseEncryptionLockNotification(databaseIsEncrypted: true).post(in: notificationContext)
             }
         }

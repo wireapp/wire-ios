@@ -18,17 +18,9 @@
 
 import Foundation
 
-@objc
-public protocol NotificationContext: NSObjectProtocol { }
-
-extension NSPersistentStoreCoordinator: NotificationContext {}
-
-public extension NSManagedObjectContext {
-
-    /// Prefer `UserSession.notificationContext` over this property.
-    @objc
-    var notificationContext: NotificationContext {
-        return persistentStoreCoordinator!
+extension ZMUserSession {
+    public var notificationContext: any NotificationContext {
+        // Workaround to replace the core data dependency in future!
+        coreDataStack.viewContext.persistentStoreCoordinator!
     }
-
 }

@@ -102,7 +102,7 @@ extension ZMUserSession {
         syncManagedObjectContext.performGroupedBlock {
             ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)
             self.syncManagedObjectContext.saveOrRollback()
-            NotificationInContext(name: .calculateBadgeCount, context: self.syncManagedObjectContext.notificationContext).post()
+            NotificationInContext(name: .calculateBadgeCount, context: self.notificationContext).post()
         }
     }
 

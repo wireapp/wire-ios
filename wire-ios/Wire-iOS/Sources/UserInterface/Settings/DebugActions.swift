@@ -260,7 +260,7 @@ enum DebugActions {
                 let action = UpdateAccessRolesAction(conversation: $0,
                                                      accessMode: ConversationAccessMode.value(forAllowGuests: true),
                                                      accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
-                action.send(in: syncContext.notificationContext)
+                action.send(in: userSession.notificationContext)
             }
         }
     }
