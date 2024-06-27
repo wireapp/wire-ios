@@ -20,17 +20,39 @@
 import XCTest
 
 class UserNameDetailViewTests: XCTestCase {
-    var sut: UserNameDetailView!
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: UserNameDetailView!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
-    func createSutWithHeadStyle(user: UserType? = nil,
-                                addressBookName: String? = nil,
-                                fallbackName: String = "Jose Luis") -> UserNameDetailView {
-        let model = UserNameDetailViewModel(user: user, fallbackName: fallbackName, addressBookName: addressBookName)
+    // MARK: - Helper Method
+
+    func createSutWithHeadStyle(
+        user: UserType? = nil,
+        addressBookName: String? = nil,
+        fallbackName: String = "Jose Luis"
+    ) -> UserNameDetailView {
+        let model = UserNameDetailViewModel(
+            user: user,
+            fallbackName: fallbackName,
+            addressBookName: addressBookName
+        )
         let view = UserNameDetailView()
         view.translatesAutoresizingMaskIntoConstraints = true
         view.configure(with: model)
@@ -39,22 +61,24 @@ class UserNameDetailViewTests: XCTestCase {
         return view
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItRendersAddressBookName() {
         let user = SwiftMockLoader.mockUsers().first
         sut = createSutWithHeadStyle(user: user, addressBookName: "JameyBoy")
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAddressBookName_EqualName() {
         let user = SwiftMockLoader.mockUsers().first
         sut = createSutWithHeadStyle(user: user, addressBookName: user?.name, fallbackName: "")
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersUserName() {
         let user = SwiftMockLoader.mockUsers().first
         sut = createSutWithHeadStyle(user: user, fallbackName: "")
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersUserName_Federated() {
@@ -62,6 +86,6 @@ class UserNameDetailViewTests: XCTestCase {
         user?.domain = "wire.com"
         user?.isFederated = true
         sut = createSutWithHeadStyle(user: user, fallbackName: "")
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
