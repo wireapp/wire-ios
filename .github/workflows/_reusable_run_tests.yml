@@ -148,6 +148,13 @@ jobs:
           results: xcodebuild-wire-ios-system.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Danger for WireSystem
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
+        run: |
+          bundle exec danger --danger_id=wire_ios_system --verbose
           
       - name: Test WireTesting
         if: ${{ inputs.wire-ios-testing || inputs.all }}
