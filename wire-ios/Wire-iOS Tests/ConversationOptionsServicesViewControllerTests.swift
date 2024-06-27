@@ -41,6 +41,18 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
     // MARK: Renders Services Screen When Services are either Allowed or not allowed
 
     func testThatItRendersServicesScreenWhenServicesAreNotAllowed() {
@@ -50,7 +62,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersServicesScreenWhenServicesAreNotAllowed_DarkTheme() {
@@ -58,10 +70,11 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let config = MockServicesOptionsViewModelConfiguration(allowServices: false)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersServicesScreenWhenServicesAreAllowed() {
@@ -71,7 +84,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersServicesScreenWhenServicesAreAllowed_DarkTheme() {
@@ -79,10 +92,11 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     // MARK: Renders Services Screen when a change is occured
@@ -94,7 +108,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // Verify that the toggle should be off.
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
 
         // WHEN
         config.allowServices = true
@@ -102,7 +116,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         config.allowServicesChangedHandler?(true)
 
         // Then, verify the toggle is now on.
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
 
     }
 
@@ -115,7 +129,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // THEN
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     // MARK: Renders different kind of alerts

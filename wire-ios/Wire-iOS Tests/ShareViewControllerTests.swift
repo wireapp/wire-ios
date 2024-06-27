@@ -35,13 +35,15 @@ extension MockShareViewControllerConversation: StableRandomParticipantsProvider 
 }
 
 final class ShareViewControllerTests: XCTestCase {
+
     private var groupConversation: MockShareViewControllerConversation!
     private var oneToOneConversation: MockShareViewControllerConversation!
     private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         let mockUser = MockUserType.createDefaultOtherUser()
 
         groupConversation = MockShareViewControllerConversation()
@@ -56,6 +58,7 @@ final class ShareViewControllerTests: XCTestCase {
 
     override func tearDown() {
         disableDarkColorScheme()
+        snapshotHelper = nil
         groupConversation = nil
         oneToOneConversation = nil
         sut = nil
@@ -81,7 +84,7 @@ final class ShareViewControllerTests: XCTestCase {
                   allowsMultipleSelection: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectlyShareViewController_OneLineTextMessage() {

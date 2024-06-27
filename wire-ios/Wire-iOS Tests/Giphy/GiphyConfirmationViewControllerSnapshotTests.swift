@@ -21,21 +21,27 @@ import SnapshotTesting
 import XCTest
 
 final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
+
     var sut: GiphyConfirmationViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        sut = GiphyConfirmationViewController(withZiph: nil,
-                                              previewImage: nil,
-                                              searchResultController: nil)
+        snapshotHelper = SnapshotHelper()
+        sut = GiphyConfirmationViewController(
+            withZiph: nil,
+            previewImage: nil,
+            searchResultController: nil
+        )
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
