@@ -24,6 +24,7 @@ public final class TimePoint: NSObject {
 
     private let callstack = [String]()
 
+    /// If not zero, it will call @c warnIfLongerThanInteval with this value on dealloc
     let warnInterval: TimeInterval
 
     /// The label associated with this timepoint
