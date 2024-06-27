@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
@@ -127,11 +127,13 @@ jobs:
       - name: Setup workspace
         run: |
           ./setup.sh
-      
+
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
-        
+
+      # WireSystem
+
       - name: Build WireSystem
         if: ${{ inputs.wire-ios-system || inputs.all }}
         run: |
@@ -146,14 +148,16 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
         run: |
           bundle exec danger --danger_id="Run Danger for WireSystem" --verbose
-        
+
       - name: Test WireSystem
         if: ${{ inputs.wire-ios-system || inputs.all }}
         run: |
           echo "Testing WireSystem..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
-          
+
+      # WireTesting
+
       - name: Test WireTesting
         if: ${{ inputs.wire-ios-testing || inputs.all }}
         run: |
@@ -170,7 +174,9 @@ jobs:
           results: xcodebuild-wire-ios-testing.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireUtilities
+
       - name: Test WireUtilities
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
         run: |
@@ -187,7 +193,9 @@ jobs:
           results: xcodebuild-wire-ios-utilities.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireCryptobox
+
       - name: Test WireCryptobox
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
         run: |
@@ -204,7 +212,9 @@ jobs:
           results: xcodebuild-wire-ios-cryptobox.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireTransport
+
       - name: Test WireTransport
         if: ${{ inputs.wire-ios-transport || inputs.all }}
         run: |
@@ -221,7 +231,9 @@ jobs:
           results: xcodebuild-wire-ios-transport.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireLinkPreview
+
       - name: Test WireLinkPreview
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
         run: |
@@ -238,7 +250,9 @@ jobs:
           results: xcodebuild-wire-ios-link-preview.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireImages
+
       - name: Test WireImages
         if: ${{ inputs.wire-ios-images || inputs.all }}
         run: |
@@ -256,6 +270,8 @@ jobs:
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # WireProtos
+
       - name: Test WireProtos
         if: ${{ inputs.wire-ios-protos || inputs.all }}
         run: |
@@ -272,7 +288,9 @@ jobs:
           results: xcodebuild-wire-ios-protos.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireMockTransport
+
       - name: Test WireMockTransport
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
         run: |
@@ -289,7 +307,9 @@ jobs:
           results: xcodebuild-wire-ios-mocktransport.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireDataModel
+
       - name: Test WireDataModel
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
         run: |
@@ -305,6 +325,8 @@ jobs:
           results: xcodebuild-wire-ios-data-model.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # WireAPI
 
       - name: Test WireAPI
         if: ${{ inputs.wire-api || inputs.all }}
@@ -323,6 +345,8 @@ jobs:
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # WireDomain
+
       - name: Test WireDomain
         if: ${{ inputs.wire-domain || inputs.all }}
         run: |
@@ -340,6 +364,8 @@ jobs:
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # WireRequestStrategy
+
       - name: Test WireRequestStrategy
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         run: |
@@ -356,7 +382,9 @@ jobs:
           results: xcodebuild-wire-ios-request-strategy.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # WireShareEngine
+
       - name: Test WireShareEngine
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
         run: |
@@ -374,6 +402,8 @@ jobs:
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # WireSyncEngine
+
       - name: Test WireSyncEngine
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
         run: |
@@ -390,7 +420,9 @@ jobs:
           results: xcodebuild-wire-ios-sync-engine.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # Wire-iOS
+
       - name: Test Wire-iOS
         if: ${{ inputs.wire-ios || inputs.all }}
         run: |
@@ -422,7 +454,7 @@ jobs:
         with:
           name: Failed Snapshots and log
           path: |
-            wire-ios/SnapshotResults/    
+            wire-ios/SnapshotResults/
             xcodebuild*.log
 
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
@@ -460,7 +492,7 @@ jobs:
           files: |
             build/reports/*.junit
           compare_to_earlier_commit: false
-            
+
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v2
         if: always()
