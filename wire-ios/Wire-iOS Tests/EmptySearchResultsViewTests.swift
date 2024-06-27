@@ -25,10 +25,14 @@ final class EmptySearchResultsViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: EmptySearchResultsView!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: EmptySearchResultsView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
@@ -40,6 +44,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -47,7 +52,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testNoResultsForUsers() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testNoResultsForUsers_WhenFederationIsEnabled() {
@@ -60,7 +65,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testNoResultsForUsers_WhenEveryoneHaveBeenAdded() {
@@ -73,7 +78,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testNoResultsForServices() {
@@ -86,7 +91,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testServicesNotEnabled() {
@@ -99,7 +104,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testServicesNotEnabled_WhenAdmin() {
@@ -112,7 +117,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helpers
