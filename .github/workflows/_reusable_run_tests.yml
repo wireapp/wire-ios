@@ -165,12 +165,13 @@ jobs:
           echo "Building WireTesting..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTesting -resultBundlePath xcodebuild-wire-ios-testing.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-testing.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireTesting
         if: ${{ inputs.wire-ios-testing || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-testing.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-testing.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireTesting" --verbose
 
       - name: Test WireTesting
         if: ${{ inputs.wire-ios-testing || inputs.all }}
@@ -188,12 +189,13 @@ jobs:
           echo "Building WireUtilities..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -resultBundlePath xcodebuild-wire-ios-utilities.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-utilities.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireUtilities
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-utilities.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-utilities.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireUtilities" --verbose
 
       - name: Test WireUtilities
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
@@ -211,12 +213,13 @@ jobs:
           echo "Building WireCryptobox..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -resultBundlePath xcodebuild-wire-ios-cryptobox.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireCryptobox
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-cryptobox.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-cryptobox.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireCryptobox" --verbose
 
       - name: Test WireCryptobox
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
@@ -234,12 +237,13 @@ jobs:
           echo "Building WireTransport..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTransport -resultBundlePath xcodebuild-wire-ios-transport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-transport.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireTransport
         if: ${{ inputs.wire-ios-transport || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-transport.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-transport.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireTransport" --verbose
 
       - name: Test WireTransport
         if: ${{ inputs.wire-ios-transport || inputs.all }}
@@ -257,12 +261,13 @@ jobs:
           echo "Building WireLinkPreview..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -resultBundlePath xcodebuild-wire-ios-link-preview.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireLinkPreview
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-link-preview.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-link-preview.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireLinkPreview" --verbose
 
       - name: Test WireLinkPreview
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
@@ -280,12 +285,13 @@ jobs:
           echo "Building WireImages..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireImages -resultBundlePath xcodebuild-wire-ios-images.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-images.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireImages
         if: ${{ inputs.wire-ios-images || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-images.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-images.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireImages" --verbose
 
       - name: Test WireImages
         if: ${{ inputs.wire-ios-images || inputs.all }}
@@ -303,12 +309,13 @@ jobs:
           echo "Building WireProtos..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireProtos -resultBundlePath xcodebuild-wire-ios-protos.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-protos.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireProtos
         if: ${{ inputs.wire-ios-protos || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-protos.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-protos.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireProtos" --verbose
 
       - name: Test WireProtos
         if: ${{ inputs.wire-ios-protos || inputs.all }}
@@ -326,12 +333,13 @@ jobs:
           echo "Building WireMockTransport..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -resultBundlePath xcodebuild-wire-ios-mocktransport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireMockTransport
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-mocktransport.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-mocktransport.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireMockTransport" --verbose
 
       - name: Test WireMockTransport
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
@@ -349,12 +357,13 @@ jobs:
           echo "Building WireDataModel..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -resultBundlePath xcodebuild-wire-ios-data-model.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireDataModel
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-data-model.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-data-model.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireDataModel" --verbose
 
       - name: Test WireDataModel
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
@@ -371,12 +380,13 @@ jobs:
           echo "Building WireAPI..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAPI -resultBundlePath xcodebuild-wire-api.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireAPI
         if: ${{ inputs.wire-api || inputs.all }}
-        with:
-          results: xcodebuild-wire-api.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-api.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireAPI" --verbose
 
       - name: Test WireAPI
         if: ${{ inputs.wire-api || inputs.all }}
@@ -394,12 +404,13 @@ jobs:
           echo "Building WireDomain..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomain -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireDomain
         if: ${{ inputs.wire-domain || inputs.all }}
-        with:
-          results: xcodebuild-wire-domain.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-domain.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireDomain" --verbose
 
       - name: Test WireDomain
         if: ${{ inputs.wire-domain || inputs.all }}
@@ -417,12 +428,13 @@ jobs:
           echo "Building WireRequestStrategy..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -resultBundlePath xcodebuild-wire-ios-request-strategy.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireRequestStrategy
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-request-strategy.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-request-strategy.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireRequestStrategy" --verbose
 
       - name: Test WireRequestStrategy
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
@@ -440,12 +452,13 @@ jobs:
           echo "Building WireShareEngine..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -resultBundlePath xcodebuild-wire-ios-share-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireShareEngine
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-share-engine.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-share-engine.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireShareEngine" --verbose
 
       - name: Test WireShareEngine
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
@@ -463,12 +476,13 @@ jobs:
           echo "Building WireSyncEngine..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -resultBundlePath xcodebuild-wire-ios-sync-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireSyncEngine
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-sync-engine.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-sync-engine.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireSyncEngine" --verbose
 
       - name: Test WireSyncEngine
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
@@ -527,12 +541,13 @@ jobs:
           echo "Building WireNotificationEngine..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -resultBundlePath xcodebuild-wire-ios-notification-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - name: Run Danger for WireNotificationEngine
         if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-notification-engine.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-ios-notification-engine.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireNotificationEngine" --verbose
 
       - name: Test WireNotificationEngine
         if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
