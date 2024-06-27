@@ -131,11 +131,11 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     }
 
     func testTooManyDevicesScreen() {
-        runSnapshotTest(for: .clientManagement(clients: [], credentials: nil))
+        runSnapshotTest(for: .clientManagement(clients: []))
     }
 
     func testClientRemovalScreen() {
-        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()], credentials: nil))
+        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()]))
     }
 
     func testAddEmailPasswordScreen() {
