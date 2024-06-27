@@ -30,7 +30,7 @@ protocol UpdateEventsRepositoryProtocol {
     /// the self client has not had an active push channel.
 
     func pullPendingEvents() async throws
-    
+
     /// Fetch the next batch pending events from the database.
     /// 
     /// The batch is already sorted, such that the first element is the oldest
