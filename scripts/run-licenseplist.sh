@@ -18,22 +18,9 @@ set -Eeuo pipefail
 # along with this program. If not, see http://www.gnu.org/licenses/.
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-DIRECTORY="$REPO_ROOT/scripts"
-LICENSEPLIST="$DIRECTORY/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
+LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
 PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
 DOWNLOADS_DIR="$REPO_ROOT/DerivedData/LicensePlist-tmp"
-
-
-# Resolve Executable
-
-if [[ ! -f "$LICENSEPLIST" ]]; then
-
-echo ""
-echo "ℹ️  Resolve Executable"
-
-xcrun --sdk macosx swift package --package-path "$DIRECTORY" resolve
-
-fi
 
 
 # Resolve Dependencies

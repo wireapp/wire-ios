@@ -58,6 +58,9 @@ else
 fi
 echo ""
 
+echo "ℹ️  Resolve Swift Packages for Scripts..."
+xcrun --sdk macosx swift package --package-path scripts resolve
+
 echo "ℹ️  Installing ImageMagick..."
 if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
     echo "Skipping ImageMagick install because not running on CI"
