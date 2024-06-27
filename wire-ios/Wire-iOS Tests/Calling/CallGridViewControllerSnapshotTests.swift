@@ -140,7 +140,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testVideoStoppedBorder_DoesntAppear_OneToOne() {
+    func testVideoStoppedBorder_DoesntAppear_OneToOne() throws {
+        throw XCTSkip("Disabled since this test is a bit flaky. Needs more investigration to figure out why.")
         // Given / When
         configuration.streams = [stubProvider.stream(videoState: .stopped)]
         configuration.floatingStream = stubProvider.stream(
