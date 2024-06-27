@@ -33,12 +33,7 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    var appliedSearchText = "" {
-        didSet { reloadConversationList() }
-    }
-
-    fileprivate struct Section<Conversation>: DifferentiableSection
-    where Conversation: ConversationListItem {
+    fileprivate struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
 
@@ -117,7 +112,7 @@ final class ConversationListViewModel: NSObject {
                 }
             }
 
-            static func == (lhs: ConversationListViewModel.Section<Conversation>.Kind, rhs: ConversationListViewModel.Section<Conversation>.Kind) -> Bool {
+            static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
                 switch (lhs, rhs) {
                 case (.conversations, .conversations):
                     return true
@@ -138,10 +133,10 @@ final class ConversationListViewModel: NSObject {
         }
 
         var kind: Kind
-        var items: [SectionItem<Conversation>]
+        var items: [SectionItem]
         var collapsed: Bool
 
-        var elements: [SectionItem<Conversation>] {
+        var elements: [SectionItem] {
             return collapsed ? [] : items
         }
 
@@ -149,7 +144,7 @@ final class ConversationListViewModel: NSObject {
         ///
         /// - Parameter item: item to search
         /// - Returns: the index of the item
-        func index(for item: Conversation) -> Int? {
+        func index(for item: ConversationListItem) -> Int? {
             return items.firstIndex(of: SectionItem(item: item, kind: kind))
         }
 
@@ -161,8 +156,7 @@ final class ConversationListViewModel: NSObject {
             return kind.identifier
         }
 
-        init<C>(source: ConversationListViewModel.Section, elements: C)
-        where C: Collection, C.Element == SectionItem<Conversation> {
+        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
             self.kind = source.kind
             self.collapsed = source.collapsed
             items = Array(elements)
@@ -216,18 +210,16 @@ final class ConversationListViewModel: NSObject {
     }
 
     // Local copies of the lists.
-    private var sections: [Section<ZMConversation>] = []
+    private var sections: [Section] = []
 
-    private typealias DiffKitSection = ArraySection<Int, SectionItem<ZMConversation>>
+    private typealias DiffKitSection = ArraySection<Int, SectionItem>
 
     /// make items has different hash in different sections
-    struct SectionItem<Conversation>: Hashable, Differentiable
-    where Conversation: ConversationListItem {
-
-        let item: Conversation
+    struct SectionItem: Hashable, Differentiable {
+        let item: ConversationListItem
         let isFavorite: Bool
 
-        fileprivate init(item: Conversation, kind: Section<ZMConversation>.Kind) {
+        fileprivate init(item: ConversationListItem, kind: Section.Kind) {
             self.item = item
             self.isFavorite = kind == .favorites
         }
@@ -239,8 +231,9 @@ final class ConversationListViewModel: NSObject {
             hasher.combine(hashableItem)
         }
 
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.isFavorite == rhs.isFavorite && lhs.item == rhs.item
+        static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
+            return lhs.isFavorite == rhs.isFavorite &&
+            lhs.item == rhs.item
         }
     }
 
@@ -317,7 +310,7 @@ final class ConversationListViewModel: NSObject {
         return !sections[section].items.isEmpty
     }
 
-    private func kind(of sectionIndex: Int) -> Section<ZMConversation>.Kind? {
+    private func kind(of sectionIndex: Int) -> Section.Kind? {
         guard sections.indices.contains(sectionIndex) else { return nil }
 
         return sections[sectionIndex].kind
@@ -346,7 +339,7 @@ final class ConversationListViewModel: NSObject {
         return sections[sectionIndex].elements.count
     }
 
-    private func numberOfItems(of kind: Section<ZMConversation>.Kind) -> Int? {
+    private func numberOfItems(of kind: Section.Kind) -> Int? {
         return sections.first(where: { $0.kind == kind })?.elements.count ?? nil
     }
 
@@ -368,7 +361,7 @@ final class ConversationListViewModel: NSObject {
     // swiftlint:disable todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
-    func indexPath(for item: ZMConversation?) -> IndexPath? {
+    func indexPath(for item: ConversationListItem?) -> IndexPath? {
         guard let item else { return nil }
 
         for (sectionIndex, section) in sections.enumerated() {
@@ -380,7 +373,7 @@ final class ConversationListViewModel: NSObject {
         return nil
     }
 
-    private static func newList(for kind: Section<ZMConversation>.Kind, conversationDirectory: ConversationDirectoryType) -> [SectionItem<ZMConversation>] {
+    private static func newList(for kind: Section.Kind, conversationDirectory: ConversationDirectoryType) -> [SectionItem] {
         let conversationListType: ConversationListType
         switch kind {
         case .contactRequests:
@@ -534,15 +527,7 @@ final class ConversationListViewModel: NSObject {
             kinds = [.conversations, .contactRequests]
         }
 
-        var sections = kinds.map { kind in
-            Section(
-                kind: kind,
-                conversationDirectory: conversationDirectory,
-                collapsed: state.collapsed.contains(kind.identifier)
-            )
-        }
-        let searchUseCase = SearchConversationsUseCase(conversationContainers: sections)
-        return searchUseCase.invoke(searchText: appliedSearchText)
+        return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
@@ -553,10 +538,10 @@ final class ConversationListViewModel: NSObject {
         return nil
     }
 
-    private func update(for kind: Section<ZMConversation>.Kind? = nil) {
+    private func update(for kind: Section.Kind? = nil) {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
 
-        var newValue: [Section<ZMConversation>]
+        var newValue: [Section]
         if let kind,
            let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
@@ -778,7 +763,7 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
         }
     }
 
-    private func kind(of conversationListType: ConversationListType) -> Section<ZMConversation>.Kind? {
+    private func kind(of conversationListType: ConversationListType) -> Section.Kind? {
 
         let kind: Section.Kind?
 
@@ -801,17 +786,5 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
         return kind
 
-    }
-}
-
-extension ConversationListViewModel.Section: SearchableConversationContainer {
-
-    var conversations: [ZMConversation] {
-        // TODO: don't force cast!
-        items.map { $0.item as! ZMConversation }
-    }
-
-    mutating func removeConversation(at index: Int) {
-        items.remove(at: index)
     }
 }

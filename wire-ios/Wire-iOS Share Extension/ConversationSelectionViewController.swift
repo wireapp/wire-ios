@@ -50,7 +50,7 @@ final class ConversationSelectionViewController: UITableViewController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {

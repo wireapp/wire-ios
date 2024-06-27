@@ -322,14 +322,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
     }
 
     private func setupSearchController() {
-
-        let searchController = UISearchController(searchResultsController: .none)
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.isTranslucent = false
-        searchController.searchResultsUpdater = self
-
-        navigationItem.searchController = searchController
+        navigationItem.searchController = .init(searchResultsController: .none)
     }
 
     // MARK: - No Contact Label Management
@@ -373,17 +366,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         } else {
             filterContainerView.isHidden = true
         }
-    }
 
-    @objc
-    func applySearchText() {
-        let searchText = navigationItem
-            .searchController?
-            .searchBar
-            .text?
-            .trimmingCharacters(in: .whitespaces)
-            .lowercased() ?? ""
-        listContentController.listViewModel.appliedSearchText = searchText
     }
 
     // MARK: - Selection Management
