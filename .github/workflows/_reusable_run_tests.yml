@@ -400,8 +400,8 @@ jobs:
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          bundle exec danger --verbose
-          
+          bundle exec danger --danger_id=wire_ios --verbose
+
       - name: Test Wire-iOS German Locale Tests
         if: ${{ inputs.wire-ios || inputs.all }}
         run: |

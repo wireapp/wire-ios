@@ -1,5 +1,8 @@
 require 'json'
 
+warn "fail following"
+fail ENV["XCRESULT_PATH"]
+
 xcode_summary.inline_mode = true
 xcode_summary.report 'xcodebuild-wire-ios.xcresult'
 
