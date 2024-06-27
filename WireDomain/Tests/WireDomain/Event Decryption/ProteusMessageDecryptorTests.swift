@@ -132,7 +132,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         }
     }
 
-    func testItThrowsWhenEncryptedPayloadIsTooBig() async throws {
+    func testItThrowsWhenCiphertextIsTooBig() async throws {
         // Given a message that exceeds the max ciphertext size
         let longMessage = String(repeating: "!", count: 20000)
         let invalidEvent = Scaffolding.makeEvent(content: .ciphertext(longMessage))
@@ -148,6 +148,25 @@ final class ProteusMessageDecryptorTests: XCTestCase {
             XCTFail("unexpected error: \(error)")
         }
     }
+
+    func testItThrowsWhenExternalCiphertextIsTooBig() async throws {
+        // Given an external message that exceeds the max ciphertext size
+        var invalidEvent = Scaffolding.makeEvent(content: .ciphertext("valid message"))
+        let longMessage = String(repeating: "!", count: 20000)
+        invalidEvent.externalData = .ciphertext(longMessage)
+
+        // When
+        do {
+            _ = try await sut.decryptedEventData(from: invalidEvent)
+            XCTFail("expected an error but none was thrown")
+            return
+        } catch ProteusError.decodeError {
+            // Then we got the right error
+        } catch {
+            XCTFail("unexpected error: \(error)")
+        }
+    }
+
 
     func testItDecryptsAnEventFromANewSenderAndUpdatesSecurityLevel() async throws {
         // Given

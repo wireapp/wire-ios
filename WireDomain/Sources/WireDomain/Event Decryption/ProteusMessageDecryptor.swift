@@ -65,17 +65,10 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             return eventData
         }
 
-        // Validate ciphertext.
-        guard ciphertext != ZMFailedToCreateEncryptedMessagePayloadString else {
-            throw ProteusMessageDecryptorError.senderFailedToEncrypt
-        }
+        let ciphertextData = try validateCiphertext(ciphertext)
 
-        // TODO: What about external data?
-        guard
-            ciphertext.count <= maxCiphertextSize,
-            let ciphertextData = Data(base64Encoded: ciphertext)
-        else {
-            throw ProteusError.decodeError
+        if case .ciphertext(let externalCiphertext) = eventData.externalData {
+            try validateExternalCiphertext(externalCiphertext)
         }
 
         let context = try await extractContext(from: eventData)
@@ -95,6 +88,30 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         var decryptedEvent = eventData
         decryptedEvent.message = .plaintext(plaintextData.base64String())
         return decryptedEvent
+    }
+
+    private func validateCiphertext(_ ciphertext: String) throws -> Data {
+        guard ciphertext != ZMFailedToCreateEncryptedMessagePayloadString else {
+            throw ProteusMessageDecryptorError.senderFailedToEncrypt
+        }
+
+        guard
+            ciphertext.count <= maxCiphertextSize,
+            let ciphertextData = Data(base64Encoded: ciphertext)
+        else {
+            throw ProteusError.decodeError
+        }
+
+        return ciphertextData
+    }
+
+    private func validateExternalCiphertext(_ ciphertext: String) throws {
+        // External messages aren't encrypted via Proteus, instead they are symmetrically
+        // encrypted with a key that is E2EE via Proteus. Decryption of external messages
+        // happens during event processing, here we just want to validate it.
+        guard ciphertext.count <= maxCiphertextSize else {
+            throw ProteusError.decodeError
+        }
     }
 
     private func extractContext(
