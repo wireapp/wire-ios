@@ -22,30 +22,27 @@ LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePl
 PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
 DOWNLOADS_DIR="$REPO_ROOT/DerivedData/LicensePlist-tmp"
 
+# Cleanup old artifacts
+rm -rf "$DOWNLOADS_DIR"
 
 # Resolve Dependencies
-
 echo ""
 echo "ℹ️  Resolve Dependencies"
-
 ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
 
 # Copy Dependencies
-
 echo ""
 echo "ℹ️  Copy Dependencies"
 
-rm -rf "$DOWNLOADS_DIR"
-
+### Swift Packages
 cp -R "$PACKAGES_DIR" "$DOWNLOADS_DIR"
 
+### Carthage
 cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$DOWNLOADS_DIR/checkouts"
 
 
 # Generate Licenses
-
 echo ""
 echo "ℹ️  Generate Licenses"
-
 "$LICENSEPLIST" --package-sources-path "$DOWNLOADS_DIR" --config-path ".license_plist.yml"
