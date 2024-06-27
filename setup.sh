@@ -109,7 +109,7 @@ echo ""
 echo "ℹ️  Generate Licenses"
 if [[ -n "${CI-}" ]]; then
     # CI
-    scripts/run-licenseplist.sh
+    scripts/generate-licenses.sh
 else
     # Local Machine
     echo "Skipping as CI is not is defined"

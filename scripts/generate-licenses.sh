@@ -20,10 +20,10 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
 PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
-DOWNLOADS_DIR="$REPO_ROOT/DerivedData/LicensePlist-tmp"
+TMP_DIR="$REPO_ROOT/DerivedData/Generate-Licenses"
 
 # Cleanup old artifacts
-rm -rf "$DOWNLOADS_DIR"
+rm -rf "$TMP_DIR"
 
 # Resolve Dependencies
 echo ""
@@ -36,13 +36,13 @@ echo ""
 echo "ℹ️  Copy Dependencies"
 
 ### Swift Packages
-cp -R "$PACKAGES_DIR" "$DOWNLOADS_DIR"
+cp -R "$PACKAGES_DIR" "$TMP_DIR"
 
 ### Carthage
-cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$DOWNLOADS_DIR/checkouts"
+cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$TMP_DIR/checkouts"
 
 
 # Generate Licenses
 echo ""
 echo "ℹ️  Generate Licenses"
-"$LICENSEPLIST" --package-sources-path "$DOWNLOADS_DIR" --config-path ".license_plist.yml"
+"$LICENSEPLIST" --package-sources-path "$TMP_DIR" --config-path ".license_plist.yml"
