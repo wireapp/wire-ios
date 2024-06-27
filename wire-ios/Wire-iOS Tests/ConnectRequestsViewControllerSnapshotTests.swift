@@ -26,10 +26,11 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!
     var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
         mockUser.zmAccentColor = .amber
         mockUser.handle = "bruno"
@@ -51,6 +52,7 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
         mockConnectionRequest = nil
@@ -59,7 +61,7 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
     }
 
     func testForOneRequest() {
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     func testForTwoRequests() {
@@ -73,6 +75,6 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
         sut.connectionRequests = [secondConnectionRequest, mockConnectionRequest]
         sut.reload(animated: false)
 
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 }

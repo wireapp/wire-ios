@@ -30,13 +30,13 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     private var serviceUser: MockServiceUserType!
     private var selfUser: MockUserType!
     private var otherUser: MockUserType!
-
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
@@ -49,6 +49,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
 
     // MARK: - tearDown
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         selfUser = nil
         otherUser = nil
@@ -136,7 +137,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             sut.selectPreviousUser()
         }
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatHighlightedItemStaysAtMiddleAfterSelectedAnUserAtTheMiddle() {
@@ -161,7 +162,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             sut.selectPreviousUser()
         }
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatLowestItemIsNotHighlightedIfKeyboardIsNotCollapsed() {
@@ -174,7 +175,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             UIResponder.keyboardFrameEndUserInfoKey: CGRect(x: 0, y: 0, width: 0, height: 100),
             UIResponder.keyboardAnimationDurationUserInfoKey: TimeInterval(0.0)])
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItDoesNotCrashWithNoResults() {

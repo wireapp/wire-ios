@@ -28,7 +28,17 @@ final class FontBookSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
 
     // MARK: Helper Method
 

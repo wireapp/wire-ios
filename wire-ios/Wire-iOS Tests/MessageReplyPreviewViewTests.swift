@@ -41,11 +41,17 @@ extension UIView {
 
 final class MessageReplyPreviewViewTests: XCTestCase {
 
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         invalidateStyle()
         super.tearDown()
     }
