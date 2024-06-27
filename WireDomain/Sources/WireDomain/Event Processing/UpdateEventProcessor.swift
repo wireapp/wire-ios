@@ -36,11 +36,11 @@ protocol UpdateEventProcessorProtocol {
 
 struct UpdateEventProcessor {
 
-    let conversationEventProcessor: ConversationEventProcessor
-    let featureconfigEventProcessor: FeatureConfigEventProcessor
-    let federationEventProcessor: FederationEventProcessor
-    let userEventProcessor: UserEventProcessor
-    let teamEventProcessor: TeamEventProcessor
+    let conversationEventProcessor: any ConversationEventProcessorProtocol
+    let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
+    let federationEventProcessor: any FederationEventProcessorProtocol
+    let userEventProcessor: any UserEventProcessorProtocol
+    let teamEventProcessor: any TeamEventProcessorProtocol
 
     func processEvent(_ event: UpdateEvent) async throws {
         switch event {
