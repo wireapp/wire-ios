@@ -36,7 +36,7 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
     /// The encoded data of the event envelope.
 
     @NSManaged
-    public var data: Data?
+    public var data: Data
 
     /// The sort index of the event.
     ///
