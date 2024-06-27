@@ -9042,7 +9042,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SETTINGS_DIR=\"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Settings.bundle\"\n\nif [ $IS_INTERNAL_BUILD == '0' ]; then\n    echo \"Copy internal Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_internal.plist\" \"$SETTINGS_DIR/Root.plist\" \nelse\n    echo \"Copy public Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_public.plist\" \"$SETTINGS_DIR/Root.plist\"\nfi\n \n";
+			shellScript = "SETTINGS_DIR=\"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Settings.bundle\"\n\nif [ $IS_INTERNAL_BUILD == '1' ]; then\n    echo \"Copy internal Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_internal.plist\" \"$SETTINGS_DIR/Root.plist\" \nelse\n    echo \"Copy public Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_public.plist\" \"$SETTINGS_DIR/Root.plist\"\nfi\n";
 		};
 		8795A5D21D34D1A50024101B /* EmbedBuildInfo */ = {
 			isa = PBXShellScriptBuildPhase;
