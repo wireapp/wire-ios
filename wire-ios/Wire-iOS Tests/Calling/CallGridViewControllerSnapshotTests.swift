@@ -141,7 +141,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     func testVideoStoppedBorder_DoesntAppear_OneToOne() throws {
-        throw XCTSkip("Disabled since this test is a bit flaky. Needs more investigration to figure out why.")
+        throw XCTSkip("This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time.")
         // Given / When
         configuration.streams = [stubProvider.stream(videoState: .stopped)]
         configuration.floatingStream = stubProvider.stream(
