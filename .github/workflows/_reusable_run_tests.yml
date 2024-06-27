@@ -26,9 +26,9 @@ on:
         default: false
         required: false
       wire-domain:
-          type: boolean
-          default: false
-          required: false
+        type: boolean
+        default: false
+        required: false
       wire-ios-transport:
         type: boolean
         default: false
