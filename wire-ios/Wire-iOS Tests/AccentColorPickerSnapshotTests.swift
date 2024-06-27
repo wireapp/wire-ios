@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import SwiftUI
 import WireCommonComponents
 import XCTest
@@ -27,15 +26,16 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: AccentColorPickerController!
-    var selfUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: AccentColorPickerController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         selfUser = MockUserType.createDefaultSelfUser()
         selfUser.accentColorValue = AccentColor.default.rawValue
         userSession = UserSessionMock(mockUser: selfUser)
@@ -46,9 +46,11 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         selfUser = nil
         userSession = nil
         sut = nil
+
         super.tearDown()
     }
 
@@ -59,7 +61,7 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
 }
