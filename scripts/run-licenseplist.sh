@@ -48,4 +48,4 @@ cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$DOWNLOADS_DIR/checkouts"
 echo ""
 echo "ℹ️  Generate Licenses"
 
-"$LICENSEPLIST" --sandbox-mode --package-sources-path "$DOWNLOADS_DIR" "$@"
+"$LICENSEPLIST" --package-sources-path "$DOWNLOADS_DIR" --config-path ".license_plist.yml"

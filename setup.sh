@@ -107,7 +107,7 @@ echo ""
 echo "ℹ️  Generate Licenses"
 if [[ "${CI-}" ]]; then
     # CI
-    scripts/run-licenseplist.sh --config-path ".license_plist.yml"
+    scripts/run-licenseplist.sh
 else
     # Local Machine
     echo "Skipping as CI is not is defined"
