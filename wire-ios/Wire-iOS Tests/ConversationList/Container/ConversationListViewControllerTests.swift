@@ -34,11 +34,13 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
 
         coreDataFixture = .init()
@@ -82,6 +84,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         window.isHidden = true
         window.rootViewController = nil
         window = nil
@@ -98,7 +101,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForNoConversations() {
         window.rootViewController = nil
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForEverythingArchived() {
@@ -108,7 +111,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
         window.rootViewController = nil
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     // MARK: - Helpers

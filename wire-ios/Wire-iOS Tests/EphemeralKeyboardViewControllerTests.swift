@@ -24,29 +24,31 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 
     var sut: EphemeralKeyboardViewController!
     var conversation: ZMConversation!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         conversation = self.createGroupConversation()
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         sut = EphemeralKeyboardViewController(conversation: conversation)
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         conversation = nil
         sut = nil
         super.tearDown()
     }
 
     func testThatItRendersCorrectInitially() {
-        sut.overrideUserInterfaceStyle = .light
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectIntially_DarkMode() {
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
 }

@@ -36,10 +36,11 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
     var sut: DeviceInfoViewController<DeviceDetailsView>!
     var client: UserClient!
     var mockContextProvider: ContextProvider!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
         let otherYearFormatter = WRDateFormatter.otherYearFormatter
         XCTAssertEqual(
@@ -51,6 +52,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         client = nil
         coreDataFixture = nil
@@ -100,11 +102,9 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     func setupWrappedInNavigationController(
-        mode: UIUserInterfaceStyle = .light,
         viewModel: DeviceInfoViewModel
     ) -> UINavigationController {
         sut = .init(rootView: DeviceDetailsView(viewModel: viewModel))
-        sut.overrideUserInterfaceStyle = mode
         return sut.wrapInNavigationController()
     }
 
@@ -117,9 +117,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsDisabled() {
@@ -127,13 +128,14 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false
+            isE2eIdentityEnabled: false,
+            proteusKeyFingerPrint: mockFingerPrint,
+            isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testGivenSelfClientWhenE2eidentityViewIsDisabled() {
@@ -145,9 +147,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValid() {
@@ -159,9 +162,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
@@ -173,9 +177,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevoked() {
@@ -187,9 +192,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpired() {
@@ -201,9 +207,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
@@ -215,9 +222,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
-        let viewController = setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityIsEnabledAndCertificateIsExpiredForOtherClient() {
@@ -229,9 +237,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityIsEnabledAndCertificateIsNotActivatedForOtherClient() {
@@ -243,9 +252,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        let viewController = setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper.verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsInvalid() {
@@ -257,9 +267,10 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
+
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
 
-        verify(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     // MARK: - Dark mode
@@ -273,9 +284,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsDisabledInDarkMode() {
@@ -287,9 +301,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
                                          proteusKeyFingerPrint: mockFingerPrint,
                                          isSelfClient: false
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidInDarkMode() {
@@ -301,9 +318,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
@@ -315,9 +335,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
@@ -329,9 +352,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
@@ -343,9 +369,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkModeForOtherClient() {
@@ -357,9 +386,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkModeForOtherClient() {
@@ -371,9 +403,12 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
 
-        verify(matching: viewController)
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: viewController)
     }
 
 }

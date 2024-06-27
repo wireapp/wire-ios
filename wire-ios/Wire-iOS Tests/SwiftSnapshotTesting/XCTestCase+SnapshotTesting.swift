@@ -233,34 +233,6 @@ extension XCTestCase {
     }
 
     @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
-    func verify(matching value: UIViewController,
-                customSize: CGSize? = nil,
-                named name: String? = nil,
-                record recording: Bool = false,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        var config: ViewImageConfig?
-        if let customSize {
-            config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
-                                     size: customSize,
-                                     traits: UITraitCollection())
-        }
-
-        let failure = verifySnapshot(matching: value,
-                                     as: config == nil ? .image(precision: precision, perceptualPrecision: perceptualPrecision) : .image(on: config!, precision: precision, perceptualPrecision: perceptualPrecision),
-                                     named: name,
-                                     record: recording,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
-    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIView,
                 named name: String? = nil,
                 file: StaticString = #file,

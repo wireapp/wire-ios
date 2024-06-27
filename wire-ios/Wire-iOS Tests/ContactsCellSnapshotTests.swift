@@ -26,12 +26,13 @@ final class ContactsCellSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: ContactsCell!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         XCTestCase.accentColor = .blue
         sut = ContactsCell()
     }
@@ -39,6 +40,7 @@ final class ContactsCellSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }

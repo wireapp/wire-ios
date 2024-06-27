@@ -26,16 +26,20 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     var sut: ConversationCreationController!
 
+    private var snapshotHelper: SnapshotHelper!
+
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .purple
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -45,37 +49,45 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     func testForEditingTextField() {
         createSut(isTeamMember: false)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testTeamGroupOptionsCollapsed() {
         createSut(isTeamMember: true)
 
-        verify(matching: sut)
-    }
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
 
-    func testTeamGroupOptionsCollapsed_dark() {
-        createSut(isTeamMember: true, userInterfaceStyle: .dark)
-
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testTeamGroupOptionsExpanded() {
         createSut(isTeamMember: true)
         sut.expandOptions()
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method
 
-    private func createSut(
-        isTeamMember: Bool,
-        userInterfaceStyle: UIUserInterfaceStyle = .light
-    ) {
+    private func createSut(isTeamMember: Bool) {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
         sut = ConversationCreationController(preSelectedParticipants: nil, userSession: mockUserSession)
-        sut.overrideUserInterfaceStyle = userInterfaceStyle
     }
 }

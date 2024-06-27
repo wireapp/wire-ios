@@ -23,12 +23,12 @@ import XCTest
 final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
 
     var sut: FolderCreationController!
-
     var coreDataFixture: CoreDataFixture!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
 
         let convo = createTeamGroupConversation()
@@ -38,6 +38,7 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
         super.tearDown()
@@ -51,6 +52,6 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
 
         sut.viewDidAppear(false)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

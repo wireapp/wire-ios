@@ -23,37 +23,40 @@ import XCTest
 final class ConversationListHeaderViewSnapshotTests: XCTestCase {
 
     var sut: ConversationListHeaderView!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = setupConversationListHeaderView()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForExpanded() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForCollapsed() {
         sut = setupConversationListHeaderView(isCollapsed: true)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForBadgeNumberHitLimit() {
         sut = setupConversationListHeaderView(folderBadge: 999)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForBadgeNumberEquals10() {
         sut = setupConversationListHeaderView(folderBadge: 10)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
-    private func setupConversationListHeaderView (
+    private func setupConversationListHeaderView(
         folderBadge: Int = 0,
         isCollapsed: Bool = false
     ) -> ConversationListHeaderView {

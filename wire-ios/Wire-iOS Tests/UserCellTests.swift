@@ -29,13 +29,13 @@ final class UserCellTests: XCTestCase {
     private var teamID = UUID()
     private var conversation: MockGroupDetailsConversation!
     private var mockUser: MockUserType!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: teamID)
 
         mockUser = MockUserType.createUser(name: "James Hetfield", inTeam: teamID)
@@ -47,6 +47,7 @@ final class UserCellTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         conversation = nil
         sut = nil
         super.tearDown()

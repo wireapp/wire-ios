@@ -27,11 +27,13 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
     typealias SketchColors = SemanticColors.DrawingColors
     var sut: SketchColorPickerController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = SketchColorPickerController()
 
         sut.sketchColors = SketchColor.getAllColors()
@@ -41,6 +43,7 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -48,12 +51,12 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
     // MARK: - Tests
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForAllItemsAreVisible() {
         sut.view.frame = CGRect(x: 0, y: 0, width: 768, height: 48)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForColorButtonBumpedThreeTimes() {
@@ -63,6 +66,6 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
         }
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

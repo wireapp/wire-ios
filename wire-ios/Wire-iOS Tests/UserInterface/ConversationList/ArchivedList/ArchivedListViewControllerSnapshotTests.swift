@@ -24,13 +24,16 @@ import XCTest
 final class ArchivedListViewControllerSnapshotTests: XCTestCase {
 
     private var userSessionMock: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSessionMock = .init()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         userSessionMock = nil
         super.tearDown()
     }
@@ -45,7 +48,7 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         )
 
         let sut = ArchivedListViewController(userSession: userSessionMock)
-        verify(matching: UINavigationController(rootViewController: sut))
+        snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 
     func testNonEmpty() {
@@ -64,6 +67,6 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         )
 
         let sut = ArchivedListViewController(userSession: userSessionMock)
-        verify(matching: UINavigationController(rootViewController: sut))
+        snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 }

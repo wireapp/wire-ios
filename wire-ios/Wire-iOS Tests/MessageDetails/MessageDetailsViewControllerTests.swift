@@ -27,12 +27,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     var mockSelfUser: MockUserType!
     var otherUser: MockUserType!
     var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
@@ -42,6 +43,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     // MARK: - tearDown method
 
     override func tearDown() {
+        snapshotHelper = nil
         SelfUser.provider = nil
         conversation = nil
 
@@ -379,17 +381,21 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         return receipts
     }
 
-    private func verify(_ detailsViewController: MessageDetailsViewController,
-                        configuration: ((MessageDetailsViewController) -> Void)? = nil,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    private func verify(
+        _ detailsViewController: MessageDetailsViewController,
+        configuration: ((MessageDetailsViewController) -> Void)? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         detailsViewController.reloadData()
         configuration?(detailsViewController)
-        verify(matching: detailsViewController,
-               file: file,
-               testName: testName,
-               line: line)
+        snapshotHelper.verify(
+            matching: detailsViewController,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
 }
