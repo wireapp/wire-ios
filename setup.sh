@@ -60,6 +60,7 @@ echo ""
 
 echo "ℹ️  Resolve Swift Packages for Scripts..."
 xcrun --sdk macosx swift package --package-path scripts resolve
+echo "" 
 
 echo "ℹ️  Installing ImageMagick..."
 if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
@@ -99,6 +100,15 @@ echo "ℹ️  Doing additional postprocessing..."
 scripts/postprocess.sh
 echo ""
 
+echo "ℹ️  Generate Licenses"
+if [[ "${CI-}" ]]; then # skip cache bootstrap for CI
+    scripts/run-licenseplist.sh --config-path ".license_plist.yml"
+else
+    echo "Skipping as CI is not is defined"
+fi
+echo ""
+
+
 echo "ℹ️ Install Git hook"
 scripts/githooks-install.sh
 echo ""
@@ -116,3 +126,4 @@ echo ""
 )
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
+
