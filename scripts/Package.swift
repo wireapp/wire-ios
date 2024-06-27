@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-// How to update packages?
+// How to add/update packages?
 // 
 // 1. Go to GitHub repository, the latest release.
 // 2. Copy url of <*.artifactbundle.zip> and enter here as 'url'.
@@ -12,6 +12,7 @@ import PackageDescription
 // 5. Save this file.
 // 6. Go to repository './scripts/'.
 // 7. Run `swift package update` to fetch new artifacts.
+// 8. Add license file manually to `.license_plist`. The tool does not include SPM binaries automatically.
 
 let package = Package(
     name: "Scripts",
