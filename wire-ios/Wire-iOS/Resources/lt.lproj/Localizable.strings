@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Jei susiduriate su naujienų pranešimo tarnybos nesklandumais, „Wire“ pagalbos centras gali paprašyti nustatyti atpažinimo ženklą iš naujo.";
 "self.settings.advanced.reset_push_token_alert.title" = "Naujienų pranešimų tarnybos atpažinimo ženklas nustatytas iš naujo";
 "self.settings.advanced.reset_push_token_alert.message" = "Pranešimai bus atkurti po kelių sekundžių.";
-"self.settings.advanced.version_technical_details.title" = "Versijos techniniai duomenys";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Duomenų naudojimo leidimas";

@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Eğer anlık bildirimler ile sorun yaşıyorsanız, Wire Destek sizden jetonu sıfırlamanızı isteyebilir.";
 "self.settings.advanced.reset_push_token_alert.title" = "Anlık Belirteş sıfırlandı";
 "self.settings.advanced.reset_push_token_alert.message" = "Bildirimleri birkaç saniye içinde geri yüklenecektir.";
-"self.settings.advanced.version_technical_details.title" = "Versiyonun Teknik Ayrıntıları";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Veri Kullanımı İzinleri";

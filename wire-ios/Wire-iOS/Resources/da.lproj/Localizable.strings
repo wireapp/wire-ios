@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Hvis du oplever problemer med push notifikationer, kan Wire Support bede dig om at nulstille denne token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push token er blevet nulstillet";
 "self.settings.advanced.reset_push_token_alert.message" = "Notifikationer vil blive gendannet ved få sekunder.";
-"self.settings.advanced.version_technical_details.title" = "Version Tekniske Detaljer";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";

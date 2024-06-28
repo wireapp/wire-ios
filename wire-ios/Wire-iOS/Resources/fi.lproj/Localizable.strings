@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Jos kohtaat ongelmia push-ilmoitusten kanssa. Wiren Tuki voi pyytää sinua nollaamaan tämän tunnuksen.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push-tunnus on nollattu";
 "self.settings.advanced.reset_push_token_alert.message" = "Ilmoitukset palautetaan muutamassa sekunnissa.";
-"self.settings.advanced.version_technical_details.title" = "Version Tekniset Tiedot";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";

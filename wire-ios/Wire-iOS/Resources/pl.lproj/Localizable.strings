@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Jeśli masz problemy z powiadomieniami, pomoc Wire może poprosić o zresetowanie powiadomień.";
 "self.settings.advanced.reset_push_token_alert.title" = "Powiadomienia zostały zresetowane";
 "self.settings.advanced.reset_push_token_alert.message" = "Powiadomienia zostaną przywrócone w ciągu kilku sekund.";
-"self.settings.advanced.version_technical_details.title" = "Dane techniczne wersji";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Uprawnienia użycia danych";

@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "当您遇到信息推送相关问题，Wire 建议您重置该Token。";
 "self.settings.advanced.reset_push_token_alert.title" = "信息推送Token已被重置";
 "self.settings.advanced.reset_push_token_alert.message" = "信息通知将在几秒钟内恢复。";
-"self.settings.advanced.version_technical_details.title" = "版本与技术信息";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "数据使用权限";

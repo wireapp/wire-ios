@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Als je problemen ondervindt met push-notificaties, kan Wire je vragen om deze token te herstellen.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push token is gereset";
 "self.settings.advanced.reset_push_token_alert.message" = "Notificaties zullen over een paar seconden worden hersteld.";
-"self.settings.advanced.version_technical_details.title" = "Technische details van deze versie";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Machtigingen voor datagebruik";

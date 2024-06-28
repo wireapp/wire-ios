@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Kui sul on probleeme teavitustega, Wire kasutajatugi võib paluda sul see võti lähtestada.";
 "self.settings.advanced.reset_push_token_alert.title" = "Võti on lähtestatud";
 "self.settings.advanced.reset_push_token_alert.message" = "Teavitused taastuvad mõne sekundi pärast.";
-"self.settings.advanced.version_technical_details.title" = "Versiooni tehnilised andmed";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Andmekasutuse õigused";

@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Si vous rencontrez des problèmes avec les notifications push, l'assistance de Wire peut vous demander de réinitialiser ce jeton.";
 "self.settings.advanced.reset_push_token_alert.title" = "Le jeton pour les notifications Push a été réinitialisé";
 "self.settings.advanced.reset_push_token_alert.message" = "Les notifications seront restaurées dans quelques secondes.";
-"self.settings.advanced.version_technical_details.title" = "Détails techniques de la version";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Utilisation des Données Personnelles";

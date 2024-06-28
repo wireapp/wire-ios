@@ -5414,10 +5414,6 @@ internal enum L10n {
               internal static let title = L10n.tr("Localizable", "self.settings.advanced.troubleshooting.submit_debug.title", fallback: "Debug Report")
             }
           }
-          internal enum VersionTechnicalDetails {
-            /// Version Technical Details
-            internal static let title = L10n.tr("Localizable", "self.settings.advanced.version_technical_details.title", fallback: "Version Technical Details")
-          }
         }
         internal enum ApnsLogging {
           /// APNS Logging

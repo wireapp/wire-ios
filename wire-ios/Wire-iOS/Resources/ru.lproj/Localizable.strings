@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "При возникновении проблем с push-уведомлениями, служба поддержки Wire может попросить вас обновить токен.";
 "self.settings.advanced.reset_push_token_alert.title" = "Токен Push-уведомлений был обновлен";
 "self.settings.advanced.reset_push_token_alert.message" = "Уведомления будут восстановлены в течение нескольких секунд.";
-"self.settings.advanced.version_technical_details.title" = "Техническая информация о версии";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Разрешение на использование данных";

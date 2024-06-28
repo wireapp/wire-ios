@@ -1296,7 +1296,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Se você tiver problemas com notificações, o Suporte do Wire pode solicitar que você redefinir esse token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Token de notificações foi redefinido";
 "self.settings.advanced.reset_push_token_alert.message" = "As notificações serão restauradas em poucos segundos.";
-"self.settings.advanced.version_technical_details.title" = "Detalhes técnicos da Versão";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Permissões de Uso de Dados";
