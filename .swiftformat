@@ -7,6 +7,7 @@
 --extensionacl on-declarations
 --ifdef outdent
 --stripunusedargs unnamed-only
+--patternlet inline
 
 --commas inline
 --typeblanklines preserve

@@ -26,22 +26,22 @@ extension UpdateEvent: Decodable {
 
         do {
             switch UpdateEventType(eventType) {
-            case let .conversation(eventType):
+            case .conversation(let eventType):
                 try self.init(eventType: eventType, from: decoder)
 
-            case let .featureConfig(eventType):
+            case .featureConfig(let eventType):
                 try self.init(eventType: eventType, from: decoder)
 
-            case let .federation(eventType):
+            case .federation(let eventType):
                 try self.init(eventType: eventType, from: decoder)
 
-            case let .user(eventType):
+            case .user(let eventType):
                 try self.init(eventType: eventType, from: decoder)
 
-            case let .team(eventType):
+            case .team(let eventType):
                 try self.init(eventType: eventType, from: decoder)
 
-            case let .unknown(eventType):
+            case .unknown(let eventType):
                 self = .unknown(eventType: eventType)
             }
         } catch {
