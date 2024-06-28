@@ -27,22 +27,6 @@ final class AnalyticsDecryptionFailedObserver: NSObject {
 
         super.init()
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(messageCannotBeDecrypted(_:)),
-            name: ZMConversation.failedToDecryptMessageNotificationName,
-            object: nil)
     }
 
-    @objc
-    private func messageCannotBeDecrypted(_ note: Notification?) {
-        var trackingInfo: [String: Any] = [:]
-        ["deviceClass",
-         "cause"].forEach {
-            if let value = note?.userInfo?[$0] {
-                trackingInfo[$0] = value
-            }
-        }
-        analytics.tagCannotDecryptMessage(withAttributes: trackingInfo, conversation: note?.object as? ZMConversation)
-    }
 }
