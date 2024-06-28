@@ -1,11 +1,12 @@
 --exclude Carthage, DerivedData
 
+--enable acronyms
+--enable blankLineAfterSwitchCase
+--disable hoistTry
+
 --extensionacl on-declarations
 --ifdef outdent
 --stripunusedargs unnamed-only
-
---enable acronyms
---enable blankLineAfterSwitchCase
 
 --commas inline
 --typeblanklines preserve
