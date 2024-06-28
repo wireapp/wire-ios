@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
 import XCTest
 
@@ -26,13 +25,15 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationCellBurstTimestampView!
-    var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationCellBurstTimestampView!
+    private var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         sut = ConversationCellBurstTimestampView()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))
@@ -43,6 +44,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
 
@@ -52,7 +54,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForIncludeDayOfWeekAndDot() {
@@ -65,7 +67,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForNotIncludeDayOfWeekAndDot() {
@@ -78,6 +80,6 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
