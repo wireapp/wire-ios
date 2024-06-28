@@ -20,13 +20,9 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
+final class NetworkConditionIndicatorView: UIView {
 
     private let label = UILabel()
-
-    override class var layerClass: AnyClass {
-        return ContinuousMaskLayer.self
-    }
 
     override var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: 32)
@@ -36,9 +32,10 @@ final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
         super.init(frame: .zero)
         isAccessibilityElement = true
         shouldGroupAccessibilityChildren = true
-
         backgroundColor = UIColor.accent()
-        shape = .relative(multiplier: 1, dimension: .height)
+        layer.cornerRadius = 16
+        layer.masksToBounds = true
+
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         NSLayoutConstraint.activate([
