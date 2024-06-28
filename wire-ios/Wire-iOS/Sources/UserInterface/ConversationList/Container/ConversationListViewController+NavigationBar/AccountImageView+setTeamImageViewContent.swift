@@ -37,6 +37,10 @@ extension AccountImageView {
             self.accountImage = InitialsRenderer(initials).renderImage()
         }
     }
+
+    func setInitialsImage(_ initials: String) {
+        accountImage = InitialsRenderer(initials).renderImage()
+    }
 }
 
 private final class InitialsRenderer: UIView {

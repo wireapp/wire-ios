@@ -59,8 +59,11 @@ extension ConversationListViewController {
             accountImageView.setTeamImageViewContent(teamImageViewContent)
             accountImageView.accessibilityValue = viewModel.account.teamName.map { L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue($0) }
             accountImageView.accessibilityIdentifier = viewModel.account.teamName.map { "\($0) team" }
+        } else if let imageData = viewModel.account.imageData, let image = UIImage(data: imageData) {
+            accountImageView.accountImage = image
         } else {
-            fatalError("TODO: set user image")
+            let personName = PersonName.person(withName: viewModel.account.userName, schemeTagger: nil)
+            accountImageView.setInitialsImage(personName.initials)
             accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(viewModel.account.userName)
         }
 
