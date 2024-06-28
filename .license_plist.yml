@@ -10,15 +10,6 @@ options:
   sandboxMode: true
 
 manual:
-  - source: https://github.com/mono0926/LicensePlist # SPM Binary
-    name: LicensePlist
-    file: scripts/ManualLicenses/LicensePlist.LICENSE.txt
-  - source: https://github.com/SwiftGen/SwiftGen # SPM Binary
-    name: SwiftGen
-    file: scripts/ManualLicenses/SwiftGen.LICENSE.txt
-  - source: https://github.com/realm/SwiftLint # SPM Binary
-    name: SwiftLint
-    file: scripts/ManualLicenses/SwiftLint.LICENSE.txt
   - source: https://github.com/undefinedlabs/Thrift-Swift # No license file in repository.
     name: Thrift-Swift
     file: scripts/ManualLicenses/Thrift-Swift.LICENSE.txt
