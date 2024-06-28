@@ -8,7 +8,7 @@
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>
-			<string>No licences have been generated. If you believe that this is not correct, please send a report.</string>
+			<string>Licences are only generated on CI builds. If you believe that something here is wrong, please send a report.</string>
 			<key>Key</key>
 			<string></string>
 		</dict>
