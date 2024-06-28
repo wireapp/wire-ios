@@ -49,13 +49,30 @@ extension ConversationListViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
 
+        let selfUser = if let contextProvider = viewModel.userSession as? ContextProvider {
+            ZMUser.selfUser(inUserSession: contextProvider)
+        } else {
+            ZMUser?.none
+        }
+        if let teamImageViewContent = selfUser?.team?.teamImageViewContent ?? viewModel.account.teamImageViewContent {
+            selfUser?.team?.requestImage()
+            accountImageView.setTeamImageViewContent(teamImageViewContent)
+            accountImageView.accessibilityValue = viewModel.account.teamName.map { L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue($0) }
+            accountImageView.accessibilityIdentifier = viewModel.account.teamName.map { "\($0) team" }
+        } else {
+            fatalError("TODO: set user image")
+            accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(viewModel.account.userName)
+        }
+
+        accountImageView.availability = selfUser?.availability.map()
+
         return accountImageView
     }
 
     func setupLeftNavigationBarButtons() {
 
         // in the design the left bar button items are very close to each other,
-        // so we'll use stack view instead
+        // so we'll use a stack view instead
         let stackView = UIStackView()
         stackView.spacing = 4
 
@@ -346,23 +363,5 @@ extension ConversationListViewController {
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
-    }
-}
-
-// MARK: - wrapInAvatarSizeContainer
-
-extension UIView {
-
-    func wrapInAvatarSizeContainer() -> UIView {
-        let container = UIView()
-        container.addSubview(self)
-        NSLayoutConstraint.activate([
-            container.widthAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
-            container.heightAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
-
-            container.centerYAnchor.constraint(equalTo: centerYAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor)
-        ])
-        return container
     }
 }
