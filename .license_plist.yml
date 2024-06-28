@@ -10,9 +10,6 @@ options:
   sandboxMode: true
 
 manual:
-  - source: https://github.com/unicode-org/cldr # No detected code dependency.
-    name: cldr
-    file: scripts/ManualLicenses/cldr.LICENSE.txt
   - source: https://github.com/iamcal/emoji-data # It's an included data set, but no detected code dependency.
     name: emoji-data
     file: scripts/ManualLicenses/emoji-data.LICENSE.txt
