@@ -120,10 +120,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
             }
 
         case .terminating(reason: let reason):
-            if let callInfo = callInfos[conversationId] {
-                analytics.tag(callEvent: .ended(reason: reason.analyticsValue), in: conversation, callInfo: callInfo)
-            }
-            callInfos[conversationId] = nil
 
             if case .inputOutputError = reason {
                 presentIOErrorAlertIfAllowed()

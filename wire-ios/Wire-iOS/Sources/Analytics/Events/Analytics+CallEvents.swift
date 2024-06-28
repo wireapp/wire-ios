@@ -23,8 +23,7 @@ enum CallEvent {
     case initiated,
          received,
          answered,
-         established,
-         ended(reason: String)
+         established
 }
 
 extension CallEvent {
@@ -35,7 +34,6 @@ extension CallEvent {
         case .received: return "calling.received_call"
         case .answered: return "calling.joined_call"
         case .established: return "calling.established_call"
-        case .ended: return "calling.ended_call"
         }
     }
 
@@ -69,16 +67,6 @@ extension Analytics {
         attributes.merge(attributesForCallParticipants(with: callInfo)) { _, new in new }
         attributes.merge(attributesForVideo(with: callInfo)) { _, new in new }
         attributes.merge(attributesForDirection(with: callInfo)) { _, new in new }
-
-        switch event {
-        case .ended(reason: let reason):
-            attributes.merge(attributesForSetupTime(with: callInfo)) { _, new in new }
-            attributes.merge(attributesForCallDuration(with: callInfo)) { _, new in new }
-            attributes.merge(attributesForVideoToogle(with: callInfo)) { _, new in new }
-            attributes.merge(["reason": reason]) { _, new in new }
-        default:
-            break
-        }
 
         return attributes
     }
