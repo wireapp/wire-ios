@@ -22,4 +22,8 @@ public enum AnalyticEvent: String {
 
     case appOpen
 
+    case restoreBackupSucceded
+    case restoreBackupFailed
+    case exportBackupFailed
+
 }

@@ -117,16 +117,13 @@ final class BackupRestoreController: NSObject {
                 self.showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
-
             case .failure(let error):
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
-                BackupEvent.importFailed.track()
                 self.showRestoreError(error)
                 self.target.isLoadingViewVisible = false
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
-                BackupEvent.importSucceeded.track()
                 self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
