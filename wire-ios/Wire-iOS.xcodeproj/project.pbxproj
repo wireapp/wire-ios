@@ -543,7 +543,6 @@
 		5EC7C87A219038F6004662AC /* ImageResourceThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC7C879219038F6004662AC /* ImageResourceThumbnailView.swift */; };
 		5EC7C87C21907D94004662AC /* ConversationReplyCellDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC7C87B21907D94004662AC /* ConversationReplyCellDescriptionTests.swift */; };
 		5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD2536213FD5C300C0E254 /* SLComposeServiceViewController+Preview.swift */; };
-		5EDD253C2140044D00C0E254 /* SettingsLicenseItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD253B2140044D00C0E254 /* SettingsLicenseItem.swift */; };
 		5EDD25412140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD25402140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift */; };
 		5EDF03EA22453AE400C04007 /* ConversationLinkAttachmentMessageCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */; };
 		5EDF03EF22455C4E00C04007 /* MockImageResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03ED22455BD200C04007 /* MockImageResource.swift */; };
@@ -2594,7 +2593,6 @@
 		5ED26CCD20E7A53A00EB9ED4 /* VerticalColumnPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnPositioning.swift; sourceTree = "<group>"; };
 		5ED26CD120E7CC5900EB9ED4 /* VerticalColumnPositioningContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnPositioningContext.swift; sourceTree = "<group>"; };
 		5EDD2536213FD5C300C0E254 /* SLComposeServiceViewController+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SLComposeServiceViewController+Preview.swift"; sourceTree = "<group>"; };
-		5EDD253B2140044D00C0E254 /* SettingsLicenseItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLicenseItem.swift; sourceTree = "<group>"; };
 		5EDD25402140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStaticTextCellDescriptor.swift; sourceTree = "<group>"; };
 		5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLinkAttachmentMessageCellTests.swift; sourceTree = "<group>"; };
 		5EDF03ED22455BD200C04007 /* MockImageResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockImageResource.swift; sourceTree = "<group>"; };
@@ -5881,7 +5879,6 @@
 			children = (
 				871BC3381D34F94200DF0793 /* SettingsProperty.swift */,
 				871BC3391D34F94200DF0793 /* SettingsPropertyFactory.swift */,
-				5EDD253B2140044D00C0E254 /* SettingsLicenseItem.swift */,
 				EF207B3822083E8000738E84 /* ZMUserSessionInterface.swift */,
 				060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */,
 			);
@@ -9986,7 +9983,6 @@
 				D58191FD2091CAE8003BA7EC /* CallActionsView.swift in Sources */,
 				A95DFDC124E6D2E30005DC0E /* CGSize+Const.swift in Sources */,
 				5EB45761204EA75300BA217A /* CallQualityDismissalTransition.swift in Sources */,
-				5EDD253C2140044D00C0E254 /* SettingsLicenseItem.swift in Sources */,
 				EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */,
 				BF5DF5C520F4B0B8002BCB67 /* UICollectionView+GroupedSections.swift in Sources */,
 				546EEA8F2536DFAB00195097 /* SwitchingAccountRouter.swift in Sources */,
