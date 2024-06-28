@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Naudojimosi sąlygos";
 "about.privacy.title" = "Privatumo politika";
-"about.license.title" = "Licencijos informacija";
 "about.website.title" = "Wire svetainė";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Išsamiau";
-"about.license.open_project_button" = "Peržiūrėkite projekto puslapį";
-"about.license.license_header" = "Padėkos";
 
 // Self new devices
 "self.new_device_alert.title" = "Jūsų paskyra buvo naudota:";

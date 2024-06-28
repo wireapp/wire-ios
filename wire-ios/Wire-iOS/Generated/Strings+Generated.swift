@@ -1060,16 +1060,6 @@ internal enum L10n {
         /// Legal
         internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
       }
-      internal enum License {
-        /// Acknowledgements
-        internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
-        /// View Project Page
-        internal static let openProjectButton = L10n.tr("Localizable", "about.license.open_project_button", fallback: "View Project Page")
-        /// Details
-        internal static let projectHeader = L10n.tr("Localizable", "about.license.project_header", fallback: "Details")
-        /// License Information
-        internal static let title = L10n.tr("Localizable", "about.license.title", fallback: "License Information")
-      }
       internal enum Privacy {
         /// Privacy Policy
         internal static let title = L10n.tr("Localizable", "about.privacy.title", fallback: "Privacy Policy")

@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Conditions d'utilisation";
 "about.privacy.title" = "Politique de confidentialité";
-"about.license.title" = "Informations sur la licence";
 "about.website.title" = "Site de Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Informations";
-"about.license.open_project_button" = "Ouvrir la Page du Projet";
-"about.license.license_header" = "Crédits";
 
 // Self new devices
 "self.new_device_alert.title" = "Votre compte a été utilisé sur :";
