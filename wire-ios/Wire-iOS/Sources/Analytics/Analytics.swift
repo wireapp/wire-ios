@@ -25,7 +25,6 @@ final class Analytics: NSObject {
     var provider: AnalyticsProvider?
 
     private var callingTracker: AnalyticsCallingTracker?
-    private var decryptionFailedObserver: AnalyticsDecryptionFailedObserver?
     private var userObserverToken: Any?
 
     static var shared: Analytics!
@@ -46,8 +45,6 @@ final class Analytics: NSObject {
     private func userSessionDidBecomeAvailable(_ note: Notification?) {
         callingTracker = AnalyticsCallingTracker(analytics: self)
         selfUser = SelfUser.provider?.providedSelfUser
-
-        decryptionFailedObserver = AnalyticsDecryptionFailedObserver(analytics: self)
     }
 
     var selfUser: UserType? {
