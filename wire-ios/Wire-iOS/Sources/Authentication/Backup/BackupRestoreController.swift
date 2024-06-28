@@ -107,13 +107,11 @@ final class BackupRestoreController: NSObject {
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
                 return
             }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
@@ -122,7 +120,6 @@ final class BackupRestoreController: NSObject {
                 }
 
             case .failure(let error):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
