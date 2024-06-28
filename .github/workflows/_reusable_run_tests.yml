@@ -5,6 +5,14 @@ on:
         type: boolean
         default: false
         required: false
+      wire-reusable-ui-components:
+        type: boolean
+        default: false
+        required: false
+      wire-design:
+        type: boolean
+        default: false
+        required: false
       wire-ios-sync-engine:
         type: boolean
         default: false
@@ -490,6 +498,46 @@ jobs:
           echo "Testing WireSyncEngine..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty --report junit --output build/reports/WireSyncEngine.junit
           exit ${PIPESTATUS[0]}
+
+      # WireDesign
+
+      - name: Test WireDesign
+        if: ${{ inputs.wire-design || inputs.all }}
+        run: |
+          echo "WireDesign has changes"
+          echo "Building WireDesign..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDesign -resultBundlePath xcodebuild-wire-design.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-design.log | bundle exec xcpretty
+          echo "Testing WireDesign..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
+          exit ${PIPESTATUS[0]}
+
+      - name: Run Danger for WireDesign
+        if: ${{ inputs.wire-design || inputs.all }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-design.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireDesign" --verbose
+
+      # WireReusableUIComponents
+
+      - name: Test WireReusableUIComponents
+        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
+        run: |
+          echo "WireReusableUIComponents has changes"
+          echo "Building WireReusableUIComponents..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -resultBundlePath xcodebuild-wire-reusable-ui-components.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty
+          echo "Testing WireReusableUIComponents..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
+          exit ${PIPESTATUS[0]}
+
+      - name: Run Danger for WireReusableUIComponents
+        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-reusable-ui-components.xcresult
+        run: |
+          bundle exec danger --danger_id="Run Danger for WireReusableUIComponents" --verbose
 
       # Wire-iOS
 

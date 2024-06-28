@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
