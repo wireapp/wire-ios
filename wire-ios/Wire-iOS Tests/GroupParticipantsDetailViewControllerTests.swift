@@ -17,8 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
@@ -40,19 +42,20 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    var userSession: UserSessionMock!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         SelfUser.provider = nil
         userSession = nil
-
         super.tearDown()
     }
 
@@ -61,7 +64,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         let users: [MockUserType] = (0..<20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
-
             return user
         }
 
@@ -70,16 +72,36 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-		let createSut: () -> UIViewController = {
+        let createSut: () -> UIViewController = {
             let sut = GroupParticipantsDetailViewController(
                 selectedParticipants: selected,
                 conversation: conversation,
                 userSession: self.userSession
             )
-			return sut.wrapInNavigationController()
-		}
+            return sut.wrapInNavigationController()
+        }
 
-        verifyInAllColorSchemes(createSut: createSut)
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersALotOfUsers_WithoutNames() {
@@ -108,7 +130,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             return sut.wrapInNavigationController()
         }
 
-        verify(matching: createSut())
+        snapshotHelper.verify(matching: createSut())
     }
 
     func testEmptyState() {
@@ -128,6 +150,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
         // then
         let wrapped = sut.wrapInNavigationController()
-        verify(matching: wrapped)
+        snapshotHelper.verify(matching: wrapped)
     }
 }

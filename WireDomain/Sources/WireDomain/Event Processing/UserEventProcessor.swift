@@ -16,12 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireLogger {
-    public static func addDatadog(_ datadog: LoggerProtocol) {
-        if let aggregatedLogger = Self.provider as? AggregatedLogger {
-            aggregatedLogger.addLogger(datadog)
-        } else {
-            Self.provider = datadog
-        }
+import Foundation
+import WireAPI
+
+/// Process user update events.
+
+protocol UserEventProcessorProtocol {
+
+    /// Process a user update event.
+    ///
+    /// Processing an event is the app's only chance to consume
+    /// some remote changes to update its local state.
+    ///
+    /// - Parameter event: A user update event.
+
+    func processEvent(_ event: UserEvent) async throws
+
+}
+
+struct UserEventProcessor {
+
+    func processEvent(_ event: UserEvent) async throws {
+        assertionFailure("not implemented yet")
     }
+
 }

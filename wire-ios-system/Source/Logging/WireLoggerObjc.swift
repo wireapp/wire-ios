@@ -16,9 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-final class PlaceholderTests: XCTestCase {
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+public final class WireLoggerObjc: NSObject {
 
-    func testNothing() {}
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
+    }
+
+    @objc(logReceivedUpdateEventWithId:)
+    static func logReceivedUpdateEvent(eventId: String) {
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
+    }
 }
