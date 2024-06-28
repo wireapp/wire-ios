@@ -80,18 +80,13 @@ final class ConversationListViewController: UIViewController, UITabBarController
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
-        label.backgroundColor = .clear
         return label
     }()
 
     /// Arranges the filterContainerView (if visible) and the contentContainer below each other.
     private var stackView: UIStackView!
 
-    let contentContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-        return view
-    }()
+    let contentContainer = UIView()
 
     let listContentController: ConversationListContentController
 
@@ -136,8 +131,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
         definesPresentationContext = true
 
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-
         viewModel.viewController = self
     }
 
@@ -172,6 +165,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupObservers()
 
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+
+        applyColorTheme()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -256,6 +251,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         filterContainerStackView.alignment = .center
         filterContainerStackView.spacing = 4
         filterContainerStackView.translatesAutoresizingMaskIntoConstraints = false
+        // TODO: fix background color
         filterContainerStackView.backgroundColor = SemanticColors.View.backgroundDefault
         filterContainerView.addSubview(filterContainerStackView)
         NSLayoutConstraint.activate([
@@ -322,6 +318,11 @@ final class ConversationListViewController: UIViewController, UITabBarController
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
             noConversationLabel.widthAnchor.constraint(equalToConstant: 240)
         ])
+    }
+
+    private func applyColorTheme() {
+        view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        titleViewLabel?.textColor = ColorTheme.Backgrounds.onSurfaceVariant
     }
 
     // MARK: - No Contact Label Management

@@ -40,8 +40,8 @@ extension ConversationListViewController {
 
     func setupTitleView() {
         let titleLabel = UILabel()
-        titleLabel.font = FontSpec(.normal, .semibold).font
-        titleLabel.textColor = SemanticColors.Label.textDefault
+        titleLabel.font = .font(for: .h2)
+        titleLabel.textColor = ColorTheme.Backgrounds.onSurfaceVariant
         titleLabel.accessibilityTraits = .header
         titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
