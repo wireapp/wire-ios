@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: fix doc comments
-
-// sourcery: AutoMockable
 /// Determines if a user has a valid E2EI certificate on all clients.
 public protocol SearchConversationsUseCaseProtocol {
     associatedtype ConversationContainer: SearchableConversationContainer

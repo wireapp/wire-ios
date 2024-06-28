@@ -798,8 +798,7 @@ extension ConversationListViewModel.Section {
 extension ConversationListViewModel.Section: SearchableConversationContainer {
 
     var conversations: [ZMConversation] {
-        // TODO: don't force cast!
-        items.map { $0.item as! ZMConversation }
+        items.compactMap { $0.item as? ZMConversation }
     }
 
     mutating func removeConversation(at index: Int) {
