@@ -16,27 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
 import XCTest
 
-class RoundedPageIndicatorTests: XCTestCase {
+@testable import Wire
 
-    var sut: RoundedPageIndicator!
-    let frame = CGRect(x: 0, y: 0, width: 120, height: 24)
+final class RoundedPageIndicatorTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: RoundedPageIndicator!
+    private let frame = CGRect(x: 0, y: 0, width: 120, height: 24)
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
         sut = RoundedPageIndicator()
         sut.frame = frame
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Unit Test
 
     func testThatPageIndicator_IsHidden_When_ThereIsOneOrLessPages() {
         // When
@@ -45,6 +55,8 @@ class RoundedPageIndicatorTests: XCTestCase {
         // Then
         XCTAssertTrue(sut.isHidden)
     }
+
+    // MARK: - Snapshot Test
 
     func testWithFivePages() {
         // When
@@ -56,6 +68,6 @@ class RoundedPageIndicatorTests: XCTestCase {
         view.addSubview(sut)
 
         // Then
-        verify(matching: view)
+        snapshotHelper.verify(matching: view)
     }
 }
