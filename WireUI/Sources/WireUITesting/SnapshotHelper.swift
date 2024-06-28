@@ -24,44 +24,48 @@ import XCTest
 ///
 /// Create variations of the snapshot behavior using the "with" methods.
 
-struct SnapshotHelper {
+public struct SnapshotHelper {
 
     private var perceptualPrecision: Float = 0.98
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
+    /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
+    private var snapshotReferenceDirectory = ""
+
+    public init() {}
 
     // MARK: - Create variations
 
-    /// Create a copy of the current helper with new perceptual precision.
+    /// Creates a copy of the current helper with new perceptual precision.
     ///
     /// Perceptual precision is the threshold at which two pixels are considered to be the same.
     ///
     /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value of 0 indicates no precision.
     /// - Returns: A copy of the current helper with the new perceptual precision.
 
-    func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
+    public func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
         var helper = self
         helper.perceptualPrecision = perceptualPrecision
         return helper
     }
 
-    /// Create a copy of the current helper with a new layout.
+    /// Creates a copy of the current helper with a new layout.
     ///
     /// - Parameter layout: The desired snapshot layout.
     /// - Returns: A copy of the current helper with a new layout.
 
-    func withLayout(_ layout: SwiftUISnapshotLayout) -> Self {
+    public func withLayout(_ layout: SwiftUISnapshotLayout) -> Self {
         var helper = self
         helper.layout = layout
         return helper
     }
 
-    /// Create a copy of the current helper with a user interface style.
+    /// Creates a copy of the current helper with a user interface style.
     ///
     /// - Parameter style: The desired user interface style.
     /// - Returns: A copy of the current helper with a new user interface style.
 
-    func withUserInterfaceStyle(_ style: UIUserInterfaceStyle) -> Self {
+    public func withUserInterfaceStyle(_ style: UIUserInterfaceStyle) -> Self {
         var helper = self
         helper.traits = UITraitCollection(traitsFrom: [
             helper.traits,
@@ -70,18 +74,49 @@ struct SnapshotHelper {
         return helper
     }
 
-    /// Create a copy of the current helper with a preferred content size category.
+    /// Creates a copy of the current helper with a preferred content size category.
     ///
     /// - Parameter category: The desired preferred content size category.
     /// - Returns: A copy of the current helper with a new preferred content size category.
 
-    func withPreferredContentSizeCategory(_ category: UIContentSizeCategory) -> Self {
+    public func withPreferredContentSizeCategory(_ category: UIContentSizeCategory) -> Self {
         var helper = self
         helper.traits = UITraitCollection(traitsFrom: [
             helper.traits,
             UITraitCollection(preferredContentSizeCategory: category)
         ])
         return helper
+    }
+
+    /// Creates a copy of the current helper with the overriden snapshot directory.
+    ///
+    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Returns: A copy of the current helper with a new snapshot directory.
+
+    public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
+        var helper = self
+        helper.snapshotReferenceDirectory = snapshotDirectory
+        return helper
+    }
+
+    /// Creates a copy of the current helper with the snapshot directory set to a path relative to the specified test case file.
+    ///
+    /// Example: from a provided value of `./WireUI/Tests/WireReusableUIComponentsTests/AccountImageView/AccountImageViewSnapshotTests.swift`
+    /// the last two path components are deleted and `Resources/ReferenceImages` is appended, resulting in the
+    /// value `/Users/christoph/Developer/wireapp/wire-ios0/WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages`.
+    ///
+    /// - Parameter testCaseFile: Specify `#file` in your test case file.
+    /// - Returns: A copy of the current helper with a new snapshot directory.
+
+    public func withSnapshotDirectory(relativeTo testCaseFile: String) -> Self {
+
+        var pathComponents = URL(fileURLWithPath: testCaseFile)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .pathComponents
+        pathComponents.append(contentsOf: ["Resources", "ReferenceImages"])
+        let snapshotDirectory = NSString.path(withComponents: pathComponents)
+        return withSnapshotDirectory(snapshotDirectory)
     }
 
     // MARK: - Verify views
@@ -94,7 +129,7 @@ struct SnapshotHelper {
     ///   - line: The invoking line numer.
     ///   - createView: A closure that provides the view to test.
 
-    func verify<View: SwiftUI.View>(
+    public func verify<View: SwiftUI.View>(
         testName: String = #function,
         file: StaticString = #file,
         line: UInt = #line,
@@ -116,7 +151,7 @@ struct SnapshotHelper {
     ///   - file: The invoking file name.
     ///   - line: The invoking line numer.
 
-    func verify<View: SwiftUI.View>(
+    public func verify<View: SwiftUI.View>(
         matching value: View,
         testName: String = #function,
         file: StaticString = #file,
@@ -149,7 +184,7 @@ struct SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - line: The invoking line number.
 
-    func verify(
+    public func verify(
         matching value: UIViewController,
         size: CGSize? = nil,
         named name: String? = nil,
@@ -183,7 +218,7 @@ struct SnapshotHelper {
     ///        - testName: The name of the reference image.
     ///        - line: The invoking line number.
 
-    func verify(
+    public func verify(
         matching value: UIView,
         named name: String? = nil,
         file: StaticString = #file,
@@ -213,7 +248,7 @@ struct SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - line: The invoking line number.
 
-    func verifyForDynamicType(
+    public func verifyForDynamicType(
         matching value: UIView,
         named name: String? = nil,
         file: StaticString = #file,
@@ -251,10 +286,14 @@ struct SnapshotHelper {
 
     }
 
-    func snapshotDirectory(file: StaticString = #file) -> String {
-        let fileName = "\(file)"
-        let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
-        return path
-    }
+    private func snapshotDirectory(file: StaticString = #file) -> String {
 
+        var snapshotReferenceDirectory = snapshotReferenceDirectory
+        if snapshotReferenceDirectory.isEmpty {
+            snapshotReferenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
+        }
+
+        let filePath = URL(fileURLWithPath: "\(file)").deletingPathExtension().lastPathComponent
+        return NSString.path(withComponents: [snapshotReferenceDirectory, filePath])
+    }
 }

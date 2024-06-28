@@ -17,9 +17,11 @@
 //
 
 import SwiftUI
-@testable import Wire
 import WireRequestStrategySupport
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class OtherUserDeviceDetailsViewTests: XCTestCase {
 

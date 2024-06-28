@@ -335,6 +335,7 @@
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
+		59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */ = {isa = PBXBuildFile; productRef = 59942F172C2BF72C00F65A54 /* WireUITesting */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
 		5996E8A02C19D02C007A52F0 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
@@ -1500,7 +1501,6 @@
 		EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		EE9AEC9E2BD15A3600F7853F /* Wire-iOS.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */; };
 		EE9B56A72AE7EA08001D7C2E /* UserSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */; };
-		EE9BB9EA2BE3953F00DBD3A6 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */; };
 		EE9EE24028DB12920009F144 /* JobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9EE23F28DB12920009F144 /* JobTests.swift */; };
 		EE9F10782BE50A3C005355BC /* SwitchBackendConfirmationViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9F10772BE50A3C005355BC /* SwitchBackendConfirmationViewModelTests.swift */; };
 		EEA1ED7325BF430B006D07D3 /* AppLockModule.View.LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8736F1831E4B67F0001CBA62 /* AppLockModule.View.LockView.swift */; };
@@ -3583,7 +3583,6 @@
 		EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = "Wire-iOS.docc"; sourceTree = "<group>"; };
 		EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionMock.swift; sourceTree = "<group>"; };
-		EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		EE9EE23F28DB12920009F144 /* JobTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobTests.swift; sourceTree = "<group>"; };
 		EE9F10772BE50A3C005355BC /* SwitchBackendConfirmationViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendConfirmationViewModelTests.swift; sourceTree = "<group>"; };
 		EEA4F47B2410054100DBEA3D /* HashBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashBox.swift; sourceTree = "<group>"; };
@@ -4060,6 +4059,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */,
 				5996E8A02C19D02C007A52F0 /* WireDataModelSupport.framework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
@@ -8183,7 +8183,6 @@
 		EF2121982292EEA4006C4293 /* SwiftSnapshotTesting */ = {
 			isa = PBXGroup;
 			children = (
-				EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */,
 				EF2121992292EEF3006C4293 /* XCTestCase+SnapshotTesting.swift */,
 				E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */,
 			);
@@ -8751,6 +8750,7 @@
 			name = "Wire-iOS-Tests";
 			packageProductDependencies = (
 				01C1A7C62A54C45A0058D578 /* SnapshotTesting */,
+				59942F172C2BF72C00F65A54 /* WireUITesting */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -10786,7 +10786,6 @@
 				87656FD11FB5FF0300D5286C /* FilePreviewGeneratorTests.swift in Sources */,
 				BFAAB23F1DED95B100CBC096 /* UserNameDetailViewTests.swift in Sources */,
 				5E65A79A212FF7CD008BFCC0 /* AuthenticationStateControllerTests.swift in Sources */,
-				EE9BB9EA2BE3953F00DBD3A6 /* SnapshotHelper.swift in Sources */,
 				BF808B511DE605DF00718076 /* ChangeHandleViewControllerTests.swift in Sources */,
 				873DC9591D4796C100C1C9B0 /* CameraKeyboardViewControllerTests.swift in Sources */,
 				1658C19A20A1F00500148F6D /* CallInfoTestFixture.swift in Sources */,
@@ -11799,6 +11798,10 @@
 		595D304A2BF923B30064A018 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		59942F172C2BF72C00F65A54 /* WireUITesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUITesting;
 		};
 		59CD83E42C22CE9800186022 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;

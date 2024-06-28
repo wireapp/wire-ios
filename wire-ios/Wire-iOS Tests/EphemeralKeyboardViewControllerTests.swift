@@ -17,8 +17,10 @@
 //
 
 import UIKit
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 

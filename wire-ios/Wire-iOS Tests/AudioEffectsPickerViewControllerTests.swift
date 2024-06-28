@@ -18,6 +18,7 @@
 
 import avs
 import WireDesign
+import WireUITesting
 import XCTest
 
 @testable import Wire

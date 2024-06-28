@@ -17,9 +17,11 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import WireUtilities
 import XCTest
+
+@testable import Wire
 
 struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
     var isConnected: Bool = true

@@ -17,8 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 // MARK: - Mentions
 
