@@ -180,6 +180,7 @@ struct ZMUserSessionBuilder {
         )
         let mlsService = mlsService ?? MLSService(
             context: coreDataStack.syncContext,
+            notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),

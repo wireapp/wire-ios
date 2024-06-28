@@ -17,20 +17,25 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
 final class UnlockViewControllerTests: XCTestCase {
+
     var sut: UnlockViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         let selfUser = MockUserType.createSelfUser(name: "Bobby McFerrin")
         sut = UnlockViewController(selfUser: selfUser)
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -41,7 +46,7 @@ final class UnlockViewControllerTests: XCTestCase {
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForPasscodeFilled() {
@@ -49,7 +54,7 @@ final class UnlockViewControllerTests: XCTestCase {
         fillPasscode()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForErrorState() {
@@ -60,7 +65,7 @@ final class UnlockViewControllerTests: XCTestCase {
         sut.showWrongPasscodeMessage()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForPasscodeRevealed() {
@@ -71,6 +76,6 @@ final class UnlockViewControllerTests: XCTestCase {
         sut.buttonPressed(UIButton())
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
