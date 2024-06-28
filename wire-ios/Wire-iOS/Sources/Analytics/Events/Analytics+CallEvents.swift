@@ -24,7 +24,7 @@ enum CallEvent {
          received,
          answered,
          established,
-         ended(reason: String),
+         ended(reason: String)
 }
 
 extension CallEvent {
@@ -76,9 +76,6 @@ extension Analytics {
             attributes.merge(attributesForCallDuration(with: callInfo)) { _, new in new }
             attributes.merge(attributesForVideoToogle(with: callInfo)) { _, new in new }
             attributes.merge(["reason": reason]) { _, new in new }
-        case .screenSharing(let duration):
-            attributes["screen_share_direction"] = "incoming"
-            attributes["screen_share_duration"] = Int(round(duration / 5)) * 5
         default:
             break
         }

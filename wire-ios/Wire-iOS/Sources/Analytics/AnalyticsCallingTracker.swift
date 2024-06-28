@@ -173,12 +173,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
             let screenSharingDate = screenSharingStartTimes[screenSharedParticipant.clientId],
             let conversationId = conversation.remoteIdentifier,
             let callInfo = callInfos[conversationId] {
-
-            // When videoState == .stopped from a remote participant, tag the event if we found a record in screenSharingInfos set with matching clientId
-            analytics.tag(callEvent: .screenSharing(duration: -screenSharingDate.timeIntervalSinceNow),
-                          in: conversation,
-                          callInfo: callInfo)
-
             screenSharingStartTimes[screenSharedParticipant.clientId] = nil
         }
     }
