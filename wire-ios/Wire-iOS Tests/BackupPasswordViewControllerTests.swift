@@ -21,12 +21,24 @@ import XCTest
 
 final class BackupPasswordViewControllerTests: XCTestCase {
 
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
     func testDefaultState() {
         // GIVEN
         let sut = makeViewController()
 
         // WHEN & THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testThatItCallsTheCallback() {
