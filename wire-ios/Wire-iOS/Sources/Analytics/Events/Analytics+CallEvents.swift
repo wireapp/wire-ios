@@ -25,7 +25,6 @@ enum CallEvent {
          answered,
          established,
          ended(reason: String),
-         screenSharing(duration: TimeInterval)
 }
 
 extension CallEvent {
@@ -37,7 +36,6 @@ extension CallEvent {
         case .answered: return "calling.joined_call"
         case .established: return "calling.established_call"
         case .ended: return "calling.ended_call"
-        case .screenSharing: return "calling.screen_share"
         }
     }
 
