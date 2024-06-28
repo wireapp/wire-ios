@@ -29,7 +29,20 @@ func MainTabBarController(
     settings: UIViewController
 ) -> UITabBarController {
 
+    let tabBarItemAppearance = UITabBarItemAppearance()
+    tabBarItemAppearance.normal.iconColor = .brown
+    tabBarItemAppearance.selected.iconColor = .cyan
+
+    let tabBarAppearance = UITabBarAppearance()
+    tabBarAppearance.configureWithDefaultBackground()
+    tabBarAppearance.shadowImage = .from(solidColor: ColorTheme.Strokes.outline)
+    tabBarAppearance.backgroundColor = ColorTheme.Backgrounds.background
+    tabBarAppearance.inlineLayoutAppearance = tabBarItemAppearance
+    tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
+    tabBarAppearance.compactInlineLayoutAppearance = tabBarItemAppearance
+
     let mainTabBarController = UITabBarController()
+    mainTabBarController.tabBar.scrollEdgeAppearance = tabBarAppearance
     mainTabBarController.viewControllers = [conversations, archive, settings]
 
     mainTabBarController.viewControllers?[tab: .conversations].tabBarItem = .init(
@@ -59,8 +72,7 @@ func MainTabBarController(
     mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Settings.hint
 
     mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
-    mainTabBarController.tabBar.backgroundColor = SemanticColors.View.backgroundDefault
-    mainTabBarController.tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
+    mainTabBarController.tabBar.unselectedItemTintColor = .yellow
 
     return mainTabBarController
 }
@@ -98,4 +110,16 @@ private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ tabBarController: UITabBarController, context: Context) {}
+}
+
+// TODO: remove duplicated code
+
+extension UIImage {
+
+    fileprivate static func from(solidColor color: UIColor) -> UIImage {
+        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
+            color.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
+    }
 }
