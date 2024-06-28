@@ -49,6 +49,7 @@ extension ConversationListViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
 
+        // TODO: create use case for getting an account image
         let selfUser = if let contextProvider = viewModel.userSession as? ContextProvider {
             ZMUser.selfUser(inUserSession: contextProvider)
         } else {
