@@ -112,6 +112,9 @@ if [[ -n "${CI-}" ]]; then
     scripts/generate-licenses.sh
 else
     # Local Machine
+    # Skipped on local machines, because updating sdks, libraries etc. causes
+    # Git changes when running this script, that can be easily forgotten.
+    # We decided that the CI should always generate the latest licenses include it in delivered builds.
     echo "Skipping as CI is not is defined"
 fi
 echo ""
