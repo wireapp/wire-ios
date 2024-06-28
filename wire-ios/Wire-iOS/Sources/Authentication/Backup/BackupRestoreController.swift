@@ -25,11 +25,7 @@ protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
 }
 
-/**
- * An object that coordinates restoring a backup.
- */
-
-private let zmLog = ZMSLog(tag: "Backup")
+/// An object that coordinates restoring a backup.
 
 final class BackupRestoreController: NSObject {
 
@@ -45,7 +41,10 @@ final class BackupRestoreController: NSObject {
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
+    init(
+        target: SpinnerCapableViewController,
+        temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+    ) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
         super.init()
@@ -167,7 +166,6 @@ extension BackupRestoreController: UIDocumentPickerDelegate {
         didPickDocumentAt url: URL
     ) {
         WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-        zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
         self.restore(with: url)
     }
