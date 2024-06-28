@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ConversationFilterType {
@@ -36,24 +37,20 @@ extension ConversationListViewController {
         setupLeftNavigationBarButtons()
     }
 
-    // MARK: - Title View
-
-    func setupTitleView() {
-        let titleLabel = UILabel()
-        titleLabel.font = .font(for: .h2)
-        titleLabel.textColor = ColorTheme.Backgrounds.onSurfaceVariant
-        titleLabel.accessibilityTraits = .header
-        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-        titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        titleLabel.text = L10n.Localizable.List.title
-        titleLabel.accessibilityValue = L10n.Localizable.List.title
-        navigationItem.titleView = titleLabel
-        self.titleViewLabel = titleLabel
-    }
-
     // MARK: - Navigation Bar Items
+
+    private func setupAccountImageView() -> AccountImageView {
+
+        let accountImageView = AccountImageView()
+        accountImageView.accessibilityTraits = .button
+        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton"
+        accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
+        accountImageView.addGestureRecognizer(tapGestureRecognizer)
+
+        return accountImageView
+    }
 
     func setupLeftNavigationBarButtons() {
 
@@ -63,8 +60,9 @@ extension ConversationListViewController {
         stackView.spacing = 4
 
         // avatar
-        let accountView = createAccountView()
-        stackView.addArrangedSubview(accountView)
+        let accountImageView = setupAccountImageView()
+        stackView.addArrangedSubview(accountImageView)
+        self.accountImageView = accountImageView
 
         // legal hold
         switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
@@ -93,27 +91,21 @@ extension ConversationListViewController {
         navigationItem.leftBarButtonItem = .init(customView: stackView)
     }
 
-    private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else { return .init() }
+    func setupTitleView() {
 
-        let user = ZMUser.selfUser(inUserSession: session)
+        let titleLabel = UILabel()
+        titleLabel.font = .font(for: .h2)
+        titleLabel.textColor = ColorTheme.Backgrounds.onSurfaceVariant
+        titleLabel.accessibilityTraits = .header
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        titleLabel.text = L10n.Localizable.List.title
+        titleLabel.accessibilityValue = L10n.Localizable.List.title
 
-        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
-        accountView.unreadCountStyle = .current
-        accountView.autoUpdateSelection = false
-
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentSettings))
-        accountView.addGestureRecognizer(tapGestureRecognizer)
-        accountView.accessibilityTraits = .button
-        accountView.accessibilityIdentifier = "bottomBarSettingsButton"
-        accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
-
-        if let selfUser = ZMUser.selfUser(),
-           selfUser.clientsRequiringUserAttention.count > 0 {
-            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
-        }
-
-        return accountView.wrapInAvatarSizeContainer()
+        navigationItem.titleView = titleLabel
+        self.titleViewLabel = titleLabel
     }
 
     func setupRightNavigationBarButtons() {
@@ -262,7 +254,7 @@ extension ConversationListViewController {
     }
 
     @objc
-    func presentSettings() {
+    func presentProfile() {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return

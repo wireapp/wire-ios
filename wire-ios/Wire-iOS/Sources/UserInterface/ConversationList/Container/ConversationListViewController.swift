@@ -90,7 +90,9 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
     let listContentController: ConversationListContentController
 
+    weak var accountImageView: AccountImageView?
     weak var titleViewLabel: UILabel?
+
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
