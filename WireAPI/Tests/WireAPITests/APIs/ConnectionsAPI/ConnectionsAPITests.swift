@@ -17,8 +17,9 @@
 //
 
 import Foundation
-@testable import WireAPI
 import XCTest
+
+@testable import WireAPI
 
 class ConnectionsAPITests: XCTestCase {
 

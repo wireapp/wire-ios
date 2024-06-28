@@ -17,8 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class ProfileDetailsViewControllerTests: XCTestCase {
 
