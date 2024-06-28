@@ -119,8 +119,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
                 return
             }
 
-            callParticipantObserverToken = WireCallCenterV3.addCallParticipantObserver(observer: self, for: conversation, userSession: userSession)
-
         case .terminating(reason: let reason):
             if let callInfo = callInfos[conversationId] {
                 analytics.tag(callEvent: .ended(reason: reason.analyticsValue), in: conversation, callInfo: callInfo)
@@ -154,28 +152,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
         alert.presentTopmost()
     }
 
-}
-
-// MARK: - WireCallCenterCallParticipantObserver - tracking share screen
-
-extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
-    func callParticipantsDidChange(conversation: ZMConversation,
-                                   participants: [CallParticipant]) {
-        // record the start/end screen share timing, and tag the event when the call ends
-
-        let selfUser = SelfUser.provider?.providedSelfUser as? ZMUser
-
-        // When the screen sharing starts add a record to screenSharingInfos set if no exist item with same client id exists
-        if let participant = participants.first(where: { $0.state.videoState == .screenSharing }),
-            screenSharingStartTimes[participant.clientId] == nil {
-            screenSharingStartTimes[participant.clientId] = Date()
-        } else if let screenSharedParticipant = participants.first(where: { $0.state.videoState == .stopped && ($0.user as? ZMUser != selfUser) }),
-            let screenSharingDate = screenSharingStartTimes[screenSharedParticipant.clientId],
-            let conversationId = conversation.remoteIdentifier,
-            let callInfo = callInfos[conversationId] {
-            screenSharingStartTimes[screenSharedParticipant.clientId] = nil
-        }
-    }
 }
 
 private extension CallClosedReason {
