@@ -21,13 +21,23 @@ import Foundation
 @objcMembers
 public final class SelfUnregisteringNotificationCenterToken: NSObject {
 
+    private let notificationCenter: NotificationCenter
     private let token: NSObjectProtocol
 
     public init(_ token: NSObjectProtocol) {
+        self.notificationCenter = .default
+        self.token = token
+    }
+
+    public init(
+        _ token: NSObjectProtocol,
+        notificationCenter: NotificationCenter
+    ) {
+        self.notificationCenter = notificationCenter
         self.token = token
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(token)
+        notificationCenter.removeObserver(token)
     }
 }

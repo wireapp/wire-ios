@@ -28,6 +28,7 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - setUp
 
@@ -50,16 +51,74 @@ final class SecurityLevelViewTests: XCTestCase {
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)
-        verifyInAllColorSchemes(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersWithClassified() {
         sut.configure(with: .classified)
-        verifyInAllColorSchemes(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItDoesNotRenderWithNone() {
         sut.configure(with: .none)
-        verifyInAllColorSchemes(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
+
 }

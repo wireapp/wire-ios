@@ -41,9 +41,6 @@
 
 #import <WireDataModel/ZMConnection+Internal.h>
 
-#import <WireDataModel/ZMConversationList.h>
-#import <WireDataModel/ZMConversationList+Internal.h>
-
 #import <WireDataModel/ZMMessage.h>
 #import <WireDataModel/ZMMessage+Internal.h>
 #import <WireDataModel/ZMOTRMessage.h>

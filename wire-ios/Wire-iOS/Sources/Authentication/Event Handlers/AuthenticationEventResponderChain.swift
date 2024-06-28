@@ -112,6 +112,7 @@ final class AuthenticationEventResponderChain {
     /// Creates and registers the default error handlers.
     fileprivate func registerDefaultEventHandlers() {
         // flowStartHandlers
+        registerHandler(AuthenticationStartClientLimitErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartE2EIdentityMissingErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingUsernameErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
