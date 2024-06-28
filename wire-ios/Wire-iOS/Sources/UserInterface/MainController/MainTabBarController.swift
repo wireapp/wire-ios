@@ -30,8 +30,8 @@ func MainTabBarController(
 ) -> UITabBarController {
 
     let tabBarItemAppearance = UITabBarItemAppearance()
-    tabBarItemAppearance.normal.iconColor = .brown
-    tabBarItemAppearance.selected.iconColor = .cyan
+    tabBarItemAppearance.normal.iconColor = ColorTheme.Base.secondaryText
+    tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
 
     let tabBarAppearance = UITabBarAppearance()
     tabBarAppearance.configureWithDefaultBackground()
@@ -72,7 +72,6 @@ func MainTabBarController(
     mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Settings.hint
 
     mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
-    mainTabBarController.tabBar.unselectedItemTintColor = .yellow
 
     return mainTabBarController
 }
