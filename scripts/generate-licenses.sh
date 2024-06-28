@@ -19,7 +19,7 @@ set -Eeuo pipefail
 
 # Technical Details
 # 
-# The tool `LicensePlist`` has two modes that differ in essence:
+# The tool `LicensePlist` has two modes that differ in essence:
 # 
 # 1. No Sandbox Mode / Online
 # This mode requests all Swift Packages from the remote URLs, which seems convenient at first.
