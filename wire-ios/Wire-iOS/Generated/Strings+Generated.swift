@@ -793,18 +793,6 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "landing.loginEnterpriseButton.description", fallback: "Log in with SSO")
       }
     }
-    internal enum LicenseDetailsSettings {
-      internal enum BackButton {
-        /// Go back to License details
-        internal static let description = L10n.tr("Accessibility", "licenseDetailsSettings.backButton.description", fallback: "Go back to License details")
-      }
-    }
-    internal enum LicenseInformationSettings {
-      internal enum BackButton {
-        /// Go back to License information
-        internal static let description = L10n.tr("Accessibility", "licenseInformationSettings.backButton.description", fallback: "Go back to License information")
-      }
-    }
     internal enum MessageAction {
       internal enum CopyButton {
         /// Copy picture
