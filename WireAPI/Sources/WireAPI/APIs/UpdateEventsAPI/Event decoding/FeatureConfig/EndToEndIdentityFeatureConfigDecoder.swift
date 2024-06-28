@@ -40,6 +40,11 @@ struct EndToEndIdentityFeatureConfigDecoder {
         let acmeDiscoveryURL: String?
         let verificationExpiration: UInt
 
+        enum CodingKeys: String, CodingKey {
+            case acmeDiscoveryURL = "acmeDiscoveryUrl"
+            case verificationExpiration
+        }
+
     }
 
 }
