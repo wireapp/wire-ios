@@ -150,10 +150,9 @@ final class SearchResultsViewController: UIViewController {
 
     lazy var topPeopleSection: TopPeopleSectionController = {
         let userSession = (userSession as? ZMUserSession)
+        let directory = userSession?.topConversationsDirectory
 
-        return TopPeopleSectionController(
-            topConversationsDirectory: userSession?.topConversationsDirectory
-        )
+        return TopPeopleSectionController(topConversationsDirectory: directory)
     }()
 
     let servicesSection: SearchServicesSectionController

@@ -351,6 +351,12 @@ final class UserSessionMock: UserSession {
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
     }
+
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
+    }
 }
 
 // MARK: - UserSessionMock + ContextProvider

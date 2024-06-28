@@ -84,10 +84,6 @@
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
       {
-        "key" : "FB_REFERENCE_IMAGE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
-      },
-      {
         "key" : "SNAPSHOT_REFERENCE_DIR",
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },

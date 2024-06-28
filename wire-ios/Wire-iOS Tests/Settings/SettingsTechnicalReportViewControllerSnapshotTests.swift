@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -24,18 +26,21 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
+    var snapshotHelper: SnapshotHelper!
     var sut: SettingsTechnicalReportViewController!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -43,7 +48,9 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
     // MARK: - Snapshot Test
 
     func testForInitState() {
-        verify(matching: setupTechnicalViewController())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: setupTechnicalViewController())
     }
 
     // MARK: - Helper method
@@ -56,8 +63,6 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
         )
 
         navigationViewController.view.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
-        navigationViewController.overrideUserInterfaceStyle = .dark
 
        return navigationViewController
     }
