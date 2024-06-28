@@ -59,9 +59,9 @@ final class HTTPClientMock: HTTPClient {
     ) throws {
         let response = PredefinedResponse(resourceName: payloadResourceName)
 
-        try self.init(
+        self.init(
             code: code,
-            payload: response.data()
+            payload: try response.data()
         )
     }
 
