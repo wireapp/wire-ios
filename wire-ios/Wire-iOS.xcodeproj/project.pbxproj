@@ -320,7 +320,7 @@
 		592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
-		5950A9472C2F1C31005AB9CE /* AvailabilityMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950A9462C2F1C31005AB9CE /* AvailabilityMapper.swift */; };
+		5950A9472C2F1C31005AB9CE /* AvailabilityAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950A9462C2F1C31005AB9CE /* AvailabilityAdapter.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		595D304B2BF923B30064A018 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; };
 		596594902BFF11E900D5B08C /* SettingsDismissProfileAndSwitchTabDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965948F2BFF11E900D5B08C /* SettingsDismissProfileAndSwitchTabDescriptor.swift */; };
@@ -2394,7 +2394,7 @@
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		592344A12BFE1EBC00859FEB /* SettingsMainViewControllerBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsMainViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
-		5950A9462C2F1C31005AB9CE /* AvailabilityMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityMapper.swift; sourceTree = "<group>"; };
+		5950A9462C2F1C31005AB9CE /* AvailabilityAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityAdapter.swift; sourceTree = "<group>"; };
 		5952693E2BE8C93B001C1E8B /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
 		5965948F2BFF11E900D5B08C /* SettingsDismissProfileAndSwitchTabDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDismissProfileAndSwitchTabDescriptor.swift; sourceTree = "<group>"; };
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -7902,7 +7902,7 @@
 				59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */,
 				E96AB4F82C071BC300792DA9 /* FilterImageName.swift */,
 				E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */,
-				5950A9462C2F1C31005AB9CE /* AvailabilityMapper.swift */,
+				5950A9462C2F1C31005AB9CE /* AvailabilityAdapter.swift */,
 			);
 			path = "ConversationListViewController+NavigationBar";
 			sourceTree = "<group>";
@@ -10167,7 +10167,7 @@
 				253C67492B88A3BB00965DE1 /* UserClientDeveloperActionsProvider.swift in Sources */,
 				5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */,
 				06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */,
-				5950A9472C2F1C31005AB9CE /* AvailabilityMapper.swift in Sources */,
+				5950A9472C2F1C31005AB9CE /* AvailabilityAdapter.swift in Sources */,
 				166390D61DC8AC0C00D7BF1C /* String+Image.swift in Sources */,
 				A90E4AC42381EFCD00468F31 /* ZMButton.swift in Sources */,
 				87DCF49B1D34E9E600BB420F /* LocationSelectionViewController.swift in Sources */,

@@ -21,16 +21,15 @@ import WireReusableUIComponents
 
 extension WireDataModel.Availability {
 
+    /// Since `WireReusableUIComponents` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireReusableUIComponents.Availability?`.
+
     func map() -> WireReusableUIComponents.Availability? {
         switch self {
-        case .none:
-                .none
-        case .available:
-                .available
-        case .busy:
-                .busy
-        case .away:
-                .away
+        case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
         }
     }
 }
