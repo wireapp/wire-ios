@@ -16,47 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct ContributedEvent: AnalyticEvent {
+public struct CallJoinedEvent: AnalyticEvent {
 
     public var eventName: String {
-        "contributed"
+        "call_joined"
     }
 
     public var segmentation: [String: String] {
         ["group_type": String(describing: conversationType),
-        "contribution_type": String(describing: contributionType)]
+        "is_video_call": String(describing: isVideoCall)]
     }
 
-    public var contributionType: ContributionType
+    public var isVideoCall: Bool
     public var conversationType: ConversationType
-    public var conversationSize: UInt
-
-    public init(contributionType: ContributionType, conversationType: ConversationType, conversationSize: UInt) {
-        self.contributionType = contributionType
-        self.conversationType = conversationType
-        self.conversationSize = conversationSize
-    }
-}
-
-public enum ContributionType {
-
-    case textMessage
-    case likeMessage
-    case pingMessage
-    case fileMessage
-    case imageMessage
-    case locationMessage
-    case audioMessage
-    case videoMessage
-    case audioCallMessage
-    case videoCallMessage
-
-}
-
-public enum ConversationType {
-
-    case group
-    case oneOnOne
-    case unknown
 
 }

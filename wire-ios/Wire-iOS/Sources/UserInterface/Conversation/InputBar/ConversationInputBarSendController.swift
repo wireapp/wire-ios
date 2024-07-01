@@ -59,14 +59,11 @@ final class ConversationInputBarSendController: NSObject {
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: message, fetchLinkPreview: shouldFetchLinkPreview)
-                conversation.draftMessage = nil
+                let useCase = userSession.makeAppendTextMessageUseCase()
+                try useCase.invoke(text: text, mentions: mentions, replyingTo: message, in: conversation, fetchLinkPreview: shouldFetchLinkPreview)
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
-
         })
     }
 
