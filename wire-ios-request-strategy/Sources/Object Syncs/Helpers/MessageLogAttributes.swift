@@ -19,9 +19,14 @@
 import CoreData
 import WireDataModel
 
+/// Provides log attributes for messages of supported message types.
 struct MessageLogAttributes {
 
-    let context: NSManagedObjectContext
+    private let context: NSManagedObjectContext
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
 
     func logAttributes(_ message: ZMClientMessage) async -> LogAttributes {
         let messageAttributes: LogAttributes = await context.perform {
@@ -58,30 +63,30 @@ struct MessageLogAttributes {
 
     // MARK: Helpers
 
-    // TODO: remove this helpers and use funcs directly
-
+    /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
     func logAttributes(_ message: any SendableMessage) async -> LogAttributes {
         await logAttributesFromAny(message)
     }
 
+    /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
     func logAttributes(_ message: any ProteusMessage) async -> LogAttributes {
-        await logAttributesFromAny(message)
-    }
-
-    func logAttributes(_ message: any MLSMessage) async -> LogAttributes {
         await logAttributesFromAny(message)
     }
 
     private func logAttributesFromAny(_ message: Any) async -> LogAttributes {
         if let clientMessage = message as? ZMClientMessage {
             return await logAttributes(clientMessage)
-        } else if let assetClientMessage = message as? ZMAssetClientMessage {
-            return await logAttributes(assetClientMessage)
-        } else if let genericMessage = message as? GenericMessageEntity {
-            return await logAttributes(genericMessage)
-        } else {
-            assertionFailure("expected logs")
-            return [:]
         }
+
+        if let assetClientMessage = message as? ZMAssetClientMessage {
+            return await logAttributes(assetClientMessage)
+        }
+
+        if let genericMessage = message as? GenericMessageEntity {
+            return await logAttributes(genericMessage)
+        }
+
+        assertionFailure("cannot find a supported type of message '\(type(of: message))'")
+        return [:]
     }
 }
