@@ -486,7 +486,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             syncMOC.saveOrRollback()
             let error = NSError(
                 domain: "ZMUserSession",
-                code: Int(UserSessionErrorCode.needsPasswordToRegisterClient.rawValue),
+                code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
                 userInfo: selfUser.loginCredentials.dictionaryRepresentation)
 
             // when
@@ -507,7 +507,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
             let error = NSError(
                 domain: "ZMUserSession",
-                code: Int(UserSessionErrorCode.invalidCredentials.rawValue)
+                code: UserSessionErrorCode.invalidCredentials.rawValue
             )
 
             // when
@@ -762,23 +762,23 @@ class ZMClientRegistrationStatusTests: MessagingTest {
     // MARK: - Helpers
 
     func needsPasswordError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(UserSessionErrorCode.needsPasswordToRegisterClient.rawValue))
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue)
     }
 
     func tooManyClientsError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(UserSessionErrorCode.canNotRegisterMoreClients.rawValue))
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue)
     }
 
     func needToRegisterEmailError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue))
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
     }
 
     func needToToEnrollE2EIToRegisterClientError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue))
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
     }
 
     func needToSetHandleError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(UserSessionErrorCode.needsToHandleToRegisterClient.rawValue))
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
     }
 
     @objc

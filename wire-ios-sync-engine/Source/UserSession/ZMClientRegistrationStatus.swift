@@ -590,7 +590,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private func notifyEmailIsNecessary() {
         let error = NSError(
             domain: NSError.userSessionErrorDomain,
-            code: Int(UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
+            code: UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue
         )
 
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
@@ -600,7 +600,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func notifyE2EIEnrollmentNecessary() {
         let error = NSError(
             domain: NSError.userSessionErrorDomain,
-            code: Int(UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
+            code: UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue
         )
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
     }
@@ -608,7 +608,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private func notifyHandleIsNecessary() {
         let error = NSError(
             domain: NSError.userSessionErrorDomain,
-            code: Int(UserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
+            code: UserSessionErrorCode.needsToHandleToRegisterClient.rawValue
         )
 
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
@@ -617,7 +617,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private func notifyCanNotRegisterMoreClients(clientIDs: [NSManagedObjectID]) {
         let error = NSError(
             domain: NSError.userSessionErrorDomain,
-            code: Int(UserSessionErrorCode.canNotRegisterMoreClients.rawValue),
+            code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue,
             userInfo: [ZMClientsKey: clientIDs]
         )
 

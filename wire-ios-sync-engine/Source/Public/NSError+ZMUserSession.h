@@ -90,7 +90,7 @@ typedef NS_CLOSED_ENUM(NSInteger, ZMUserSessionErrorCode) {
     /// User's account pending verification
     ZMUserSessionErrorCodeAccountIsPendingVerification = 32,
     /// Migration has finished and the user should authenticate
-    ZMUserSessionErrorCodeNeedsAuthenticationAfterMigration = 32
+    ZMUserSessionErrorCodeNeedsAuthenticationAfterMigration = 33
 } NS_SWIFT_NAME(UserSessionErrorCode);
 
 FOUNDATION_EXPORT NSString * const ZMClientsKey;

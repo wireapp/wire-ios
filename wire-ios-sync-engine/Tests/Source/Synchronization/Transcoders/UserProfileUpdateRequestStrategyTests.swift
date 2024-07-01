@@ -262,7 +262,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
         guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
-        XCTAssertEqual((error as NSError).code, Int(UserSessionErrorCode.invalidEmail.rawValue))
+        XCTAssertEqual((error as NSError).code, UserSessionErrorCode.invalidEmail.rawValue)
     }
 
     func testThatItCallsDidFailEmailUpdateWithDuplicatedEmail() {
@@ -281,7 +281,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
         guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
-        XCTAssertEqual((error as NSError).code, Int(UserSessionErrorCode.emailIsAlreadyRegistered.rawValue))
+        XCTAssertEqual((error as NSError).code, UserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
 
     func testThatItCallsDidFailEmailUpdateWithUnknownError() {
@@ -300,7 +300,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
         guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
-        XCTAssertEqual((error as NSError).code, Int(UserSessionErrorCode.unknownError.rawValue))
+        XCTAssertEqual((error as NSError).code, UserSessionErrorCode.unknownError.rawValue)
 
     }
 
