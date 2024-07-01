@@ -22,7 +22,7 @@ extension UserCredentials {
     var isInvalid: Bool {
         let noEmail = email?.isEmpty ?? true
         let noPassword = password?.isEmpty ?? true
-        return (noEmail || noPassword)
+        return noEmail || noPassword
     }
 }
 
