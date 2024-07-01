@@ -308,7 +308,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor),
 
-            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
+            onboardingHint.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
             onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
 
@@ -364,7 +364,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         } else {
             filterContainerView.isHidden = true
         }
-
     }
 
     // MARK: - Selection Management

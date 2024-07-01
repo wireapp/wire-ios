@@ -24,6 +24,7 @@ final class ConversationListOnboardingHint: UIView {
 
     let messageLabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
     let arrowView = UIImageView()
+
     weak var arrowPointToView: UITabBar? {
         didSet {
             guard let arrowPointToTabBar = arrowPointToView,
@@ -39,7 +40,7 @@ final class ConversationListOnboardingHint: UIView {
 
         super.init(frame: frame)
 
-        arrowView.setTemplateIcon(.longUpArrow, size: .large)
+        arrowView.setTemplateIcon(.longDownArrow, size: .large)
         arrowView.tintColor = SemanticColors.Label.textDefault
 
         messageLabel.numberOfLines = 0
@@ -47,13 +48,14 @@ final class ConversationListOnboardingHint: UIView {
         messageLabel.text = L10n.Localizable.ConversationList.Empty.NoContacts.message
 
         [arrowView, messageLabel].forEach(addSubview)
+        arrowView.transform = .init(rotationAngle: .pi)
 
         createConstraints()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createConstraints() {
@@ -64,11 +66,11 @@ final class ConversationListOnboardingHint: UIView {
         let margin: CGFloat = 24
         NSLayoutConstraint.activate([
 
-            messageLabel.topAnchor.constraint(equalTo: topAnchor),
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margin),
-            trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: margin),
+            messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: margin),
+            messageLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
+            trailingAnchor.constraint(equalToSystemSpacingAfter: messageLabel.trailingAnchor, multiplier: 1),
 
             arrowView.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: margin),
-            arrowView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin)])
+            arrowView.bottomAnchor.constraint(equalTo: bottomAnchor)])
     }
 }
