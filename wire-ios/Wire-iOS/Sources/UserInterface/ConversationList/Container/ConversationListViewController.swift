@@ -253,8 +253,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         filterContainerStackView.alignment = .center
         filterContainerStackView.spacing = 4
         filterContainerStackView.translatesAutoresizingMaskIntoConstraints = false
-        // TODO: fix background color
-        filterContainerStackView.backgroundColor = SemanticColors.View.backgroundDefault
         filterContainerView.addSubview(filterContainerStackView)
         NSLayoutConstraint.activate([
             filterContainerStackView.topAnchor.constraint(equalToSystemSpacingBelow: filterContainerView.topAnchor, multiplier: 1),
