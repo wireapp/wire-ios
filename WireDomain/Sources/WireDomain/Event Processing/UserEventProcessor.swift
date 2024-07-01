@@ -16,9 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
+import WireAPI
 
-final class PlaceholderTests: XCTestCase {
+/// Process user update events.
 
-    func testNothing() {}
+protocol UserEventProcessorProtocol {
+
+    /// Process a user update event.
+    ///
+    /// Processing an event is the app's only chance to consume
+    /// some remote changes to update its local state.
+    ///
+    /// - Parameter event: A user update event.
+
+    func processEvent(_ event: UserEvent) async throws
+
+}
+
+struct UserEventProcessor {
+
+    func processEvent(_ event: UserEvent) async throws {
+        assertionFailure("not implemented yet")
+    }
+
 }

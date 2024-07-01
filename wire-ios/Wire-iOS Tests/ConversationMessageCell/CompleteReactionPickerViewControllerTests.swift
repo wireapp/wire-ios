@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class CompleteReactionPickerViewControllerTests: XCTestCase {
 
@@ -25,11 +27,13 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
 
     var sut: CompleteReactionPickerViewController!
     var emojiRepository: EmojiRepository!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         emojiRepository = EmojiRepository()
         sut = setUpCompleteReactionPickerViewController()
     }
@@ -37,6 +41,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     // MARK: tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         emojiRepository.registerRecentlyUsedEmojis([])
         emojiRepository = nil
@@ -48,7 +53,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     func testReactionPicker() {
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
         scrollToSection(1)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testReactionPicker_scrolledToMiddle() {
@@ -57,7 +62,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(4)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testReactionPicker_scrolledToBottom() {
@@ -66,7 +71,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(7)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testReactionPicker_withRecentReactionsSection() {
@@ -76,7 +81,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testReactionPicker_withSearchQuery() {
@@ -87,7 +92,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(1)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: Helper Methods

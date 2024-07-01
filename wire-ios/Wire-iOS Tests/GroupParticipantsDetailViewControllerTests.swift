@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -42,16 +43,17 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     private var userSession: UserSessionMock!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         SelfUser.provider = nil
         userSession = nil
         super.tearDown()
@@ -128,7 +130,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             return sut.wrapInNavigationController()
         }
 
-        verify(matching: createSut())
+        snapshotHelper.verify(matching: createSut())
     }
 
     func testEmptyState() {
@@ -148,6 +150,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
         // then
         let wrapped = sut.wrapInNavigationController()
-        verify(matching: wrapped)
+        snapshotHelper.verify(matching: wrapped)
     }
 }

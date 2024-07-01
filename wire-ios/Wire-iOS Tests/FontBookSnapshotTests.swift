@@ -19,6 +19,7 @@
 import SnapshotTesting
 import WireCommonComponents
 import WireDesign
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -27,7 +28,17 @@ final class FontBookSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
 
     // MARK: Helper Method
 

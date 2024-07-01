@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 // MARK: - Observer
 @objc public protocol UserProfileUpdateObserver: NSObjectProtocol {
@@ -72,17 +73,18 @@ struct UserProfileUpdateNotification: SelfPostingNotification {
 
 extension UserProfileUpdateStatus {
 
-    @objc(addObserver:) public func add(
-        observer: UserProfileUpdateObserver
-    ) -> Any {
-        return Self.add(observer: observer, in: managedObjectContext.notificationContext)
+    public func add(observer: UserProfileUpdateObserver) -> Any {
+        Self.add(
+            observer: observer,
+            in: managedObjectContext.notificationContext
+        )
     }
 
-    @objc(addObserver:in:) public static func add(
+    public static func add(
         observer: UserProfileUpdateObserver,
         in notificationContext: NotificationContext
-    ) -> Any {
-        return NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
+    ) -> SelfUnregisteringNotificationCenterToken {
+        NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[UserProfileUpdateNotification.userInfoKey] as? UserProfileUpdateNotification,
                   let observer else {
                     return

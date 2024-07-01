@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireUtilities
 import XCTest
 
-class UserProfileUpdateStatusTests: MessagingTest {
+@testable import WireSyncEngine
+
+final class UserProfileUpdateStatusTests: MessagingTest {
 
     var observerToken: Any?
 
@@ -54,9 +55,7 @@ class UserProfileUpdateStatusTests: MessagingTest {
         self.sut = nil
         super.tearDown()
     }
-}
 
-extension UserProfileUpdateStatusTests {
     func testThatItDoesNotRetainObserver() {
         // GIVEN
         var observer: TestUserProfileUpdateObserver? = TestUserProfileUpdateObserver()
@@ -73,7 +72,6 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertNil(weakObserver)
     }
-}
 
 // MARK: - Changing email
 
@@ -352,10 +350,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Credentials provider
-extension UserProfileUpdateStatusTests {
+    // MARK: - Credentials provider
 
     func testThatItDoesNotReturnCredentialsIfOnlyPasswordIsVerified() {
 
@@ -415,12 +411,11 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertNil(self.sut.emailCredentials())
     }
-}
 
 // MARK: - Check handle availability
 
 extension UserProfileUpdateStatusTests {
-
+  
     func testThatItIsNotCheckingAvailabilityAtCreation() {
         XCTAssertFalse(self.sut.currentlyCheckingHandleAvailability)
     }
@@ -592,9 +587,6 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
-
-// MARK: - Set handle
 
 extension UserProfileUpdateStatusTests {
 
@@ -764,7 +756,6 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
 // MARK: - Find handle suggestions
 
