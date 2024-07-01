@@ -127,6 +127,8 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMessageProtocol
         }
 
+        // set expiration date?
+
         do {
             return switch messageProtocol {
             case .proteus, .mixed:
@@ -299,19 +301,6 @@ public final class MessageSender: MessageSenderInterface {
             return encryptedData
         }
     }
-}
-
-public extension UserClient {
-    var qualifiedClientID: QualifiedClientID? {
-        guard
-            let clientID = remoteIdentifier,
-            let qualifiedID = user?.qualifiedID
-        else {
-            return nil
-        }
-        return QualifiedClientID(userID: qualifiedID.uuid, domain: qualifiedID.domain, clientID: clientID)
-    }
-
 }
 
 private extension Payload.ClientListByQualifiedUserID {
