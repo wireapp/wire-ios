@@ -28,6 +28,6 @@ extension ZMAssetClientMessage: MLSMessage {}
 
 extension GenericMessageEntity: MLSMessage {
     public func encryptForTransport(using encrypt: (Data) async throws -> Data) async throws -> Data {
-        return try await message.encryptForTransport(using: encrypt)
+        try await message.encryptForTransport(using: encrypt)
     }
 }
