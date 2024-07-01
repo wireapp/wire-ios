@@ -313,41 +313,7 @@ extension ConversationListViewController.ViewModel: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
-            // viewController?.conversationListViewControllerViewModel(self, didUpdate: <#T##UserStatus#>)
-
-//            private func updateAccountImageView() async {
-//                guard let accountImageView else { return }
-//
-//                do {
-//                    let useCase = GetAccountImageUseCase()
-//                    let (accountImage, isTeamAccount) = try await useCase.invoke()
-//                    accountImageView.accountType = isTeamAccount ? .team : .user
-//                    accountImageView.accountImage = accountImage
-//                } catch {
-//                    WireLogger.conversationList.error("Failed to get account image: \(error)")
-//                }
-//            }
-
-            /*
-            // TODO: create use case for getting an account image
-            let selfUser = if let contextProvider = viewModel.userSession as? ContextProvider {
-                ZMUser.selfUser(inUserSession: contextProvider)
-            } else {
-                ZMUser?.none
-            }
-            if let teamImageViewContent = selfUser?.team?.teamImageViewContent ?? viewModel.account.teamImageViewContent {
-                selfUser?.team?.requestImage()
-                accountImageView.setTeamImageViewContent(teamImageViewContent)
-                accountImageView.accessibilityValue = viewModel.account.teamName.map { L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue($0) }
-                accountImageView.accessibilityIdentifier = viewModel.account.teamName.map { "\($0) team" }
-            } else if let imageData = viewModel.account.imageData, let image = UIImage(data: imageData) {
-                accountImageView.accountImage = image
-            } else {
-                let personName = PersonName.person(withName: viewModel.account.userName, schemeTagger: nil)
-                accountImageView.setInitialsImage(personName.initials)
-                accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(viewModel.account.userName)
-            }
-             */
+            updateAccountImage()
         }
 
         if changeInfo.trustLevelChanged {

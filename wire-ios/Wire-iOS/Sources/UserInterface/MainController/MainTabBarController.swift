@@ -111,8 +111,6 @@ private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
     func updateUIViewController(_ tabBarController: UITabBarController, context: Context) {}
 }
 
-// TODO: remove duplicated code
-
 extension UIImage {
 
     fileprivate static func from(solidColor color: UIColor) -> UIImage {
