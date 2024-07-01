@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireReusableUIComponents
 
-final class MiniatureAccountImageFactorySnapshotTests: XCTestCase {
+final class MiniatureAccountImageFactoryTests: XCTestCase {
 
     private var sut: MiniatureAccountImageFactory!
     private var snapshotHelper: SnapshotHelper!

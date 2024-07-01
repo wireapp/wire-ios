@@ -29,11 +29,17 @@ enum ConversationFilterType {
 
 extension ConversationListViewController {
 
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
+    func conversationListViewControllerViewModel(
+        _ viewModel: ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    ) {
         accountImageView?.availability = selfUserStatus.availability.map()
     }
 
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)) {
+    func conversationListViewControllerViewModel(
+        _ viewModel: ViewModel,
+        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
+    ) {
 
         accountImageView?.isTeamAccount = accountImage.isTeamAccount
         accountImageView?.accountImage = accountImage.image
