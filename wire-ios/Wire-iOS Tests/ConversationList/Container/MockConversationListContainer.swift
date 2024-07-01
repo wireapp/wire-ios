@@ -83,6 +83,10 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
         // no-op
     }
 
+    func conversationListViewControllerViewModel(_ viewModel: ConversationListViewController.ViewModel, didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)) {
+        // no-op
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: Wire.ConversationListViewController.ViewModel) {
         // no-op
     }

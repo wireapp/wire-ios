@@ -140,7 +140,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut.applyFilter(nil)
 
         // THEN
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForShowingConversationsFilteredByGroups() {
@@ -157,7 +157,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForShowingConversationsFilteredByFavourites() {
@@ -174,7 +174,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForShowingConversationsFilteredByOneOnOne() throws {
@@ -195,7 +195,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut.applyFilter(.oneToOneConversations)
 
         // THEN
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     // MARK: - Helper Methods
