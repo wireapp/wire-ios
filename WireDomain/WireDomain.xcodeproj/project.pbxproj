@@ -28,6 +28,12 @@
 		162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356562C2B22A300C6666C /* UserModelMappings.swift */; };
 		162356582C2C2F6100C6666C /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356512C2B223B00C6666C /* UserRepository.swift */; };
 		162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356522C2B223B00C6666C /* UserRepositoryError.swift */; };
+		EE0E11982C2D6899004BBD29 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11912C2D6899004BBD29 /* ConversationEventProcessor.swift */; };
+		EE0E11992C2D6899004BBD29 /* FeatureConfigEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11922C2D6899004BBD29 /* FeatureConfigEventProcessor.swift */; };
+		EE0E119A2C2D6899004BBD29 /* FederationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11932C2D6899004BBD29 /* FederationEventProcessor.swift */; };
+		EE0E119B2C2D6899004BBD29 /* TeamEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11942C2D6899004BBD29 /* TeamEventProcessor.swift */; };
+		EE0E119C2C2D6899004BBD29 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11952C2D6899004BBD29 /* UpdateEventProcessor.swift */; };
+		EE0E119D2C2D6899004BBD29 /* UserEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11962C2D6899004BBD29 /* UserEventProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +76,12 @@
 		162356512C2B223B00C6666C /* UserRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
+		EE0E11912C2D6899004BBD29 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
+		EE0E11922C2D6899004BBD29 /* FeatureConfigEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigEventProcessor.swift; sourceTree = "<group>"; };
+		EE0E11932C2D6899004BBD29 /* FederationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FederationEventProcessor.swift; sourceTree = "<group>"; };
+		EE0E11942C2D6899004BBD29 /* TeamEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamEventProcessor.swift; sourceTree = "<group>"; };
+		EE0E11952C2D6899004BBD29 /* UpdateEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EE0E11962C2D6899004BBD29 /* UserEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEventProcessor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +153,7 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EE0E11972C2D6899004BBD29 /* Event Processing */,
 				017F67A22C20802300B6E02D /* Repositories */,
 			);
 			path = WireDomain;
@@ -219,6 +232,19 @@
 				017F679A2C20801800B6E02D /* WireDomain */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		EE0E11972C2D6899004BBD29 /* Event Processing */ = {
+			isa = PBXGroup;
+			children = (
+				EE0E11912C2D6899004BBD29 /* ConversationEventProcessor.swift */,
+				EE0E11922C2D6899004BBD29 /* FeatureConfigEventProcessor.swift */,
+				EE0E11932C2D6899004BBD29 /* FederationEventProcessor.swift */,
+				EE0E11942C2D6899004BBD29 /* TeamEventProcessor.swift */,
+				EE0E11952C2D6899004BBD29 /* UpdateEventProcessor.swift */,
+				EE0E11962C2D6899004BBD29 /* UserEventProcessor.swift */,
+			);
+			path = "Event Processing";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -406,12 +432,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE0E11992C2D6899004BBD29 /* FeatureConfigEventProcessor.swift in Sources */,
+				EE0E119A2C2D6899004BBD29 /* FederationEventProcessor.swift in Sources */,
+				EE0E119B2C2D6899004BBD29 /* TeamEventProcessor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
+				EE0E119D2C2D6899004BBD29 /* UserEventProcessor.swift in Sources */,
+				EE0E119C2C2D6899004BBD29 /* UpdateEventProcessor.swift in Sources */,
+				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
+				EE0E11982C2D6899004BBD29 /* ConversationEventProcessor.swift in Sources */,
 				162356582C2C2F6100C6666C /* UserRepository.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
 				162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */,
