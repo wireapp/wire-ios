@@ -18,7 +18,6 @@
 
 import Contacts
 import Foundation
-import libPhoneNumberiOS // TODO [WPB-8822]: try to remove this framework (also from Cartfile)
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone
@@ -151,8 +150,9 @@ class AddressBook {
     let phoneNumberNormalizer: AddressBook.Normalizer
 
     init() {
-        let libPhoneNumber = NBPhoneNumberUtil.sharedInstance()
-        self.phoneNumberNormalizer = { libPhoneNumber?.normalize(phoneNumber: $0)?.validatedPhoneNumber }
+        fatalError("TODO: replace this code") // TODO: fix
+        // let libPhoneNumber = NBPhoneNumberUtil.sharedInstance()
+        // self.phoneNumberNormalizer = { libPhoneNumber?.normalize(phoneNumber: $0)?.validatedPhoneNumber }
     }
 
     typealias Normalizer = (String) -> (String?)
@@ -193,31 +193,31 @@ struct EncodedAddressBookChunk {
 }
 
 // MARK: - Phone number and email normalization
-extension NBPhoneNumberUtil {
-
-    /// Returns a normalized version of the phone number, or nil
-    /// if the phone number was not normalizable.
-    /// - note: numbers starting with "+0", a prefix that is not
-    /// assigned to any real number, are considered test numbers
-    /// used for QA automation and will always be accepted, without being
-    /// normalized through the normalization library but just sanitized
-    /// from any non-numberic character
-    fileprivate func normalize(phoneNumber: String) -> String? {
-        let testingNumberPrefix = "+0"
-        guard !phoneNumber.hasPrefix(testingNumberPrefix) else {
-            return phoneNumber.validatedPhoneNumber
-        }
-
-        guard let parsedNumber = try? self.parse(withPhoneCarrierRegion: phoneNumber) else {
-            return nil
-        }
-        guard let normalizedNumber = try? self.format(parsedNumber, numberFormat: .E164) else {
-            return nil
-        }
-        return normalizedNumber
-    }
-
-}
+// extension NBPhoneNumberUtil {
+//
+//     /// Returns a normalized version of the phone number, or nil
+//     /// if the phone number was not normalizable.
+//     /// - note: numbers starting with "+0", a prefix that is not
+//     /// assigned to any real number, are considered test numbers
+//     /// used for QA automation and will always be accepted, without being
+//     /// normalized through the normalization library but just sanitized
+//     /// from any non-numberic character
+//     fileprivate func normalize(phoneNumber: String) -> String? {
+//         let testingNumberPrefix = "+0"
+//         guard !phoneNumber.hasPrefix(testingNumberPrefix) else {
+//             return phoneNumber.validatedPhoneNumber
+//         }
+//
+//         guard let parsedNumber = try? self.parse(withPhoneCarrierRegion: phoneNumber) else {
+//             return nil
+//         }
+//         guard let normalizedNumber = try? self.format(parsedNumber, numberFormat: .E164) else {
+//             return nil
+//         }
+//         return normalizedNumber
+//     }
+//
+// }
 
 extension String {
 
