@@ -28,8 +28,10 @@ extension ZMConversation: SearchableConversation {
                 .init(searchableName: localParticipant.name ?? "")
             }
     }
-}
 
-public struct ZMConversationSearchableParticipant: SearchableConversationParticipant {
-    public var searchableName: String
+    // MARK: - Nested Types
+
+    public struct ZMConversationSearchableParticipant: SearchableConversationParticipant {
+        public var searchableName: String
+    }
 }
