@@ -17,9 +17,11 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import WireDataModel
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
