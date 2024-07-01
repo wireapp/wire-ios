@@ -70,7 +70,7 @@ extension ConversationType {
         case .oneOnOne:
             self = .oneOnOne
         default:
-            self = .uknown
+            self = .unknown
         }
     }
 
