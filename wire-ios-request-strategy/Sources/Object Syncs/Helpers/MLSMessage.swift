@@ -20,7 +20,7 @@ import Foundation
 
 /// A message that can be sent in an mls group.
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {}
+public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {}
 
 extension ZMClientMessage: MLSMessage {}
 

@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {}
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {}
 
 extension ZMClientMessage: ProteusMessage {}
 
