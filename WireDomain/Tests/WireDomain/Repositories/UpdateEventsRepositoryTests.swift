@@ -253,6 +253,54 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
+    // MARK: - Delete next pending events
+
+    func testItDeletesAllStoredEnvelopesIfLimitExceedsTotalNumberOfEnvelopes() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes more than 3.
+        try await sut.deleteNextPendingEvents(limit: 10)
+
+        // Then all stored events were deleted.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.fetchRequest()
+            let result = try context.fetch(request)
+            XCTAssertTrue(result.isEmpty)
+        }
+    }
+
+    func testItDeletesStoredEnvelopesOnlyUpToTheLimit() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes 2 envelopes.
+        try await sut.deleteNextPendingEvents(limit: 2)
+
+        // Then the first 2 envelopes were deleted.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let result = try context.fetch(request)
+
+            XCTAssertEqual(result.count, 1)
+
+            let envelope = try XCTUnwrap(result.first)
+            XCTAssertEqual(envelope.sortIndex, 2)
+
+            let decoder = JSONDecoder()
+            let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
+            XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+        }
+    }
+
 }
 
 private enum Scaffolding {

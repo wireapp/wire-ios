@@ -18,11 +18,25 @@
 
 import Foundation
 
-enum UpdateEventsRepositoryError: Error {
+/// Describes the apps synchronization state.
 
-    case lastEventIDMissing
-    case failedToFetchStoredEvents(Error)
-    case failedToDecodeStoredEvent(Error)
-    case failedToDeleteStoredEvents(Error)
+enum SyncState {
+
+    /// The app is fetching remote data such as team, conversation,
+    /// user and client metadata.
+
+    case slowSync
+
+    /// The app is fetching and processing all pending events.
+
+    case quickSync
+
+    /// The app is processing live events via the push channel.
+
+    case live
+
+    /// The app is neither receiving nor processing any events.
+
+    case suspended
 
 }

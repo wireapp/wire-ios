@@ -18,11 +18,22 @@
 
 import Foundation
 
-enum UpdateEventsRepositoryError: Error {
+struct SlowSync {
 
-    case lastEventIDMissing
-    case failedToFetchStoredEvents(Error)
-    case failedToDecodeStoredEvent(Error)
-    case failedToDeleteStoredEvents(Error)
+    func perform() async throws {
+        // fetchingLastUpdateEventID
+        // fetchingTeams
+        // fetchingTeamMembers
+        // fetchingTeamRoles
+        // fetchingConnections
+        // fetchingConversations
+        // fetchingUsers
+        // fetchingSelfUser
+        // fetchingLegalHoldStatus
+        // fetchingLabels
+        // fetchingFeatureConfig
+        // updateSelfSupportedProtocols
+        // evaluate1on1ConversationsForMLS
+    }
 
 }

@@ -20,8 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// sourcery: AutoMockable
 /// Access update events.
-
 protocol UpdateEventsRepositoryProtocol {
 
     /// Pull pending events from the server, decrypt if needed, and store locally.
@@ -34,13 +34,23 @@ protocol UpdateEventsRepositoryProtocol {
     /// Fetch the next batch pending events from the database.
     /// 
     /// The batch is already sorted, such that the first element is the oldest
-    /// stored event. This method does not delete any events, so invoking this
-    /// method again will return the same batch.
+    /// stored event. This method does not delete any events
+    /// (see `deleteNextPendingEvents(limit:)`), so invoking this method again
+    /// will return the same batch.
     ///
     /// - Parameter limit: The maximum number of events to fetch.
     /// - Returns: Decrypted update event envelopes ready for processing.
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope]
+    
+    /// Delete the next batch of pending events from the database.
+    ///
+    /// Use this method to delete stored events that have been processed and
+    /// can now be discarded.
+    ///
+    /// - Parameter limit: The maximum number of events to delete.
+
+    func deleteNextPendingEvents(limit: UInt) async throws
 
 }
 
@@ -160,6 +170,22 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 return try decoder.decode(UpdateEventEnvelope.self, from: $0)
             } catch {
                 throw UpdateEventsRepositoryError.failedToDecodeStoredEvent(error)
+            }
+        }
+    }
+
+    // MARK: - Delete pending events
+
+    func deleteNextPendingEvents(limit: UInt) async throws {
+        try await eventContext.perform { [eventContext] in
+            do {
+                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+                request.fetchLimit = Int(limit)
+                let storedEventEnvelopes = try eventContext.fetch(request)
+                storedEventEnvelopes.forEach(eventContext.delete)
+                try eventContext.save()
+            } catch {
+                throw UpdateEventsRepositoryError.failedToDeleteStoredEvents(error)
             }
         }
     }

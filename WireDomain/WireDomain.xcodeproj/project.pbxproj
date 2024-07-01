@@ -40,6 +40,10 @@
 		EE57A7052C2997090096F242 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE57A7042C2997090096F242 /* WireAPI */; };
 		EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */; };
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
+		EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A52C2EB6CD00679448 /* SyncManager.swift */; };
+		EECC35A82C2EB70400679448 /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A72C2EB70400679448 /* SyncState.swift */; };
+		EECC35AA2C2EB72600679448 /* SlowSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A92C2EB72600679448 /* SlowSync.swift */; };
+		EECC35AE2C2EE5D600679448 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +97,10 @@
 		EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryTests.swift; sourceTree = "<group>"; };
 		EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorError.swift; sourceTree = "<group>"; };
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
+		EECC35A52C2EB6CD00679448 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
+		EECC35A72C2EB70400679448 /* SyncState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncState.swift; sourceTree = "<group>"; };
+		EECC35A92C2EB72600679448 /* SlowSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowSync.swift; sourceTree = "<group>"; };
+		EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				EE0E117C2C2C4076004BBD29 /* Helpers */,
+				EECC35AB2C2EE58200679448 /* Synchronization */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
 				017F67992C20801800B6E02D /* Repositories */,
 			);
@@ -166,6 +175,7 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EECC35A42C2EB6C100679448 /* Synchronization */,
 				EE57A6FC2C298F280096F242 /* Event Decryption */,
 				EE368CCD2C2DAA87009DBAB0 /* Event Processing */,
 				017F67A22C20802300B6E02D /* Repositories */,
@@ -286,6 +296,24 @@
 				EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */,
 			);
 			path = "Event Decryption";
+			sourceTree = "<group>";
+		};
+		EECC35A42C2EB6C100679448 /* Synchronization */ = {
+			isa = PBXGroup;
+			children = (
+				EECC35A52C2EB6CD00679448 /* SyncManager.swift */,
+				EECC35A72C2EB70400679448 /* SyncState.swift */,
+				EECC35A92C2EB72600679448 /* SlowSync.swift */,
+			);
+			path = Synchronization;
+			sourceTree = "<group>";
+		};
+		EECC35AB2C2EE58200679448 /* Synchronization */ = {
+			isa = PBXGroup;
+			children = (
+				EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */,
+			);
+			path = Synchronization;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -479,6 +507,7 @@
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
+				EECC35AA2C2EB72600679448 /* SlowSync.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
@@ -488,12 +517,14 @@
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
+				EECC35A82C2EB70400679448 /* SyncState.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* UserRepository.swift in Sources */,
 				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
 				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
 				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
+				EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,6 +534,7 @@
 			files = (
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
+				EECC35AE2C2EE5D600679448 /* SyncManagerTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
