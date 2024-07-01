@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -43,17 +44,19 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     private var mockMainCoordinator: MockMainCoordinator!
     private var userSession: UserSessionMock!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
 
         mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         SelfUser.provider = nil
         userSession = nil
         mockMainCoordinator = nil

@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -28,12 +29,13 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     private var sut: LegalHoldDetailsViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
@@ -43,6 +45,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         SelfUser.provider = nil
         userSession = nil
