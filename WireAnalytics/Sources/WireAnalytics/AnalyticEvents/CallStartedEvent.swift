@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for managing and tracking analytics events within a session.
+public struct CallStartedEvent: AnalyticEvent {
 
-public protocol AnalyticsSessionProtocol {
+    public var eventName: String {
+        "call_started"
+    }
 
-    /// Starts an analytics session.
-    func startSession()
+    public var segmentation: [String: String] {
+        ["group_type": String(describing: conversationType),
+        "is_video_call": String(describing: isVideoCall)]
+    }
 
-    /// Ends the current analytics session.
-    func endSession()
-
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: any AnalyticEvent)
+    public var isVideoCall: Bool
+    public var conversationType: ConversationType
 
 }

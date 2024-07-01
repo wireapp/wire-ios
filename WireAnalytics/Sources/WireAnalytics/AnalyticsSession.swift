@@ -22,6 +22,10 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
 
     private let countly: WireCountly
 
+    private let osVersion: String = ""
+    private let deviceModel: String = ""
+    private let isSelfUserTeamMember: Bool
+
     public init(
         appKey: String,
         host: URL,
@@ -41,6 +45,10 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
             WireCountly.user().set("team_user_type", value: teamInfo.role)
             WireCountly.user().set("team_team_size", value: String(teamInfo.size.logRound()))
         }
+
+        isSelfUserTeamMember = userProfile.teamInfo != nil
+
+        WireCountly.user().save()
     }
 
     public func startSession() {
@@ -51,7 +59,18 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         countly.endSession()
     }
 
-    public func trackEvent(_ event: AnalyticEvent) {
-        countly.recordEvent(event.rawValue)
+    public func trackEvent(_ event: any AnalyticEvent) {
+        let defaultSegmentation = [
+            "os_version": osVersion,
+            "device_model": deviceModel,
+            "is_team_member": String(isSelfUserTeamMember)
+        ]
+
+        let segmentation = defaultSegmentation.merging(event.segmentation) { _, new in new }
+
+        countly.recordEvent(
+            event.eventName,
+            segmentation: segmentation
+        )
     }
 }

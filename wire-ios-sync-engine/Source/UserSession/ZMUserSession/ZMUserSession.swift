@@ -432,7 +432,8 @@ public final class ZMUserSession: NSObject {
     }
 
     @objc private func handleAppDidBecomeActive() {
-        analyticsSession?.trackEvent(.appOpen)
+        let appOpenEvent = AppOpenEvent()
+        analyticsSession?.trackEvent(appOpenEvent)
     }
 
     func setup(

@@ -18,12 +18,9 @@
 
 /// All possible analytic events that can be tracked
 
-public enum AnalyticEvent: String {
+public protocol AnalyticEvent {
 
-    case appOpen
-
-    case restoreBackupSucceded
-    case restoreBackupFailed
-    case exportBackupFailed
+    var eventName: String { get }
+    var segmentation: [String: String] { get }
 
 }

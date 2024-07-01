@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAnalytics
 import WireCryptobox
 import WireDataModel
 import WireUtilities
@@ -59,7 +60,8 @@ extension SessionManager {
                 case .success:
                     break
                 case .failure:
-                    activeUserSession.analyticsSession?.trackEvent(.exportBackupFailed)
+                    let exportBackupFailed = ExportBackupFailed()
+                    activeUserSession.analyticsSession?.trackEvent(exportBackupFailed)
                 }
 
                 SessionManager.handle(
@@ -113,9 +115,11 @@ extension SessionManager {
                 DispatchQueue.main.async(group: dispatchGroup) {
                     switch result {
                     case .success:
-                        self.activeUserSession?.analyticsSession?.trackEvent(.restoreBackupSucceded)
+                        let restoreBackupSucceeded = RestoreBackupSucceeded()
+                        self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupSucceeded)
                     case .failure(let error):
-                        self.activeUserSession?.analyticsSession?.trackEvent(.restoreBackupFailed)
+                        let restoreBackupFailed = RestoreBackupFailed()
+                        self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupFailed)
                     }
                     completion(result)
                 }

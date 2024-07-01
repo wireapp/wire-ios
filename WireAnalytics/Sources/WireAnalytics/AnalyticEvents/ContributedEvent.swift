@@ -16,20 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for managing and tracking analytics events within a session.
+public struct ContributedEvent: AnalyticEvent {
 
-public protocol AnalyticsSessionProtocol {
+    public var eventName: String {
+        "contributed"
+    }
 
-    /// Starts an analytics session.
-    func startSession()
+    public var segmentation: [String: String] {
+        ["group_type": String(describing: conversationType),
+        "contribution_type": String(describing: contributionType)]
+    }
 
-    /// Ends the current analytics session.
-    func endSession()
+    public var contributionType: ContributionType
+    public var conversationType: ConversationType
+    public var conversationSize: UInt
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: any AnalyticEvent)
+}
+
+public enum ContributionType {
+
+    case textMessage
+    case imageMessage
+    case audioMessage
+    case fileMessage
+    case locationMessage
+    case pingMessage
+
+}
+
+public enum ConversationType {
+
+    case group
+    case oneOnOne
 
 }
