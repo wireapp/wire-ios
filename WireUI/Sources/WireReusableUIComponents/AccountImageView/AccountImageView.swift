@@ -208,6 +208,7 @@ public final class AccountImageView: UIView {
 
     // MARK: - Nested Types
 
+    // TODO: consider replacing by a boolean isTeamAccount
     public enum AccountType: CaseIterable {
         /// The account image will be clipped using a circle shape.
         case user

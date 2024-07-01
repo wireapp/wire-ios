@@ -29,8 +29,13 @@ enum ConversationFilterType {
 
 extension ConversationListViewController {
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-        setupLeftNavigationBarButtons()
+    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
+        accountImageView?.availability = selfUserStatus.availability.map()
+    }
+
+    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)) {
+        accountImageView?.accountType = accountImage.isTeamAccount ? .team : .user
+        accountImageView?.accountImage = accountImage.image
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
@@ -42,33 +47,15 @@ extension ConversationListViewController {
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
+        accountImageView.accountType = viewModel.accountImage.isTeamAccount ? .team : .user
+        accountImageView.accountImage = viewModel.accountImage.image
+        accountImageView.availability = viewModel.selfUserStatus.availability.map()
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityIdentifier = "bottomBarSettingsButton"
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
-
-        // TODO: create use case for getting an account image
-        let selfUser = if let contextProvider = viewModel.userSession as? ContextProvider {
-            ZMUser.selfUser(inUserSession: contextProvider)
-        } else {
-            ZMUser?.none
-        }
-        if let teamImageViewContent = selfUser?.team?.teamImageViewContent ?? viewModel.account.teamImageViewContent {
-            selfUser?.team?.requestImage()
-            accountImageView.setTeamImageViewContent(teamImageViewContent)
-            accountImageView.accessibilityValue = viewModel.account.teamName.map { L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue($0) }
-            accountImageView.accessibilityIdentifier = viewModel.account.teamName.map { "\($0) team" }
-        } else if let imageData = viewModel.account.imageData, let image = UIImage(data: imageData) {
-            accountImageView.accountImage = image
-        } else {
-            let personName = PersonName.person(withName: viewModel.account.userName, schemeTagger: nil)
-            accountImageView.setInitialsImage(personName.initials)
-            accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(viewModel.account.userName)
-        }
-
-        accountImageView.availability = selfUser?.availability.map()
 
         return accountImageView
     }

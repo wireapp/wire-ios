@@ -29,6 +29,7 @@ public extension WireLogger {
     static let backend = WireLogger(tag: "backend")
     static let calling = WireLogger(tag: "calling")
     static let conversation = WireLogger(tag: "conversation")
+    static let conversationList = WireLogger(tag: "conversation-list")
     static let coreCrypto = WireLogger(tag: "core-crypto")
     static let e2ei = WireLogger(tag: "end-to-end-identity")
     static let ear = WireLogger(tag: "encryption-at-rest")

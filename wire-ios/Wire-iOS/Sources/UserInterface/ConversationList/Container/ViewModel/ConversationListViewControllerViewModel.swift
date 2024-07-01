@@ -29,6 +29,11 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
+    )
+
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
         didUpdate selfUserStatus: UserStatus
     )
 
@@ -47,12 +52,13 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         completion: (() -> Void)?
     ) -> Bool
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {
+
     final class ViewModel: NSObject {
+
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
                 guard viewController != nil else { return }
@@ -68,6 +74,10 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
+        private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
+        }
+
         let selfUserLegalHoldSubject: any SelfUserLegalHoldable
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
@@ -78,7 +88,10 @@ extension ConversationListViewController {
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: (any NSObjectProtocol)?
+
         private var userObservationToken: NSObjectProtocol?
+        private var teamObservationToken: NSObjectProtocol?
+
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
         var connectionRequestsObserverToken: NSObjectProtocol?
@@ -135,6 +148,11 @@ extension ConversationListViewController.ViewModel {
             }
 
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
+
+            if let team = userSession.selfUser.membership?.team {
+                team.requestImage()
+                teamObservationToken = TeamChangeInfo.add(observer: self, for: team)
+            }
         }
 
         updateObserverTokensForActiveTeam()
@@ -248,12 +266,48 @@ extension ConversationListViewController.ViewModel {
     }
 }
 
+// MARK: - UserObserving
+
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
-            viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
+            // viewController?.conversationListViewControllerViewModel(self, didUpdate: <#T##UserStatus#>)
+
+//            private func updateAccountImageView() async {
+//                guard let accountImageView else { return }
+//
+//                do {
+//                    let useCase = GetAccountImageUseCase()
+//                    let (accountImage, isTeamAccount) = try await useCase.invoke()
+//                    accountImageView.accountType = isTeamAccount ? .team : .user
+//                    accountImageView.accountImage = accountImage
+//                } catch {
+//                    WireLogger.conversationList.error("Failed to get account image: \(error)")
+//                }
+//            }
+
+            /*
+            // TODO: create use case for getting an account image
+            let selfUser = if let contextProvider = viewModel.userSession as? ContextProvider {
+                ZMUser.selfUser(inUserSession: contextProvider)
+            } else {
+                ZMUser?.none
+            }
+            if let teamImageViewContent = selfUser?.team?.teamImageViewContent ?? viewModel.account.teamImageViewContent {
+                selfUser?.team?.requestImage()
+                accountImageView.setTeamImageViewContent(teamImageViewContent)
+                accountImageView.accessibilityValue = viewModel.account.teamName.map { L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue($0) }
+                accountImageView.accessibilityIdentifier = viewModel.account.teamName.map { "\($0) team" }
+            } else if let imageData = viewModel.account.imageData, let image = UIImage(data: imageData) {
+                accountImageView.accountImage = image
+            } else {
+                let personName = PersonName.person(withName: viewModel.account.userName, schemeTagger: nil)
+                accountImageView.setInitialsImage(personName.initials)
+                accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(viewModel.account.userName)
+            }
+             */
         }
 
         if changeInfo.trustLevelChanged {
@@ -267,6 +321,27 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
+        }
+
+        if changeInfo.teamsChanged {
+            if let team = changeInfo.user.membership?.team {
+                teamObservationToken = TeamChangeInfo.add(observer: self, for: team)
+            } else {
+                teamObservationToken = nil
+            }
+        }
+    }
+}
+
+// MARK: - TeamObserver
+
+extension ConversationListViewController.ViewModel: TeamObserver {
+
+    func teamDidChange(_ changeInfo: TeamChangeInfo) {
+
+        if changeInfo.imageDataChanged, let teamImageViewContent = changeInfo.team.teamImageViewContent ?? account.teamImageViewContent {
+
+            fatalError()
         }
     }
 }

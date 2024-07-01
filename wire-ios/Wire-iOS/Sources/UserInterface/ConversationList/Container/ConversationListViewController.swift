@@ -432,13 +432,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
 // MARK: - ViewModel Delegate
 
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {
-
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
-        setupTitleView()
-        setupLeftNavigationBarButtons()
-    }
-}
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
 
 // MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
 

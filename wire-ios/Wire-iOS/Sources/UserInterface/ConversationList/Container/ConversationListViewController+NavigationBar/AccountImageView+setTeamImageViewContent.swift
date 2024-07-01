@@ -21,6 +21,7 @@ import WireReusableUIComponents
 
 extension AccountImageView {
 
+    // TODO: remove unused code
     func setTeamImageViewContent(_ teamImageViewContent: TeamImageView.Content) {
 
         accountType = .team
@@ -43,6 +44,7 @@ extension AccountImageView {
     }
 }
 
+// TODO: move to WireUI AccountImageFactory
 private final class InitialsRenderer: UIView {
 
     fileprivate init(_ initials: String) {
@@ -68,8 +70,6 @@ private final class InitialsRenderer: UIView {
         setNeedsLayout()
         layoutIfNeeded()
 
-        let factor: CGFloat = 3
-        let size = CGSize(width: bounds.width * factor, height: bounds.height * factor)
         let format = UIGraphicsImageRendererFormat()
         format.scale = 3
         return UIGraphicsImageRenderer(size: bounds.size, format: format).image { rendererContext in
