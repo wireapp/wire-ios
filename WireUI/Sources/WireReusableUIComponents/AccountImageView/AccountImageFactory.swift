@@ -17,38 +17,41 @@
 //
 
 import UIKit
-import WireReusableUIComponents
 
-extension AccountImageView {
+public struct AccountImageFactory: AccountImageFactoryProtocol {
 
-    // TODO: remove unused code
-    func setTeamImageViewContent(_ teamImageViewContent: TeamImageView.Content) {
-
-        accountType = .team
-
-        switch teamImageViewContent {
-        case .teamImage(let data):
-            if let accountImage = UIImage(data: data) {
-                self.accountImage = accountImage
-            } else {
-                self.accountImage = InitialsRenderer("").renderImage()
-            }
-        case .teamName(let name):
-            let initials = name.first.map { "\($0)" } ?? ""
-            self.accountImage = InitialsRenderer(initials).renderImage()
-        }
+    var size: CGSize {
+        get { renderer.frame.size }
+        set { renderer.frame.size = newValue }
     }
 
-    func setInitialsImage(_ initials: String) {
-        accountImage = InitialsRenderer(initials).renderImage()
+    private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 50, height: 50))
+
+    public func createImage(initials: String) -> UIImage {
+
+        let initials = initials.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !initials.isEmpty else { return .init() }
+
+        renderer.initials = initials
+        return renderer.renderImage()
     }
 }
 
-// TODO: remove
+// MARK: -
+
 private final class InitialsRenderer: UIView {
 
-    fileprivate init(_ initials: String) {
-        super.init(frame: .init(x: 0, y: 0, width: 50, height: 50))
+    fileprivate var initials: String {
+        get { initialsLabel.text ?? "" }
+        set { initialsLabel.text = newValue }
+    }
+
+    private let initialsLabel = UILabel()
+
+    // MARK: - Life Cycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         backgroundColor = .green
         setupLabel(initials)
     }
@@ -58,12 +61,14 @@ private final class InitialsRenderer: UIView {
     }
 
     private func setupLabel(_ initials: String) {
-        let label = UILabel()
-        label.text = initials
-        label.frame = bounds
-        label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        addSubview(label)
+
+        initialsLabel.text = initials
+        initialsLabel.frame = bounds
+        initialsLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        addSubview(initialsLabel)
     }
+
+    // MARK: - Methods
 
     fileprivate func renderImage() -> UIImage {
 
