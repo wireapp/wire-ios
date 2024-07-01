@@ -22,8 +22,8 @@ import WireDesign
 
 final class ConversationListOnboardingHint: UIView {
 
-    let messageLabel: UILabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
-    let arrowView: UIImageView = UIImageView()
+    let messageLabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
+    let arrowView = UIImageView()
     weak var arrowPointToView: UITabBar? {
         didSet {
             guard let arrowPointToTabBar = arrowPointToView,
@@ -39,14 +39,14 @@ final class ConversationListOnboardingHint: UIView {
 
         super.init(frame: frame)
 
-        arrowView.setTemplateIcon(.longDownArrow, size: .large)
+        arrowView.setTemplateIcon(.longUpArrow, size: .large)
         arrowView.tintColor = SemanticColors.Label.textDefault
 
         messageLabel.numberOfLines = 0
-        messageLabel.textAlignment = .left
+        messageLabel.textAlignment = .right
         messageLabel.text = L10n.Localizable.ConversationList.Empty.NoContacts.message
 
-        [arrowView, messageLabel].forEach(self.addSubview)
+        [arrowView, messageLabel].forEach(addSubview)
 
         createConstraints()
     }
@@ -57,14 +57,16 @@ final class ConversationListOnboardingHint: UIView {
     }
 
     private func createConstraints() {
-        [arrowView, messageLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        arrowView.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margin: CGFloat = 24
-
         NSLayoutConstraint.activate([
+
             messageLabel.topAnchor.constraint(equalTo: topAnchor),
             messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margin),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: margin),
 
             arrowView.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: margin),
             arrowView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin)])

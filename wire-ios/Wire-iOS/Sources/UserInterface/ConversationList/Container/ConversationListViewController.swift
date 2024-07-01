@@ -133,6 +133,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
         definesPresentationContext = true
 
+        hideNoContactLabel(animated: false)
         viewModel.viewController = self
     }
 
@@ -160,9 +161,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupTitleView()
         setupLeftNavigationBarButtons()
         setupRightNavigationBarButtons()
-
-        // Update the UI as needed
-        hideNoContactLabel(animated: false)
 
         setupObservers()
 

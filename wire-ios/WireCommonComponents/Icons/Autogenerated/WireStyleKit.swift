@@ -3786,7 +3786,7 @@ public class WireStyleKit: NSObject {
         servicePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_longDownArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc dynamic public class func drawIcon_longUpArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
 
         //// DownArrow Drawing
         let downArrowPath = UIBezierPath()
@@ -3804,6 +3804,8 @@ public class WireStyleKit: NSObject {
         downArrowPath.usesEvenOddFillRule = true
         color.setFill()
         downArrowPath.fill()
+
+        downArrowPath.apply(.init(rotationAngle: .pi))
     }
 
     @objc dynamic public class func drawIcon_createConversation_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
