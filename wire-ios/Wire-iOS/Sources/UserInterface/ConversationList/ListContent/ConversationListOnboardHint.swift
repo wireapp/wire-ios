@@ -25,17 +25,6 @@ final class ConversationListOnboardingHint: UIView {
     let messageLabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
     let arrowView = UIImageView()
 
-    weak var arrowPointToView: UITabBar? {
-        didSet {
-            guard let arrowPointToTabBar = arrowPointToView,
-                  let items = arrowPointToTabBar.items else { return }
-            let itemWidth = UIScreen.main.bounds.width / CGFloat(items.count)
-
-            NSLayoutConstraint.activate([
-                arrowView.centerXAnchor.constraint(equalTo: arrowPointToTabBar.leadingAnchor, constant: itemWidth / 2)])
-        }
-    }
-
     override init(frame: CGRect) {
 
         super.init(frame: frame)
@@ -66,11 +55,12 @@ final class ConversationListOnboardingHint: UIView {
         let margin: CGFloat = 24
         NSLayoutConstraint.activate([
 
-            messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: margin),
-            messageLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
-            trailingAnchor.constraint(equalToSystemSpacingAfter: messageLabel.trailingAnchor, multiplier: 1),
+            arrowView.topAnchor.constraint(equalTo: topAnchor, constant: margin),
+            trailingAnchor.constraint(equalTo: arrowView.trailingAnchor, constant: 4),
 
-            arrowView.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: margin),
-            arrowView.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            messageLabel.topAnchor.constraint(equalTo: arrowView.bottomAnchor, constant: margin),
+            messageLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 2),
+            trailingAnchor.constraint(equalToSystemSpacingAfter: messageLabel.trailingAnchor, multiplier: 2),
+            bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)])
     }
 }

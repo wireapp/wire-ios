@@ -189,8 +189,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
         viewModel.updateE2EICertifiedStatus()
 
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
-
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
 
