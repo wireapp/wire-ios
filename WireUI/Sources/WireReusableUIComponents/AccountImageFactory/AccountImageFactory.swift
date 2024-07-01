@@ -20,6 +20,6 @@ import UIKit
 
 /// Creates an image based on a user's or team's initials.
 
-public protocol AccountImageFactoryProtocol {
-    func createImage(initials: String) -> UIImage
+public protocol AccountImageFactory {
+    func createImage(initials: String, backgroundColor: UIColor) -> UIImage
 }

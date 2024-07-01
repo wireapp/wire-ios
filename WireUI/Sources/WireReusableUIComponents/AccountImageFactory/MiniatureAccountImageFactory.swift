@@ -18,20 +18,21 @@
 
 import UIKit
 
-public struct AccountImageFactory: AccountImageFactoryProtocol {
+public struct MiniatureAccountImageFactory: AccountImageFactory {
 
-    var size: CGSize {
-        get { renderer.frame.size }
-        set { renderer.frame.size = newValue }
-    }
+//    var size: CGSize {
+//        get { renderer.frame.size }
+//        set { renderer.frame.size = newValue }
+//    }
 
-    private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 50, height: 50))
+    private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 40, height: 40))
 
-    public func createImage(initials: String) -> UIImage {
+    public func createImage(initials: String, backgroundColor: UIColor) -> UIImage {
 
         let initials = initials.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { return .init() }
 
+        renderer.backgroundColor = backgroundColor
         renderer.initials = initials
         return renderer.renderImage()
     }
@@ -52,7 +53,7 @@ private final class InitialsRenderer: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .green
+        backgroundColor = .white
         setupLabel(initials)
     }
 

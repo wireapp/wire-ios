@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireReusableUIComponents
 
-final class AccountImageFactorySnapshotTests: XCTestCase {
+final class MiniatureAccountImageFactorySnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -38,7 +38,7 @@ final class AccountImageFactorySnapshotTests: XCTestCase {
 
     func testTODO() {
 
-        let image = AccountImageFactory().createImage(initials: "CA")
+        let image = MiniatureAccountImageFactory().createImage(initials: "CA", backgroundColor: .white)
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
 
