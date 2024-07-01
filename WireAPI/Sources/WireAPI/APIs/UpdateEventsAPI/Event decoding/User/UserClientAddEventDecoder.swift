@@ -32,11 +32,11 @@ struct UserClientAddEventDecoder {
             client: UserClient(
                 id: payload.id,
                 type: payload.type,
-                activationDate: payload.activationDate,
+                activationDate: payload.activationDate.date,
                 label: payload.label,
                 model: payload.model,
                 deviceClass: payload.deviceClass,
-                lastActiveDate: payload.lastActiveDate,
+                lastActiveDate: payload.lastActiveDate?.date,
                 mlsPublicKeys: payload.mlsPublicKeys,
                 cookie: payload.cookie,
                 capabilities: payload.capabilities?.capabilities ?? []
@@ -48,11 +48,11 @@ struct UserClientAddEventDecoder {
 
         let id: String
         let type: UserClientType
-        let activationDate: Date
+        let activationDate: UTCTimeMillis
         let label: String?
         let model: String?
         let deviceClass: DeviceClass?
-        let lastActiveDate: Date?
+        let lastActiveDate: UTCTime?
         let mlsPublicKeys: MLSPublicKeys?
         let cookie: String?
         let capabilities: CapabilitiesList?

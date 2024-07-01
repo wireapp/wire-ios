@@ -34,7 +34,7 @@ struct ConversationRenameEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
@@ -46,7 +46,7 @@ struct ConversationRenameEventDecoder {
         return ConversationRenameEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp,
+            timestamp: timestamp.date,
             newName: payload.name
         )
     }

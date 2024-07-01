@@ -1,0 +1,13 @@
+name: SZ Production
+on: workflow_dispatch
+
+permissions: 
+  checks: write
+
+jobs:
+  sz_production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: |
+          echo "This workflow only exists on chore/add-sz-app for now"
