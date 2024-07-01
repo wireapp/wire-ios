@@ -36,7 +36,7 @@ public protocol MessageSenderInterface {
 
 }
 
-public class MessageSender: MessageSenderInterface {
+public final class MessageSender: MessageSenderInterface {
 
     public init (
         apiProvider: APIProviderInterface,
@@ -83,19 +83,27 @@ public class MessageSender: MessageSenderInterface {
 
     public func sendMessage(message: any SendableMessage) async throws {
         await context.perform {
-            WireLogger.messaging.debug("send message", attributes: message.logInformation)
+            WireLogger.messaging.debug(
+                "send message - start wait for quick sync to finish",
+                attributes: .safePublic
+            )
         }
-
-        WireLogger.messaging.info("")
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
         do {
+            await context.perform {
+                WireLogger.messaging.debug(
+                    "send message - start wait for dependencies to resolve",
+                    attributes: message.logInformation
+                )
+            }
+
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
             try await attemptToSend(message: message)
         } catch {
             await context.perform {
-                WireLogger.messaging.warn("send message failed: \(error)", attributes: message.logInformation)
+                WireLogger.messaging.warn("send message - failed: \(error)", attributes: message.logInformation)
             }
             throw error
         }
@@ -106,7 +114,13 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSend(message: any SendableMessage) async throws {
-        let messageProtocol = await context.perform { message.conversation?.messageProtocol }
+        let messageProtocol = await context.perform {
+            WireLogger.messaging.debug(
+                "attempt to send",
+                attributes: message.logInformation
+            )
+            return message.conversation?.messageProtocol
+        }
 
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
@@ -140,7 +154,11 @@ public class MessageSender: MessageSenderInterface {
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
         let conversationID = await context.perform {
-            message.conversation?.qualifiedID
+            WireLogger.messaging.debug(
+                "attempt to send with proteus",
+                attributes: message.logInformation
+            )
+            return message.conversation?.qualifiedID
         }
 
         guard let conversationID else {
@@ -161,9 +179,10 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
-        await context.perform { // swiftlint:disable todo_requires_jira_link
+        await context.perform {
+            // swiftlint:disable:next todo_requires_jira_link
             message.delivered(with: response) // FIXME: jacob refactor to not use raw response
-        } // swiftlint:enable todo_requires_jira_link
+        }
         await proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
             for: message
@@ -182,6 +201,12 @@ public class MessageSender: MessageSenderInterface {
             }
 
             if await context.perform({ message.isExpired }) {
+                await context.perform {
+                    WireLogger.messaging.warn(
+                        "attempt to send with proteus failed - missing clients and message is expired",
+                        attributes: message.logInformation
+                    )
+                }
                 throw MessageSendError.messageExpired
             } else {
                 return Set(messageSendingStatus.missing.qualifiedClientIDs)
@@ -189,8 +214,20 @@ public class MessageSender: MessageSenderInterface {
         default:
             if case .tryAgainLater = failure.response?.result {
                 if await context.perform({ message.isExpired }) {
+                    await context.perform {
+                        WireLogger.messaging.warn(
+                            "attempt to send with proteus failed - message is expired and try again later",
+                            attributes: message.logInformation
+                        )
+                    }
                     throw MessageSendError.messageExpired
                 } else {
+                    await context.perform {
+                        WireLogger.messaging.warn(
+                            "attempt to send with proteus failed - try again later",
+                            attributes: message.logInformation
+                        )
+                    }
                     return Set() // FIXME: [WPB-5454] it's dangerous to retry indefinitely like this - [jacob]
                 }
             } else {
@@ -214,9 +251,17 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async throws {
-        let conversationID = await context.perform { message.conversation?.qualifiedID }
-        let groupID = await context.perform { message.conversation?.mlsGroupID }
-        let mlsService = await context.perform { self.context.mlsService }
+        let (conversationID, groupID, mlsService) = await context.perform {
+            WireLogger.messaging.info(
+                "attempt to send with mls",
+                attributes: message.logInformation
+            )
+            return (
+                message.conversation?.qualifiedID,
+                message.conversation?.mlsGroupID,
+                self.context.mlsService
+            )
+        }
 
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
