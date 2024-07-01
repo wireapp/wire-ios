@@ -102,6 +102,8 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
+        let miniatureAccountImageFactory = MiniatureAccountImageFactory()
+
         init(
             account: Account,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
@@ -194,14 +196,21 @@ extension ConversationListViewController.ViewModel {
                 teamName = team.name ?? account.teamName ?? ""
             }
             let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
-            let accountImage = MiniatureAccountImageFactory().createImage(initials: initials, backgroundColor: .white)
+            let accountImage = miniatureAccountImageFactory.createImage(initials: initials, backgroundColor: .white)
             self.accountImage = (accountImage, true)
 
         } else {
 
             // User image
+            if let data = account.imageData, let accountImage = UIImage(data: data) {
+                self.accountImage = (accountImage, false)
+                return
+            }
 
             // User initials
+            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
+            let accountImage = miniatureAccountImageFactory.createImage(initials: personName.initials, backgroundColor: .white)
+            self.accountImage = (accountImage, false)
         }
     }
 

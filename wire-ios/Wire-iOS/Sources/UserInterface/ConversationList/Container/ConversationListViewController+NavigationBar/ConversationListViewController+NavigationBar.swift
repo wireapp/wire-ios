@@ -34,8 +34,20 @@ extension ConversationListViewController {
     }
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)) {
+
         accountImageView?.accountType = accountImage.isTeamAccount ? .team : .user
         accountImageView?.accountImage = accountImage.image
+
+        if accountImage.isTeamAccount, let teamName = viewModel.account.teamName ?? viewModel.userSession.selfUser.teamName {
+            accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(teamName)
+            accountImageView?.accessibilityIdentifier = "\(teamName) team"
+        } else if let userName = viewModel.userSession.selfUser.name {
+            accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
+            accountImageView?.accessibilityIdentifier = .none
+        } else {
+            accountImageView?.accessibilityValue = .none
+            accountImageView?.accessibilityIdentifier = .none
+        }
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {

@@ -60,7 +60,7 @@ private final class InitialsRenderer: UIView {
 
     private func setupLabel(_ initials: String) {
 
-        initialsLabel.font = .systemFont(ofSize: 24)
+        initialsLabel.font = .systemFont(ofSize: 27, weight: .light)
         initialsLabel.textAlignment = .center
         initialsLabel.text = initials
         initialsLabel.frame = bounds
