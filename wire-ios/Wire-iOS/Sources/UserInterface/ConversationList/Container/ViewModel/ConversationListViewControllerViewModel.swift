@@ -20,6 +20,7 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 typealias Completion = () -> Void
@@ -119,6 +120,7 @@ extension ConversationListViewController {
             super.init()
 
             updateE2EICertifiedStatus()
+            updateAccountImage()
         }
 
         deinit {
@@ -171,6 +173,35 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
+        }
+    }
+
+    private func updateAccountImage() {
+
+        if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
+
+            // Team image
+            if case .teamImage(let data) = teamImageViewContent, let accountImage = UIImage(data: data) {
+                self.accountImage = (accountImage, true)
+                return
+            }
+
+            // Team initials
+            let teamName: String
+            if case .teamName(let value) = teamImageViewContent {
+                teamName = value
+            } else {
+                teamName = team.name ?? account.teamName ?? ""
+            }
+            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
+            let accountImage = MiniatureAccountImageFactory().createImage(initials: initials, backgroundColor: .white)
+            self.accountImage = (accountImage, true)
+
+        } else {
+
+            // User image
+
+            // User initials
         }
     }
 
@@ -339,9 +370,8 @@ extension ConversationListViewController.ViewModel: TeamObserver {
 
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
 
-        if changeInfo.imageDataChanged, let teamImageViewContent = changeInfo.team.teamImageViewContent ?? account.teamImageViewContent {
-
-            fatalError()
+        if changeInfo.imageDataChanged {
+            updateAccountImage()
         }
     }
 }

@@ -20,12 +20,9 @@ import UIKit
 
 public struct MiniatureAccountImageFactory: AccountImageFactory {
 
-//    var size: CGSize {
-//        get { renderer.frame.size }
-//        set { renderer.frame.size = newValue }
-//    }
-
     private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 40, height: 40))
+
+    public init() {}
 
     public func createImage(initials: String, backgroundColor: UIColor) -> UIImage {
 
@@ -63,7 +60,7 @@ private final class InitialsRenderer: UIView {
 
     private func setupLabel(_ initials: String) {
 
-        initialsLabel.font = .systemFont(ofSize: 11, weight: .semibold)
+        initialsLabel.font = .systemFont(ofSize: 24)
         initialsLabel.textAlignment = .center
         initialsLabel.text = initials
         initialsLabel.frame = bounds
