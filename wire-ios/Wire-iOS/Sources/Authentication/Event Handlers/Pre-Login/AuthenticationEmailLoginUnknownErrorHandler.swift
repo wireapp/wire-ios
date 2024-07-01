@@ -44,9 +44,9 @@ final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHand
         var detectedError: NSError
 
         if !ZMUser.isValidEmailAddress(credentials.email) {
-            detectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.invalidEmail.rawValue), userInfo: nil)
+            detectedError = NSError(domain: NSError.userSessionErrorDomain, code: Int(UserSessionErrorCode.invalidEmail.rawValue), userInfo: nil)
         } else if !ZMUser.isValidPassword(credentials.password) {
-            detectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue), userInfo: nil)
+            detectedError = NSError(domain: NSError.userSessionErrorDomain, code: Int(UserSessionErrorCode.invalidCredentials.rawValue), userInfo: nil)
         } else {
             detectedError = error
         }

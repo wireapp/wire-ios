@@ -305,7 +305,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeInvalidCredentials after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -321,7 +321,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountIsPendingVerification after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountIsPendingVerification after:^{
         [[self.sut nextRequestForAPIVersion:0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -337,7 +337,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidEmailVerificationCode after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeInvalidEmailVerificationCode after:^{
         [[self.sut nextRequestForAPIVersion:0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -354,7 +354,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountIsPendingActivation after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountIsPendingActivation after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -371,7 +371,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountSuspended after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountSuspended after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -387,7 +387,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountIsPendingVerification after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountIsPendingVerification after:^{
         [[self.sut nextRequestForAPIVersion:0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -406,7 +406,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeInvalidCredentials after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];

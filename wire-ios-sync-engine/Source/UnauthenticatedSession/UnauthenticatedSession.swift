@@ -97,7 +97,7 @@ public class UnauthenticatedSession: NSObject {
         if self.reachability.mayBeReachable {
             block()
         } else {
-            let error = NSError(code: .networkError, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .networkError, userInfo: nil)
             authenticationStatus.notifyAuthenticationDidFail(error)
         }
     }

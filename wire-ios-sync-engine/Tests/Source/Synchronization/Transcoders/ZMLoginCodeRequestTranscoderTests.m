@@ -97,7 +97,7 @@
     // then
     XCTAssertEqual(self.mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1);
     XCTAssertEqual(self.mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].code,
-                   (long) ZMUserSessionCodeRequestIsAlreadyPending);
+                   (long) ZMUserSessionErrorCodeRequestIsAlreadyPending);
     XCTAssertEqualObjects(self.mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].domain,
                           NSError.ZMUserSessionErrorDomain);
     XCTAssertEqual(self.authenticationStatus.currentPhase, ZMAuthenticationPhaseUnauthenticated);

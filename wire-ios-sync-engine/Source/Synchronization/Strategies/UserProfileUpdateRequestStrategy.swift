@@ -150,7 +150,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             } else {
                 let error: Error = NSError.invalidEmail(with: response) ??
                     NSError.keyExistsError(with: response) ??
-                    NSError(code: .unknownError, userInfo: nil)
+                    NSError(userSessionErrorCode: .unknownError, userInfo: nil)
                 self.userProfileUpdateStatus.didFailEmailUpdate(error: error)
             }
 

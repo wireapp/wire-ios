@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSError (ZMUserSessionInternal)
 
-+ (instancetype)userSessionErrorWithErrorCode:(ZMUserSessionErrorCode)code userInfo:(nullable NSDictionary *)userInfo;
++ (instancetype)userSessionErrorWithCode:(ZMUserSessionErrorCode)code userInfo:(nullable NSDictionary *)userInfo NS_SWIFT_NAME(userSessionError(code:userInfo:));
 
 + (__nullable instancetype)pendingLoginErrorWithResponse:(ZMTransportResponse *)response;
 + (__nullable instancetype)unauthorizedEmailErrorWithResponse:(ZMTransportResponse *)response;

@@ -261,7 +261,7 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         } else {
-            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
             transition(to: .unauthenticated(error: error))
         }
     }
@@ -270,7 +270,7 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         } else {
-            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
             transition(to: .unauthenticated(error: error))
         }
     }

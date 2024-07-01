@@ -73,9 +73,7 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         XCTAssertNil(weakObserver)
     }
 
-// MARK: - Changing email
-
-extension UserProfileUpdateStatusTests {
+    // MARK: - Changing email
 
     func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() throws {
 
@@ -115,11 +113,7 @@ extension UserProfileUpdateStatusTests {
         XCTAssertEqual(self.newRequestCallbackCount, 1)
     }
 
-}
-
-// MARK: - Set email and password
-
-extension UserProfileUpdateStatusTests {
+    // MARK: - Set email and password
 
     func testThatItIsNotUpdatingEmail() {
         XCTAssertFalse(sut.currentlySettingEmail)
@@ -412,10 +406,8 @@ extension UserProfileUpdateStatusTests {
         XCTAssertNil(self.sut.emailCredentials())
     }
 
-// MARK: - Check handle availability
+    // MARK: - Check handle availability
 
-extension UserProfileUpdateStatusTests {
-  
     func testThatItIsNotCheckingAvailabilityAtCreation() {
         XCTAssertFalse(self.sut.currentlyCheckingHandleAvailability)
     }
@@ -588,8 +580,6 @@ extension UserProfileUpdateStatusTests {
         }
     }
 
-extension UserProfileUpdateStatusTests {
-
     func testThatItIsNotSettingHandleyAtCreation() {
         XCTAssertFalse(self.sut.currentlySettingHandle)
     }
@@ -757,9 +747,7 @@ extension UserProfileUpdateStatusTests {
         }
     }
 
-// MARK: - Find handle suggestions
-
-extension UserProfileUpdateStatusTests {
+    // MARK: - Find handle suggestions
 
     func testThatItIsNotGeneratingHandleSuggestionsAtCreation() {
         XCTAssertFalse(self.sut.currentlyGeneratingHandleSuggestion)

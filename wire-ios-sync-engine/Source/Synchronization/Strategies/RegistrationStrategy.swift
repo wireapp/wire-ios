@@ -55,7 +55,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
                 NSError.emailAddressInUse(with: response) ??
                 NSError.invalidEmail(with: response) ??
                 NSError.unauthorizedEmailError(with: response) ??
-                NSError(code: .unknownError, userInfo: [:])
+                NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             registrationStatus.handleError(error)
         }
     }

@@ -162,7 +162,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(code: .needsCredentials, userInfo: nil).localizedDescription)
+        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(userSessionErrorCode: .needsCredentials, userInfo: nil).localizedDescription)
     }
 
     func testThatDuringLoginWithEmailItThrowsErrorWhenOffline() {
@@ -174,7 +174,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription,
-                       NSError(code: .networkError, userInfo: nil).localizedDescription)
+                       NSError(userSessionErrorCode: .networkError, userInfo: nil).localizedDescription)
     }
 
     func testThatItAsksDelegateIfAccountAlreadyExists() throws {

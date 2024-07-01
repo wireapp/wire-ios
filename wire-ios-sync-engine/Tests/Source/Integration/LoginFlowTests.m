@@ -125,7 +125,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     
     // then
     XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationDidFail);
-    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionInvalidCredentials);
+    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionErrorCodeInvalidCredentials);
 }
 
 - (void)testThatWhenTransportSessionDeletesCookieInResponseToFailedLoginWeDoNotContinueSendingMoreRequests
@@ -234,7 +234,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         return self.mockLoginDelegete.didCallAuthenticationDidFail;
     } timeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionNetworkError);
+    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionErrorCodeNetworkError);
     XCTAssertLessThan(self.mockTransportSession.receivedRequests.count, 2u);
 
     // after

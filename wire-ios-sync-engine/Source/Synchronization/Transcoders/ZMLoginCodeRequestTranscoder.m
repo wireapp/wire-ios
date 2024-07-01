@@ -85,7 +85,7 @@
     else {
         NSError *error = {
             [NSError pendingLoginErrorWithResponse:response] ?:
-            [NSError userSessionErrorWithErrorCode:ZMUserSessionUnknownError userInfo:nil]
+            [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeUnknownError userInfo:nil]
         };
 
         [authStatus didFailRequestForLoginCode:error];

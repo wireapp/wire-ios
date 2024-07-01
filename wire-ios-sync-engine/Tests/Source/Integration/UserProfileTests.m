@@ -259,8 +259,8 @@
         }
         return nil;
     };
-    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionUnknownError userInfo:nil]];
-    
+    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeUnknownError userInfo:nil]];
+
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     WaitForAllGroupsToBeEmpty(5);
@@ -294,8 +294,8 @@
         }
         return nil;
     };
-    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmail userInfo:nil]];
-    
+    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidEmail userInfo:nil]];
+
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     WaitForAllGroupsToBeEmpty(5);
@@ -329,8 +329,8 @@
         }
         return nil;
     };
-    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil]];
-    
+    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeEmailIsAlreadyRegistered userInfo:nil]];
+
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -340,7 +340,6 @@
     
     // after
     token = nil;
-    
 }
 
 @end
