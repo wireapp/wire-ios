@@ -237,11 +237,11 @@ struct AccountImageView_Previews: PreviewProvider {
             ForEach([false, true], id: \.self) { isTeamAccount in
 
                 previewWithNavigationBar(isTeamAccount, .none)
-                    .previewDisplayName(isTeamAccount ? "Team Account" : "Personal Account")
+                    .previewDisplayName(isTeamAccount ? "team" : "personal")
 
                 ForEach(Availability.allCases, id: \.self) { availability in
                     previewWithNavigationBar(isTeamAccount, availability)
-                        .previewDisplayName(isTeamAccount ? "Team Account" : "Personal Account" + " - \(availability)")
+                        .previewDisplayName(isTeamAccount ? "team" : "personal" + " - \(availability)")
                 }
             }
         }

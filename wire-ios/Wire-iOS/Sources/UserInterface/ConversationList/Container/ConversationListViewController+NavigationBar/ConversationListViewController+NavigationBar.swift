@@ -35,7 +35,7 @@ extension ConversationListViewController {
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)) {
 
-        accountImageView?.accountType = accountImage.isTeamAccount ? .team : .user
+        accountImageView?.isTeamAccount = accountImage.isTeamAccount
         accountImageView?.accountImage = accountImage.image
 
         if accountImage.isTeamAccount, let teamName = viewModel.account.teamName ?? viewModel.userSession.selfUser.teamName {
@@ -59,7 +59,7 @@ extension ConversationListViewController {
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
-        accountImageView.accountType = viewModel.accountImage.isTeamAccount ? .team : .user
+        accountImageView.isTeamAccount = viewModel.accountImage.isTeamAccount
         accountImageView.accountImage = viewModel.accountImage.image
         accountImageView.availability = viewModel.selfUserStatus.availability.map()
         accountImageView.accessibilityTraits = .button
