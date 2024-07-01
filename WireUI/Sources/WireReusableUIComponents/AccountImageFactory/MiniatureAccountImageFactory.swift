@@ -63,6 +63,8 @@ private final class InitialsRenderer: UIView {
 
     private func setupLabel(_ initials: String) {
 
+        initialsLabel.font = .systemFont(ofSize: 11, weight: .semibold)
+        initialsLabel.textAlignment = .center
         initialsLabel.text = initials
         initialsLabel.frame = bounds
         initialsLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]

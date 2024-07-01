@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireUITesting
 import XCTest
 
@@ -24,9 +25,11 @@ import XCTest
 
 final class MiniatureAccountImageFactorySnapshotTests: XCTestCase {
 
+    private var sut: MiniatureAccountImageFactory!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
+        sut = .init()
         snapshotHelper = .init()
             .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
@@ -34,16 +37,33 @@ final class MiniatureAccountImageFactorySnapshotTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
+        sut = nil
     }
 
-    func testTODO() {
+    func testRenderingWhiteW() {
 
-        let image = MiniatureAccountImageFactory().createImage(initials: "CA", backgroundColor: .white)
+        let image = sut.createImage(initials: "W", backgroundColor: .white)
+        let imageView = UIImageView(image: image)
+        imageView.frame.size = image.size
+
+        snapshotHelper
+            .verify(matching: imageView)
+    }
+
+    func testRenderingBlueCA() {
+
+        let image = sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.LightUI.MainColor.blue500)
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
+            .verify(matching: imageView)
+
+        imageView.image = sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.DarkUI.MainColor.blue500)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
             .verify(matching: imageView)
     }
 }
