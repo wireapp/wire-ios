@@ -16,35 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public protocol HttpClient {
-
-    func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
-
-}
-
-public class HttpClientImpl: HttpClient {
-
-    let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
-
-    public init(transportSession: TransportSessionType, queue: ZMSGroupQueue) {
-        self.transportSession = transportSession
-        self.queue = queue
-    }
-
-    public func send(_ request: ZMTransportRequest) async -> ZMTransportResponse {
-        await withCheckedContinuation { continuation in
-            request.add(ZMCompletionHandler(on: queue, block: { response in
-                continuation.resume(returning: response)
-            }))
-
-            transportSession.enqueueOneTime(request)
-        }
-    }
-}
-
 public enum MessageSendError: Error, Equatable {
     case missingMessageProtocol
     case missingGroupID
@@ -114,6 +85,8 @@ public class MessageSender: MessageSenderInterface {
         await context.perform {
             WireLogger.messaging.debug("send message", attributes: message.logInformation)
         }
+
+        WireLogger.messaging.info("")
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
