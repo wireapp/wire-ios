@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "Archiv";
+"archived_list.empty_placeholder.headline" = "Noch nichts archiviert";
+"archived_list.empty_placeholder.subheadline" = "Für eine übersichtliche Unterhaltungsliste verschieben Sie ungenutzte Unterhaltungen hierher. Sie können die Archivierung später jederzeit aufheben.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Jede Unterhaltung beginnt hier";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "E-Mail-Adresse und Passwort hinzufügen";
 
 // About screen
+"about.legal.title" = "Datenschutz und AGB";
 "about.tos.title" = "Nutzungsbedingungen";
 "about.privacy.title" = "Datenschutzrichtlinie";
 "about.license.title" = "Lizenzen";

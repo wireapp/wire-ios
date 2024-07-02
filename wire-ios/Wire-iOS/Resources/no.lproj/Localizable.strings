@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arkiver";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Samtale starter her";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "Legg til epostadresse og et passord";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Brukervilkår";
 "about.privacy.title" = "Personvernregler";
 "about.license.title" = "Lisensinformasjon";

@@ -90,22 +90,28 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
-        WireLogger.messaging.debug("inserting message", attributes: object.logInformation)
+        let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
+        let logAttributes = logAttributesBuilder.syncLogAttributes(object)
+        WireLogger.messaging.debug("inserting message", attributes: logAttributes)
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
         Task {
             do {
                 try await messageSender.sendMessage(message: object)
+
+                let logAttributes = await logAttributesBuilder.logAttributes(object)
+                WireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
+
                 await context.perform {
-                    WireLogger.messaging.debug("successfully sent message", attributes: object.logInformation)
                     object.markAsSent()
                     self.deleteMessageIfNecessary(object)
                 }
             } catch {
-                await context.perform {
-                    WireLogger.messaging.error("failed to send message: \(error)", attributes: object.logInformation)
+                let logAttributes = await logAttributesBuilder.logAttributes(object)
+                WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
 
+                await context.perform {
                     object.expire()
                     self.localNotificationDispatcher.didFailToSend(object)
 

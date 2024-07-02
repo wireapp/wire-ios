@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archive";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "گفتگوها از اینجا شروع می‌شوند";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "ایمیل آدرس خود و رمز عبور جدیدی را وارد کنید";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "شرایط و مقررات استفاده";
 "about.privacy.title" = "سیاست حفظ از حریم خصوصی";
 "about.license.title" = "اطلاعات مجوز";
