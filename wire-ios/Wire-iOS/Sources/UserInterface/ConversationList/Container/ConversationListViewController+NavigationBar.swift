@@ -190,7 +190,12 @@ extension ConversationListViewController {
             return
         }
 
-        LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: viewModel.userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            user: selfUser,
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     @objc

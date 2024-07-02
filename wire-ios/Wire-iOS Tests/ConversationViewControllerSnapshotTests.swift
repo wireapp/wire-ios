@@ -25,10 +25,11 @@ import XCTest
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
-    var sut: ConversationViewController!
-    var mockConversation: ZMConversation!
-    var serviceUser: ZMUser!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: ConversationViewController!
+    private var mockConversation: ZMConversation!
+    private var serviceUser: ZMUser!
+    private var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
     private var imageTransformerMock: MockImageTransformer!
@@ -41,6 +42,8 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     override func setUp() {
         super.setUp()
+
+        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
@@ -48,9 +51,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         userSession.contextProvider = coreDataStack
         userSession.mockConversationList = ConversationList(
             allConversations: [mockConversation!],
-            filteringPredicate: NSPredicate(
-                value: true
-            ),
+            filteringPredicate: NSPredicate(value: true),
             managedObjectContext: uiMOC,
             description: "all conversations"
         )
@@ -63,8 +64,9 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         sut = ConversationViewController(
             conversation: mockConversation,
             visibleMessage: nil,
-            zClientViewController: zClientViewController,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()
         )
@@ -76,6 +78,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         serviceUser = nil
         coreDataFixture = nil
         imageTransformerMock = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }

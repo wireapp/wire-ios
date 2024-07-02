@@ -68,7 +68,7 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 
     func perform(
         action: MessageAction,
-        for message: ZMConversationMessage!,
+        for message: ZMConversationMessage,
         view: UIView
     ) {
         // no-op
