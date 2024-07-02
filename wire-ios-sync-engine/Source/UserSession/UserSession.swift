@@ -262,7 +262,9 @@ public protocol UserSession: AnyObject {
 
     func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol
 
-    func makeAppendImageMessageUseCase() -> ApppendImageMessageUseCaseProtocol
+    func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol
+
+    func makeAppendKnockMessageUseCase() -> AppendKnocMessagekUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

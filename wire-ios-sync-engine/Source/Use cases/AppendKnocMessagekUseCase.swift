@@ -20,58 +20,33 @@ import WireAnalytics
 import WireDataModel
 
 // sourcery: AutoMockable
-public protocol AppendTextMessageUseCaseProtocol {
+public protocol AppendKnocMessagekUseCaseProtocol {
+
     func invoke(
-        text: String,
-        mentions: [Mention],
-        replyingTo: ZMConversationMessage?,
-        in conversation: ZMConversation,
-        fetchLinkPreview: Bool
+        in conversation: ZMConversation
     ) throws
+
 }
 
-public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
+public struct AppendKnocMessagekUseCase: AppendKnocMessagekUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
     public func invoke(
-        text: String,
-        mentions: [Mention],
-        replyingTo: ZMConversationMessage?,
-        in conversation: ZMConversation,
-        fetchLinkPreview: Bool
+        in conversation: ZMConversation
     ) throws {
-        try conversation.appendText(
-            content: text,
-            mentions: mentions,
-            replyingTo: replyingTo,
-            fetchLinkPreview: fetchLinkPreview
-        )
-        conversation.draftMessage = nil
+
+        try conversation.appendKnock()
+
         analyticsSession?.trackEvent(
             ContributedEvent(
-                contributionType: .textMessage,
+                contributionType: .pingMessage,
                 conversationType: .init(conversation.conversationType),
                 conversationSize: UInt(
                     conversation.localParticipants.count
                 )
             )
         )
-    }
-
-}
-
-extension ConversationType {
-
-    init(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .group:
-            self = .group
-        case .oneOnOne:
-            self = .oneOnOne
-        default:
-            self = .unknown
-        }
     }
 
 }

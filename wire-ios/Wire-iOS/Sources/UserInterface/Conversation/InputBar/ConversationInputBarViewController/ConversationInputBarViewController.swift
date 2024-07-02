@@ -668,9 +668,8 @@ final class ConversationInputBarViewController: UIViewController,
         notificationFeedbackGenerator.prepare()
         userSession.enqueue({
             do {
-                try conversation.appendKnock()
-                Analytics.shared.tagMediaActionCompleted(.ping, inConversation: conversation)
-
+                let useCase = self.userSession.makeAppendKnockMessageUseCase()
+                try useCase.invoke(in: conversation)
                 AVSMediaManager.sharedInstance().playKnockSound()
                 self.notificationFeedbackGenerator.notificationOccurred(.success)
             } catch {

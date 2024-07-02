@@ -20,7 +20,7 @@ import WireAnalytics
 import WireDataModel
 
 // sourcery: AutoMockable
-public protocol ApppendImageMessageUseCaseProtocol {
+public protocol AppendImageMessageUseCaseProtocol {
 
     func invoke(
         withImageData imageData: Data,
@@ -28,7 +28,7 @@ public protocol ApppendImageMessageUseCaseProtocol {
     ) throws
 }
 
-public struct ApppendImageMessageUseCase: ApppendImageMessageUseCaseProtocol {
+public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
