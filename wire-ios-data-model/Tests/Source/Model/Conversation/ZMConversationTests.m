@@ -22,10 +22,8 @@
 #import "ZMUser.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMConversationList+Internal.h"
 #import "ZMConnection+Internal.h"
 #import "ZMConversation+Internal.h"
-#import "ZMConversationList+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 #import "WireDataModelTests-Swift.h"
 
@@ -410,7 +408,7 @@
     invalidConversation.conversationType = ZMConversationTypeInvalid;
     
     // when
-    NSArray *conversationsInContext = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *conversationsInContext = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     
     // then
     XCTAssertEqualObjects(conversationsInContext, @[oneToOneConversation]);

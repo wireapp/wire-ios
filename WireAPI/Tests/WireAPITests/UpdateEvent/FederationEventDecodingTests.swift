@@ -25,7 +25,7 @@ final class FederationEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
