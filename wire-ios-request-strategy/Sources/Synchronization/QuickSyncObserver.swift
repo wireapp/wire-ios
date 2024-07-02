@@ -41,6 +41,13 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     }
 
     public func waitForQuickSyncToFinish() async {
+        // TODO: remove sleeping
+        if #available(iOSApplicationExtension 16.0, *) {
+            try! await Task.sleep(for: .seconds(11))
+        } else {
+            try! await Task.sleep(nanoseconds: 11_000_000_000)
+        }
+
         if await quickSyncHasCompleted() {
             WireLogger.messaging.info(
                 "no need to wait, because  quick sync has completed",

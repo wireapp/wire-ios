@@ -385,10 +385,15 @@ extension ZMConversation {
 
         message.sender = ZMUser.selfUser(in: moc)
 
-        if expires {
-            let expirationDate = message.setExpirationDate()
-            WireLogger.messaging.debug("set expiration date \(expirationDate)", attributes: logAttributes)
-        }
+        // TODO: remove
+//        if expires {
+//            // message.expirationDate = Date(timeIntervalSinceNow: .oneMinute)
+//            message.setExpirationDate()
+//            WireLogger.messaging.debug(
+//                "set expiration date \(String(describing: message.expirationDate))",
+//                attributes: logAttributes
+//            )
+//        }
 
         if hidden {
             message.hiddenInConversation = self

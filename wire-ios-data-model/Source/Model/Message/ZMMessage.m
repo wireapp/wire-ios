@@ -38,7 +38,8 @@
 
 static NSString *ZMLogTag ZM_UNUSED = @"ephemeral";
 
-static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
+// TODO: revert to 30 seconds
+static NSTimeInterval ZMDefaultMessageExpirationTime = 10;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
 NSString * const ZMMessageIsExpiredKey = @"isExpired";
@@ -219,11 +220,9 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     [self prepareToSend];
 }
 
-- (NSDate *)setExpirationDate;
+- (void)setExpirationDate;
 {
-    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
-    self.expirationDate = expirationDate;
-    return expirationDate;
+    self.expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
 }
 
 - (void)removeExpirationDate;

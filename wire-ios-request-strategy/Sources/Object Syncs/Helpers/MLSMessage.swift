@@ -22,6 +22,9 @@ import Foundation
 
 public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {
     var logInformation: LogAttributes { get }
+
+    /// Sets the expiration date with the default time interval and returns the date.
+    func setExpirationDate()
 }
 
 extension ZMClientMessage: MLSMessage {}
@@ -42,6 +45,10 @@ extension GenericMessageEntity: MLSMessage {
 
     public func encryptForTransport(using encrypt: (Data) async throws -> Data) async throws -> Data {
         return try await message.encryptForTransport(using: encrypt)
+    }
+
+    public func setExpirationDate() {
+        // no-op
     }
 
     public var logInformation: LogAttributes {

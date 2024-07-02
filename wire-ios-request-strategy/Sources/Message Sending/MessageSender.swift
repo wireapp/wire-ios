@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
+
 public enum MessageSendError: Error, Equatable {
     case missingMessageProtocol
     case missingGroupID
@@ -127,7 +129,11 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMessageProtocol
         }
 
-        // set expiration date?
+        // TODO: conditionally see if the message type expires or not
+        await context.perform {
+            message.setExpirationDate()
+            self.context.saveOrRollback()
+        }
 
         do {
             return switch messageProtocol {

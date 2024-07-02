@@ -20,6 +20,9 @@ import Foundation
 
 public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {
     var logInformation: LogAttributes { get }
+
+    /// Sets the expiration date with the default time interval and returns the date.
+    func setExpirationDate()
 }
 
 extension ZMClientMessage: ProteusMessage {
