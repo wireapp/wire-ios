@@ -45,15 +45,18 @@ extension UIView {
 }
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
+
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController) {
         present(actionsController, animated: true)
     }
 
     // MARK: - MessageActionResponder
 
-    func perform(action: MessageAction,
-                 for message: ZMConversationMessage!,
-                 view: UIView) {
+    func perform(
+        action: MessageAction,
+        for message: ZMConversationMessage,
+        view: UIView
+    ) {
         let actionView = view.targetView(for: message, dataSource: dataSource)
 
         // Do not dismiss Modal for forward since share VC is present in a popover
@@ -83,7 +86,12 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
     }
 
     func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
-        let messageDetailsViewController = MessageDetailsViewController(message: message, preferredDisplayMode: preferredDisplayMode, userSession: userSession)
+        let messageDetailsViewController = MessageDetailsViewController(
+            message: message,
+            preferredDisplayMode: preferredDisplayMode,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         parent?.present(messageDetailsViewController, animated: true)
     }
 

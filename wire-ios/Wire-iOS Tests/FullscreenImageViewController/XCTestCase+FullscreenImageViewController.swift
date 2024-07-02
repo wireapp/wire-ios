@@ -32,7 +32,11 @@ extension XCTestCase {
 
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let sut = FullscreenImageViewController(message: message, userSession: userSession)
+        let sut = FullscreenImageViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
         sut.setBoundsSizeAsIPhone4_7Inch()
         sut.viewDidLoad()
 
