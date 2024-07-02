@@ -61,7 +61,7 @@ final class ConversationCreationController: UIViewController {
         ].compactMap { $0 }
 
         if let firstSection = sections.first {
-            firstSection.headerTitle = "Conversation Options"
+            firstSection.headerTitle = L10n.Localizable.Conversation.Create.Options.title
         }
 
         return sections

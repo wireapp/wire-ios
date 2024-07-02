@@ -30,7 +30,7 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
 
     weak var cell: CreationCell?
 
-    var header = UICollectionReusableView(frame: .zero)
+    var header = SectionHeader(frame: .zero)
     var headerHeight: CGFloat = 0
 
     var footer = SectionFooter(frame: .zero)
@@ -47,7 +47,7 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
             withReuseIdentifier: "SectionFooter")
 
         collectionView?.register(
-            UICollectionReusableView.self,
+            SectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "SectionHeader")
     }
@@ -77,19 +77,7 @@ extension ConversationCreateSectionController {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SectionHeader", for: indexPath)
-            if let headerTitle {
-                let label = UILabel()
-                label.text = headerTitle
-                label.font = .systemFont(ofSize: 14, weight: .medium)
-                label.textColor = .gray
-                label.translatesAutoresizingMaskIntoConstraints = false
-                view.addSubview(label)
-                NSLayoutConstraint.activate([
-                    label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                    label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                    label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-                ])
-            }
+            (view as? SectionHeader)?.titleLabel.text = headerTitle
             return view
         default:
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SectionFooter", for: indexPath)
@@ -105,7 +93,10 @@ extension ConversationCreateSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return headerTitle != nil ? CGSize(width: collectionView.bounds.size.width, height: headerHeight) : .zero
+        guard headerTitle != nil else { return .zero }
+        header.titleLabel.text = headerTitle
+        header.size(fittingWidth: collectionView.bounds.width)
+        return header.bounds.size
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {

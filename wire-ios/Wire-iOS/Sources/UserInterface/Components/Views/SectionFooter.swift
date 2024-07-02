@@ -17,10 +17,11 @@
 //
 
 import UIKit
+import WireDesign
 
 final class SectionFooterView: UIView {
 
-    let titleLabel = UILabel()
+    let titleLabel = DynamicFontLabel(style: .h5, color: SemanticColors.Label.textSectionFooter)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,8 +46,8 @@ final class SectionFooterView: UIView {
         NSLayoutConstraint.activate([
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
 
