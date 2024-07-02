@@ -531,7 +531,7 @@ final class ConversationListViewModel: NSObject {
             kinds = [.conversations, .contactRequests]
         }
 
-        var sections = kinds.map { kind in
+        let sections = kinds.map { kind in
             Section(
                 kind: kind,
                 conversationDirectory: conversationDirectory,
