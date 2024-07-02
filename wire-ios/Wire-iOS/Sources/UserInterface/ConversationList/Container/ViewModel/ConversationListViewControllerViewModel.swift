@@ -20,12 +20,18 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
+
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
+    )
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
@@ -47,12 +53,13 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         completion: (() -> Void)?
     ) -> Bool
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {
+
     final class ViewModel: NSObject {
+
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
                 guard viewController != nil else { return }
@@ -68,6 +75,10 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
+        private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
+        }
+
         let selfUserLegalHoldSubject: any SelfUserLegalHoldable
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
@@ -78,7 +89,10 @@ extension ConversationListViewController {
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: (any NSObjectProtocol)?
+
         private var userObservationToken: NSObjectProtocol?
+        private var teamObservationToken: NSObjectProtocol?
+
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
         var connectionRequestsObserverToken: NSObjectProtocol?
@@ -87,6 +101,8 @@ extension ConversationListViewController {
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
+
+        let miniatureAccountImageFactory = MiniatureAccountImageFactory()
 
         init(
             account: Account,
@@ -106,6 +122,7 @@ extension ConversationListViewController {
             super.init()
 
             updateE2EICertifiedStatus()
+            updateAccountImage()
         }
 
         deinit {
@@ -135,6 +152,11 @@ extension ConversationListViewController.ViewModel {
             }
 
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
+
+            if let team = userSession.selfUser.membership?.team {
+                team.requestImage()
+                teamObservationToken = TeamChangeInfo.add(observer: self, for: team)
+            }
         }
 
         updateObserverTokensForActiveTeam()
@@ -153,6 +175,42 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
+        }
+    }
+
+    private func updateAccountImage() {
+
+        if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
+
+            // Team image
+            if case .teamImage(let data) = teamImageViewContent, let accountImage = UIImage(data: data) {
+                self.accountImage = (accountImage, true)
+                return
+            }
+
+            // Team initials
+            let teamName: String
+            if case .teamName(let value) = teamImageViewContent {
+                teamName = value
+            } else {
+                teamName = team.name ?? account.teamName ?? ""
+            }
+            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
+            let accountImage = miniatureAccountImageFactory.createImage(initials: initials, backgroundColor: .white)
+            self.accountImage = (accountImage, true)
+
+        } else {
+
+            // User image
+            if let data = account.imageData, let accountImage = UIImage(data: data) {
+                self.accountImage = (accountImage, false)
+                return
+            }
+
+            // User initials
+            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
+            let accountImage = miniatureAccountImageFactory.createImage(initials: personName.initials, backgroundColor: .white)
+            self.accountImage = (accountImage, false)
         }
     }
 
@@ -248,12 +306,14 @@ extension ConversationListViewController.ViewModel {
     }
 }
 
+// MARK: - UserObserving
+
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
-        if changeInfo.teamsChanged {
-            viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
+        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
+            updateAccountImage()
         }
 
         if changeInfo.trustLevelChanged {
@@ -267,6 +327,26 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
+        }
+
+        if changeInfo.teamsChanged {
+            if let team = changeInfo.user.membership?.team {
+                teamObservationToken = TeamChangeInfo.add(observer: self, for: team)
+            } else {
+                teamObservationToken = nil
+            }
+        }
+    }
+}
+
+// MARK: - TeamObserver
+
+extension ConversationListViewController.ViewModel: TeamObserver {
+
+    func teamDidChange(_ changeInfo: TeamChangeInfo) {
+
+        if changeInfo.imageDataChanged {
+            updateAccountImage()
         }
     }
 }

@@ -80,22 +80,19 @@ final class ConversationListViewController: UIViewController, UITabBarController
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
-        label.backgroundColor = .clear
         return label
     }()
 
     /// Arranges the filterContainerView (if visible) and the contentContainer below each other.
     private var stackView: UIStackView!
 
-    let contentContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-        return view
-    }()
+    let contentContainer = UIView()
 
     let listContentController: ConversationListContentController
 
+    weak var accountImageView: AccountImageView?
     weak var titleViewLabel: UILabel?
+
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
@@ -136,8 +133,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
         definesPresentationContext = true
 
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-
+        hideNoContactLabel(animated: false)
         viewModel.viewController = self
     }
 
@@ -166,12 +162,11 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupLeftNavigationBarButtons()
         setupRightNavigationBarButtons()
 
-        // Update the UI as needed
-        hideNoContactLabel(animated: false)
-
         setupObservers()
 
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+
+        applyColorTheme()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -193,8 +188,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
-
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
@@ -256,7 +249,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         filterContainerStackView.alignment = .center
         filterContainerStackView.spacing = 4
         filterContainerStackView.translatesAutoresizingMaskIntoConstraints = false
-        filterContainerStackView.backgroundColor = SemanticColors.View.backgroundDefault
         filterContainerView.addSubview(filterContainerStackView)
         NSLayoutConstraint.activate([
             filterContainerStackView.topAnchor.constraint(equalToSystemSpacingBelow: filterContainerView.topAnchor, multiplier: 1),
@@ -314,7 +306,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor),
 
-            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
+            onboardingHint.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
             onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
 
@@ -322,6 +314,11 @@ final class ConversationListViewController: UIViewController, UITabBarController
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
             noConversationLabel.widthAnchor.constraint(equalToConstant: 240)
         ])
+    }
+
+    private func applyColorTheme() {
+        view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        titleViewLabel?.textColor = ColorTheme.Backgrounds.onSurfaceVariant
     }
 
     // MARK: - No Contact Label Management
@@ -365,7 +362,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         } else {
             filterContainerView.isHidden = true
         }
-
     }
 
     // MARK: - Selection Management
@@ -429,13 +425,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
 // MARK: - ViewModel Delegate
 
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {
-
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
-        setupTitleView()
-        setupLeftNavigationBarButtons()
-    }
-}
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
 
 // MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
 

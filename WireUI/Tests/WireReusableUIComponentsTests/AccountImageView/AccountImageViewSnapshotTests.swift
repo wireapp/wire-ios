@@ -38,15 +38,16 @@ final class AccountImageViewSnapshotTests: XCTestCase {
 
     func testAllAccountTypesAndAvailabilities() {
 
-        for accountType in AccountImageView.AccountType.allCases {
+        for isTeamAccount in [false, true] {
             for availability in Availability.allCases + [Availability?.none] {
 
                 if #available(iOS 16.0, *) {
 
                     // Given
-                    let rootView = AccountImageView_Previews.previewWithNavigationBar(accountType, availability)
+                    let rootView = AccountImageView_Previews.previewWithNavigationBar(isTeamAccount, availability)
                     let hostingControllerView = UIHostingController(rootView: rootView).view!
                     hostingControllerView.frame = UIScreen.main.bounds
+                    let accountType = isTeamAccount ? "team" : "personal"
                     let testName = if let availability { "\(accountType).\(availability)" } else { "\(accountType).none" }
 
                     // Then
