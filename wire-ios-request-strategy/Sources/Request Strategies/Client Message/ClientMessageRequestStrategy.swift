@@ -91,11 +91,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
-
-        Task {
-            let logAttributes = await logAttributesBuilder.logAttributes(object)
-            WireLogger.messaging.debug("inserting message", attributes: logAttributes)
-        }
+        let logAttributes = logAttributesBuilder.syncLogAttributes(object)
+        WireLogger.messaging.debug("inserting message", attributes: logAttributes)
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()

@@ -24,44 +24,73 @@ struct MessageLogAttributesBuilder {
 
     private let context: NSManagedObjectContext
 
+    // MARK: - Initialize
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
 
+    // MARK: - ZMClientMessage
+
     func logAttributes(_ message: ZMClientMessage) async -> LogAttributes {
-        let messageAttributes: LogAttributes = await context.perform {
-            [
-                LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>",
-                LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-                LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-            ]
-        }
-        return messageAttributes.merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+        let attributes = await context.perform { clientMessageLogAttributes(message) }
+        return makeAttributesPublic(attributes)
     }
+
+    func syncLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
+        let attributes = context.performAndWait { clientMessageLogAttributes(message) }
+        return makeAttributesPublic(attributes)
+    }
+
+    private func clientMessageLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
+        [
+            LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ]
+    }
+
+    // MARK: - ZMAssetClientMessage
 
     func logAttributes(_ message: ZMAssetClientMessage) async -> LogAttributes {
-        let messageAttributes: LogAttributes = await context.perform {
-            [
-                LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>",
-                LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-                LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-            ]
-        }
-        return messageAttributes.merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+        let attributes = await context.perform { assetClientMessageLogAttributes(message) }
+        return makeAttributesPublic(attributes)
     }
+
+    func syncLogAttributes(_ message: ZMAssetClientMessage) -> LogAttributes {
+        let attributes = context.performAndWait { assetClientMessageLogAttributes(message) }
+        return makeAttributesPublic(attributes)
+    }
+
+    private func assetClientMessageLogAttributes(_ message: ZMAssetClientMessage) -> LogAttributes {
+        [
+            LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ]
+    }
+
+    // MARK: - GenericMessageEntity
 
     func logAttributes(_ message: GenericMessageEntity) async -> LogAttributes {
-        let messageAttributes: LogAttributes = await context.perform {
-            [
-                LogAttributesKey.nonce.rawValue: message.message.safeIdForLoggingDescription,
-                LogAttributesKey.messageType.rawValue: message.message.safeTypeForLoggingDescription,
-                LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-            ]
-        }
-        return messageAttributes.merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+        let attributes = await context.perform { genericMessageLogAttributes(message) }
+        return makeAttributesPublic(attributes)
     }
 
-    // MARK: Helpers
+    func syncLogAttributes(_ message: GenericMessageEntity) -> LogAttributes {
+        let attributes = context.performAndWait { genericMessageLogAttributes(message) }
+        return makeAttributesPublic(attributes)
+    }
+
+    private func genericMessageLogAttributes(_ message: GenericMessageEntity) -> LogAttributes {
+        [
+            LogAttributesKey.nonce.rawValue: message.message.safeIdForLoggingDescription,
+            LogAttributesKey.messageType.rawValue: message.message.safeTypeForLoggingDescription,
+            LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ]
+    }
+
+    // MARK: - Protocol async
 
     /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
     func logAttributes(_ message: any SendableMessage) async -> LogAttributes {
@@ -88,5 +117,31 @@ struct MessageLogAttributesBuilder {
 
         assertionFailure("cannot find a supported type of message '\(type(of: message))'")
         return [:]
+    }
+
+    // MARK: - Protocol sync
+
+    /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
+    func syncLogAttributes(_ message: any ProteusMessage) -> LogAttributes {
+        if let clientMessage = message as? ZMClientMessage {
+            return syncLogAttributes(clientMessage)
+        }
+
+        if let assetClientMessage = message as? ZMAssetClientMessage {
+            return syncLogAttributes(assetClientMessage)
+        }
+
+        if let genericMessage = message as? GenericMessageEntity {
+            return syncLogAttributes(genericMessage)
+        }
+
+        assertionFailure("cannot find a supported type of message '\(type(of: message))'")
+        return [:]
+    }
+
+    // MARK: Helpers
+
+    private func makeAttributesPublic(_ attributes: LogAttributes) -> LogAttributes {
+        attributes.merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 }
