@@ -69,6 +69,7 @@ final class MessageLogAttributesBuilderTests: XCTestCase {
         XCTAssertEqual(attributes["message_nonce"] as? String, "9cb5d6f***")
         XCTAssertEqual(attributes["message_type"] as? String, "text")
         XCTAssertEqual(attributes["conversation_id"] as? String, "f4d0b09*** - wire***")
+        XCTAssertEqual(attributes["public"] as? Bool, true)
     }
 
     // MARK: Helpers
