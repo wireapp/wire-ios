@@ -100,10 +100,6 @@ echo ""
 
 echo "ℹ️  Overriding configuration if specified..."
 scripts/override-configuration_if_needed.sh "$@"
-echo "" 
-
-echo "ℹ️  Doing additional postprocessing..."
-scripts/postprocess.sh
 echo ""
 
 echo "ℹ️  Generate Licenses"
@@ -118,7 +114,6 @@ else
     echo "Skipping as CI is not is defined"
 fi
 echo ""
-
 
 echo "ℹ️ Install Git hook"
 scripts/githooks-install.sh
