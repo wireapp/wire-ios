@@ -52,10 +52,13 @@ final class SyncManagerTests: XCTestCase {
         pushChannel.open_MockValue = pushChannelSubject.eraseToAnyPublisher()
         pushChannel.close_MockMethod = { }
 
-        // Mock decryption.
+        // Base mocks.
+        updateEventsRepository.pullPendingEvents_MockMethod = {}
+        updateEventsRepository.fetchNextPendingEventsLimit_MockValue = []
+        updateEventsRepository.deleteNextPendingEventsLimit_MockMethod = { _ in }
+
         updateEventDecryptor.decryptEventsIn_MockMethod = { envelope in
-            print("decrypting envelope: \(envelope)")
-            return envelope.events
+            envelope.events
         }
     }
 
@@ -84,7 +87,18 @@ final class SyncManagerTests: XCTestCase {
     // MARK: - Suspension
 
     func testItSuspendsWhenLive() async throws {
-        XCTFail("not implemented yet")
+        // Given it goes live.
+        try await sut.performQuickSync()
+        XCTAssertEqual(sut.syncState, .live)
+
+        // When it suspends.
+        try await sut.suspend()
+
+        // Then the push channel was closed.
+        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+
+        // Then it goes to the suspended state.
+        XCTAssertEqual(sut.syncState, .suspended)
     }
 
     func testItSuspendsWhenQuickSyncing() async throws {
