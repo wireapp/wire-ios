@@ -394,6 +394,7 @@
 		5996E89F2C19CF54007A52F0 /* AutoMockable.manual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5996E89C2C19CF54007A52F0 /* AutoMockable.manual.swift */; };
 		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59DA04A32BD25486003F9195 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
+		59DF0E672C33FEAE0065A979 /* libPhoneNumber in Frameworks */ = {isa = PBXBuildFile; productRef = 59DF0E662C33FEAE0065A979 /* libPhoneNumber */; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
 		59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */; };
 		59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9192B4EE62100DBCC6B /* RecurringAction+dummy.swift */; };
@@ -1628,6 +1629,7 @@
 			files = (
 				EE88B0252BF4D8060013F0BD /* WireAPI in Frameworks */,
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
+				59DF0E672C33FEAE0065A979 /* libPhoneNumber in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				015519462C20D20800037358 /* WireDomain.framework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
@@ -3169,6 +3171,7 @@
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
 				EE88B0242BF4D8060013F0BD /* WireAPI */,
+				59DF0E662C33FEAE0065A979 /* libPhoneNumber */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -3248,6 +3251,7 @@
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
 				EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */,
+				59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -4581,7 +4585,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/libPhoneNumber-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		59DF0E662C33FEAE0065A979 /* libPhoneNumber */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */;
+			productName = libPhoneNumber;
+		};
 		EE88B0242BF4D8060013F0BD /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
