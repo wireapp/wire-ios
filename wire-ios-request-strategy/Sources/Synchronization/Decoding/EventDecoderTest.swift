@@ -137,7 +137,7 @@ extension EventDecoderTest {
         _ = try await self.sut.decryptAndStoreEvents([event1])
 
         // when
-        _ = await self.sut.decryptAndStoreEvents([event2])
+        _ = try await self.sut.decryptAndStoreEvents([event2])
         await self.sut.processStoredEvents { events in
             if callCount == 0 {
                 XCTAssertTrue(events.contains(event1))
@@ -328,7 +328,7 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = await sut.decryptAndStoreEvents([pushEvent])
+        _ = try await sut.decryptAndStoreEvents([pushEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
@@ -339,7 +339,7 @@ extension EventDecoderTest {
 
         // and when
         let streamProcessed = self.customExpectation(description: "Stream event processed")
-        _ = await sut.decryptAndStoreEvents([streamEvent])
+        _ = try await sut.decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(streamEvent))
             streamProcessed.fulfill()
@@ -363,7 +363,7 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = await sut.decryptAndStoreEvents([pushEvent])
+        _ = try await sut.decryptAndStoreEvents([pushEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
@@ -375,7 +375,7 @@ extension EventDecoderTest {
         // and when
         let streamProcessed = self.customExpectation(description: "Stream event not processed")
 
-        _ = await sut.decryptAndStoreEvents([streamEvent])
+        _ = try await sut.decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.isEmpty)
             streamProcessed.fulfill()
@@ -399,7 +399,7 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = await self.sut.decryptAndStoreEvents([pushEvent])
+        _ = try await self.sut.decryptAndStoreEvents([pushEvent])
         await self.sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
@@ -412,7 +412,7 @@ extension EventDecoderTest {
         // and when
         let streamProcessed = self.customExpectation(description: "Stream event processed")
 
-        _ = await self.sut.decryptAndStoreEvents([streamEvent])
+        _ = try await self.sut.decryptAndStoreEvents([streamEvent])
         await self.sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(streamEvent))
             streamProcessed.fulfill()
@@ -687,7 +687,7 @@ extension EventDecoderTest {
         mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
 
         // When
-        _ = await try sut.decryptAndStoreEvents([event])
+        _ = try await sut.decryptAndStoreEvents([event])
 
         // Then
         XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
