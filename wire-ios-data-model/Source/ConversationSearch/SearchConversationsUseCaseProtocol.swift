@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Determines if a user has a valid E2EI certificate on all clients.
+/// A use case which returns a list of conversations which match the provided search text.
 public protocol SearchConversationsUseCaseProtocol {
     associatedtype ConversationContainer: SearchableConversationContainer
 
-    /// Returns `true` if all clients of the provided conversation's user have valid E2EI certificates.
+    /// Returns conversations which match the `searchText`.
     func invoke(searchText: String) -> [ConversationContainer]
 }
