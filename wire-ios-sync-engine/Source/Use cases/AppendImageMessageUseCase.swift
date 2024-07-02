@@ -16,63 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAnalytics
 import WireDataModel
 
 // sourcery: AutoMockable
-public protocol AppendTextMessageUseCaseProtocol {
+public protocol ApppendImageMessageUseCaseProtocol {
+
     func invoke(
-        text: String,
-        mentions: [Mention],
-        replyingTo: ZMConversationMessage?,
-        in conversation: ZMConversation,
-        fetchLinkPreview: Bool
+        withImageData imageData: Data,
+        in conversation: ZMConversation
     ) throws
 }
 
-public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
+public struct ApppendImageMessageUseCase: ApppendImageMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
     public func invoke(
-        text: String,
-        mentions: [Mention],
-        replyingTo: ZMConversationMessage?,
-        in conversation: ZMConversation,
-        fetchLinkPreview: Bool
+        withImageData imageData: Data,
+        in conversation: ZMConversation
     ) throws {
-        try conversation.appendText(
-            content: text,
-            mentions: mentions,
-            replyingTo: replyingTo,
-            fetchLinkPreview: fetchLinkPreview
-        )
-        conversation.draftMessage = nil
+        try conversation.appendImage(from: imageData)
         analyticsSession?.trackEvent(
             ContributedEvent(
-                contributionType: .textMessage,
-                conversationType: .init(conversation.conversationType),
+                contributionType: .imageMessage,
+                conversationType: .init(
+                    conversation.conversationType
+                ),
                 conversationSize: UInt(
                     conversation.localParticipants.count
                 )
             )
         )
-    }
-
-}
-
-extension ConversationType {
-
-    init(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .group:
-            self = .group
-        case .oneOnOne:
-            self = .oneOnOne
-        default:
-            self = .unknown
-        }
     }
 
 }

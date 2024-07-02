@@ -262,6 +262,8 @@ public protocol UserSession: AnyObject {
 
     func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol
 
+    func makeAppendImageMessageUseCase() -> ApppendImageMessageUseCaseProtocol
+
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?

@@ -353,6 +353,10 @@ extension ZMUserSession: UserSession {
         return AppendTextMessageUseCase(analyticsSession: analyticsSession)
     }
 
+    public func makeAppendImageMessageUseCase() -> any ApppendImageMessageUseCaseProtocol {
+        return ApppendImageMessageUseCase(analyticsSession: analyticsSession)
+    }
+
 }
 
 extension UInt64 {
