@@ -63,11 +63,12 @@ actor ExpiringActivityManager {
                     let semaphore = DispatchSemaphore(value: 0)
                     Task {
                         do {
+                            WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
                             try await self.startWork(block: block, semaphore: semaphore).value
                             WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
                             continuation.resume()
                         } catch {
-                            WireLogger.backgroundActivity.debug("Expiring activity ended with an error: \(error)")
+                            WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
                             continuation.resume(throwing: error)
                         }
 
