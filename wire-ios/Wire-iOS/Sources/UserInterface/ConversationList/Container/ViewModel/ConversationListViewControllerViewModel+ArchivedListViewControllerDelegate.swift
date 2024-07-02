@@ -33,8 +33,7 @@ extension ConversationListViewController.ViewModel: ArchivedListViewControllerDe
                 conversation,
                 scrollTo: nil,
                 focusOnView: true,
-                animated: true,
-                completion: nil
+                animated: true
             )
         }
     }

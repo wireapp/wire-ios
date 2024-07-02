@@ -56,7 +56,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+            connectionRequests = pendingConnectionsList.items
             pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
             userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
         }
@@ -198,7 +198,7 @@ final class ConnectRequestsViewController: UIViewController,
     func reload(animated: Bool = true) {
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+            connectionRequests = pendingConnectionsList.items
         }
 
         tableView.reloadData()

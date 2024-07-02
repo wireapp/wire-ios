@@ -48,6 +48,7 @@ extension ZMConversationType {
 }
 
 final class ProfileViewController: UIViewController {
+
     weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
@@ -58,6 +59,7 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
+    private let mainCoordinator: MainCoordinating
 
     // MARK: - init
 
@@ -68,7 +70,8 @@ final class ProfileViewController: UIViewController {
         context: ProfileViewControllerContext? = nil,
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {
@@ -95,15 +98,22 @@ final class ProfileViewController: UIViewController {
             profileActionsFactory: profileActionsFactory
         )
 
-        self.init(viewModel: viewModel)
+        self.init(
+            viewModel: viewModel,
+            mainCoordinator: mainCoordinator
+        )
 
         setupKeyboardFrameNotification()
 
         self.viewControllerDismisser = viewControllerDismisser
     }
 
-    required init(viewModel: any ProfileViewControllerViewModeling) {
+    required init(
+        viewModel: some ProfileViewControllerViewModeling,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.viewModel = viewModel
+        self.mainCoordinator = mainCoordinator
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
@@ -388,9 +398,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             leftViewControllerRevealed = true
         }
 
-        dismiss(animated: true) { [weak self] in
-            self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.presentSettings()
+        dismiss(animated: true) {
+            self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
+                self.mainCoordinator.showSettings()
             }
         }
     }
@@ -415,7 +425,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     @objc
     private func presentLegalHoldDetails() {
         let user = viewModel.user
-        LegalHoldDetailsViewController.present(in: self, user: user, userSession: viewModel.userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            user: user,
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     // MARK: Block

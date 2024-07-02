@@ -84,6 +84,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
+    // TODO [WPB-9867]: remove this property
     var mediaPlaybackManager: MediaPlaybackManager? {
         return appRootRouter?.rootViewController
             .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
@@ -98,10 +99,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
-
-    override init() {
-        super.init()
-    }
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {

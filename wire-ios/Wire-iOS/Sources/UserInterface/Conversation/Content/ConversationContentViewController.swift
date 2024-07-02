@@ -98,6 +98,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
+    let mainCoordinator: MainCoordinating
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -110,12 +111,16 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private weak var messageVisibleOnLoad: ZMConversationMessage?
     private var token: NSObjectProtocol?
 
-    init(conversation: ZMConversation,
-         message: ZMConversationMessage? = nil,
-         mediaPlaybackManager: MediaPlaybackManager?,
-         userSession: UserSession) {
+    init(
+        conversation: ZMConversation,
+        message: ZMConversationMessage? = nil,
+        mediaPlaybackManager: MediaPlaybackManager?,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         self.conversation = conversation
         messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 

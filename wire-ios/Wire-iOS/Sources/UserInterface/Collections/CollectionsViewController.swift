@@ -54,6 +54,7 @@ final class CollectionsViewController: UIViewController {
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
     let userSession: UserSession
+    let mainCoordinator: MainCoordinating
 
     private var fetchingDone: Bool = false {
         didSet {
@@ -72,7 +73,11 @@ final class CollectionsViewController: UIViewController {
 
     private lazy var textSearchController = TextSearchViewController(conversation: collection.conversation, userSession: userSession)
 
-    convenience init(conversation: ZMConversation, userSession: UserSession) {
+    convenience init(
+        conversation: ZMConversation,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
         let matchVideo = CategoryMatch(including: .video, excluding: .none)
@@ -80,13 +85,21 @@ final class CollectionsViewController: UIViewController {
 
         let holder = AssetCollectionWrapper(conversation: conversation, matchingCategories: [matchImages, matchFiles, matchVideo, matchLink])
 
-        self.init(collection: holder, userSession: userSession)
+        self.init(collection: holder, userSession: userSession, mainCoordinator: mainCoordinator)
     }
 
-    init(collection: AssetCollectionWrapper, sections: CollectionsSectionSet = .all, messages: [ZMConversationMessage] = [], fetchingDone: Bool = false, userSession: UserSession) {
+    init(
+        collection: AssetCollectionWrapper,
+        sections: CollectionsSectionSet = .all,
+        messages: [ZMConversationMessage] = [],
+        fetchingDone: Bool = false,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.collection = collection
         self.sections = sections
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
 
         switch sections {
         case CollectionsSectionSet.images:
@@ -567,7 +580,14 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                 guard let self else {
                     return
                 }
-                let collectionController = CollectionsViewController(collection: self.collection, sections: section, messages: self.elements(for: section), fetchingDone: self.fetchingDone, userSession: userSession)
+                let collectionController = CollectionsViewController(
+                    collection: self.collection,
+                    sections: section,
+                    messages: self.elements(for: section),
+                    fetchingDone: self.fetchingDone,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator
+                )
                 collectionController.onDismiss = self.onDismiss
                 collectionController.delegate = self.delegate
                 self.navigationController?.pushViewController(collectionController, animated: true)
@@ -674,7 +694,8 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
 
 // MARK: - Actions
 extension CollectionsViewController: MessageActionResponder {
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
+
+    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         perform(action, for: message, source: view as? CollectionCell)
     }
 }
@@ -709,7 +730,12 @@ extension CollectionsViewController: CollectionCellDelegate {
             selectedMessage = message
 
             if message.isImage, message.canBeShared {
-                let imagesController = ConversationImagesViewController(collection: collection, initialMessage: message, userSession: userSession)
+                let imagesController = ConversationImagesViewController(
+                    collection: collection,
+                    initialMessage: message,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator
+                )
 
                 let backButton = CollectionsView.backButton()
                 backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
@@ -724,7 +750,13 @@ extension CollectionsViewController: CollectionCellDelegate {
                 imagesController.messageActionDelegate = self
                 navigationController?.pushViewController(imagesController, animated: true)
             } else {
-                messagePresenter.open(message, targetView: view, actionResponder: self, userSession: userSession)
+                messagePresenter.open(
+                    message,
+                    targetView: view,
+                    actionResponder: self,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator
+                )
             }
 
         case .save:
@@ -750,7 +782,11 @@ extension CollectionsViewController: CollectionCellDelegate {
             }
 
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+            let detailsViewController = MessageDetailsViewController(
+                message: message,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
             present(detailsViewController, animated: true)
 
         default:

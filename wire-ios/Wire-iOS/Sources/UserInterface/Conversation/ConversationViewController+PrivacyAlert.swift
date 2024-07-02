@@ -162,7 +162,14 @@ extension ConversationViewController {
         if selfUser.hasUntrustedClients {
             ZClientViewController.shared?.openClientListScreen(for: selfUser)
         } else if let connectedUser = conversation.connectedUser, conversation.conversationType == .oneOnOne {
-            let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList, userSession: userSession)
+            let profileViewController = ProfileViewController(
+                user: connectedUser,
+                viewer: selfUser,
+                conversation: conversation,
+                context: .deviceList,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
             profileViewController.delegate = self
             profileViewController.viewControllerDismisser = self
             let navigationController = profileViewController.wrapInNavigationController()
@@ -172,7 +179,8 @@ extension ConversationViewController {
             let participantsViewController = GroupParticipantsDetailViewController(
                 selectedParticipants: [],
                 conversation: conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             let navigationController = participantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
@@ -181,7 +189,12 @@ extension ConversationViewController {
     }
 
     private func presentLegalHoldDetails() {
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
 }

@@ -17,14 +17,9 @@
 //
 
 import UIKit
-import WireDataModel
 
-protocol MessageActionResponder: AnyObject {
-    /// perform an action for the message
-    ///
-    /// - Parameters:
-    ///   - action: a kind of MessageAction
-    ///   - message: the ZMConversationMessage to perform the action
-    ///   - view: the source view which perfroms the action
-    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView)
+// sourcery: AutoMockable
+protocol TopOverlayPresenting {
+    func presentTopOverlay(_ viewController: UIViewController, animated: Bool)
+    func dismissTopOverlay(animated: Bool)
 }

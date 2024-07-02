@@ -30,7 +30,8 @@ extension ConversationViewController {
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
     }
 }
@@ -38,7 +39,7 @@ extension ConversationViewController {
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            self.zClientViewController.select(conversation: conversation, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

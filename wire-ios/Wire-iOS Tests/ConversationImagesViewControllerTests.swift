@@ -69,7 +69,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             collection: assetWrapper,
             initialMessage: initialMessage,
             inverse: true,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: .mock
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
