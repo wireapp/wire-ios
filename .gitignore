@@ -91,7 +91,6 @@ fastlane/appstoreconnect_api_key.json
 vendor/*
 .submodule-ssh-key
 
-# Brew
-#
-# We can ignore the Brewfile lock, because `brew bundle` is just a helper for local machines und not used for CI.
-Brewfile.lock.json
+# LicensePlist in Settings
+/wire-ios/Wire-iOS/Resources/Settings.bundle/com.mono0926.LicensePlist.latest_result.txt
+/wire-ios/Wire-iOS/Resources/Settings.bundle/com.mono0926.LicensePlist

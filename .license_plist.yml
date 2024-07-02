@@ -1,0 +1,18 @@
+# Documentation https://github.com/mono0926/LicensePlist
+
+options:
+  outputPath: ./wire-ios/Wire-iOS/Resources/Settings.bundle
+  cartfilePath: Cartfile
+  force: true
+  addVersionNumbers: true
+  suppressOpeningDirectory: true
+  failIfMissingLicense: true
+  sandboxMode: true
+
+manual:
+  - source: https://github.com/iamcal/emoji-data # It's an included data set, but no detected code dependency.
+    name: emoji-data
+    file: scripts/ManualLicenses/emoji-data.LICENSE.txt
+  - source: https://github.com/undefinedlabs/Thrift-Swift # No license file in repository.
+    name: Thrift-Swift
+    file: scripts/ManualLicenses/Thrift-Swift.LICENSE.txt
