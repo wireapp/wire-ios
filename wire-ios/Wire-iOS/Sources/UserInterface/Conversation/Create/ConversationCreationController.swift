@@ -52,12 +52,6 @@ final class ConversationCreationController: UIViewController {
     private lazy var nameSection = ConversationCreateNameSectionController(selfUser: userSession.selfUser, delegate: self)
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
-    private lazy var optionsToggle: ConversationCreateOptionsSectionController = {
-        let section = ConversationCreateOptionsSectionController(values: values)
-        section.tapHandler = optionsTapped
-        return section
-    }()
-
     private lazy var optionsSections = [
         guestsSection,
         servicesSection,
@@ -79,7 +73,6 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
         let section = ConversationCreateGuestsSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] allowGuests in
             self.values.allowGuests = allowGuests
@@ -91,7 +84,6 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var servicesSection: ConversationCreateServicesSectionController = {
         let section = ConversationCreateServicesSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] allowServices in
             self.values.allowServices = allowServices
@@ -102,7 +94,6 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var receiptsSection: ConversationCreateReceiptsSectionController = {
         let section = ConversationCreateReceiptsSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] enableReceipts in
             self.values.enableReceipts = enableReceipts
@@ -114,7 +105,6 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var encryptionProtocolSection: ConversationEncryptionProtocolSectionController = {
         let section = ConversationEncryptionProtocolSectionController(values: values)
-        section.isHidden = true
 
         section.tapAction = {
             self.presentEncryptionProtocolPicker { [weak self] encryptionProtocol in
@@ -205,7 +195,7 @@ final class ConversationCreationController: UIViewController {
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
-            collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
+            collectionViewController.sections.append(contentsOf: optionsSections)
         }
 
     }
@@ -265,7 +255,6 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateOptions() {
-        self.optionsToggle.configure(with: values)
         self.guestsSection.configure(with: values)
         self.servicesSection.configure(with: values)
         self.encryptionProtocolSection.configure(with: values)
@@ -432,44 +421,6 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
     func textFieldDidEndEditing(_ textField: SimpleTextField) {
 
     }
-}
-
-// MARK: - Handlers
-
-extension ConversationCreationController {
-
-    private func optionsTapped(expanded: Bool) {
-        guard let collectionView = collectionViewController.collectionView else {
-            return
-        }
-
-        let changes: () -> Void
-        let indexSet = IndexSet(integersIn: 3..<(3 + optionsSections.count))
-
-        if expanded {
-            nameSection.resignFirstResponder()
-            expandOptions()
-            changes = { collectionView.insertSections(indexSet) }
-        } else {
-            collapseOptions()
-            changes = { collectionView.deleteSections(indexSet) }
-        }
-
-        collectionView.performBatchUpdates(changes)
-    }
-
-    func expandOptions() {
-        optionsSections.forEach {
-            $0.isHidden = false
-        }
-    }
-
-    func collapseOptions() {
-        optionsSections.forEach {
-            $0.isHidden = true
-        }
-    }
-
 }
 
 extension ConversationCreationController {
