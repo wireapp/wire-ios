@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireTransport
+import WireDataModel
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
