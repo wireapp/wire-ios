@@ -81,7 +81,7 @@ public class MessageSender: MessageSenderInterface {
         self.messageDependencyResolver = messageDependencyResolver
         self.quickSyncObserver = quickSyncObserver
         self.context = context
-        self.messageLogAttributes = MessageLogAttributes(context: context)
+        self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
     }
 
     private let apiProvider: APIProviderInterface
@@ -92,11 +92,11 @@ public class MessageSender: MessageSenderInterface {
     private let quickSyncObserver: QuickSyncObserverInterface
     private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
-    private let messageLogAttributes: MessageLogAttributes
+    private let logAttributesBuilder: MessageLogAttributesBuilder
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        let logInformation = await messageLogAttributes.logAttributes(message)
-        WireLogger.messaging.debug("broadcast message", attributes: logInformation)
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
@@ -104,15 +104,15 @@ public class MessageSender: MessageSenderInterface {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
-            let logInformation = await messageLogAttributes.logAttributes(message)
-            WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logInformation)
+            let logAttributes = await logAttributesBuilder.logAttributes(message)
+            WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
             throw error
         }
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        let logInformation = await messageLogAttributes.logAttributes(message)
-        WireLogger.messaging.debug("send message", attributes: logInformation)
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug("send message", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
@@ -120,8 +120,8 @@ public class MessageSender: MessageSenderInterface {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
             try await attemptToSend(message: message)
         } catch {
-            let logInformation = await messageLogAttributes.logAttributes(message)
-            WireLogger.messaging.warn("send message failed: \(error)", attributes: logInformation)
+            let logAttributes = await logAttributesBuilder.logAttributes(message)
+            WireLogger.messaging.warn("send message failed: \(error)", attributes: logAttributes)
             throw error
         }
 

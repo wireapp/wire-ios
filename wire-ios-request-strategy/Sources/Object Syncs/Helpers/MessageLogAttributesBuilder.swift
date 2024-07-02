@@ -20,7 +20,7 @@ import CoreData
 import WireDataModel
 
 /// Provides log attributes for messages of supported message types.
-struct MessageLogAttributes {
+struct MessageLogAttributesBuilder {
 
     private let context: NSManagedObjectContext
 

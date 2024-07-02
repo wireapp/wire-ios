@@ -96,8 +96,8 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
     private func logDebug(_ text: String, message: any ProteusMessage) {
         Task {
-            let logInformation = await MessageLogAttributes(context: moc).logAttributes(message)
-            WireLogger.messaging.debug(text, attributes: logInformation)
+            let logAttributes = await MessageLogAttributesBuilder(context: moc).logAttributes(message)
+            WireLogger.messaging.debug(text, attributes: logAttributes)
         }
     }
 }
