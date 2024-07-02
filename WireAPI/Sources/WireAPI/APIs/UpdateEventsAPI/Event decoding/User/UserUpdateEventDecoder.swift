@@ -55,11 +55,11 @@ struct UserUpdateEventDecoder {
 
             case userID = "id"
             case accentColorID = "accent_id"
-            case name = "name"
-            case handle = "handle"
-            case email = "email"
+            case name
+            case handle
+            case email
             case isSSOIDDeleted = "sso_id_deleted"
-            case assets = "assets"
+            case assets
             case supportedProtocols = "supported_protocols"
 
         }
