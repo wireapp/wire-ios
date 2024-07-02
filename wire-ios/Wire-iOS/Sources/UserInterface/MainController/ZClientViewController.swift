@@ -52,7 +52,7 @@ final class ZClientViewController: UIViewController {
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
         zClientViewController: self,
-        mainCoordinator: MainCoordinator_(zClientViewController: self),
+        mainCoordinator: MainCoordinator(zClientViewController: self),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         isFolderStatePersistenceEnabled: false,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
@@ -64,7 +64,7 @@ final class ZClientViewController: UIViewController {
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             zClientViewController: self,
-            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mainCoordinator: MainCoordinator(zClientViewController: self),
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             isFolderStatePersistenceEnabled: true,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
@@ -361,7 +361,7 @@ final class ZClientViewController: UIViewController {
                 conversation: conversation,
                 message: message,
                 userSession: userSession,
-                mainCoordinator: MainCoordinator_(zClientViewController: self),
+                mainCoordinator: MainCoordinator(zClientViewController: self),
                 mediaPlaybackManager: mediaPlaybackManager
             )
         }
@@ -386,7 +386,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mainCoordinator: MainCoordinator(zClientViewController: self),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -445,7 +445,7 @@ final class ZClientViewController: UIViewController {
             conversation: currentConversation,
             message: nil,
             userSession: userSession,
-            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mainCoordinator: MainCoordinator(zClientViewController: self),
             mediaPlaybackManager: mediaPlaybackManager
         )
 

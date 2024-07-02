@@ -19,7 +19,7 @@
 import WireDataModel
 import WireSystem
 
-struct MainCoordinator_: MainCoordinating {
+struct MainCoordinator: MainCoordinating {
 
     weak var zClientViewController: ZClientViewController?
 

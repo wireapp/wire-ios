@@ -77,17 +77,12 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-        let createSut: () -> UIViewController = { [self] in
-            let sut = GroupParticipantsDetailViewController(
-                selectedParticipants: selected,
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mockMainCoordinator
-            )
-            return sut.wrapInNavigationController()
-        }
-
-        let sut = createSut()
+        let sut = GroupParticipantsDetailViewController(
+            selectedParticipants: selected,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        ).wrapInNavigationController()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
