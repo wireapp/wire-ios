@@ -51,14 +51,6 @@
 			<false/>
 		</dict>
 		<dict>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>BUILD_INFO</string>
-			<key>File</key>
-			<string>BuildInfo</string>
-		</dict>
-		<dict>
 			<key>Title</key>
 			<string>ENABLE_LOGGING</string>
 			<key>Type</key>
@@ -90,6 +82,6 @@
 		</dict>
 	</array>
 	<key>StringsTable</key>
-	<string>Root</string>
+	<string>DeveloperSettings</string>
 </dict>
 </plist>
