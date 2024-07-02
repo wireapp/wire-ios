@@ -193,7 +193,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
         )
         if !user.isSelfUser {
             navigationController?.pushViewController(viewController, animated: true)

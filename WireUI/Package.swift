@@ -19,7 +19,10 @@ let package = Package(
             targets: ["WireDesign"]),
         .library(
             name: "WireReusableUIComponents",
-            targets: ["WireReusableUIComponents"])
+            targets: ["WireReusableUIComponents"]),
+        .library(
+            name: "WireUITesting",
+            targets: ["WireUITesting"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -60,6 +63,17 @@ let package = Package(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 "WireReusableUIComponents",
+                "WireUITesting",
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
+            ]),
+
+        // TODO [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
+        .target(
+            name: "WireUITesting",
+            dependencies: [
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"

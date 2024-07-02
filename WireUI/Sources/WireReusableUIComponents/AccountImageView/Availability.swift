@@ -16,13 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZClientViewController: SplitViewControllerDelegate {
-
-    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-
-        return splitViewController.rightViewController != nil &&
-        splitViewController.leftViewController == conversationListViewController.tabBarController &&
-        conversationListViewController.state == .conversationList &&
-        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
-    }
+public enum Availability: CaseIterable {
+    case available, busy, away
 }

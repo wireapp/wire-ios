@@ -20,10 +20,6 @@
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
       {
-        "key" : "FB_REFERENCE_IMAGE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
-      },
-      {
         "key" : "IMAGE_DIFF_DIR",
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
@@ -66,7 +62,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:..\/WireUI",
         "identifier" : "WireReusableUIComponentsTests",
@@ -74,7 +69,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:..\/WireUI",
         "identifier" : "WireDesignTests",

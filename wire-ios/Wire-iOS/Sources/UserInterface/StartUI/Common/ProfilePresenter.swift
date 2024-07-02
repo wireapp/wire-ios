@@ -59,11 +59,13 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0).size
     }
 
-    func presentProfileViewController(for user: UserType,
-                                      in controller: UIViewController?,
-                                      from rect: CGRect,
-                                      userSession: UserSession,
-                                      onDismiss: @escaping () -> Void) {
+    func presentProfileViewController(
+        for user: UserType,
+        in controller: UIViewController?,
+        from rect: CGRect,
+        userSession: UserSession,
+        onDismiss: @escaping () -> Void
+    ) {
         guard let viewer = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -80,7 +82,8 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             user: user,
             viewer: viewer,
             context: .search,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self

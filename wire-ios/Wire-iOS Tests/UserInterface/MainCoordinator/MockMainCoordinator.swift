@@ -42,4 +42,15 @@ final class MockMainCoordinator: MainCoordinating {
     func showConversationList() {
         fatalError("Mock method not implemented")
     }
+
+    func showSettings() {
+        fatalError("Mock method not implemented")
+    }
+}
+
+// MARK: - MainCoordinating + mock
+
+extension MainCoordinating where Self == MockMainCoordinator {
+
+    static var mock: Self { .init() }
 }

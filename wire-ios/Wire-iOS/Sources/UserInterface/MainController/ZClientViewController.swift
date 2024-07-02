@@ -46,13 +46,12 @@ final class ZClientViewController: UIViewController {
             accountSelector: SessionManager.shared
         )
     }
-    // TODO: make completely private
-    private(set) lazy var conversationListViewController = ConversationListViewController(
+    private lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
         zClientViewController: self,
-        mainCoordinator: MainCoordinator_(zClientViewController: self),
+        mainCoordinator: MainCoordinator(zClientViewController: self),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         isFolderStatePersistenceEnabled: false,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
@@ -64,7 +63,7 @@ final class ZClientViewController: UIViewController {
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             zClientViewController: self,
-            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mainCoordinator: MainCoordinator(zClientViewController: self),
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             isFolderStatePersistenceEnabled: true,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
@@ -285,8 +284,10 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Singleton
+
+    @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
     static var shared: ZClientViewController? {
-        return AppDelegate.shared.appRootRouter?.rootViewController.children.first(where: { $0 is ZClientViewController }) as? ZClientViewController
+        AppDelegate.shared.appRootRouter?.rootViewController.children.first { $0 is ZClientViewController } as? ZClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
@@ -302,7 +303,7 @@ final class ZClientViewController: UIViewController {
     /// - Parameter completion: completion handler
     func hideIncomingContactRequests(completion: Completion? = nil) {
         let conversationsList = userSession.conversationList()
-        if let conversation = (conversationsList as? [ZMConversation])?.first {
+        if let conversation = conversationsList.items.first {
             select(conversation: conversation)
         }
 
@@ -361,7 +362,7 @@ final class ZClientViewController: UIViewController {
                 conversation: conversation,
                 message: message,
                 userSession: userSession,
-                mainCoordinator: MainCoordinator_(zClientViewController: self),
+                mainCoordinator: MainCoordinator(zClientViewController: self),
                 mediaPlaybackManager: mediaPlaybackManager
             )
         }
@@ -386,7 +387,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mainCoordinator: MainCoordinator(zClientViewController: self),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -445,7 +446,7 @@ final class ZClientViewController: UIViewController {
             conversation: currentConversation,
             message: nil,
             userSession: userSession,
-            mainCoordinator: MainCoordinator_(zClientViewController: self),
+            mainCoordinator: MainCoordinator(zClientViewController: self),
             mediaPlaybackManager: mediaPlaybackManager
         )
 
@@ -501,9 +502,9 @@ final class ZClientViewController: UIViewController {
     func selectListItemWhenNoPreviousItemSelected() {
         // check for conversations and pick the first one.. this can be tricky if there are pending updates and
         // we haven't synced yet, but for now we just pick the current first item
-        let list = userSession.conversationList() as? [ZMConversation]
+        let list = userSession.conversationList().items
 
-        if let conversation = list?.first {
+        if let conversation = list.first {
             // select the first conversation and don't focus on it
             select(conversation: conversation)
         } else {
@@ -688,7 +689,13 @@ final class ZClientViewController: UIViewController {
                 return
             }
 
-            let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .deviceList, userSession: userSession)
+            let profileViewController = ProfileViewController(
+                user: user,
+                viewer: selfUser,
+                context: .deviceList,
+                userSession: userSession,
+                mainCoordinator: MainCoordinator(zClientViewController: self)
+            )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {
                 profileViewController.delegate = conversationViewController
@@ -747,5 +754,22 @@ final class ZClientViewController: UIViewController {
     func minimizeCallOverlay(animated: Bool,
                              withCompletion completion: Completion?) {
         router?.minimizeCallOverlay(animated: animated, withCompletion: completion)
+    }
+
+    func presentSettings() {
+        conversationListViewController.presentSettings()
+    }
+}
+
+// MARK: - ZClientViewController + SplitViewControllerDelegate
+
+extension ZClientViewController: SplitViewControllerDelegate {
+
+    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+
+        return splitViewController.rightViewController != nil &&
+        splitViewController.leftViewController == conversationListViewController.tabBarController &&
+        conversationListViewController.state == .conversationList &&
+        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }

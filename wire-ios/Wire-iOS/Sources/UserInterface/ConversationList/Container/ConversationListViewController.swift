@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ConversationListState {
@@ -86,7 +87,8 @@ final class ConversationListViewController: UIViewController {
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
+            mainCoordinator: mainCoordinator
         )
         self.init(
             viewModel: viewModel,

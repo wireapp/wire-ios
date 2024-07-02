@@ -1,8 +1,9 @@
 #!/bin/bash
+set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2018 Wire Swiss GmbH
+# Copyright (C) 2023 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,17 +19,17 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
-set -e
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $DIR/..
+REPO_ROOT=$(git rev-parse --show-toplevel)
+SCRIPTS_DIR="$REPO_ROOT/scripts"
+SWIFTFORMAT="$SCRIPTS_DIR/.build/artifacts/scripts/swiftformat/swiftformat.artifactbundle/swiftformat-0.54.0-macos/bin/swiftformat"
 
-POSTPROCESS_SCRIPT="wire-ios/Configuration/postprocess.sh"
-
-if [ -e "${POSTPROCESS_SCRIPT}" ]; then
-    echo "Running ${POSTPROCESS_SCRIPT}"
-    ./"${POSTPROCESS_SCRIPT}"
-else
-    echo "No postprocess script found in ${POSTPROCESS_SCRIPT}, skipping..."
+if [ ! -z "${CI-}" ]; then
+    echo "Skipping SwiftFormat in CI environment"
+    exit 0
 fi
 
-echo "✅  Postprocess Done"
+if [[ ! -f "$SWIFTFORMAT" ]]; then
+    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+fi
+
+"$SWIFTFORMAT" --config "$REPO_ROOT/.swiftformat" "$@"

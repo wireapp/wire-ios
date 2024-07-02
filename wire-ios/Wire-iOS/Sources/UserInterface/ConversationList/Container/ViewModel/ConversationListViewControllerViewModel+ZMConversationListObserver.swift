@@ -27,7 +27,7 @@ extension ConversationListViewController.ViewModel: ZMConversationListObserver {
 
 extension ConversationListViewController.ViewModel {
     func updateNoConversationVisibility(animated: Bool = true) {
-        if !ZMConversationList.hasConversations {
+        if !ConversationList.hasConversations {
             viewController?.showNoContactLabel(animated: animated)
         } else {
             viewController?.hideNoContactLabel(animated: animated)
@@ -36,14 +36,14 @@ extension ConversationListViewController.ViewModel {
 
     func updateObserverTokensForActiveTeam() {
         if let userSession = ZMUserSession.shared() {
-            allConversationsObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
+            allConversationsObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
 
-            connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
     }
 
     var hasArchivedConversations: Bool {
         guard let contextProvider = userSession as? ContextProvider else { return false }
-        return ZMConversationList.archivedConversations(inUserSession: contextProvider).count > 0
+        return (ConversationList.archivedConversations(inUserSession: contextProvider)?.items.count ?? 0) > 0
     }
 }

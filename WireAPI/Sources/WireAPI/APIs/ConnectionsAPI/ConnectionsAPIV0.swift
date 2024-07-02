@@ -39,7 +39,6 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     func getConnections() async throws -> PayloadPager<Connection> {
-
         let pager = PayloadPager<Connection> { start in
 
             // body Params
@@ -72,7 +71,7 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
     }
 
     var nextStartReference: String? {
-        return pagingState
+        pagingState
     }
 
     let connections: [ConnectionResponseV0]
@@ -110,11 +109,11 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
 
     func toAPIModel() -> Connection {
         Connection(
-            senderId: from,
-            receiverId: to,
-            receiverQualifiedId: qualifiedTo,
-            conversationId: conversationID,
-            qualifiedConversationId: qualifiedConversationID,
+            senderID: from,
+            receiverID: to,
+            receiverQualifiedID: qualifiedTo,
+            conversationID: conversationID,
+            qualifiedConversationID: qualifiedConversationID,
             lastUpdate: lastUpdate.date,
             status: status
         )

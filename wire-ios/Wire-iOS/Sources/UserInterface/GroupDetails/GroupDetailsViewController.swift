@@ -68,13 +68,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 if session.hasCompletedInitialSync {
                     didCompleteInitialSync = true
                 } else {
-                    let context = session.managedObjectContext
-
                     initialSyncToken = NotificationInContext.addObserver(
                         name: .initialSync,
-                        context: context.notificationContext
+                        context: userSession.notificationContext
                     ) { [weak self] _ in
-                        context.performGroupedBlock {
+                        session.managedObjectContext.performGroupedBlock {
                             self?.didCompleteInitialSync = true
                             self?.initialSyncToken = nil
                         }
@@ -374,7 +372,12 @@ extension GroupDetailsViewController {
     func presentLegalHoldDetails() {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
 }
@@ -478,7 +481,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
 
         navigationController?.pushViewController(viewController, animated: true)

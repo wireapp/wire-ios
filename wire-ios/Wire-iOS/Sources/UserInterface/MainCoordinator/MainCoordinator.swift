@@ -19,7 +19,7 @@
 import WireDataModel
 import WireSystem
 
-struct MainCoordinator_: MainCoordinating {
+struct MainCoordinator: MainCoordinating {
 
     weak var zClientViewController: ZClientViewController?
 
@@ -47,5 +47,9 @@ struct MainCoordinator_: MainCoordinating {
             return WireLogger.mainCoordinator.warn("zClientViewController is nil")
         }
         zClientViewController.showConversationList()
+    }
+
+    func showSettings() {
+        zClientViewController?.presentSettings()
     }
 }

@@ -275,19 +275,22 @@ final class ConversationListContentController: UICollectionViewController, Popov
         }
     }
 
-    override func collectionView(_ collectionView: UICollectionView,
-                                 contextMenuConfigurationForItemAt indexPath: IndexPath,
-                                 point: CGPoint) -> UIContextMenuConfiguration? {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
                 return nil
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            return ConversationPreviewViewController(
+            ConversationPreviewViewController(
                 conversation: conversation,
                 presentingViewController: self,
                 sourceView: collectionView.cellForItem(at: indexPath),
-                userSession: self.userSession
+                userSession: self.userSession,
+                mainCoordinator: self.mainCoordinator
             )
         }
 
@@ -439,7 +442,13 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
 
         previewingContext.sourceRect = layoutAttributes.frame
 
-        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath), userSession: userSession)
+        return ConversationPreviewViewController(
+            conversation: conversation,
+            presentingViewController: self,
+            sourceView: collectionView.cellForItem(at: indexPath),
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 }
 
