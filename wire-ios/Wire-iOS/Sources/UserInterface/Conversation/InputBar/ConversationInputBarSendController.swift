@@ -29,9 +29,11 @@ final class ConversationInputBarSendController: NSObject {
         super.init()
     }
 
-    func sendMessage(withImageData imageData: Data,
-                     userSession: UserSession,
-                     completion completionHandler: Completion? = nil) {
+    func sendMessage(
+        withImageData imageData: Data,
+        userSession: UserSession,
+        completion completionHandler: Completion? = nil
+    ) {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -47,10 +49,12 @@ final class ConversationInputBarSendController: NSObject {
         })
     }
 
-    func sendTextMessage(_ text: String,
-                         mentions: [Mention],
-                         userSession: UserSession,
-                         replyingTo message: ZMConversationMessage?) {
+    func sendTextMessage(
+        _ text: String,
+        mentions: [Mention],
+        userSession: UserSession,
+        replyingTo message: ZMConversationMessage?
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         userSession.enqueue({
@@ -71,7 +75,12 @@ final class ConversationInputBarSendController: NSObject {
         })
     }
 
-    func sendTextMessage(_ text: String, mentions: [Mention], userSession: UserSession, withImageData data: Data) {
+    func sendTextMessage(
+        _ text: String,
+        mentions: [Mention],
+        userSession: UserSession,
+        withImageData data: Data
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let shouldFetchLinkPreview = !Settings.disableLinkPreviews
@@ -88,7 +97,6 @@ final class ConversationInputBarSendController: NSObject {
                     fetchLinkPreview: shouldFetchLinkPreview
                 )
                 try imageMessageUseCase.invoke(withImageData: data, in: conversation)
-                conversation.draftMessage = nil
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
