@@ -244,7 +244,6 @@ extension EventDecoder {
         await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            // decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
             for event in events {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
