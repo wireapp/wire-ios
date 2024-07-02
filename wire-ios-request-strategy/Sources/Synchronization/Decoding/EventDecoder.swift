@@ -239,12 +239,13 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         keyStore: UserClientKeysStore
     ) async -> [ZMUpdateEvent] {
-        var decryptedEvents: [ZMUpdateEvent] = []
+        var decryptedEvents = [ZMUpdateEvent]()
 
         await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
+            // decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
+            for event in events {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                     let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -253,26 +254,28 @@ extension EventDecoder {
                             for: sessionID.mapToEncryptionSessionID()
                         )
                     }
-                    return proteusEvent.map { [$0] } ?? []
+                    if let proteusEvent {
+                        decryptedEvents.append(proteusEvent)
+                    }
 
                 case .conversationMLSWelcome:
                     await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                    return [event]
+                    decryptedEvents.append(event)
 
                 case .conversationMLSMessageAdd:
-                    return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    decryptedEvents.append(contentsOf: events)
 
                 default:
-                    return [event]
+                    decryptedEvents.append(event)
                 }
-            }.joined())
+            }
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
             await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
-
         }
 
         if let lastEventID = decryptedEvents.last(where: { !$0.isTransient })?.uuid {
@@ -446,22 +449,5 @@ extension EventDecoder {
         self.eventMOC.performGroupedAndWait {
             self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
         }
-    }
-}
-
-// TODO: remove this, see https://github.com/wireapp/wire-ios/pull/1284
-
-extension Sequence {
-
-    public func asyncMap<T>(
-        _ transform: (Element) async throws -> T
-    ) async rethrows -> [T] {
-        var values = [T]()
-
-        for element in self {
-            try await values.append(transform(element))
-        }
-
-        return values
     }
 }
