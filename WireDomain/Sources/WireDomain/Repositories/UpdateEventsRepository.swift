@@ -95,6 +95,9 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             selfClientID: selfClientID,
             sinceEventID: lastEventID
         ) {
+            // If we need to abort, do it before processing the next page.
+            try Task.checkCancellation()
+
             for envelope in envelopes {
                 // We can only decrypt once so store the decrypted events for later retrieval.
                 var decryptedEnvelope = envelope

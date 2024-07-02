@@ -47,7 +47,21 @@ protocol SyncManagerProtocol {
 
 final class SyncManager: SyncManagerProtocol {
 
-    private(set) var syncState: SyncState = .suspended
+    var syncState: SyncState {
+        switch state {
+        case .suspended:
+            .suspended
+        case .slowSyncing:
+            .slowSync
+        case .quickSyncing:
+            .quickSync
+        case .live:
+            .live
+        }
+    }
+
+    private var state: State = .suspended
+    private var isSuspending = false
 
     private let pushChannel: any PushChannelProtocol
     private var pushChannelToken: AnyCancellable?
@@ -70,39 +84,74 @@ final class SyncManager: SyncManagerProtocol {
     }
 
     func performSlowSync() async throws {
-        syncState = .slowSync
+        state = .slowSyncing
         let slowSync = SlowSync()
         try await slowSync.perform()
         try await performQuickSync()
     }
 
     func performQuickSync() async throws {
-        syncState = .quickSync
+        if case .quickSyncing = state {
+            return
+        }
 
-        // Divert incoming events from the event queue to the push channel,
-        // they'll be buffered until we finish quick sync.
-        try await openPushChannel()
-        try await updateEventsRepository.pullPendingEvents()
-        try await processStoredEvents()
-        try await processBufferedEvents()
+        // TODO: check how to handle buffered events in case of cancellation?
+        // Decrypt and store? Or Drop?
+        let task = Task {
+            // Divert incoming events from the event queue to the push channel,
+            // they'll be buffered until we finish quick sync.
+            try await openPushChannel()
+            try await updateEventsRepository.pullPendingEvents()
+            try await processStoredEvents()
+            try await processBufferedEvents()
+        }
 
-        syncState = .live
+        do {
+            state = .quickSyncing(task)
+            try await task.value
+            state = .live
+        } catch {
+            try await suspend()
+            throw error
+        }
     }
 
     func suspend() async throws {
-        try await closePushChannel()
-        syncState = .suspended
+        // Already suspended.
+        if case .suspended = state {
+            return
+        }
+
+        // In the process of suspending.
+        guard !isSuspending else {
+            return
+        }
+
+        isSuspending = true
+        await closePushChannel()
+        ongoingTask?.cancel()
+        state = .suspended
+        isSuspending = false
+    }
+
+    private var ongoingTask: Task<Void, Error>?  {
+        switch state {
+        case let .quickSyncing(task):
+            task
+        default:
+            nil
+        }
     }
 
     // MARK: - Push channel
 
-    private func closePushChannel() async throws {
-        try await pushChannel.close()
+    private func closePushChannel() async {
+        await pushChannel.close()
         self.pushChannelToken = nil
     }
 
     private func openPushChannel() async throws {
-        pushChannelToken = try await pushChannel.open().sink { [weak self]  in
+        pushChannelToken = try await pushChannel.open().sink { [weak self] in
             self?.didReceiveUpdateEventEnvelope($0)
         }
     }
@@ -145,6 +194,9 @@ final class SyncManager: SyncManagerProtocol {
         let batchSize: UInt = 500
 
         while true {
+            // If we need to abort, do it before processing the next batch.
+            try Task.checkCancellation()
+
             let envelopes = try await updateEventsRepository.fetchNextPendingEvents(limit: batchSize)
 
             guard !envelopes.isEmpty else {
@@ -167,6 +219,15 @@ final class SyncManager: SyncManagerProtocol {
             let events = try await decryptLiveEvents(in: envelope)
             try await processLiveEvents(events)
         }
+    }
+
+    private enum State {
+
+        case suspended
+        case slowSyncing
+        case quickSyncing(Task<Void, Error>)
+        case live
+
     }
 
 }

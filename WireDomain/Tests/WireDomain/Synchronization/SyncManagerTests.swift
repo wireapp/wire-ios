@@ -60,6 +60,8 @@ final class SyncManagerTests: XCTestCase {
         updateEventDecryptor.decryptEventsIn_MockMethod = { envelope in
             envelope.events
         }
+
+        updateEventProcessor.processEvent_MockMethod = { _ in }
     }
 
     override func tearDown() async throws {
@@ -101,8 +103,63 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(sut.syncState, .suspended)
     }
 
+    // This test asserts that if we suspend the SyncManager while there
+    // is an ongoing quick sync, then the quick sync is cancelled and
+    // it transitions to the `suspend` state.
+    //
+    // The sequence of events is:
+    //
+    // 1. Test creates Task to perform quick sync.
+    // 2. Test lets the Task begin, waits for it to pull pending events.
+    // 3. Meanwhile, Task continues to fetch next pending events, waits until
+    //    Test starts suspension.
+    // 4. Test suspends sut, then waits for the Task to throw a CancellationError.
+    // 5. Meanwhile, Task continues after the suspension, then will throw a
+    //    CancellationError when it processes the next batch of events.
+
     func testItSuspendsWhenQuickSyncing() async throws {
-        XCTFail("not implemented yet")
+        let didPullEvents = XCTestExpectation()
+        let didSuspend = XCTestExpectation()
+        
+        updateEventsRepository.pullPendingEvents_MockMethod = {
+            didPullEvents.fulfill()
+        }
+
+        updateEventsRepository.fetchNextPendingEventsLimit_MockMethod = { _ in
+            // Wait here until we suspend.
+            await self.fulfillment(of: [didSuspend])
+            return [Scaffolding.makeEnvelope(with: Scaffolding.event1)]
+        }
+
+        let ongoingQuickSync = Task {
+            // Given we are quick syncing.
+            try await sut.performQuickSync()
+        }
+
+        // Let quick sync run, wait until it pulls events.
+        await fulfillment(of: [didPullEvents])
+
+        // When it suspends.
+        try await sut.suspend()
+        didSuspend.fulfill()
+
+        do {
+            // Wait for the quick sync to finish.
+            try await ongoingQuickSync.value
+            XCTFail("expected the quick sync to cancel but it did not")
+            return
+        } catch is CancellationError {
+            // Then the quick sync was cancelled.
+        } catch {
+            XCTFail("expected a cancellation error but got: \(error)")
+            return
+        }
+
+        // Then the push channel was closed.
+        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+        
+        // Then it goes to the suspended state.
+        XCTAssertEqual(sut.syncState, .suspended)
     }
 
     func testItSuspendsWhenSlowSyncing() async throws {
@@ -265,6 +322,8 @@ final class SyncManagerTests: XCTestCase {
         // they don't overlap
         XCTFail("not implemented yet")
     }
+
+    // test cancel quicksync
 
 }
 
