@@ -148,7 +148,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
 
         return userSession

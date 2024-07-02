@@ -115,9 +115,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     ++self.pushChannelDidCloseCount;
 }
 
--(void)pushChannelDidReceiveTransportData:(id<ZMTransportData>)data
+-(void)pushChannelDidReceiveData:(NSData *)data
 {
-    [self.pushChannelReceivedEvents addObjectsFromArray:[TestPushChannelEvent eventsArrayFromPushChannelData:data]];
+    NSDictionary *eventData = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    [self.pushChannelReceivedEvents addObjectsFromArray:[TestPushChannelEvent eventsArrayFromPushChannelData:eventData]];
 }
 
 - (void)setUp

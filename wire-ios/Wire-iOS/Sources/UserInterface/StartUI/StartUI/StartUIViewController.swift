@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
@@ -206,7 +207,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     func showKeyboardIfNeeded() {
-        let conversationCount = userSession.conversationList().count
+        let conversationCount = userSession.conversationList().items.count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             _ = searchHeader.tokenField.becomeFirstResponder()
         }

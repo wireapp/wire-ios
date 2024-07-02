@@ -49,11 +49,11 @@ public enum ClientUpdateError: NSInteger {
     fileprivate var isWaitingToDeleteClients = false
     fileprivate var needsToVerifySelfClient = false
     fileprivate var isGeneratingPrekeys = false
-    fileprivate var internalCredentials: ZMEmailCredentials?
+    fileprivate var internalCredentials: UserEmailCredentials?
 
     var prekeys: [IdPrekeyTuple]?
 
-    open var credentials: ZMEmailCredentials? {
+    open var credentials: UserEmailCredentials? {
         return internalCredentials
     }
 
@@ -159,7 +159,7 @@ public enum ClientUpdateError: NSInteger {
         }
     }
 
-    public func deleteClients(withCredentials emailCredentials: ZMEmailCredentials?) {
+    public func deleteClients(withCredentials emailCredentials: UserEmailCredentials?) {
         isWaitingToDeleteClients = true
         internalCredentials = emailCredentials
     }

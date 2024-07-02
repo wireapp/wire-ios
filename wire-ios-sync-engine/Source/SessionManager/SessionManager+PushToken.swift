@@ -78,13 +78,13 @@ extension SessionManager {
             return
         }
 
-        let context = session.managedObjectContext.notificationContext
+        let notificationContext = session.notificationContext
         let groups = session.syncManagedObjectContext.enterAllGroupsExceptSecondary()
         Task {
             do {
                 try await pushTokenService.syncLocalTokenWithRemote(
                     clientID: clientID,
-                    in: context
+                    in: notificationContext
                 )
 
                 Logging.push.safePublic("syncLocalTokenWithRemote: success")

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 

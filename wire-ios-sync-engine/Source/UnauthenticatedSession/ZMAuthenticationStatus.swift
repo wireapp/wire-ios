@@ -19,3 +19,24 @@
 import Foundation
 
 extension ZMAuthenticationStatus: NotificationContext {}
+
+extension ZMAuthenticationStatus: ZMCredentialProvider {
+
+    public func credentialsMayBeCleared() {
+        if self.currentPhase == ZMAuthenticationPhase.authenticated {
+            self.resetLoginAndRegistrationStatus()
+        }
+    }
+
+    public func emailCredentials() -> UserEmailCredentials? {
+        guard let loginCredentials = self.loginCredentials, loginCredentials.credentialWithEmail else {
+            return nil
+        }
+        return UserEmailCredentials.credentials(
+            email: loginCredentials.email ?? "",
+            password: loginCredentials.password ?? "",
+            emailVerificationCode: loginCredentials.emailVerificationCode
+        )
+    }
+
+}

@@ -32,7 +32,7 @@ extension EventDecoder {
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
     ) async -> ZMUpdateEvent? {
-        let eventAttributes: LogAttributes = [.eventId: event.uuid?.safeForLoggingDescription ?? "<not filled>"]
+        let eventAttributes: LogAttributes = [.eventId: event.safeUUID]
         WireLogger.updateEvent.info("decrypting proteus event...", attributes: eventAttributes, .safePublic)
 
         guard !event.wasDecrypted else {
@@ -56,6 +56,7 @@ extension EventDecoder {
                 selfClient?.remoteIdentifier == recipientID
             else {
                 let additionalInfo: LogAttributes = [
+                    .recipientID: event.recipientID?.readableHash ?? "<nil>",
                     .selfClientId: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
                 ]
@@ -165,8 +166,12 @@ extension EventDecoder {
         sender: UserClient,
         in context: NSManagedObjectContext
     ) {
-        zmLog.safePublic("Failed to decrypt message with error: \(error), client id <\(sender.safeRemoteIdentifier))>")
-        zmLog.error("event debug: \(event.debugInformation)")
+        WireLogger.updateEvent.error("Failed to decrypt message with error: \(String(describing: error))",
+                                     attributes: [
+                                        .eventId: event.safeUUID,
+                                        .senderUserId: sender.safeRemoteIdentifier.value
+                                     ], .safePublic)
+        WireLogger.updateEvent.debug("event debug: \(event.debugInformation)")
 
         if error == .outdatedMessage || error == .duplicateMessage {
             // Do not notify the user if the error is just "duplicated".

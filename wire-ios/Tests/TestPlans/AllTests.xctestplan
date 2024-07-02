@@ -20,10 +20,6 @@
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
       {
-        "key" : "FB_REFERENCE_IMAGE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
-      },
-      {
         "key" : "IMAGE_DIFF_DIR",
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
@@ -63,6 +59,20 @@
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "E6579E352AFF9B30004E7FD8",
         "name" : "Wire-iOS UnitTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
       }
     }
   ],

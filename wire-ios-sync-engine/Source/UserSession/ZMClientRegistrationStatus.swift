@@ -101,7 +101,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public weak var registrationStatusDelegate: ZMClientRegistrationStatusDelegate?
     @objc
-    public var emailCredentials: ZMEmailCredentials?
+    public var emailCredentials: UserEmailCredentials?
     var prekeys: [IdPrekeyTuple]?
     var lastResortPrekey: IdPrekeyTuple?
 

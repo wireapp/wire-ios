@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
@@ -555,7 +556,7 @@ extension ConversationViewController: ZMConversationListObserver {
         }
     }
 
-    func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
+    func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
         updateLeftNavigationBarItems()
     }
 }

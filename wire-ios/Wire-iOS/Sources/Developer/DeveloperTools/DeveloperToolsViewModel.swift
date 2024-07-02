@@ -23,7 +23,14 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
 
+/// Data Structure containing contextual information currently displayed view
+struct DeveloperToolsContext {
+    var currentUserClient: UserClient?
+}
+
 final class DeveloperToolsViewModel: ObservableObject {
+
+    static var context: DeveloperToolsContext = DeveloperToolsContext()
 
     // MARK: - Models
 
@@ -103,6 +110,12 @@ final class DeveloperToolsViewModel: ObservableObject {
     var alertTitle: String?
     var alertBody: String?
 
+    // MARK: - Computed
+
+    private var userSession: ZMUserSession? {
+        ZMUserSession.shared()
+    }
+
     // MARK: - Life cycle
 
     init(
@@ -117,6 +130,100 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupSections() {
+
+        setupContextualItems()
+
+        setupActions()
+
+        setupAppInfo()
+
+        sections.append(backendInfoSection)
+
+        setupSelfUser()
+
+        setupPushToken()
+
+        setupDatadog()
+    }
+
+    // MARK: - Section Builders
+
+    private func setupAppInfo() {
+        sections.append(Section(
+            header: "App info",
+            items: [
+                .text(TextItem(title: "App version", value: appVersion)),
+                .text(TextItem(title: "Build number", value: buildNumber)),
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
+            ]
+        ))
+    }
+
+    private func setupSelfUser() {
+        if let selfUser {
+            sections.append(Section(
+                header: "Self user",
+                items: [
+                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
+                    .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
+                    .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
+                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(
+                        title: "Supported protocols",
+                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
+                    ),
+                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"))
+                ]
+            ))
+        }
+    }
+
+    private func setupPushToken() {
+        if let pushToken = PushTokenStorage.pushToken {
+            sections.append(Section(
+                header: "Push token",
+                items: [
+                    .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
+                    .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
+                    .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
+                        self?.checkRegisteredTokens()
+                    }))
+                ]
+            ))
+        }
+    }
+
+    private func setupDatadog() {
+        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
+            sections.append(Section(
+                header: "Datadog",
+                items: [
+                    .text(TextItem(title: "User ID", value: datadogUserIdentifier)),
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
+                ]
+            ))
+        }
+    }
+
+    private func setupContextualItems() {
+        let actionsProviders: [DeveloperToolsContextItemsProvider?] = [
+            UserClientDeveloperItemsProvider(context: Self.context)
+            // add new builder here
+        ]
+
+        let actions = actionsProviders.reduce(into: [], { $0 += ($1?.getActionItems() ?? []) })
+        guard !actions.isEmpty else { return }
+
+        sections.append(
+            Section(
+                header: "Contextual Menu",
+                items: actions
+            )
+        )
+    }
+
+    private func setupActions() {
         sections.append(Section(
             header: "Actions",
             items: [
@@ -137,58 +244,6 @@ final class DeveloperToolsViewModel: ObservableObject {
                 }))
             ]
         ))
-
-        sections.append(Section(
-            header: "App info",
-            items: [
-                .text(TextItem(title: "App version", value: appVersion)),
-                .text(TextItem(title: "Build number", value: buildNumber)),
-                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
-            ]
-        ))
-
-        sections.append(backendInfoSection)
-
-        if let selfUser {
-            sections.append(Section(
-                header: "Self user",
-                items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
-                    .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
-                    .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(
-                        title: "Supported protocols",
-                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
-                    ),
-                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"))
-                ]
-            ))
-        }
-
-        if let pushToken = PushTokenStorage.pushToken {
-            sections.append(Section(
-                header: "Push token",
-                items: [
-                    .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
-                    .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
-                    .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
-                        self?.checkRegisteredTokens()
-                    }))
-                ]
-            ))
-        }
-
-        if let dataDogUserId = DatadogWrapper.shared?.datadogUserId {
-            sections.append(Section(
-                header: "Datadog",
-                items: [
-                    .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
-                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
-                ]
-            ))
-        }
     }
 
     private lazy var backendInfoSection: Section = {
@@ -252,9 +307,8 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func checkRegisteredTokens() {
         guard
-            let selfClient,
-            let clientID = selfClient.remoteIdentifier,
-            let context = selfClient.managedObjectContext?.notificationContext
+            let clientID = selfClient?.remoteIdentifier,
+            let context = userSession?.notificationContext
         else {
             return
         }
@@ -312,13 +366,13 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var selfUser: ZMUser? {
-        guard let session = ZMUserSession.shared() else { return nil }
-        return ZMUser.selfUser(inUserSession: session)
+        guard let userSession else { return nil }
+        return ZMUser.selfUser(inUserSession: userSession)
     }
 
     private var selfClient: UserClient? {
-        guard let session = ZMUserSession.shared() else { return nil }
-        return session.selfUserClient
+        guard let userSession else { return nil }
+        return userSession.selfUserClient
     }
 
     private func stopFederatingBella() {

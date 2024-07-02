@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ConversationListState {

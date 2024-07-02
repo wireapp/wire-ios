@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 protocol CharacterInputFieldDelegate: AnyObject {
     func shouldAcceptChanges(_ inputField: CharacterInputField) -> Bool

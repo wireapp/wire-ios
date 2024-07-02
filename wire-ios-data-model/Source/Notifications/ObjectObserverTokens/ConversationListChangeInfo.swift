@@ -21,19 +21,18 @@ import WireSystem
 
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
-extension ZMConversationList {
+extension ConversationList {
 
     func toOrderedSetState() -> OrderedSetState<ZMConversation> {
-        return OrderedSetState(array: self.map { $0 as! ZMConversation })
+        OrderedSetState(array: items)
     }
-
 }
 
 @objcMembers public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
     public typealias ChangeInfoContent = ZMConversation
     public var setChangeInfo: SetChangeInfo<ZMConversation>
 
-    public var conversationList: ZMConversationList { return setChangeInfo.observedObject as! ZMConversationList }
+    public var conversationList: ConversationList { return setChangeInfo.observedObject as! ConversationList }
 
     init(setChangeInfo: SetChangeInfo<ZMConversation>) {
         self.setChangeInfo = setChangeInfo
@@ -53,7 +52,7 @@ extension ZMConversationList {
 
 @objc public protocol ZMConversationListObserver: NSObjectProtocol {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo)
-    @objc optional func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo)
+    @objc optional func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo)
 }
 
 @objc public protocol ZMConversationListReloadObserver: NSObjectProtocol {
@@ -69,7 +68,7 @@ extension ConversationListChangeInfo {
     /// Adds a ZMConversationListObserver to the specified list
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forList:managedObjectContext:)
-    public static func addListObserver(_ observer: ZMConversationListObserver, for list: ZMConversationList?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+    public static func addListObserver(_ observer: ZMConversationListObserver, for list: ConversationList?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
 
         if let list {
             zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
@@ -78,7 +77,7 @@ extension ConversationListChangeInfo {
         }
 
         return ManagedObjectObserverToken(name: .conversationListDidChange, managedObjectContext: managedObjectContext, object: list) { [weak observer] note in
-            guard let `observer` = observer, let aList = note.object as? ZMConversationList else { return }
+            guard let observer, let aList = note.object as? ConversationList else { return }
 
             zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
 
