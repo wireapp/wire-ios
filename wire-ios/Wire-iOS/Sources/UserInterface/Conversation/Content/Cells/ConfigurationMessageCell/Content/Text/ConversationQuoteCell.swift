@@ -299,7 +299,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     @objc func onTap() {
-        delegate?.perform(action: .openQuote, for: message, view: self)
+        delegate?.perform(action: .openQuote, for: message!, view: self)
     }
 
 }
