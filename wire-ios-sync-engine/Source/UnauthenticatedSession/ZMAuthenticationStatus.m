@@ -209,7 +209,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    if((self.currentPhase == ZMAuthenticationPhaseLoginWithEmail) && self.loginCredentials == credentials)
+    if (self.currentPhase == ZMAuthenticationPhaseLoginWithEmail && self.loginCredentials == credentials)
     {
         self.loginCredentials = nil;
         [self.delegate authenticationDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeNetworkError userInfo:nil]];
