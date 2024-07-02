@@ -16,16 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
+
+// TODO: instead of conformance to protocol wrap in new type which caches the normalization results
 extension ZMConversation: SearchableConversation {
 
     public var searchableName: String {
-        displayName ?? ""
+        normalizedUserDefinedName ?? displayName?.normalizedForSearch() as String? ?? ""
     }
 
     public var searchableParticipants: [ZMConversationSearchableParticipant] {
         localParticipants
             .map { localParticipant in
-                .init(searchableName: localParticipant.name ?? "")
+                .init(searchableName: localParticipant.normalizedName ?? localParticipant.name?.normalizedForSearch() as String? ?? "")
             }
     }
 

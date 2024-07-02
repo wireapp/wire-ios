@@ -53,13 +53,85 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         XCTAssertEqual(filtered, [[], [], []])
     }
 
+    func testSearchTextMatchesConversationName() {
+
+        // Given
+        sut = .init(conversationContainers: conversationContainers)
+
+        // When
+        let filtered = sut.invoke(searchText: "wire team")
+
+        // Then matches
+        // - only the "Wire Team" conversation
+        XCTAssertEqual(filtered, [[groupConversations[0]], [], []])
+    }
+
+    func testSearchTextMatchesParticipant() {
+
+        // Given
+        sut = .init(conversationContainers: conversationContainers)
+
+        // When
+        let filtered = sut.invoke(searchText: "rifka")
+
+        // Then matches
+        // - the "Announcements" conversation, since Rifka is a participant
+        // - the "Guests" conversation, since Rifka is a participant
+        XCTAssertEqual(filtered, [[groupConversations[1]], [], [otherGroupConversations[0]]])
+    }
+
+    func testSpecialCharacterMatchesConversationNameAndParticipants() {
+
+        // Given
+        sut = .init(conversationContainers: conversationContainers)
+
+        // When
+        let filtered = sut.invoke(searchText: "ö")
+
+        // Then matches
+        // - the "Wire Team" conversation, because at least one participant's name contains "o"
+        // - the "Announcements" conversation, because the conversation name contains "o"
+        // - the "Guests" conversation, because at least one participant's name contains "o"
+        XCTAssertEqual(filtered, [[groupConversations[0], groupConversations[1]], [], [otherGroupConversations[0]]])
+    }
+
+    func testSpecialCharacter_ß_MatchesConversationNameWith_ss() {
+
+        // Given
+        sut = .init(conversationContainers: conversationContainers)
+
+        // When
+        let filtered = sut.invoke(searchText: "ß")
+
+        // Then matches
+        // - the "Wire Team" conversation, because at least one participant's name contains "o"
+        // - the "Announcements" conversation, because the conversation name contains "o"
+        // - the "Guests" conversation, because at least one participant's name contains "o"
+        XCTAssertEqual(filtered, [[], [], [otherGroupConversations[1], otherGroupConversations[2]]])
+    }
+
+    func testCharacters_ss_MatchesConversationNameWith_ß() {
+
+        // Given
+        sut = .init(conversationContainers: conversationContainers)
+
+        // When
+        let filtered = sut.invoke(searchText: "ß")
+
+        // Then matches
+        // - the "Wire Team" conversation, because at least one participant's name contains "o"
+        // - the "Announcements" conversation, because the conversation name contains "o"
+        // - the "Guests" conversation, because at least one participant's name contains "o"
+        XCTAssertEqual(filtered, [[], [], [otherGroupConversations[1], otherGroupConversations[2]]])
+    }
+
     // MARK: - Content
 
     private var conversationContainers: [MockContainer] {
         [
             MockContainer(groupConversations),
             MockContainer(oneOnOneConversations),
-            MockContainer(otherFolder)
+            MockContainer(otherGroupConversations)
         ]
     }
 
@@ -68,7 +140,10 @@ final class SearchConversationsUseCaseTests: XCTestCase {
             searchableName: "Wire Team",
             searchableParticipants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
         ),
-        MockConversation(searchableName: "Announcements", searchableParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"])
+        MockConversation(
+            searchableName: "Announcements",
+            searchableParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
+        )
     ]
 
     private let oneOnOneConversations = [
@@ -76,8 +151,10 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         MockConversation(searchableName: "Mariele", searchableParticipants: ["Mariele", "Mneme Tiedemann"])
     ]
 
-    private let otherFolder = [
-        MockConversation(searchableName: "Guests", searchableParticipants: ["Grusha Žarko", "Mneme Tiedemann"])
+    private let otherGroupConversations = [
+        MockConversation(searchableName: "Guests", searchableParticipants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
+        MockConversation(searchableName: "Spaß", searchableParticipants: ["Mneme Tiedemann"]),
+        MockConversation(searchableName: "Essen", searchableParticipants: ["Mneme Tiedemann"])
     ]
 }
 
@@ -87,9 +164,7 @@ private struct MockContainer: SearchableConversationContainer, CustomDebugString
 
     private(set) var conversations: [MockConversation]
 
-    var debugDescription: String {
-        "Container(\(conversations))"
-    }
+    var debugDescription: String { "\(conversations)" }
 
     init(_ conversations: [MockConversation]) {
         self.conversations = conversations
@@ -110,7 +185,10 @@ private struct MockConversation: SearchableConversation, CustomDebugStringConver
     private(set) var searchableParticipants: [MockParticipant]
 
     var debugDescription: String {
-        "Conversation(\(searchableName), \(searchableParticipants))"
+        let participants = searchableParticipants
+            .map(String.init(reflecting:))
+            .joined(separator: ", ")
+        return "\(searchableName)(\(participants))"
     }
 }
 
@@ -118,9 +196,7 @@ private struct MockParticipant: SearchableConversationParticipant, CustomDebugSt
 
     private(set) var searchableName: String
 
-    var debugDescription: String {
-        "Participant(\(searchableName))"
-    }
+    var debugDescription: String { searchableName }
 
     init(stringLiteral value: String) {
         searchableName = value

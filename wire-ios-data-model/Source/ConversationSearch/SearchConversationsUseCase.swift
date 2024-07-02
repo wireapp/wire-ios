@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
+
 public struct SearchConversationsUseCase<ConversationContainer>: SearchConversationsUseCaseProtocol
 where ConversationContainer: SearchableConversationContainer {
 
@@ -30,6 +32,7 @@ where ConversationContainer: SearchableConversationContainer {
         let searchText = searchText
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
+            .normalizedForSearch() as String
 
         if searchText.isEmpty {
             return conversationContainers
