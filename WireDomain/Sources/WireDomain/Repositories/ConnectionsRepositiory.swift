@@ -85,13 +85,13 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     private func storedConversation(from connection: Connection, with storedConnection: ZMConnection) throws -> ZMConversation {
 
-        guard let conversationID = connection.conversationId ?? connection.qualifiedConversationId?.uuid else {
+        guard let conversationID = connection.conversationID ?? connection.qualifiedConversationID?.uuid else {
             throw ConnectionsRepositoryError.missingConversationId
         }
 
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
-            domain: connection.qualifiedConversationId?.domain,
+            domain: connection.qualifiedConversationID?.domain,
             in: context
         )
 
@@ -106,13 +106,13 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     /// - Returns: connection object stored locally
 
     private func storedConnection(from connection: Connection) throws -> ZMConnection {
-        guard let userID = connection.receiverId ?? connection.receiverQualifiedId?.uuid else {
+        guard let userID = connection.receiverID ?? connection.receiverQualifiedID?.uuid else {
             throw ConnectionsRepositoryError.missingReceiverId
         }
 
         let storedConnection = ZMConnection.fetchOrCreate(
             userID: userID,
-            domain: connection.receiverQualifiedId?.domain,
+            domain: connection.receiverQualifiedID?.domain,
             in: context
         )
 

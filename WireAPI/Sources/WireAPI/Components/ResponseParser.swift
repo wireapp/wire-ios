@@ -32,7 +32,7 @@ struct ResponseParser<Success> {
 
     init(decoder: JSONDecoder = .init()) {
         self.decoder = decoder
-        self.parseBlocks = []
+        parseBlocks = []
     }
 
     func success<Payload: Decodable & ToAPIModelConvertible>(

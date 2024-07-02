@@ -51,6 +51,7 @@ private class HTTPClientImpl: HTTPClient {
 
     public func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
         await withCheckedContinuation { continuation in
+
             let request = request.toZMTransportRequest()
             request.add(ZMCompletionHandler(on: queue) { response in
                 let response = response.toHTTPResponse()
@@ -60,13 +61,12 @@ private class HTTPClientImpl: HTTPClient {
             transportSession.enqueueOneTime(request)
         }
     }
-
 }
 
 private extension HTTPRequest {
 
     func toZMTransportRequest() -> ZMTransportRequest {
-        return ZMTransportRequest(
+        .init(
             path: path,
             method: method.toZMTransportRequestMethod(),
             payload: body.map { String(data: $0, encoding: .utf8) } as? ZMTransportData,

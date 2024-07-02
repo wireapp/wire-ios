@@ -29,9 +29,9 @@ extension XCTestCase {
     ///   - file: The file name of the invoking test.
     ///   - line: The line number when this assertion is made.
 
-    func XCTAssertThrowsError<T, E: Error & Equatable>(
+    func XCTAssertThrowsError<E: Error & Equatable>(
         _ expectedError: E,
-        when expression: @escaping () async throws -> T,
+        when expression: @escaping () async throws -> some Any,
         _ message: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -68,8 +68,8 @@ extension XCTestCase {
     ///   - line: The line number when this assertion is made.
     ///   - errorHandler: A handler for the thrown error.
 
-    func XCTAssertThrowsError<T>(
-        _ expression: () async throws -> T,
+    func XCTAssertThrowsError(
+        _ expression: () async throws -> some Any,
         _ message: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line,

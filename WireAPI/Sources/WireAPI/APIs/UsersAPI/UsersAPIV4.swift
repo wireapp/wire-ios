@@ -39,7 +39,7 @@ class UsersAPIV4: UsersAPIV3 {
     }
 
     override func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIds: userIDs))
+        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
         let request = HTTPRequest(
             path: "\(pathPrefix)/list-users",
             method: .post,
@@ -114,7 +114,6 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
              expiresAt: expiresAt?.date,
              service: service?.toAPIModel(),
              supportedProtocols: supportedProtocols,
-             legalholdStatus: legalholdStatus.toAPIModel()
-        )
+             legalholdStatus: legalholdStatus.toAPIModel())
     }
 }

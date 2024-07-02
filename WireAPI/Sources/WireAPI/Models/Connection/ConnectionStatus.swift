@@ -22,27 +22,27 @@ public enum ConnectionStatus: String, Decodable, Equatable {
 
     /// The connection is complete and the conversation is in its normal state
 
-    case accepted = "accepted"
+    case accepted
 
     /// The user has been blocked
 
-    case blocked = "blocked"
+    case blocked
 
     /// The other user has sent a connection request to this one
 
-    case pending = "pending"
+    case pending
 
     /// The connection has been ignored
 
-    case ignored = "ignored"
+    case ignored
 
     /// This user has sent a connection request to another user
 
-    case sent = "sent"
+    case sent
 
     /// The connection has been cancelled
 
-    case cancelled = "cancelled"
+    case cancelled
 
     /// The connection is missing legal hold consent
 

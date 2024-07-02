@@ -41,6 +41,7 @@ final class TeamRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+
         stack = try await coreDataStackHelper.createStack()
         userRespository = MockUserRepositoryProtocol()
         teamsAPI = MockTeamsAPI()
@@ -68,6 +69,7 @@ final class TeamRepositoryTests: XCTestCase {
         teamsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
+
         try await super.tearDown()
     }
 

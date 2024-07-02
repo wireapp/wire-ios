@@ -30,9 +30,9 @@ extension UpdateEventEnvelope: Decodable {
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.events = try container.decodeIfPresent([UpdateEvent].self, forKey: .events) ?? []
-        self.isTransient = try container.decodeIfPresent(Bool.self, forKey: .isTransient) ?? false
+        id = try container.decode(UUID.self, forKey: .id)
+        events = try container.decodeIfPresent([UpdateEvent].self, forKey: .events) ?? []
+        isTransient = try container.decodeIfPresent(Bool.self, forKey: .isTransient) ?? false
     }
 
 }

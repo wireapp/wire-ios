@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		592996512C2EB98A008C334F /* Format Swift Code */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format Swift Code" */;
+			buildPhases = (
+				592996552C2EB996008C334F /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Format Swift Code";
+			productName = "Format Swift Code";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D62940F4F30046124D /* TextFieldWrapper.swift */; };
 		010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D72940F4F40046124D /* CustomBackendView.swift */; };
@@ -8819,6 +8833,9 @@
 							};
 						};
 					};
+					592996512C2EB98A008C334F = {
+						CreatedOnToolsVersion = 15.3;
+					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1000;
@@ -8891,6 +8908,7 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
+				592996512C2EB98A008C334F /* Format Swift Code */,
 			);
 		};
 /* End PBXProject section */
@@ -9023,6 +9041,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "$SRCROOT/Scripts/copyExtraAudioNotifications\n\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"YES\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+		592996552C2EB996008C334F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftformat.sh ../WireAPI\n";
 		};
 		5E055B28228AAF1500E91314 /* Embed Internal Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11372,6 +11408,22 @@
 			};
 			name = Release;
 		};
+		592996522C2EB98A008C334F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		592996532C2EB98A008C334F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11688,6 +11740,15 @@
 			buildConfigurations = (
 				168A16B51D9597C2005CFA6C /* Debug */,
 				168A16B61D9597C2005CFA6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format Swift Code" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592996522C2EB98A008C334F /* Debug */,
+				592996532C2EB98A008C334F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
