@@ -38,14 +38,12 @@ final class ConversationInputBarSendController: NSObject {
         feedbackGenerator.prepare()
         userSession.enqueue({
             do {
-                try conversation.appendImage(from: imageData)
+                let useCase = userSession.makeAppendImageMessageUseCase()
+                try useCase.invoke(withImageData: imageData, in: conversation)
                 self.feedbackGenerator.impactOccurred()
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            completionHandler?()
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
         })
     }
 
@@ -60,7 +58,13 @@ final class ConversationInputBarSendController: NSObject {
 
             do {
                 let useCase = userSession.makeAppendTextMessageUseCase()
-                try useCase.invoke(text: text, mentions: mentions, replyingTo: message, in: conversation, fetchLinkPreview: shouldFetchLinkPreview)
+                try useCase.invoke(
+                    text: text,
+                    mentions: mentions,
+                    replyingTo: message,
+                    in: conversation,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
@@ -74,15 +78,20 @@ final class ConversationInputBarSendController: NSObject {
 
         userSession.enqueue({
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: nil, fetchLinkPreview: shouldFetchLinkPreview)
-                try conversation.appendImage(from: data)
+                let textMessageUseCase = userSession.makeAppendTextMessageUseCase()
+                let imageMessageUseCase = userSession.makeAppendImageMessageUseCase()
+                try textMessageUseCase.invoke(
+                    text: text,
+                    mentions: mentions,
+                    replyingTo: nil,
+                    in: conversation,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
+                try imageMessageUseCase.invoke(withImageData: data, in: conversation)
                 conversation.draftMessage = nil
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
-            Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
         })
     }
 }
