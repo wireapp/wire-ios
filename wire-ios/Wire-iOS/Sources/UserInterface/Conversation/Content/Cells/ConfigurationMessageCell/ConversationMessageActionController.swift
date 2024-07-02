@@ -57,14 +57,18 @@ final class ConversationMessageActionController {
             guard let title = messageAction.title else { return nil }
 
             let handler: UIActionHandler = { _ in
-                responder?.perform(action: messageAction,
-                                   for: message,
-                                   view: targetView)
+                responder?.perform(
+                    action: messageAction,
+                    for: message!,
+                    view: targetView
+                )
             }
 
-            return UIAction(title: title,
-                            image: messageAction.systemIcon(),
-                            handler: handler)
+            return UIAction(
+                title: title,
+                image: messageAction.systemIcon(),
+                handler: handler
+            )
         }
     }
 

@@ -372,7 +372,12 @@ extension GroupDetailsViewController {
     func presentLegalHoldDetails() {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
 }
@@ -476,7 +481,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
 
         navigationController?.pushViewController(viewController, animated: true)

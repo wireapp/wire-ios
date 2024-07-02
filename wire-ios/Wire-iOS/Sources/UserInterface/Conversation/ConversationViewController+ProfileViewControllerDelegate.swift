@@ -30,7 +30,8 @@ extension ConversationViewController {
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
     }
 }

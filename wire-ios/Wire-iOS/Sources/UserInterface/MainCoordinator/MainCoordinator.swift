@@ -48,4 +48,8 @@ struct MainCoordinator: MainCoordinating {
         }
         zClientViewController.showConversationList()
     }
+
+    func showSettings() {
+        zClientViewController?.presentSettings()
+    }
 }

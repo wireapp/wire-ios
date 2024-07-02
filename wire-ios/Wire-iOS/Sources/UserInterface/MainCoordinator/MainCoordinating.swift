@@ -34,4 +34,6 @@ protocol MainCoordinating {
     ) where Message: ZMConversationMessage
 
     func showConversationList()
+
+    func showSettings()
 }

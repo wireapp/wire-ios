@@ -61,7 +61,8 @@ final class ConversationListViewControllerTests: XCTestCase {
             account: account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
         sut = ConversationListViewController(

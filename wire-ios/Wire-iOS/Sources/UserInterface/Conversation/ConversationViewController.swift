@@ -120,10 +120,13 @@ final class ConversationViewController: UIViewController {
         self.visibleMessage = visibleMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
-        contentViewController = ConversationContentViewController(conversation: conversation,
-                                                                  message: visibleMessage,
-                                                                  mediaPlaybackManager: mediaPlaybackManager,
-                                                                  userSession: userSession)
+        contentViewController = ConversationContentViewController(
+            conversation: conversation,
+            message: visibleMessage,
+            mediaPlaybackManager: mediaPlaybackManager,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
 
         inputBarController = ConversationInputBarViewController(
             conversation: conversation,
@@ -651,7 +654,11 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     private func onCollectionButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {
-            let collections = CollectionsViewController(conversation: conversation, userSession: userSession)
+            let collections = CollectionsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in

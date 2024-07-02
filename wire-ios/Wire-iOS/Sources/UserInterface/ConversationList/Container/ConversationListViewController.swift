@@ -87,7 +87,8 @@ final class ConversationListViewController: UIViewController {
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
+            mainCoordinator: mainCoordinator
         )
         self.init(
             viewModel: viewModel,

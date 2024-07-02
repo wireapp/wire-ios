@@ -50,6 +50,7 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 }
 
 extension ConversationListViewController {
+
     final class ViewModel: NSObject {
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
@@ -82,6 +83,7 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
+        let mainCoordinator: MainCoordinating
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
@@ -91,7 +93,8 @@ extension ConversationListViewController {
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-            notificationCenter: NotificationCenter = .default
+            notificationCenter: NotificationCenter = .default,
+            mainCoordinator: some MainCoordinating
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -101,6 +104,7 @@ extension ConversationListViewController {
             shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
+            self.mainCoordinator = mainCoordinator
             super.init()
 
             updateE2EICertifiedStatus()
