@@ -108,7 +108,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func close() {
-        WireLogger.pushChannel.debug("Push channel was closed")
+        WireLogger.pushChannel.info("Push channel was closed")
 
         scheduler.performGroupedBlock {
             self.webSocket?.disconnect()
@@ -155,7 +155,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         }
         webSocket?.connect()
 
-        WireLogger.pushChannel.debug("Connecting websocket with URL: \(websocketURL)")
+        WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL)")
     }
 
     func scheduleOpen() {
