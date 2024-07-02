@@ -166,6 +166,13 @@ final class SyncManagerTests: XCTestCase {
         XCTFail("not implemented yet")
     }
 
+    func testItSuspendsOnlyOnce() async throws {
+        // suspend
+        // suspend again
+        // it only suspends once.
+        XCTFail("not implemented yet")
+    }
+
     // MARK: - Slow sync
 
     func testItSlowSyncs() async throws {
