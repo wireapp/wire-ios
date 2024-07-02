@@ -155,7 +155,11 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         }
         webSocket?.connect()
 
-        WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL)")
+        let attributes: LogAttributes = [
+            LogAttributesKey.selfClientId.rawValue: clientID?.redactedAndTruncated()
+        ]
+        WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
+                                    attributes: makeAttributesPublic(attributes))
     }
 
     func scheduleOpen() {
@@ -214,6 +218,13 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         timer?.fire(afterTimeInterval: 30)
         pingTimer = timer
     }
+
+    // MARK: Helpers
+
+    private func makeAttributesPublic(_ attributes: LogAttributes) -> LogAttributes {
+        attributes.merging(.safePublic, uniquingKeysWith: { _, new in new })
+    }
+
 }
 
 extension StarscreamPushChannel: ZMTimerClient {
