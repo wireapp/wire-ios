@@ -36,11 +36,11 @@ struct UserConnectionEventDecoder {
         return UserConnectionEvent(
             userName: user.name,
             connection: Connection(
-                senderId: connection.from,
-                receiverId: connection.to,
-                receiverQualifiedId: connection.qualifiedTo,
-                conversationId: connection.conversationID,
-                qualifiedConversationId: connection.qualifiedConversationID,
+                senderID: connection.from,
+                receiverID: connection.to,
+                receiverQualifiedID: connection.qualifiedTo,
+                conversationID: connection.conversationID,
+                qualifiedConversationID: connection.qualifiedConversationID,
                 lastUpdate: connection.lastUpdate.date,
                 status: connection.status
             )
