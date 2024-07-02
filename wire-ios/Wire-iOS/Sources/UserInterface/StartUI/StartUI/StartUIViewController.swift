@@ -50,12 +50,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
 
-    let profilePresenter: ProfilePresenter = ProfilePresenter()
+    let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     let backgroundColor = SemanticColors.View.backgroundDefault
@@ -66,7 +66,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     init(
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
@@ -76,6 +77,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
                                                                        shouldIncludeGuests: true,
                                                                        isFederationEnabled: isFederationEnabled)
         self.userSession = userSession
+        profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -207,7 +209,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     func showKeyboardIfNeeded() {
-        let conversationCount = userSession.conversationList().count
+        let conversationCount = userSession.conversationList().items.count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             _ = searchHeader.tokenField.becomeFirstResponder()
         }

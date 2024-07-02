@@ -30,11 +30,14 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let profileViewController = ProfileViewController(user: user,
-                                                          viewer: selfUser,
-                                                          conversation: conversation,
-                                                          viewControllerDismisser: self,
-                                                          userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: selfUser,
+            conversation: conversation,
+            viewControllerDismisser: self,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
         profileViewController.delegate = self
@@ -143,6 +146,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
@@ -162,6 +166,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()

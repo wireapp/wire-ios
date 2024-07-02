@@ -109,10 +109,6 @@ open class PushNotificationStatus: NSObject {
 
         WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.safeForLoggingDescription), attributes: .safePublic)
 
-        if let lastEventId {
-            lastEventIDRepository.storeLastEventID(lastEventId)
-        }
-
         guard finished else { return }
 
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID

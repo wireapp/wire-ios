@@ -51,9 +51,14 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 
     fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 
-    public init(eventMOC: NSManagedObjectContext, syncMOC: NSManagedObjectContext) {
+    public init(
+        eventMOC: NSManagedObjectContext,
+        syncMOC: NSManagedObjectContext,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
+        self.lastEventIDRepository = lastEventIDRepository
         super.init()
         self.eventMOC.performGroupedAndWait {
             self.createReceivedPushEventIDsStoreIfNecessary()
@@ -67,6 +72,8 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
             syncMOC.proteusProvider
         }
     }
+
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
 }
 
 // MARK: - Process events
@@ -83,7 +90,7 @@ extension EventDecoder {
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
-    ) async -> [ZMUpdateEvent] {
+    ) async throws -> [ZMUpdateEvent] {
         let (filteredEvents, lastIndex) = await eventMOC.perform {
             self.storeReceivedPushEventIDs(from: events)
             let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
@@ -98,9 +105,9 @@ extension EventDecoder {
             return []
         }
 
-        let decryptedEvents: [ZMUpdateEvent] = await proteusProvider.performAsync(
+        let decryptedEvents: [ZMUpdateEvent] = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return await self.decryptAndStoreEvents(
+                return try await self.decryptAndStoreEvents(
                     filteredEvents,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
@@ -160,43 +167,70 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
-    ) async -> [ZMUpdateEvent] {
+    ) async throws -> [ZMUpdateEvent] {
+        var decryptedEvents: [ZMUpdateEvent] = []
 
-        var decryptedEvents = [ZMUpdateEvent]()
-        for event in events {
-
-            switch event.type {
-            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    try await proteusService.decrypt(
-                        data: encryptedData,
-                        forSession: sessionID
-                    )
+        try await withExpiringActivity(reason: "Decrypting & storing event") {
+            var index = startIndex
+            for event in events {
+                try Task.checkCancellation()
+                if DeveloperFlag.decryptAndStoreEventsSleep.isOn {
+                    try await Task.sleep(nanoseconds: 1_000_000_000)
                 }
-                if let proteusEvent {
-                    decryptedEvents.append(proteusEvent)
-                }
-
-            case .conversationMLSWelcome:
-                await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                decryptedEvents.append(event)
-
-            case .conversationMLSMessageAdd:
-                let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
-                decryptedEvents.append(contentsOf: events)
-
-            default:
-                decryptedEvents.append(event)
+                await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
+                index += 1
             }
         }
 
-        // This call has to be synchronous to ensure that we close the
-        // encryption context only if we stored all events in the database.
+        return decryptedEvents
+    }
+
+    private func decryptAndStoreEvent(
+        event: ZMUpdateEvent,
+        at index: Int64,
+        publicKeys: EARPublicKeys?,
+        proteusService: ProteusServiceInterface
+    ) async -> [ZMUpdateEvent] {
+        let decryptedEvents = await decryptEvent(event: event, publicKeys: publicKeys, proteusService: proteusService)
+
         await eventMOC.perform {
-            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: index, publicKeys: publicKeys)
+        }
+
+        await syncMOC.perform {
+            if let eventUUID = event.uuid, !event.isTransient {
+                self.lastEventIDRepository.storeLastEventID(eventUUID)
+            }
         }
 
         return decryptedEvents
+    }
+
+    private func decryptEvent(
+        event: ZMUpdateEvent,
+        publicKeys: EARPublicKeys?,
+        proteusService: ProteusServiceInterface
+    ) async -> [ZMUpdateEvent] {
+        switch event.type {
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+            let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                try await proteusService.decrypt(
+                    data: encryptedData,
+                    forSession: sessionID
+                )
+            }
+            return proteusEvent.map { [$0] } ?? []
+
+        case .conversationMLSWelcome:
+            await self.processWelcomeMessage(from: event, context: self.syncMOC)
+            return [event]
+
+        case .conversationMLSMessageAdd:
+            return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+        default:
+            return [event]
+        }
     }
 
     private func legacyDecryptAndStoreEvents(
@@ -241,6 +275,10 @@ extension EventDecoder {
             await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
+        }
+
+        if let lastEventID = decryptedEvents.last(where: { !$0.isTransient })?.uuid {
+            lastEventIDRepository.storeLastEventID(lastEventID)
         }
 
         return decryptedEvents

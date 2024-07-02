@@ -204,7 +204,10 @@ public final class ZMUserSession: NSObject {
     public private(set) var networkState: ZMNetworkState = .online {
         didSet {
             if oldValue != networkState {
-                ZMNetworkAvailabilityChangeNotification.notify(networkState: networkState, userSession: self)
+                ZMNetworkAvailabilityChangeNotification.notify(
+                    networkState: networkState,
+                    notificationContext: managedObjectContext.notificationContext
+                )
             }
         }
     }
@@ -521,7 +524,8 @@ public final class ZMUserSession: NSObject {
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
+            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor],
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -586,7 +590,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func registerForCalculateBadgeCountNotification() {
-        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: managedObjectContext.notificationContext) { [weak self] _ in
+        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: notificationContext) { [weak self] _ in
             self?.calculateBadgeCount()
         })
     }
@@ -792,7 +796,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             NotificationInContext(
                 name: .initialSync,
-                context: managedObjectContext.notificationContext
+                context: notificationContext
             ).post()
         }
 
@@ -819,7 +823,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         NotificationInContext(
             name: .quickSyncCompletedNotification,
-            context: syncContext.notificationContext
+            context: notificationContext
         ).post()
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
@@ -845,7 +849,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 var getFeatureConfigAction = GetFeatureConfigsAction()
                 let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
 
-                try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+                try await getFeatureConfigAction.perform(in: notificationContext)
                 try await resolveOneOnOneUseCase.invoke()
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")

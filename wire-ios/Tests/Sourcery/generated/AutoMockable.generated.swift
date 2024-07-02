@@ -1182,6 +1182,44 @@ class MockShouldPresentNotificationPermissionHintUseCaseProtocol: ShouldPresentN
 
 }
 
+class MockTopOverlayPresenting: TopOverlayPresenting {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - presentTopOverlay
+
+    var presentTopOverlayAnimated_Invocations: [(viewController: UIViewController, animated: Bool)] = []
+    var presentTopOverlayAnimated_MockMethod: ((UIViewController, Bool) -> Void)?
+
+    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
+        presentTopOverlayAnimated_Invocations.append((viewController: viewController, animated: animated))
+
+        guard let mock = presentTopOverlayAnimated_MockMethod else {
+            fatalError("no mock for `presentTopOverlayAnimated`")
+        }
+
+        mock(viewController, animated)
+    }
+
+    // MARK: - dismissTopOverlay
+
+    var dismissTopOverlayAnimated_Invocations: [Bool] = []
+    var dismissTopOverlayAnimated_MockMethod: ((Bool) -> Void)?
+
+    func dismissTopOverlay(animated: Bool) {
+        dismissTopOverlayAnimated_Invocations.append(animated)
+
+        guard let mock = dismissTopOverlayAnimated_MockMethod else {
+            fatalError("no mock for `dismissTopOverlayAnimated`")
+        }
+
+        mock(animated)
+    }
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

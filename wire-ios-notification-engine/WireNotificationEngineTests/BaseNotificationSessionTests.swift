@@ -176,7 +176,8 @@ class BaseTest: ZMTBaseTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: mockEARService,
             proteusService: mockProteusService,
-            mlsDecryptionService: mockMLSDecryptionService
+            mlsDecryptionService: mockMLSDecryptionService,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 }
