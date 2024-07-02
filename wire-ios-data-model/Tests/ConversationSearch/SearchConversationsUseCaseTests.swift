@@ -38,7 +38,19 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         let filtered = sut.invoke(searchText: "")
 
         // Then
-        XCTAssertEqual(filtered, [])
+        XCTAssertEqual(filtered, conversationContainers)
+    }
+
+    func testSingleCharacterSearchTextReturnsNoConversations() {
+
+        // Given
+        sut = .init(conversationContainers: conversationContainers)
+
+        // When
+        let filtered = sut.invoke(searchText: "y")
+
+        // Then
+        XCTAssertEqual(filtered, [[], [], []])
     }
 
     // MARK: - Content
@@ -52,7 +64,10 @@ final class SearchConversationsUseCaseTests: XCTestCase {
     }
 
     private let groupConversations = [
-        MockConversation(searchableName: "Wire Team", searchableParticipants: ["Petrŭ", "Mariele", "Rifka", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir"]),
+        MockConversation(
+            searchableName: "Wire Team",
+            searchableParticipants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
+        ),
         MockConversation(searchableName: "Announcements", searchableParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"])
     ]
 
@@ -68,9 +83,13 @@ final class SearchConversationsUseCaseTests: XCTestCase {
 
 // MARK: - Mock Conversation, Mock Container
 
-private struct MockContainer: SearchableConversationContainer, Equatable, ExpressibleByArrayLiteral {
+private struct MockContainer: SearchableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
 
     private(set) var conversations: [MockConversation]
+
+    var debugDescription: String {
+        "Container(\(conversations))"
+    }
 
     init(_ conversations: [MockConversation]) {
         self.conversations = conversations
@@ -81,18 +100,27 @@ private struct MockContainer: SearchableConversationContainer, Equatable, Expres
     }
 
     mutating func removeConversation(at index: Int) {
-        fatalError()
+        conversations.remove(at: index)
     }
 }
 
-private struct MockConversation: SearchableConversation, Equatable {
+private struct MockConversation: SearchableConversation, CustomDebugStringConvertible, Equatable {
+
     private(set) var searchableName: String
     private(set) var searchableParticipants: [MockParticipant]
+
+    var debugDescription: String {
+        "Conversation(\(searchableName), \(searchableParticipants))"
+    }
 }
 
-private struct MockParticipant: SearchableConversationParticipant, Equatable, ExpressibleByStringLiteral {
+private struct MockParticipant: SearchableConversationParticipant, CustomDebugStringConvertible, Equatable, ExpressibleByStringLiteral {
 
     private(set) var searchableName: String
+
+    var debugDescription: String {
+        "Participant(\(searchableName))"
+    }
 
     init(stringLiteral value: String) {
         searchableName = value
