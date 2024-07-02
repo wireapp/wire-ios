@@ -29,7 +29,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     /// Name, availability and verification info about the self user.
     public var selfUserStatus = UserStatus() {
-        didSet { 
+        didSet {
             guard viewIfLoaded != nil else { return }
             updateTitleView()
         }
