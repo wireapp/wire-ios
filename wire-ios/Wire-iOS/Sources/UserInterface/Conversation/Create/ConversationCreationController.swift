@@ -52,12 +52,20 @@ final class ConversationCreationController: UIViewController {
     private lazy var nameSection = ConversationCreateNameSectionController(selfUser: userSession.selfUser, delegate: self)
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
-    private lazy var optionsSections = [
-        guestsSection,
-        servicesSection,
-        receiptsSection,
-        shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-    ].compactMap { $0 }
+    private lazy var optionsSections: [ConversationCreateSectionController] = {
+        let sections = [
+            guestsSection,
+            servicesSection,
+            receiptsSection,
+            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
+        ].compactMap { $0 }
+
+        if let firstSection = sections.first {
+            firstSection.headerTitle = "Conversation Options"
+        }
+
+        return sections
+    }()
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
         if DeveloperFlag.showCreateMLSGroupToggle.isOn {
