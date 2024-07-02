@@ -105,7 +105,7 @@ extension AddressBookAccessor {
         self.contacts(range: range).enumerated().forEach {
             let contact = $0.element
             cards[contact.localIdentifier ?? "\($0.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
-                + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
+            + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
         }
         return cards
     }
@@ -193,31 +193,31 @@ struct EncodedAddressBookChunk {
 }
 
 // MARK: - Phone number and email normalization
- extension NBPhoneNumberUtil {
+extension NBPhoneNumberUtil {
 
-     /// Returns a normalized version of the phone number, or nil
-     /// if the phone number was not normalizable.
-     /// - note: numbers starting with "+0", a prefix that is not
-     /// assigned to any real number, are considered test numbers
-     /// used for QA automation and will always be accepted, without being
-     /// normalized through the normalization library but just sanitized
-     /// from any non-numberic character
-     fileprivate func normalize(phoneNumber: String) -> String? {
-         let testingNumberPrefix = "+0"
-         guard !phoneNumber.hasPrefix(testingNumberPrefix) else {
-             return phoneNumber.validatedPhoneNumber
-         }
+    /// Returns a normalized version of the phone number, or nil
+    /// if the phone number was not normalizable.
+    /// - note: numbers starting with "+0", a prefix that is not
+    /// assigned to any real number, are considered test numbers
+    /// used for QA automation and will always be accepted, without being
+    /// normalized through the normalization library but just sanitized
+    /// from any non-numberic character
+    fileprivate func normalize(phoneNumber: String) -> String? {
+        let testingNumberPrefix = "+0"
+        guard !phoneNumber.hasPrefix(testingNumberPrefix) else {
+            return phoneNumber.validatedPhoneNumber
+        }
 
-         guard let parsedNumber = try? self.parse(withPhoneCarrierRegion: phoneNumber) else {
-             return nil
-         }
-         guard let normalizedNumber = try? self.format(parsedNumber, numberFormat: .E164) else {
-             return nil
-         }
-         return normalizedNumber
-     }
+        guard let parsedNumber = try? self.parse(withPhoneCarrierRegion: phoneNumber) else {
+            return nil
+        }
+        guard let normalizedNumber = try? self.format(parsedNumber, numberFormat: .E164) else {
+            return nil
+        }
+        return normalizedNumber
+    }
 
- }
+}
 
 extension String {
 

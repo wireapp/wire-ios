@@ -33,13 +33,13 @@ typedef NS_CLOSED_ENUM(NSInteger, ZMUserSessionErrorCode) {
     /// The email used in the registration is already in use
     ZMUserSessionErrorCodeEmailIsAlreadyRegistered = 6,
     /// The phone number used in the registration is already in use
-    ZMUserSessionErrorCodePhoneNumberIsAlreadyRegistered __attribute__((deprecated)) = 7,
+    // ZMUserSessionErrorCodePhoneNumberIsAlreadyRegistered __attribute__((deprecated)) = 7,
     /// The phone number used in the registration is not a valid phone number
-    ZMUserSessionErrorCodeInvalidPhoneNumber __attribute__((deprecated)) = 8,
+    // ZMUserSessionErrorCodeInvalidPhoneNumber __attribute__((deprecated)) = 8,
     /// The email used in the registration is not a valid email
     ZMUserSessionErrorCodeInvalidEmail = 9,
     /// The phone number verification code inserted is not valid
-    ZMUserSessionErrorCodeInvalidPhoneNumberVerificationCode __attribute__((deprecated)) = 10,
+    // ZMUserSessionErrorCodeInvalidPhoneNumberVerificationCode __attribute__((deprecated)) = 10,
     /// The email verification code inserted is not valid
     ZMUserSessionErrorCodeInvalidEmailVerificationCode = 11,
     /// The registration failed, but we don't know why
