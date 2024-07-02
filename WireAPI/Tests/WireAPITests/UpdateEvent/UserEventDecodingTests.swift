@@ -267,14 +267,14 @@ final class UserEventDecodingTests: XCTestCase {
         static let connectionEvent = UserConnectionEvent(
             userName: "Alice McGee",
             connection: Connection(
-                senderId: UUID(uuidString: "67b39b90-bd3c-41dd-ab58-35905afda19c")!,
-                receiverId: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
-                receiverQualifiedId: QualifiedID(
+                senderID: UUID(uuidString: "67b39b90-bd3c-41dd-ab58-35905afda19c")!,
+                receiverID: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
+                receiverQualifiedID: QualifiedID(
                     uuid: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
                     domain: "example.com"
                 ),
-                conversationId: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
-                qualifiedConversationId: QualifiedID(
+                conversationID: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
+                qualifiedConversationID: QualifiedID(
                     uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     domain: "example.com"
                 ),
