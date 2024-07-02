@@ -19,7 +19,7 @@
 public struct SearchConversationsUseCase<ConversationContainer>: SearchConversationsUseCaseProtocol
 where ConversationContainer: SearchableConversationContainer {
 
-    var conversationContainers: [ConversationContainer]
+    private let conversationContainers: [ConversationContainer]
 
     public init(conversationContainers: [ConversationContainer]) {
         self.conversationContainers = conversationContainers

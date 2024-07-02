@@ -297,6 +297,7 @@
 		599EA3D92C247ABF009319D4 /* ZMConversation+SearchableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D82C247ABF009319D4 /* ZMConversation+SearchableConversation.swift */; };
 		599EA3DB2C2485AE009319D4 /* SearchableConversationParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3DA2C2485AE009319D4 /* SearchableConversationParticipant.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
+		59BAE1102C3429EB00F8EEDC /* SearchConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BAE10F2C3429EB00F8EEDC /* SearchConversationsUseCaseTests.swift */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C3072B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1238,6 +1239,7 @@
 		599EA3D82C247ABF009319D4 /* ZMConversation+SearchableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+SearchableConversation.swift"; sourceTree = "<group>"; };
 		599EA3DA2C2485AE009319D4 /* SearchableConversationParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableConversationParticipant.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
+		59BAE10F2C3429EB00F8EEDC /* SearchConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchConversationsUseCaseTests.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireDataModelSupport.h; sourceTree = "<group>"; };
 		59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCaseProtocol.swift; sourceTree = "<group>"; };
@@ -2228,6 +2230,14 @@
 				599EA3D42C246955009319D4 /* SearchableConversationContainer.swift */,
 				599EA3D82C247ABF009319D4 /* ZMConversation+SearchableConversation.swift */,
 				599EA3DA2C2485AE009319D4 /* SearchableConversationParticipant.swift */,
+			);
+			path = ConversationSearch;
+			sourceTree = "<group>";
+		};
+		59BAE10E2C3429DA00F8EEDC /* ConversationSearch */ = {
+			isa = PBXGroup;
+			children = (
+				59BAE10F2C3429EB00F8EEDC /* SearchConversationsUseCaseTests.swift */,
 			);
 			path = ConversationSearch;
 			sourceTree = "<group>";
@@ -3639,6 +3649,7 @@
 			isa = PBXGroup;
 			children = (
 				E6E504442BC56DF1004948E7 /* Authentication */,
+				59BAE10E2C3429DA00F8EEDC /* ConversationSearch */,
 				069BCC632B3098F500DF4EC2 /* E2EIdentity */,
 				638941F42AF521050051ABFD /* UseCases */,
 				54FB03AB1E41F6C2000E13DC /* Utils */,
@@ -4768,6 +4779,7 @@
 				63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */,
 				546D3DE91CE5D24C00A6047F /* RichAssetFileTypeTests.swift in Sources */,
 				065D7501239FAB1200275114 /* SelfUserParticipantMigrationTests.swift in Sources */,
+				59BAE1102C3429EB00F8EEDC /* SearchConversationsUseCaseTests.swift in Sources */,
 				EF3510FA22CA07BB00115B97 /* ZMConversationTests+Transport.swift in Sources */,
 				591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */,
 				5476BA3E1DEDABCC00D047F8 /* AddressBookEntryTests.swift in Sources */,
