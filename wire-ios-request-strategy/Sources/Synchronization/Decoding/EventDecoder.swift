@@ -161,10 +161,9 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
-
         var decryptedEvents = [ZMUpdateEvent]()
-        for event in events {
 
+        decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
             switch event.type {
             case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                 let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -173,22 +172,19 @@ extension EventDecoder {
                         forSession: sessionID
                     )
                 }
-                if let proteusEvent {
-                    decryptedEvents.append(proteusEvent)
-                }
+                return proteusEvent.map { [$0] } ?? []
 
             case .conversationMLSWelcome:
                 await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                decryptedEvents.append(event)
+                return [event]
 
             case .conversationMLSMessageAdd:
-                let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
-                decryptedEvents.append(contentsOf: events)
+                return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
             default:
-                decryptedEvents.append(event)
+                return [event]
             }
-        }
+        }.joined())
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
@@ -205,12 +201,12 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         keyStore: UserClientKeysStore
     ) async -> [ZMUpdateEvent] {
-        var decryptedEvents = [ZMUpdateEvent]()
+        var decryptedEvents: [ZMUpdateEvent] = []
 
         await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            for event in events {
+            decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                     let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -219,28 +215,26 @@ extension EventDecoder {
                             for: sessionID.mapToEncryptionSessionID()
                         )
                     }
-                    if let proteusEvent {
-                        decryptedEvents.append(proteusEvent)
-                    }
+                    return proteusEvent.map { [$0] } ?? []
 
                 case .conversationMLSWelcome:
                     await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                    decryptedEvents.append(event)
+                    return [event]
 
                 case .conversationMLSMessageAdd:
-                    let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
-                    decryptedEvents.append(contentsOf: events)
+                    return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
                 default:
-                    decryptedEvents.append(event)
+                    return [event]
                 }
-            }
+            }.joined())
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
             await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
+
         }
 
         return decryptedEvents
