@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 @objc
 public protocol LastEventIDRepositoryInterface {
 

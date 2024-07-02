@@ -22,13 +22,15 @@ import WireDataModel
 import WireProtos
 import XCTest
 
+@testable import WireDataModelSupport
 @testable import WireRequestStrategy
 
 final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItCanDecryptOTRMessageAddEvent() async throws {
         // GIVEN
-        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
         let generic = GenericMessage(content: Text(content: text))
 
@@ -53,7 +55,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItCanDecryptOTRAssetAddEvent() async throws {
         // GIVEN
-        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let image = self.verySmallJPEGData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
@@ -78,7 +81,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItInsertsAUnableToDecryptMessageIfItCanNotEstablishASession() async throws {
         // GIVEN
-        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         var event: ZMUpdateEvent!
 
         await self.syncMOC.perform {
@@ -125,7 +129,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000() async throws {
         // Given
-        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
         let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
         XCTAssertGreaterThan(text.count, 18_000)
@@ -174,7 +179,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000_External_Message() async throws {
         // Given
-        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
         let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
         XCTAssertGreaterThan(text.count, 18_000)

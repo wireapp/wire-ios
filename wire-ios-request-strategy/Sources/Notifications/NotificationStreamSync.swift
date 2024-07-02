@@ -50,6 +50,10 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         notificationStreamSyncDelegate = delegate
     }
 
+    public func reset() {
+        listPaginator.resetFetching()
+    }
+
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
        // We only reset the paginator if it is neither in progress nor has more pages to fetch.
@@ -71,13 +75,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     private var lastUpdateEventID: UUID? {
-        get {
-            lastEventIDRepository.fetchLastEventID()
-        }
-
-        set {
-            lastEventIDRepository.storeLastEventID(newValue)
-        }
+        lastEventIDRepository.fetchLastEventID()
     }
 
     @objc(nextUUIDFromResponse:forListPaginator:)

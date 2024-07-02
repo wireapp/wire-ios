@@ -97,6 +97,8 @@ ZM_EMPTY_ASSERTING_INIT()
         UserClient *selfClient = [ZMUser selfUserInContext:self.moc].selfClient;
         if (selfClient.remoteIdentifier != nil) {
             [queryItems addObject:[NSURLQueryItem queryItemWithName:@"client" value:selfClient.remoteIdentifier]];
+        } else {
+            return nil;
         }
     }
 

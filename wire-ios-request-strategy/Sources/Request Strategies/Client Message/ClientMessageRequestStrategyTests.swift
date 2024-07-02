@@ -18,6 +18,7 @@
 
 import XCTest
 
+@testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
@@ -209,7 +210,8 @@ extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
         // GIVEN
-        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let text = "Everything"
         let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 
