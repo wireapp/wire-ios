@@ -20,7 +20,7 @@ import UIKit
 
 final class ConversationCreateNameCell: UICollectionViewCell {
 
-    let textField = SimpleTextField()
+    let textField = WireTextField()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,7 +40,12 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         textField.accessibilityValue = L10n.Accessibility.CreateConversation.SearchView.description
 
         contentView.addSubview(textField)
-        textField.fitIn(view: contentView)
 
+        NSLayoutConstraint.activate([
+            textField.topAnchor.constraint(equalTo: contentView.topAnchor),
+            textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+        ])
     }
 }

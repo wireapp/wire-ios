@@ -22,7 +22,7 @@ import WireDesign
 
 final class SectionHeaderView: UIView {
 
-    let titleLabel = DynamicFontLabel(style: .h5,
+    let titleLabel = DynamicFontLabel(style: .subline1,
                                       color: SemanticColors.Label.textSectionHeader)
 
     override init(frame: CGRect) {

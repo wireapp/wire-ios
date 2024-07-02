@@ -21,7 +21,7 @@ import WireDesign
 
 final class SectionFooterView: UIView {
 
-    let titleLabel = DynamicFontLabel(style: .h5, color: SemanticColors.Label.textSectionFooter)
+    let titleLabel = DynamicFontLabel(style: .subline1, color: SemanticColors.Label.textSectionFooter)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,10 +35,8 @@ final class SectionFooterView: UIView {
     }
 
     private func setupViews() {
-        titleLabel.font = .preferredFont(forTextStyle: .footnote)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
-        titleLabel.applyStyle(.footerLabel)
         addSubview(titleLabel)
     }
 

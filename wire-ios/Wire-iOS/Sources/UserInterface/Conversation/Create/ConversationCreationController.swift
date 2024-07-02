@@ -232,7 +232,7 @@ final class ConversationCreationController: UIViewController {
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
-    func proceedWith(value: SimpleTextField.Value) {
+    func proceedWith(value: WireTextField.Value) {
         switch value {
         case let .error(error):
             errorSection.displayError(error)
@@ -407,9 +407,20 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
 // MARK: - SimpleTextFieldDelegate
 
-extension ConversationCreationController: SimpleTextFieldDelegate {
+extension ConversationCreationController: WireTextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: WireTextField) {
 
-    func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
+    }
+
+    func textFieldDidBeginEditing(_ textField: WireTextField) {
+
+    }
+
+    func textFieldReturnPressed(_ textField: WireTextField) {
+        tryToProceed()
+    }
+
+    func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value) {
         errorSection.clearError()
         switch value {
         case .error: navigationItem.rightBarButtonItem?.isEnabled = false
@@ -418,17 +429,6 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
 
     }
 
-    func textFieldReturnPressed(_ textField: SimpleTextField) {
-        tryToProceed()
-    }
-
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {
-
-    }
-
-    func textFieldDidEndEditing(_ textField: SimpleTextField) {
-
-    }
 }
 
 extension ConversationCreationController {
