@@ -47,7 +47,8 @@ where ConversationContainer: SearchableConversationContainer {
             for conversationIndex in conversationContainers[containerIndex].conversations.indices.reversed() {
 
                 let conversation = conversationContainers[containerIndex].conversations[conversationIndex]
-
+            // TODO: actually the normalization should be done here and the result cached if possible
+            // ensure the unit test tests the implementation!
                 // check if conversation name matches
                 if conversation.searchableName.lowercased().contains(searchText) {
                     continue
