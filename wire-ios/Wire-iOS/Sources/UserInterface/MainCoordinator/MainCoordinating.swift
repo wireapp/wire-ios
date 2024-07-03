@@ -36,4 +36,6 @@ protocol MainCoordinating {
     func showConversationList()
 
     func showSettings()
+
+    func showSelfProfile()
 }
