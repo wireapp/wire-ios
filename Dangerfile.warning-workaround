@@ -1,6 +1,5 @@
 require 'json'
 
-system('ls -l')
 system('ls -l Danger.results')
 system('cat Danger.results/*')
 
@@ -31,8 +30,6 @@ if File.exist?(filename)
 
   # previous_result = JSON.parse(File.read(filename), symbolize_names: true)
 end
-
-message "note previous: #{previous_result} current: #{current_result}"
 
 # compare and notify if there are warnings
 if current_result[:warnings] > 0 && current_result[:warnings] == previous_result[:warnings]
