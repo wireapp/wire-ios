@@ -142,6 +142,11 @@ jobs:
 
       # WireSystem
 
+      - uses: actions/cache@v4
+        with:
+          path: xcodebuild-wire-ios-system.xcresult.danger
+          key: xcodebuild-wire-ios-system
+
       - name: Build WireSystem
         if: ${{ inputs.wire-ios-system || inputs.all }}
         run: |

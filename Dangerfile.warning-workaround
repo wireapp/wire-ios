@@ -3,19 +3,22 @@ require 'json'
 xcode_summary.inline_mode = true
 xcode_summary.report ENV["XCRESULT_PATH"]
 
-# add extra warning
+# don't display all the warnings,
+# instead use cache restore/save to remember a number of warnigns
+# and only notify on the PR once the number of warnings increased
 result = xcode_summary.warning_error_count ENV["XCRESULT_PATH"]
-json_hash = JSON.parse(result, symbolize_names: true)
+json_result = JSON.parse(result, symbolize_names: true)
+warnings_count = json_result[:warnings]
+errors_count = json_result[:errors]
 
-warnings_count = json_hash[:warnings]
-errors_count = json_hash[:errors]
+directory = ENV["XCRESULT_PATH"] + ".danger"
+Dir.mkdir(directory) unless Dir.exist?(directory)
 
-max_warnings = 359
-# set current branch warnings count
-if warnings_count < max_warnings 
-    warn " You removed #{max_warnings - warnings_count} warnings !! please change max_warnings limit before merging"
-elsif warnings_count == max_warnings 
-    message "The whole team congratulates you, you did not make it worse, thanks!"
-else 
-    fail "#{warnings_count - max_warnings} warnings introduced - please fix them"
-end
+out_file = File.new(directory + "/warnings", "w")
+out_file.puts(warnings_count.to_s)
+out_file.close
+
+out_file = File.new(directory + "/errors", "w")
+out_file.puts(warnings_count.to_s)
+out_file.close
+
