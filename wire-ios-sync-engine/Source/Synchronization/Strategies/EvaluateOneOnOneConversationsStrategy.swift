@@ -87,7 +87,7 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
     }
 
     private func finishCurrentSyncPhase() {
-        WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
+        WireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
         syncProgress.finishCurrentSyncPhase(phase: syncPhase)
     }
 }
