@@ -143,28 +143,13 @@ final class SyncManager: SyncManagerProtocol {
         }
 
         Task {
-            let events = try await decryptLiveEvents(in: envelope)
-            try await processLiveEvents(events)
+            try await processLiveEvents(in: envelope)
         }
     }
 
-    private func decryptLiveEvents(in envelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
-        do {
-            return try await updateEventDecryptor.decryptEvents(in: envelope)
-        } catch {
-            print("failed to decrypt envelope: \(error)")
-            throw error
-        }
-    }
-
-    private func processLiveEvents(_ events: [UpdateEvent]) async throws {
-        for event in events {
-            do {
-                try await updateEventProcessor.processEvent(event)
-            } catch {
-                print("failed to process event: \(error)")
-                throw error
-            }
+    private func processLiveEvents(in envelope: UpdateEventEnvelope) async throws {
+        for event in try await updateEventDecryptor.decryptEvents(in: envelope) {
+            try await updateEventProcessor.processEvent(event)
         }
     }
 
@@ -197,8 +182,7 @@ final class SyncManager: SyncManagerProtocol {
         while !bufferedEnvelopes.isEmpty {
             try Task.checkCancellation()
             let envelope = bufferedEnvelopes.removeFirst()
-            let events = try await decryptLiveEvents(in: envelope)
-            try await processLiveEvents(events)
+            try await processLiveEvents(in: envelope)
 
             if !envelope.isTransient {
                 // TODO: store last event id
