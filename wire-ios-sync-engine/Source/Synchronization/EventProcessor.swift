@@ -91,8 +91,10 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
+        defer { processingTask = nil }
+
         processingTask = Task { [processingTask] in
-            _ = await processingTask?.result
+            _ = try await processingTask?.value
             return try await block()
         }
 
