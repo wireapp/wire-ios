@@ -49,8 +49,7 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         _ conversation: ZMConversation!,
         scrollTo message: ZMConversationMessage?,
         focusOnView focus: Bool,
-        animated: Bool,
-        completion: (() -> Void)?
+        animated: Bool
     ) -> Bool
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
@@ -98,6 +97,7 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
+        let mainCoordinator: MainCoordinating
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
@@ -109,7 +109,8 @@ extension ConversationListViewController {
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-            notificationCenter: NotificationCenter = .default
+            notificationCenter: NotificationCenter = .default,
+            mainCoordinator: some MainCoordinating
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -119,6 +120,7 @@ extension ConversationListViewController {
             shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
+            self.mainCoordinator = mainCoordinator
             super.init()
 
             updateE2EICertifiedStatus()
@@ -232,8 +234,7 @@ extension ConversationListViewController.ViewModel {
         conversation: ZMConversation,
         scrollTo message: ZMConversationMessage? = nil,
         focusOnView focus: Bool = false,
-        animated: Bool = false,
-        completion: Completion? = nil
+        animated: Bool = false
     ) {
 
         selectedConversation = conversation
@@ -241,8 +242,7 @@ extension ConversationListViewController.ViewModel {
             selectedConversation,
             scrollTo: message,
             focusOnView: focus,
-            animated: animated,
-            completion: completion
+            animated: animated
         )
     }
 

@@ -16,13 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZClientViewController: SplitViewControllerDelegate {
+import WireDataModel
 
-    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+protocol MainCoordinating {
 
-        return splitViewController.rightViewController != nil &&
-        splitViewController.leftViewController == conversationListViewController.tabBarController &&
-        conversationListViewController.tabBarController?.selectedIndex == MainTabBarControllerTab.conversations.rawValue &&
-        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
-    }
+    func openConversation(
+        _ conversation: ZMConversation,
+        focusOnView focus: Bool,
+        animated: Bool
+    )
+
+    func openConversation<Message>(
+        _ conversation: ZMConversation,
+        scrollTo message: Message,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) where Message: ZMConversationMessage
+
+    func showConversationList()
+
+    func showSettings()
 }

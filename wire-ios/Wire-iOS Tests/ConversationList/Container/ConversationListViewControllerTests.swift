@@ -29,6 +29,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
+    private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
     private var tabBarController: UITabBarController!
@@ -42,6 +43,8 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
+        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
 
@@ -64,11 +67,14 @@ final class ConversationListViewControllerTests: XCTestCase {
             account: account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
         sut = ConversationListViewController(
             viewModel: viewModel,
+            zClientViewController: .init(account: account, userSession: userSession),
+            mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )
 
@@ -100,6 +106,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         userSession = nil
         coreDataFixture = nil
         modelHelper = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
