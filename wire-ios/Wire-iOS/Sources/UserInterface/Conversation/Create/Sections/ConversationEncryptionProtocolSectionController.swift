@@ -27,7 +27,6 @@ final class ConversationEncryptionProtocolSectionController: ConversationCreateS
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
-        headerHeight = 40
         footerText = L10n.Localizable.Conversation.Create.Mls.subtitle
     }
 }

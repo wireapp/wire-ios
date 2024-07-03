@@ -26,6 +26,7 @@ final class SectionFooterView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
+        titleLabel.lineBreakMode = .byWordWrapping
         createConstraints()
     }
 

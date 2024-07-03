@@ -200,17 +200,27 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
+        // Set the navigation bar title
+        navigationItem.title = CreateGroupName.title.capitalized
+
+        // Set the navigation bar title color and font
+        let titleTextAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.font(for: .h3)
+        ]
+        navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
+
+        // Configure navigation bar appearance
         navigationController?.navigationBar.barTintColor = SemanticColors.View.backgroundDefault
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.tintColor = UIColor.accent()
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = navigationController?.closeItem()
         }
 
+        // Configure the next button
         let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
             title: L10n.Localizable.General.next.capitalized,
             systemImage: false,
@@ -221,6 +231,16 @@ final class ConversationCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
         navigationItem.rightBarButtonItem = nextButtonItem
+
+        // Ensure title supports LargeContentViewer
+        navigationItem.titleView?.isAccessibilityElement = true
+        navigationItem.titleView?.accessibilityTraits = .header
+        navigationItem.titleView?.accessibilityLabel = navigationItem.title
+
+        if let titleView = navigationItem.titleView {
+            titleView.showsLargeContentViewer = true
+            titleView.largeContentTitle = navigationItem.title
+        }
     }
 
     func proceedWith(value: WireTextField.Value) {
