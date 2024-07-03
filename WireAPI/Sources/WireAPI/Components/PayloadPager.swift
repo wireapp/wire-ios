@@ -38,7 +38,7 @@ public struct PayloadPager<Payload>: AsyncSequence {
     }
 
     public func makeAsyncIterator() -> Iterator {
-        return Iterator(
+        Iterator(
             start: start,
             fetchPage: fetchPage
         )
@@ -79,8 +79,8 @@ public struct PayloadPager<Payload>: AsyncSequence {
         public mutating func next() async throws -> [Payload]? {
             guard hasMore else { return nil }
             let page = try await fetchPage(start)
-            self.hasMore = page.hasMore
-            self.start = page.nextStart
+            hasMore = page.hasMore
+            start = page.nextStart
             return page.element
         }
     }

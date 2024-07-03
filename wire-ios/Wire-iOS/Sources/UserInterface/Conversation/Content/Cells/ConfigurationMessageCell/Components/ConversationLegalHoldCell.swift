@@ -51,7 +51,6 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
         imageView.image = object.icon
         conversation = object.conversation
     }
-
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
@@ -107,7 +106,12 @@ extension ConversationLegalHoldSystemMessageCell {
             let conversation,
             let clientViewController = ZClientViewController.shared {
 
-            LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation, userSession: clientViewController.userSession)
+            LegalHoldDetailsViewController.present(
+                in: clientViewController,
+                conversation: conversation,
+                userSession: clientViewController.userSession,
+                mainCoordinator: MainCoordinator(zClientViewController: clientViewController)
+            )
 
             return true
         }
