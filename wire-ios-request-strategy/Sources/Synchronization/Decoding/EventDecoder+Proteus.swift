@@ -60,7 +60,7 @@ extension EventDecoder {
                     .selfClientId: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
                 ]
-                WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...)", attributes: eventAttributes, additionalInfo, .safePublic)
+                WireLogger.updateEvent.error("decrypting proteus event... failed: is not for self client, dropping...)", attributes: eventAttributes, additionalInfo, .safePublic)
                 return (UserClient?.none, ProteusSessionID?.none)
             }
 
@@ -121,7 +121,7 @@ extension EventDecoder {
         if createdNewSession {
             await context.perform {
                 let senderClientSet: Set<UserClient> = [senderClient]
-                selfClient?.decrementNumberOfRemainingKeys()
+                selfClient?.decrementNumberOfRemainingProteusKeys()
                 selfClient?.addNewClientToIgnored(senderClient)
                 selfClient?.updateSecurityLevelAfterDiscovering(senderClientSet)
             }
