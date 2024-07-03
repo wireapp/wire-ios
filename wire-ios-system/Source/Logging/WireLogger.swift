@@ -93,7 +93,86 @@ public struct WireLogger: LoggerProtocol {
         provider.logFiles
     }
 
+<<<<<<< HEAD
     public static func addLogger(_ logger: LoggerProtocol) {
         provider.addLogger(logger)
+=======
+}
+
+public protocol LogConvertible {
+
+    var logDescription: String { get }
+
+}
+
+extension String: LogConvertible {
+
+    public var logDescription: String {
+        return self
+    }
+
+}
+
+public extension WireLogger {
+
+    static let appState = WireLogger(tag: "AppState")
+    static let appDelegate = WireLogger(tag: "AppDelegate")
+    static let appLock = WireLogger(tag: "AppLock")
+    static let assets = WireLogger(tag: "assets")
+    static let authentication = WireLogger(tag: "authentication")
+    static let backgroundActivity = WireLogger(tag: "background-activity")
+    static let badgeCount = WireLogger(tag: "badge-count")
+    static let backend = WireLogger(tag: "backend")
+    static let calling = WireLogger(tag: "calling")
+    static let conversation = WireLogger(tag: "conversation")
+    static let coreCrypto = WireLogger(tag: "core-crypto")
+    static let e2ei = WireLogger(tag: "end-to-end-identity")
+    static let ear = WireLogger(tag: "encryption-at-rest")
+    static let environment = WireLogger(tag: "environment")
+    static let featureConfigs = WireLogger(tag: "feature-configurations")
+    static let keychain = WireLogger(tag: "keychain")
+    static let localStorage = WireLogger(tag: "local-storage")
+    static let messaging = WireLogger(tag: "messaging")
+    static let mls = WireLogger(tag: "mls")
+    static let notifications = WireLogger(tag: "notifications")
+    static let performance = WireLogger(tag: "performance")
+    static let push = WireLogger(tag: "push")
+    static let proteus = WireLogger(tag: "proteus")
+    static let session = WireLogger(tag: "session")
+    static let shareExtension = WireLogger(tag: "share-extension")
+    static let sync = WireLogger(tag: "sync")
+    static let system = WireLogger(tag: "system")
+    static let ui = WireLogger(tag: "UI")
+    static let updateEvent = WireLogger(tag: "update-event")
+    static let userClient = WireLogger(tag: "user-client")
+    static let pushChannel = WireLogger(tag: "push-channel")
+
+}
+
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+public final class WireLoggerObjc: NSObject {
+
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
+    }
+
+    @objc(logReceivedUpdateEventWithId:)
+    static func logReceivedUpdateEvent(eventId: String) {
+        var mergedAttributes: LogAttributes = LogAttributes.safePublic
+
+        mergedAttributes.merge([LogAttributesKey.eventId.rawValue: eventId], uniquingKeysWith: { _, new in new })
+
+        WireLogger.updateEvent.info("received event", attributes: mergedAttributes)
+    }
+
+    static func updateEventError(_ message: String) {
+        WireLogger.updateEvent.error(message, attributes: .safePublic)
+    }
+
+    @objc(logSaveCoreDataError:)
+    static func logSaveCoreData(error: Error) {
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
+>>>>>>> 83fdfa4028 (chore: add more logs and connect to the websocket when self client is not nil - WPB-9221 (#1641))
     }
 }

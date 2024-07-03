@@ -56,11 +56,19 @@ extension EventDecoder {
                 selfClient?.remoteIdentifier == recipientID
             else {
                 let additionalInfo: LogAttributes = [
+<<<<<<< HEAD
                     .recipientID: event.recipientID?.readableHash ?? "<nil>",
                     .selfClientId: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
                 ]
                 WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...)", attributes: eventAttributes, additionalInfo, .safePublic)
+=======
+                    LogAttributesKey.recipientID.rawValue: event.recipientID?.redactedAndTruncated() ?? "<nil>",
+                    LogAttributesKey.selfClientId.rawValue: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
+                    LogAttributesKey.selfUserId.rawValue: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
+                ].merging(event.logAttributes, uniquingKeysWith: { _, new in new })
+                WireLogger.updateEvent.error("decrypting proteus event... failed: is not for self client, dropping...)", attributes: additionalInfo)
+>>>>>>> 83fdfa4028 (chore: add more logs and connect to the websocket when self client is not nil - WPB-9221 (#1641))
                 return (UserClient?.none, ProteusSessionID?.none)
             }
 
