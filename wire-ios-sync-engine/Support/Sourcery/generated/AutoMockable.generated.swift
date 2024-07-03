@@ -141,35 +141,6 @@ public class MockAppendLocationMessagekUseCaseProtocol: AppendLocationMessagekUs
 
 }
 
-public class MockAppendTextMessageUseCaseProtocol: AppendTextMessageUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeTextMentionsReplyingToInFetchLinkPreview_Invocations: [(text: String, mentions: [Mention], replyingTo: ZMConversationMessage?, conversation: ZMConversation, fetchLinkPreview: Bool)] = []
-    public var invokeTextMentionsReplyingToInFetchLinkPreview_MockError: Error?
-    public var invokeTextMentionsReplyingToInFetchLinkPreview_MockMethod: ((String, [Mention], ZMConversationMessage?, ZMConversation, Bool) throws -> Void)?
-
-    public func invoke(text: String, mentions: [Mention], replyingTo: ZMConversationMessage?, in conversation: ZMConversation, fetchLinkPreview: Bool) throws {
-        invokeTextMentionsReplyingToInFetchLinkPreview_Invocations.append((text: text, mentions: mentions, replyingTo: replyingTo, conversation: conversation, fetchLinkPreview: fetchLinkPreview))
-
-        if let error = invokeTextMentionsReplyingToInFetchLinkPreview_MockError {
-            throw error
-        }
-
-        guard let mock = invokeTextMentionsReplyingToInFetchLinkPreview_MockMethod else {
-            fatalError("no mock for `invokeTextMentionsReplyingToInFetchLinkPreview`")
-        }
-
-        try mock(text, mentions, replyingTo, conversation, fetchLinkPreview)
-    }
-
-}
-
 public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
 
     // MARK: - Life cycle

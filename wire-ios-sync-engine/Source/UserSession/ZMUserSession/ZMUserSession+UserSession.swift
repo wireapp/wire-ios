@@ -350,7 +350,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
-        return AppendTextMessageUseCase(analyticsSession: analyticsSession)
+        return AppendTextMessageUseCase<ZMConversation>(analyticsSession: analyticsSession)
     }
 
     public func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {

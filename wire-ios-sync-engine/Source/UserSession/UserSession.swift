@@ -260,7 +260,7 @@ public protocol UserSession: AnyObject {
 
     func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
-    func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol
+    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
     func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol
 

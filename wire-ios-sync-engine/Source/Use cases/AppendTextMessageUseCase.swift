@@ -19,18 +19,20 @@
 import WireAnalytics
 import WireDataModel
 
-// sourcery: AutoMockable
 public protocol AppendTextMessageUseCaseProtocol {
+    associatedtype Conversation: MessageAppendableConversation
+
     func invoke(
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,
-        in conversation: ZMConversation,
+        in conversation: Conversation,
         fetchLinkPreview: Bool
     ) throws
 }
 
-public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
+public struct AppendTextMessageUseCase<Conversation>: AppendTextMessageUseCaseProtocol
+where Conversation: MessageAppendableConversation {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
@@ -38,14 +40,15 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,
-        in conversation: ZMConversation,
+        in conversation: Conversation,
         fetchLinkPreview: Bool
     ) throws {
         try conversation.appendText(
             content: text,
             mentions: mentions,
             replyingTo: replyingTo,
-            fetchLinkPreview: fetchLinkPreview
+            fetchLinkPreview: fetchLinkPreview,
+            nonce: UUID()
         )
         conversation.draftMessage = nil
         analyticsSession?.trackEvent(
@@ -58,8 +61,25 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
             )
         )
     }
-
 }
+
+public protocol MessageAppendableConversation {
+
+    var conversationType: ZMConversationType { get }
+    var localParticipants: Set<ZMUser> { get }
+    var draftMessage: DraftMessage? { get nonmutating set }
+
+    @discardableResult
+    func appendText(
+        content: String,
+        mentions: [Mention],
+        replyingTo quotedMessage: (any ZMConversationMessage)?,
+        fetchLinkPreview: Bool,
+        nonce: UUID
+    ) throws -> any ZMConversationMessage
+}
+
+extension ZMConversation: MessageAppendableConversation {}
 
 extension ConversationType {
 
