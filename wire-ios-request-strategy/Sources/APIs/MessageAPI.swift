@@ -238,7 +238,11 @@ class MessageAPIV1: MessageAPIV0 {
         if let expirationDate = (await message.context.perform {
             message.expirationDate
         }) {
+            // TODO: remove prints
+            debugPrint("expiration date on request: \(expirationDate)")
             request.expire(at: expirationDate)
+        } else {
+            debugPrint("no expiration date on request")
         }
 
         let response = await httpClient.send(request)
