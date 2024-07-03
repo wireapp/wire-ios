@@ -23,8 +23,11 @@ import WireDesign
 protocol WireTextFieldDelegate: AnyObject {
 
     func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value)
+
     func textFieldReturnPressed(_ textField: WireTextField)
+
     func textFieldDidEndEditing(_ textField: WireTextField)
+
     func textFieldDidBeginEditing(_ textField: WireTextField)
 
 }
@@ -41,8 +44,8 @@ class WireTextField: UITextField {
     private let borderWidth: CGFloat = 1
     private let cornerRadius: CGFloat = 12
 
-    var defaultBorderColor: UIColor = .lightGray
-    var selectedBorderColor: UIColor = .blue
+    var defaultBorderColor: UIColor = SemanticColors.SearchBar.borderInputView
+    var selectedBorderColor: UIColor = UIColor.accent()
 
     weak var wireTextFieldDelegate: WireTextFieldDelegate?
     private let textFieldValidator = SimpleTextFieldValidator()
@@ -71,9 +74,11 @@ class WireTextField: UITextField {
     // MARK: - Setup
 
     private func setup() {
+
         layer.borderWidth = borderWidth
         layer.cornerRadius = cornerRadius
         layer.borderColor = defaultBorderColor.cgColor
+        layer.masksToBounds = true
 
         // Add padding to the text
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: frame.height))
@@ -86,7 +91,7 @@ class WireTextField: UITextField {
         accessibilityIdentifier = "NameField"
         autocorrectionType = .no
         contentVerticalAlignment = .center
-        font = FontSpec(.normal, .regular, .inputText).font
+        font = .font(for: .body1)
 
         textFieldValidator.delegate = self
         delegate = textFieldValidator

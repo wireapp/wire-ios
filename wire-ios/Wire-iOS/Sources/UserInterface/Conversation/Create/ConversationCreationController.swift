@@ -154,20 +154,11 @@ final class ConversationCreationController: UIViewController {
 
         setupViews()
 
-        // try to overtake the first responder from the other view
-        if UIResponder.currentFirst != nil {
-            nameSection.becomeFirstResponder()
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBar()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        nameSection.becomeFirstResponder()
     }
 
     // MARK: - Methods
@@ -405,7 +396,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
 }
 
-// MARK: - SimpleTextFieldDelegate
+// MARK: - WireTextFieldDelegate
 
 extension ConversationCreationController: WireTextFieldDelegate {
     func textFieldDidEndEditing(_ textField: WireTextField) {

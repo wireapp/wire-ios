@@ -17,8 +17,17 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 final class ConversationCreateNameCell: UICollectionViewCell {
+
+    private let stackView = UIStackView()
+    private let groupNameLabel = DynamicFontLabel(
+        text: "Group name",
+        style: .h4,
+        color: SemanticColors.Label.textUserPropertyCellName
+    )
 
     let textField = WireTextField()
 
@@ -32,20 +41,53 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    fileprivate func setup() {
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.isAccessibilityElement = true
-        textField.accessibilityIdentifier = "textfield.newgroup.name"
-        textField.placeholder = L10n.Localizable.Conversation.Create.GroupName.placeholder.localizedUppercase
-        textField.accessibilityValue = L10n.Accessibility.CreateConversation.SearchView.description
+    private func setup() {
+        setupStackView()
+        setupGroupNameLabel()
+        setupTextField()
+        setupConstraints()
+    }
 
-        contentView.addSubview(textField)
+    private func setupStackView() {
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(stackView)
+    }
 
+    private func setupGroupNameLabel() {
+        stackView.addArrangedSubview(groupNameLabel)
+    }
+
+    private func setupTextField() {
+        textField.borderStyle = .roundedRect
+        textField.layer.borderColor = SemanticColors.SearchBar.borderInputView.cgColor
+        textField.font = .font(for: .body1)
+        textField.delegate = self
+        stackView.addArrangedSubview(textField)
+    }
+
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: contentView.topAnchor),
-            textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+
+            textField.heightAnchor.constraint(equalToConstant: 46)
         ])
+    }
+    }
+
+extension ConversationCreateNameCell: UITextFieldDelegate {
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        groupNameLabel.textColor = UIColor.accent()
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        groupNameLabel.textColor = SemanticColors.Label.textUserPropertyCellName
     }
 }
