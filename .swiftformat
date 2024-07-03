@@ -1,4 +1,4 @@
---exclude Carthage, DerivedData
+--exclude Carthage,DerivedData,**/AutoMockable.generated.swift
 
 --enable acronyms
 --enable blankLineAfterSwitchCase
@@ -11,3 +11,5 @@
 
 --commas inline
 --typeblanklines preserve
+
+--decimalgrouping 3,4

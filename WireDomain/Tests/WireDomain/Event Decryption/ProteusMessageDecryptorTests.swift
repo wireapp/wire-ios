@@ -134,7 +134,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
     func testItThrowsWhenCiphertextIsTooBig() async throws {
         // Given a message that exceeds the max ciphertext size
-        let longMessage = String(repeating: "!", count: 20000)
+        let longMessage = String(repeating: "!", count: 20_000)
         let invalidEvent = Scaffolding.makeEvent(content: .ciphertext(longMessage))
 
         // When
@@ -152,7 +152,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
     func testItThrowsWhenExternalCiphertextIsTooBig() async throws {
         // Given an external message that exceeds the max ciphertext size
         var invalidEvent = Scaffolding.makeEvent(content: .ciphertext("valid message"))
-        let longMessage = String(repeating: "!", count: 20000)
+        let longMessage = String(repeating: "!", count: 20_000)
         invalidEvent.externalData = .ciphertext(longMessage)
 
         // When
