@@ -78,8 +78,6 @@ final class SyncManager: SyncManagerProtocol {
             return
         }
 
-        // TODO: check how to handle buffered events in case of cancellation?
-        // Decrypt and store? Or Drop?
         let task = Task {
             // Divert incoming events from the event queue to the push channel,
             // they'll be buffered until we finish quick sync.
@@ -199,9 +197,14 @@ final class SyncManager: SyncManagerProtocol {
         // More events may be aded to the buffering while we're processing,
         // so we process one at a time until the buffer is empty.
         while !bufferedEnvelopes.isEmpty {
+            try Task.checkCancellation()
             let envelope = bufferedEnvelopes.removeFirst()
             let events = try await decryptLiveEvents(in: envelope)
             try await processLiveEvents(events)
+
+            if !envelope.isTransient {
+                // TODO: store last event id
+            }
         }
     }
 
