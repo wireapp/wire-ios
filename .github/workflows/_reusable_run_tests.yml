@@ -123,6 +123,12 @@ jobs:
           path: Carthage
           key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
 
+      - uses: actions/cache@v4
+        id: cache-danger-results
+        with:
+          path: Danger.results
+          key: Danger.results
+
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
@@ -141,11 +147,6 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       # WireSystem
-
-      - uses: actions/cache@v4
-        with:
-          path: xcodebuild-wire-ios-system.xcresult.danger
-          key: xcodebuild-wire-ios-system
 
       - name: Build WireSystem
         if: ${{ inputs.wire-ios-system || inputs.all }}
