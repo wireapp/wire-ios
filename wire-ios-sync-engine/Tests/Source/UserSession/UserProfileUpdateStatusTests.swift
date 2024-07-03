@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireUtilities
 import XCTest
 
-class UserProfileUpdateStatusTests: MessagingTest {
+@testable import WireSyncEngine
+
+final class UserProfileUpdateStatusTests: MessagingTest {
 
     var observerToken: Any?
 
@@ -54,9 +55,7 @@ class UserProfileUpdateStatusTests: MessagingTest {
         self.sut = nil
         super.tearDown()
     }
-}
 
-extension UserProfileUpdateStatusTests {
     func testThatItDoesNotRetainObserver() {
         // GIVEN
         var observer: TestUserProfileUpdateObserver? = TestUserProfileUpdateObserver()
@@ -73,10 +72,8 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertNil(weakObserver)
     }
-}
 
-// MARK: - Changing email
-extension UserProfileUpdateStatusTests {
+    // MARK: - Changing email
 
     func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() throws {
 
@@ -116,10 +113,7 @@ extension UserProfileUpdateStatusTests {
         XCTAssertEqual(self.newRequestCallbackCount, 1)
     }
 
-}
-
-// MARK: - Set email and password
-extension UserProfileUpdateStatusTests {
+    // MARK: - Set email and password
 
     func testThatItIsNotUpdatingEmail() {
         XCTAssertFalse(sut.currentlySettingEmail)
@@ -350,10 +344,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Credentials provider
-extension UserProfileUpdateStatusTests {
+    // MARK: - Credentials provider
 
     func testThatItDoesNotReturnCredentialsIfOnlyPasswordIsVerified() {
 
@@ -413,10 +405,8 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertNil(self.sut.emailCredentials())
     }
-}
 
-// MARK: - Phone number code request
-extension UserProfileUpdateStatusTests {
+    // MARK: - Phone number code request
 
     func testThatItIsNotRequestingPhoneVerificationAtStart() {
         XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
@@ -513,10 +503,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Phone number verification
-extension UserProfileUpdateStatusTests {
+    // MARK: - Phone number verification
 
     func testThatItIsNotUpdatingPhoneNumberAtStart() {
         XCTAssertFalse(self.sut.currentlySettingPhone)
@@ -591,10 +579,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Check handle availability
-extension UserProfileUpdateStatusTests {
+    // MARK: - Check handle availability
 
     func testThatItIsNotCheckingAvailabilityAtCreation() {
         XCTAssertFalse(self.sut.currentlyCheckingHandleAvailability)
@@ -767,10 +753,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Set handle
-extension UserProfileUpdateStatusTests {
+    // MARK: - Set handle
 
     func testThatItIsNotSettingHandleyAtCreation() {
         XCTAssertFalse(self.sut.currentlySettingHandle)
@@ -938,10 +922,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Find handle suggestions
-extension UserProfileUpdateStatusTests {
+    // MARK: - Find handle suggestions
 
     func testThatItIsNotGeneratingHandleSuggestionsAtCreation() {
         XCTAssertFalse(self.sut.currentlyGeneratingHandleSuggestion)

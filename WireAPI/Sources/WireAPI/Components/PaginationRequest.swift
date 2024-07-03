@@ -23,6 +23,7 @@ struct PaginationRequest: Codable {
         case pagingState = "paging_state"
         case size
     }
+
     var pagingState: String?
     // Set in case you want specific number of pages, otherwise, the backend will return default per endpoint
     var size: Int?
