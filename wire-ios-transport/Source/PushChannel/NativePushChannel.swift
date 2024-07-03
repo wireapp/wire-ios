@@ -226,13 +226,8 @@ extension NativePushChannel: ZMTimerClient {
     func timerDidFire(_ timer: ZMTimer!) {
         WireLogger.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
-<<<<<<< HEAD
             if let error {
-                Logging.pushChannel.debug("Failed to send ping: \(error)")
-=======
-            if let error = error {
                 WireLogger.pushChannel.debug("Failed to send ping: \(error)")
->>>>>>> 83fdfa4028 (chore: add more logs and connect to the websocket when self client is not nil - WPB-9221 (#1641))
             }
         })
         schedulePingTimer()

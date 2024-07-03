@@ -154,10 +154,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         webSocket?.connect()
 
         let attributes: LogAttributes = [
-            LogAttributesKey.selfClientId.rawValue: clientID?.redactedAndTruncated()
+            .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
         ]
         WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
-                                    attributes: makeAttributesPublic(attributes))
+                                    attributes: attributes, .safePublic)
     }
 
     func scheduleOpen() {
@@ -217,12 +217,6 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         pingTimer = timer
     }
 
-    // MARK: Helpers
-
-    private func makeAttributesPublic(_ attributes: LogAttributes) -> LogAttributes {
-        attributes.merging(.safePublic, uniquingKeysWith: { _, new in new })
-    }
-
 }
 
 extension StarscreamPushChannel: ZMTimerClient {
@@ -248,18 +242,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
         case .text:
             break
         case .binary(let data):
-<<<<<<< HEAD
-            Logging.pushChannel.debug("Received data")
-=======
             WireLogger.pushChannel.debug("Received data")
-            guard
-                let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-            else {
-                WireLogger.pushChannel.error("Received binary data via push channel cannot be deserialized", attributes: .safePublic)
-                break
-            }
->>>>>>> 83fdfa4028 (chore: add more logs and connect to the websocket when self client is not nil - WPB-9221 (#1641))
-
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)
             }
