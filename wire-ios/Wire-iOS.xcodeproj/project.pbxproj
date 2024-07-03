@@ -595,6 +595,10 @@
 		6328283F24A110CF000748D2 /* MicrophoneIconStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328283E24A110CF000748D2 /* MicrophoneIconStyle.swift */; };
 		6328284124A110DC000748D2 /* VideoIconStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328284024A110DC000748D2 /* VideoIconStyle.swift */; };
 		6328284324A11847000748D2 /* UserTypeIconStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328284224A11847000748D2 /* UserTypeIconStyle.swift */; };
+		6328BBAD2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328BBAC2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift */; };
+		6328BBAF2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328BBAE2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift */; };
+		6328BBB12C2F03E8007A3288 /* ShareableDebugReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328BBB02C2F03E8007A3288 /* ShareableDebugReport.swift */; };
+		6328BBB32C2F0411007A3288 /* ShareableDebugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6328BBB22C2F0411007A3288 /* ShareableDebugReportView.swift */; };
 		6330FCC2249264C900E40B06 /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6330FCC1249264C900E40B06 /* GridView.swift */; };
 		6340660925B204B100C0B4BA /* StreamStubProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6340660825B204B100C0B4BA /* StreamStubProvider.swift */; };
 		6340EF96237AE93500EF8506 /* VoiceChannelStreamArrangmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6340EF95237AE93500EF8506 /* VoiceChannelStreamArrangmentTests.swift */; };
@@ -619,6 +623,7 @@
 		637387CD26458EDB004FEF79 /* ScalableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387CC26458EDB004FEF79 /* ScalableView.swift */; };
 		637387E026492833004FEF79 /* ScalableViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387DA2649277A004FEF79 /* ScalableViewTests.swift */; };
 		6375051B262477ED0083DC27 /* NotificationLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6375051A262477ED0083DC27 /* NotificationLabelTests.swift */; };
+		637505F22C3462F20048EF08 /* LogFilesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637505F12C3462F20048EF08 /* LogFilesProvider.swift */; };
 		637C825C267CED69009457CA /* Stream+Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637C825B267CED68009457CA /* Stream+Video.swift */; };
 		63804BE926E7723B005E2B35 /* CallActionsViewInputType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63804BE826E7723B005E2B35 /* CallActionsViewInputType.swift */; };
 		63804BED26E77274005E2B35 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63804BEC26E77274005E2B35 /* MediaState.swift */; };
@@ -630,6 +635,7 @@
 		63991EB42BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */; };
 		639A8F2D26DE41ED0080B8FE /* CallStatusViewInputType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */; };
 		639A8F3A26DE42AF0080B8FE /* CallStatusViewInputTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */; };
+		63A5083E2C2C17EB00A65E17 /* SettingsDebugReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5083D2C2C17EB00A65E17 /* SettingsDebugReportViewController.swift */; };
 		63A5E6E424C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */; };
 		63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5E6F524C87DFF00F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift */; };
 		63A874FC26CBAF2B000D3F27 /* CallingConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A874FB26CBAF2A000D3F27 /* CallingConfiguration.swift */; };
@@ -2656,6 +2662,10 @@
 		6328283E24A110CF000748D2 /* MicrophoneIconStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophoneIconStyle.swift; sourceTree = "<group>"; };
 		6328284024A110DC000748D2 /* VideoIconStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoIconStyle.swift; sourceTree = "<group>"; };
 		6328284224A11847000748D2 /* UserTypeIconStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTypeIconStyle.swift; sourceTree = "<group>"; };
+		6328BBAC2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugReportViewModel.swift; sourceTree = "<group>"; };
+		6328BBAE2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugReportRouter.swift; sourceTree = "<group>"; };
+		6328BBB02C2F03E8007A3288 /* ShareableDebugReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareableDebugReport.swift; sourceTree = "<group>"; };
+		6328BBB22C2F0411007A3288 /* ShareableDebugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareableDebugReportView.swift; sourceTree = "<group>"; };
 		6330FCC1249264C900E40B06 /* GridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridView.swift; sourceTree = "<group>"; };
 		6340660825B204B100C0B4BA /* StreamStubProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamStubProvider.swift; sourceTree = "<group>"; };
 		6340EF95237AE93500EF8506 /* VoiceChannelStreamArrangmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceChannelStreamArrangmentTests.swift; sourceTree = "<group>"; };
@@ -2682,6 +2692,7 @@
 		637387CC26458EDB004FEF79 /* ScalableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalableView.swift; sourceTree = "<group>"; };
 		637387DA2649277A004FEF79 /* ScalableViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalableViewTests.swift; sourceTree = "<group>"; };
 		6375051A262477ED0083DC27 /* NotificationLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLabelTests.swift; sourceTree = "<group>"; };
+		637505F12C3462F20048EF08 /* LogFilesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFilesProvider.swift; sourceTree = "<group>"; };
 		637C825B267CED68009457CA /* Stream+Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream+Video.swift"; sourceTree = "<group>"; };
 		63804BE826E7723B005E2B35 /* CallActionsViewInputType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallActionsViewInputType.swift; sourceTree = "<group>"; };
 		63804BEC26E77274005E2B35 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
@@ -2694,6 +2705,7 @@
 		63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputType.swift; sourceTree = "<group>"; };
 		639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputTypeTests.swift; sourceTree = "<group>"; };
+		63A5083D2C2C17EB00A65E17 /* SettingsDebugReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugReportViewController.swift; sourceTree = "<group>"; };
 		63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+Advanced.swift"; sourceTree = "<group>"; };
 		63A5E6F524C87DFF00F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+SoundAlert.swift"; sourceTree = "<group>"; };
 		63A874FB26CBAF2A000D3F27 /* CallingConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingConfiguration.swift; sourceTree = "<group>"; };
@@ -5415,6 +5427,19 @@
 			path = IconImageView;
 			sourceTree = "<group>";
 		};
+		6328BBAB2C2EFE80007A3288 /* Debug Report */ = {
+			isa = PBXGroup;
+			children = (
+				63A5083D2C2C17EB00A65E17 /* SettingsDebugReportViewController.swift */,
+				6328BBAC2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift */,
+				6328BBAE2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift */,
+				6328BBB02C2F03E8007A3288 /* ShareableDebugReport.swift */,
+				6328BBB22C2F0411007A3288 /* ShareableDebugReportView.swift */,
+				637505F12C3462F20048EF08 /* LogFilesProvider.swift */,
+			);
+			path = "Debug Report";
+			sourceTree = "<group>";
+		};
 		6340EF8E237AE90700EF8506 /* Calling */ = {
 			isa = PBXGroup;
 			children = (
@@ -6882,6 +6907,7 @@
 		8FC852B3199245760008B66B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				6328BBAB2C2EFE80007A3288 /* Debug Report */,
 				E666EDD42B73E5F500C03E2B /* Backup */,
 				87B8C33A1DF9788B0015EC89 /* LinkOpening */,
 				873C5FE21C10426A00D5132A /* DeviceManagement */,
@@ -9330,6 +9356,7 @@
 				BFE3FEEA209747D6003D9AB5 /* CallStatusView.swift in Sources */,
 				A9806A3E23E41EF400691DFE /* Token.swift in Sources */,
 				A978D993236C587B00B568AE /* ZMUserSession+Shared.swift in Sources */,
+				6328BBB12C2F03E8007A3288 /* ShareableDebugReport.swift in Sources */,
 				E9929EF72BCEC6FB00C40274 /* AppLocationManager.swift in Sources */,
 				5E8DA75A211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift in Sources */,
 				551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */,
@@ -9377,6 +9404,7 @@
 				BFFA182820FDE22B00F64377 /* UIAlertController+CompanyLogin.swift in Sources */,
 				5EFD914621C926A900080599 /* PersonalRegistrationStepDescription.swift in Sources */,
 				63421E3726149D7500ADA723 /* PinchToZoomRule.swift in Sources */,
+				63A5083E2C2C17EB00A65E17 /* SettingsDebugReportViewController.swift in Sources */,
 				872C823E214AA12100236A76 /* NSAttributedString+Mentions.swift in Sources */,
 				63F2398F269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift in Sources */,
 				5E028DEC21F883DF00E5512A /* EmailPasswordTextFieldCell.swift in Sources */,
@@ -9945,6 +9973,7 @@
 				EE742AB6284DE57900A6B5F3 /* DeveloperToolsView.swift in Sources */,
 				879718921D1C109900163C07 /* AudioRecordKeyboardViewController.swift in Sources */,
 				F1A989D01FD1630300B8A82E /* SecondaryViewDescription.swift in Sources */,
+				6328BBAD2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift in Sources */,
 				E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */,
 				87F18BBC1E01577C00C69D9B /* FileMessageViewState.swift in Sources */,
 				D56A2D44207DFC9E00DB59F5 /* BackupRestoreController+Failed.swift in Sources */,
@@ -9964,6 +9993,7 @@
 				5E52378A20EB5B4C00649241 /* SCSiriWaveformView.swift in Sources */,
 				5E3A6C22206A3AD500907484 /* ConversationActionController.swift in Sources */,
 				8710673E1C0DC5570035603B /* SettingsCellDescriptorFactory.swift in Sources */,
+				6328BBB32C2F0411007A3288 /* ShareableDebugReportView.swift in Sources */,
 				E9C0B3672B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift in Sources */,
 				060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */,
 				D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */,
@@ -10095,6 +10125,7 @@
 				D36E027A293758DD006C3E5A /* CallHeaderBar.swift in Sources */,
 				F16427061FCC5BE400D2ABFC /* SetFullNameStepDescription.swift in Sources */,
 				A95E31C723DEF01000258C43 /* UIView+Zeta.swift in Sources */,
+				6328BBAF2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift in Sources */,
 				EFBCC9132154FF18006AAB70 /* Constants.swift in Sources */,
 				EEA9A76121B0244D001F7B5C /* ConversationCreateErrorSectionController.swift in Sources */,
 				06CDC6F62A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift in Sources */,
@@ -10197,6 +10228,7 @@
 				EF17B0E2223AB371006252A8 /* ConnectRequestCell.swift in Sources */,
 				BFA25DC91D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift in Sources */,
 				EF15A7B020BC08C000A045C7 /* ConversationContentViewController+SaveImage.swift in Sources */,
+				637505F22C3462F20048EF08 /* LogFilesProvider.swift in Sources */,
 				A96316A623F2BCAA00AFDB71 /* UIViewController+ErrorAlert.swift in Sources */,
 				D53D39102059784900B87DAD /* ConversationActionController+CancelRequest.swift in Sources */,
 				A9275F6124223AB4007CB2BC /* DynamicsProxy.swift in Sources */,

@@ -1,0 +1,102 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import MessageUI
+import WireCommonComponents
+import WireSyncEngine
+
+protocol SettingsDebugReportViewModelProtocol {
+
+    /// Send a debug report via email or shows fallback alert if email is not available
+    func sendReport()
+
+    /// Presents a list of conversation for the user to share the debug report with
+    func shareReport()
+
+}
+
+class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
+
+    // MARK: - Properties
+
+    private let router: SettingsDebugReportRouterProtocol
+    private let userSession: UserSession
+    private let contextProvider: ContextProvider
+    private let logsProvider: LogFilesProviding
+    private let fileMetaDataGenerator: FileMetaDataGenerating
+
+    // MARK: - Life cycle
+
+    init(
+        router: SettingsDebugReportRouterProtocol,
+        userSession: UserSession,
+        contextProvider: ContextProvider,
+        logsProvider: LogFilesProviding = LogFilesProvider(),
+        fileMetaDataGenerator: FileMetaDataGenerating = FileMetaDataGenerator()
+    ) {
+        self.router = router
+        self.userSession = userSession
+        self.contextProvider = contextProvider
+        self.logsProvider = logsProvider
+        self.fileMetaDataGenerator = fileMetaDataGenerator
+    }
+
+    // MARK: - Interface
+
+    func sendReport() {
+        if MFMailComposeViewController.canSendMail() {
+            Task {
+                await router.presentMailComposer()
+            }
+        } else {
+            router.presentFallbackAlert()
+        }
+    }
+
+    func shareReport() {
+
+        let conversations = ConversationList.conversationsIncludingArchived(
+            inUserSession: contextProvider
+        ).shareableConversations()
+
+        let logsURL = logsProvider.generateLogFilesZip()
+
+        fileMetaDataGenerator.metadataForFileAtURL(
+            logsURL,
+            UTI: logsURL.UTI(),
+            name: logsURL.lastPathComponent
+        ) { [weak self] metadata in
+
+            guard let `self` else { return }
+
+            let shareableDebugReport = ShareableDebugReport(
+                logFileMetadata: metadata,
+                userSession: self.userSession
+            )
+
+            self.router.presentShareViewController(
+                destinations: conversations,
+                debugReport: shareableDebugReport,
+                onDismiss: {
+                    try? self.logsProvider.clearTemporaryDirectory()
+                }
+            )
+        }
+    }
+}
