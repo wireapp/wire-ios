@@ -17,7 +17,7 @@
 //
 
 /// Protocol for managing and tracking analytics events within a session.
-// sourcery: AutoMockable
+
 public protocol AnalyticsSessionProtocol {
 
     /// Starts an analytics session.
