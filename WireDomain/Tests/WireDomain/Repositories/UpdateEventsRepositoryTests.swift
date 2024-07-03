@@ -68,23 +68,21 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await super.tearDown()
     }
 
-    private func insertStoredEventEnvelopes() async throws {
+    private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
         try await context.perform { [context] in
             let encoder = JSONEncoder()
 
-            let storedEventEnvelope1 = StoredUpdateEventEnvelope(context: context)
-            storedEventEnvelope1.data = try encoder.encode(Scaffolding.envelope1)
-            storedEventEnvelope1.sortIndex = 0
-
-            let storedEventEnvelope2 = StoredUpdateEventEnvelope(context: context)
-            storedEventEnvelope2.data = try encoder.encode(Scaffolding.envelope2)
-            storedEventEnvelope2.sortIndex = 1
+            for (index, envelope) in envelopes.enumerated() {
+                let storedEventEnvelope = StoredUpdateEventEnvelope(context: context)
+                storedEventEnvelope.data = try encoder.encode(envelope)
+                storedEventEnvelope.sortIndex = Int64(index)
+            }
 
             try context.save()
         }
     }
 
-    // MARK: - Tests
+    // MARK: - Pull pending events
 
     func testItThrowsErrorWhenPullingPendingEventsWithoutLastEventID() async throws {
         // Given no last event id.
@@ -103,7 +101,10 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
     func testItPullPendingEvents() async throws {
         // Given some events already in the db.
-        try await insertStoredEventEnvelopes()
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2
+        ])
 
         // There is a last event id.
         lastEventIDRepository.fetchLastEventID_MockValue = Scaffolding.lastEventID
@@ -203,6 +204,53 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(lastEventIDInvocations[0], Scaffolding.id3)
         XCTAssertEqual(lastEventIDInvocations[1], Scaffolding.id5)
         XCTAssertEqual(lastEventIDInvocations[2], Scaffolding.id6)
+    }
+
+    // MARK: - Fetch next pending events
+
+    func testItFetchesNoEnvelopesIfThereAreNone() async throws {
+        // Given no stored events.
+
+        // When
+        let fetchedEnvelopes = try await sut.fetchNextPendingEvents(limit: 3)
+
+        // Then it returns no envelopes.
+        XCTAssertTrue(fetchedEnvelopes.isEmpty)
+    }
+
+    func testItFetchesLessThanTheLimitIfThereAreNotEnoughEnvelopes() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([Scaffolding.envelope3])
+
+        // When
+        let fetchedEnvelopes = try await sut.fetchNextPendingEvents(limit: 3)
+
+        // Then it returns the one and only envelope.
+        XCTAssertEqual(fetchedEnvelopes, [Scaffolding.envelope3])
+    }
+
+    func testItDoesNotFetchMoreThanTheLimit() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope3,
+            Scaffolding.envelope4,
+            Scaffolding.envelope1,
+            Scaffolding.envelope5,
+            Scaffolding.envelope2
+        ])
+
+        // When
+        let fetchedEnvelopes = try await sut.fetchNextPendingEvents(limit: 3)
+
+        // Then the first 3 envelopes were returned.
+        guard fetchedEnvelopes.count == 3 else {
+            XCTFail("expected 3 envelopes, got \(fetchedEnvelopes.count)")
+            return
+        }
+
+        XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
+        XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
+        XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
 }

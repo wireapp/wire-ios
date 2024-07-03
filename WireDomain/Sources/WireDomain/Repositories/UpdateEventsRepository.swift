@@ -31,6 +31,17 @@ protocol UpdateEventsRepositoryProtocol {
 
     func pullPendingEvents() async throws
 
+    /// Fetch the next batch pending events from the database.
+    /// 
+    /// The batch is already sorted, such that the first element is the oldest
+    /// stored event. This method does not delete any events, so invoking this
+    /// method again will return the same batch.
+    ///
+    /// - Parameter limit: The maximum number of events to fetch.
+    /// - Returns: Decrypted update event envelopes ready for processing.
+
+    func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope]
+
 }
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
@@ -39,9 +50,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let updateEventsAPI: any UpdateEventsAPI
     private let updateEventDecryptor: any UpdateEventDecryptorProtocol
     private let eventContext: NSManagedObjectContext
-    private let jsonEncoder = JSONEncoder()
-
     private let lastEventIDRepository: any LastEventIDRepositoryInterface
+
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
 
     init(
         selfClientID: String,
@@ -56,6 +68,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         self.eventContext = eventContext
         self.lastEventIDRepository = lastEventIDRepository
     }
+
+    // MARK: - Pull pending events
 
     func pullPendingEvents() async throws {
         // We want all events since this event.
@@ -105,8 +119,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws {
-        try await eventContext.perform { [eventContext, jsonEncoder] in
-            let data = try jsonEncoder.encode(eventEnvelope)
+        try await eventContext.perform { [eventContext, encoder] in
+            let data = try encoder.encode(eventEnvelope)
 
             if let string = String(data: data, encoding: .utf8) {
                 print("persisting event: \(string)")
@@ -116,6 +130,37 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             storedEventEnvelope.data = data
             storedEventEnvelope.sortIndex = index
             try eventContext.save()
+        }
+    }
+
+    // MARK: - Fetch pending events
+
+    func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
+        let payloads = try await fetchStoredEventEnvelopePayloads(limit: limit)
+        return try decodeEventEnvelopes(payloads)
+    }
+
+    private func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
+        try await eventContext.perform { [eventContext] in
+            do {
+                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+                request.fetchLimit = Int(limit)
+                request.returnsObjectsAsFaults = false
+                let storedEventEnvelopes = try eventContext.fetch(request)
+                return storedEventEnvelopes.map(\.data)
+            } catch {
+                throw UpdateEventsRepositoryError.failedToFetchStoredEvents(error)
+            }
+        }
+    }
+
+    private func decodeEventEnvelopes(_ payloads: [Data]) throws -> [UpdateEventEnvelope] {
+        try payloads.map {
+            do {
+                return try decoder.decode(UpdateEventEnvelope.self, from: $0)
+            } catch {
+                throw UpdateEventsRepositoryError.failedToDecodeStoredEvent(error)
+            }
         }
     }
 
