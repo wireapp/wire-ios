@@ -49,12 +49,10 @@ struct MainCoordinator: MainCoordinating {
         zClientViewController.showConversationList()
     }
 
-    // TODO: is it used?
-    func showSettings() {
-        zClientViewController?.mainTabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
-    }
-
     func showSelfProfile() {
-        fatalError("TODO")
+        guard let zClientViewController else {
+            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
+        }
+        zClientViewController.showSelfProfile()
     }
 }
