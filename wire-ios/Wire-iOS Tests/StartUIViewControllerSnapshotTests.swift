@@ -51,6 +51,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
+    private var mockMainCoordinator: MockMainCoordinator!
     var sut: StartUIViewController!
     var mockAddressBookHelper: MockAddressBookHelper!
     var userSession: UserSessionMock!
@@ -59,6 +60,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+
+        mockMainCoordinator = .init()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock(
@@ -75,13 +78,19 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         mockAddressBookHelper = nil
         SelfUser.provider = nil
         userSession = nil
+        mockMainCoordinator = nil
+
         super.tearDown()
     }
 
     // MARK: - Helper Methods
 
     func setupSut() {
-        sut = StartUIViewController(addressBookHelperType: MockAddressBookHelper.self, userSession: userSession)
+        sut = StartUIViewController(
+            addressBookHelperType: MockAddressBookHelper.self,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
 

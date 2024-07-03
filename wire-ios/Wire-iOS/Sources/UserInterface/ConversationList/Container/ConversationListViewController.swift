@@ -28,6 +28,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
     // MARK: - Properties
 
     let viewModel: ViewModel
+    let mainCoordinator: MainCoordinating
+    weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -101,6 +103,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
+        zClientViewController: ZClientViewController,
+        mainCoordinator: MainCoordinating,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
@@ -108,23 +112,34 @@ final class ConversationListViewController: UIViewController, UITabBarController
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
+            mainCoordinator: mainCoordinator
         )
         self.init(
             viewModel: viewModel,
+            zClientViewController: zClientViewController,
+            mainCoordinator: mainCoordinator,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
     }
 
     required init(
         viewModel: ViewModel,
-        selfProfileViewControllerBuilder: ViewControllerBuilder
+        zClientViewController: ZClientViewController,
+        mainCoordinator: MainCoordinating,
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
+        self.mainCoordinator = mainCoordinator
+        self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = .init(userSession: viewModel.userSession)
+        listContentController = ConversationListContentController(
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator,
+            zClientViewController: zClientViewController
+        )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
@@ -137,7 +152,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     // MARK: - Override methods
@@ -185,7 +200,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
         shouldAnimateNetworkStatusView = true
 
-        ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
+        zClientViewController?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
 
@@ -194,7 +209,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
             tabBarController?.delegate = self
 
-            ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
+            zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }
 
@@ -404,15 +419,13 @@ final class ConversationListViewController: UIViewController, UITabBarController
         _ conversation: ZMConversation!,
         scrollTo message: ZMConversationMessage?,
         focusOnView focus: Bool,
-        animated: Bool,
-        completion: (() -> Void)?
+        animated: Bool
     ) -> Bool {
         listContentController.select(
             conversation,
             scrollTo: message,
             focusOnView: focus,
-            animated: animated,
-            completion: completion
+            animated: animated
         )
     }
 
@@ -420,7 +433,10 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
     /// Present the new conversation view controller
     func presentNewConversationViewController() {
-        let viewController = StartUIViewController(userSession: viewModel.userSession)
+        let viewController = StartUIViewController(
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
         viewController.delegate = viewModel
         viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -462,9 +478,7 @@ extension ConversationListViewController: ArchivedListViewControllerDelegate {
             scrollTo: nil,
             focusOnView: true,
             animated: true
-        ) { [weak self] in
-            self?.tabBarController?.selectedIndex = MainTabBarControllerTab.conversations.rawValue
-        }
+        )
     }
 }
 

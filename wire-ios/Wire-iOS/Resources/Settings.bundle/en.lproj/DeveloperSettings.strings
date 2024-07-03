@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
-"APPLICATION_TITLE" = "Application";
-"VERSION_TITLE" = "Version";
-"BUILT_BY_TITLE" = "Built by";
-"BUILT_ON_TITLE" = "Built on";
-"BUILD_NUMBER_TITLE" = "Build Number"
+"ENABLE_LOGGING" = "Enable Assert Logging";
+"ENABLE_NETWORK_LOGGING" = "Network Logging (Internal builds)";
+"BUILD_INFO" = "Build Info";
+"USE_DEVELOPER_LOGIN_UI" = "Use Developer Login UI";
+"USE_WEBDAV_DESIGN" = "Use WebDav server";
+"USE_MARKDOWN" = "Disable Markdown";
