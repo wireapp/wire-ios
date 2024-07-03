@@ -118,8 +118,8 @@ final class NativePushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             websocketTask == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }
@@ -147,6 +147,8 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     var websocketURL: URL? {
+        guard let clientID else { return nil }
+
         let url = environment.backendWSURL.appendingPathComponent("/await")
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         urlComponents?.queryItems = [URLQueryItem(name: "client", value: clientID)]
@@ -237,13 +239,13 @@ extension NativePushChannel: ZMTimerClient {
 extension NativePushChannel: URLSessionWebSocketDelegate {
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        WireLogger.pushChannel.debug("Push channel did open with protocol \(`protocol` ?? "n/a")")
+        WireLogger.pushChannel.info("Push channel did open with protocol \(`protocol` ?? "n/a")")
 
         onOpen()
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        WireLogger.pushChannel.debug("Push channel did close with code \(closeCode), reason: \(reason ?? Data())")
+        WireLogger.pushChannel.info("Push channel did close with code \(closeCode), reason: \(reason ?? Data())")
 
         onClose()
     }
@@ -252,7 +254,7 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 extension NativePushChannel: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        WireLogger.pushChannel.debug("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a" )")
+        WireLogger.pushChannel.error("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a" )")
 
         websocketTask = nil
     }
