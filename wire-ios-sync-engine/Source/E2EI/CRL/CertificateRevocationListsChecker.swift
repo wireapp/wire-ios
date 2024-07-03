@@ -32,7 +32,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let featureRepository: FeatureRepositoryInterface
+    private let fetchE2eiFeatureConfig: (() -> Feature.E2EI.Config?)
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -50,7 +50,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlAPI: CertificateRevocationListAPIProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        featureRepository: FeatureRepositoryInterface,
+        fetchE2eiFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -59,7 +59,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
             mlsConversationsVerificationUpdater: mlsConversationsVerificationUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
-            featureRepository: featureRepository,
+            fetchE2eiFeatureConfig: fetchE2eiFeatureConfig,
             coreCryptoProvider: coreCryptoProvider,
             context: context
         )
@@ -70,7 +70,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        featureRepository: FeatureRepositoryInterface,
+        fetchE2eiFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -78,7 +78,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         self.crlExpirationDatesRepository = crlExpirationDatesRepository
         self.mlsConversationsVerificationUpdater = mlsConversationsVerificationUpdater
         self.selfClientCertificateProvider = selfClientCertificateProvider
-        self.featureRepository = featureRepository
+        self.fetchE2eiFeatureConfig = fetchE2eiFeatureConfig
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
     }
@@ -114,11 +114,11 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
         let e2eiFeatureConfig = await context.perform {
-            self.featureRepository.fetchE2EI().config
+            self.fetchE2eiFeatureConfig()
         }
         let crlURLBuilder = CRLURLBuilder(
-            shouldUseProxy: e2eiFeatureConfig.useProxyOnMobile ?? false,
-            proxyURLString: e2eiFeatureConfig.crlProxy)
+            shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
+            proxyURLString: e2eiFeatureConfig?.crlProxy)
 
         var shouldNotifyAboutRevokedCertificate = false
 

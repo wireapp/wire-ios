@@ -58,7 +58,9 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
             crlExpirationDatesRepository: mockCRLExpirationDatesRepository,
             mlsConversationsVerificationUpdater: mockConversationVerificationStatusUpdater,
             selfClientCertificateProvider: mockSelfClientCertificateProvider,
-            featureRepository: mockFeatureRepository,
+            fetchE2eiFeatureConfig: { [weak self] in
+                return self?.mockFeatureRepository.fetchE2EI_MockValue?.config
+            },
             coreCryptoProvider: provider,
             context: mockCoreDataStack.syncContext
         )
