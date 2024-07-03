@@ -42,7 +42,6 @@
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
 		EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A52C2EB6CD00679448 /* SyncManager.swift */; };
 		EECC35A82C2EB70400679448 /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A72C2EB70400679448 /* SyncState.swift */; };
-		EECC35AA2C2EB72600679448 /* SlowSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A92C2EB72600679448 /* SlowSync.swift */; };
 		EECC35AE2C2EE5D600679448 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -99,7 +98,6 @@
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
 		EECC35A52C2EB6CD00679448 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		EECC35A72C2EB70400679448 /* SyncState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncState.swift; sourceTree = "<group>"; };
-		EECC35A92C2EB72600679448 /* SlowSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowSync.swift; sourceTree = "<group>"; };
 		EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -303,7 +301,6 @@
 			children = (
 				EECC35A52C2EB6CD00679448 /* SyncManager.swift */,
 				EECC35A72C2EB70400679448 /* SyncState.swift */,
-				EECC35A92C2EB72600679448 /* SlowSync.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -507,7 +504,6 @@
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
-				EECC35AA2C2EB72600679448 /* SlowSync.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,

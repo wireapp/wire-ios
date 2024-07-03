@@ -173,19 +173,6 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(sut.syncState, .suspended)
     }
 
-    func testItSuspendsWhenSlowSyncing() async throws {
-        XCTFail("not implemented yet")
-    }
-
-    // MARK: - Slow sync
-
-    func testItSlowSyncs() async throws {
-        // performs slow sync
-        // performs quick sync
-        // goes live
-        XCTFail("not implemented yet")
-    }
-
     // MARK: - Quick sync
 
     // This test is important because it asserts how we coordinate multiple sources of

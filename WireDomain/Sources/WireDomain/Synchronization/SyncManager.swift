@@ -26,10 +26,6 @@ protocol SyncManagerProtocol {
 
     var syncState: SyncState { get }
 
-    /// Fetch user data from the server and store locally.
-
-    func performSlowSync() async throws
-
     /// Fetch events from the server and process all pending events.
 
     func performQuickSync() async throws
@@ -51,8 +47,6 @@ final class SyncManager: SyncManagerProtocol {
         switch state {
         case .suspended:
             .suspended
-        case .slowSyncing:
-            .slowSync
         case .quickSyncing:
             .quickSync
         case .live:
@@ -81,14 +75,6 @@ final class SyncManager: SyncManagerProtocol {
         self.updateEventsRepository = updateEventsRepository
         self.updateEventDecryptor = updateEventDecryptor
         self.updateEventProcessor = updateEventProcessor
-    }
-
-    // TODO: Make non re-entrant
-    func performSlowSync() async throws {
-        state = .slowSyncing
-        let slowSync = SlowSync()
-        try await slowSync.perform()
-        try await performQuickSync()
     }
 
     // TODO: Make non re-entrant
@@ -227,7 +213,6 @@ final class SyncManager: SyncManagerProtocol {
     private enum State {
 
         case suspended
-        case slowSyncing
         case quickSyncing(Task<Void, Error>)
         case live
 

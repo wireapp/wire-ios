@@ -22,11 +22,6 @@ import Foundation
 
 enum SyncState {
 
-    /// The app is fetching remote data such as team, conversation,
-    /// user and client metadata.
-
-    case slowSync
-
     /// The app is fetching and processing all pending events.
 
     case quickSync
