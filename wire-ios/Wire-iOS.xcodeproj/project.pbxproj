@@ -9097,7 +9097,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftformat.sh ../WireAPI\n";
+			shellScript = "../scripts/run-swiftformat.sh \\\n../SourceryPlugin \\\n../WireAPI \\\n../WireAnalytics \\\n../WireDomain \\\n../WireUI\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
