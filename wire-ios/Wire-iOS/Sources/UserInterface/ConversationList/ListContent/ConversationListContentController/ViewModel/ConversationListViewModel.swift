@@ -805,8 +805,10 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
 extension ConversationListViewModel.Section: SearchableConversationContainer {
 
-    var conversations: [ZMConversation] {
-        items.compactMap { $0.item as? ZMConversation }
+    var conversations: [SearchableZMConversationWrapper] {
+        items
+            .compactMap { $0.item as? ZMConversation }
+            .map(SearchableZMConversationWrapper.init(conversation:))
     }
 
     mutating func removeConversation(at index: Int) {

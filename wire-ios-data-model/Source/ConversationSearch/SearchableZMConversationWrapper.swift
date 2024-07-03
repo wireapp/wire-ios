@@ -18,23 +18,28 @@
 
 import WireUtilities
 
-// TODO: instead of conformance to protocol wrap in new type which caches the normalization results
-extension ZMConversation: SearchableConversation {
+public struct SearchableZMConversationWrapper: SearchableConversation {
+
+    private let conversation: ZMConversation
 
     public var searchableName: String {
-        normalizedUserDefinedName ?? displayName?.normalizedForSearch() as String? ?? ""
+        conversation.normalizedUserDefinedName ?? conversation.displayName?.normalizedForSearch() as String? ?? ""
     }
 
-    public var searchableParticipants: [ZMConversationSearchableParticipant] {
-        localParticipants
+    public var searchableParticipants: [Participant] {
+        conversation.localParticipants
             .map { localParticipant in
                 .init(searchableName: localParticipant.normalizedName ?? localParticipant.name?.normalizedForSearch() as String? ?? "")
             }
     }
 
+    public init(conversation: ZMConversation) {
+        self.conversation = conversation
+    }
+
     // MARK: - Nested Types
 
-    public struct ZMConversationSearchableParticipant: SearchableConversationParticipant {
+    public struct Participant: SearchableConversationParticipant {
         public var searchableName: String
     }
 }

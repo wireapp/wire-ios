@@ -16,10 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A protocol which represents a conversation that can be searched for.
-public protocol SearchableConversation {
-    associatedtype SearchableParticipant: SearchableConversationParticipant
-
-    var searchableName: String { get }
-    var searchableParticipants: [SearchableParticipant] { get }
+enum MainTabBarControllerTab: Int {
+    case conversations, archive, settings
 }
