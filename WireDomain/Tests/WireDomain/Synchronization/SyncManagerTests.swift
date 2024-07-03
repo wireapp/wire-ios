@@ -88,6 +88,17 @@ final class SyncManagerTests: XCTestCase {
 
     // MARK: - Suspension
 
+    func testItDoesNotSuspendIfItIsAlreadySuspended() async throws {
+        // Given it's already suspended.
+        XCTAssertEqual(sut.syncState, .suspended)
+
+        // When
+        try await sut.suspend()
+
+        // Then it didn't do anything.
+        XCTAssertTrue(pushChannel.close_Invocations.isEmpty)
+    }
+
     func testItSuspendsWhenLive() async throws {
         // Given it goes live.
         try await sut.performQuickSync()
@@ -97,6 +108,38 @@ final class SyncManagerTests: XCTestCase {
         try await sut.suspend()
 
         // Then the push channel was closed.
+        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+
+        // Then it goes to the suspended state.
+        XCTAssertEqual(sut.syncState, .suspended)
+    }
+
+    func testItSuspendsOnlyOnce() async throws {
+        // Given it goes live.
+        try await sut.performQuickSync()
+        XCTAssertEqual(sut.syncState, .live)
+
+        pushChannel.close_MockMethod = {
+            // Let the other task run so both tasks are running
+            // simultaneously.
+            await Task.yield()
+        }
+
+        // Given it suspends.
+        let task1 = Task {
+            try await sut.suspend()
+        }
+
+        // When it suspends again.
+        let task2 = Task {
+            try await sut.suspend()
+        }
+
+        // Wait for suspension to complete.
+        try await task2.value
+        try await task1.value
+
+        // Then the push channel was closed only once.
         XCTAssertEqual(pushChannel.close_Invocations.count, 1)
 
         // Then it goes to the suspended state.
@@ -163,13 +206,6 @@ final class SyncManagerTests: XCTestCase {
     }
 
     func testItSuspendsWhenSlowSyncing() async throws {
-        XCTFail("not implemented yet")
-    }
-
-    func testItSuspendsOnlyOnce() async throws {
-        // suspend
-        // suspend again
-        // it only suspends once.
         XCTFail("not implemented yet")
     }
 
