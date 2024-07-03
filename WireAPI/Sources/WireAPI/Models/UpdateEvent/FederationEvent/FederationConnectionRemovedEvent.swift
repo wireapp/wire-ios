@@ -21,7 +21,7 @@ import Foundation
 /// An event where the two or more other backends stopped federating
 /// with each other.
 
-public struct FederationConnectionRemovedEvent: Equatable {
+public struct FederationConnectionRemovedEvent: Equatable, Codable {
 
     /// The domains of the backends that are no longer
     /// federating with each other.

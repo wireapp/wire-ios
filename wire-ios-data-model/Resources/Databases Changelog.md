@@ -54,6 +54,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
  
 ## ZMEventModel
 
+### 5.0
+
+* add new `StoredUpdateEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
+
 ### 4.0
 
 TBD

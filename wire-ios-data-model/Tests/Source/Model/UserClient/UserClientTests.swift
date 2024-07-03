@@ -438,7 +438,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.numberOfKeysRemaining = 1
 
             // when
-            selfClient.decrementNumberOfRemainingKeys()
+            selfClient.decrementNumberOfRemainingProteusKeys()
 
             // then
             XCTAssertTrue(selfClient.modifiedKeys!.contains(ZMUserClientNumberOfKeysRemainingKey))
@@ -453,7 +453,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.numberOfKeysRemaining = 2
 
             // when
-            selfClient.decrementNumberOfRemainingKeys()
+            selfClient.decrementNumberOfRemainingProteusKeys()
 
             // then
             XCTAssertNil(selfClient.modifiedKeys)

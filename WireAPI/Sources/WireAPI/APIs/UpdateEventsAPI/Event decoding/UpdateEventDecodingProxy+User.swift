@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension UpdateEvent {
+extension UpdateEventDecodingProxy {
 
     init(
         eventType: UserEventType,
@@ -29,50 +29,50 @@ extension UpdateEvent {
         switch eventType {
         case .clientAdd:
             let event = try UserClientAddEventDecoder().decode(from: container)
-            self = .user(.clientAdd(event))
+            updateEvent = .user(.clientAdd(event))
 
         case .clientRemove:
             let event = try UserClientRemoveEventDecoder().decode(from: container)
-            self = .user(.clientRemove(event))
+            updateEvent = .user(.clientRemove(event))
 
         case .connection:
             let event = try UserConnectionEventDecoder().decode(from: container)
-            self = .user(.connection(event))
+            updateEvent = .user(.connection(event))
 
         case .contactJoin:
             let event = try UserContactJoinEventDecoder().decode(from: container)
-            self = .user(.contactJoin(event))
+            updateEvent = .user(.contactJoin(event))
 
         case .delete:
             let event = try UserDeleteEventDecoder().decode(from: container)
-            self = .user(.delete(event))
+            updateEvent = .user(.delete(event))
 
         case .legalholdDisable:
             let event = try UserLegalholdDisableEventDecoder().decode(from: container)
-            self = .user(.legalholdDisable(event))
+            updateEvent = .user(.legalholdDisable(event))
 
         case .legalholdEnable:
             let event = try UserLegalholdEnableEventDecoder().decode(from: container)
-            self = .user(.legalholdEnable(event))
+            updateEvent = .user(.legalholdEnable(event))
 
         case .legalholdRequest:
             let event = try UserLegalholdRequestEventDecoder().decode(from: container)
-            self = .user(.legalholdRequest(event))
+            updateEvent = .user(.legalholdRequest(event))
 
         case .propertiesSet:
             let event = try UserPropertiesSetEventDecoder().decode(from: container)
-            self = .user(.propertiesSet(event))
+            updateEvent = .user(.propertiesSet(event))
 
         case .propertiesDelete:
             let event = try UserPropertiesDeleteEventDecoder().decode(from: container)
-            self = .user(.propertiesDelete(event))
+            updateEvent = .user(.propertiesDelete(event))
 
         case .pushRemove:
-            self = .user(.pushRemove)
+            updateEvent = .user(.pushRemove)
 
         case .update:
             let event = try UserUpdateEventDecoder().decode(from: container)
-            self = .user(.update(event))
+            updateEvent = .user(.update(event))
         }
     }
 

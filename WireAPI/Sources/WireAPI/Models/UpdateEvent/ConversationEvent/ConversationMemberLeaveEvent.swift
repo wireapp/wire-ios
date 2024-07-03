@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where some participants were removed from a conversation.
 
-public struct ConversationMemberLeaveEvent: Equatable {
+public struct ConversationMemberLeaveEvent: Equatable, Codable {
 
     /// The id of the conversation.
 

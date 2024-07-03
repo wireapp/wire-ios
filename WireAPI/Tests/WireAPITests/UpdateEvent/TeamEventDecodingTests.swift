@@ -38,7 +38,10 @@ final class TeamEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "TeamMemberLeave")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -52,7 +55,10 @@ final class TeamEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "TeamMemberUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(

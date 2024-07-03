@@ -20,7 +20,7 @@ import Foundation
 
 /// An error when decoding `UpdateEvent`.
 
-public struct UpdateEventDecodingError: Error, CustomStringConvertible {
+public struct UpdateEventDecodingProxyError: Error, CustomStringConvertible {
 
     /// The type of the event being decoding.
 

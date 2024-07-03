@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a user is typing in a conversation.
 
-public struct ConversationTypingEvent: Equatable {
+public struct ConversationTypingEvent: Equatable, Codable {
 
     /// The id of the conversation.
 

@@ -25,18 +25,18 @@ public enum ProteusError: Int, Error, Equatable {
     /// An error occurred while loading or peristing key material. The
     /// operation may be retried a limited number of times.
 
-    case storageError
+    case storageError = 1
 
     /// A requested session was not found.
 
-    case sessionNotFound
+    case sessionNotFound = 2
 
     /// A message or key could not be decoded.
     ///
     /// The message or key being decoded is either malformed or otherwise
     /// encoded in a way such that it cannot be understood.
 
-    case decodeError
+    case decodeError = 3
 
     /// The remote identity of a session changed.
     ///
@@ -44,13 +44,13 @@ public enum ProteusError: Int, Error, Equatable {
     /// If the remote fingerprint was previously verified, it will need to be
     /// verified anew in order to exclude any potential MITM.
 
-    case remoteIdentityChanged
+    case remoteIdentityChanged = 4
 
     /// The signature of a decrypted message is invalid.
     ///
     /// The message being decrypted is incomplete or has otherwise been tampered with.
 
-    case invalidSignature
+    case invalidSignature = 5
 
     /// A message is invalid.
     ///
@@ -61,7 +61,7 @@ public enum ProteusError: Int, Error, Equatable {
     /// should be reported to the user, as it might be necessary for both
     /// peers to re-initialise their sessions.
 
-    case invalidMessage
+    case invalidMessage = 6
 
     /// A message is a duplicate.
     ///
@@ -69,7 +69,7 @@ public enum ProteusError: Int, Error, Equatable {
     /// previously been decrypted with the same session. The message can
     /// be safely discarded.
 
-    case duplicateMessage
+    case duplicateMessage = 7
 
     /// A message is too recent.
     ///
@@ -77,7 +77,7 @@ public enum ProteusError: Int, Error, Equatable {
     /// and the message being decrypted, i.e. there are too many intermediate
     /// messages missing. The message should be dropped.
 
-    case tooDistantFuture
+    case tooDistantFuture = 8
 
     /// A message is too old.
     ///
@@ -85,18 +85,18 @@ public enum ProteusError: Int, Error, Equatable {
     /// any longer due to the key material no longer being available. The message
     /// should be dropped.
 
-    case outdatedMessage
+    case outdatedMessage = 9
 
     /// A CBox has been opened with an incomplete or mismatching identity using
     /// 'CryptoBox.openWith'.
 
-    case identityError
+    case identityError = 13
 
     /// An attempt was made to initialise a new session using
     /// `CryptoBox.initSessionFromMessage'` whereby the prekey corresponding to
     /// the prekey ID in the message could not be found.
 
-    case prekeyNotFound
+    case prekeyNotFound = 14
 
     /// A panic occurred. This is the last resort error raised from native code
     /// to signal a severe problem, like a violation of a critical invariant,
@@ -108,11 +108,11 @@ public enum ProteusError: Int, Error, Equatable {
     /// state may be corrupt. Such sessions should be closed and may be subsequently
     /// reloaded to retry the operation(s).
 
-    case panic
+    case panic = 15
 
     /// An unspecified error occurred.
 
-    case unknown
+    case unknown = 999
 
     /// Initialise from a proteus code.
     /// See: https://github.com/wireapp/proteus/blob/2.x/crates/proteus-traits/src/lib.rs

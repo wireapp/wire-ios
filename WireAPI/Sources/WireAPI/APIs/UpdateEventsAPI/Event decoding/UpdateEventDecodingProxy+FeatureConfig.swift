@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension UpdateEvent {
+extension UpdateEventDecodingProxy {
 
     init(
         eventType: FeatureConfigEventType,
@@ -37,56 +37,56 @@ extension UpdateEvent {
             case "appLock":
                 let config = try AppLockFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .appLock(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "classifiedDomains":
                 let config = try ClassifiedDomainsFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .classifiedDomains(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "conferenceCalling":
                 let config = try ConferenceCallingFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .conferenceCalling(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "conversationGuestLinks":
                 let config = try ConversationGuestLinksFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .conversationGuestLinks(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "digitalSignature":
                 let config = try DigitalSignatureFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .digitalSignature(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "e2ei":
                 let config = try EndToEndIdentityFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .endToEndIdentity(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "fileSharing":
                 let config = try FileSharingFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .fileSharing(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "mls":
                 let config = try MLSFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .mls(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "mlsMigration":
                 let config = try MLSMigrationFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .mlsMigration(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             case "selfDeletingMessages":
                 let config = try SelfDeletingMessagesFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .selfDeletingMessages(config))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
 
             default:
                 let event = FeatureConfigUpdateEvent(featureConfig: .unknown(featureName: featureName))
-                self = .featureConfig(.update(event))
+                updateEvent = .featureConfig(.update(event))
             }
         }
     }

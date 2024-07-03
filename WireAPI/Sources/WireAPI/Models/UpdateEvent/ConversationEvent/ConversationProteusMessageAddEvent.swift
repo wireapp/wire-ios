@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a proteus message was received in a conversation.
 
-public struct ConversationProteusMessageAddEvent: Equatable {
+public struct ConversationProteusMessageAddEvent: Equatable, Codable {
 
     /// The id of the conversation.
 
@@ -34,20 +34,49 @@ public struct ConversationProteusMessageAddEvent: Equatable {
 
     public let timestamp: Date
 
-    /// The base 64 encoded encrypted message.
+    /// The base 64 encoded message.
 
-    public let message: String
+    public var message: MessageContent
 
     /// The base 64 encoded external data.
 
-    public let externalData: String?
+    public var externalData: MessageContent?
 
-    /// The id of the user who sent the message.
+    /// The id of the user client who sent the message.
 
-    public let messageSenderID: UUID
+    public let messageSenderClientID: String
 
-    /// The id of the user who should receive the message.
+    /// The id of the user client who should receive the message.
 
-    public let messageRecipientID: UUID
+    public let messageRecipientClientID: String
+
+    /// Create a new `ConversationProteusMessageAddEvent`.
+    ///
+    /// - Parameters:
+    ///   - conversationID: The id of the conversation.
+    ///   - senderID: The id of the user who sent the message.
+    ///   - timestamp: When the message was sent.
+    ///   - message: The base 64 encoded message.
+    ///   - externalData: The base 64 encoded external data.
+    ///   - messageSenderClientID: The id of the user client who sent the message.
+    ///   - messageRecipientClientID:  The id of the user client who should receive the message.
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        message: MessageContent,
+        externalData: MessageContent? = nil,
+        messageSenderClientID: String,
+        messageRecipientClientID: String
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.message = message
+        self.externalData = externalData
+        self.messageSenderClientID = messageSenderClientID
+        self.messageRecipientClientID = messageRecipientClientID
+    }
 
 }

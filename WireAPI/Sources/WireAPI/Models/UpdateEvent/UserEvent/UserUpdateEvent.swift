@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a user's metadata was updated.
 
-public struct UserUpdateEvent: Equatable {
+public struct UserUpdateEvent: Equatable, Codable {
 
     /// The updated user's id.
 
