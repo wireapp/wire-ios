@@ -41,11 +41,16 @@ actor EventProcessor: UpdateEventProcessor {
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
         eventConsumers: [ZMEventConsumer],
-        eventAsyncConsumers: [ZMEventAsyncConsumer]
+        eventAsyncConsumers: [ZMEventAsyncConsumer],
+        lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
-        self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
+        self.eventDecoder = EventDecoder(
+            eventMOC: eventContext,
+            syncMOC: syncContext,
+            lastEventIDRepository: lastEventIDRepository
+        )
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
         self.bufferedEvents = []
@@ -67,7 +72,7 @@ actor EventProcessor: UpdateEventProcessor {
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
             let publicKeys = try? self.earService.fetchPublicKeys()
-            let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
+            let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             await self.processBackgroundEvents(decryptedEvents)
 
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
@@ -86,8 +91,10 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
+        defer { processingTask = nil }
+
         processingTask = Task { [processingTask] in
-            _ = await processingTask?.result
+            _ = try await processingTask?.value
             return try await block()
         }
 

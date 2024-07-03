@@ -44,7 +44,7 @@ final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCel
 extension ConversationCannotDecryptSystemMessageCell {
 
     override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        delegate?.perform(action: .resetSession, for: message, view: self)
+        delegate?.perform(action: .resetSession, for: message!, view: self)
 
         return false
     }

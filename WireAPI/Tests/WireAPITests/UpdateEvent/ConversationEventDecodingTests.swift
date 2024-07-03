@@ -384,7 +384,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                     )
                 ),
                 name: "Foo Bar",
-                messageTimer: 123456,
+                messageTimer: 123_456,
                 readReceiptMode: 1,
                 access: [.invite],
                 accessRoles: [.teamMember],

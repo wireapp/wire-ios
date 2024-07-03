@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -24,16 +25,17 @@ final class GroupConversationCellTests: XCTestCase {
 
     private var sut: GroupConversationCell!
     private var otherUser: MockUserType!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         otherUser = MockUserType.createDefaultOtherUser()
         sut = GroupConversationCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         otherUser = nil
 
