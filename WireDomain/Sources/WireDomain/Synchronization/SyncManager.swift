@@ -22,10 +22,6 @@ import WireAPI
 
 protocol SyncManagerProtocol {
 
-    /// The current synchronization state.
-
-    var syncState: SyncState { get }
-
     /// Fetch events from the server and process all pending events.
 
     func performQuickSync() async throws
@@ -38,18 +34,7 @@ protocol SyncManagerProtocol {
 
 final class SyncManager: SyncManagerProtocol {
 
-    var syncState: SyncState {
-        switch state {
-        case .suspended:
-            .suspended
-        case .quickSyncing:
-            .quickSync
-        case .live:
-            .live
-        }
-    }
-
-    private var state: State = .suspended
+    private(set) var syncState: SyncState = .suspended
     private var isSuspending = false
 
     private let pushChannel: any PushChannelProtocol
@@ -74,7 +59,7 @@ final class SyncManager: SyncManagerProtocol {
 
     // TODO: Make non re-entrant
     func performQuickSync() async throws {
-        if case .quickSyncing = state {
+        if case .quickSync = syncState {
             return
         }
 
@@ -88,9 +73,9 @@ final class SyncManager: SyncManagerProtocol {
         }
 
         do {
-            state = .quickSyncing(task)
+            syncState = .quickSync(task)
             try await task.value
-            state = .live
+            syncState = .live
         } catch {
             try await suspend()
             throw error
@@ -99,7 +84,7 @@ final class SyncManager: SyncManagerProtocol {
 
     // TODO: Make non re-entrant
     func suspend() async throws {
-        if case .suspended = state {
+        if case .suspended = syncState {
             return
         }
 
@@ -110,13 +95,13 @@ final class SyncManager: SyncManagerProtocol {
         isSuspending = true
         await closePushChannel()
         ongoingTask?.cancel()
-        state = .suspended
+        syncState = .suspended
         isSuspending = false
     }
 
     private var ongoingTask: Task<Void, Error>?  {
-        switch state {
-        case let .quickSyncing(task):
+        switch syncState {
+        case let .quickSync(task):
             task
         default:
             nil
@@ -137,7 +122,7 @@ final class SyncManager: SyncManagerProtocol {
     }
 
     private func didReceiveUpdateEventEnvelope(_ envelope: UpdateEventEnvelope) {
-        guard syncState == .live else {
+        guard case .live = syncState else {
             bufferedEnvelopes.append(envelope)
             return
         }
@@ -188,14 +173,6 @@ final class SyncManager: SyncManagerProtocol {
                 // TODO: store last event id
             }
         }
-    }
-
-    private enum State {
-
-        case suspended
-        case quickSyncing(Task<Void, Error>)
-        case live
-
     }
 
 }

@@ -80,7 +80,10 @@ final class SyncManagerTests: XCTestCase {
         // Given we just initialized the sync manager.
 
         // Then it's suspended.
-        XCTAssertEqual(sut.syncState, .suspended)
+        guard case .suspended = sut.syncState else {
+            XCTFail("unexpected sync state: \(sut.syncState)")
+            return
+        }
 
         // Then the push channel is closed.
         XCTAssertTrue(pushChannel.open_Invocations.isEmpty)
@@ -90,7 +93,10 @@ final class SyncManagerTests: XCTestCase {
 
     func testItDoesNotSuspendIfItIsAlreadySuspended() async throws {
         // Given it's already suspended.
-        XCTAssertEqual(sut.syncState, .suspended)
+        guard case .suspended = sut.syncState else {
+            XCTFail("unexpected sync state: \(sut.syncState)")
+            return
+        }
 
         // When
         try await sut.suspend()
@@ -102,7 +108,11 @@ final class SyncManagerTests: XCTestCase {
     func testItSuspendsWhenLive() async throws {
         // Given it goes live.
         try await sut.performQuickSync()
-        XCTAssertEqual(sut.syncState, .live)
+
+        guard case .live = sut.syncState else {
+            XCTFail("unexpected sync state: \(sut.syncState)")
+            return
+        }
 
         // When it suspends.
         try await sut.suspend()
@@ -111,7 +121,10 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(pushChannel.close_Invocations.count, 1)
 
         // Then it goes to the suspended state.
-        XCTAssertEqual(sut.syncState, .suspended)
+        guard case .suspended = sut.syncState else {
+            XCTFail("unexpected sync state: \(sut.syncState)")
+            return
+        }
     }
 
     // This test asserts that if we suspend the SyncManager while there
@@ -170,7 +183,10 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(pushChannel.close_Invocations.count, 1)
         
         // Then it goes to the suspended state.
-        XCTAssertEqual(sut.syncState, .suspended)
+        guard case .suspended = sut.syncState else {
+            XCTFail("unexpected sync state: \(sut.syncState)")
+            return
+        }
     }
 
     // MARK: - Quick sync
@@ -304,7 +320,10 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(sut.bufferedEnvelopes.count, 0)
 
         // Then it is live.
-        XCTAssertEqual(sut.syncState, .live)
+        guard case .live = sut.syncState else {
+            XCTFail("unexpected sync state: \(sut.syncState)")
+            return
+        }
     }
 
 }

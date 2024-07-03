@@ -24,7 +24,7 @@ enum SyncState {
 
     /// The app is fetching and processing all pending events.
 
-    case quickSync
+    case quickSync(Task<Void, Error>)
 
     /// The app is processing live events via the push channel.
 
