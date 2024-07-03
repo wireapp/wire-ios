@@ -54,7 +54,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             await withThrowingTaskGroup(of: Void.self) { taskGroup in
                 for connection in connections {
                     taskGroup.addTask {
-                        try await self.storeConnection(connection)
+                        try await storeConnection(connection)
                     }
                 }
             }
@@ -84,9 +84,8 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     /// - Returns: conversation object stored locally
 
     private func storedConversation(from connection: Connection, with storedConnection: ZMConnection) throws -> ZMConversation {
-
         guard let conversationID = connection.conversationID ?? connection.qualifiedConversationID?.uuid else {
-            throw ConnectionsRepositoryError.missingConversationId
+            throw ConnectionsRepositoryError.missingConversationID
         }
 
         let conversation = ZMConversation.fetchOrCreate(
@@ -107,7 +106,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     private func storedConnection(from connection: Connection) throws -> ZMConnection {
         guard let userID = connection.receiverID ?? connection.receiverQualifiedID?.uuid else {
-            throw ConnectionsRepositoryError.missingReceiverId
+            throw ConnectionsRepositoryError.missingReceiverID
         }
 
         let storedConnection = ZMConnection.fetchOrCreate(
@@ -128,19 +127,19 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     private func status(from connectionStatus: ConnectionStatus) -> ZMConnectionStatus {
         switch connectionStatus {
         case .sent:
-            return .sent
+            .sent
         case .accepted:
-            return .accepted
+            .accepted
         case .pending:
-            return .pending
+            .pending
         case .blocked:
-            return .blocked
+            .blocked
         case .cancelled:
-            return .cancelled
+            .cancelled
         case .ignored:
-            return .ignored
+            .ignored
         case .missingLegalholdConsent:
-            return .blockedMissingLegalholdConsent
+            .blockedMissingLegalholdConsent
         }
     }
 }

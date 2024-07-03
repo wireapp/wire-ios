@@ -24,9 +24,9 @@ enum ConnectionsRepositoryError: Error {
 
     /// Failed to get receiver id from api response
 
-    case missingReceiverId
+    case missingReceiverID
 
     /// Failed to get conversation id from api response
 
-    case missingConversationId
+    case missingConversationID
 }

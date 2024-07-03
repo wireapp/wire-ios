@@ -72,7 +72,7 @@ final class TeamRepository: TeamRepositoryProtocol {
         await storeTeamLocally(team)
     }
 
-    private func fetchSelfTeamRemotely () async throws -> WireAPI.Team {
+    private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {
         do {
             return try await teamsAPI.getTeam(for: selfTeamID)
         } catch {
@@ -101,7 +101,7 @@ final class TeamRepository: TeamRepositoryProtocol {
                 domain: nil,
                 in: context
             )
-            team.pictureAssetId = teamAPIModel.logoID
+            team.pictureAssetID = teamAPIModel.logoID
             team.pictureAssetKey = teamAPIModel.logoKey
             team.needsToBeUpdatedFromBackend = false
         }
@@ -236,9 +236,9 @@ final class TeamRepository: TeamRepositoryProtocol {
 
 }
 
-private extension ConversationAction {
+extension ConversationAction {
 
-    var name: String {
+    fileprivate var name: String {
         switch self {
         case .addConversationMember:
             "add_conversation_member"

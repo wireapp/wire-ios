@@ -53,14 +53,13 @@ final class TeamRepositoryTests: XCTestCase {
         )
 
         let selfUser = await context.perform { [context, modelHelper] in
-            return modelHelper.createSelfUser(
+            modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID,
                 in: context
             )
         }
 
         userRespository.fetchSelfUser_MockValue = selfUser
-
     }
 
     override func tearDown() async throws {
@@ -102,7 +101,7 @@ final class TeamRepositoryTests: XCTestCase {
             XCTAssertEqual(team.remoteIdentifier, Scaffolding.selfTeamID)
             XCTAssertEqual(team.name, Scaffolding.teamName)
             XCTAssertEqual(team.creator?.remoteIdentifier, Scaffolding.teamCreatorID)
-            XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
+            XCTAssertEqual(team.pictureAssetID, Scaffolding.logoID)
             XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
             XCTAssertFalse(team.needsToBeUpdatedFromBackend)
         }

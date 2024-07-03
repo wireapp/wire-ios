@@ -22,8 +22,8 @@ import WireDesign
 private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 private let availabilityIndicatorBackgroundColor = UIColor {
     $0.userInterfaceStyle == .dark
-    ? BaseColorPalette.Grays.gray90
-    : .clear
+        ? BaseColorPalette.Grays.gray90
+        : .clear
 }
 
 private let accountImageHeight: CGFloat = 26
@@ -57,7 +57,7 @@ public final class AccountImageView: UIView {
     // provides a background color only for dark mode
     private let availabilityIndicatorBackgroundView = UIView()
 
-    public override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         .init(
             width: accountImageBorderWidth * 2 + accountImageHeight,
             height: accountImageBorderWidth * 2 + accountImageHeight
@@ -76,12 +76,12 @@ public final class AccountImageView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         updateAccountImageBorder()
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if #unavailable(iOS 17.0), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
@@ -92,7 +92,6 @@ public final class AccountImageView: UIView {
     // MARK: - Methods
 
     private func setupSubviews() {
-
         // wrapper of the image view which applies the border on its layer
         let accountImageViewWrapper = UIView()
         accountImageViewWrapper.translatesAutoresizingMaskIntoConstraints = false
@@ -174,7 +173,6 @@ public final class AccountImageView: UIView {
     }
 
     private func updateAvailabilityIndicator() {
-
         if availabilityIndicatorView.availability != availability {
             availabilityIndicatorView.availability = availability
         }

@@ -209,7 +209,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
         // Mock decryption
         proteusService.decryptDataForSession_MockMethod = { _, _ in
-            return (didCreateNewSession: true, decryptedData: decryptedMessageData)
+            (didCreateNewSession: true, decryptedData: decryptedMessageData)
         }
 
         // When
@@ -311,7 +311,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
         // Mock decryption
         proteusService.decryptDataForSession_MockMethod = { _, _ in
-            return (didCreateNewSession: false, decryptedData: decryptedMessageData)
+            (didCreateNewSession: false, decryptedData: decryptedMessageData)
         }
 
         // When
