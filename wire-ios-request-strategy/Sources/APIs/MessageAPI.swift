@@ -220,6 +220,12 @@ class MessageAPIV1: MessageAPIV0 {
             throw NetworkError.errorEncodingRequest
         }
 
+        if #available(iOS 16.0, *) {
+            try! await Task.sleep(for: .seconds(3))
+        } else {
+            // Fallback on earlier versions
+        }
+
         let request = ZMTransportRequest(
             path: path,
             method: .post,
