@@ -19,7 +19,7 @@
 import Foundation
 
 /// A wrapper that provides custom decoding of update events from
-/// JSON payloads received from the backed.
+/// JSON payloads received from the backend.
 ///
 /// The need for this wrapper arises from another need to persist
 /// update events in a database: to persist an update event we
