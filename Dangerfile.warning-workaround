@@ -4,7 +4,7 @@ xcode_summary.inline_mode = true
 xcode_summary.report ENV["XCRESULT_PATH"]
 
 # add extra warning
-result = xcode_summary.warning_error_count 'WireiOS.xcresult'
+result = xcode_summary.warning_error_count ENV["XCRESULT_PATH"]
 json_hash = JSON.parse(result, symbolize_names: true)
 
 warnings_count = json_hash[:warnings]
