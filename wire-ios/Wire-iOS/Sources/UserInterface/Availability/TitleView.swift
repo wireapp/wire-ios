@@ -42,11 +42,11 @@ class TitleView: UIView, DynamicTypeCapable {
         }
 
         createViews()
+        createConstraints()
     }
 
     // MARK: - Private methods
     private func createConstraints() {
-        [titleButton, stackView, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         stackView.fitIn(view: self)
     }
@@ -93,7 +93,6 @@ class TitleView: UIView, DynamicTypeCapable {
         subtitleLabel.text = subtitle
         subtitleLabel.font = .smallLightFont
 
-        createConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {
