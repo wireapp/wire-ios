@@ -43,8 +43,6 @@ public final class Cache<Key: Hashable, Value> {
         self.maxCost = maxCost
         self.maxElementsCount = maxElementsCount
         cacheBuffer = CircularArray<Key>(size: maxElementsCount)
-
-        // sss
     }
 
     /// Add a value to the cache
