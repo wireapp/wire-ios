@@ -18,26 +18,17 @@
 
 import Foundation
 
-extension UpdateEvent {
+/// The contents of a message, typically as a base-64 encoded
+/// Protobuf string.
 
-    init(
-        eventType: TeamEventType,
-        from decoder: any Decoder
-    ) throws {
-        let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
+public enum MessageContent: Equatable, Codable {
 
-        switch eventType {
-        case .delete:
-            self = .team(.delete)
+    /// Encrypted message content.
 
-        case .memberLeave:
-            let event = try TeamMemberLeaveEventDecoder().decode(from: container)
-            self = .team(.memberLeave(event))
+    case ciphertext(String)
 
-        case .memberUpdate:
-            let event = try TeamMemberUpdateEventDecoder().decode(from: container)
-            self = .team(.memberUpdate(event))
-        }
-    }
+    /// Unencrypted message content.
+
+    case plaintext(String)
 
 }

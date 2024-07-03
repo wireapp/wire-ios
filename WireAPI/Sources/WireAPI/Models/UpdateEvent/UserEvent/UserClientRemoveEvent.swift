@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where an existing self user client was removed.
 
-public struct UserClientRemoveEvent: Equatable {
+public struct UserClientRemoveEvent: Equatable, Codable {
 
     /// The id of the removed client.
 
