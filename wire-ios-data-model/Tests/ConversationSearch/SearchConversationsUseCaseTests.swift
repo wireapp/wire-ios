@@ -91,8 +91,9 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
         // - the "Announcements" conversation, because the conversation name contains "o"
+        // - the "Pipaluk Bróðir" conversation, because the conversation name contains "o"
         // - the "Guests" conversation, because at least one participant's name contains "o"
-        XCTAssertEqual(filtered, [[groupConversations[0], groupConversations[1]], [], [otherGroupConversations[0]]])
+        XCTAssertEqual(filtered, [[groupConversations[0], groupConversations[1]], [oneOnOneConversations[0]], [otherGroupConversations[0]]])
     }
 
     func testSpecialCharacter_ß_MatchesConversationNameWith_ss() {
