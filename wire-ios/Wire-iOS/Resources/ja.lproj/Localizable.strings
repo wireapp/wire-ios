@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "アーカイブ";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "ここから会話を始めます";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "メールアドレスとパスワードを追加";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "利用規約";
 "about.privacy.title" = "プライバシーポリシー";
 "about.license.title" = "ライセンス情報";
