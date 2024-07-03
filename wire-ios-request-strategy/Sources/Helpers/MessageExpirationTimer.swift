@@ -81,7 +81,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
             guard let expirationDate = $0.expirationDate else { return }
 
-            if expirationDate.compare(now) == .orderedAscending {
+            if expirationDate >= .now {
                 logWithMessage("expiring message when trying to start timer", message: $0)
                 $0.expire()
                 $0.managedObjectContext?.enqueueDelayedSave()
