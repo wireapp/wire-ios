@@ -36,11 +36,6 @@ protocol SyncManagerProtocol {
 
 }
 
-// Questions / notes:
-// - What happens if we call performSlowSync or performQuickSync multiple times?
-// - We might need to de-duplicate buffered events to make sure we decrypt and process new events.
-// - What should suspend() do if the sync state is not live?
-
 final class SyncManager: SyncManagerProtocol {
 
     var syncState: SyncState {
