@@ -99,12 +99,10 @@ final class SyncManager: SyncManagerProtocol {
 
     // TODO: Make non re-entrant
     func suspend() async throws {
-        // Already suspended.
         if case .suspended = state {
             return
         }
 
-        // In the process of suspending.
         guard !isSuspending else {
             return
         }
