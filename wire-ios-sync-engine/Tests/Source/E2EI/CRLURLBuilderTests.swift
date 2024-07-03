@@ -19,15 +19,15 @@
 import XCTest
 @testable import WireSyncEngine
 
-final class ProxyCRLProviderTests: XCTestCase {
+final class CRLURLBuilderTests: XCTestCase {
 
-    var sut: ProxyCRLProvider!
+    var sut: CRLURLBuilder!
     var distributionPoint: URL!
 
     override func setUp() {
         super.setUp()
 
-        sut = ProxyCRLProvider(shouldUseProxy: true, proxyURLString: "")
+        sut = CRLURLBuilder(shouldUseProxy: true, proxyURLString: "")
         distributionPoint = URL(string: "https://acme.diya.link/crl")
     }
 
@@ -40,7 +40,7 @@ final class ProxyCRLProviderTests: XCTestCase {
 
     func testThatItConstructsProxyCrlURL_ShouldUseProxy() {
         // GIVEN
-        sut = ProxyCRLProvider(shouldUseProxy: true, proxyURLString: "https://something.link/proxyCrl")
+        sut = CRLURLBuilder(shouldUseProxy: true, proxyURLString: "https://something.link/proxyCrl")
 
         // WHEN
         let urlToUse = sut.getURL(from: distributionPoint)
@@ -51,7 +51,7 @@ final class ProxyCRLProviderTests: XCTestCase {
 
     func testThatItReturnsDistributionPoint_ShouldNotUseProxy() {
         // GIVEN
-        sut = ProxyCRLProvider(shouldUseProxy: false, proxyURLString: "https://something.link/proxyCrl")
+        sut = CRLURLBuilder(shouldUseProxy: false, proxyURLString: "https://something.link/proxyCrl")
 
         // WHEN
         let urlToUse = sut.getURL(from: distributionPoint)
@@ -62,7 +62,7 @@ final class ProxyCRLProviderTests: XCTestCase {
 
     func testThatItReturnsDistributionPoint_ProxyURLIsNil() {
         // GIVEN
-        sut = ProxyCRLProvider(shouldUseProxy: true, proxyURLString: nil)
+        sut = CRLURLBuilder(shouldUseProxy: true, proxyURLString: nil)
 
         // WHEN
         let urlToUse = sut.getURL(from: distributionPoint)

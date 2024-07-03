@@ -116,7 +116,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         let e2eiFeatureConfig = await context.perform {
             self.featureRepository.fetchE2EI().config
         }
-        let proxyCRLProvider = ProxyCRLProvider(
+        let crlURLBuilder = CRLURLBuilder(
             shouldUseProxy: e2eiFeatureConfig.useProxyOnMobile ?? false,
             proxyURLString: e2eiFeatureConfig.crlProxy)
 
@@ -124,7 +124,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
         for distributionPoint in distributionPoints {
             do {
-                let crlURL = proxyCRLProvider.getURL(from: distributionPoint)
+                let crlURL = crlURLBuilder.getURL(from: distributionPoint)
                 let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
