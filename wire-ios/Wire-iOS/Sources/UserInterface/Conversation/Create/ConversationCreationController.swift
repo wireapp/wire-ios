@@ -225,7 +225,8 @@ final class ConversationCreationController: UIViewController {
             title: L10n.Localizable.General.next.capitalized,
             systemImage: false,
             target: self,
-            action: #selector(tryToProceed)
+            action: #selector(tryToProceed),
+            font: UIFont.font(for: .body1)
         )
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()
