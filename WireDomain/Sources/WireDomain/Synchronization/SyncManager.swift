@@ -83,6 +83,7 @@ final class SyncManager: SyncManagerProtocol {
         self.updateEventProcessor = updateEventProcessor
     }
 
+    // TODO: Make non re-entrant
     func performSlowSync() async throws {
         state = .slowSyncing
         let slowSync = SlowSync()
@@ -90,6 +91,7 @@ final class SyncManager: SyncManagerProtocol {
         try await performQuickSync()
     }
 
+    // TODO: Make non re-entrant
     func performQuickSync() async throws {
         if case .quickSyncing = state {
             return
@@ -116,6 +118,7 @@ final class SyncManager: SyncManagerProtocol {
         }
     }
 
+    // TODO: Make non re-entrant
     func suspend() async throws {
         // Already suspended.
         if case .suspended = state {

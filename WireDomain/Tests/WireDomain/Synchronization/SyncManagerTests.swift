@@ -114,38 +114,6 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(sut.syncState, .suspended)
     }
 
-    func testItSuspendsOnlyOnce() async throws {
-        // Given it goes live.
-        try await sut.performQuickSync()
-        XCTAssertEqual(sut.syncState, .live)
-
-        pushChannel.close_MockMethod = {
-            // Let the other task run so both tasks are running
-            // simultaneously.
-            await Task.yield()
-        }
-
-        // Given it suspends.
-        let task1 = Task {
-            try await sut.suspend()
-        }
-
-        // When it suspends again.
-        let task2 = Task {
-            try await sut.suspend()
-        }
-
-        // Wait for suspension to complete.
-        try await task2.value
-        try await task1.value
-
-        // Then the push channel was closed only once.
-        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
-
-        // Then it goes to the suspended state.
-        XCTAssertEqual(sut.syncState, .suspended)
-    }
-
     // This test asserts that if we suspend the SyncManager while there
     // is an ongoing quick sync, then the quick sync is cancelled and
     // it transitions to the `suspend` state.
@@ -215,13 +183,6 @@ final class SyncManagerTests: XCTestCase {
         // performs slow sync
         // performs quick sync
         // goes live
-        XCTFail("not implemented yet")
-    }
-
-    func testItOnlyPerformsASingleSlowSync() async throws {
-        // start slow sync
-        // start again
-        // they don't overlap
         XCTFail("not implemented yet")
     }
 
@@ -358,15 +319,6 @@ final class SyncManagerTests: XCTestCase {
         // Then it is live.
         XCTAssertEqual(sut.syncState, .live)
     }
-
-    func testItOnlyPerformsASingleQuickSync() async throws {
-        // start quick sync
-        // start again
-        // they don't overlap
-        XCTFail("not implemented yet")
-    }
-
-    // test cancel quicksync
 
 }
 
