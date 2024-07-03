@@ -1,6 +1,8 @@
 require 'json'
 
-message "💡 Danger"
+system('ls -l')
+system('ls -l Danger.results')
+system('cat Danger.results/*')
 
 xcode_summary.inline_mode = true
 xcode_summary.report ENV["XCRESULT_PATH"]
@@ -30,7 +32,7 @@ if File.exist?(filename)
   # previous_result = JSON.parse(File.read(filename), symbolize_names: true)
 end
 
-message "🚨 doesn't work previous: #{previous_result} current: #{current_result}"
+message "note previous: #{previous_result} current: #{current_result}"
 
 # compare and notify if there are warnings
 if current_result[:warnings] > 0 && current_result[:warnings] == previous_result[:warnings]
@@ -38,7 +40,7 @@ if current_result[:warnings] > 0 && current_result[:warnings] == previous_result
 elsif current_result[:warnings] < previous_result[:warnings]
   message "✅ The number of warnings decreased from #{previous_result[:warnings]} to #{current_result[:warnings]}."
 elsif current_result[:warnings] > previous_result[:warnings]
-  warn "🚨 #{previous_result[:warnings] - current_result[:warnings]} warnings introduced, please fix them!"
+  warn "🚨 #{current_result[:warnings] - previous_result[:warnings]} warning(s) introduced, please fix them!"
 end
 
 # store current values
