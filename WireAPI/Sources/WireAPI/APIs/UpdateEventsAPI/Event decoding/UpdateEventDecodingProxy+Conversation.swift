@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension UpdateEvent {
+extension UpdateEventDecodingProxy {
 
     init(
         eventType: ConversationEventType,
@@ -29,63 +29,63 @@ extension UpdateEvent {
         switch eventType {
         case .accessUpdate:
             let event = try ConversationAccessUpdateEventDecoder().decode(from: container)
-            self = .conversation(.accessUpdate(event))
+            updateEvent = .conversation(.accessUpdate(event))
 
         case .codeUpdate:
             let event = try ConversationCodeUpdateEventDecoder().decode(from: container)
-            self = .conversation(.codeUpdate(event))
+            updateEvent = .conversation(.codeUpdate(event))
 
         case .create:
             let event = try ConversationCreateEventDecoder().decode(from: container)
-            self = .conversation(.create(event))
+            updateEvent = .conversation(.create(event))
 
         case .delete:
             let event = try ConversationDeleteEventDecoder().decode(from: container)
-            self = .conversation(.delete(event))
+            updateEvent = .conversation(.delete(event))
 
         case .memberJoin:
             let event = try ConversationMemberJoinEventDecoder().decode(from: container)
-            self = .conversation(.memberJoin(event))
+            updateEvent = .conversation(.memberJoin(event))
 
         case .memberLeave:
             let event = try ConversationMemberLeaveEventDecoder().decode(from: container)
-            self = .conversation(.memberLeave(event))
+            updateEvent = .conversation(.memberLeave(event))
 
         case .memberUpdate:
             let event = try ConversationMemberUpdateEventDecoder().decode(from: container)
-            self = .conversation(.memberUpdate(event))
+            updateEvent = .conversation(.memberUpdate(event))
 
         case .messageTimerUpdate:
             let event = try ConversationMessageTimerUpdateEventDecoder().decode(from: container)
-            self = .conversation(.messageTimerUpdate(event))
+            updateEvent = .conversation(.messageTimerUpdate(event))
 
         case .mlsMessageAdd:
             let event = try ConversationMLSMessageAddEventDecoder().decode(from: container)
-            self = .conversation(.mlsMessageAdd(event))
+            updateEvent = .conversation(.mlsMessageAdd(event))
 
         case .mlsWelcome:
             let event = try ConversationMLSWelcomeEventDecoder().decode(from: container)
-            self = .conversation(.mlsWelcome(event))
+            updateEvent = .conversation(.mlsWelcome(event))
 
         case .otrMessageAdd:
             let event = try ConversationProteusMessageAddEventDecoder().decode(from: container)
-            self = .conversation(.proteusMessageAdd(event))
+            updateEvent = .conversation(.proteusMessageAdd(event))
 
         case .protocolUpdate:
             let event = try ConversationProtocolUpdateEventDecoder().decode(from: container)
-            self = .conversation(.protocolUpdate(event))
+            updateEvent = .conversation(.protocolUpdate(event))
 
         case .receiptModeUpdate:
             let event = try ConversationReceiptModeUpdateEventDecoder().decode(from: container)
-            self = .conversation(.receiptModeUpdate(event))
+            updateEvent = .conversation(.receiptModeUpdate(event))
 
         case .rename:
             let event = try ConversationRenameEventDecoder().decode(from: container)
-            self = .conversation(.rename(event))
+            updateEvent = .conversation(.rename(event))
 
         case .typing:
             let event = try ConversationTypingEventDecoder().decode(from: container)
-            self = .conversation(.typing(event))
+            updateEvent = .conversation(.typing(event))
         }
     }
 
