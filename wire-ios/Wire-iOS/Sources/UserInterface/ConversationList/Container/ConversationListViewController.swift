@@ -263,11 +263,14 @@ final class ConversationListViewController: UIViewController, UITabBarController
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
 
-        addChild(searchController)
-        stackView.addArrangedSubview(searchController.view)
-        searchController.didMove(toParent: self)
+        // addChild(searchController)
+        stackView.addArrangedSubview(searchController.searchBar)
+        // searchController.didMove(toParent: self)
 
-        searchController.view.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        searchController.searchBar.barTintColor = ColorTheme.Backgrounds.surface
+
+        // TODO: now the searchbar disappears when tapped
+        // try embeding a whole view controller + navigation bar + searchbar clipping the bounds
     }
 
     private func setupFilterContainerView() {
