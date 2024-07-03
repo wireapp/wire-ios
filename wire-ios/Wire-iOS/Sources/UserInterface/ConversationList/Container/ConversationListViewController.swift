@@ -34,7 +34,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
 
-    private lazy var filterContainerView = UIView()
+    private let searchController = UISearchController(searchResultsController: .none)
+    private let filterContainerView = UIView()
 
     private lazy var filterLabel: UILabel = {
         let label = UILabel()
@@ -166,6 +167,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupOnboardingHint()
         setupNetworkStatusBar()
         setupFilterContainerView()
+        setupSearchController()
 
         stackView.addArrangedSubview(contentContainer)
 
@@ -180,8 +182,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
 
         applyColorTheme()
-
-        setupSearchController()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -256,7 +256,21 @@ final class ConversationListViewController: UIViewController, UITabBarController
         ])
     }
 
-    func setupFilterContainerView() {
+    private func setupSearchController() {
+
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.isTranslucent = false
+        searchController.searchResultsUpdater = self
+
+        addChild(searchController)
+        stackView.addArrangedSubview(searchController.view)
+        searchController.didMove(toParent: self)
+
+        searchController.view.heightAnchor.constraint(equalToConstant: 50).isActive = true
+    }
+
+    private func setupFilterContainerView() {
         stackView.addArrangedSubview(filterContainerView)
 
         let filterContainerStackView = UIStackView()
@@ -334,17 +348,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
     private func applyColorTheme() {
         view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
         titleViewLabel?.textColor = ColorTheme.Backgrounds.onSurfaceVariant
-    }
-
-    private func setupSearchController() {
-
-        let searchController = UISearchController(searchResultsController: .none)
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.isTranslucent = false
-        searchController.searchResultsUpdater = self
-
-        navigationItem.searchController = searchController
     }
 
     // MARK: - No Contact Label Management
