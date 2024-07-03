@@ -1,0 +1,42 @@
+{
+  "configurations" : [
+    {
+      "id" : "3C155FFB-129C-4EDD-9E2A-84C8B05A787A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "enabled" : false,
+        "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
+        "value" : "1"
+      }
+    ],
+    "mallocScribbleEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireRequestStrategy.xcodeproj",
+      "identifier" : "166901691D707509000FE4AF",
+      "name" : "WireRequestStrategy"
+    },
+    "undefinedBehaviorSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/wire-ios-request-strategy\/WireRequestStrategy.xcodeproj",
+        "identifier" : "166901731D707509000FE4AF",
+        "name" : "WireRequestStrategyTests"
+      }
+    }
+  ],
+  "version" : 1
+}

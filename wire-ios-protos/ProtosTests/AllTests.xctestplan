@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "F2102EC5-B5E2-4DF5-9F36-8C6EC4819DFE",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireProtos.xcodeproj",
+        "identifier" : "090838081B872DBF00629095",
+        "name" : "WireProtosTests"
+      }
+    }
+  ],
+  "version" : 1
+}

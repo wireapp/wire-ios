@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "8471E351-AE48-451E-90E0-BFD5B81CD956",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireCryptobox.xcodeproj",
+      "identifier" : "0928E2331BA0777A0057232E",
+      "name" : "WireCryptobox"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireCryptobox.xcodeproj",
+        "identifier" : "BA7EF9681B7109B600204A8E",
+        "name" : "WireCryptoboxTests"
+      }
+    }
+  ],
+  "version" : 1
+}

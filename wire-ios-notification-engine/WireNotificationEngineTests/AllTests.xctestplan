@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "5218A40A-16E4-45F4-883F-67BA675941EB",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireNotificationEngine.xcodeproj",
+      "identifier" : "067ECB392487A93D00701956",
+      "name" : "WireNotificationEngine"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireNotificationEngine.xcodeproj",
+        "identifier" : "EE761664299E60C9005DB75F",
+        "name" : "WireNotificationEngineTests"
+      }
+    }
+  ],
+  "version" : 1
+}

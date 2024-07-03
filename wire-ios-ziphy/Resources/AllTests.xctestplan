@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "B4EBA392-03CE-421F-883A-63F77BAF9F9D",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:Ziphy.xcodeproj",
+          "identifier" : "DBF380581B15C0B800369FB7",
+          "name" : "Ziphy"
+        }
+      ]
+    },
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Ziphy.xcodeproj",
+      "identifier" : "DBF380581B15C0B800369FB7",
+      "name" : "Ziphy"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/wire-ios-ziphy\/Ziphy.xcodeproj",
+        "identifier" : "DBF380631B15C0B800369FB7",
+        "name" : "ZiphyTests"
+      }
+    }
+  ],
+  "version" : 1
+}

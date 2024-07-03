@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "35C4DF72-A822-48DC-8D0A-01F14408DA2B",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireProtos.xcodeproj",
+      "identifier" : "090837FD1B872DBF00629095",
+      "name" : "WireProtos"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireProtos.xcodeproj",
+        "identifier" : "090838081B872DBF00629095",
+        "name" : "WireProtosTests"
+      }
+    }
+  ],
+  "version" : 1
+}

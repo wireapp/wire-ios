@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "0D4744CE-E393-4E43-9091-F258FBF4B068",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:WireLinkPreview.xcodeproj",
+          "identifier" : "BFF057891D25434D004A2C29",
+          "name" : "WireLinkPreview"
+        }
+      ]
+    },
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireLinkPreview.xcodeproj",
+      "identifier" : "BFF057891D25434D004A2C29",
+      "name" : "WireLinkPreview"
+    }
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "E2ETests"
+      ],
+      "target" : {
+        "containerPath" : "container:WireLinkPreview.xcodeproj",
+        "identifier" : "BFF057931D25434E004A2C29",
+        "name" : "WireLinkPreviewTests"
+      }
+    }
+  ],
+  "version" : 1
+}

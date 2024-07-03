@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "BFCBE82D-591A-493B-AC9E-A25082E6680E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireTransport.xcodeproj",
+      "identifier" : "3E88BCA61B1F35DF00232589",
+      "name" : "WireTransport-ios"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireTransport.xcodeproj",
+        "identifier" : "3E88BCB11B1F35DF00232589",
+        "name" : "WireTransport-ios-tests"
+      }
+    }
+  ],
+  "version" : 1
+}
