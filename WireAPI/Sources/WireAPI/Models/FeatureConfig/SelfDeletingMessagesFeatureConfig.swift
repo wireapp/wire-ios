@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Self Deleting Messages* feature.
 
-public struct SelfDeletingMessagesFeatureConfig: Equatable {
+public struct SelfDeletingMessagesFeatureConfig: Equatable, Codable {
 
     /// The feature's status.
 

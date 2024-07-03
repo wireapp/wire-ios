@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where an mls message was received in a conversation.
 
-public struct ConversationMLSMessageAddEvent: Equatable {
+public struct ConversationMLSMessageAddEvent: Equatable, Codable {
 
     /// The id of the conversation.
 
