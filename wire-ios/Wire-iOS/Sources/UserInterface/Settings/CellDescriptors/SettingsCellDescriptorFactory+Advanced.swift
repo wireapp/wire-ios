@@ -24,11 +24,11 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
-    var advancedGroup: SettingsCellDescriptorType {
+    func advancedGroup(userSession: UserSession) -> SettingsCellDescriptorType {
         var items = [SettingsSectionDescriptor]()
 
         items.append(contentsOf: [
-            troubleshootingSection,
+            troubleshootingSection(userSession: userSession),
             debuggingToolsSection,
             pushSection,
             versionSection
@@ -43,11 +43,26 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
-    private var troubleshootingSection: SettingsSectionDescriptor {
+    private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                return SettingsTechnicalReportViewController()
+
+                // TODO: How to avoid this?
+                guard let contextProvider = userSession as? ContextProvider else {
+                    assertionFailure()
+                    return nil
+                }
+
+                let router = SettingsDebugReportRouter()
+                let viewModel = SettingsDebugReportViewModel(
+                    router: router,
+                    userSession: userSession,
+                    contextProvider: contextProvider
+                )
+                let viewController = SettingsDebugReportViewController(viewModel: viewModel)
+                router.viewController = viewController
+                return viewController
         })
 
         return SettingsSectionDescriptor(
