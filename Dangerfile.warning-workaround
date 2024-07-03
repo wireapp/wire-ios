@@ -21,14 +21,16 @@ if File.exist?(filename)
 
   begin
     previous_result = JSON.parse(File.read(filename), symbolize_names: true)
-    puts "Parsed JSON data: #{previous_result}"
+    message "Parsed JSON data: #{previous_result}"
   rescue JSON::ParserError => e
-    puts "Failed to parse JSON: #{e.message}"
+    message "Failed to parse JSON: #{e.message}"
     File.write(filename, JSON.generate({ warnings: 0, errors: 0 }))
   end
 
   # previous_result = JSON.parse(File.read(filename), symbolize_names: true)
 end
+
+message "🚨 doesn't work previous: #{previous_result} current: #{current_result}"
 
 # compare and notify if there are warnings
 if current_result[:warnings] > 0 && current_result[:warnings] == previous_result[:warnings]
@@ -37,8 +39,6 @@ elsif current_result[:warnings] < previous_result[:warnings]
   message "✅ The number of warnings decreased from #{previous_result[:warnings]} to #{current_result[:warnings]}."
 elsif current_result[:warnings] > previous_result[:warnings]
   warn "🚨 #{previous_result[:warnings] - current_result[:warnings]} warnings introduced, please fix them!"
-else
-  warn "🚨 doesn't work previous: #{previous_result} current: #{current_result}"
 end
 
 # store current values
