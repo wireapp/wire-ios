@@ -1,9 +1,6 @@
 require 'json'
 
-system('ls -l Danger.results')
-system('cat Danger.results/*')
-
-xcode_summary.inline_mode = true
+# xcode_summary.inline_mode = true
 xcode_summary.report ENV["XCRESULT_PATH"]
 
 # don't display all the warnings,
