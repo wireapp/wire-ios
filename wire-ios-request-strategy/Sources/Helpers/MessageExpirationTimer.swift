@@ -24,6 +24,8 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     let entityNames: [String]
     let filter: NSPredicate?
 
+    private let logAttributesBuilder: MessageLogAttributesBuilder
+
     public override init() {
         fatalError("Should not use this init")
     }
@@ -32,7 +34,10 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         self.localNotificationsDispatcher = localNotificationDispatcher
         self.entityNames = entityNames
         self.filter = filter
+        self.logAttributesBuilder = MessageLogAttributesBuilder(context: moc)
+
         super.init(managedObjectContext: moc)
+
         self.timerCompletionBlock = { [weak self] message, _ in
             if let message = message {
                 self?.timerFired(for: message)
@@ -72,27 +77,27 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         messages.forEach {
             guard self.entityNames.contains(type(of: $0).entityName()) else { return }
 
-            if let filter = self.filter, !filter.evaluate(with: $0) {
-                return
-            }
+            if let filter = self.filter, !filter.evaluate(with: $0) { return }
 
             guard let expirationDate = $0.expirationDate else { return }
+
             if expirationDate.compare(now) == .orderedAscending {
-                if let proteusMessage = $0 as? (any ProteusMessage) {
-                    WireLogger.messaging.debug("expiring message when trying to start timer", attributes: proteusMessage.logInformation)
-                }
+                logWithMessage("expiring message when trying to start timer", message: $0)
                 $0.expire()
                 $0.managedObjectContext?.enqueueDelayedSave()
             } else {
 
                 if super.startTimerIfNeeded(for: $0, fireDate: expirationDate, userInfo: [:]) {
-                    if let proteusMessage = $0 as? (any ProteusMessage) {
-                        WireLogger.messaging.debug("starting timer for message", attributes: proteusMessage.logInformation)
-
-                    }
+                    logWithMessage("starting timer for message", message: $0)
                 }
             }
         }
     }
 
+    private func logWithMessage(_ text: String, message: ZMMessage) {
+        guard let proteusMessage = message as? (any ProteusMessage) else { return }
+
+        let logAttributes = logAttributesBuilder.syncLogAttributes(proteusMessage)
+        WireLogger.messaging.debug(text, attributes: logAttributes)
+    }
 }
