@@ -1,5 +1,7 @@
 require 'json'
 
+message "💡 Danger"
+
 xcode_summary.inline_mode = true
 xcode_summary.report ENV["XCRESULT_PATH"]
 
@@ -26,6 +28,8 @@ elsif current_result[:warnings] < previous_result[:warnings]
   message "✅ The number of warnings decreased from #{previous_result[:warnings]} to #{current_result[:warnings]}."
 elsif current_result[:warnings] > previous_result[:warnings]
   warn "🚨 #{previous_result[:warnings] - current_result[:warnings]} warnings introduced, please fix them!"
+else
+  warn "🚨 doesn't work previous: #{previous_result} current: #{current_result}"
 end
 
 # store current values
