@@ -20,7 +20,7 @@ import Foundation
 
 /// A label used to categorize conversations.
 
-public struct ConversationLabel: Equatable {
+public struct ConversationLabel: Equatable, Codable {
 
     /// The label's id.
 

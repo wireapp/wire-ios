@@ -21,7 +21,7 @@ import Foundation
 /// A persisted property stored on the server used to
 /// share self user settings across devices.
 
-public enum UserProperty: Equatable {
+public enum UserProperty: Equatable, Codable {
 
     /// Whether the self user has enabled read receipts.
 

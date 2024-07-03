@@ -121,7 +121,7 @@ extension EventDecoder {
         if createdNewSession {
             await context.perform {
                 let senderClientSet: Set<UserClient> = [senderClient]
-                selfClient?.decrementNumberOfRemainingKeys()
+                selfClient?.decrementNumberOfRemainingProteusKeys()
                 selfClient?.addNewClientToIgnored(senderClient)
                 selfClient?.updateSecurityLevelAfterDiscovering(senderClientSet)
             }
