@@ -59,7 +59,7 @@ extension EventDecoder {
                     LogAttributesKey.selfClientId.rawValue: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     LogAttributesKey.selfUserId.rawValue: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
                 ].merging(event.logAttributes, uniquingKeysWith: { _, new in new })
-                WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...)", attributes: additionalInfo)
+                WireLogger.updateEvent.error("decrypting proteus event... failed: is not for self client, dropping...)", attributes: additionalInfo)
                 return (UserClient?.none, ProteusSessionID?.none)
             }
 

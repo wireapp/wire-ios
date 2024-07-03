@@ -223,6 +223,7 @@ public extension WireLogger {
     static let ui = WireLogger(tag: "UI")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
+    static let pushChannel = WireLogger(tag: "push-channel")
 
 }
 
