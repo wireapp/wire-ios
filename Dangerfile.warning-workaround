@@ -18,7 +18,16 @@ Dir.mkdir(directory) unless Dir.exist?(directory)
 # read current values
 previous_result = { warnings: 0, errors: 0 }
 if File.exist?(filename)
-  previous_result = JSON.parse(File.read(filename), symbolize_names: true)
+
+  begin
+    previous_result = JSON.parse(File.read(filename), symbolize_names: true)
+    puts "Parsed JSON data: #{previous_result}"
+  rescue JSON::ParserError => e
+    puts "Failed to parse JSON: #{e.message}"
+    File.write(filename, JSON.generate({ warnings: 0, errors: 0 }))
+  end
+
+  # previous_result = JSON.parse(File.read(filename), symbolize_names: true)
 end
 
 # compare and notify if there are warnings
@@ -33,4 +42,4 @@ else
 end
 
 # store current values
-File.write(filename, current_result)
+File.write(filename, JSON.generate(current_result))
