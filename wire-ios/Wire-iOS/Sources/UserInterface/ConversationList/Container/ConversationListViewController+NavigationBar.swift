@@ -24,69 +24,7 @@ import WireSyncEngine
 
 extension ConversationListViewController {
 
-<<<<<<< HEAD:wire-ios/Wire-iOS/Sources/UserInterface/ConversationList/Container/ConversationListViewController+NavigationBar.swift
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
-=======
-final class ConversationListTopBarViewController: UIViewController {
-
-    private let account: Account
-
-    /// Name, availability and verification info about the self user.
-    public var selfUserStatus = UserStatus() {
-        didSet {
-            guard viewIfLoaded != nil else { return }
-            updateTitleView()
-        }
-    }
-
-    private let selfUser: SelfUserType
-    private var userSession: UserSession
-    private var observerToken: NSObjectProtocol?
-
-    private var topBar: TopBar? {
-        viewIfLoaded as? TopBar
-    }
-
-    private weak var userStatusViewController: UserStatusViewController?
-    private weak var titleViewLabel: UILabel?
-
-    /// init a ConversationListTopBarViewController
-    ///
-    /// - Parameters:
-    ///   - account: the Account of the user
-    ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    init(
-        account: Account,
-        selfUser: SelfUserType,
-        userSession: UserSession
-    ) {
-        self.account = account
-        self.selfUser = selfUser
-        self.userSession = userSession
-
-        super.init(nibName: nil, bundle: nil)
-
-        observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
-
-        viewRespectsSystemMinimumLayoutMargins = false
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func loadView() {
-        view = TopBar()
-    }
-
-    override func viewDidLoad() {
-        topBar?.splitSeparator = false
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-        view.addBorder(for: .bottom)
-
-        updateTitleView()
->>>>>>> 9d1202ef97 (fix: account name overflows in top bar  - WPB-7281 (#1642)):wire-ios/Wire-iOS/Sources/UserInterface/ConversationList/ConversationListTopBarViewController.swift
         updateAccountView()
     }
 
@@ -150,15 +88,9 @@ final class ConversationListTopBarViewController: UIViewController {
 
     // MARK: - Title View
 
-<<<<<<< HEAD:wire-ios/Wire-iOS/Sources/UserInterface/ConversationList/Container/ConversationListViewController+NavigationBar.swift
     func updateTitleView() {
         if viewModel.selfUserLegalHoldSubject.isTeamMember {
             defer { userStatusViewController?.userStatus = viewModel.selfUserStatus }
-=======
-    private func updateTitleView() {
-        if selfUser.isTeamMember {
-            defer { userStatusViewController?.userStatus = selfUserStatus }
->>>>>>> 9d1202ef97 (fix: account name overflows in top bar  - WPB-7281 (#1642)):wire-ios/Wire-iOS/Sources/UserInterface/ConversationList/ConversationListTopBarViewController.swift
             guard userStatusViewController == nil else { return }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
@@ -240,40 +172,6 @@ final class ConversationListTopBarViewController: UIViewController {
         return button
     }
 
-<<<<<<< HEAD:wire-ios/Wire-iOS/Sources/UserInterface/ConversationList/Container/ConversationListViewController+NavigationBar.swift
-=======
-    private func updateAccountView() {
-        topBar?.leftView = createAccountView()
-    }
-
-    private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else {
-            return UIView()
-        }
-
-        let user = ZMUser.selfUser(inUserSession: session)
-
-        let accountView = AccountViewFactory.viewFor(account: account, user: user, displayContext: .conversationListHeader)
-
-        accountView.unreadCountStyle = .current
-        accountView.autoUpdateSelection = false
-
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentSettings))
-        accountView.addGestureRecognizer(tapGestureRecognizer)
-
-        accountView.accessibilityTraits = .button
-        accountView.accessibilityIdentifier = "bottomBarSettingsButton"
-        accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
-
-        if let selfUser = ZMUser.selfUser(),
-           selfUser.clientsRequiringUserAttention.count > 0 {
-            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
-        }
-
-        return accountView.wrapInAvatarSizeContainer()
-    }
-
->>>>>>> 9d1202ef97 (fix: account name overflows in top bar  - WPB-7281 (#1642)):wire-ios/Wire-iOS/Sources/UserInterface/ConversationList/ConversationListTopBarViewController.swift
     func updateLegalHoldIndictor() {
         switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
         case .disabled:
