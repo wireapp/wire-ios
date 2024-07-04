@@ -270,7 +270,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(contextSaved)
 
         // and WHEN
-        spinMainQueue(withTimeout: 0.2) // the delayed save will wait 0.1 seconds
+        let predicate = NSPredicate { _, _ in blockExecuted }
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+        wait(for: [expectation], timeout: 1)
 
         // THEN
         XCTAssertTrue(executed)
