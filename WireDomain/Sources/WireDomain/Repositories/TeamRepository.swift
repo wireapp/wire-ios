@@ -72,7 +72,7 @@ final class TeamRepository: TeamRepositoryProtocol {
         await storeTeamLocally(team)
     }
 
-    private func fetchSelfTeamRemotely () async throws -> WireAPI.Team {
+    private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {
         do {
             return try await teamsAPI.getTeam(for: selfTeamID)
         } catch {
@@ -174,7 +174,7 @@ final class TeamRepository: TeamRepositoryProtocol {
         do {
             return try await teamsAPI.getTeamMembers(
                 for: selfTeamID,
-                maxResults: 2000
+                maxResults: 2_000
             )
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)

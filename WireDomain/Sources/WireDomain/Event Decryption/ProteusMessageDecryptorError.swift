@@ -18,9 +18,9 @@
 
 enum ProteusMessageDecryptorError: Error {
 
-        case selfClientNotFound
-        case senderClientNotFound
-        case proteusSessionIDNotFound
-        case senderFailedToEncrypt
+    case selfClientNotFound
+    case senderClientNotFound
+    case proteusSessionIDNotFound
+    case senderFailedToEncrypt
 
 }

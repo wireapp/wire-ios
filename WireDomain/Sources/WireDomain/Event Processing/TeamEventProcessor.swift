@@ -36,7 +36,7 @@ protocol TeamEventProcessorProtocol {
 
 struct TeamEventProcessor {
 
-    func processEvent(_ event: TeamEvent) async throws {
+    func processEvent(_: TeamEvent) async throws {
         assertionFailure("not implemented yet")
     }
 

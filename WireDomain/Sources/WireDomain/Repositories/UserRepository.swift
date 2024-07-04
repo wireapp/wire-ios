@@ -41,7 +41,7 @@ public final class UserRepository: UserRepositoryProtocol {
     // MARK: - Methods
 
     public func fetchSelfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
+        ZMUser.selfUser(in: context)
     }
 
 }

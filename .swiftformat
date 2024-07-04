@@ -1,13 +1,15 @@
---exclude Carthage, DerivedData
+--exclude Carthage,DerivedData,**/AutoMockable.generated.swift
 
---enable acronyms
 --enable blankLineAfterSwitchCase
 --disable hoistTry
+# this rule is nice but is hard to apply on existing codebases (Core Data, Codable)
+# --enable acronyms
 
---extensionacl on-declarations
 --ifdef outdent
 --stripunusedargs unnamed-only
 --patternlet inline
 
 --commas inline
 --typeblanklines preserve
+
+--decimalgrouping 3,4

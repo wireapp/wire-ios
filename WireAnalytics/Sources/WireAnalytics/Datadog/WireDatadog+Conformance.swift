@@ -20,6 +20,6 @@
 
 import WireDatadog
 
-extension WireDatadog: WireDatadogProtocol { }
+extension WireDatadog: WireDatadogProtocol {}
 
 #endif

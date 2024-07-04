@@ -37,12 +37,9 @@ final class AccountImageViewSnapshotTests: XCTestCase {
     }
 
     func testAllAccountTypesAndAvailabilities() {
-
         for accountType in AccountImageView.AccountType.allCases {
             for availability in Availability.allCases + [Availability?.none] {
-
                 if #available(iOS 16.0, *) {
-
                     // Given
                     let rootView = AccountImageView_Previews.previewWithNavigationBar(accountType, availability)
                     let hostingControllerView = UIHostingController(rootView: rootView).view!
