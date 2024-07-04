@@ -16,32 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
-import XCTest
+import Foundation
 
-@testable import Wire
+/// Errors to throw from test code.
 
-final class VersionInfoViewControllerSnapshotTests: XCTestCase {
+struct TestError: Error {
 
-    var sut: VersionInfoViewController!
-    private var snapshotHelper: SnapshotHelper!
+    let message: String
 
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-        let path = Bundle(for: type(of: self)).path(forResource: "DummyComponentsVersions", ofType: "plist")!
-
-        sut = VersionInfoViewController(versionsPlist: path)
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
 }
