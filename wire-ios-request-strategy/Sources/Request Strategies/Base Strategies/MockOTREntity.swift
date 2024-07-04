@@ -79,6 +79,9 @@ extension MockOTREntity: ProteusMessage {
         return ("qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
     }
 
+    func setExpirationDate() {
+        // no-op
+    }
 }
 
 func == (lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
