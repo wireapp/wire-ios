@@ -81,9 +81,6 @@ public final class Cache<Key: Hashable, Value> {
         cache.removeAll()
         cacheBuffer.clear()
         currentCost = 0
-
-        var x = 0
-        print(x)
     }
 
     private func purgeBasedOnElementsCount(adding key: Key) -> Bool {
