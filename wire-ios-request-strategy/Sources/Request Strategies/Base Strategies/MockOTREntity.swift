@@ -25,6 +25,7 @@ final class MockOTREntity: OTREntity {
 
     var context: NSManagedObjectContext
     var expirationDate: Date?
+    var shouldExpire: Bool = false
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
     func expire() {
