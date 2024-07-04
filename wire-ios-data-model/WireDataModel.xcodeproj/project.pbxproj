@@ -551,6 +551,7 @@
 		E6F443232B16294400D2B08A /* zmessaging.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */; };
 		E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */; };
 		E94FD49A2B8F432200F2B4F3 /* MockActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169FF3A427157B3800330C2E /* MockActionHandler.swift */; };
+		E955D3DD2C36997F0090BEAB /* AutoMockable.manual.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3DC2C36997F0090BEAB /* AutoMockable.manual.swift */; };
 		E97A542827B122D80009DCCF /* AccessRoleMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */; };
 		E999AC402BC9467E00569E79 /* CreateConversationGuestLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E999AC3F2BC9467E00569E79 /* CreateConversationGuestLinkAction.swift */; };
 		E9A96E7A2B88B64800914FDD /* PushSupportedProtocolsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E792B88B64800914FDD /* PushSupportedProtocolsAction.swift */; };
@@ -1515,6 +1516,7 @@
 		E6F443212B16294000D2B08A /* zmessaging2.107.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.107.0.xcdatamodel; sourceTree = "<group>"; };
 		E6F443222B16294000D2B08A /* zmessaging2.103.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.103.0.xcdatamodel; sourceTree = "<group>"; };
 		E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-98-0.wiredatabase"; sourceTree = "<group>"; };
+		E955D3DC2C36997F0090BEAB /* AutoMockable.manual.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.manual.swift; sourceTree = "<group>"; };
 		E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMigrationTests.swift; sourceTree = "<group>"; };
 		E999AC3F2BC9467E00569E79 /* CreateConversationGuestLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkAction.swift; sourceTree = "<group>"; };
 		E9A96E792B88B64800914FDD /* PushSupportedProtocolsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsAction.swift; sourceTree = "<group>"; };
@@ -2184,6 +2186,7 @@
 		594EB2FF2B1E31D30022A5CD /* generated */ = {
 			isa = PBXGroup;
 			children = (
+				E955D3DC2C36997F0090BEAB /* AutoMockable.manual.swift */,
 				594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */,
 			);
 			path = generated;
@@ -4038,6 +4041,7 @@
 				5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */,
 				EEA58F132B7115A1006DEE32 /* ModelHelper.swift in Sources */,
 				EEA58F112B70E89B006DEE32 /* CoreDataStackHelper.swift in Sources */,
+				E955D3DD2C36997F0090BEAB /* AutoMockable.manual.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

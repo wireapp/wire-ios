@@ -100,3 +100,57 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     }
 
 }
+
+public class MockMessageAppendableConversation: MessageAppendableConversation {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - conversationType
+
+    public var conversationType: ZMConversationType {
+        get { return underlyingConversationType }
+        set(value) { underlyingConversationType = value }
+    }
+
+    public var underlyingConversationType: ZMConversationType!
+
+    // MARK: - localParticipants
+
+    public var localParticipants: Set<ZMUser> {
+        get { return underlyingLocalParticipants }
+        set(value) { underlyingLocalParticipants = value }
+    }
+
+    public var underlyingLocalParticipants: Set<ZMUser>!
+
+    // MARK: - draftMessage
+
+    public var draftMessage: DraftMessage?
+
+
+    // MARK: - appendText
+
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations: [(content: String, mentions: [Mention], quotedMessage: (any ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID)] = []
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockError: Error?
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod: ((String, [Mention], (any ZMConversationMessage)?, Bool, UUID) throws -> any ZMConversationMessage)?
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockValue: (any ZMConversationMessage)?
+
+    @discardableResult
+    public func appendText(content: String, mentions: [Mention], replyingTo quotedMessage: (any ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID) throws -> any ZMConversationMessage {
+        appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.append((content: content, mentions: mentions, quotedMessage: quotedMessage, fetchLinkPreview: fetchLinkPreview, nonce: nonce))
+
+        if let error = appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockError {
+            throw error
+        }
+
+        if let mock = appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod {
+            return try mock(content, mentions, quotedMessage, fetchLinkPreview, nonce)
+        } else if let mock = appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendTextContentMentionsReplyingToFetchLinkPreviewNonce`")
+        }
+    }
+}

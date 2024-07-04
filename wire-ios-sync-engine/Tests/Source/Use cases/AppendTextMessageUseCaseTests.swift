@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAnalytics
 import WireAnalyticsSupport
 import WireDataModel
+import WireDataModelSupport
+import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -25,52 +28,51 @@ import XCTest
 final class AppendTextMessageUseCaseTests: XCTestCase {
 
     private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
-    private var conversation: MockConversation!
-    private var sut: AppendTextMessageUseCase<MockConversation>!
+    private var mockConversation: MockMessageAppendableConversation!
+    private var sut: AppendTextMessageUseCase<MockMessageAppendableConversation>!
 
     override func setUp() {
         mockAnalyticsSessionProtocol = .init()
-        conversation = .init()
+        mockConversation = .init()
         sut = AppendTextMessageUseCase(analyticsSession: mockAnalyticsSessionProtocol)
     }
 
     override func tearDown() {
         sut = nil
-        conversation = nil
+        mockConversation = nil
         mockAnalyticsSessionProtocol = nil
     }
 
     func testExample() throws {
 
         // Given
-        // ?
+        mockConversation.conversationType = .group
+        mockConversation.localParticipants = []
+        mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod = { _, _, _, _, _ in
+            MockZMConversationMessage()
+        }
+        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
 
         // When
         try sut.invoke(
             text: "some message",
             mentions: [],
             replyingTo: .none,
-            in: conversation,
+            in: mockConversation,
             fetchLinkPreview: false
         )
 
         // Then
-        // TODO: assert the code worked correctly
-        // e.g. check draftMessage has become nil
-    }
-}
+        XCTAssertEqual(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.count, 1)
+        let appendTextInvocation = try XCTUnwrap(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.first)
+        XCTAssertEqual(appendTextInvocation.content, "some message")
+        // ..
 
-// MARK: - MockConversation
+        XCTAssertNil(mockConversation.draftMessage)
 
-private final class MockConversation: MessageAppendableConversation {
-
-    var conversationType = ZMConversationType.oneOnOne
-
-    var localParticipants = Set<ZMUser>()
-
-    var draftMessage: DraftMessage?
-
-    func appendText(content: String, mentions: [WireDataModel.Mention], replyingTo quotedMessage: (any WireDataModel.ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID) throws -> any WireDataModel.ZMConversationMessage {
-        // fatalError("TODO")
+        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
+        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ContributedEvent)
+        XCTAssertEqual(trackEventInvocation.contributionType, .textMessage)
+        // ..
     }
 }
