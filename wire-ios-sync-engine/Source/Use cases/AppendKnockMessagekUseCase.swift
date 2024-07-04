@@ -20,7 +20,7 @@ import WireAnalytics
 import WireDataModel
 
 // sourcery: AutoMockable
-public protocol AppendKnocMessagekUseCaseProtocol {
+public protocol AppendKnockMessagekUseCaseProtocol {
 
     func invoke(
         in conversation: ZMConversation
@@ -28,7 +28,7 @@ public protocol AppendKnocMessagekUseCaseProtocol {
 
 }
 
-public struct AppendKnocMessagekUseCase: AppendKnocMessagekUseCaseProtocol {
+public struct AppendKnockMessagekUseCase: AppendKnockMessagekUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 

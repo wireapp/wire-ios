@@ -264,7 +264,7 @@ public protocol UserSession: AnyObject {
 
     func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol
 
-    func makeAppendKnockMessageUseCase() -> AppendKnocMessagekUseCaseProtocol
+    func makeAppendKnockMessageUseCase() -> AppendKnockMessagekUseCaseProtocol
 
     func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol
 
