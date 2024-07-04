@@ -18,7 +18,10 @@
 
 import Countly
 
+/// A structure representing an analytics session.
 public struct AnalyticsSession: AnalyticsSessionProtocol {
+
+    // MARK: - Properties
 
     private let countly: WireCountly
 
@@ -26,6 +29,13 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
     private let deviceModel: String = ""
     private let isSelfUserTeamMember: Bool
 
+    // MARK: - Init
+
+    /// Initializes a new analytics session.
+    /// - Parameters:
+    ///   - appKey: The application key for Countly.
+    ///   - host: The host URL for Countly.
+    ///   - userProfile: The user profile for analytics.
     public init(
         appKey: String,
         host: URL,
@@ -51,14 +61,20 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         WireCountly.user().save()
     }
 
+    // MARK: - Public Interface
+
+    /// Starts the analytics session.
     public func startSession() {
         self.countly.beginSession()
     }
 
+    /// Ends the analytics session.
     public func endSession() {
         countly.endSession()
     }
 
+    /// Tracks an analytic event.
+    /// - Parameter event: The event to be tracked.
     public func trackEvent(_ event: any AnalyticEvent) {
         let defaultSegmentation = [
             "os_version": osVersion,

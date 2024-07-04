@@ -16,28 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// A structure representing a contributed event for analytics.
 public struct ContributedEvent: AnalyticEvent {
 
+    /// The name of the event.
     public var eventName: String {
         "contributed"
     }
 
+    /// The segmentation information for the event.
     public var segmentation: [String: String] {
         ["group_type": String(describing: conversationType),
-        "contribution_type": String(describing: contributionType)]
+         "contribution_type": String(describing: contributionType)]
     }
 
+    /// The type of contribution.
     public var contributionType: ContributionType
+
+    /// The type of conversation.
     public var conversationType: ConversationType
+
+    /// The size of the conversation.
     public var conversationSize: UInt
 
-    public init(contributionType: ContributionType, conversationType: ConversationType, conversationSize: UInt) {
+    public init(
+        contributionType: ContributionType,
+        conversationType: ConversationType,
+        conversationSize: UInt
+    ) {
         self.contributionType = contributionType
         self.conversationType = conversationType
         self.conversationSize = conversationSize
     }
 }
 
+/// An enumeration representing the type of contribution.
 public enum ContributionType {
 
     case textMessage
@@ -53,10 +66,9 @@ public enum ContributionType {
 
 }
 
+/// An enumeration representing the type of conversation.
 public enum ConversationType {
-
     case group
     case oneOnOne
     case unknown
-
 }
