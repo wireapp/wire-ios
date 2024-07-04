@@ -51,7 +51,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         }
 
         guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
-                return
+            return
         }
         message.expire()
         message.managedObjectContext?.enqueueDelayedSave()

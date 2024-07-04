@@ -220,12 +220,6 @@ class MessageAPIV1: MessageAPIV0 {
             throw NetworkError.errorEncodingRequest
         }
 
-        if #available(iOS 16.0, *) {
-            try! await Task.sleep(for: .seconds(3))
-        } else {
-            // Fallback on earlier versions
-        }
-
         let request = ZMTransportRequest(
             path: path,
             method: .post,
@@ -245,6 +239,13 @@ class MessageAPIV1: MessageAPIV0 {
             debugPrint("no expiration date on request")
         }
 
+        if #available(iOS 16.0, *) {
+            try! await Task.sleep(for: .seconds(11))
+        } else {
+            // Fallback on earlier versions
+        }
+        debugPrint("start network request now: \(Date.now)")
+
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {
@@ -255,6 +256,7 @@ class MessageAPIV1: MessageAPIV0 {
             }
             throw NetworkError.missingClients(messageSendingStatus, response)
         } else {
+            debugPrint("finish network request now: \(Date.now)")
             let payload: Payload.MessageSendingStatus = try mapResponse(response)
             return (payload, response)
         }
