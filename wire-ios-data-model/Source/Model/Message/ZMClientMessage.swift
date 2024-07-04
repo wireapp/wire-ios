@@ -168,14 +168,12 @@ public class ZMClientMessage: ZMOTRMessage {
         }
     }
 
-    public var logInformation: LogAttributes {
-
-        return [
+    private var logInformation: LogAttributes {
+        [
             .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
             .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
-
     }
 
     override static public func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
