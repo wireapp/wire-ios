@@ -216,7 +216,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 - (void)resend;
 {
     self.isExpired = NO;
-    [self setExpirationDate];
+    [self removeExpirationDate];
     [self prepareToSend];
 }
 
