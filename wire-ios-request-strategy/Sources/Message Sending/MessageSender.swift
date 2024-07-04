@@ -125,6 +125,8 @@ public final class MessageSender: MessageSenderInterface {
         // TODO: conditionally see if the message type expires or not
         await context.perform {
             message.setExpirationDate()
+            debugPrint("now: \(Date.now)")
+            debugPrint("set expiration date: \(String(describing: message.expirationDate))")
             self.context.saveOrRollback()
         }
 

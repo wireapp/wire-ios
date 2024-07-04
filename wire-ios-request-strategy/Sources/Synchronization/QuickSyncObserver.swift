@@ -43,9 +43,9 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     public func waitForQuickSyncToFinish() async {
         // TODO: remove sleeping
         if #available(iOSApplicationExtension 16.0, *) {
-            try! await Task.sleep(for: .seconds(11))
+            try! await Task.sleep(for: .seconds(5))
         } else {
-            try! await Task.sleep(nanoseconds: 11_000_000_000)
+            try! await Task.sleep(nanoseconds: 5_000_000_000)
         }
 
         if await quickSyncHasCompleted() {
@@ -65,6 +65,10 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
             named: .quickSyncCompletedNotification,
             object: notificationContext
         ) {
+            WireLogger.messaging.info(
+                "Quick sync finished",
+                attributes: .safePublic
+            )
             break
         }
     }
