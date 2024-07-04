@@ -1143,6 +1143,7 @@
 		BFFD439E1DE47FFA00505C8C /* UIView+RightToLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFD439D1DE47FFA00505C8C /* UIView+RightToLeft.swift */; };
 		BFFE943C1E7839D10025AD75 /* ConversationRenamedCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */; };
 		BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */; };
+		CBE01ED02C36C07300583646 /* DebugLogSenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE01ECF2C36C07300583646 /* DebugLogSenderTests.swift */; };
 		CE2402811E0A992200665A91 /* AnalyticsConsoleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2402801E0A992200665A91 /* AnalyticsConsoleProvider.swift */; };
 		CEEEAF071CB562BF00111759 /* PlaceholderConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEEAF061CB562BF00111759 /* PlaceholderConversationView.swift */; };
 		D30880FB292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30880FA292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift */; };
@@ -3301,6 +3302,7 @@
 		BFFD439D1DE47FFA00505C8C /* UIView+RightToLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+RightToLeft.swift"; sourceTree = "<group>"; };
 		BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationRenamedCellTests.swift; sourceTree = "<group>"; };
 		BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSnapshotTestCase.swift; sourceTree = "<group>"; };
+		CBE01ECF2C36C07300583646 /* DebugLogSenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogSenderTests.swift; sourceTree = "<group>"; };
 		CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+VideoConvert.swift"; sourceTree = "<group>"; };
 		CE2402801E0A992200665A91 /* AnalyticsConsoleProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsConsoleProvider.swift; sourceTree = "<group>"; };
 		CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMetaDataGenerator.swift; sourceTree = "<group>"; };
@@ -7767,6 +7769,7 @@
 		E66258902B4D65FD00C23E79 /* Developer */ = {
 			isa = PBXGroup;
 			children = (
+				CBE01ECF2C36C07300583646 /* DebugLogSenderTests.swift */,
 				E66258912B4D660300C23E79 /* DeveloperTools */,
 			);
 			path = Developer;
@@ -10852,6 +10855,7 @@
 				E6579E7D2AFFA97F004E7FD8 /* OrientationDeltaTests.swift in Sources */,
 				E6579E482AFFA001004E7FD8 /* MockUserType+SelfLegalHoldSubject.swift in Sources */,
 				E6579E572AFFA024004E7FD8 /* MockPanGestureRecognizer.swift in Sources */,
+				CBE01ED02C36C07300583646 /* DebugLogSenderTests.swift in Sources */,
 				E6579E632AFFA024004E7FD8 /* SwiftMockLoader.swift in Sources */,
 				E6579E7C2AFFA979004E7FD8 /* UserRightTests.swift in Sources */,
 				E6C25FEC2B027A9500406A1C /* NetworkInfoTests.swift in Sources */,
