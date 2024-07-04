@@ -44,9 +44,9 @@ struct MessageLogAttributesBuilder {
 
     private func clientMessageLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
         [
-            LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ]
     }
 
@@ -64,9 +64,9 @@ struct MessageLogAttributesBuilder {
 
     private func assetClientMessageLogAttributes(_ message: ZMAssetClientMessage) -> LogAttributes {
         [
-            LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ]
     }
 
@@ -84,9 +84,9 @@ struct MessageLogAttributesBuilder {
 
     private func genericMessageLogAttributes(_ message: GenericMessageEntity) -> LogAttributes {
         [
-            LogAttributesKey.nonce.rawValue: message.message.safeIdForLoggingDescription,
-            LogAttributesKey.messageType.rawValue: message.message.safeTypeForLoggingDescription,
-            LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .nonce: message.message.safeIdForLoggingDescription,
+            .messageType: message.message.safeTypeForLoggingDescription,
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ]
     }
 
