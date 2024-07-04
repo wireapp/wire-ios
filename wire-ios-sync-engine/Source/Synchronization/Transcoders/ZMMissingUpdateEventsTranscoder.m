@@ -190,15 +190,24 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     NSDate *fetchDate = self.listPaginator.lastResetFetchDate;
     NSArray<ZMSDispatchGroup *> *groups = [self.managedObjectContext enterAllGroupsExceptSecondary];
     self.isProcessingEvents = YES;
+    SyncStatus *syncStatus = self.syncStatus;
 
     NSLog(@"ZMMissingUpdateEventsTranscoder process %lu events", (unsigned long)parsedEvents.count);
     [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
-        NOT_USED(error);
         [self.managedObjectContext performBlock:^{
+            if (error != nil) {
+                NSLog(@"ZMMissingUpdateEventsTranscoder error processing events: %@", error);
+                [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:NO];
+                self.isProcessingEvents = NO;
+                [self.listPaginator resetFetching];
+                [self.managedObjectContext leaveAllGroups:groups];
+                return;
+            }
+
             [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
-            
+
             if (finished) {
-                [self.syncStatus completedFetchingNotificationStreamFetchBeganAt:fetchDate];
+                [syncStatus completedFetchingNotificationStreamFetchBeganAt:fetchDate];
 
                 if (self.operationStatus.operationState == SyncEngineOperationStateBackgroundFetch) {
                     [self updateBackgroundFetchResultWithResponse:response];
@@ -252,16 +261,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
 {
-    
-    if (!liveEvents) {
-        return;
-    }
-    
-    for (ZMUpdateEvent *event in events) {
-        if (event.uuid != nil && ! event.isTransient && event.source != ZMUpdateEventSourcePushNotification) {
-            [self.lastEventIDRepository storeLastEventID:event.uuid];
-        }
-    }
+
 }
 
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion

@@ -23,6 +23,7 @@ import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
+    private let mainCoordinator: MainCoordinating
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
     let viewModel: GroupParticipantsDetailViewModel
@@ -43,8 +44,10 @@ final class GroupParticipantsDetailViewController: UIViewController {
     init(
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating
     ) {
+        self.mainCoordinator = mainCoordinator
 
         viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
@@ -190,7 +193,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
         )
         if !user.isSelfUser {
             navigationController?.pushViewController(viewController, animated: true)
@@ -202,10 +206,12 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
+
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
             conversation: viewModel.conversation,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
         )
 
         detailsViewController.delegate = self
@@ -219,14 +225,13 @@ extension GroupParticipantsDetailViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true, completion: completion)
     }
-
 }
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

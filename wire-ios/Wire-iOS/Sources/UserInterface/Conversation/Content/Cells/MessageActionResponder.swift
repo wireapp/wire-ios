@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDataModel
 
 protocol MessageActionResponder: AnyObject {
@@ -26,5 +26,5 @@ protocol MessageActionResponder: AnyObject {
     ///   - action: a kind of MessageAction
     ///   - message: the ZMConversationMessage to perform the action
     ///   - view: the source view which perfroms the action
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView)
+    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView)
 }

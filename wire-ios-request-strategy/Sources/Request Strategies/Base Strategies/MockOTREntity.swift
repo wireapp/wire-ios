@@ -70,6 +70,10 @@ import XCTest
 }
 
 extension MockOTREntity: ProteusMessage {
+    var logInformation: LogAttributes {
+        return LogAttributes.safePublic
+    }
+
     var debugInfo: String {
         "Mock ProteusMessage"
     }
