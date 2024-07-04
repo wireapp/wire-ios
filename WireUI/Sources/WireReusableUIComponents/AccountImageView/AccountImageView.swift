@@ -216,9 +216,9 @@ public final class AccountImageView: UIView {
 
 // MARK: - Convenience Init
 
-extension AccountImageView {
+public extension AccountImageView {
 
-    public convenience init(
+    convenience init(
         accountImage: UIImage,
         accountType: AccountType,
         availability: Availability?
@@ -280,9 +280,9 @@ struct AccountImageView_Previews: PreviewProvider {
     }
 }
 
-extension View {
+private extension View {
 
-    fileprivate func center() -> some View {
+    func center() -> some View {
         VStack {
             Spacer()
             HStack {
@@ -322,9 +322,9 @@ private struct AccountImageViewRepresentable: UIViewRepresentable {
     }
 }
 
-extension UIImage {
+private extension UIImage {
 
-    fileprivate static func from(solidColor color: UIColor) -> UIImage {
+    static func from(solidColor color: UIColor) -> UIImage {
         UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
             color.setFill()
             rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
