@@ -18,24 +18,22 @@
 
 import Foundation
 
-/**
- * Represents an item for the licenses pane.
- */
+/// An error when decoding `UpdateEvent`.
 
-struct SettingsLicenseItem: Decodable, Equatable {
+public struct UpdateEventDecodingProxyError: Error, CustomStringConvertible {
 
-    /// The name of the license software.
-    let name: String
+    /// The type of the event being decoding.
 
-    /// The text of the license.
-    let licenseText: String
+    public let eventType: String
 
-    /// The URL to the project.
-    let projectURL: URL
+    /// The error that occurred when decoding.
 
-    enum CodingKeys: String, CodingKey {
-        case name = "Name"
-        case licenseText = "LicenseText"
-        case projectURL = "ProjectURL"
+    public let decodingError: Error
+
+    /// A textual representation of the error.
+
+    public var description: String {
+        "failed to decode event '\(eventType)': \(decodingError)"
     }
+
 }

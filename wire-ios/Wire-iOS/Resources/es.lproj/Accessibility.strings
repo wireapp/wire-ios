@@ -164,8 +164,6 @@
 "supportSettings.backButton.description" = "Go back to Support";
 
 "aboutSettings.backButton.description" = "Go back to About";
-"licenseInformationSettings.backButton.description" = "Go back to License information";
-"licenseDetailsSettings.backButton.description" = "Go back to License details";
 
 "developerOptionsSettings.backButton.description" = "Go back to Developer options";
 
