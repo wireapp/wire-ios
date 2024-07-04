@@ -1,11 +1,10 @@
 require 'json'
 
-# xcode_summary.inline_mode = true
 xcode_summary.report ENV["XCRESULT_PATH"]
 
-# don't display all the warnings,
-# instead use cache restore/save to remember a number of warnigns
-# and only notify on the PR once the number of warnings increased
+# don't display all the warnings, but use cache restore/save
+# to remember a number of warnings and only warn on the PR
+# once the number of warnings increased
 warning_error_count = xcode_summary.warning_error_count ENV["XCRESULT_PATH"]
 current_result = JSON.parse(warning_error_count, symbolize_names: true)
 
