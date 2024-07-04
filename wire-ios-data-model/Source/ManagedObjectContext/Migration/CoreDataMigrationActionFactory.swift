@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct CoreDataMigrationActionFactory {
+enum CoreDataMigrationActionFactory {
 
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
