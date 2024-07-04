@@ -36,8 +36,8 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
     // MARK: - Properties
 
     private let router: SettingsDebugReportRouterProtocol
-    private let userSession: UserSession
-    private let contextProvider: ContextProvider
+    private let shareFile: ShareFileUseCaseProtocol
+    private let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
     private let logsProvider: LogFilesProviding
     private let fileMetaDataGenerator: FileMetaDataGenerating
 
@@ -45,14 +45,14 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     init(
         router: SettingsDebugReportRouterProtocol,
-        userSession: UserSession,
-        contextProvider: ContextProvider,
+        shareFile: ShareFileUseCaseProtocol,
+        fetchShareableConversations: FetchShareableConversationsUseCaseProtocol,
         logsProvider: LogFilesProviding = LogFilesProvider(),
         fileMetaDataGenerator: FileMetaDataGenerating = FileMetaDataGenerator()
     ) {
         self.router = router
-        self.userSession = userSession
-        self.contextProvider = contextProvider
+        self.shareFile = shareFile
+        self.fetchShareableConversations = fetchShareableConversations
         self.logsProvider = logsProvider
         self.fileMetaDataGenerator = fileMetaDataGenerator
     }
@@ -71,10 +71,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     func shareReport() {
 
-        let conversations = ConversationList.conversationsIncludingArchived(
-            inUserSession: contextProvider
-        ).shareableConversations()
-
+        let conversations = fetchShareableConversations.invoke()
         let logsURL = logsProvider.generateLogFilesZip()
 
         fileMetaDataGenerator.metadataForFileAtURL(
@@ -87,7 +84,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
             let shareableDebugReport = ShareableDebugReport(
                 logFileMetadata: metadata,
-                userSession: self.userSession
+                shareFile: self.shareFile
             )
 
             self.router.presentShareViewController(

@@ -30,16 +30,16 @@ struct ShareableDebugReport: Shareable {
     // MARK: - Properties
 
     private let logFileMetadata: ZMFileMetadata
-    private let userSession: UserSession
+    private let shareFile: ShareFileUseCaseProtocol
 
     // MARK: - Life cycle
 
     init(
         logFileMetadata: ZMFileMetadata,
-        userSession: UserSession
+        shareFile: ShareFileUseCaseProtocol
     ) {
         self.logFileMetadata = logFileMetadata
-        self.userSession = userSession
+        self.shareFile = shareFile
     }
 
     // MARK: - Interface
@@ -49,16 +49,10 @@ struct ShareableDebugReport: Shareable {
             return
         }
 
-        userSession.perform {
-
-            conversations.forEach { conversation in
-                do {
-                    try conversation.appendFile(with: logFileMetadata)
-                } catch {
-                    WireLogger.system.warn("Failed to append log file. Reason: \(error.localizedDescription)")
-                }
-            }
-        }
+        shareFile.invoke(
+            fileMetadata: logFileMetadata,
+            conversations: conversations
+        )
     }
 
     func previewView() -> UIView? {
@@ -69,4 +63,10 @@ struct ShareableDebugReport: Shareable {
         return view
     }
 
+}
+
+extension ShareableDebugReport: Equatable {
+    static func == (lhs: ShareableDebugReport, rhs: ShareableDebugReport) -> Bool {
+        lhs.logFileMetadata == rhs.logFileMetadata
+    }
 }

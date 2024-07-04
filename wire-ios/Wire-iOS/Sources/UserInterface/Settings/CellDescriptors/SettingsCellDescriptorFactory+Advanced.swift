@@ -47,18 +47,11 @@ extension SettingsCellDescriptorFactory {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-
-                // TODO: How to avoid this?
-                guard let contextProvider = userSession as? ContextProvider else {
-                    assertionFailure()
-                    return nil
-                }
-
                 let router = SettingsDebugReportRouter()
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
-                    userSession: userSession,
-                    contextProvider: contextProvider
+                    shareFile: userSession.shareFileUseCase,
+                    fetchShareableConversations: userSession.fetchShareableConversationsUseCase
                 )
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
