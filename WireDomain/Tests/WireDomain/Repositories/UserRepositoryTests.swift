@@ -134,7 +134,7 @@ class UserRepositoryTests: XCTestCase {
         }
     }
 
-    struct Scaffolding {
+    private enum Scaffolding {
         static let user1 = User(
             id: QualifiedID(uuid: UUID(), domain: "example.com"),
             name: "user1",
