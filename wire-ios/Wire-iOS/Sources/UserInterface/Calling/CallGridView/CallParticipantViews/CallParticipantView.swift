@@ -121,6 +121,10 @@ final class CallParticipantView: BaseCallParticipantView {
         self.videoContainerView?.removeFromSuperview()
         self.videoContainerView = videoContainerView
 
+        let videoView = makeVideoView()
+        self.videoView = videoView
+        videoContainerView.setupVideoView(videoView)
+
         // Adding the preview into a container allows smoother scaling
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
         scalableView.addSubview(videoContainerView)
@@ -161,15 +165,6 @@ final class CallParticipantView: BaseCallParticipantView {
     // MARK: Override Base
 
     override func updateVideoShouldFill(_ shouldFill: Bool) {
-        if shouldFill, videoView == nil {
-            // [WPB-8954] Setup video only when the video really starts to avoid
-            // calls crashing on the iOS 17 simulator.
-            let videoView = makeVideoView()
-            self.videoView = videoView
-
-            videoContainerView?.setupVideoView(videoView)
-        }
-
         videoView?.shouldFill = shouldFill
     }
 
