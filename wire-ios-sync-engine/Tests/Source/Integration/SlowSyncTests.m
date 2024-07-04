@@ -182,12 +182,12 @@
 
     // then
     XCTAssertEqual(stateRecoder.stateChanges_objc.count, 2u);
-    NetworkState state1 = (NetworkState)[stateRecoder.stateChanges_objc.firstObject intValue];
-    NetworkState state2 = (NetworkState)[stateRecoder.stateChanges_objc.lastObject intValue];
+    ZMNetworkState state1 = (ZMNetworkState)[stateRecoder.stateChanges_objc.firstObject intValue];
+    ZMNetworkState state2 = (ZMNetworkState)[stateRecoder.stateChanges_objc.lastObject intValue];
 
-    XCTAssertEqual(state1, NetworkStateOnlineSynchronizing);
-    XCTAssertEqual(state2, NetworkStateOnline);
-    XCTAssertEqual(self.userSession.networkState, NetworkStateOnline);
+    XCTAssertEqual(state1, ZMNetworkStateOnlineSynchronizing);
+    XCTAssertEqual(state2, ZMNetworkStateOnline);
+    XCTAssertEqual(self.userSession.networkState, ZMNetworkStateOnline);
 }
 
 - (void)testThatItHasTheSelfUserEmailAfterTheSlowSync
