@@ -12,7 +12,7 @@ directory = "Danger.results"
 filename = directory + "/" + ENV["XCRESULT_PATH"]
 Dir.mkdir(directory) unless Dir.exist?(directory)
 
-# read current values
+# read previous values
 previous_result = { warnings: 0, errors: 0 }
 if File.exist?(filename)
   previous_result = JSON.parse(File.read(filename), symbolize_names: true)
@@ -22,7 +22,7 @@ end
 if current_result[:warnings] > 0 && current_result[:warnings] == previous_result[:warnings]
   message "⚠️ The number of warnings is still #{current_result[:warnings]}."
 elsif current_result[:warnings] < previous_result[:warnings]
-  message "✅ The number of warnings decreased from #{previous_result[:warnings]} to #{current_result[:warnings]}."
+  message "❤️ The number of warnings decreased from #{previous_result[:warnings]} to #{current_result[:warnings]}."
 elsif current_result[:warnings] > previous_result[:warnings]
   warn "🚨 #{current_result[:warnings] - previous_result[:warnings]} warning(s) introduced, please fix them!"
 end
