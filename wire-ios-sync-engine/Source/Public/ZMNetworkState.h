@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-typedef NS_ENUM(int16_t, ZMNetworkState) {
+typedef NS_CLOSED_ENUM(int16_t, ZMNetworkState) {
     ZMNetworkStateOnline = 0,
     ZMNetworkStateOffline,
     ZMNetworkStateOnlineSynchronizing,
