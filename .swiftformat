@@ -1,8 +1,9 @@
 --exclude Carthage,DerivedData,**/AutoMockable.generated.swift
 
---enable acronyms
 --enable blankLineAfterSwitchCase
 --disable hoistTry
+# this rule is nice but is hard to apply on existing codebases (Core Data, Codable)
+# --enable acronyms
 
 --ifdef outdent
 --stripunusedargs unnamed-only
