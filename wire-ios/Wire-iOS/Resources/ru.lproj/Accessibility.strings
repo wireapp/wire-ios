@@ -164,8 +164,6 @@
 "supportSettings.backButton.description" = "Вернуться в раздел Поддержка";
 
 "aboutSettings.backButton.description" = "Вернуться в раздел О программе";
-"licenseInformationSettings.backButton.description" = "Вернуться в раздел Информация о лицензии";
-"licenseDetailsSettings.backButton.description" = "Вернуться в раздел Сведения о лицензии";
 
 "developerOptionsSettings.backButton.description" = "Вернуться в раздел Параметры разработчика";
 

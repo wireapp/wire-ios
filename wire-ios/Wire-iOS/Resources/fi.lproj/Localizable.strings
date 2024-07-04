@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Käyttöehdot";
 "about.privacy.title" = "Yksityisyyskäytännöt";
-"about.license.title" = "Lisenssitiedot";
 "about.website.title" = "Wiren verkkosivu";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Lisätietoja";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Tiliäsi käytettiin:";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Jos kohtaat ongelmia push-ilmoitusten kanssa. Wiren Tuki voi pyytää sinua nollaamaan tämän tunnuksen.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push-tunnus on nollattu";
 "self.settings.advanced.reset_push_token_alert.message" = "Ilmoitukset palautetaan muutamassa sekunnissa.";
-"self.settings.advanced.version_technical_details.title" = "Version Tekniset Tiedot";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";

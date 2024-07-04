@@ -163,8 +163,6 @@
 "supportSettings.backButton.description" = "Revenir à 'Support'";
 
 "aboutSettings.backButton.description" = "Retourner à 'À propos'";
-"licenseInformationSettings.backButton.description" = "Revenir aux informations de la licence";
-"licenseDetailsSettings.backButton.description" = "Revenir aux informations de la licence";
 
 "developerOptionsSettings.backButton.description" = "Revenir aux options du développeur";
 

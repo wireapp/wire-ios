@@ -163,8 +163,6 @@
 "supportSettings.backButton.description" = "Zurück zum Support";
 
 "aboutSettings.backButton.description" = "Zurück zu Über Wire";
-"licenseInformationSettings.backButton.description" = "Zurück zu Lizenzen";
-"licenseDetailsSettings.backButton.description" = "Zurück zu Lizenzdetails";
 
 "developerOptionsSettings.backButton.description" = "Zurück zu Entwickleroptionen";
 

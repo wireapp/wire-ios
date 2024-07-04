@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Умови використання";
 "about.privacy.title" = "Політика конфіденційності";
-"about.license.title" = "Відомості про ліцензію";
 "about.website.title" = "Веб-сайт Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Подробиці";
-"about.license.open_project_button" = "Переглянути сторінку проекту";
-"about.license.license_header" = "Подяки";
 
 // Self new devices
 "self.new_device_alert.title" = "Ваш акаунт використовується на:";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Якщо у вас виникли проблеми з push-сповіщеннями, команда підтримки Wire може попросити вас виконати скидання цього токену.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push-токен був оновлений";
 "self.settings.advanced.reset_push_token_alert.message" = "Сповіщення будуть відновлені за декілька секунд.";
-"self.settings.advanced.version_technical_details.title" = "Технічні деталі збірки";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Дозвіл на використання даних";

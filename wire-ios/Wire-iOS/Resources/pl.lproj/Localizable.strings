@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Zasady korzystania z usługi";
 "about.privacy.title" = "Polityka prywatności";
-"about.license.title" = "Informacje o licencji";
 "about.website.title" = "Strona programu Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Szczegóły";
-"about.license.open_project_button" = "Zobacz stronę projektu";
-"about.license.license_header" = "Potwierdzenia";
 
 // Self new devices
 "self.new_device_alert.title" = "Twoje konto było ostatnio użyte:";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Jeśli masz problemy z powiadomieniami, pomoc Wire może poprosić o zresetowanie powiadomień.";
 "self.settings.advanced.reset_push_token_alert.title" = "Powiadomienia zostały zresetowane";
 "self.settings.advanced.reset_push_token_alert.message" = "Powiadomienia zostaną przywrócone w ciągu kilku sekund.";
-"self.settings.advanced.version_technical_details.title" = "Dane techniczne wersji";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Uprawnienia użycia danych";

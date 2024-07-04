@@ -163,8 +163,6 @@
 "supportSettings.backButton.description" = "Повернутися до підтримки";
 
 "aboutSettings.backButton.description" = "Повернутися до інформації про програму";
-"licenseInformationSettings.backButton.description" = "Повернутися до інформації про ліцензію";
-"licenseDetailsSettings.backButton.description" = "Повернутися до подробиць про ліцензію";
 
 "developerOptionsSettings.backButton.description" = "Повернутися до налаштувань розробника";
 

@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Kasutustingimused";
 "about.privacy.title" = "Privaatsuspoliitika";
-"about.license.title" = "Litsentsiteave";
 "about.website.title" = "Wire koduleht";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Üksikasjad";
-"about.license.open_project_button" = "Ava projekti leht";
-"about.license.license_header" = "Tunnustused";
 
 // Self new devices
 "self.new_device_alert.title" = "Sinu kontot kasutati:";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Kui sul on probleeme teavitustega, Wire kasutajatugi võib paluda sul see võti lähtestada.";
 "self.settings.advanced.reset_push_token_alert.title" = "Võti on lähtestatud";
 "self.settings.advanced.reset_push_token_alert.message" = "Teavitused taastuvad mõne sekundi pärast.";
-"self.settings.advanced.version_technical_details.title" = "Versiooni tehnilised andmed";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Andmekasutuse õigused";
