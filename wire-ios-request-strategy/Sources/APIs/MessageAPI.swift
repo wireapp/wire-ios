@@ -229,22 +229,9 @@ class MessageAPIV1: MessageAPIV0 {
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = (await message.context.perform {
-            message.expirationDate
-        }) {
-            // TODO: remove prints
-            debugPrint("expiration date on request: \(expirationDate)")
+        if let expirationDate = await message.context.perform({ message.expirationDate }) {
             request.expire(at: expirationDate)
-        } else {
-            debugPrint("no expiration date on request")
         }
-
-        if #available(iOS 16.0, *) {
-            try! await Task.sleep(for: .seconds(11))
-        } else {
-            // Fallback on earlier versions
-        }
-        debugPrint("start network request now: \(Date.now)")
 
         let response = await httpClient.send(request)
 

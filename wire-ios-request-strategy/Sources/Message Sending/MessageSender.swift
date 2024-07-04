@@ -109,12 +109,6 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSend(message: any SendableMessage) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.debug(
-            "attempt to send",
-            attributes: logAttributes
-        )
-
         let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
@@ -125,8 +119,6 @@ public final class MessageSender: MessageSenderInterface {
         // TODO: conditionally see if the message type expires or not
         await context.perform {
             message.setExpirationDate()
-            debugPrint("now: \(Date.now)")
-            debugPrint("set expiration date: \(String(describing: message.expirationDate))")
             self.context.saveOrRollback()
         }
 
@@ -156,12 +148,6 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.debug(
-            "attempt to send with proteus",
-            attributes: logAttributes
-        )
-
         let conversationID = await context.perform { message.conversation?.qualifiedID }
 
         guard let conversationID else {
@@ -251,12 +237,6 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.info(
-            "attempt to send with mls",
-            attributes: logAttributes
-        )
-
         let (conversationID, groupID, mlsService) = await context.perform { (
             message.conversation?.qualifiedID,
             message.conversation?.mlsGroupID,
