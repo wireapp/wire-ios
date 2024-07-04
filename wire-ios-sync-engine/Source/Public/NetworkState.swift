@@ -16,23 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning users.
-public protocol UsersAPI {
-
-    /// Get user details for a single user
-    ///
-    /// - Parameter userID: The id of the user.
-    /// - Returns: The user details.
-
-    func getUser(for userID: UserID) async throws -> User
-
-    /// Get user details for a list of users
-    ///
-    /// - Parameter userIDs: lists of user ids
-    /// - Returns: List user details response.
-
-    func getUsers(userIDs: [UserID]) async throws -> UserList
+@objc(ZMNetworkState)
+public enum NetworkState: Int {
+    case online = 0
+    case offline
+    case onlineSynchronizing
 }

@@ -348,7 +348,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                userRepository: UserRepository(context: syncMOC)
+                selfUserProvider: WireDomain.SelfUserProvider(context: syncMOC)
             ),
             EvaluateOneOnOneConversationsStrategy(
                 withManagedObjectContext: syncMOC,
