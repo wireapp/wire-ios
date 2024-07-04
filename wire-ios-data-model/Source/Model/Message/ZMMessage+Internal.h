@@ -161,6 +161,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic, readonly) NSDate * _Nullable destructionDate;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
+@property (nonatomic) BOOL shouldExpire;
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic, readonly) NSDate * _Nullable expirationDate;

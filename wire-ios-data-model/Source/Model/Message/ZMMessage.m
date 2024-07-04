@@ -111,6 +111,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 
 @interface ZMMessage (CoreDataForward)
 
+@property (nonatomic) BOOL shouldExpire;
 @property (nonatomic) BOOL isExpired;
 @property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic) NSDate *expirationDate;
@@ -131,6 +132,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 @implementation ZMMessage
 
 @dynamic missingRecipients;
+@dynamic shouldExpire;
 @dynamic isExpired;
 @dynamic expirationReasonCode;
 @dynamic expirationDate;
