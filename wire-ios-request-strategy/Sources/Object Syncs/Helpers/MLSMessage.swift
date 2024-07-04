@@ -20,11 +20,23 @@ import Foundation
 
 /// A message that can be sent in an mls group.
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {}
+public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {
+    var logInformation: LogAttributes { get }
+}
 
 extension ZMClientMessage: MLSMessage {}
 
-extension ZMAssetClientMessage: MLSMessage {}
+extension ZMAssetClientMessage: MLSMessage {
+    public var logInformation: LogAttributes {
+
+        return [
+            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
+
+    }
+}
 
 extension GenericMessageEntity: MLSMessage {
 
@@ -32,4 +44,14 @@ extension GenericMessageEntity: MLSMessage {
         return try await message.encryptForTransport(using: encrypt)
     }
 
+    public var logInformation: LogAttributes {
+
+        let logAttibutes: LogAttributes = [
+            .nonce: self.message.safeIdForLoggingDescription,
+            .messageType: self.message.safeTypeForLoggingDescription,
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
+
+        return logAttibutes
+    }
 }

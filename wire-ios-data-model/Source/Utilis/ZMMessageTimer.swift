@@ -18,21 +18,18 @@
 
 import Foundation
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {
-    var logInformation: LogAttributes { get }
-}
+extension ZMMessageTimer {
+    /// Starts a new timer if there is no existing one
+    /// - Parameters:
+    ///   - message: message passed to the timer's fireMethod
+    ///   - fireDate The date at which the timer should fire
+    ///   - userInfo: Additional info that should be added to the timer
+    /// - Returns: True if timer was started, false otherwise
+    @discardableResult
+    public func startTimerIfNeeded(for message: ZMMessage, fireDate: Date, userInfo: [String: Any]) -> Bool {
+        guard !isTimerRunning(for: message) else { return false }
 
-extension ZMClientMessage: ProteusMessage {
-
-    public var logInformation: LogAttributes {
-
-        return [
-            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
-
+        startTimer(for: message, fireDate: fireDate, userInfo: userInfo)
+        return true
     }
 }
-
-extension ZMAssetClientMessage: ProteusMessage {}
