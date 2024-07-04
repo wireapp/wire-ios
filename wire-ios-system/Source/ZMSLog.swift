@@ -250,11 +250,15 @@ extension ZMSLog {
         static let maxNumberOfLogFiles = 5
     }
 
-    static var cachesDirectory: URL? {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+    static var cachesDirectory: URL {
+        if #available(iOS 16.0, *) {
+            return URL.cachesDirectory
+        } else {
+            return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        }
     }
 
-    @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
+    @objc static public let currentLogURL: URL = cachesDirectory.appendingPathComponent("current.log")
 
     @objc static public var currentZipLog: Data? {
         FileManager.default.zipData(from: currentLogURL)
@@ -263,22 +267,19 @@ extension ZMSLog {
     @objc static public let previousZipLogURLs: [URL] = {
         [0..<Constant.maxNumberOfLogFiles]
             .joined()
-            .compactMap { index in
-                cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
+            .map { index in
+                cachesDirectory.appendingPathComponent("previous_\(index).log.zip")
             }
     }()
 
     @objc public static func clearLogs() {
-        guard let currentLogURL else { return }
-
         logQueue.async {
             closeHandle()
             let manager = FileManager.default
 
             // 2023-12-06: old deprecated previous log can be removed after some time.
-            if let deprecatedPreviousLogURL = cachesDirectory?.appendingPathComponent("previous.log") {
-                try? manager.removeItem(at: deprecatedPreviousLogURL)
-            }
+            let deprecatedPreviousLogURL = cachesDirectory.appendingPathComponent("previous.log")
+            try? manager.removeItem(at: deprecatedPreviousLogURL)
 
             previousZipLogURLs.forEach {
                 try? manager.removeItem(at: $0)
@@ -289,8 +290,6 @@ extension ZMSLog {
     }
 
     @objc public static func switchCurrentLogToPrevious() {
-        guard let currentLogURL else { return }
-
         logQueue.async {
             closeHandle()
 
@@ -337,8 +336,8 @@ extension ZMSLog {
         if let assertionFile = ZMLastAssertionFile(), FileManager.default.fileExists(atPath: assertionFile.path) {
             paths.append(assertionFile)
         }
-        if let currentPath = currentLogURL, FileManager.default.fileExists(atPath: currentPath.path) {
-            paths.append(currentPath)
+        if FileManager.default.fileExists(atPath: currentLogURL.path) {
+            paths.append(currentLogURL)
         }
         return paths
     }
@@ -349,7 +348,7 @@ extension ZMSLog {
     }
 
     static func appendToCurrentLog(_ string: String) {
-        guard let currentLogPath = currentLogURL?.path else { return }
+        let currentLogPath = currentLogURL.path
         let manager = FileManager.default
 
         if !manager.fileExists(atPath: currentLogPath) {

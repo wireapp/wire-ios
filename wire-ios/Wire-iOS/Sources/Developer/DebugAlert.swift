@@ -118,7 +118,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
 
     static var existingDebugLogs: [URL] {
         let oslogs = LogFileDestination.allCases.compactMap { $0.log }
-        let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
+        let currentLog = [ZMSLog.currentLogURL]
         let allLogs = ZMSLog.previousZipLogURLs + oslogs + currentLog
 
         return allLogs.filter { FileManager.default.fileExists(atPath: $0.path) }
