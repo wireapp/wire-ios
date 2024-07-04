@@ -153,4 +153,28 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
             fatalError("no mock for `appendTextContentMentionsReplyingToFetchLinkPreviewNonce`")
         }
     }
+
+    // MARK: - appendKnock
+
+    public var appendKnock_Invocations: [UUID] = []
+    public var appendKnock_MockError: Error?
+    public var appendKnock_MockMethod: ((UUID) throws -> any ZMConversationMessage)?
+    public var appendKnock_MockValue: (any ZMConversationMessage)?
+
+    @discardableResult
+    public func appendKnock(nonce: UUID) throws -> any ZMConversationMessage {
+        appendKnock_Invocations.append(nonce)
+
+        if let error = appendKnock_MockError {
+            throw error
+        }
+
+        if let mock = appendKnock_MockMethod {
+            return try mock(nonce)
+        } else if let mock = appendKnock_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendKnock`")
+        }
+    }
 }

@@ -19,24 +19,22 @@
 import WireAnalytics
 import WireDataModel
 
-// sourcery: AutoMockable
-public protocol AppendKnockMessagekUseCaseProtocol {
+public protocol AppendKnockMessageUseCaseProtocol {
+    associatedtype Conversation: MessageAppendableConversation
 
-    func invoke(
-        in conversation: ZMConversation
-    ) throws
-
+    func invoke(in conversation: Conversation) throws
 }
 
-public struct AppendKnockMessagekUseCase: AppendKnockMessagekUseCaseProtocol {
+public struct AppendKnockMessageUseCase<Conversation>: AppendKnockMessageUseCaseProtocol
+where Conversation: MessageAppendableConversation {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
     public func invoke(
-        in conversation: ZMConversation
+        in conversation: Conversation
     ) throws {
 
-        try conversation.appendKnock()
+        try conversation.appendKnock(nonce: UUID())
 
         analyticsSession?.trackEvent(
             ContributedEvent(

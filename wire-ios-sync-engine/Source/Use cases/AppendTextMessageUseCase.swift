@@ -77,21 +77,12 @@ public protocol MessageAppendableConversation {
         fetchLinkPreview: Bool,
         nonce: UUID
     ) throws -> any ZMConversationMessage
+
+    @discardableResult
+    func appendKnock(nonce: UUID) throws -> any ZMConversationMessage
+
 }
 
-extension ZMConversation: MessageAppendableConversation {}
-
-extension ConversationType {
-
-    init(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .group:
-            self = .group
-        case .oneOnOne:
-            self = .oneOnOne
-        default:
-            self = .unknown
-        }
-    }
+extension ZMConversation: MessageAppendableConversation {
 
 }
