@@ -79,15 +79,18 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
             guard let expirationDate = $0.expirationDate else { return }
             if expirationDate.compare(now) == .orderedAscending {
                 if let proteusMessage = $0 as? (any ProteusMessage) {
-                    WireLogger.messaging.debug("expiring message \(proteusMessage.debugInfo) when trying to start timer")
+                    WireLogger.messaging.debug("expiring message when trying to start timer", attributes: proteusMessage.logInformation)
                 }
                 $0.expire()
                 $0.managedObjectContext?.enqueueDelayedSave()
             } else {
-                if let proteusMessage = $0 as? (any ProteusMessage) {
-                    WireLogger.messaging.debug("starting timer for message \(proteusMessage.debugInfo)")
+
+                if super.startTimerIfNeeded(for: $0, fireDate: expirationDate, userInfo: [:]) {
+                    if let proteusMessage = $0 as? (any ProteusMessage) {
+                        WireLogger.messaging.debug("starting timer for message", attributes: proteusMessage.logInformation)
+
+                    }
                 }
-                super.start(forMessageIfNeeded: $0, fire: expirationDate, userInfo: [:])
             }
         }
     }

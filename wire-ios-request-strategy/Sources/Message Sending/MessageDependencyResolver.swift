@@ -64,10 +64,14 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
             }
 
             if !hasDependencies {
-                WireLogger.messaging.debug("Message dependency resolved")
+                await context.perform {
+                    WireLogger.messaging.debug("Message dependency resolved", attributes: message.logInformation)
+                }
                 return true
             } else {
-                WireLogger.messaging.debug("Message has dependency, waiting")
+                await context.perform {
+                    WireLogger.messaging.debug("Message has dependency, waiting", attributes: message.logInformation)
+                }
                 return false
             }
         }

@@ -107,7 +107,7 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.uuidString), attributes: .safePublic)
+        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.safeForLoggingDescription), attributes: .safePublic)
 
         guard finished else { return }
 
