@@ -125,10 +125,6 @@ echo ""
     echo "ℹ️  [CodeGen] Update StyleKit Icons..."
     swift run --package-path ./Scripts/updateStylekit
     echo ""
-
-    echo "ℹ️ Update Licenses File..."
-    swift run --package-path ./Scripts/updateLicenses
-    echo ""
 )
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
