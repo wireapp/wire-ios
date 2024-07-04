@@ -286,7 +286,8 @@
                                 @"recipient": toClient.identifier,
                                 @"id": assetId.transportString,
                                 @"key": [metaData base64EncodedStringWithOptions:0],
-                                @"data": imageData != nil && isInline ? [imageData base64EncodedStringWithOptions:0] : [NSNull null]
+                                @"data": imageData != nil && isInline ? [imageData base64EncodedStringWithOptions:0] : [NSNull null],
+                                @"info": [imageData base64EncodedStringWithOptions:0]
                                 };
     return [self eventIfNeededByUser:fromClient.user type:ZMUpdateEventTypeConversationOtrAssetAdd data:eventData];
 }
