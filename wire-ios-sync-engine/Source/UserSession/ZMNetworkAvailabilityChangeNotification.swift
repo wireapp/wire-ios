@@ -32,13 +32,13 @@ public class ZMNetworkAvailabilityChangeNotification: NSObject {
             name: name,
             context: notificationContext
         ) { [weak observer] note in
-            let networkState = note.userInfo[stateKey] as! ZMNetworkState
+            let networkState = note.userInfo[stateKey] as! NetworkState
             observer?.didChangeAvailability(newState: networkState)
         }
     }
 
     public static func notify(
-        networkState: ZMNetworkState,
+        networkState: NetworkState,
         notificationContext: NotificationContext
     ) {
         NotificationInContext(
@@ -51,5 +51,5 @@ public class ZMNetworkAvailabilityChangeNotification: NSObject {
 }
 
 public protocol ZMNetworkAvailabilityObserver: AnyObject {
-    func didChangeAvailability(newState: ZMNetworkState)
+    func didChangeAvailability(newState: NetworkState)
 }
