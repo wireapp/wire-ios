@@ -117,10 +117,11 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMessageProtocol
         }
 
-        // TODO: conditionally see if the message type expires or not
         await context.perform {
-            message.setExpirationDate()
-            self.context.saveOrRollback()
+            if message.shouldExpire {
+                message.setExpirationDate()
+                self.context.saveOrRollback()
+            }
         }
 
         do {

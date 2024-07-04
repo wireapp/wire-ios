@@ -384,16 +384,7 @@ extension ZMConversation {
         }
 
         message.sender = ZMUser.selfUser(in: moc)
-
-        // TODO: remove
-//        if expires {
-//            // message.expirationDate = Date(timeIntervalSinceNow: .oneMinute)
-//            message.setExpirationDate()
-//            WireLogger.messaging.debug(
-//                "set expiration date \(String(describing: message.expirationDate))",
-//                attributes: logAttributes
-//            )
-//        }
+        message.shouldExpire = expires
 
         if hidden {
             message.hiddenInConversation = self
