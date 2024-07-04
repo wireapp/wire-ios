@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct Connection: Equatable {
+public struct Connection: Equatable, Codable {
 
     /// Remote identifier of the sender
 
@@ -47,4 +47,5 @@ public struct Connection: Equatable {
     /// current status of connection
 
     public let status: ConnectionStatus
+
 }

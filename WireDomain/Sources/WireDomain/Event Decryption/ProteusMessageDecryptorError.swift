@@ -16,32 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
-import XCTest
+enum ProteusMessageDecryptorError: Error {
 
-@testable import Wire
+        case selfClientNotFound
+        case senderClientNotFound
+        case proteusSessionIDNotFound
+        case senderFailedToEncrypt
 
-final class VersionInfoViewControllerSnapshotTests: XCTestCase {
-
-    var sut: VersionInfoViewController!
-    private var snapshotHelper: SnapshotHelper!
-
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-        let path = Bundle(for: type(of: self)).path(forResource: "DummyComponentsVersions", ofType: "plist")!
-
-        sut = VersionInfoViewController(versionsPlist: path)
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
 }
