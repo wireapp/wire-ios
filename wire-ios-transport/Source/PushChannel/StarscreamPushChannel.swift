@@ -156,7 +156,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         webSocket?.connect()
 
         let attributes: LogAttributes = [
-            .selfClientID: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
+            .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
         ]
         WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
                                     attributes: attributes, .safePublic)

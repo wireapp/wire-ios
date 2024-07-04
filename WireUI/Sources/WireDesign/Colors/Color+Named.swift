@@ -20,53 +20,46 @@ import SwiftUI
 
 public extension Color {
 
-    static let primaryText = Color(
-        uiColor: UIColor(
-            light: .black,
-            dark: .white
-        )
+    static let primaryText = Color(uiColor: UIColor(
+        light: .black,
+        dark: .white
+    )
     )
 
-    static let secondaryText = Color(
-        uiColor: UIColor(
-            light: .gray70,
-            dark: .gray30
-        )
+    static let secondaryText = Color(uiColor: UIColor(
+        light: .gray70,
+        dark: .gray30
+    )
     )
 
-    static let primaryButtonBackground = Color(
-        uiColor: UIColor(
-            light: .blue500Light,
-            dark: .blue500Dark
-        )
+    static let primaryButtonBackground = Color(uiColor: UIColor(
+        light: .blue500Light,
+        dark: .blue500Dark
+    )
     )
 
-    static let primaryButtonText = Color(
-        uiColor: UIColor(
-            light: .white,
-            dark: .black
-        )
+    static let primaryButtonText = Color(uiColor: UIColor(
+        light: .white,
+        dark: .black
+    )
     )
 
-    static let secondaryButtonBackground = Color(
-        uiColor: UIColor(
-            light: .white,
-            dark: .gray95
-        )
+    static let secondaryButtonBackground = Color(uiColor: UIColor(
+        light: .white,
+        dark: .gray95
+    )
     )
 
-    static let secondaryButtonBorder = Color(
-        uiColor: UIColor(
-            light: .gray40,
-            dark: .gray80
-        )
+    static let secondaryButtonBorder = Color(uiColor: UIColor(
+        light: .gray40,
+        dark: .gray80
+    )
     )
 
-    static let secondaryButtonText = Color(
-        uiColor: UIColor(
-            light: .black,
-            dark: .white
-        )
+    static let secondaryButtonText = Color(uiColor: UIColor(
+        light: .black,
+        dark: .white
+    )
     )
 }
 

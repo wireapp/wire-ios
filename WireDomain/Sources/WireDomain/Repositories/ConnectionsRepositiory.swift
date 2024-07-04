@@ -85,7 +85,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     private func storedConversation(from connection: Connection, with storedConnection: ZMConnection) throws -> ZMConversation {
         guard let conversationID = connection.conversationID ?? connection.qualifiedConversationID?.uuid else {
-            throw ConnectionsRepositoryError.missingConversationID
+            throw ConnectionsRepositoryError.missingConversationId
         }
 
         let conversation = ZMConversation.fetchOrCreate(
@@ -106,7 +106,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     private func storedConnection(from connection: Connection) throws -> ZMConnection {
         guard let userID = connection.receiverID ?? connection.receiverQualifiedID?.uuid else {
-            throw ConnectionsRepositoryError.missingReceiverID
+            throw ConnectionsRepositoryError.missingReceiverId
         }
 
         let storedConnection = ZMConnection.fetchOrCreate(

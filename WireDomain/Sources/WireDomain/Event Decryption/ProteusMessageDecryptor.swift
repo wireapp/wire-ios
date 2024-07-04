@@ -129,7 +129,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             )
 
             guard let senderClient = UserClient.fetchUserClient(
-                withRemoteID: eventData.messageSenderClientID,
+                withRemoteId: eventData.messageSenderClientID,
                 forUser: senderUser,
                 createIfNeeded: true
             ) else {

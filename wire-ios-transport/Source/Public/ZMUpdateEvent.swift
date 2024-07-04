@@ -267,7 +267,7 @@ open class ZMUpdateEvent: NSObject {
     class func eventsArray(with uuid: UUID, payloadArray: [Any]?, transient: Bool, source: ZMUpdateEventSource, pushStartingAt sourceThreshold: UUID?) -> [ZMUpdateEvent] {
 
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
-            WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventID: uuid.transportString().redactedAndTruncated()], .safePublic)
+            WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventId: uuid.transportString().redactedAndTruncated()], .safePublic)
             return []
         }
 

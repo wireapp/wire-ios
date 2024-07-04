@@ -101,7 +101,7 @@ final class TeamRepositoryTests: XCTestCase {
             XCTAssertEqual(team.remoteIdentifier, Scaffolding.selfTeamID)
             XCTAssertEqual(team.name, Scaffolding.teamName)
             XCTAssertEqual(team.creator?.remoteIdentifier, Scaffolding.teamCreatorID)
-            XCTAssertEqual(team.pictureAssetID, Scaffolding.logoID)
+            XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
             XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
             XCTAssertFalse(team.needsToBeUpdatedFromBackend)
         }

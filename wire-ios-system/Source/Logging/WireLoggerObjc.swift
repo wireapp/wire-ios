@@ -28,7 +28,7 @@ public final class WireLoggerObjc: NSObject {
 
     @objc(logReceivedUpdateEventWithId:)
     static func logReceivedUpdateEvent(eventId: String) {
-        WireLogger.updateEvent.info("received event", attributes: [.eventID: eventId], .safePublic)
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
     }
 
     @objc(logSaveCoreDataError:)

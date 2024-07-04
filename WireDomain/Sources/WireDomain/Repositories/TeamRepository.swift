@@ -101,7 +101,7 @@ final class TeamRepository: TeamRepositoryProtocol {
                 domain: nil,
                 in: context
             )
-            team.pictureAssetID = teamAPIModel.logoID
+            team.pictureAssetId = teamAPIModel.logoID
             team.pictureAssetKey = teamAPIModel.logoKey
             team.needsToBeUpdatedFromBackend = false
         }
