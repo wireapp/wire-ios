@@ -76,7 +76,6 @@ final class AvailabilityIndicatorView: UIView {
         shapeView.layer.cornerRadius = diameter / 2
 
         switch availability {
-
         case .available:
             shapeView.backgroundColor = availableColor
             layer.mask = nil

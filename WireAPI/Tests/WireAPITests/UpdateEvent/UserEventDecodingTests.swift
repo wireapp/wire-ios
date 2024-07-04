@@ -342,7 +342,7 @@ final class UserEventDecodingTests: XCTestCase {
             userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!,
             clientID: "abcd1234",
             lastPrekey: Prekey(
-                id: 12345,
+                id: 12_345,
                 base64EncodedKey: "foo"
             )
         )
