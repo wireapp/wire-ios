@@ -77,8 +77,12 @@ class UserRepositoryTests: XCTestCase {
         // Then
         try await context.perform { [context] in
             // There is a user in the database.
-            let user = try XCTUnwrap(ZMUser.fetch(
-                with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context)
+            let user = try XCTUnwrap(
+                ZMUser.fetch(
+                    with: Scaffolding.user1.id.uuid,
+                    domain: Scaffolding.user1.id.domain,
+                    in: context
+                )
             )
             XCTAssertEqual(user.remoteIdentifier, Scaffolding.user1.id.uuid)
             XCTAssertEqual(user.name, Scaffolding.user1.name)
@@ -111,8 +115,12 @@ class UserRepositoryTests: XCTestCase {
         // Then
         try await context.perform { [context] in
             // The complete user in the database.
-            let user = try XCTUnwrap(ZMUser.fetch(
-                with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context)
+            let user = try XCTUnwrap(
+                ZMUser.fetch(
+                    with: Scaffolding.user1.id.uuid,
+                    domain: Scaffolding.user1.id.domain,
+                    in: context
+                )
             )
             XCTAssertEqual(user.remoteIdentifier, Scaffolding.user1.id.uuid)
             XCTAssertEqual(user.name, Scaffolding.user1.name)

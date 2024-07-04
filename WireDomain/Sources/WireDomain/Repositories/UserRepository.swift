@@ -45,7 +45,7 @@ public protocol UserRepositoryProtocol {
 
 }
 
-final public class UserRepository: UserRepositoryProtocol {
+public final class UserRepository: UserRepositoryProtocol {
 
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
@@ -80,8 +80,8 @@ final public class UserRepository: UserRepositoryProtocol {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
             await context.perform {
-                userList.found.forEach {
-                    self.persistUser(from: $0)
+                for user in userList.found {
+                    self.persistUser(from: user)
                 }
             }
         } catch {

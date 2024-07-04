@@ -42,7 +42,7 @@ public final class SelfUserProvider: SelfUserProviderProtocol {
     // MARK: - Methods
 
     public func fetchSelfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
+        ZMUser.selfUser(in: context)
     }
 
 }

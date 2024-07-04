@@ -20,10 +20,10 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-extension Collection where Element == WireDataModel.QualifiedID {
+extension Collection<WireDataModel.QualifiedID> {
 
     func toAPIModel() -> [WireAPI.QualifiedID] {
-        map({ $0.toAPIModel() })
+        map { $0.toAPIModel() }
     }
 
 }
@@ -44,10 +44,10 @@ extension WireAPI.QualifiedID {
 
 }
 
-extension Set where Element == WireAPI.SupportedProtocol {
+extension Set<WireAPI.SupportedProtocol> {
 
     func toDomainModel() -> Set<WireDataModel.MessageProtocol> {
-        .init(map({ $0.toDomainModel() }))
+        .init(map { $0.toDomainModel() })
     }
 
 }
