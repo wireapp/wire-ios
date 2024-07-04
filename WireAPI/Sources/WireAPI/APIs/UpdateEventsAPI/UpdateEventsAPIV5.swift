@@ -46,7 +46,7 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
 
         // Change: 400 error removed.
         return try ResponseParser()
-            .success(code: 200, type: UpdateEventEnvelope.self)
+            .success(code: 200, type: UpdateEventEnvelopeV0.self)
             .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
     }
