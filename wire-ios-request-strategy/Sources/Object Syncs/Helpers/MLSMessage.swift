@@ -35,6 +35,8 @@ extension GenericMessageEntity: MLSMessage {
     }
 
     public func setExpirationDate() {
-        // no-op
+        // Just required for protocol conformance.
+        // Generic messages are used as underlying messages in proteus and mls,
+        // so they don't need to have their own expiration date.
     }
 }
