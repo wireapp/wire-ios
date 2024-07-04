@@ -83,35 +83,6 @@ public class MockAppendImageMessageUseCaseProtocol: AppendImageMessageUseCasePro
 
 }
 
-public class MockAppendKnockMessagekUseCaseProtocol: AppendKnockMessagekUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeIn_Invocations: [ZMConversation] = []
-    public var invokeIn_MockError: Error?
-    public var invokeIn_MockMethod: ((ZMConversation) throws -> Void)?
-
-    public func invoke(in conversation: ZMConversation) throws {
-        invokeIn_Invocations.append(conversation)
-
-        if let error = invokeIn_MockError {
-            throw error
-        }
-
-        guard let mock = invokeIn_MockMethod else {
-            fatalError("no mock for `invokeIn`")
-        }
-
-        try mock(conversation)
-    }
-
-}
-
 public class MockAppendLocationMessagekUseCaseProtocol: AppendLocationMessagekUseCaseProtocol {
 
     // MARK: - Life cycle

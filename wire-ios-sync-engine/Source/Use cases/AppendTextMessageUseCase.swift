@@ -20,9 +20,8 @@ import WireAnalytics
 import WireDataModel
 
 public protocol AppendTextMessageUseCaseProtocol {
-    associatedtype Conversation: MessageAppendableConversation
 
-    func invoke(
+    func invoke<Conversation: MessageAppendableConversation>(
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,
@@ -31,12 +30,11 @@ public protocol AppendTextMessageUseCaseProtocol {
     ) throws
 }
 
-public struct AppendTextMessageUseCase<Conversation>: AppendTextMessageUseCaseProtocol
-where Conversation: MessageAppendableConversation {
+public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
-    public func invoke(
+    public func invoke<Conversation: MessageAppendableConversation>(
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,

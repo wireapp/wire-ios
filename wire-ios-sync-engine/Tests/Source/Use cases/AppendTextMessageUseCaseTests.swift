@@ -31,7 +31,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
 
     private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
     private var mockConversation: MockMessageAppendableConversation!
-    private var sut: AppendTextMessageUseCase<MockMessageAppendableConversation>!
+    private var sut: AppendTextMessageUseCase!
 
     // MARK: - setUp
 
