@@ -56,7 +56,7 @@ final public class UserRepository: UserRepositoryProtocol {
     }
 
     public func fetchSelfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
+        ZMUser.selfUser(in: context)
     }
 
     public func pullKnownUsers() async throws {

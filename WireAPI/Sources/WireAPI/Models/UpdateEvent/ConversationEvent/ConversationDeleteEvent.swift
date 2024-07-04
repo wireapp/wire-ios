@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a conversation was deleted.
 
-public struct ConversationDeleteEvent: Equatable {
+public struct ConversationDeleteEvent: Equatable, Codable {
 
     /// The id of the conversation.
 

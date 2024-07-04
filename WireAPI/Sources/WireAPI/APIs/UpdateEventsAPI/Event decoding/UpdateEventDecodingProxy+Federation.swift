@@ -18,22 +18,23 @@
 
 import Foundation
 
-/// An error when decoding `UpdateEvent`.
+extension UpdateEventDecodingProxy {
 
-public struct UpdateEventDecodingError: Error, CustomStringConvertible {
+    init(
+        eventType: FederationEventType,
+        from decoder: any Decoder
+    ) throws {
+        let container = try decoder.container(keyedBy: FederationEventCodingKeys.self)
 
-    /// The type of the event being decoding.
+        switch eventType {
+        case .connectionRemoved:
+            let event = try FederationConnectionRemovedEventDecoder().decode(from: container)
+            updateEvent = .federation(.connectionRemoved(event))
 
-    public let eventType: String
-
-    /// The error that occurred when decoding.
-
-    public let decodingError: Error
-
-    /// A textual representation of the error.
-
-    public var description: String {
-        "failed to decode event '\(eventType)': \(decodingError)"
+        case .delete:
+            let event = try FederationDeleteEventDecoder().decode(from: container)
+            updateEvent = .federation(.delete(event))
+        }
     }
 
 }

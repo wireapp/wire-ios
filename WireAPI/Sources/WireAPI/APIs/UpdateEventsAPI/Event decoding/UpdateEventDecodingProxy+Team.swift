@@ -18,21 +18,26 @@
 
 import Foundation
 
-extension UpdateEventEnvelope: Decodable {
+extension UpdateEventDecodingProxy {
 
-    enum CodingKeys: String, CodingKey {
+    init(
+        eventType: TeamEventType,
+        from decoder: any Decoder
+    ) throws {
+        let container = try decoder.container(keyedBy: TeamEventCodingKeys.self)
 
-        case id
-        case events = "payload"
-        case isTransient = "transient"
+        switch eventType {
+        case .delete:
+            updateEvent = .team(.delete)
 
-    }
+        case .memberLeave:
+            let event = try TeamMemberLeaveEventDecoder().decode(from: container)
+            updateEvent = .team(.memberLeave(event))
 
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(UUID.self, forKey: .id)
-        events = try container.decodeIfPresent([UpdateEvent].self, forKey: .events) ?? []
-        isTransient = try container.decodeIfPresent(Bool.self, forKey: .isTransient) ?? false
+        case .memberUpdate:
+            let event = try TeamMemberUpdateEventDecoder().decode(from: container)
+            updateEvent = .team(.memberUpdate(event))
+        }
     }
 
 }

@@ -20,16 +20,14 @@ import Foundation
 
 /// A message that can be sent in an mls group.
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {}
+public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {}
 
 extension ZMClientMessage: MLSMessage {}
 
 extension ZMAssetClientMessage: MLSMessage {}
 
 extension GenericMessageEntity: MLSMessage {
-
     public func encryptForTransport(using encrypt: (Data) async throws -> Data) async throws -> Data {
-        return try await message.encryptForTransport(using: encrypt)
+        try await message.encryptForTransport(using: encrypt)
     }
-
 }

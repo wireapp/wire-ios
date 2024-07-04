@@ -17,26 +17,27 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
 
-@objcMembers class MockOTREntity: OTREntity, Hashable {
+@testable import WireRequestStrategy
+
+final class MockOTREntity: OTREntity {
 
     var context: NSManagedObjectContext
     var expirationDate: Date?
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
-    public func expire() {
+    func expire() {
         isExpired = true
     }
-    public var expirationReasonCode: NSNumber?
+    var expirationReasonCode: NSNumber?
 
     let messageData: Data
 
-    public func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
     }
-    public var conversation: ZMConversation?
+    var conversation: ZMConversation?
 
     var isMissingClients = false
     var didCallHandleClientUpdates = false
@@ -49,10 +50,6 @@ import XCTest
         self.messageData = messageData
         self.conversation = conversation
         self.context = context
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.conversation!)
     }
 
     func detectedRedundantUsers(_ users: [ZMUser]) {

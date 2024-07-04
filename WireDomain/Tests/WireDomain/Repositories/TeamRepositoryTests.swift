@@ -53,14 +53,13 @@ final class TeamRepositoryTests: XCTestCase {
         )
 
         let selfUser = await context.perform { [context, modelHelper] in
-            return modelHelper.createSelfUser(
+            modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID,
                 in: context
             )
         }
 
         userRespository.fetchSelfUser_MockValue = selfUser
-
     }
 
     override func tearDown() async throws {

@@ -28,12 +28,22 @@
 		162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356562C2B22A300C6666C /* UserModelMappings.swift */; };
 		162356582C2C2F6100C6666C /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356512C2B223B00C6666C /* UserRepository.swift */; };
 		162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356522C2B223B00C6666C /* UserRepositoryError.swift */; };
-		EE0E11982C2D6899004BBD29 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11912C2D6899004BBD29 /* ConversationEventProcessor.swift */; };
-		EE0E11992C2D6899004BBD29 /* FeatureConfigEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11922C2D6899004BBD29 /* FeatureConfigEventProcessor.swift */; };
-		EE0E119A2C2D6899004BBD29 /* FederationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11932C2D6899004BBD29 /* FederationEventProcessor.swift */; };
-		EE0E119B2C2D6899004BBD29 /* TeamEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11942C2D6899004BBD29 /* TeamEventProcessor.swift */; };
-		EE0E119C2C2D6899004BBD29 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11952C2D6899004BBD29 /* UpdateEventProcessor.swift */; };
-		EE0E119D2C2D6899004BBD29 /* UserEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E11962C2D6899004BBD29 /* UserEventProcessor.swift */; };
+		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
+		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
+		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
+		EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */; };
+		EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */; };
+		EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCA2C2DAA87009DBAB0 /* TeamEventProcessor.swift */; };
+		EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */; };
+		EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */; };
+		EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */; };
+		EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */; };
+		EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */; };
+		EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */; };
+		EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */; };
+		EE57A7052C2997090096F242 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE57A7042C2997090096F242 /* WireAPI */; };
+		EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */; };
+		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,12 +86,21 @@
 		162356512C2B223B00C6666C /* UserRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
-		EE0E11912C2D6899004BBD29 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
-		EE0E11922C2D6899004BBD29 /* FeatureConfigEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigEventProcessor.swift; sourceTree = "<group>"; };
-		EE0E11932C2D6899004BBD29 /* FederationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FederationEventProcessor.swift; sourceTree = "<group>"; };
-		EE0E11942C2D6899004BBD29 /* TeamEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamEventProcessor.swift; sourceTree = "<group>"; };
-		EE0E11952C2D6899004BBD29 /* UpdateEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateEventProcessor.swift; sourceTree = "<group>"; };
-		EE0E11962C2D6899004BBD29 /* UserEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEventProcessor.swift; sourceTree = "<group>"; };
+		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
+		EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryError.swift; sourceTree = "<group>"; };
+		EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
+		EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigEventProcessor.swift; sourceTree = "<group>"; };
+		EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FederationEventProcessor.swift; sourceTree = "<group>"; };
+		EE368CCA2C2DAA87009DBAB0 /* TeamEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamEventProcessor.swift; sourceTree = "<group>"; };
+		EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEventProcessor.swift; sourceTree = "<group>"; };
+		EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorTests.swift; sourceTree = "<group>"; };
+		EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepository.swift; sourceTree = "<group>"; };
+		EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptor.swift; sourceTree = "<group>"; };
+		EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptor.swift; sourceTree = "<group>"; };
+		EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryTests.swift; sourceTree = "<group>"; };
+		EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorError.swift; sourceTree = "<group>"; };
+		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE57A7052C2997090096F242 /* WireAPI in Frameworks */,
 				0151580E2C2083D700590D24 /* WireDomain.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -123,6 +143,7 @@
 				1623564F2C2B223100C6666C /* UserRepositoryTests.swift */,
 				017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */,
 				017F67982C20801800B6E02D /* TeamRepositoryTests.swift */,
+				EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -130,6 +151,8 @@
 		017F679A2C20801800B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EE0E117C2C2C4076004BBD29 /* Helpers */,
+				EE57A7092C2A8B950096F242 /* Event Decryption */,
 				017F67992C20801800B6E02D /* Repositories */,
 			);
 			path = WireDomain;
@@ -146,6 +169,9 @@
 				017F679F2C20802300B6E02D /* TeamRepository.swift */,
 				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
 				017F67A12C20802300B6E02D /* SelfUserProvider.swift */,
+				017F67A12C20802300B6E02D /* UserRepository.swift */,
+				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
+				EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -153,7 +179,8 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
-				EE0E11972C2D6899004BBD29 /* Event Processing */,
+				EE57A6FC2C298F280096F242 /* Event Decryption */,
+				EE368CCD2C2DAA87009DBAB0 /* Event Processing */,
 				017F67A22C20802300B6E02D /* Repositories */,
 			);
 			path = WireDomain;
@@ -234,17 +261,44 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		EE0E11972C2D6899004BBD29 /* Event Processing */ = {
+		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				EE0E11912C2D6899004BBD29 /* ConversationEventProcessor.swift */,
-				EE0E11922C2D6899004BBD29 /* FeatureConfigEventProcessor.swift */,
-				EE0E11932C2D6899004BBD29 /* FederationEventProcessor.swift */,
-				EE0E11942C2D6899004BBD29 /* TeamEventProcessor.swift */,
-				EE0E11952C2D6899004BBD29 /* UpdateEventProcessor.swift */,
-				EE0E11962C2D6899004BBD29 /* UserEventProcessor.swift */,
+				EE0E117D2C2C4080004BBD29 /* TestError.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		EE368CCD2C2DAA87009DBAB0 /* Event Processing */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */,
+				EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */,
+				EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */,
+				EE368CCA2C2DAA87009DBAB0 /* TeamEventProcessor.swift */,
+				EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */,
+				EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */,
 			);
 			path = "Event Processing";
+			sourceTree = "<group>";
+		};
+		EE57A6FC2C298F280096F242 /* Event Decryption */ = {
+			isa = PBXGroup;
+			children = (
+				EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */,
+				EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */,
+				EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */,
+			);
+			path = "Event Decryption";
+			sourceTree = "<group>";
+		};
+		EE57A7092C2A8B950096F242 /* Event Decryption */ = {
+			isa = PBXGroup;
+			children = (
+				EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */,
+				EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */,
+			);
+			path = "Event Decryption";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -283,6 +337,9 @@
 				017F67932C207A9100B6E02D /* PBXTargetDependency */,
 			);
 			name = WireDomainSupport;
+			packageProductDependencies = (
+				EE57A7042C2997090096F242 /* WireAPI */,
+			);
 			productName = WireDomainSupport;
 			productReference = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -432,22 +489,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE0E11992C2D6899004BBD29 /* FeatureConfigEventProcessor.swift in Sources */,
-				EE0E119A2C2D6899004BBD29 /* FederationEventProcessor.swift in Sources */,
-				EE0E119B2C2D6899004BBD29 /* TeamEventProcessor.swift in Sources */,
+				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
+				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
+				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
+				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
+				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
+				EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
-				EE0E119D2C2D6899004BBD29 /* UserEventProcessor.swift in Sources */,
-				EE0E119C2C2D6899004BBD29 /* UpdateEventProcessor.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
-				EE0E11982C2D6899004BBD29 /* ConversationEventProcessor.swift in Sources */,
 				162356582C2C2F6100C6666C /* UserRepository.swift in Sources */,
-				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
 				162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */,
+				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
+				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
+				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
+				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
+				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
+				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,8 +517,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
+				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
+				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -856,6 +921,10 @@
 		01D0DD022C1C90E90076CB1C /* WireAPISupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
+		};
+		EE57A7042C2997090096F242 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

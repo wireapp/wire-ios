@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "使用條款";
 "about.privacy.title" = "隱私權原則";
-"about.license.title" = "許可證資訊";
 "about.website.title" = "Wire網站";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "詳細資訊";
-"about.license.open_project_button" = "檢視專案頁面";
-"about.license.license_header" = "致謝聲明";
 
 // Self new devices
 "self.new_device_alert.title" = "您的帳號用於：";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "如果您有推送通知的問題，Wire客服可能會請您重設此token。";
 "self.settings.advanced.reset_push_token_alert.title" = "推送token 已被重設";
 "self.settings.advanced.reset_push_token_alert.message" = "通知將會在幾秒鐘內恢復。";
-"self.settings.advanced.version_technical_details.title" = "版本資訊";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "資料使用許可";
