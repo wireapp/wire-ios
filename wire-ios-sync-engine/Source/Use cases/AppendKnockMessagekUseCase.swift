@@ -20,17 +20,15 @@ import WireAnalytics
 import WireDataModel
 
 public protocol AppendKnockMessageUseCaseProtocol {
-    associatedtype Conversation: MessageAppendableConversation
 
-    func invoke(in conversation: Conversation) throws
+    func invoke<Conversation: MessageAppendableConversation>(in conversation: Conversation) throws
 }
 
-public struct AppendKnockMessageUseCase<Conversation>: AppendKnockMessageUseCaseProtocol
-where Conversation: MessageAppendableConversation {
+public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
-    public func invoke(
+    public func invoke<Conversation: MessageAppendableConversation>(
         in conversation: Conversation
     ) throws {
 

@@ -358,7 +358,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
-        return AppendKnockMessageUseCase<ZMConversation>(analyticsSession: analyticsSession)
+        return AppendKnockMessageUseCase(analyticsSession: analyticsSession)
     }
 
     public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
