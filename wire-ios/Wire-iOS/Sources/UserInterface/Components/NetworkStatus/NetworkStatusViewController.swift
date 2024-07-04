@@ -139,11 +139,6 @@ final class NetworkStatusViewController: UIViewController {
             return .online
         case .onlineSynchronizing:
             return .onlineSynchronizing
-        @unknown default:
-            // swiftlint:disable todo_requires_jira_link
-            // TODO: ZMNetworkState change to NS_CLOSED_ENUM
-            // swiftlint:enable todo_requires_jira_link
-            fatalError()
         }
     }
 
