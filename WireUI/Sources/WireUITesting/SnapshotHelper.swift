@@ -109,7 +109,6 @@ public struct SnapshotHelper {
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(relativeTo testCaseFile: String) -> Self {
-
         var pathComponents = URL(fileURLWithPath: testCaseFile)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
@@ -225,7 +224,6 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-
         let failure = verifySnapshot(
             matching: value,
             as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
@@ -283,11 +281,9 @@ public struct SnapshotHelper {
 
             XCTAssertNil(failure, file: file, line: line)
         }
-
     }
 
     private func snapshotDirectory(file: StaticString = #file) -> String {
-
         var snapshotReferenceDirectory = snapshotReferenceDirectory
         if snapshotReferenceDirectory.isEmpty {
             snapshotReferenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
