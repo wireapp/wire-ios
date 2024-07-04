@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc
+@objc(ZMNetworkState)
 public enum NetworkState: Int {
     case online = 0
     case offline
