@@ -174,7 +174,7 @@ extension EventDecoder {
             var index = startIndex
             for event in events {
                 try Task.checkCancellation()
-                if DeveloperFlag.debugDuplicateObjects.isOn {
+                if DeveloperFlag.decryptAndStoreEventsSleep.isOn {
                     try await Task.sleep(nanoseconds: 1_000_000_000)
                 }
                 await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
@@ -294,7 +294,8 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?
     ) {
         for (idx, event) in decryptedEvents.enumerated() {
-            WireLogger.updateEvent.info("store event", attributes: [.eventId: event.safeUUID])
+            WireLogger.updateEvent.info("store event", attributes: event.logAttributes)
+
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
@@ -428,10 +429,7 @@ extension EventDecoder {
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
                 let included = genericMessage.hasAvailability
                 if !included {
-                    WireLogger.updateEvent.warn(
-                        "dropping stored event",
-                        attributes: [.eventId: event.safeUUID]
-                    )
+                    WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)
                 }
                 return included
             }

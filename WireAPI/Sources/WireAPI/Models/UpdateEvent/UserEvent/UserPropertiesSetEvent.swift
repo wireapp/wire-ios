@@ -21,7 +21,7 @@ import Foundation
 /// An event where one of the self user's persisted
 /// properties was set.
 
-public struct UserPropertiesSetEvent: Equatable {
+public struct UserPropertiesSetEvent: Equatable, Codable {
 
     /// The updated user property.
 
