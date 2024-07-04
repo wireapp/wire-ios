@@ -17,22 +17,32 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
-/// An API access object for endpoints concerning users.
-public protocol UsersAPI {
+public protocol SelfUserProviderProtocol {
 
-    /// Get user details for a single user
-    ///
-    /// - Parameter userID: The id of the user.
-    /// - Returns: The user details.
+    func fetchSelfUser() -> ZMUser
 
-    func getUser(for userID: UserID) async throws -> User
+}
 
-    /// Get user details for a list of users
-    ///
-    /// - Parameter userIDs: lists of user ids
-    /// - Returns: List user details response.
+@available(*, deprecated, message: "Use UserRepository instead")
+public final class SelfUserProvider: SelfUserProviderProtocol {
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: - Methods
+
+    public func fetchSelfUser() -> ZMUser {
+        ZMUser.selfUser(in: context)
+    }
+
 }

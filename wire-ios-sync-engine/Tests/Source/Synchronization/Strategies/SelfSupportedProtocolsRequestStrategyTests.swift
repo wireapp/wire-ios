@@ -32,7 +32,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!
 
-    private var mockUserRepository: MockUserRepositoryProtocol!
+    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -45,18 +45,18 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
         coreDataStackHelper = CoreDataStackHelper()
         mockCoreDataStack = try await coreDataStackHelper.createStack()
-        mockUserRepository = MockUserRepositoryProtocol()
+        mockSelfUserProvider = MockSelfUserProviderProtocol()
 
         // set values
 
         let context = mockCoreDataStack.syncContext
         await context.perform {
-            self.mockUserRepository.fetchSelfUser_MockValue = self.createUser(in: context)
+            self.mockSelfUserProvider.fetchSelfUser_MockValue = self.createUser(in: context)
         }
     }
 
     override func tearDown() async throws {
-        mockUserRepository = nil
+        mockSelfUserProvider = nil
         mockCoreDataStack = nil
 
         try coreDataStackHelper.cleanupDirectory()
@@ -107,7 +107,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
         // when
         let request = await syncContext.perform {
-            self.mockUserRepository.fetchSelfUser().supportedProtocols = [.proteus]
+            self.mockSelfUserProvider.fetchSelfUser().supportedProtocols = [.proteus]
             return strategy.nextRequestIfAllowed(for: self.defaultAPIVersion)
         }
 
@@ -125,7 +125,7 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
             context: syncContext,
             applicationStatus: applicationStatus ?? MockApplicationStatus(),
             syncProgress: syncProgress ?? MockSyncProgress(),
-            userRepository: mockUserRepository
+            selfUserProvider: mockSelfUserProvider
         )
     }
 

@@ -28,7 +28,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
 
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockUserRepository: MockUserRepositoryProtocol!
+    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
 
     private var sut: SupportedProtocolsService!
 
@@ -43,18 +43,18 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         mockCoreDataStack = try await coreDataStackHelper.createStack()
 
         mockFeatureRepository = MockFeatureRepositoryInterface()
-        mockUserRepository = MockUserRepositoryProtocol()
+        mockSelfUserProvider = MockSelfUserProviderProtocol()
 
         sut = SupportedProtocolsService(
             featureRepository: mockFeatureRepository,
-            userRepository: mockUserRepository
+            selfUserProvider: mockSelfUserProvider
         )
     }
 
     override func tearDown() async throws {
         sut = nil
         mockFeatureRepository = nil
-        mockUserRepository = nil
+        mockSelfUserProvider = nil
         mockCoreDataStack = nil
 
         try coreDataStackHelper.cleanupDirectory()
@@ -67,7 +67,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 
     private func mock(allActiveMLSClients: Bool) throws {
         let selfUser = createSelfUser(in: syncContext)
-        mockUserRepository.fetchSelfUser_MockValue = selfUser
+        mockSelfUserProvider.fetchSelfUser_MockValue = selfUser
 
         let selfClient = createSelfClient(in: syncContext)
         selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)

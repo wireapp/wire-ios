@@ -32,7 +32,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     // MARK: - Properties
 
     private let featureRepository: FeatureRepositoryInterface
-    private let userRepository: UserRepositoryProtocol
+    private let selfUserProvider: SelfUserProviderProtocol
     private let logger = WireLogger(tag: "supported-protocols")
 
     // MARK: - Life cycle
@@ -40,16 +40,16 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     public convenience init(context: NSManagedObjectContext) {
         self.init(
             featureRepository: FeatureRepository(context: context),
-            userRepository: UserRepository(context: context)
+            selfUserProvider: WireDomain.SelfUserProvider(context: context)
         )
     }
 
     init(
         featureRepository: FeatureRepositoryInterface,
-        userRepository: UserRepositoryProtocol
+        selfUserProvider: SelfUserProviderProtocol
     ) {
         self.featureRepository = featureRepository
-        self.userRepository = userRepository
+        self.selfUserProvider = selfUserProvider
     }
 
     // MARK: - Methods
@@ -150,7 +150,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     }
 
     private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        return userRepository.fetchSelfUser().clients.all(\.isActiveMLSClient)
+        return selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 
 }
