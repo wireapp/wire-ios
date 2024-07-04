@@ -83,7 +83,7 @@ public class MockAppendImageMessageUseCaseProtocol: AppendImageMessageUseCasePro
 
 }
 
-public class MockAppendKnocMessagekUseCaseProtocol: AppendKnocMessagekUseCaseProtocol {
+public class MockAppendKnockMessagekUseCaseProtocol: AppendKnockMessagekUseCaseProtocol {
 
     // MARK: - Life cycle
 

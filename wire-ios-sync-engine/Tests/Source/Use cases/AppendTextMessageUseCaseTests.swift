@@ -71,6 +71,6 @@ private final class MockConversation: MessageAppendableConversation {
     var draftMessage: DraftMessage?
 
     func appendText(content: String, mentions: [WireDataModel.Mention], replyingTo quotedMessage: (any WireDataModel.ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID) throws -> any WireDataModel.ZMConversationMessage {
-        fatalError("TODO")
+        // fatalError("TODO")
     }
 }
