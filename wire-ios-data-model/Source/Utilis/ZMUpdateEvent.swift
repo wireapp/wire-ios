@@ -39,6 +39,20 @@ extension ZMUpdateEvent {
         }
     }
 
+    /// Attributes that can be attached to logs safely
+    public var logAttributes: LogAttributes {
+        [
+            LogAttributesKey.messageType: safeType,
+            LogAttributesKey.eventId: safeUUID,
+            LogAttributesKey.nonce: messageNonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId: safeLoggingConversationId
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
+    }
+
+    public var safeLoggingConversationId: String {
+        conversationUUID.flatMap { QualifiedID(uuid: $0, domain: conversationDomain ?? "<nil>").safeForLoggingDescription } ?? "<nil>"
+    }
+
     public var userIDs: [UUID] {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
             let userIds = dataPayload["user_ids"] as? [String] else {

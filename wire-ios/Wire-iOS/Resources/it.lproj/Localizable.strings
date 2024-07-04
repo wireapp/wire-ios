@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Termini di utilizzo";
 "about.privacy.title" = "Informativa sulla privacy";
-"about.license.title" = "Informazioni sulla licenza";
 "about.website.title" = "Sito di Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Dettagli";
-"about.license.open_project_button" = "Vai alla pagina del progetto";
-"about.license.license_header" = "Riconoscimenti";
 
 // Self new devices
 "self.new_device_alert.title" = "Il tuo account è stato utilizzato su:";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Se si verificano problemi con le notifiche push, il supporto di Wire può chiedere di reimpostare questo token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push Token è stata resettata";
 "self.settings.advanced.reset_push_token_alert.message" = "Le notifiche verranno ripristinate in pochi secondi.";
-"self.settings.advanced.version_technical_details.title" = "Dettagli tecnici della versione";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Autorizzazioni all'utilizzo dei dati";
