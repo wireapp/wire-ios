@@ -27,9 +27,13 @@ import XCTest
 
 final class AppendTextMessageUseCaseTests: XCTestCase {
 
+    // MARK: - Properties
+
     private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendTextMessageUseCase<MockMessageAppendableConversation>!
+
+    // MARK: - setUp
 
     override func setUp() {
         mockAnalyticsSessionProtocol = .init()
@@ -37,15 +41,16 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
         sut = AppendTextMessageUseCase(analyticsSession: mockAnalyticsSessionProtocol)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockConversation = nil
         mockAnalyticsSessionProtocol = nil
     }
 
-    func testExample() throws {
-
-        // Given
+    func testInvoke_AppendTextContentWithoutMentionsOrRepliesInGroupConversation_TracksEventCorrectly() throws {
+        // GIVEN
         mockConversation.conversationType = .group
         mockConversation.localParticipants = []
         mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod = { _, _, _, _, _ in
@@ -53,7 +58,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
         }
         mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
 
-        // When
+        // WHEN
         try sut.invoke(
             text: "some message",
             mentions: [],
@@ -62,17 +67,18 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
             fetchLinkPreview: false
         )
 
-        // Then
+        // THEN
         XCTAssertEqual(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.count, 1)
         let appendTextInvocation = try XCTUnwrap(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.first)
         XCTAssertEqual(appendTextInvocation.content, "some message")
-        // ..
+        XCTAssertEqual(appendTextInvocation.mentions, [])
+        XCTAssertEqual(appendTextInvocation.fetchLinkPreview, false)
 
         XCTAssertNil(mockConversation.draftMessage)
 
         XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
         let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ContributedEvent)
         XCTAssertEqual(trackEventInvocation.contributionType, .textMessage)
-        // ..
+        XCTAssertEqual(trackEventInvocation.conversationType, .group)
     }
 }
