@@ -131,7 +131,7 @@ final class NetworkStatusViewController: UIViewController {
         alert.presentTopmost()
     }
 
-    private func viewState(from networkState: ZMNetworkState) -> NetworkStatusViewState {
+    private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
             return .offlineExpanded
@@ -175,7 +175,7 @@ final class NetworkStatusViewController: UIViewController {
 
 extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 
-    func didChangeAvailability(newState: ZMNetworkState) {
+    func didChangeAvailability(newState: NetworkState) {
         enqueue(state: viewState(from: newState))
     }
 
