@@ -62,6 +62,9 @@ actor EventProcessor: UpdateEventProcessor {
 
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
         guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+        events.forEach { event in
+            WireLogger.updateEvent.debug("buffer event", attributes: event.logAttributes)
+        }
         bufferedEvents.append(contentsOf: events)
     }
 
