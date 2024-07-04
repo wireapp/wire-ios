@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireSystem
 import ZipArchive
 
+// sourcery: AutoMockable
 protocol LogFilesProviding {
 
     /// Generates a zip file containing all log files and returns its data before removing the files

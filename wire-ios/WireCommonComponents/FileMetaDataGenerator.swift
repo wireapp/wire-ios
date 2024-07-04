@@ -23,6 +23,7 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// sourcery: AutoMockable
 public protocol FileMetaDataGenerating {
 
     func metadataForFileAtURL(

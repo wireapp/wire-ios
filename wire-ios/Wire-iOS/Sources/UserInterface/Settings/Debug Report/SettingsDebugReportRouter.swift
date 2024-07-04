@@ -20,15 +20,24 @@ import Foundation
 import MessageUI
 import WireDataModel
 
+// sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the mail composer with the debug report
+
     @MainActor func presentMailComposer()
 
     /// Presents the fallback alert
+
     func presentFallbackAlert()
 
     /// Presents the share view controller
+    /// 
+    /// - Parameters:
+    ///   - destinations: list of conversations to choose from to send the report
+    ///   - debugReport: the debug report to share
+    ///   - onDismiss: closure to call when the share view controller is dismissed
+
     func presentShareViewController(
         destinations: [ZMConversation],
         debugReport: ShareableDebugReport,
