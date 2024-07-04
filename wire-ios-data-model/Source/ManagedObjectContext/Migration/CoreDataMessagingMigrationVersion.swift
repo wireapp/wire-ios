@@ -70,9 +70,10 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
     var nextVersion: Self? {
         switch self {
-        case .version2_116,
-                .version2_117:
+        case .version2_117:
             return nil
+        case .version2_116:
+            return .version2_117
         case .version2_115,
                 .version2_114:
             return .version2_116 // destination version runs custom migration actions
