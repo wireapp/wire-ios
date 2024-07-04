@@ -134,18 +134,6 @@ extension ZMConversationMessage {
     }
 }
 
-// swiftlint:disable:next todo_requires_jira_link
-extension ConversationList { // TODO: mv to DM
-
-    func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        items.filter { conversation in
-            (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
-                conversation.isSelfAnActiveMember &&
-                !(conversation === excluding)
-        }
-    }
-}
-
 // MARK: - popover apperance update
 
 extension ConversationContentViewController {
