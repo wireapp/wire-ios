@@ -47,7 +47,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
     private func timerFired(for message: ZMMessage) {
         if let proteusMessage = message as? (any ProteusMessage) {
-            WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo) now: \(Date())")
+            WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")
         }
 
         guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {

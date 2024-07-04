@@ -88,14 +88,15 @@ public final class MessageSender: MessageSenderInterface {
         WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
-
-        WireLogger.messaging.debug(
-            "send message - start wait for dependencies to resolve",
-            attributes: logAttributes
-        )
+        WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 
         do {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            WireLogger.messaging.debug(
+                "send message - resolve dependencies finished",
+                attributes: logAttributes
+            )
+
             try await attemptToSend(message: message)
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
@@ -154,6 +155,12 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingQualifiedID
         }
 
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug(
+            "send message - via proteus",
+            attributes: logAttributes
+        )
+
         do {
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
                 message: message,
@@ -168,6 +175,12 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug(
+            "send message - via proteus succeeded",
+            attributes: logAttributes
+        )
+
         await context.perform {
             // swiftlint:disable:next todo_requires_jira_link
             message.delivered(with: response) // FIXME: jacob refactor to not use raw response

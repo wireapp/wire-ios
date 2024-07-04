@@ -243,7 +243,6 @@ class MessageAPIV1: MessageAPIV0 {
             }
             throw NetworkError.missingClients(messageSendingStatus, response)
         } else {
-            debugPrint("finish network request now: \(Date.now)")
             let payload: Payload.MessageSendingStatus = try mapResponse(response)
             return (payload, response)
         }

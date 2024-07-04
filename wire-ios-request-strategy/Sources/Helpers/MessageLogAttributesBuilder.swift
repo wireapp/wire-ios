@@ -102,11 +102,6 @@ struct MessageLogAttributesBuilder {
         await logAttributesFromAny(message)
     }
 
-    /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
-    func logAttributes(_ message: any MLSMessage) async -> LogAttributes {
-        await logAttributesFromAny(message)
-    }
-
     private func logAttributesFromAny(_ message: Any) async -> LogAttributes {
         if let clientMessage = message as? ZMClientMessage {
             return await logAttributes(clientMessage)
