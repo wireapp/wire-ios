@@ -20,7 +20,7 @@ import Foundation
 
 /// An event concerning federation between domains.
 
-public enum FederationEvent: Equatable {
+public enum FederationEvent: Equatable, Codable {
 
     /// Two or more other domains have stopped federating
     /// with each other.
