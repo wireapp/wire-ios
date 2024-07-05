@@ -418,14 +418,14 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
-                WireLogger.calling.info("detected a call event")
+                WireLogger.calling.info("detected a call event", attributes: event.logAttributes)
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                WireLogger.notifications.info("generated a notification from an event")
+                WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes)
                 tempNotifications[notification.contentHashValue] = notification
             } else {
-                WireLogger.notifications.info("ignoring event")
+                WireLogger.notifications.info("ignoring event", attributes: event.logAttributes)
             }
         }
 

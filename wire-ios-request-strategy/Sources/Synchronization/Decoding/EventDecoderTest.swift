@@ -460,6 +460,40 @@ extension EventDecoderTest {
         proteusViaCoreCrypto.isOn = false
     }
 
+    func test_ProteusEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
+
+        let mockProteusService = MockProteusServiceInterface()
+        enum FakeError: Error {
+            case decryptionError
+        }
+        // Given
+        mockProteusService.decryptDataForSession_MockMethod = { _, _ in
+            throw FakeError.decryptionError
+        }
+
+        let event = await syncMOC.perform {
+            let message = GenericMessage(content: Text(content: "foo"))
+            return self.encryptedUpdateEventToSelfFromOtherClient(message: message)
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.proteusService = mockProteusService
+        }
+
+        // When
+        _ = try await self.sut.decryptAndStoreEvents([event])
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
+        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
+    }
+
     func test_ProteusEventDecryption_Legacy() async throws {
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
 

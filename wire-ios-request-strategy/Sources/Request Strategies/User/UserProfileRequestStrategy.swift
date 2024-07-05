@@ -183,7 +183,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             let userProfile = Payload.UserProfile(payloadData),
             let userID = userProfile.id
         else {
-            return Logging.eventProcessing.error("Malformed user.update update event, skipping...")
+            return WireLogger.eventProcessing.error("Malformed user.update update event, skipping...")
         }
 
         let user = ZMUser.fetchOrCreate(
@@ -206,7 +206,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
         guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init(transportString:)),
               let user = ZMUser.fetch(with: userId, in: managedObjectContext)
         else {
-            return Logging.eventProcessing.error("Malformed user.delete update event, skipping...")
+            return WireLogger.eventProcessing.error("Malformed user.delete update event, skipping...")
         }
 
         if user.isSelfUser {

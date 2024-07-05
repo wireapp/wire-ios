@@ -188,7 +188,10 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
         case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
-            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else { return }
+            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else {
+                WireLogger.updateEvent.warn("message could not be created from event", attributes: event.logAttributes)
+                return
+            }
             message.markAsSent()
 
         default:

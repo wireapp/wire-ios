@@ -62,6 +62,9 @@ actor EventProcessor: UpdateEventProcessor {
 
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
         guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+        events.forEach { event in
+            WireLogger.updateEvent.debug("buffer event", attributes: event.logAttributes)
+        }
         bufferedEvents.append(contentsOf: events)
     }
 
@@ -161,7 +164,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             WireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
 
-            Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
+            WireLogger.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
             for event in decryptedUpdateEvents {
                 WireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)

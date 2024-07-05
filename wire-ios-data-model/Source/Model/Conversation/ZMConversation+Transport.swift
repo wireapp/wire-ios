@@ -18,8 +18,6 @@
 
 import WireTransport
 
-private let zmLog = ZMSLog(tag: "event-processing")
-
 /// This enum matches the backend convention for type
 @objc(ZMBackendConversationType)
 public enum BackendConversationType: Int {
