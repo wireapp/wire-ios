@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public enum UpdateEventSource: String {
     case pushChannel
     case notificationsStream
@@ -49,7 +48,7 @@ extension ZMUpdateEvent {
     public var logAttributes: LogAttributes {
         logAttributes(source: .notificationsStream)
     }
-    
+
     public func logAttributes(source: UpdateEventSource) ->  LogAttributes {
         [
             LogAttributesKey.messageType.rawValue: safeType,
