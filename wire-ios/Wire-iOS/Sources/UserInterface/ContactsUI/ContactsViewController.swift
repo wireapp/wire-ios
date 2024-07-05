@@ -70,6 +70,11 @@ final class ContactsViewController: UIViewController {
         observeKeyboardFrame()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(with: ContactsUI.title.capitalized)
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         showKeyboardIfNeeded()
@@ -133,7 +138,6 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
-        navigationItem.setupNavigationBarTitle(title: ContactsUI.title.capitalized)
 
         view.backgroundColor = .clear
 
