@@ -49,7 +49,7 @@ extension ZMUpdateEvent {
         logAttributes(source: .notificationsStream)
     }
 
-    public func logAttributes(source: UpdateEventSource) ->  LogAttributes {
+    public func logAttributes(source: UpdateEventSource) -> LogAttributes {
         [
             LogAttributesKey.messageType.rawValue: safeType,
             LogAttributesKey.eventId.rawValue: safeUUID,
