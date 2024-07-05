@@ -149,38 +149,35 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
     }
 
     func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
-        let federationFlagBackup = BackendInfo.isFederationEnabled
-        let backendDomainBackup = BackendInfo.domain
-        defer {
-            BackendInfo.isFederationEnabled = federationFlagBackup
-            BackendInfo.domain = backendDomainBackup
-        }
-        // given
-        let otherUser1 = createUser(moc: uiMOC, domain: UUID().uuidString)
-        let otherUser2 = createUser(moc: uiMOC, domain: nil)
-        let otherUser3 = createUser(moc: uiMOC, domain: UUID().uuidString)
-        let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        TemporaryBackendInfo(
+            domain: localDomain,
+            isFederationEnabled: true
+        ) {
+            // given
+            let otherUser1 = createUser(moc: uiMOC, domain: UUID().uuidString)
+            let otherUser2 = createUser(moc: uiMOC, domain: nil)
+            let otherUser3 = createUser(moc: uiMOC, domain: UUID().uuidString)
+            let otherUsers = [otherUser1, otherUser2, otherUser3]
 
-        BackendInfo.isFederationEnabled = true
-        BackendInfo.domain = localDomain
+            let otherUsersDomains = otherUsers.compactMap { $0.domain }
+            let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
-        syncMOC.performAndWait {
-            storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.domain = UUID().uuidString
-            self.syncMOC.saveOrRollback()
+            syncMOC.performAndWait {
+                storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
+                let selfUser = ZMUser.selfUser(in: self.syncMOC)
+                selfUser.domain = UUID().uuidString
+                self.syncMOC.saveOrRollback()
+            }
+            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // when
+            let classification = sut.classification(users: otherUsers, conversationDomain: nil)
+
+            // then
+            XCTAssertEqual(classification, .notClassified)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // when
-        let classification = sut.classification(users: otherUsers, conversationDomain: nil)
-
-        // then
-        XCTAssertEqual(classification, .notClassified)
     }
 
     func testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
