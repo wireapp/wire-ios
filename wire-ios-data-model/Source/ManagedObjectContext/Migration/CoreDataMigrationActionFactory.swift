@@ -26,7 +26,7 @@ enum CoreDataMigrationActionFactory {
             return RemoveDuplicatePreAction()
 
         case .v107:
-            return CleanupModels2_107PreAction()
+            return CleanupModels107PreAction()
 
         default:
             return nil
