@@ -18,21 +18,30 @@
 
 #if DEBUG
 
-public struct TemporaryBackendInfoDomain {
+/// For testing: helps to temporary set the backend info domain and reset after usage.
+public struct TemporaryBackendInfo {
 
-    public let domain: String?
+    private  let domain: String?
+    private let isFederationEnabled: Bool
 
-    public init(domain: String?) {
+    public init(
+        domain: String? = nil,
+        isFederationEnabled: Bool = false
+    ) {
         self.domain = domain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     public func callAsFunction(_ perform: () -> Void) {
-        let originalDomain = BackendInfo.domain
+        let originalStorage = BackendInfo.storage
+        BackendInfo.storage = .temporary()
+
         BackendInfo.domain = domain
+        BackendInfo.isFederationEnabled = isFederationEnabled
 
         perform()
 
-        BackendInfo.domain = originalDomain
+        BackendInfo.storage = originalStorage
     }
 }
 

@@ -270,7 +270,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
     }
 
     func testThatLastReadUpdatesInSelfConversationDontExpire() {
-        TemporaryBackendInfoDomain(domain: "wire.com") {
+        TemporaryBackendInfo(domain: "wire.com") {
             self.syncMOC.performGroupedAndWait {
                 // given
                 let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
