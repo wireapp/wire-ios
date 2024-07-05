@@ -270,9 +270,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(contextSaved)
 
         // and WHEN
-        let predicate = NSPredicate { _, _ in blockExecuted }
-        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
-        wait(for: [expectation], timeout: 1)
+        let waitExpectation = XCTestExpectation().inverted()
+        wait(for: [waitExpectation], timeout: 0.5)
 
         // THEN
         XCTAssertTrue(executed)
