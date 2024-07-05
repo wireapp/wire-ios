@@ -267,21 +267,37 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(start, self.uiMOC.insertedObjects)
     }
 
+    struct TemporaryBackendInfoDomain {
+
+        let domain: String?
+
+        func callAsFunction(_ perform: () -> Void) {
+            let originalDomain = BackendInfo.domain
+            BackendInfo.domain = domain
+
+            perform()
+
+            BackendInfo.domain = originalDomain
+        }
+    }
+
     func testThatLastReadUpdatesInSelfConversationDontExpire() {
-        self.syncMOC.performGroupedAndWait {
-            // given
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.remoteIdentifier = UUID()
-            conversation.lastReadServerTimeStamp = Date()
+        TemporaryBackendInfoDomain(domain: "wire.com") {
+            self.syncMOC.performGroupedAndWait {
+                // given
+                let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+                conversation.remoteIdentifier = UUID()
+                conversation.lastReadServerTimeStamp = Date()
 
-            // when
-            guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: conversation) else {
-                XCTFail()
-                return
+                // when
+                guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: conversation) else {
+                    XCTFail()
+                    return
+                }
+
+                // then
+                XCTAssertNil(message.expirationDate)
             }
-
-            // then
-            XCTAssertNil(message.expirationDate)
         }
     }
 
