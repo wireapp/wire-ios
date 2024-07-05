@@ -125,7 +125,7 @@ extension EventDecoder {
         )
 
         if !events.isEmpty {
-            Logging.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
+            WireLogger.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
         }
 
         return decryptedEvents
@@ -368,7 +368,7 @@ extension EventDecoder {
         block: ConsumeBlock
     ) async {
         if !events.isEmpty {
-            Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
+            WireLogger.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
         }
 
         await block(filterInvalidEvents(from: events))

@@ -22,7 +22,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
 
     public func pushChannelDidReceive(_ data: ZMTransportData) {
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
-            Logging.eventProcessing.info("Received \(events.count) events from push channel")
+            WireLogger.eventProcessing.info("Received \(events.count) events from push channel")
 
             events.forEach {
                 WireLogger.updateEvent.info("received event",  attributes: $0.logAttributes(source: .pushChannel))

@@ -164,7 +164,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             WireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
 
-            Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
+            WireLogger.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
             for event in decryptedUpdateEvents {
                 WireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)
