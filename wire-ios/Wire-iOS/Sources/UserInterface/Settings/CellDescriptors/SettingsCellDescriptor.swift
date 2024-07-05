@@ -198,6 +198,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     func select(_ value: SettingsPropertyValue?) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
+            controllerToPush.hidesBottomBarWhenPushed = true
             navigationController.pushViewController(controllerToPush, animated: true)
         }
     }
