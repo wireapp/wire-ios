@@ -5,6 +5,7 @@
 # this rule is nice but is hard to apply on existing codebases (Core Data, Codable)
 # --enable acronyms
 
+--typeblanklines preserve
 --ifdef outdent
 --stripunusedargs unnamed-only
 --patternlet inline
