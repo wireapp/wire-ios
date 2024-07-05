@@ -128,7 +128,6 @@ final class ClientListViewController: UIViewController,
         }
 
         super.init(nibName: nil, bundle: nil)
-        setupControllerTitle()
 
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
@@ -179,6 +178,7 @@ final class ClientListViewController: UIViewController,
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        setupNavigationBarTitle(with: L10n.Localizable.Registration.Devices.title.capitalized)
         updateAllClients()
     }
 
@@ -526,10 +526,6 @@ final class ClientListViewController: UIViewController,
             self.navigationItem.rightBarButtonItem = editButtonItem
             self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
         }
-    }
-
-    private func setupControllerTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Devices.title.capitalized)
     }
 
     @MainActor
