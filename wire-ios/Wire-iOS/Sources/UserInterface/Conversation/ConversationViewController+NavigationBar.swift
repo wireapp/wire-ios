@@ -125,10 +125,6 @@ extension ConversationViewController {
         return button
     }
 
-    func updateBackButton(hasUnread: Bool) {
-
-    }
-
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
         var arrowIcon: StyleKitIcon
 
