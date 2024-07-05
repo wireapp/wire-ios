@@ -109,7 +109,7 @@ extension ZMOTRMessage {
                 let senderClientID = updateEvent.senderClientID,
                 let senderClient = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: sender, createIfNeeded: true),
                 let timestamp = updateEvent.timestamp
-            else { 
+            else {
                 WireLogger.eventProcessing.warn("clientAction resetSession did not create any message", attributes: logAttributes)
                 return nil
             }
