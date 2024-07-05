@@ -19,7 +19,7 @@
 import Foundation
 
 /// Removes UserClient duplicates and invalid ParticipantRoles
-class CleanupModels2_107PreAction: CoreDataMigrationAction {
+class CleanupModels107PreAction: CoreDataMigrationAction {
 
     private enum Keys: String {
         case conversation
