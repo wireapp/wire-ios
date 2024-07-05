@@ -100,7 +100,7 @@ final class DebugAlert {
         )
         alert.addAction(.cancel())
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
-            let activity = UIActivityViewController(activityItems: logPaths + [Foo()], applicationActivities: nil)
+            let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
 
             controller.present(activity, animated: true, completion: nil)
@@ -108,20 +108,6 @@ final class DebugAlert {
         controller.present(alert, animated: true, completion: nil)
     }
 
-}
-
-class Foo: NSObject, UIActivityItemSource {
-    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
-        "Test subject"
-    }
-
-    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-        return "Foo"
-    }
-
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-        return "Bar"
-    }
 }
 
 /// Sends debug logs by email
