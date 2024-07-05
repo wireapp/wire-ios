@@ -51,20 +51,12 @@ extension ZMUpdateEvent {
 
     public func logAttributes(source: UpdateEventSource) -> LogAttributes {
         [
-<<<<<<< HEAD
             LogAttributesKey.messageType: safeType,
             LogAttributesKey.eventId: safeUUID,
             LogAttributesKey.nonce: messageNonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId: safeLoggingConversationId
+            LogAttributesKey.conversationId: safeLoggingConversationId,
+            LogAttributesKey.eventSource: source.rawValue
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
-=======
-            LogAttributesKey.messageType.rawValue: safeType,
-            LogAttributesKey.eventId.rawValue: safeUUID,
-            LogAttributesKey.nonce.rawValue: messageNonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: safeLoggingConversationId,
-            LogAttributesKey.eventSource.rawValue: source.rawValue
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
->>>>>>> 7dcf4fef55 (chore: add logs for missing messages - WPB-9221 (#1660))
     }
 
     public var safeLoggingConversationId: String {

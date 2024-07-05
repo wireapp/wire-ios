@@ -376,23 +376,16 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
-<<<<<<< HEAD
         await eventMOC.performGrouped {
-            storedEvents.forEach(self.eventMOC.delete(_:))
-            self.eventMOC.saveOrRollback()
-=======
-        eventMOC.performGroupedBlockAndWait {
-
             storedEvents.forEach { storedEvent in
                 self.eventMOC.delete(storedEvent)
-                WireLogger.eventProcessing.info("delete stored event", attributes: [LogAttributesKey.eventId.rawValue: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"])
+                WireLogger.eventProcessing.info("delete stored event", attributes: [.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"], .safePublic)
             }
             do {
                 try self.eventMOC.save()
             } catch {
                 WireLogger.eventProcessing.critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
             }
->>>>>>> 7dcf4fef55 (chore: add logs for missing messages - WPB-9221 (#1660))
         }
     }
 }
