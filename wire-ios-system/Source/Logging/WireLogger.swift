@@ -145,6 +145,7 @@ public enum LogAttributesKey: String {
     case lastEventID = "last_event_id"
     case conversationId = "conversation_id"
     case syncPhase = "sync_phase"
+    case eventSource = "event_source"
 }
 
 public extension LogAttributes {
@@ -224,6 +225,7 @@ public extension WireLogger {
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
     static let pushChannel = WireLogger(tag: "push-channel")
+    static let eventProcessing = WireLogger(tag: "event-processing")
 
 }
 
