@@ -238,6 +238,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setupNavigationBar()
         updateUI()
         observerToken = userProfile?.add(observer: self)
     }
@@ -248,7 +249,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: HandleChange.title.capitalized)
         view.backgroundColor = .clear
         ChangeHandleTableViewCell.register(in: tableView)
         tableView.allowsSelection = false
@@ -257,13 +257,17 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
         footerLabel.numberOfLines = 0
         updateUI()
+    }
 
+    func setupNavigationBar() {
+        setupNavigationBarTitle(with: HandleChange.title.capitalized)
         let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
                                                                                   systemImage: false,
                                                                                   target: self,
                                                                                   action: #selector(saveButtonTapped))
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
+
     }
 
     @objc func saveButtonTapped(sender: UIBarButtonItem) {
