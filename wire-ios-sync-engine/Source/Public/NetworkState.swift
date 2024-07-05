@@ -16,32 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
-import XCTest
-
-@testable import Wire
-
-final class VersionInfoViewControllerSnapshotTests: XCTestCase {
-
-    var sut: VersionInfoViewController!
-    private var snapshotHelper: SnapshotHelper!
-
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-        let path = Bundle(for: type(of: self)).path(forResource: "DummyComponentsVersions", ofType: "plist")!
-
-        sut = VersionInfoViewController(versionsPlist: path)
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
+@objc(ZMNetworkState)
+public enum NetworkState: Int {
+    case online = 0
+    case offline
+    case onlineSynchronizing
 }

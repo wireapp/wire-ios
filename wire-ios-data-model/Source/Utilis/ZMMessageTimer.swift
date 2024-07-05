@@ -16,8 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-typedef NS_ENUM(int16_t, ZMNetworkState) {
-    ZMNetworkStateOnline = 0,
-    ZMNetworkStateOffline,
-    ZMNetworkStateOnlineSynchronizing,
-};
+import Foundation
+
+extension ZMMessageTimer {
+    /// Starts a new timer if there is no existing one
+    /// - Parameters:
+    ///   - message: message passed to the timer's fireMethod
+    ///   - fireDate The date at which the timer should fire
+    ///   - userInfo: Additional info that should be added to the timer
+    /// - Returns: True if timer was started, false otherwise
+    @discardableResult
+    public func startTimerIfNeeded(for message: ZMMessage, fireDate: Date, userInfo: [String: Any]) -> Bool {
+        guard !isTimerRunning(for: message) else { return false }
+
+        startTimer(for: message, fireDate: fireDate, userInfo: userInfo)
+        return true
+    }
+}

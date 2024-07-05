@@ -32,7 +32,7 @@ protocol UpdateEventsRepositoryProtocol {
     func pullPendingEvents() async throws
 
     /// Fetch the next batch pending events from the database.
-    /// 
+    ///
     /// The batch is already sorted, such that the first element is the oldest
     /// stored event. This method does not delete any events, so invoking this
     /// method again will return the same batch.
