@@ -58,20 +58,19 @@ final class SettingsTechnicalReportViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupNavigationTitle()
         tableView.backgroundColor = UIColor.clear
         tableView.isScrollEnabled = false
         tableView.separatorColor = UIColor(white: 1, alpha: 0.1)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(with: L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
+    }
+
     func sendReport(sourceView: UIView? = nil) {
         presentMailComposer(withLogs: includedVoiceLogCell.accessoryType == .checkmark,
                             sourceView: sourceView)
-    }
-
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
     }
 
     // MARK: - TableView Delegates
