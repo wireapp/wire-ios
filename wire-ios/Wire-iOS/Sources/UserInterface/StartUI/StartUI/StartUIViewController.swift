@@ -93,17 +93,21 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     // MARK: - Overloaded methods
+
     override func loadView() {
         view = StartUIView(frame: CGRect.zero)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let title = userSession.selfUser.membership?.team?.name {
+            setupNavigationBarTitle(with: title)
+        } else if let title = userSession.selfUser.name {
+            setupNavigationBarTitle(with: title)
+        }
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
     }
 
@@ -122,12 +126,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.mode = .list
         searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
-
-        if let title = userSession.selfUser.membership?.team?.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        } else if let title = userSession.selfUser.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        }
 
         searchHeader.delegate = self
         searchHeader.allowsMultipleSelection = false
