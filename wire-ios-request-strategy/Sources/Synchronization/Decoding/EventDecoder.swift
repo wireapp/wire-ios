@@ -193,7 +193,7 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         let decryptedEvents = await decryptEvent(event: event, publicKeys: publicKeys, proteusService: proteusService)
 
-        guard decryptedEvents.isNonEmpty else {
+        guard !decryptedEvents.isEmpty else {
             return []
         }
 
