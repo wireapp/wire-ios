@@ -106,10 +106,6 @@ final class ServiceDetailViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let title = self.service.serviceUser.name {
-            navigationItem.setupNavigationBarTitle(title: title.capitalized)
-        }
-
         setupViews()
     }
 
@@ -120,6 +116,10 @@ final class ServiceDetailViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if let title = self.service.serviceUser.name {
+            setupNavigationBarTitle(with: title.capitalized)
+        }
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(icon: .cross,
                                                                  target: self,
