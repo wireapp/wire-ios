@@ -56,6 +56,7 @@ NSString * const ZMMessageOriginalSizeDataKey = @"originalSize_data";
 NSString * const ZMMessageOriginalSizeKey = @"originalSize";
 NSString * const ZMMessageConversationKey = @"visibleInConversation";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
+NSString * const ZMMessageShouldExpireKey = @"shouldExpire";
 NSString * const ZMMessageExpirationDateKey = @"expirationDate";
 NSString * const ZMMessageNameKey = @"name";
 NSString * const ZMMessageNeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
@@ -558,6 +559,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         NSSet *keys = [super ignoredKeys];
         NSArray *newKeys = @[
                              ZMMessageConversationKey,
+                             ZMMessageShouldExpireKey,
                              ZMMessageExpirationDateKey,
                              ZMMessageExpirationReasonCodeKey,
                              ZMMessageImageTypeKey,
