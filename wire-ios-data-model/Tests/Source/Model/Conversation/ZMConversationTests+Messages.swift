@@ -270,23 +270,25 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
     }
 
     func testThatLastReadUpdatesInSelfConversationDontExpire() {
-        TemporaryBackendInfo(domain: "wire.com") {
-            self.syncMOC.performGroupedAndWait {
-                // given
-                let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-                conversation.remoteIdentifier = UUID()
-                conversation.lastReadServerTimeStamp = Date()
+        let backendInfoToken = TemporaryBackendInfoToken(domain: "wire.com")
 
-                // when
-                guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: conversation) else {
-                    XCTFail()
-                    return
-                }
+        self.syncMOC.performGroupedAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID()
+            conversation.lastReadServerTimeStamp = Date()
 
-                // then
-                XCTAssertNil(message.expirationDate)
+            // when
+            guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: conversation) else {
+                XCTFail()
+                return
             }
+
+            // then
+            XCTAssertNil(message.expirationDate)
         }
+
+        withExtendedLifetime(backendInfoToken) { }
     }
 
     func testThatWeCanInsertAFileMessage() {

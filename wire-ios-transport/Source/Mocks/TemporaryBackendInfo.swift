@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 #if DEBUG
 
-/// For testing: helps to temporary set the backend info domain and reset after usage.
+/// For testing: helps to temporary set the backend info domain and reset after call.
 public struct TemporaryBackendInfo {
 
-    private  let domain: String?
+    private let domain: String?
     private let isFederationEnabled: Bool
 
     public init(
