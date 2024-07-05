@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDataModel
 import WireImages
+import WireTransport
+import XCTest
+
+@testable import WireDataModel
 
 class ZMConversationMessagesTests: ZMConversationTestsBase {
 
@@ -265,20 +267,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         // then
         XCTAssertNil(message)
         XCTAssertEqual(start, self.uiMOC.insertedObjects)
-    }
-
-    struct TemporaryBackendInfoDomain {
-
-        let domain: String?
-
-        func callAsFunction(_ perform: () -> Void) {
-            let originalDomain = BackendInfo.domain
-            BackendInfo.domain = domain
-
-            perform()
-
-            BackendInfo.domain = originalDomain
-        }
     }
 
     func testThatLastReadUpdatesInSelfConversationDontExpire() {
