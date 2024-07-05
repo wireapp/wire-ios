@@ -84,7 +84,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @property (nonatomic) BOOL delivered;
 
-/// Sets the expiration date with the default time interval and returns the date.
+/// Sets the expiration date with the default time interval.
 - (void)setExpirationDate;
 
 /// Removes the message and deletes associated content
