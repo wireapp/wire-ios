@@ -21,6 +21,7 @@ import WireAPI
 
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
+<<<<<<< HEAD
     public func pushChannelDidReceive(_ data: Data) {
         if isDeveloperModeEnabled {
             // TODO: [WPB-9612] remove event decoding monitoring.
@@ -48,6 +49,16 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: transportData), !events.isEmpty {
             Logging.eventProcessing.info("Received \(events.count) events from push channel")
             events.forEach { $0.appendDebugInformation("from push channel (web socket)") }
+=======
+    public func pushChannelDidReceive(_ data: ZMTransportData) {
+        if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
+            WireLogger.eventProcessing.info("Received \(events.count) events from push channel")
+
+            events.forEach {
+                WireLogger.updateEvent.info("received event", attributes: $0.logAttributes(source: .pushChannel))
+                $0.appendDebugInformation("from push channel (web socket)")
+            }
+>>>>>>> 7dcf4fef55 (chore: add logs for missing messages - WPB-9221 (#1660))
 
             if syncStatus.isSyncing {
                 WaitingGroupTask(context: syncMOC) {
@@ -58,7 +69,9 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                     do {
                         try await self.updateEventProcessor.processEvents(events)
                     } catch {
-                        WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })", attributes: .safePublic)
+                        events.forEach {
+                            WireLogger.updateEvent.error("Failed to process event from push channel (web socket)", attributes: $0.logAttributes(source: .pushChannel))
+                        }
                     }
                 }
             }

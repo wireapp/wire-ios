@@ -77,7 +77,6 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             result = try await block(coreCrypto)
         } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)", attributes: .safePublic)
             throw error
         }
 
