@@ -193,6 +193,10 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         let decryptedEvents = await decryptEvent(event: event, publicKeys: publicKeys, proteusService: proteusService)
 
+        guard decryptedEvents.isNonEmpty else {
+            return []
+        }
+
         await eventMOC.perform {
             self.storeUpdateEvents(decryptedEvents, startingAtIndex: index, publicKeys: publicKeys)
         }
@@ -301,7 +305,11 @@ extension EventDecoder {
             )
         }
 
-        self.eventMOC.saveOrRollback()
+        do {
+            try self.eventMOC.save()
+        } catch {
+            WireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
+        }
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.
