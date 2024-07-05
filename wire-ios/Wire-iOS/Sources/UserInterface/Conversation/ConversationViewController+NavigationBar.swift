@@ -112,7 +112,7 @@ extension ConversationViewController {
 
     func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
         typealias UnreadMessages = L10n.Localizable.ConversationList.Voiceover.UnreadMessages
-        
+
         let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
@@ -181,11 +181,11 @@ extension ConversationViewController {
         }
     }
 
-    func leftNavigationItems(forConversation conversation: ZMConversation) -> [UIBarButtonItem] {
+    func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
         if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
-            items.append(backButton)
+            items.append(createBackButton(hasUnread: hasUnread))
         }
 
         if shouldShowCollectionsButton {
@@ -201,18 +201,17 @@ extension ConversationViewController {
 
     /// Update left navigation bar items
     func updateLeftNavigationBarItems() {
-        // fetch the latest info
-        Task {
-            let info = await updateInfo()
+        updateLeftNavigationBarItemsTask?.cancel()
+        updateLeftNavigationBarItemsTask = Task {
+            if Task.isCancelled { return }
+
+            let hasUnread = self.conversation.hasUnreadMessagesInOtherConversations
+            if Task.isCancelled { return }
 
             await MainActor.run {
-                navigationItem.leftBarButtonItems = leftNavigationItems(forConversation: conversation)
+                navigationItem.leftBarButtonItems = leftNavigationItems(hasUnread: hasUnread)
             }
         }
-    }
-
-    func updateInfo() async -> AnyObject {
-
     }
 
     @objc
