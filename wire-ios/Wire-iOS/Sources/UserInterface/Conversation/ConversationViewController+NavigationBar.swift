@@ -110,29 +110,23 @@ extension ConversationViewController {
         return UIBarButtonItem(customView: button)
     }
 
-    var backButton: UIBarButtonItem {
-
-        let icon = backButtonIcon(hasUnreadInOtherConversations: false)
+    func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
+        typealias UnreadMessages = L10n.Localizable.ConversationList.Voiceover.UnreadMessages
+        
+        let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
         let button = UIBarButtonItem(icon: icon, target: self, action: action)
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
-
-        // `ZMConversation.hasUnreadMessageInOtherConversations` is expensive because it performs a fetch request,
-        // so we call it from a Task to reduce the load on the UI.
-        // If `true` we update the button icon, If `false` we already have set it up above
-        Task {
-            if self.conversation.hasUnreadMessagesInOtherConversations {
-                await MainActor.run {
-                    button.setIcon(backButtonIcon(hasUnreadInOtherConversations: true))
-                    button.tintColor = UIColor.accent()
-                    button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
-                }
-            }
-        }
+        button.tintColor = hasUnread ? UIColor.accent() : nil
+        button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
 
         return button
+    }
+
+    func updateBackButton(hasUnread: Bool) {
+
     }
 
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
@@ -207,7 +201,18 @@ extension ConversationViewController {
 
     /// Update left navigation bar items
     func updateLeftNavigationBarItems() {
-        navigationItem.leftBarButtonItems = leftNavigationItems(forConversation: conversation)
+        // fetch the latest info
+        Task {
+            let info = await updateInfo()
+
+            await MainActor.run {
+                navigationItem.leftBarButtonItems = leftNavigationItems(forConversation: conversation)
+            }
+        }
+    }
+
+    func updateInfo() async -> AnyObject {
+
     }
 
     @objc
