@@ -283,7 +283,7 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
             let userID = identifiers.first,
             let connection = ZMConnection.fetch(userID: userID, domain: nil, in: context)
         else {
-            Logging.eventProcessing.error("Can't update connection since it was found, aborting...")
+            WireLogger.eventProcessing.error("Can't update connection since it was found, aborting...")
             return
         }
 
@@ -342,7 +342,7 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let qualifiedID = identifiers.first,
             let connection = ZMConnection.fetch(userID: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
         else {
-            Logging.eventProcessing.error("Can't update connection since it was found, aborting...")
+            WireLogger.eventProcessing.error("Can't update connection since it was found, aborting...")
             return
         }
 
