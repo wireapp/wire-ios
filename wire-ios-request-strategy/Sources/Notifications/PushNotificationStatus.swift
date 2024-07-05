@@ -69,7 +69,7 @@ open class PushNotificationStatus: NSObject {
     /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
 
     public func fetch(eventId: UUID, completionHandler: @escaping FetchCompletion) {
-        let logAttributes: LogAttributes = [LogAttributesKey.eventId.rawValue: eventId.safeForLoggingDescription].merging(.safePublic, uniquingKeysWith: { _, new in new })
+        let logAttributes: LogAttributes = [LogAttributesKey.eventId: eventId.safeForLoggingDescription].merging(.safePublic, uniquingKeysWith: { _, new in new })
         guard eventId.isType1UUID else {
             WireLogger.eventProcessing.error("Attempt to fetch event id not conforming to UUID type1", attributes: logAttributes)
             completionHandler(.failure(.invalidEventID))
