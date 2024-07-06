@@ -112,12 +112,13 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     private func setupNavigationBar() {
         navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-
-        setupNavigationBarTitle(with: L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
+        setupNavigationBarTitle(with: L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
     }
 
     private func createConstraints() {
