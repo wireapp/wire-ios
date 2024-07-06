@@ -92,13 +92,12 @@ final class LegalHoldDetailsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        title = L10n.Localizable.Legalhold.Header.title.localizedUppercase
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupNavigationBarTitle(with: L10n.Localizable.Legalhold.Header.title)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
             self?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
