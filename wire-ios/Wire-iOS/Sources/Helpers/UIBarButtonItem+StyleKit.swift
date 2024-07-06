@@ -23,7 +23,6 @@ import WireDesign
 extension UIBarButtonItem {
 
     typealias IconColors = SemanticColors.Icon
-    typealias General = L10n.Localizable.General
 
     convenience init(icon: StyleKitIcon,
                      style: UIBarButtonItem.Style = .plain,
@@ -36,14 +35,6 @@ extension UIBarButtonItem {
             target: target,
             action: action
         )
-    }
-
-    static func createCloseItem() -> UIBarButtonItem {
-        let item = UIBarButtonItem(icon: .cross, target: nil, action: nil)
-        item.tintColor = IconColors.foregroundDefault
-        item.accessibilityIdentifier = "close"
-        item.accessibilityLabel = General.close
-        return item
     }
 
     static func createNavigationRightBarButtonItem(
