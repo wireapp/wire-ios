@@ -108,7 +108,9 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.onDismissPressed()
+        }, accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description)
     }
 
     private func configGroupSelector() {
@@ -161,12 +163,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         updateActionBar()
         searchResults.searchContactList()
 
-        let closeButton = UIBarButtonItem(icon: .cross, style: UIBarButtonItem.Style.plain, target: self, action: #selector(onDismissPressed))
-
-        closeButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
-        closeButton.accessibilityIdentifier = "close"
-
-        navigationItem.rightBarButtonItem = closeButton
         view.accessibilityViewIsModal = true
     }
 
@@ -224,7 +220,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         view.setNeedsLayout()
     }
 
-    @objc
     private func onDismissPressed() {
         _ = searchHeader.tokenField.resignFirstResponder()
         navigationController?.dismiss(animated: true)
