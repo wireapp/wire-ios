@@ -150,32 +150,35 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
 
     func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
         let localDomain = UUID().uuidString
-
-        TemporaryBackendInfo(
+        let backendInfoToken = TemporaryBackendInfoToken(
             domain: localDomain,
             isFederationEnabled: true
-        ) {
-            // given
-            let otherUser1 = createUser(moc: uiMOC, domain: UUID().uuidString)
-            let otherUser2 = createUser(moc: uiMOC, domain: nil)
-            let otherUser3 = createUser(moc: uiMOC, domain: UUID().uuidString)
-            let otherUsers = [otherUser1, otherUser2, otherUser3]
+        )
 
-            let otherUsersDomains = otherUsers.compactMap { $0.domain }
-            let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        // given
+        let otherUsers = [
+            createUser(moc: uiMOC, domain: UUID().uuidString),
+            createUser(moc: uiMOC, domain: nil),
+            createUser(moc: uiMOC, domain: UUID().uuidString)
+        ]
+        let classifiedDomains = [
+            otherUsers.compactMap { $0.domain },
+            [localDomain]
+        ].flatMap { $0 }
 
-            syncMOC.performAndWait {
-                storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
-                let selfUser = ZMUser.selfUser(in: self.syncMOC)
-                selfUser.domain = UUID().uuidString
-                self.syncMOC.saveOrRollback()
-            }
-            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        syncMOC.performAndWait {
+            storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.domain = UUID().uuidString
+            self.syncMOC.saveOrRollback()
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // when
-            let classification = sut.classification(users: otherUsers, conversationDomain: nil)
+        // when
+        let classification = sut.classification(users: otherUsers, conversationDomain: nil)
 
-            // then
+        // then
+        withExtendedLifetime(backendInfoToken) {
             XCTAssertEqual(classification, .notClassified)
         }
     }
