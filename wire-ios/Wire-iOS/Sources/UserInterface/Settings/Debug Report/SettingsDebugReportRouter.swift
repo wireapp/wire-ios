@@ -101,8 +101,9 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
     func presentFallbackAlert() {
         guard let viewController else { return }
 
+        let logsURL = LogFilesProvider().generateLogFilesZip()
         DebugAlert.displayFallbackActivityController(
-            logPaths: DebugLogSender.existingDebugLogs(),
+            logPaths: [logsURL],
             email: mailRecipient,
             from: viewController,
             sourceView: nil

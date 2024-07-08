@@ -142,8 +142,8 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-
-            DebugAlert.displayFallbackActivityController(logPaths: existingDebugLogs(), email: mail, from: controller)
+            let logsURL = LogFilesProvider().generateLogFilesZip()
+            DebugAlert.displayFallbackActivityController(logPaths: [logsURL], email: mail, from: controller)
             return
         }
 
