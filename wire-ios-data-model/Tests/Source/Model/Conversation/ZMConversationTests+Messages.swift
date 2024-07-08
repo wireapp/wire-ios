@@ -18,6 +18,7 @@
 
 import WireImages
 import WireTransport
+import WireTransportSupport
 import XCTest
 
 @testable import WireDataModel
