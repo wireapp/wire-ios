@@ -35,10 +35,8 @@ public extension UIViewController {
         navigationItem.titleView?.accessibilityTraits = .header
         navigationItem.titleView?.accessibilityLabel = navigationItem.title
 
-        if let titleView = navigationItem.titleView {
-            titleView.showsLargeContentViewer = true
-            titleView.largeContentTitle = navigationItem.title
-        }
+        navigationItem.titleView?.showsLargeContentViewer = true
+        navigationItem.titleView?.largeContentTitle = navigationItem.title
     }
 }
 
