@@ -23,7 +23,6 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
     let countly: WireCountly
 
     public init(appKey: String, host: URL) {
-
         let config = CountlyConfig()
         config.appKey = appKey
         config.host = host.absoluteString
