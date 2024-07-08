@@ -24,13 +24,14 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
+    func advancedGroup(userSession: UserSession) -> SettingsCellDescriptorType {
+        var items = [SettingsSectionDescriptor]()
 
-    var advancedGroup: SettingsCellDescriptorType {
-        let items = [
-            troubleshootingSection,
+        items.append(contentsOf: [
+            troubleshootingSection(userSession: userSession),
             debuggingToolsSection,
             pushSection
-        ]
+        ])
 
         return SettingsGroupCellDescriptor(
             items: items,
@@ -41,11 +42,19 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
-    private var troubleshootingSection: SettingsSectionDescriptor {
+    private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                return SettingsTechnicalReportViewController()
+                let router = SettingsDebugReportRouter()
+                let viewModel = SettingsDebugReportViewModel(
+                    router: router,
+                    shareFile: userSession.shareFileUseCase,
+                    fetchShareableConversations: userSession.fetchShareableConversationsUseCase
+                )
+                let viewController = SettingsDebugReportViewController(viewModel: viewModel)
+                router.viewController = viewController
+                return viewController
         })
 
         return SettingsSectionDescriptor(

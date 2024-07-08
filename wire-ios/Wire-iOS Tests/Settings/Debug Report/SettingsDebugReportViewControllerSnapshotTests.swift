@@ -22,12 +22,12 @@ import XCTest
 
 @testable import Wire
 
-final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
+final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     var snapshotHelper: SnapshotHelper!
-    var sut: SettingsTechnicalReportViewController!
+    var sut: SettingsDebugReportViewController!
 
     // MARK: - setUp
 
@@ -35,6 +35,7 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
         super.setUp()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
+        sut = SettingsDebugReportViewController(viewModel: MockSettingsDebugReportViewModelProtocol())
     }
 
     // MARK: - tearDown
@@ -50,21 +51,7 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: XCTestCase {
     func testForInitState() {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: setupTechnicalViewController())
-    }
-
-    // MARK: - Helper method
-
-    func setupTechnicalViewController() -> UINavigationController {
-        sut = SettingsTechnicalReportViewController()
-
-        let navigationViewController = sut.wrapInNavigationController(
-            navigationControllerClass: SettingsStyleNavigationController.self
-        )
-
-        navigationViewController.view.backgroundColor = .black
-
-       return navigationViewController
+            .verify(matching: sut)
     }
 
 }
