@@ -19,6 +19,7 @@ opt_in_rules:
   - multiline_parameters
   - operator_usage_whitespace
   - reduce_into
+  - redundant_self_in_closure
   - self_binding
   - shorthand_optional_binding
   - sorted_imports
