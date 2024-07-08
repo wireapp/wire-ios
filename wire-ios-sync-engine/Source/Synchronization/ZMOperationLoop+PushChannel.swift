@@ -46,8 +46,11 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         }
 
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: transportData), !events.isEmpty {
-            Logging.eventProcessing.info("Received \(events.count) events from push channel")
-            events.forEach { $0.appendDebugInformation("from push channel (web socket)") }
+            WireLogger.eventProcessing.info("Received \(events.count) events from push channel")
+            events.forEach {
+                WireLogger.updateEvent.info("received event", attributes: $0.logAttributes(source: .pushChannel))
+                $0.appendDebugInformation("from push channel (web socket)")
+            }
 
             if syncStatus.isSyncing {
                 WaitingGroupTask(context: syncMOC) {
@@ -58,7 +61,9 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                     do {
                         try await self.updateEventProcessor.processEvents(events)
                     } catch {
-                        WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })", attributes: .safePublic)
+                        events.forEach {
+                            WireLogger.updateEvent.error("Failed to process event from push channel (web socket)", attributes: $0.logAttributes(source: .pushChannel))
+                        }
                     }
                 }
             }

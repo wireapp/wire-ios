@@ -35,6 +35,7 @@ extension EventDecoder {
         WireLogger.updateEvent.info("decrypting proteus event...", attributes: event.logAttributes)
 
         guard !event.wasDecrypted else {
+            WireLogger.updateEvent.info("returned already decrypted event", attributes: event.logAttributes)
             return event
         }
 
