@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTransportSupport
 import XCTest
 
 @testable import Wire
@@ -23,24 +24,28 @@ import XCTest
 final class AppStateCalculatorTests: XCTestCase {
 
     private var sut: AppStateCalculator!
+
     private var delegate: MockAppStateCalculatorDelegate!
+    private var backendInfoToken: TemporaryBackendInfoToken!
 
     override func setUp() {
         super.setUp()
 
         sut = AppStateCalculator()
+
         delegate = MockAppStateCalculatorDelegate()
         delegate.appStateCalculatorDidCalculateCompletion_MockMethod = { _, _, completion in
             completion()
         }
         sut.delegate = delegate
-        BackendInfo.apiVersion = .v0
+
+        backendInfoToken = TemporaryBackendInfoToken(apiVersion: .v0)
     }
 
     override func tearDown() {
-        sut = nil
+        backendInfoToken = nil
         delegate = nil
-        BackendInfo.apiVersion = nil
+        sut = nil
 
         super.tearDown()
     }
