@@ -43,7 +43,7 @@ final class MockMainCoordinator: MainCoordinating {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings() {
+    func showSelfProfile() {
         fatalError("Mock method not implemented")
     }
 }

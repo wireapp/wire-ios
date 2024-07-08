@@ -16,19 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface NSString (Normalization)
-
-- (instancetype)normalizedString;
-- (instancetype)normalizedForSearch;
-- (instancetype)normalizedForMentionSearch;
-- (instancetype)normalizedEmailaddress;
-
-- (BOOL)zmHasOnlyWhitespaceCharacters;
-
-@end
-
-NS_ASSUME_NONNULL_END
+enum MainTabBarControllerTab: Int {
+    case conversations, archive, settings
+}

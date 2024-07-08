@@ -41,7 +41,6 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
     }
 
     func testRenderingWhiteW() {
-
         let image = sut.createImage(initials: "W", backgroundColor: .white)
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
@@ -51,7 +50,6 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
     }
 
     func testRenderingBlueCA() {
-
         let image = sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.LightUI.MainColor.blue500)
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size

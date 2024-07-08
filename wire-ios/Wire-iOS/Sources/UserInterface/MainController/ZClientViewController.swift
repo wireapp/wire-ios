@@ -698,6 +698,14 @@ final class ZClientViewController: UIViewController {
         }
     }
 
+    func showConversationList() {
+        transitionToList(animated: true, completion: nil)
+    }
+
+    func showSelfProfile() {
+        conversationListViewController.presentProfile()
+    }
+
     // MARK: - Select conversation
 
     /// Select a conversation and move the focus to the conversation view.

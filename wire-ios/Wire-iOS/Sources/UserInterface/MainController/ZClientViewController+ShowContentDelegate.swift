@@ -73,8 +73,4 @@ extension ZClientViewController {
             break
         }
     }
-
-    func showConversationList() {
-        transitionToList(animated: true, completion: nil)
-    }
 }

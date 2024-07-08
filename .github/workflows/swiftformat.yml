@@ -27,3 +27,4 @@ jobs:
             ./WireDomain
             ./WireUI
             --reporter github-actions-log
+            --config .swiftformat

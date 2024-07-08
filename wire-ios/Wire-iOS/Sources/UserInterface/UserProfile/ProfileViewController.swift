@@ -400,7 +400,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) {
             self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                self.mainCoordinator.showSettings()
+                self.mainCoordinator.showSelfProfile()
             }
         }
     }
