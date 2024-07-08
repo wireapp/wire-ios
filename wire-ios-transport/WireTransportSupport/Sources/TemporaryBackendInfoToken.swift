@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-#if DEBUG
+import WireTransport
 
 /// For testing: helps to temporary set the backend info domain and reset on dealloc.
 public final class TemporaryBackendInfoToken {
@@ -63,5 +61,3 @@ public final class TemporaryBackendInfoToken {
         BackendInfo.storage = originalStorage
     }
 }
-
-#endif

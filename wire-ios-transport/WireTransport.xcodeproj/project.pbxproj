@@ -136,7 +136,11 @@
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
-		E67490592C38105C00964E33 /* TemporaryBackendInfoToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67490582C38105C00964E33 /* TemporaryBackendInfoToken.swift */; };
+		E6804DA42C3C2823004C3714 /* WireTransportSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = E6804DA32C3C2823004C3714 /* WireTransportSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E6804DA72C3C2823004C3714 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6804DA12C3C2823004C3714 /* WireTransportSupport.framework */; };
+		E6804DA82C3C2823004C3714 /* WireTransportSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E6804DA12C3C2823004C3714 /* WireTransportSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E6804DAE2C3C284A004C3714 /* TemporaryBackendInfoToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6804DAD2C3C284A004C3714 /* TemporaryBackendInfoToken.swift */; };
+		E6804DAF2C3C2867004C3714 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
 		EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */; };
@@ -191,6 +195,20 @@
 			remoteGlobalIDString = 3E88BCA61B1F35DF00232589;
 			remoteInfo = "ZMTransport-ios";
 		};
+		E6804DA52C3C2823004C3714 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E88BC9E1B1F35DF00232589 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E6804DA02C3C2823004C3714;
+			remoteInfo = WireTransportSupport;
+		};
+		E6804DB12C3C2867004C3714 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E88BC9E1B1F35DF00232589 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E88BCA61B1F35DF00232589;
+			remoteInfo = "WireTransport-ios";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -210,6 +228,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */,
+				E6804DA82C3C2823004C3714 /* WireTransportSupport.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,7 +383,9 @@
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
-		E67490582C38105C00964E33 /* TemporaryBackendInfoToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryBackendInfoToken.swift; sourceTree = "<group>"; };
+		E6804DA12C3C2823004C3714 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6804DA32C3C2823004C3714 /* WireTransportSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireTransportSupport.h; sourceTree = "<group>"; };
+		E6804DAD2C3C284A004C3714 /* TemporaryBackendInfoToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryBackendInfoToken.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfo.swift; sourceTree = "<group>"; };
 		EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccessTokenHandler.swift; sourceTree = "<group>"; };
@@ -402,6 +423,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6804DA72C3C2823004C3714 /* WireTransportSupport.framework in Frameworks */,
 				EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */,
 				BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */,
 			);
@@ -421,6 +443,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6804D9E2C3C2823004C3714 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6804DAF2C3C2867004C3714 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +500,7 @@
 				546E89BD1B33015000DD1042 /* Tests */,
 				3E88BD0B1B1F370700232589 /* Resources */,
 				09A218671B790D330076547A /* WireTransport-tests-host */,
+				E6804DA22C3C2823004C3714 /* WireTransportSupport */,
 				3E88BDE01B1F44FB00232589 /* Frameworks */,
 				3E88BCA81B1F35DF00232589 /* Products */,
 			);
@@ -485,6 +516,7 @@
 				3E88BCA71B1F35DF00232589 /* WireTransport.framework */,
 				3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */,
 				09A218661B790D330076547A /* WireTransport-tests-host.app */,
+				E6804DA12C3C2823004C3714 /* WireTransportSupport.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -640,7 +672,6 @@
 		5499FF661B31C66C00835C8B /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E67490552C3808FA00964E33 /* Mocks */,
 				54CA150D1B32F2C1008D3787 /* Public */,
 				54CA14FD1B32F2C1008D3787 /* Authentication */,
 				54CA15031B32F2C1008D3787 /* Background */,
@@ -853,12 +884,21 @@
 			name = "Unauthenticated Session";
 			sourceTree = "<group>";
 		};
-		E67490552C3808FA00964E33 /* Mocks */ = {
+		E6804DA22C3C2823004C3714 /* WireTransportSupport */ = {
 			isa = PBXGroup;
 			children = (
-				E67490582C38105C00964E33 /* TemporaryBackendInfoToken.swift */,
+				E6804DAC2C3C283B004C3714 /* Sources */,
+				E6804DA32C3C2823004C3714 /* WireTransportSupport.h */,
 			);
-			path = Mocks;
+			path = WireTransportSupport;
+			sourceTree = "<group>";
+		};
+		E6804DAC2C3C283B004C3714 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E6804DAD2C3C284A004C3714 /* TemporaryBackendInfoToken.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		F173092A21C7EC91008F82EE /* Resources */ = {
@@ -917,6 +957,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E6804D9C2C3C2823004C3714 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6804DA42C3C2823004C3714 /* WireTransportSupport.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -933,6 +981,7 @@
 			);
 			dependencies = (
 				BF3A7A6F1D8C04550034FF40 /* PBXTargetDependency */,
+				E6804DA62C3C2823004C3714 /* PBXTargetDependency */,
 			);
 			name = "WireTransport-tests-host";
 			productName = "ZMTransport-tests-host";
@@ -981,6 +1030,25 @@
 			productReference = 3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		E6804DA02C3C2823004C3714 /* WireTransportSupport */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E6804DAB2C3C2823004C3714 /* Build configuration list for PBXNativeTarget "WireTransportSupport" */;
+			buildPhases = (
+				E6804D9C2C3C2823004C3714 /* Headers */,
+				E6804D9D2C3C2823004C3714 /* Sources */,
+				E6804D9E2C3C2823004C3714 /* Frameworks */,
+				E6804D9F2C3C2823004C3714 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E6804DB22C3C2867004C3714 /* PBXTargetDependency */,
+			);
+			name = WireTransportSupport;
+			productName = WireTransportSupport;
+			productReference = E6804DA12C3C2823004C3714 /* WireTransportSupport.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1003,6 +1071,10 @@
 						LastSwiftMigration = 0930;
 						TestTargetID = 09A218651B790D330076547A;
 					};
+					E6804DA02C3C2823004C3714 = {
+						CreatedOnToolsVersion = 15.4;
+						LastSwiftMigration = 1540;
+					};
 				};
 			};
 			buildConfigurationList = 3E88BCA11B1F35DF00232589 /* Build configuration list for PBXProject "WireTransport" */;
@@ -1024,6 +1096,7 @@
 				3E88BCA61B1F35DF00232589 /* WireTransport-ios */,
 				3E88BCB11B1F35DF00232589 /* WireTransport-ios-tests */,
 				09A218651B790D330076547A /* WireTransport-tests-host */,
+				E6804DA02C3C2823004C3714 /* WireTransportSupport */,
 			);
 		};
 /* End PBXProject section */
@@ -1052,6 +1125,13 @@
 				09F028C61B7252FC00BADDB6 /* Lorem Ipsum.txt in Resources */,
 				F108BCC821C3CB6D00E1BBE3 /* Backend.bundle in Resources */,
 				F1D1282521C292010090045E /* certificates.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6804D9F2C3C2823004C3714 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1149,7 +1229,6 @@
 				54CA15B91B32F2C1008D3787 /* ZMTransportResponse.m in Sources */,
 				22D0F91C29027191004E2882 /* ProxySettings.swift in Sources */,
 				1671F7562B6BFB5600C2D8A3 /* CookieProvider.swift in Sources */,
-				E67490592C38105C00964E33 /* TemporaryBackendInfoToken.swift in Sources */,
 				F1D1281E21C2656F0090045E /* ServerCertificateTrust.swift in Sources */,
 				CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */,
 				095840201B9591F1004555F9 /* NSData+Multipart.m in Sources */,
@@ -1215,6 +1294,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E6804D9D2C3C2823004C3714 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6804DAE2C3C284A004C3714 /* TemporaryBackendInfoToken.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1232,6 +1319,16 @@
 			isa = PBXTargetDependency;
 			target = 3E88BCA61B1F35DF00232589 /* WireTransport-ios */;
 			targetProxy = BF3A7A6E1D8C04550034FF40 /* PBXContainerItemProxy */;
+		};
+		E6804DA62C3C2823004C3714 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E6804DA02C3C2823004C3714 /* WireTransportSupport */;
+			targetProxy = E6804DA52C3C2823004C3714 /* PBXContainerItemProxy */;
+		};
+		E6804DB22C3C2867004C3714 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E88BCA61B1F35DF00232589 /* WireTransport-ios */;
+			targetProxy = E6804DB12C3C2867004C3714 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1251,6 +1348,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120B1B751F7900223568 /* ios-test-host.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1269,6 +1367,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120B1B751F7900223568 /* ios-test-host.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1348,6 +1447,187 @@
 			};
 			name = Release;
 		};
+		E6804DA92C3C2823004C3714 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Wire. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireTransportSupport;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E6804DAA2C3C2823004C3714 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Wire. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireTransportSupport;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1383,6 +1663,15 @@
 			buildConfigurations = (
 				3E88BCC11B1F35DF00232589 /* Debug */,
 				3E88BCC21B1F35DF00232589 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E6804DAB2C3C2823004C3714 /* Build configuration list for PBXNativeTarget "WireTransportSupport" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6804DA92C3C2823004C3714 /* Debug */,
+				E6804DAA2C3C2823004C3714 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
