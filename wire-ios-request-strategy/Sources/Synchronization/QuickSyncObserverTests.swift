@@ -72,10 +72,13 @@ private struct Arrangement {
     }
 
     func arrange() -> (Arrangement, QuickSyncObserver) {
-        (self, QuickSyncObserver(
-            context: coreDataStack.syncContext,
-            applicationStatus: applicationStatus,
-            notificationContext: coreDataStack.syncContext.notificationContext
+        (
+            self,
+            QuickSyncObserver(
+                context: coreDataStack.syncContext,
+                applicationStatus: applicationStatus,
+                notificationContext: coreDataStack.syncContext.notificationContext
+            )
         )
     }
 }
