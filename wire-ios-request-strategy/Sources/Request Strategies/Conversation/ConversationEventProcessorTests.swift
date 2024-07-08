@@ -438,12 +438,12 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
 
-            XCTAssertNotEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertNotEqual(self.groupConversation.accessRoles, newAccessRole)
+            XCTAssertNotEqual(groupConversation.accessMode, newAccessMode)
+            XCTAssertNotEqual(groupConversation.accessRoles, newAccessRole)
 
-            event = self.updateEvent(type: "conversation.access-update",
-                                     senderID: self.otherUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
+            event = updateEvent(type: "conversation.access-update",
+                                     senderID: otherUser.remoteIdentifier!,
+                                     conversationID: groupConversation.remoteIdentifier!,
                                      timestamp: Date(),
                                      dataPayload: [
                                         "access": newAccessMode.stringValue,
@@ -455,8 +455,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
+            XCTAssertEqual(groupConversation.accessMode, newAccessMode)
+            XCTAssertEqual(groupConversation.accessRoles, newAccessRole)
         }
     }
 
@@ -486,7 +486,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
             let newAccessRole = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
-            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
+            XCTAssertEqual(groupConversation.accessRoles, newAccessRole)
         }
     }
 
@@ -511,9 +511,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31536000))
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31536000))
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            guard let message = groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
@@ -541,8 +541,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
             // THEN
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-            guard let message = self.groupConversation.lastMessage as? ZMSystemMessage else {
+            XCTAssertNil(groupConversation.activeMessageDestructionTimeoutValue)
+            guard let message = groupConversation.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
@@ -578,9 +578,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await self.syncMOC.perform { [self] in
 
             // THEN: the local timeout still exists
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .fiveMinutes)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .selfUser)
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, .fiveMinutes)
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .selfUser)
+            guard let message = groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
@@ -614,9 +614,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await self.sut.processConversationEvents([event])
         var firstMessage: ZMSystemMessage?
         await self.syncMOC.perform { [self] in
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            firstMessage = groupConversation?.lastMessage as? ZMSystemMessage
             guard let firstMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
@@ -628,9 +628,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else {
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            guard let secondMessage = groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation

@@ -91,7 +91,7 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
     private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
         return action.previewAction { [weak self] in
             guard let self else { return }
-            self.actionController.handleAction(action)
+            actionController.handleAction(action)
         }
     }
 

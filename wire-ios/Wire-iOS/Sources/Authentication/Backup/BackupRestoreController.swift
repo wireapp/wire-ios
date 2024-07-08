@@ -115,9 +115,9 @@ final class BackupRestoreController: NSObject {
             case .failure(SessionManager.BackupError.decryptionError):
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
-                self.target.isLoadingViewVisible = false
+                target.isLoadingViewVisible = false
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                self.showWrongPasswordAlert { _ in
+                showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
 
@@ -125,14 +125,14 @@ final class BackupRestoreController: NSObject {
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
-                self.showRestoreError(error)
-                self.target.isLoadingViewVisible = false
+                showRestoreError(error)
+                target.isLoadingViewVisible = false
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
                 BackupEvent.importSucceeded.track()
-                self.temporaryFilesService.removeTemporaryData()
-                self.delegate?.backupResoreControllerDidFinishRestoring(self)
+                temporaryFilesService.removeTemporaryData()
+                delegate?.backupResoreControllerDidFinishRestoring(self)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
         }
@@ -156,8 +156,8 @@ final class BackupRestoreController: NSObject {
     private func showRestoreError(_ error: Error) {
         let controller = restoreBackupFailed(
             error: error,
-            onTryAgain: { [unowned self] in self.showFilePicker() },
-            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self) }
+            onTryAgain: { [unowned self] in showFilePicker() },
+            onCancel: { [unowned self] in delegate?.backupResoreControllerDidFinishRestoring(self) }
         )
 
         target.present(controller, animated: true)

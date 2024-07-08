@@ -97,7 +97,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
                     }
                 }
 
-                self.slowSyncTask = nil
+                slowSyncTask = nil
             }
         }
 

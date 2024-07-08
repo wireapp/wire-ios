@@ -313,11 +313,11 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
         audioPlayerDelegate = AudioPlayerDelegate { [weak self] _ in
             guard let self else { return }
-            self.removeDisplayLink()
-            self.playingStateCallback?(.idle)
-            self.recordLevelCallBack?(0)
-            guard let duration = self.audioPlayer?.duration else { return }
-            self.recordTimerCallback?(duration)
+            removeDisplayLink()
+            playingStateCallback?(.idle)
+            recordLevelCallBack?(0)
+            guard let duration = audioPlayer?.duration else { return }
+            recordTimerCallback?(duration)
         }
 
         audioPlayer?.delegate = audioPlayerDelegate

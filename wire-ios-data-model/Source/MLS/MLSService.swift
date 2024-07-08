@@ -1613,8 +1613,7 @@ public final class MLSService: MLSServiceInterface {
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            await conversationExists(groupID: subConversationGroupID)
-        {
+            await conversationExists(groupID: subConversationGroupID) {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {
             let subconversation = try await actionsProvider.fetchSubgroup(

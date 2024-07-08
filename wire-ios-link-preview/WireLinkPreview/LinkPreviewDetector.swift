@@ -72,7 +72,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
             guard let data = openGraphData else { return completion([]) }
 
             let linkPreview = data.linkPreview(originalURLString, offset: range.location)
-            linkPreview.requestAssets(withImageDownloader: self.imageDownloader) { _ in
+            linkPreview.requestAssets(withImageDownloader: imageDownloader) { _ in
                 completion([linkPreview])
             }
         }

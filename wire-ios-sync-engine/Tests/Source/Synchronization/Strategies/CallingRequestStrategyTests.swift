@@ -710,7 +710,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
             let mockMLSService = MockMLSServiceInterface()
 
-            self.syncMOC.mlsService = mockMLSService
+            syncMOC.mlsService = mockMLSService
 
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)

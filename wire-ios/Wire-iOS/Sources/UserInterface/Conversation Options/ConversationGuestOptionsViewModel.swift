@@ -133,8 +133,8 @@ final class ConversationGuestOptionsViewModel {
     // swiftlint:enable todo_requires_jira_link
     private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
-            get: { [unowned self] in return self.configuration.allowGuests },
-            set: { [unowned self] in self.setAllowGuests($0, view: $1) },
+            get: { [unowned self] in return configuration.allowGuests },
+            set: { [unowned self] in setAllowGuests($0, view: $1) },
             isEnabled: configuration.isConversationFromSelfTeam
         )]
         guard configuration.allowGuests else {
@@ -200,13 +200,13 @@ final class ConversationGuestOptionsViewModel {
     private func revokeLink(view: UIView? = nil) {
         delegate?.viewModel(self, sourceView: view, confirmRevokingLink: { [weak self] revoke in
             guard let self else { return }
-            guard revoke else { return self.updateRows() }
+            guard revoke else { return updateRows() }
 
             let item = CancelableItem(delay: 0.4) { [weak self] in
                 self?.state.isLoading = true
             }
 
-            self.configuration.deleteLink { result in
+            configuration.deleteLink { result in
                 switch result {
                 case .success:
                     self.link = nil
@@ -253,19 +253,19 @@ final class ConversationGuestOptionsViewModel {
             switch result {
             case .success(let linkData):
                 if linkData.secured {
-                    self.securedLink = linkData.uri
-                    self.link = nil
+                    securedLink = linkData.uri
+                    link = nil
                 } else {
-                    self.link = linkData.uri
-                    self.securedLink = nil
+                    link = linkData.uri
+                    securedLink = nil
                 }
 
             case .failure(let error):
-                self.delegate?.viewModel(self, didReceiveError: error)
+                delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
-            self.showLoadingCell = false
+            showLoadingCell = false
         }
     }
 
@@ -280,11 +280,11 @@ final class ConversationGuestOptionsViewModel {
             case .success(let link):
                 self.link = link
             case .failure(let error):
-                self.delegate?.viewModel(self, didReceiveError: error)
+                delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
-            self.showLoadingCell = false
+            showLoadingCell = false
         }
 
     }
@@ -334,15 +334,15 @@ final class ConversationGuestOptionsViewModel {
             configuration.setAllowGuests(allowGuests) { [weak self] result in
                 guard let self else { return }
                 item.cancel()
-                self.state.isLoading = false
+                state.isLoading = false
 
                 switch result {
                 case .success:
-                    self.updateRows()
-                    if (self.link == nil && self.securedLink == nil) && allowGuests {
-                        self.fetchLink()
+                    updateRows()
+                    if (link == nil && securedLink == nil) && allowGuests {
+                        fetchLink()
                     }
-                case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
+                case .failure(let error): delegate?.viewModel(self, didReceiveError: error)
                 }
             }
         }
@@ -355,9 +355,9 @@ final class ConversationGuestOptionsViewModel {
             // Make "remove guests and services" warning only appear if guests or services are present
             return delegate?.viewModel(self, sourceView: view, confirmRemovingGuests: { [weak self] remove in
                 guard let self else { return }
-                guard remove else { return self.updateRows() }
-                self.link = nil
-                self.securedLink = nil
+                guard remove else { return updateRows() }
+                link = nil
+                securedLink = nil
                 _setAllowGuests()
             })
         } else {

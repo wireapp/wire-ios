@@ -123,11 +123,11 @@ final class SendController {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
                 guard let self else { return }
-                guard !self.isCancelled else {
+                guard !isCancelled else {
                     return progress(.done)
                 }
                 progress(.startingSending)
-                self.append(unsentSendables: self.unsentSendables, completion: completion)
+                append(unsentSendables: unsentSendables, completion: completion)
             }
         } else {
             progress(.startingSending)

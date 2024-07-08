@@ -550,15 +550,15 @@ public final class SessionManager: NSObject, SessionManagerType {
                 application: application,
                 minTLSVersion: minTLSVersion,
                 blacklistCallback: { [weak self] blacklisted in
-                    guard let self, !self.isAppVersionBlacklisted else { return }
+                    guard let self, !isAppVersionBlacklisted else { return }
 
                     if blacklisted {
-                        self.isAppVersionBlacklisted = true
-                        self.delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+                        isAppVersionBlacklisted = true
+                        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
                         // When the application version is blacklisted we don't want have a
                         // transition to any other state in the UI, so we won't inform it
                         // anymore by setting the delegate to nil.
-                        self.delegate = nil
+                        delegate = nil
                     }
                 })
         }
@@ -645,8 +645,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         loadSession(for: account) { [weak self] session in
             guard let self, let session else { return }
-            self.updateCurrentAccount(in: session.managedObjectContext)
-            session.application(self.application, didFinishLaunching: launchOptions)
+            updateCurrentAccount(in: session.managedObjectContext)
+            session.application(application, didFinishLaunching: launchOptions)
         }
     }
 
@@ -938,7 +938,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     return
                 }
 
-                let userSession = self.startBackgroundSession(
+                let userSession = startBackgroundSession(
                     for: account,
                     with: coreDataStack
                 )

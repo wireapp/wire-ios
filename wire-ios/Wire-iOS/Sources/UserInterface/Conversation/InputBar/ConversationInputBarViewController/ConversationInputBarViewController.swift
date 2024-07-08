@@ -657,7 +657,7 @@ final class ConversationInputBarViewController: UIViewController,
                     }
                 }
             } else {
-                self.appendKnock()
+                appendKnock()
             }
         }
     }

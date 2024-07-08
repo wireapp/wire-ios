@@ -99,8 +99,7 @@ final class APIVersionResolver {
         } else if
             isDeveloperModeEnabled,
             let preferredAPIVersion = BackendInfo.preferredAPIVersion,
-            allBackendVersions.contains(preferredAPIVersion)
-        {
+            allBackendVersions.contains(preferredAPIVersion) {
             WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
         } else if let apiVersion = commonProductionVersions.max() {

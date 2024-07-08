@@ -37,8 +37,8 @@ class ClientUpdateStatusTests: MessagingTest {
         super.setUp()
 
         syncMOC.performAndWait { [self] in
-            self.sut = ClientUpdateStatus(syncManagedObjectContext: syncMOC)
-            self.sut.determineInitialClientStatus()
+            sut = ClientUpdateStatus(syncManagedObjectContext: syncMOC)
+            sut.determineInitialClientStatus()
         }
 
         clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in

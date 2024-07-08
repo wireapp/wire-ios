@@ -110,7 +110,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
         parseMetaHeader(container, url: url) { [weak self] result in
             guard let self else { return }
-            self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
+            completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
 

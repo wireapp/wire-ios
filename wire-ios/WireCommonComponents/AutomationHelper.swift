@@ -108,8 +108,7 @@ public final class AutomationHelper: NSObject {
 
         if
             let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
-            let apiVersion = Int32(value)
-        {
+            let apiVersion = Int32(value) {
             preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 

@@ -101,7 +101,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
                 return false
             }
 
-            return self.managedObjectContext.zm_fileAssetCache.hasEncryptedMediumImageData(for: message)
+            return managedObjectContext.zm_fileAssetCache.hasEncryptedMediumImageData(for: message)
         }
     }
 
@@ -166,8 +166,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
         if
             var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
             let messageText = message.textMessageData?.messageText,
-            let mentions = message.textMessageData?.mentions
-        {
+            let mentions = message.textMessageData?.mentions {
             let assetToken = payload["token"] as? String
             let assetDomain = payload["domain"] as? String
             linkPreview.update(withAssetKey: assetKey, assetToken: assetToken, assetDomain: assetDomain)

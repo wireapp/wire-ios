@@ -283,7 +283,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
         postContent?.send(text: contentText, sharingSession: sharingSession) { [weak self] progress in
-            guard let self, let postContent = self.postContent else { return }
+            guard let self, let postContent else { return }
 
             switch progress {
             case .preparing:
@@ -302,7 +302,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .sending(let progress):
                 WireLogger.shareExtension.info("progress event: sending with progress: (\(progress))")
-                self.progressViewController?.progress = progress
+                progressViewController?.progress = progress
 
             case .done:
                 WireLogger.shareExtension.info("progress event: done")
@@ -316,13 +316,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             case .conversationDidDegrade((let users, let strategyChoice)):
                 WireLogger.shareExtension.warn("progress event: converation did degrade")
                 if let conversation = postContent.target {
-                    self.conversationDidDegrade(
+                    conversationDidDegrade(
                         change: ConversationDegradationInfo(conversation: conversation, users: users),
                         callback: strategyChoice)
                 }
             case .timedOut:
                 WireLogger.shareExtension.error("progress event: timed out")
-                self.popConfigurationViewController()
+                popConfigurationViewController()
 
                 let alert = UIAlertController(
                     title: L10n.ShareExtension.Timeout.title,
@@ -334,7 +334,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     style: .cancel
                 ))
 
-                self.present(alert, animated: true)
+                present(alert, animated: true)
 
             case .error(let error):
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
@@ -353,7 +353,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                         }
                     ))
 
-                    self.present(alert, animated: true) {
+                    present(alert, animated: true) {
                         self.popConfigurationViewController()
                     }
                 }
@@ -370,7 +370,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     style: .cancel
                 ))
 
-                self.present(alert, animated: true)
+                present(alert, animated: true)
             }
         }
     }
@@ -511,9 +511,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
             guard let self,
-                  self.localAuthenticationStatus == .granted else { return }
+                  localAuthenticationStatus == .granted else { return }
 
-            self.showChooseConversation()
+            showChooseConversation()
         }
     }
 

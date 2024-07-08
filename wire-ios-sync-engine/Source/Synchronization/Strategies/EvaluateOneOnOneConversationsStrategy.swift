@@ -75,7 +75,7 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
                 }
             }
 
-            self.task = nil
+            task = nil
         }
 
         return nil

@@ -144,8 +144,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
-            )
-        {
+            ) {
             groupID = subconversationGroupID
             debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }

@@ -72,10 +72,10 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else { return }
             message.isDownloading = true
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
@@ -83,10 +83,10 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self  else { return }
-            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
+            guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
             guard message.version >= 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
-            self.applicationStatus?.requestCancellation.cancelTask(with: identifier)
+            applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.isDownloading = false
             message.associatedTaskIdentifier = nil
         }

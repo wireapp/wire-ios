@@ -159,10 +159,10 @@ final class EmptySearchResultsView: UIView {
         actionButton.accessibilityIdentifier = "button.searchui.open-services-no-results"
 
         actionButton.addCallback(for: .touchUpInside) { [unowned self] _ in
-            guard let action = self.buttonAction else {
+            guard let action = buttonAction else {
                 return
             }
-            self.delegate?.execute(action: action, from: self)
+            delegate?.execute(action: action, from: self)
         }
 
         updateUIForCurrentEmptySearchResultState()

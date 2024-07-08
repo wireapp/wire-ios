@@ -70,8 +70,8 @@ import Foundation
     func didWhitelistAssetDownload(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let message = try? self.managedObjectContext.existingObject(with: objectID) as? ZMClientMessage else { return }
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            guard let message = try? managedObjectContext.existingObject(with: objectID) as? ZMClientMessage else { return }
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }

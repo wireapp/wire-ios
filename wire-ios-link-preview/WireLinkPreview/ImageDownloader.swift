@@ -66,7 +66,7 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
             }
 
             _ = group.wait(timeout: DispatchTime.distantFuture)
-            self.resultsQueue.addOperation {
+            resultsQueue.addOperation {
                 completion(result)
             }
         }

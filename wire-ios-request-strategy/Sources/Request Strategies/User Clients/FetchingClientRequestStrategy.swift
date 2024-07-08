@@ -75,7 +75,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                                                                           context: self.managedObjectContext.notificationContext,
                                                                           object: nil) { [weak self] note in
             guard let self, let objectID = note.object as? NSManagedObjectID else { return }
-            self.managedObjectContext.performGroupedBlock {
+            managedObjectContext.performGroupedBlock {
                 guard
                     let apiVersion = BackendInfo.apiVersion,
                     let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser,

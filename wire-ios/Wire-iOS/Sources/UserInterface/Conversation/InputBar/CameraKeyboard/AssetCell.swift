@@ -95,9 +95,9 @@ final class AssetCell: UICollectionViewCell {
                                                    options: type(of: self).imageFetchOptions,
                                                    resultHandler: { [weak self] result, _ in
                                                     guard let self,
-                                                        self.representedAssetIdentifier == asset.localIdentifier
+                                                        representedAssetIdentifier == asset.localIdentifier
                                                         else { return }
-                                                    self.imageView.image = result
+                                                    imageView.image = result
             })
 
             if asset.mediaType == .video {

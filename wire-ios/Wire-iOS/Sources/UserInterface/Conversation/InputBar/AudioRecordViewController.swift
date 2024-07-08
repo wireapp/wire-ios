@@ -145,7 +145,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     private func configureViews(userSession: UserSession) {
         accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
             if let color {
-                self.audioPreviewView.color = color
+                audioPreviewView.color = color
             }
         }
 

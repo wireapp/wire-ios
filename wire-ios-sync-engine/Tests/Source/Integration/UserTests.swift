@@ -55,7 +55,7 @@ final class UserTests_swift: IntegrationTest {
         var extraUser: MockUser?
         mockTransportSession.performRemoteChanges({ [self] session in
             extraUser = session.insertUser(withName: "Max Tester")
-            self.groupConversation.addUsers(by: self.selfUser, addedUsers: [extraUser!])
+            groupConversation.addUsers(by: self.selfUser, addedUsers: [extraUser!])
             XCTAssertNotNil(extraUser?.name)
         })
 

@@ -86,7 +86,7 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // then
         await userSession!.managedObjectContext.perform { [self] in
-            XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
+            XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: user2)!))
         }
     }
 
@@ -117,7 +117,7 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // then
         await userSession!.managedObjectContext.perform { [self] in
-            XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
+            XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: user2)!))
         }
     }
 

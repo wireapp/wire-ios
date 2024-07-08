@@ -35,14 +35,14 @@ final class SearchTaskTests: DatabaseTest {
         teamIdentifier = UUID()
 
         performPretendingUIMocIsSyncMoc { [unowned self] in
-            let selfUser = ZMUser.selfUser(in: self.uiMOC)
+            let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.remoteIdentifier = UUID()
-            selfUser.teamIdentifier = self.teamIdentifier
+            selfUser.teamIdentifier = teamIdentifier
             let team = Team.fetchOrCreate(
-                with: self.teamIdentifier,
-                in: self.uiMOC
+                with: teamIdentifier,
+                in: uiMOC
             )
-            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.uiMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: uiMOC)
             uiMOC.saveOrRollback()
         }
         BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!

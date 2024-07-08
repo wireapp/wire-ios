@@ -108,7 +108,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
-            let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
+            let message = conversation.appendTextMessage(text, fetchLinkPreview: fetchPreview)
             completion(message)
         }
     }
@@ -198,7 +198,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
-            completion(self.imageData.flatMap(self.conversation.appendImage))
+            completion(imageData.flatMap(conversation.appendImage))
         }
     }
 
@@ -249,7 +249,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
-            completion(self.metadata.flatMap(self.conversation.appendFile))
+            completion(metadata.flatMap(conversation.appendFile))
         }
     }
 

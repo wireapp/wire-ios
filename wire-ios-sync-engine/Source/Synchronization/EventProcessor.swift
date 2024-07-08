@@ -177,7 +177,7 @@ actor EventProcessor: UpdateEventProcessor {
                 // swiftlint:disable todo_requires_jira_link
                 // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
                 // swiftlint:enable todo_requires_jira_link
-                for eventConsumer in self.eventAsyncConsumers {
+                for eventConsumer in eventAsyncConsumers {
                     await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }
             }
@@ -188,7 +188,7 @@ actor EventProcessor: UpdateEventProcessor {
                 self.syncContext.saveOrRollback()
             }
 
-            WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
+            WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(eventProcessingTracker.debugDescription)")
         }
     }
 

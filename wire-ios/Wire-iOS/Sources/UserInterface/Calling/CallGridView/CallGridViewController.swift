@@ -76,8 +76,7 @@ final class CallGridViewController: SpinnerCapableViewController {
             if
                 configuration.isGroupCall,
                 configuration.isConnected,
-                !oldValue.isConnected
-            {
+                !oldValue.isConnected {
                 updateHint(for: .connectionEstablished)
             }
         }

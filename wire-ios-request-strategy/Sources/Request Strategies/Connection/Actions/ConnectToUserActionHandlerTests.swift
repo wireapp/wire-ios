@@ -90,7 +90,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
-            let domain = self.owningDomain
+            let domain = owningDomain
             let action = ConnectToUserAction(userID: userID, domain: domain)
             let connection = createConnectionPayload(to: QualifiedID(uuid: userID, domain: domain))
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
@@ -100,10 +100,10 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
-            XCTAssertNotNil(ZMConnection.fetch(userID: userID, domain: domain, in: self.syncMOC))
+            XCTAssertNotNil(ZMConnection.fetch(userID: userID, domain: domain, in: syncMOC))
         }
     }
 
@@ -111,7 +111,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
-            let domain = self.owningDomain
+            let domain = owningDomain
             var action = ConnectToUserAction(userID: userID, domain: domain)
             let connection = createConnectionPayload(to: QualifiedID(uuid: userID, domain: domain))
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
@@ -120,7 +120,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -128,7 +128,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             }
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -139,10 +139,10 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
-            let domain = self.owningDomain
+            let domain = owningDomain
             var action = ConnectToUserAction(userID: userID, domain: domain)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
@@ -155,7 +155,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

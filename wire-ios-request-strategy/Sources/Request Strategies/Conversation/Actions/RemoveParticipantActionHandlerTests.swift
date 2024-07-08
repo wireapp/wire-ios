@@ -122,9 +122,9 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     func testThatItProcessMemberLeaveEventInTheResponse() throws {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
 
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: user, conversation: conversation)
             let memberLeave = Payload.UpdateConverationMemberLeave(
                 userIDs: [user.remoteIdentifier!],
@@ -140,13 +140,13 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
+            let waitForHandler = customExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
                 waitForHandler.fulfill()
             }
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
         }
 
         // then
@@ -242,10 +242,10 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     func testThatItCallsResultHandler_On200() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             var action = RemoveParticipantAction(user: user, conversation: conversation)
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -267,7 +267,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
         }
 
         // then
@@ -279,7 +279,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -291,7 +291,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -303,7 +303,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
@@ -316,7 +316,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

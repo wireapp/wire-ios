@@ -171,7 +171,7 @@ final class AppRootRouter: NSObject {
         appStateTransitionQueue.async { [weak self] in
             guard let self else { return }
 
-            self.appStateTransitionGroup.wait()
+            appStateTransitionGroup.wait()
 
             DispatchQueue.main.async {
                 self.transition(to: appState, completion: completion)

@@ -409,31 +409,31 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
         syncManagedObjectContext.performGroupedAndWait { [self] in
-            self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
-            self.configureTransportSession()
+            localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
+            configureTransportSession()
 
             // need to be before we create strategies since it is passed
-            self.proteusProvider = ProteusProvider(proteusService: self.proteusService,
-                                                   keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
+            proteusProvider = ProteusProvider(proteusService: proteusService,
+                                                   keyStore: syncManagedObjectContext.zm_cryptKeyStore)
 
-            self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
-            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
-            self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
-            self.operationLoop = operationLoop ?? self.createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
-            self.urlActionProcessors = self.createURLActionProcessors()
-            self.callStateObserver = CallStateObserver(localNotificationDispatcher: self.localNotificationDispatcher!,
+            self.strategyDirectory = strategyDirectory ?? createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            updateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
+            self.syncStrategy = syncStrategy ?? createSyncStrategy()
+            self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
+            urlActionProcessors = createURLActionProcessors()
+            callStateObserver = CallStateObserver(localNotificationDispatcher: localNotificationDispatcher!,
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
 
             // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
-            self.syncManagedObjectContext.proteusService = self.proteusService
-            self.syncManagedObjectContext.mlsService = self.mlsService
+            syncManagedObjectContext.proteusService = proteusService
+            syncManagedObjectContext.mlsService = mlsService
 
             applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
-            self.applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
-            self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
-            self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
-            self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
+            applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
+            applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
+            applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
+            hasCompletedInitialSync = applicationStatusDirectory.syncStatus.isSlowSyncing == false
         }
 
         setupMLSGroupVerification()

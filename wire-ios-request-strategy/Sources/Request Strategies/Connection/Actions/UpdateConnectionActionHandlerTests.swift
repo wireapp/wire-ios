@@ -94,9 +94,9 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             let newStatus: ZMConnectionStatus = .blocked
-            let action = UpdateConnectionAction(connection: self.oneToOneConnection,
+            let action = UpdateConnectionAction(connection: oneToOneConnection,
                                                 newStatus: newStatus)
-            let connection = createConnectionPayload(self.oneToOneConnection,
+            let connection = createConnectionPayload(oneToOneConnection,
                                                      status: .blocked)
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
@@ -105,19 +105,19 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
-            XCTAssertEqual(self.oneToOneConnection.status, newStatus)
+            XCTAssertEqual(oneToOneConnection.status, newStatus)
         }
     }
 
     func testThatItCallsResultHandler_On200() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            var action = UpdateConnectionAction(connection: self.oneToOneConnection,
+            var action = UpdateConnectionAction(connection: oneToOneConnection,
                                                 newStatus: .blocked)
-            let connection = createConnectionPayload(self.oneToOneConnection,
+            let connection = createConnectionPayload(oneToOneConnection,
                                                      status: .blocked)
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
@@ -125,7 +125,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -133,7 +133,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             }
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -143,10 +143,10 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func testThatItCallsResultHandler_OnError() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            var action = UpdateConnectionAction(connection: self.oneToOneConnection,
+            var action = UpdateConnectionAction(connection: oneToOneConnection,
                                                 newStatus: .blocked)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
@@ -159,7 +159,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
