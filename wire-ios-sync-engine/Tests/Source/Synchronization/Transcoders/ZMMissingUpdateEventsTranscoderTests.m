@@ -33,7 +33,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 @interface ZMMissingUpdateEventsTranscoderTests : MessagingTest
 
 @property (nonatomic, readonly) ZMMissingUpdateEventsTranscoder *sut;
-@property (nonatomic, readonly) id<PreviouslyReceivedEventIDsCollection> mockEventIDsCollection;
 @property (nonatomic) id mockPushNotificationStatus;
 @property (nonatomic) id requestSync;
 @property (nonatomic) BOOL mockHasPushNotificationEventsToFetch;
@@ -68,14 +67,12 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
         [invocation setReturnValue:&value];
     }] hasEventsToFetch];
     
-    _mockEventIDsCollection = OCMProtocolMock(@protocol(PreviouslyReceivedEventIDsCollection));
 
     [self verifyMockLater:self.mockPushNotificationStatus];
     
     _sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.uiMOC
                                                             notificationsTracker:nil
                                                                   eventProcessor:self.mockUpdateEventProcessor
-                                            previouslyReceivedEventIDsCollection:(id)self.mockEventIDsCollection
                                                                applicationStatus:self.mockApplicationDirectory
                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                       syncStatus:self.mockSyncStatus
@@ -400,7 +397,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     ZMMissingUpdateEventsTranscoder *sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.syncMOC
                                                                                             notificationsTracker:nil
                                                                                                   eventProcessor:self.mockUpdateEventProcessor
-                                                                            previouslyReceivedEventIDsCollection:(id)self.mockEventIDsCollection
                                                                                                applicationStatus:self.mockApplicationDirectory
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                                                       syncStatus:self.mockSyncStatus
