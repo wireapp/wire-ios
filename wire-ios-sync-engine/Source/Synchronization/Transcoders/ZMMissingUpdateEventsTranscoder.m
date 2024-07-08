@@ -330,10 +330,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
     NSUUID *latestEventId = [self processUpdateEventsAndReturnLastNotificationIDFromResponse:response];
 
-    if (!self.listPaginator.hasMoreToFetch) {
-        [self.previouslyReceivedEventIDsCollection discardListOfAlreadyReceivedPushEventIDs];
-    }
-    
     [self appendPotentialGapSystemMessageIfNeededWithResponse:response];
 
     if (response.result == ZMTransportResponseStatusPermanentError) {
