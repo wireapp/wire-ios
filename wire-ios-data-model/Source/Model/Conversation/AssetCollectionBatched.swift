@@ -83,17 +83,17 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
                   let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
             }
-            let allAssetMessages: [ZMAssetClientMessage] = self.unCategorizedMessages(for: syncConversation)
-            let allClientMessages: [ZMClientMessage] = self.unCategorizedMessages(for: syncConversation)
+            let allAssetMessages: [ZMAssetClientMessage] = unCategorizedMessages(for: syncConversation)
+            let allClientMessages: [ZMClientMessage] = unCategorizedMessages(for: syncConversation)
 
-            let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: self.matchingCategories)
+            let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: matchingCategories)
             if categorizedMessages.count > 0 {
-                let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: self.matchingCategories)
-                self.notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
+                let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: matchingCategories)
+                notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
             }
 
-            self.categorizeNextBatch(type: .asset, allMessages: allAssetMessages, managedObjectContext: syncMOC)
-            self.categorizeNextBatch(type: .client, allMessages: allClientMessages, managedObjectContext: syncMOC)
+            categorizeNextBatch(type: .asset, allMessages: allAssetMessages, managedObjectContext: syncMOC)
+            categorizeNextBatch(type: .client, allMessages: allClientMessages, managedObjectContext: syncMOC)
         }
     }
 
@@ -163,8 +163,8 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
 
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
-            self.categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext: managedObjectContext)
+            guard let self, !tornDown else { return }
+            categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext: managedObjectContext)
         }
     }
 
@@ -173,7 +173,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             return
         }
         uiMOC?.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
+            guard let self, !tornDown else { return }
 
             // Map assets to UI assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
@@ -183,16 +183,16 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             }
 
             // Merge result with existing result
-            if let assets = self.assets {
+            if let assets {
                 self.assets = AssetCollectionBatched.merge(messageMap: assets, with: uiAssets)
             } else {
-                self.assets = uiAssets
+                assets = uiAssets
             }
 
             // Notify delegate
-            self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: !didReachLastMessage)
-            if self.fetchingDone {
-                self.delegate.assetCollectionDidFinishFetching(collection: self, result: .success)
+            delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: !didReachLastMessage)
+            if fetchingDone {
+                delegate.assetCollectionDidFinishFetching(collection: self, result: .success)
             }
         }
     }
@@ -203,9 +203,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             var result = result
             if result == .success {
                 // Since we are setting the assets in a performGroupedBlock on the uiMOC, we might not know if there are assets or not when we call notifyDelegateFetchingIsDone. Therefore we check for assets here.
-                result = (self.assets != nil) ? .success : .noAssetsToFetch
+                result = (assets != nil) ? .success : .noAssetsToFetch
             }
-            self.delegate.assetCollectionDidFinishFetching(collection: self, result: result)
+            delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
     }
 

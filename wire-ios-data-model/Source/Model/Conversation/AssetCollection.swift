@@ -97,14 +97,14 @@ public class AssetCollection: NSObject, ZMCollection {
                 return
             }
 
-            let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: self.matchingCategories)
+            let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: matchingCategories)
             if categorizedMessages.count > 0 {
-                let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: self.matchingCategories)
-                self.notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
+                let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: matchingCategories)
+                notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
             }
 
-            self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .asset, syncConversation: syncConversation)
-            self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .client, syncConversation: syncConversation)
+            fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .asset, syncConversation: syncConversation)
+            fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .client, syncConversation: syncConversation)
         }
 
     }
@@ -191,8 +191,8 @@ public class AssetCollection: NSObject, ZMCollection {
         }
 
         syncConversation.managedObjectContext?.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
-            self.fetchNextIfNotTornDown(limit: AssetCollection.defaultFetchCount, type: type, syncConversation: syncConversation)
+            guard let self, !tornDown else { return }
+            fetchNextIfNotTornDown(limit: AssetCollection.defaultFetchCount, type: type, syncConversation: syncConversation)
         }
     }
 
@@ -202,7 +202,7 @@ public class AssetCollection: NSObject, ZMCollection {
         }
 
         uiMOC?.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
+            guard let self, !tornDown else { return }
 
             // Map to ui assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
@@ -212,24 +212,24 @@ public class AssetCollection: NSObject, ZMCollection {
             }
 
             // Merge with existing assets
-            if let assets = self.assets {
+            if let assets {
                 self.assets = AssetCollectionBatched.merge(messageMap: assets, with: uiAssets)
             } else {
-                self.assets = uiAssets
+                assets = uiAssets
             }
 
             // Notify delegate
-            self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: didReachLastMessage)
-            if self.fetchingDone {
-                self.notifyDelegateFetchingIsDone(result: (self.assets == nil) ? .noAssetsToFetch : .success)
+            delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: didReachLastMessage)
+            if fetchingDone {
+                notifyDelegateFetchingIsDone(result: (assets == nil) ? .noAssetsToFetch : .success)
             }
         }
     }
 
     private func notifyDelegateFetchingIsDone(result: AssetFetchResult) {
         self.uiMOC?.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
-            self.delegate.assetCollectionDidFinishFetching(collection: self, result: result)
+            guard let self, !tornDown else { return }
+            delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
     }
 
