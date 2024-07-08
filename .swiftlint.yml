@@ -1,6 +1,5 @@
 # potential rules to enable:
 # trailing_closure
-# self_in_property_initialization
 # prefer_self_in_static_references
 # prefer_self_type_over_type_of_self
 # redundant_self_in_closure
@@ -21,6 +20,7 @@ opt_in_rules:
   - reduce_into
   - redundant_self_in_closure
   - self_binding
+  - self_in_property_initialization
   - shorthand_optional_binding
   - sorted_imports
   - unhandled_throwing_task
