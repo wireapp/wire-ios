@@ -1,7 +1,7 @@
 --exclude Carthage,DerivedData,**/AutoMockable.generated.swift
 
 --enable blankLineAfterSwitchCase
---disable hoistTry
+--disable hoistTry,blankLinesAtStartOfScope
 # this rule is nice but is hard to apply on existing codebases (Core Data, Codable)
 # --enable acronyms
 
