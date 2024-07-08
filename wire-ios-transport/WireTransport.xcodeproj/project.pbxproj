@@ -136,7 +136,6 @@
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
-		E67490572C38090A00964E33 /* TemporaryBackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67490562C38090A00964E33 /* TemporaryBackendInfo.swift */; };
 		E67490592C38105C00964E33 /* TemporaryBackendInfoToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67490582C38105C00964E33 /* TemporaryBackendInfoToken.swift */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
@@ -365,7 +364,6 @@
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
-		E67490562C38090A00964E33 /* TemporaryBackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryBackendInfo.swift; sourceTree = "<group>"; };
 		E67490582C38105C00964E33 /* TemporaryBackendInfoToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryBackendInfoToken.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfo.swift; sourceTree = "<group>"; };
@@ -858,7 +856,6 @@
 		E67490552C3808FA00964E33 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				E67490562C38090A00964E33 /* TemporaryBackendInfo.swift */,
 				E67490582C38105C00964E33 /* TemporaryBackendInfoToken.swift */,
 			);
 			path = Mocks;
@@ -1138,7 +1135,6 @@
 				54CA15C51B32F2C1008D3787 /* NSError+ZMTransportSession.m in Sources */,
 				7038D63E27D0D286004BE280 /* APIVersion.swift in Sources */,
 				166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */,
-				E67490572C38090A00964E33 /* TemporaryBackendInfo.swift in Sources */,
 				87B2B79B20BC476E00799AB9 /* ZMTransportRequest.swift in Sources */,
 				54CA15C11B32F2C1008D3787 /* ZMTransportCodec.m in Sources */,
 				54CA15B71B32F2C1008D3787 /* ZMTransportRequest.m in Sources */,

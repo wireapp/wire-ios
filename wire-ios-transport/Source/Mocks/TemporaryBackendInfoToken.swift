@@ -25,15 +25,38 @@ public final class TemporaryBackendInfoToken {
 
     private let originalStorage: UserDefaults
 
+    public var apiVersion: APIVersion? {
+        get { BackendInfo.apiVersion }
+        set { BackendInfo.apiVersion = newValue }
+    }
+
+    public var domain: String? {
+        get { BackendInfo.domain }
+        set { BackendInfo.domain = newValue }
+    }
+
+    public var isFederationEnabled: Bool {
+        get { BackendInfo.isFederationEnabled }
+        set { BackendInfo.isFederationEnabled = newValue }
+    }
+
+    public var preferredAPIVersion: APIVersion? {
+        get { BackendInfo.preferredAPIVersion }
+        set { BackendInfo.preferredAPIVersion = newValue }
+    }
+
     public init(
         domain: String? = nil,
         isFederationEnabled: Bool = false
     ) {
         originalStorage = BackendInfo.storage
+
+        // self initialized
+
         BackendInfo.storage = .temporary()
 
-        BackendInfo.domain = domain
-        BackendInfo.isFederationEnabled = isFederationEnabled
+        self.domain = domain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     deinit {
