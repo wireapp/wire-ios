@@ -40,6 +40,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         let label = UILabel()
         label.font = UIFont.font(for: .h5)
         label.textColor = SemanticColors.Label.baseSecondaryText
+        // TODO: WPB-7301 The strings "Selected by groups", "Selected by favorites" etc. should probably be separate localized strings, without concatenation.
         label.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
         return label
     }()
@@ -266,11 +267,10 @@ final class ConversationListViewController: UIViewController, UITabBarController
         filterContainerStackView.translatesAutoresizingMaskIntoConstraints = false
         filterContainerView.addSubview(filterContainerStackView)
         NSLayoutConstraint.activate([
-            filterContainerStackView.topAnchor.constraint(equalToSystemSpacingBelow: filterContainerView.topAnchor, multiplier: 1),
-            filterContainerView.bottomAnchor.constraint(equalToSystemSpacingBelow: filterContainerStackView.bottomAnchor, multiplier: 1),
-            filterContainerStackView.centerXAnchor.constraint(equalTo: filterContainerView.centerXAnchor),
-            filterContainerStackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 1),
-            filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 1)
+            filterContainerStackView.topAnchor.constraint(equalTo: filterContainerView.topAnchor),
+            filterContainerView.bottomAnchor.constraint(equalTo: filterContainerStackView.bottomAnchor),
+            filterContainerStackView.leadingAnchor.constraint(equalToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 2),
+            filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 2)
         ])
 
         filterContainerStackView.addArrangedSubview(filterLabel)
