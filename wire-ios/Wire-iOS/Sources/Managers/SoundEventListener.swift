@@ -222,7 +222,7 @@ extension SoundEventListener {
 
 extension SoundEventListener: ZMNetworkAvailabilityObserver {
 
-    func didChangeAvailability(newState: ZMNetworkState) {
+    func didChangeAvailability(newState: NetworkState) {
         guard UIApplication.shared.applicationState != .background else { return }
 
         if newState == .online {

@@ -174,7 +174,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
             XCTAssertEqual(lastMessage.sender, alice)
             XCTAssertEqual(lastMessage.clients, [aliceClient])
         }
-
     }
 
     func testWhenDuplicateMessageErrorIsThrownThenNoSystemMessageIsAppended() async throws {
