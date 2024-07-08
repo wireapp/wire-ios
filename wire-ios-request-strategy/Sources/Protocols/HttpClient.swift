@@ -16,17 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTransport
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
+public protocol HttpClient {
 
-    /// Messages can expire, e.g. if network conditions are too slow to send.
-    var shouldExpire: Bool { get }
+    func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
 
-    /// Sets the expiration date with the default time interval.
-    func setExpirationDate()
 }
-
-extension ZMClientMessage: ProteusMessage {}
-
-extension ZMAssetClientMessage: ProteusMessage {}
