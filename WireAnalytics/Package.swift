@@ -54,6 +54,10 @@ let package = Package(
                     package: "SourceryPlugin"
                 )
             ]
+        ),
+        .testTarget(
+            name: "WireAnalyticsTests",
+            dependencies: ["WireAnalytics"]
         )
     ]
 )
