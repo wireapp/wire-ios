@@ -58,8 +58,8 @@ public enum ZMSound: String, CustomStringConvertible {
         AudioServicesPlaySystemSound(soundId)
 
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(4 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)) {
-            if self.playingPreviewID == soundId {
-                self.stopPlayingPreview()
+            if playingPreviewID == soundId {
+                stopPlayingPreview()
             }
         }
     }

@@ -30,7 +30,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     private let flowLayout = UICollectionViewFlowLayout()
     private var contentSizeObservation: NSKeyValueObservation?
     private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
+        return UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
     }()
 
     var reactions = [MessageReactionMetadata]() {

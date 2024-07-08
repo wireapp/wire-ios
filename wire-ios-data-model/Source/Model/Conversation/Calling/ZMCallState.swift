@@ -133,7 +133,7 @@ open class ZMCallState: NSObject, Sequence {
         return conversationStates[conversationID] ?? {
             zmLog.debug("inserting new state for conversationID \(conversationID) into \(SwiftDebugging.address(self))")
             let newState = ZMConversationCallState()
-            self.conversationStates[conversationID] = newState
+            conversationStates[conversationID] = newState
             return newState
             }()
     }

@@ -90,21 +90,21 @@ public class ZMLocalNotification: NSObject {
     /// Returns a configured concrete `UNNotificationContent` object.
     public lazy var content: UNNotificationContent = {
         let content = UNMutableNotificationContent()
-        content.body = self.body
-        content.categoryIdentifier = self.category.rawValue
+        content.body = body
+        content.categoryIdentifier = category.rawValue
         content.sound = UNNotificationSound(named: convertToUNNotificationSoundName(sound.name))
 
-        if let title = self.title {
+        if let title {
             content.title = title
         }
 
-        if let userInfo = self.userInfo {
+        if let userInfo {
             content.userInfo = userInfo.storage
         }
 
         // only group non ephemeral messages
-        if let conversationID = self.conversationID {
-            switch self.type {
+        if let conversationID {
+            switch type {
             case .message(.ephemeral): break
             default: content.threadIdentifier = conversationID.transportString()
             }

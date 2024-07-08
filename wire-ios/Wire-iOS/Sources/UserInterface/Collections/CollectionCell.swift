@@ -156,7 +156,7 @@ class CollectionCell: UICollectionViewCell {
     }
 
     lazy var obfuscationView = {
-        return ObfuscationView(icon: self.obfuscationIcon)
+        return ObfuscationView(icon: obfuscationIcon)
     }()
 
     fileprivate func updateMessageVisibility() {

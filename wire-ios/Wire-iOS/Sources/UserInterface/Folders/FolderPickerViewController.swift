@@ -37,7 +37,7 @@ final class FolderPickerViewController: UIViewController {
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
     private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
+        return UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
     }()
 
     init(conversation: ZMConversation, directory: ConversationDirectoryType) {

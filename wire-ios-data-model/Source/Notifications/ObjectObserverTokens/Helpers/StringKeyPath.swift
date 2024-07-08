@@ -53,13 +53,13 @@ public final class StringKeyPath: Hashable {
     }
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {
-        if self.count > 0 {
-            if let i = self.rawValue.firstIndex(of: ".") {
-                let head = self.rawValue[..<i]
+        if count > 0 {
+            if let i = rawValue.firstIndex(of: ".") {
+                let head = rawValue[..<i]
                 var tail: StringKeyPath?
-                if i != self.rawValue.endIndex {
-                    let nextIndex = self.rawValue.index(after: i)
-                    let result = self.rawValue[nextIndex...]
+                if i != rawValue.endIndex {
+                    let nextIndex = rawValue.index(after: i)
+                    let result = rawValue[nextIndex...]
                     tail = StringKeyPath.keyPathForString(String(result))
                 }
                 return (StringKeyPath.keyPathForString(String(head)), tail)

@@ -39,7 +39,7 @@ struct AccentColorPicker: View {
                 cell(for: color)
                     .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
                     .onTapGesture {
-                        self.selectedColor = color
+                        selectedColor = color
                         onColorSelect?(color)
                     }
             }

@@ -34,40 +34,40 @@
     static let stringsToPersonNames = NSCache<NSString, PersonName>()
 
     lazy var secondNameComponents: [String] = {
-        guard self.components.count < 2  else { return [] }
+        guard components.count < 2  else { return [] }
 
         var startIndex = 0
         var lastIndex = 0
 
-        switch self.nameOrder {
+        switch nameOrder {
         case .givenNameLast:
-            lastIndex = self.components.count - 2
+            lastIndex = components.count - 2
         case .givenNameFirst:
             startIndex = 1
-            lastIndex = self.components.count - 1
+            lastIndex = components.count - 1
         case .arabicGivenName:
             startIndex = 1
-            lastIndex = self.components.count - 1
-            guard self.components.count > 1 && self.components[1].zmIsGodName() else { break }
-            guard self.components.count > 2 else { return [] }
+            lastIndex = components.count - 1
+            guard components.count > 1 && components[1].zmIsGodName() else { break }
+            guard components.count > 2 else { return [] }
             startIndex += 1
         }
-        return Array(self.components[startIndex...lastIndex])
+        return Array(components[startIndex...lastIndex])
     }()
 
     lazy var givenName: String = {
-        guard let firstComponent = self.components.first else { return self.fullName }
+        guard let firstComponent = components.first else { return fullName }
 
         var name = String()
-        switch self.nameOrder {
+        switch nameOrder {
         case .givenNameLast:
-            name += self.components.last!
+            name += components.last!
         case .givenNameFirst:
             name += firstComponent
         case .arabicGivenName:
             name += firstComponent
-            guard self.components.count > 1 else { break }
-            let comp = self.components[1]
+            guard components.count > 1 else { break }
+            let comp = components[1]
             guard comp.zmIsGodName() else { break }
             name = [name, comp].joined(separator: " ")
         }
@@ -75,16 +75,16 @@
     }()
 
     lazy public var initials: String = {
-        guard let firstComponent = self.components.first else { return "" }
+        guard let firstComponent = components.first else { return "" }
 
         var _initials = String()
-        switch self.nameOrder {
+        switch nameOrder {
         case .givenNameLast:
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
             _initials += (firstComponent.zmSecondComposedCharacter() ?? "")
         case .arabicGivenName, .givenNameFirst:
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
-            guard self.components.count > 1, let lastComponent = self.components.last else { break }
+            guard components.count > 1, let lastComponent = components.last else { break }
             _initials += (lastComponent.zmFirstComposedCharacter() ?? "")
         }
         return _initials

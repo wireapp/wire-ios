@@ -26,14 +26,14 @@ public class ZMConversationAccessModeTests: MessagingTest {
         super.setUp()
 
         teamA = {
-            let team = Team.insertNewObject(in: self.uiMOC)
+            let team = Team.insertNewObject(in: uiMOC)
             team.name = "Team A"
             team.remoteIdentifier = UUID()
             return team
         }()
 
         teamB = {
-            let team = Team.insertNewObject(in: self.uiMOC)
+            let team = Team.insertNewObject(in: uiMOC)
             team.name = "Team B"
             team.remoteIdentifier = UUID()
             return team

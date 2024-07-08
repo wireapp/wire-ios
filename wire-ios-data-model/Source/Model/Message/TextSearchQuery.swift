@@ -328,15 +328,15 @@ public class TextSearchQuery: NSObject {
     /// Predicate matching messages containing the query in the conversation
     private lazy var predicateForQueryMatch: NSPredicate = {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
-            ZMClientMessage.predicateForMessagesMatching(self.queryStrings),
-            ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
+            ZMClientMessage.predicateForMessagesMatching(queryStrings),
+            ZMClientMessage.predicateForMessages(inConversationWith: conversationRemoteIdentifier)
         ])
     }()
 
     /// Predicate matching indexed messages containing the query in the conversation
     private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate = {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
-            self.predicateForQueryMatch,
+            predicateForQueryMatch,
             ZMClientMessage.predicateForIndexedMessages()
         ])
     }()
@@ -345,7 +345,7 @@ public class TextSearchQuery: NSObject {
     private lazy var predicateForNotIndexedMessages: NSPredicate = {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
             ZMClientMessage.predicateForNotIndexedMessages(),
-            ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
+            ZMClientMessage.predicateForMessages(inConversationWith: conversationRemoteIdentifier)
         ])
     }()
 
@@ -353,7 +353,7 @@ public class TextSearchQuery: NSObject {
     private lazy var predicateForIndexedMessages: NSPredicate = {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
             ZMClientMessage.predicateForIndexedMessages(),
-            ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
+            ZMClientMessage.predicateForMessages(inConversationWith: conversationRemoteIdentifier)
         ])
     }()
 

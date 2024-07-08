@@ -64,7 +64,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         let objectId = userClient.objectID
 
         guard let (existingClient, clientId) = await self.context.perform({
-            let client = try? self.context.existingObject(with: objectId) as? UserClient
+            let client = try? context.existingObject(with: objectId) as? UserClient
             return (client, client?.qualifiedClientID) as? (UserClient, QualifiedClientID)
         }) else {
             return nil
@@ -89,7 +89,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         }
 
         let canPerform = await context.perform {
-            self.proteusProvider.canPerform
+            proteusProvider.canPerform
         }
 
         guard canPerform else {
