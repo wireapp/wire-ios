@@ -34,8 +34,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
 
-    private let searchBar = UISearchBar()
-    private let filterContainerView = UIView()
+    private lazy var filterContainerView = UIView()
 
     private lazy var filterLabel: UILabel = {
         let label = UILabel()
@@ -167,7 +166,6 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupOnboardingHint()
         setupNetworkStatusBar()
         setupFilterContainerView()
-        setupSearchBar()
 
         stackView.addArrangedSubview(contentContainer)
 
@@ -182,6 +180,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
 
         applyColorTheme()
+
+        setupSearchController()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -256,35 +256,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         ])
     }
 
-    private func setupSearchBar() {
-
-        searchBar.isTranslucent = false
-        searchBar.delegate = self
-        searchBar.barTintColor = ColorTheme.Backgrounds.surface
-
-        stackView.addArrangedSubview(searchBar)
-    }
-
-    /*
-    private func setupSearchController() {
-
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.isTranslucent = false
-        searchController.searchResultsUpdater = self
-
-        // addChild(searchController)
-        stackView.addArrangedSubview(searchController.searchBar)
-        // searchController.didMove(toParent: self)
-
-        searchController.searchBar.barTintColor = ColorTheme.Backgrounds.surface
-
-        // TODO: now the searchbar disappears when tapped
-        // try embeding a whole view controller + navigation bar + searchbar clipping the bounds
-    }
-     */
-
-    private func setupFilterContainerView() {
+    func setupFilterContainerView() {
         stackView.addArrangedSubview(filterContainerView)
 
         let filterContainerStackView = UIStackView()
@@ -364,6 +336,17 @@ final class ConversationListViewController: UIViewController, UITabBarController
         titleViewLabel?.textColor = ColorTheme.Backgrounds.onSurfaceVariant
     }
 
+    private func setupSearchController() {
+
+        let searchController = UISearchController(searchResultsController: .none)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.isTranslucent = false
+        searchController.searchResultsUpdater = self
+
+        navigationItem.searchController = searchController
+    }
+
     // MARK: - No Contact Label Management
 
     /// Show or hide the "No Contact" label and onboarding hint based on whether there are archived conversations.
@@ -409,7 +392,9 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
     @objc
     func applySearchText() {
-        let searchText = searchBar
+        let searchText = navigationItem
+            .searchController?
+            .searchBar
             .text?
             .trimmingCharacters(in: .whitespaces)
             .lowercased() ?? ""
