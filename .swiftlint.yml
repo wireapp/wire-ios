@@ -2,7 +2,6 @@
 # trailing_closure
 # prefer_self_in_static_references
 # prefer_self_type_over_type_of_self
-# redundant_self_in_closure
 # direct_return
 # implicit_return
 # redundant_nil_coalescing
