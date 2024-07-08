@@ -17,5 +17,7 @@
 //
 
 enum ConversationFilterType {
-    case favorites, groups, oneToOneConversations
+    case favorites
+    case groups
+    case oneToOneConversations
 }
