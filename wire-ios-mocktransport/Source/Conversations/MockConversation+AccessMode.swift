@@ -81,7 +81,7 @@ public struct MockConversationAccessMode: OptionSet {
                                                                               .`private`: "private"]
 
     public var stringValue: [String] {
-        return MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
+        return MockConversationAccessMode.stringValues.compactMap { contains($0) ? $1 : nil }
     }
 
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessMode {
