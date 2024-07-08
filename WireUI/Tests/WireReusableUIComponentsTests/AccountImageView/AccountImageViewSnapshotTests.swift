@@ -40,9 +40,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
 
         for isTeamAccount in [false, true] {
             for availability in Availability.allCases + [Availability?.none] {
-
                 if #available(iOS 16.0, *) {
-
                     // Given
                     let rootView = AccountImageView_Previews.previewWithNavigationBar(isTeamAccount, availability)
                     let hostingControllerView = UIHostingController(rootView: rootView).view!
