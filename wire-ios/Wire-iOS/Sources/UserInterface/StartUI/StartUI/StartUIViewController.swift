@@ -24,6 +24,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
 final class StartUIViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: SpinnerCompletion?
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
@@ -59,6 +60,16 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     let backgroundColor = SemanticColors.View.backgroundDefault
+
+    private var navigationBarTitle: String? {
+        if let title = userSession.selfUser.membership?.team?.name {
+            return title
+        } else if let title = userSession.selfUser.name {
+            return title
+        }
+
+        return nil
+    }
 
     /// init method for injecting mock addressBookHelper
     ///
@@ -100,9 +111,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let title = userSession.selfUser.membership?.team?.name {
-            setupNavigationBarTitle(title)
-        } else if let title = userSession.selfUser.name {
+
+        if let title = navigationBarTitle {
             setupNavigationBarTitle(title)
         }
 
