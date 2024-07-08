@@ -52,12 +52,6 @@ private let zmLog = ZMSLog(tag: "EventDecoder")
         self.syncMOC = syncMOC
         self.lastEventIDRepository = lastEventIDRepository
         super.init()
-<<<<<<< HEAD
-        self.eventMOC.performGroupedAndWait {
-            self.createReceivedPushEventIDsStoreIfNecessary()
-        }
-=======
->>>>>>> e2ff121161 (fix: remove filtering events - WPB-9221 (#1672))
     }
 
     /// Guarantee to get proteusProvider from correct context
@@ -403,16 +397,3 @@ extension EventDecoder {
         }
     }
 }
-<<<<<<< HEAD
-
-@objc extension EventDecoder: PreviouslyReceivedEventIDsCollection {
-
-    /// Discards the list of already received events
-    public func discardListOfAlreadyReceivedPushEventIDs() {
-        self.eventMOC.performGroupedAndWait {
-            self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
-        }
-    }
-}
-=======
->>>>>>> e2ff121161 (fix: remove filtering events - WPB-9221 (#1672))
