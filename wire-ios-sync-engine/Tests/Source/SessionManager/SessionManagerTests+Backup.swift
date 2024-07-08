@@ -253,10 +253,11 @@ final class SessionManagerBackupTests: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         spinMainQueue(withTimeout: 2)
 
-        // Then
-        wait(forConditionToBeTrue: {
-            guard let moc = self.sessionManager?.activeUserSession?.managedObjectContext else { return false }
-            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return false }
+        // then
+        wait(forConditionToBeTrue: { [weak self] in
+            guard let self else { return false }
+            guard let moc = sessionManager?.activeUserSession?.managedObjectContext else { return false }
+            guard let conversation = conversation(for: selfToUser1Conversation) else { return false }
             let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc)
             return nil == message?.textMessageData?.messageText && nil == message?.sender
         }(), timeout: 5)
