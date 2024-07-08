@@ -905,7 +905,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.setupNavigationBarTitle(with: conversation.displayNameWithFallback)
+        viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
 
         parent?.present(viewController.wrapInNavigationController(), animated: true)
     }

@@ -110,7 +110,7 @@ final class SettingsClientViewController: UIViewController,
 
     private func setupNavigationTitle() {
         guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
-        setupNavigationBarTitle(with: deviceClass.capitalized)
+        setupNavigationBarTitle(deviceClass.capitalized)
     }
 
     override func viewWillAppear(_ animated: Bool) {

@@ -65,7 +65,7 @@ final class SettingsTechnicalReportViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
     }
 
     func sendReport(sourceView: UIView? = nil) {

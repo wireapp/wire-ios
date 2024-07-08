@@ -22,7 +22,7 @@ import WireDesign
 
 public extension UIViewController {
 
-    func setupNavigationBarTitle(with title: String) {
+    func setupNavigationBarTitle(_ title: String) {
         navigationItem.title = title.capitalized
 
         let titleTextAttributes: [NSAttributedString.Key: Any] = [
@@ -49,7 +49,7 @@ struct ViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
         viewController.view.backgroundColor = .white
-        viewController.setupNavigationBarTitle(with: title)
+        viewController.setupNavigationBarTitle(title)
 
         let navigationController = UINavigationController(rootViewController: viewController)
         return navigationController

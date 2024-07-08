@@ -44,7 +44,7 @@ final class BackupViewController: UIViewController, SpinnerCapable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized)
     }
 
     private func setupViews() {

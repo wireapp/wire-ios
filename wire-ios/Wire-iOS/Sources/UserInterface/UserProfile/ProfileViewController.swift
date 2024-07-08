@@ -191,7 +191,7 @@ final class ProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: L10n.Localizable.Profile.Details.title)
+        setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
     }

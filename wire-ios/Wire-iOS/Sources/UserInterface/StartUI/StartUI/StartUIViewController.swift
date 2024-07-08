@@ -101,9 +101,9 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let title = userSession.selfUser.membership?.team?.name {
-            setupNavigationBarTitle(with: title)
+            setupNavigationBarTitle(title)
         } else if let title = userSession.selfUser.name {
-            setupNavigationBarTitle(with: title)
+            setupNavigationBarTitle(title)
         }
 
         navigationController?.navigationBar.barTintColor = backgroundColor

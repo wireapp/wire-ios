@@ -224,7 +224,7 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        setupNavigationBarTitle(with: CreateGroupName.title.capitalized)
+        setupNavigationBarTitle(CreateGroupName.title.capitalized)
         self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
 

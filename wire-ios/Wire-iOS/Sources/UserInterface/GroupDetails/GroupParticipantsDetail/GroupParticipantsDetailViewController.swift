@@ -87,7 +87,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        setupNavigationBarTitle(with: L10n.Localizable.Participants.All.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Participants.All.title.capitalized)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         collectionViewController.collectionView?.reloadData()
     }

@@ -178,7 +178,7 @@ final class ClientListViewController: UIViewController,
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-        setupNavigationBarTitle(with: L10n.Localizable.Registration.Devices.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title.capitalized)
         updateAllClients()
     }
 

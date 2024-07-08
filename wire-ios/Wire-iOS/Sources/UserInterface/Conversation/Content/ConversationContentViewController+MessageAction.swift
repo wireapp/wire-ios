@@ -52,7 +52,7 @@ extension ConversationContentViewController {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }
         canvasViewController.delegate = self
-        canvasViewController.setupNavigationBarTitle(with: message.conversationLike?.displayName ?? "")
+        canvasViewController.setupNavigationBarTitle(message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
         present(canvasViewController.wrapInNavigationController(), animated: true)

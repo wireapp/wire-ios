@@ -253,7 +253,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     private func setupNavigationBar() {
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
-        setupNavigationBarTitle(with: SecuredGuestLinkWithPasswordLocale.Header.title)
+        setupNavigationBarTitle(SecuredGuestLinkWithPasswordLocale.Header.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateSecureGuestLink.CloseButton.description
     }

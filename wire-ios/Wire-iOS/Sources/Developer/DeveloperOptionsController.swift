@@ -58,7 +58,7 @@ final class DeveloperOptionsController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: L10n.Localizable.Self.Settings.DeveloperOptions.Loggin.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.DeveloperOptions.Loggin.title.capitalized)
     }
 
     // MARK: - Cells

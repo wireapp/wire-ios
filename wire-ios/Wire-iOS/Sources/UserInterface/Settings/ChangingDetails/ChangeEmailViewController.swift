@@ -114,7 +114,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: EmailAccountSection.Change.title.capitalized)
+        setupNavigationBarTitle(EmailAccountSection.Change.title.capitalized)
         let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: EmailAccountSection.Change.save.capitalized,
                                                                                   systemImage: false,
                                                                                   target: self,

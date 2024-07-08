@@ -136,7 +136,7 @@ final class FolderCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
-        setupNavigationBarTitle(with: FolderCreationName.title.capitalized)
+        setupNavigationBarTitle(FolderCreationName.title.capitalized)
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
