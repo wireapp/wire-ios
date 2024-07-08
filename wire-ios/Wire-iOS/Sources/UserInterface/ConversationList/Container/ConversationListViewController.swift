@@ -34,7 +34,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
 
-    private let searchController = UISearchController(searchResultsController: .none)
+    private let searchBar = UISearchBar()
     private let filterContainerView = UIView()
 
     private lazy var filterLabel: UILabel = {
@@ -167,7 +167,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         setupOnboardingHint()
         setupNetworkStatusBar()
         setupFilterContainerView()
-        setupSearchController()
+        setupSearchBar()
 
         stackView.addArrangedSubview(contentContainer)
 
@@ -256,6 +256,16 @@ final class ConversationListViewController: UIViewController, UITabBarController
         ])
     }
 
+    private func setupSearchBar() {
+
+        searchBar.isTranslucent = false
+        searchBar.delegate = self
+        searchBar.barTintColor = ColorTheme.Backgrounds.surface
+
+        stackView.addArrangedSubview(searchBar)
+    }
+
+    /*
     private func setupSearchController() {
 
         searchController.obscuresBackgroundDuringPresentation = false
@@ -272,6 +282,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
         // TODO: now the searchbar disappears when tapped
         // try embeding a whole view controller + navigation bar + searchbar clipping the bounds
     }
+     */
 
     private func setupFilterContainerView() {
         stackView.addArrangedSubview(filterContainerView)
@@ -398,9 +409,7 @@ final class ConversationListViewController: UIViewController, UITabBarController
 
     @objc
     func applySearchText() {
-        let searchText = navigationItem
-            .searchController?
-            .searchBar
+        let searchText = searchBar
             .text?
             .trimmingCharacters(in: .whitespaces)
             .lowercased() ?? ""

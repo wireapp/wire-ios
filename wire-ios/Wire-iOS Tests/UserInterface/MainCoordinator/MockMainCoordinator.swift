@@ -42,6 +42,10 @@ final class MockMainCoordinator: MainCoordinating {
     func showConversationList() {
         fatalError("Mock method not implemented")
     }
+
+    func showSelfProfile() {
+        fatalError("Mock method not implemented")
+    }
 }
 
 // MARK: - MainCoordinating + mock
