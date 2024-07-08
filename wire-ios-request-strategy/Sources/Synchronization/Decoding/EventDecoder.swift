@@ -23,14 +23,6 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
-/// Key used in persistent store metadata
-private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
-
-/// Holds a list of received event IDs
-@objc public protocol PreviouslyReceivedEventIDsCollection: NSObjectProtocol {
-    func discardListOfAlreadyReceivedPushEventIDs()
-}
-
 /// Decodes and stores events from various sources to be processed later
 @objcMembers public final class EventDecoder: NSObject {
 
@@ -60,9 +52,12 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
         self.syncMOC = syncMOC
         self.lastEventIDRepository = lastEventIDRepository
         super.init()
+<<<<<<< HEAD
         self.eventMOC.performGroupedAndWait {
             self.createReceivedPushEventIDsStoreIfNecessary()
         }
+=======
+>>>>>>> e2ff121161 (fix: remove filtering events - WPB-9221 (#1672))
     }
 
     /// Guarantee to get proteusProvider from correct context
@@ -91,13 +86,9 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
     ) async throws -> [ZMUpdateEvent] {
-        let (filteredEvents, lastIndex) = await eventMOC.perform {
-            self.storeReceivedPushEventIDs(from: events)
-            let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
-
+        let lastIndex = await eventMOC.perform {
             // Get the highest index of events in the DB
-            let lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
-            return (filteredEvents, lastIndex)
+            StoredUpdateEvent.highestIndex(self.eventMOC)
         }
 
         guard proteusProvider.canPerform else {
@@ -108,7 +99,7 @@ extension EventDecoder {
         let decryptedEvents: [ZMUpdateEvent] = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
                 return try await self.decryptAndStoreEvents(
-                    filteredEvents,
+                    events,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
                     proteusService: proteusService
@@ -116,7 +107,7 @@ extension EventDecoder {
             },
             withKeyStore: { keyStore in
                 return await self.legacyDecryptAndStoreEvents(
-                    filteredEvents,
+                    events,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
                     keyStore: keyStore
@@ -393,47 +384,6 @@ extension EventDecoder {
 // MARK: - List of already received event IDs
 extension EventDecoder {
 
-    /// create event ID store if needed
-    fileprivate func createReceivedPushEventIDsStoreIfNecessary() {
-        if self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as? [String] == nil {
-            self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
-        }
-    }
-
-    /// List of already received event IDs
-    fileprivate var alreadyReceivedPushEventIDs: Set<UUID> {
-        let array = self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String]
-        return Set(array.compactMap { UUID(uuidString: $0) })
-    }
-
-    /// List of already received event IDs as strings
-    fileprivate var alreadyReceivedPushEventIDsStrings: Set<String> {
-        return Set(self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String])
-    }
-
-    /// Store received event IDs
-    fileprivate func storeReceivedPushEventIDs(from: [ZMUpdateEvent]) {
-        let uuidToAdd = from
-            .filter { $0.source == .pushNotification }
-            .compactMap { $0.uuid }
-            .map { $0.transportString() }
-        let allUuidStrings = self.alreadyReceivedPushEventIDsStrings.union(uuidToAdd)
-
-        self.eventMOC.setPersistentStoreMetadata(array: Array(allUuidStrings), key: previouslyReceivedEventIDsKey)
-    }
-
-    /// Filters out events that have been received before
-    fileprivate func filterAlreadyReceivedEvents(from: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
-        let eventIDsToDiscard = self.alreadyReceivedPushEventIDs
-        return from.compactMap { event -> ZMUpdateEvent? in
-            if event.source != .pushNotification, let uuid = event.uuid {
-                return eventIDsToDiscard.contains(uuid) ? nil : event
-            } else {
-                return event
-            }
-        }
-    }
-
     /// Filters out events that shouldn't be processed
     fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
         let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
@@ -453,6 +403,7 @@ extension EventDecoder {
         }
     }
 }
+<<<<<<< HEAD
 
 @objc extension EventDecoder: PreviouslyReceivedEventIDsCollection {
 
@@ -463,3 +414,5 @@ extension EventDecoder {
         }
     }
 }
+=======
+>>>>>>> e2ff121161 (fix: remove filtering events - WPB-9221 (#1672))

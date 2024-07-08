@@ -349,7 +349,7 @@ extension EventDecoderTest {
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesNotProcessesEventsWithSameUUIDWhenThroughPushEventsFirst() async throws {
+    func testThatItDoesProcessEventsWithSameUUIDWhenThroughPushEventsFirst() async throws {
 
         // given
         let pushProcessed = self.customExpectation(description: "Push event processed")
@@ -376,8 +376,14 @@ extension EventDecoderTest {
         let streamProcessed = self.customExpectation(description: "Stream event not processed")
 
         _ = try await sut.decryptAndStoreEvents([streamEvent])
+<<<<<<< HEAD
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.isEmpty)
+=======
+        await sut.processStoredEvents { (events) in
+            // as filtering is removed, event with same id can go through process twice
+            XCTAssertTrue(events.contains(streamEvent))
+>>>>>>> e2ff121161 (fix: remove filtering events - WPB-9221 (#1672))
             streamProcessed.fulfill()
         }
 
@@ -404,7 +410,6 @@ extension EventDecoderTest {
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
         }
-        self.sut.discardListOfAlreadyReceivedPushEventIDs()
 
         // then
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
