@@ -132,7 +132,7 @@ extension ZMUser: ObjectInSnapshot {
     }
 
     public var availabilityChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.availability))
+        return changedKeysContain(keys: #keyPath(ZMUser.availability))
     }
 
     public var readReceiptsEnabledChanged: Bool {
