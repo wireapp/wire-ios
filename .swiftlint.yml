@@ -78,6 +78,7 @@ custom_rules:
 
 excluded:
   - "**/*/Package.swift"
+  - "**/.build"
   - Carthage
   - DerivedData
   - fastlane
