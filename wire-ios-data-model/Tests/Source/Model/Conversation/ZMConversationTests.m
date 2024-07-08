@@ -629,7 +629,7 @@
     ZMMessage *message = (id)[sut appendMessageWithText:@"Quux"];
 
     // then
-    XCTAssert(message.shouldExpire);
+    XCTAssertTrue(message.shouldExpire);
 }
 
 

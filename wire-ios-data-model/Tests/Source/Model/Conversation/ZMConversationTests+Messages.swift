@@ -446,7 +446,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         // then
         XCTAssertNil(message.underlyingMessage?.imageAssetData)
         XCTAssertNotNil(message.underlyingMessage?.locationData)
-        XCTAssert(message.shouldExpire)
+        XCTAssertTrue(message.shouldExpire)
     }
 
     func testThatWeCanInsertAVideoMessage() {
