@@ -108,17 +108,12 @@ final class ConversationGuestOptionsViewController: UIViewController,
         tableView.dataSource = self
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
         tableView.contentInsetAdjustmentBehavior = .never
-        setupNavigationBar()
     }
 
     private func setupNavigationBar() {
         navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        if var textAttributes = navigationController?.navigationBar.titleTextAttributes {
-            textAttributes[NSAttributedString.Key.foregroundColor] = SemanticColors.Label.textDefault
-            navigationController?.navigationBar.titleTextAttributes = textAttributes
-        }
 
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.GuestOptionsCell.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault

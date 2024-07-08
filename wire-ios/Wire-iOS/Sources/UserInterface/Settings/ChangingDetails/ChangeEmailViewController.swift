@@ -114,6 +114,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupNavigationBarTitle(EmailAccountSection.Change.title.capitalized)
+
         observerToken = userProfile?.add(observer: self)
     }
 
@@ -129,7 +131,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: EmailAccountSection.Change.title.capitalized)
+
         view.backgroundColor = .clear
         tableView.isScrollEnabled = false
 
@@ -154,6 +156,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
                                                                                   action: #selector(saveButtonTapped))
         saveButtonItem.tintColor = UIColor.accent()
         navigationItem.rightBarButtonItem = saveButtonItem
+
         updateSaveButtonState()
     }
 

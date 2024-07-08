@@ -155,15 +155,18 @@ final class ConversationCreationController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
-        setupNavigationBar()
         setupViews()
 
         // try to overtake the first responder from the other view
         if UIResponder.currentFirst != nil {
             nameSection.becomeFirstResponder()
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -221,6 +224,7 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
+        setupNavigationBarTitle(CreateGroupName.title.capitalized)
         self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
 

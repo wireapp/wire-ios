@@ -175,8 +175,6 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Profile.Details.title)
-
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
         view.addSubview(activityIndicator)
@@ -193,6 +191,7 @@ final class ProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
     }

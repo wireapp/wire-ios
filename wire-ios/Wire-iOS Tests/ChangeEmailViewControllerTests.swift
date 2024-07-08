@@ -24,8 +24,8 @@ import XCTest
 
 final class ChangeEmailViewControllerTests: XCTestCase {
 
-    var userSession: UserSession!
-    var snapshotHelper: SnapshotHelper!
+    private var userSession: UserSession!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()

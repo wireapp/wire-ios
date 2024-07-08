@@ -35,7 +35,6 @@ final class DeveloperOptionsController: UIViewController {
     var mailViewController: MFMailComposeViewController?
 
     override func loadView() {
-        setupNavigationTitle()
         view = UIView()
         edgesForExtendedLayout = UIRectEdge()
         view.backgroundColor = .clear
@@ -57,8 +56,9 @@ final class DeveloperOptionsController: UIViewController {
         ])
     }
 
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.Settings.DeveloperOptions.Loggin.title.capitalized)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.DeveloperOptions.Loggin.title.capitalized)
     }
 
     // MARK: - Cells

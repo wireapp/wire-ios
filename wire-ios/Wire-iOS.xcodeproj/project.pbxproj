@@ -1412,7 +1412,6 @@
 		E9C0B3672B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */; };
 		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
 		E9D141622AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141612AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift */; };
 		E9D141652AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141642AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift */; };
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
@@ -3491,7 +3490,6 @@
 		E9C0B3642B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationVerifiedSystemMessageSectionDescription.swift; sourceTree = "<group>"; };
 		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
-		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
 		E9D141612AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureConversationGuestLinkViewModel.swift; sourceTree = "<group>"; };
 		E9D141642AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewModelTests.swift; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
@@ -6547,7 +6545,6 @@
 				E57917B028999A240063339D /* UIView+Borders.swift */,
 				E9D6C37C289A9DC100861E4C /* StylableButton.swift */,
 				E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */,
-				E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */,
 				E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */,
 				2521831F2B4C00DF000C4325 /* SaveFileManager.swift */,
 				252183252B4C16CB000C4325 /* SystemSaveFilePresenter.swift */,
@@ -10343,7 +10340,6 @@
 				875753D1211DC61C00A80F5E /* EmptySearchResultsView.swift in Sources */,
 				E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */,
 				16D74BEC2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift in Sources */,
-				E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */,
 				2572EC552B148EE50075A7BE /* DeviceInfoViewModel.swift in Sources */,
 				54AB765C1DB7AB77008D19C8 /* DeveloperOptionsController.swift in Sources */,
 				5EF7BA69221B042200815625 /* UserPropertyCell.swift in Sources */,
