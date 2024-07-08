@@ -45,7 +45,7 @@ final class AnalyticsSessionTests: XCTestCase {
 
     func testStartSession() {
         // GIVEN
-        let expectation = self.expectation(description: "startSession called")
+        let expectation = expectation(description: "startSession called")
         mockAnalyticsSession.startSession_MockMethod = {
             expectation.fulfill()
         }
@@ -60,7 +60,7 @@ final class AnalyticsSessionTests: XCTestCase {
 
     func testEndSession() {
         // GIVEN
-        let expectation = self.expectation(description: "endSession called")
+        let expectation = expectation(description: "endSession called")
         mockAnalyticsSession.endSession_MockMethod = {
             expectation.fulfill()
         }
@@ -76,7 +76,7 @@ final class AnalyticsSessionTests: XCTestCase {
     func testTrackEvent() {
         // GIVEN
         let event = AnalyticEvent.appOpen
-        let expectation = self.expectation(description: "trackEvent called")
+        let expectation = expectation(description: "trackEvent called")
         mockAnalyticsSession.trackEvent_MockMethod = { receivedEvent in
             XCTAssertEqual(receivedEvent, event)
             expectation.fulfill()

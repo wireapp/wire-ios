@@ -28,6 +28,6 @@ extension Int {
     ///
     /// - Returns: A rounded integer value based on the base-2 logarithm of the original value.
     func logRound() -> Int {
-        return Int(log2(Double(self)).rounded())
+        Int(log2(Double(self)).rounded())
     }
 }
