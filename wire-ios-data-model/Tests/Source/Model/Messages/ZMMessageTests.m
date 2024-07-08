@@ -202,20 +202,20 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateDelivered);
 }
 
-- (void)testThatItResetsTheExpirationDateWhenResending
+- (void)testThatItRemovesTheExpirationDateWhenResending
 {
     // given
     ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     [message expire];
-    
-    NSDate *expectedDate = [NSDate dateWithTimeIntervalSinceNow:ZMTransportRequestDefaultExpirationInterval];
-    
+    XCTAssert(message.isExpired);
+
     // when
+    [message setExpirationDate];
     [message resend];
     
     // then
-    XCTAssertNotNil(message.expirationDate);
-    XCTAssertEqualWithAccuracy([message.expirationDate timeIntervalSinceNow], [expectedDate timeIntervalSinceNow], 0.001);
+    XCTAssertFalse(message.isExpired);
+    XCTAssertNil(message.expirationDate);
 }
 
 

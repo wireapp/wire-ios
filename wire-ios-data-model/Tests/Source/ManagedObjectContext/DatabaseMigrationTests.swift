@@ -36,11 +36,10 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
+        let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
         let dataModelVersion = CoreDataStack.loadMessagingModel().version
 
         // when
-        let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
-
         // then
         XCTAssertEqual(
             latestMigrationVersion?.dataModelVersion,

@@ -25,6 +25,7 @@ final class MockOTREntity: OTREntity {
 
     var context: NSManagedObjectContext
     var expirationDate: Date?
+    var shouldExpire: Bool = false
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
     func expire() {
@@ -79,6 +80,9 @@ extension MockOTREntity: ProteusMessage {
         return ("qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
     }
 
+    func setExpirationDate() {
+        // no-op
+    }
 }
 
 func == (lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {

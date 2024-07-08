@@ -229,9 +229,7 @@ class MessageAPIV1: MessageAPIV0 {
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = (await message.context.perform {
-            message.expirationDate
-        }) {
+        if let expirationDate = await message.context.perform({ message.expirationDate }) {
             request.expire(at: expirationDate)
         }
 

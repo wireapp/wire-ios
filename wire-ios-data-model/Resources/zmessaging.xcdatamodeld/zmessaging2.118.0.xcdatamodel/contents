@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.118.0">
+    <entity name="Action" representedClassName=".Action" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role"/>
+    </entity>
+    <entity name="AddressBookEntry" representedClassName=".AddressBookEntry" syncable="YES">
+        <attribute name="cachedName" optional="YES" attributeType="String"/>
+        <attribute name="localIdentifier" optional="YES" attributeType="String"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="addressBookEntry" inverseEntity="User"/>
+        <fetchIndex name="byLocalIdentifierIndex">
+            <fetchIndexElement property="localIdentifier" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="AssetClientMessage" representedClassName=".ZMAssetClientMessage" parentEntity="Message" syncable="YES">
+        <attribute name="assetId" optional="YES" transient="YES"/>
+        <attribute name="assetId_data" optional="YES" attributeType="Binary"/>
+        <attribute name="associatedTaskIdentifier" optional="YES" transient="YES"/>
+        <attribute name="associatedTaskIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="isDownloading" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="preprocessedSize" optional="YES" transient="YES"/>
+        <attribute name="preprocessedSize_data" optional="YES" attributeType="Binary"/>
+        <attribute name="progress" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="transferState" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="uploadState" optional="YES" attributeType="Integer 16" usesScalarValueType="NO"/>
+        <attribute name="version" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="dataSet" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="GenericMessageData" inverseName="asset" inverseEntity="GenericMessageData"/>
+    </entity>
+    <entity name="ButtonState" representedClassName=".ButtonState" syncable="YES">
+        <attribute name="isExpired" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="remoteIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="stateValue" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="buttonStates" inverseEntity="Message"/>
+    </entity>
+    <entity name="ClientMessage" representedClassName=".ZMClientMessage" parentEntity="Message" syncable="YES">
+        <attribute name="linkPreviewState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="updatedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="dataSet" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="GenericMessageData" inverseName="message" inverseEntity="GenericMessageData"/>
+    </entity>
+    <entity name="Connection" representedClassName="ZMConnection" syncable="YES">
+        <attribute name="existsOnBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="lastUpdateDateInGMT" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="message" optional="YES" attributeType="String"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="connection" inverseEntity="User"/>
+    </entity>
+    <entity name="Conversation" representedClassName="ZMConversation" syncable="YES">
+        <attribute name="accessModeStrings" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="accessRoleString" optional="YES" attributeType="String"/>
+        <attribute name="accessRoleStringsV2" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="archivedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="ciphersuite" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="clearedTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="commitPendingProposalDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="conversationType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="domain" optional="YES" attributeType="String"/>
+        <attribute name="draftMessageData" optional="YES" attributeType="Binary"/>
+        <attribute name="draftMessageNonce" optional="YES" attributeType="Binary"/>
+        <attribute name="epoch" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="hasReadReceiptsEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="hasUnreadUnsentMessage" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="internalEstimatedUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="internalEstimatedUnreadSelfMentionCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="internalEstimatedUnreadSelfReplyCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="internalIsArchived" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isDeletedRemotely" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isForcedReadOnly" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isPendingInitialFetch" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="isPendingMetadataRefresh" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isSelfAnActiveMember" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
+        <attribute name="lastModifiedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastReadServerTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastServerTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastUnreadKnockDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastUnreadMissedCallDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="legalHoldStatus" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="localMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="NO" elementID="messageDestructionTimeout"/>
+        <attribute name="messageProtocol" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="mlsGroupID" optional="YES" attributeType="Binary"/>
+        <attribute name="mlsStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="mlsVerificationStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="mutedStatus" attributeType="Integer 32" defaultValueString="NO" usesScalarValueType="NO" elementID="mutedStatus"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="needsToCalculateUnreadMessages" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToDownloadRoles" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToVerifyLegalHold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="normalizedUserDefinedName" optional="YES" attributeType="String"/>
+        <attribute name="primaryKey" optional="YES" attributeType="String"/>
+        <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="silencedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="syncedMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="teamRemoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="teamRemoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="userDefinedName" optional="YES" attributeType="String"/>
+        <attribute name="voiceChannel" optional="YES" transient="YES"/>
+        <relationship name="allMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="visibleInConversation" inverseEntity="Message" elementID="messages"/>
+        <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="conversationsCreated" inverseEntity="User"/>
+        <relationship name="hiddenMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="hiddenInConversation" inverseEntity="Message"/>
+        <relationship name="labels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Label" inverseName="conversations" inverseEntity="Label"/>
+        <relationship name="lastServerSyncedActiveParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="lastServerSyncedActiveConversations" inverseEntity="User"/>
+        <relationship name="nonTeamRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="conversation" inverseEntity="Role"/>
+        <relationship name="oneOnOneUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="oneOnOneConversation" inverseEntity="User"/>
+        <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole"/>
+        <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team"/>
+        <fetchIndex name="byNormalizedUserDefinedNameIndex">
+            <fetchIndexElement property="normalizedUserDefinedName" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byRemoteIdentifier_dataIndex">
+            <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="compoundIndex">
+            <fetchIndexElement property="internalIsArchived" type="Binary" order="ascending"/>
+            <fetchIndexElement property="lastModifiedDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="primaryKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="Feature" representedClassName=".Feature" syncable="YES">
+        <attribute name="configData" optional="YES" attributeType="Binary"/>
+        <attribute name="hasInitialDefault" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="nameValue" attributeType="String"/>
+        <attribute name="needsToNotifyUser" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="statusValue" attributeType="String"/>
+    </entity>
+    <entity name="GenericMessageData" representedClassName="ZMGenericMessageData" syncable="YES">
+        <attribute name="data" attributeType="Binary"/>
+        <attribute name="nonce" optional="YES" attributeType="Binary"/>
+        <relationship name="asset" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AssetClientMessage" inverseName="dataSet" inverseEntity="AssetClientMessage"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ClientMessage" inverseName="dataSet" inverseEntity="ClientMessage"/>
+    </entity>
+    <entity name="ImageMessage" representedClassName="ZMImageMessage" parentEntity="Message" syncable="YES">
+        <attribute name="imageType" optional="YES" attributeType="String"/>
+        <attribute name="isAnimatedGIF" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="mediumDataLoaded" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="mediumRemoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="mediumRemoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="originalDataProcessed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="originalSize" optional="YES" transient="YES"/>
+        <attribute name="originalSize_data" optional="YES" attributeType="Binary"/>
+    </entity>
+    <entity name="KnockMessage" representedClassName="ZMKnockMessage" parentEntity="Message" syncable="YES"/>
+    <entity name="Label" representedClassName=".Label" syncable="YES">
+        <attribute name="markedForDeletion" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="labels" inverseEntity="Conversation"/>
+    </entity>
+    <entity name="Member" representedClassName=".Member" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="permissionsRawValue" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdTeamMembers" inverseEntity="User"/>
+        <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="members" inverseEntity="Team"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="membership" inverseEntity="User"/>
+        <fetchIndex name="byRemoteIdentifier_dataIndex">
+            <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Message" representedClassName="ZMMessage" isAbstract="YES" syncable="YES">
+        <attribute name="cachedCategory" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="delivered" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="destructionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expectsReadConfirmation" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO" versionHashModifier="add index"/>
+        <attribute name="expirationReasonCode" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isExpired" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isObfuscated" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="linkAttachments" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="needsLinkAttachmentsUpdate" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="nonce" optional="YES" transient="YES"/>
+        <attribute name="nonce_data" optional="YES" attributeType="Binary" versionHashModifier="add_index1"/>
+        <attribute name="normalizedText" optional="YES" attributeType="String"/>
+        <attribute name="senderClientID" optional="YES" attributeType="String"/>
+        <attribute name="serverTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="shouldExpire" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="buttonStates" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ButtonState" inverseName="message" inverseEntity="ButtonState"/>
+        <relationship name="confirmations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MessageConfirmation" inverseName="message" inverseEntity="MessageConfirmation"/>
+        <relationship name="discoveredClients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="discoveredByMessage" inverseEntity="UserClient"/>
+        <relationship name="failedToSendRecipients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="messagesFailedToSendRecipient" inverseEntity="User"/>
+        <relationship name="hiddenInConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="hiddenMessages" inverseEntity="Conversation"/>
+        <relationship name="missingRecipients" optional="YES" transient="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="messagesMissingRecipient" inverseEntity="UserClient"/>
+        <relationship name="quote" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="replies" inverseEntity="Message"/>
+        <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Reaction" inverseName="message" inverseEntity="Reaction"/>
+        <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="quote" inverseEntity="Message"/>
+        <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+        <relationship name="visibleInConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="allMessages" inverseEntity="Conversation"/>
+        <fetchIndex name="byDestructionDateIndex">
+            <fetchIndexElement property="destructionDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byExpirationDateIndex">
+            <fetchIndexElement property="expirationDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNonce_dataIndex">
+            <fetchIndexElement property="nonce_data" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNormalizedTextIndex">
+            <fetchIndexElement property="normalizedText" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="compoundIndex">
+            <fetchIndexElement property="visibleInConversation" type="Binary" order="ascending"/>
+            <fetchIndexElement property="serverTimestamp" type="Binary" order="ascending"/>
+            <fetchIndexElement property="isExpired" type="Binary" order="ascending"/>
+            <fetchIndexElement property="delivered" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="compoundIndex1">
+            <fetchIndexElement property="hiddenInConversation" type="Binary" order="ascending"/>
+            <fetchIndexElement property="isExpired" type="Binary" order="ascending"/>
+            <fetchIndexElement property="serverTimestamp" type="Binary" order="ascending"/>
+            <fetchIndexElement property="delivered" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="MessageConfirmation" representedClassName="ZMMessageConfirmation" syncable="YES">
+        <attribute name="serverTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="message" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="confirmations" inverseEntity="Message"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+    </entity>
+    <entity name="MLSGroup" representedClassName=".MLSGroup" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="Binary"/>
+        <attribute name="lastKeyMaterialUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation"/>
+        <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
+    </entity>
+    <entity name="Reaction" representedClassName=".Reaction" syncable="YES">
+        <attribute name="firstReactionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="unicodeValue" optional="YES" attributeType="String"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="reactions" inverseEntity="Message"/>
+        <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="reactions" inverseEntity="User"/>
+    </entity>
+    <entity name="Role" representedClassName=".Role" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="actions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Action" inverseName="role" inverseEntity="Action"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="nonTeamRoles" inverseEntity="Conversation"/>
+        <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ParticipantRole" inverseName="role" inverseEntity="ParticipantRole"/>
+        <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="roles" inverseEntity="Team"/>
+    </entity>
+    <entity name="Session" representedClassName="ZMSession" syncable="YES">
+        <relationship name="selfUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+    </entity>
+    <entity name="SystemMessage" representedClassName="ZMSystemMessage" parentEntity="Message" syncable="YES">
+        <attribute name="allTeamUsersAdded" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="decryptionErrorCode" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="domains" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="messageTimer" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="needsUpdatingUsers" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="numberOfGuestsAdded" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="participantsRemovedReason" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="relevantForConversationStatus" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="systemMessageType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <relationship name="addedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="showingUserAdded" inverseEntity="User"/>
+        <relationship name="childMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="parentMessage" inverseEntity="SystemMessage"/>
+        <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="addedOrRemovedInSystemMessages" inverseEntity="UserClient"/>
+        <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="childMessages" inverseEntity="SystemMessage"/>
+        <relationship name="removedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="showingUserRemoved" inverseEntity="User"/>
+        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="systemMessages" inverseEntity="User"/>
+    </entity>
+    <entity name="Team" representedClassName=".Team" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToDownloadRoles" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="needsToRedownloadMembers" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="pictureAssetId" optional="YES" attributeType="String"/>
+        <attribute name="pictureAssetKey" optional="YES" attributeType="String"/>
+        <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="team" inverseEntity="Conversation"/>
+        <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdTeams" inverseEntity="User"/>
+        <relationship name="members" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Member" inverseName="team" inverseEntity="Member"/>
+        <relationship name="roles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="team" inverseEntity="Role"/>
+        <fetchIndex name="byRemoteIdentifier_dataIndex">
+            <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="remoteIdentifier_data"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="TextMessage" representedClassName="ZMTextMessage" parentEntity="Message" syncable="YES">
+        <attribute name="text" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="User" representedClassName="ZMUser" syncable="YES">
+        <attribute name="accentColorValue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="analyticsIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="availability" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="completeProfileAssetIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="domain" optional="YES" attributeType="String"/>
+        <attribute name="emailAddress" optional="YES" attributeType="String"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="handle" optional="YES" attributeType="String"/>
+        <attribute name="isAccountDeleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isPendingMetadataRefresh" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="legalHoldRequest" optional="YES" attributeType="Binary"/>
+        <attribute name="managedBy" optional="YES" attributeType="String"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="needsPropertiesUpdate" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="needsRichProfileUpdate" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="needsToAcknowledgeLegalHoldStatus" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToRefetchLabels" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="normalizedEmailAddress" optional="YES" attributeType="String"/>
+        <attribute name="normalizedName" optional="YES" attributeType="String"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String"/>
+        <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="primaryKey" optional="YES" attributeType="String"/>
+        <attribute name="providerIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="readReceiptsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="readReceiptsEnabledChangedRemotely" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
+        <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="richProfile" optional="YES" attributeType="Binary"/>
+        <attribute name="serviceIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="supportedProtocols" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="teamIdentifier" optional="YES" transient="YES"/>
+        <attribute name="teamIdentifier_data" optional="YES" attributeType="Binary"/>
+        <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <relationship name="addressBookEntry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressBookEntry" inverseName="user" inverseEntity="AddressBookEntry"/>
+        <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient"/>
+        <relationship name="connection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Connection" inverseName="to" inverseEntity="Connection"/>
+        <relationship name="conversationsCreated" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="creator" inverseEntity="Conversation"/>
+        <relationship name="createdTeamMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="createdBy" inverseEntity="Member"/>
+        <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team"/>
+        <relationship name="lastServerSyncedActiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="lastServerSyncedActiveParticipants" inverseEntity="Conversation"/>
+        <relationship name="membership" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Member" inverseName="user" inverseEntity="Member"/>
+        <relationship name="messagesFailedToSendRecipient" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="failedToSendRecipients" inverseEntity="Message"/>
+        <relationship name="oneOnOneConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="oneOnOneUser" inverseEntity="Conversation"/>
+        <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="user" inverseEntity="ParticipantRole"/>
+        <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Reaction" inverseName="users" inverseEntity="Reaction"/>
+        <relationship name="showingUserAdded" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="addedUsers" inverseEntity="SystemMessage"/>
+        <relationship name="showingUserRemoved" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="removedUsers" inverseEntity="SystemMessage"/>
+        <relationship name="systemMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="users" inverseEntity="SystemMessage"/>
+        <fetchIndex name="byNormalizedEmailAddressIndex">
+            <fetchIndexElement property="normalizedEmailAddress" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNormalizedNameIndex">
+            <fetchIndexElement property="normalizedName" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byRemoteIdentifier_dataIndex">
+            <fetchIndexElement property="remoteIdentifier_data" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="primaryKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="UserClient" representedClassName=".UserClient" syncable="YES">
+        <attribute name="activationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="apsDecryptionKey" optional="YES" attributeType="Binary"/>
+        <attribute name="apsVerificationKey" optional="YES" attributeType="Binary"/>
+        <attribute name="deviceClass" optional="YES" attributeType="String"/>
+        <attribute name="discoveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="label" optional="YES" attributeType="String"/>
+        <attribute name="lastActiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="markedToDelete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="mlsPublicKeys" optional="YES" attributeType="Binary"/>
+        <attribute name="model" optional="YES" attributeType="String"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
+        <attribute name="needsSessionMigration" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToNotifyOtherUserAboutSessionReset" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToNotifyUser" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToUpdateCapabilities" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="needsToUploadMLSPublicKeys" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="needsToUploadSignalingKeys" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="numberOfKeysRemaining" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="preKeysRangeMax" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="pushToken" optional="YES" attributeType="Binary"/>
+        <attribute name="remoteIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="type" attributeType="String" defaultValueString="permanent"/>
+        <relationship name="addedOrRemovedInSystemMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="clients" inverseEntity="SystemMessage"/>
+        <relationship name="discoveredByMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="discoveredClients" inverseEntity="Message"/>
+        <relationship name="ignoredByClients" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="ignoredClients" inverseEntity="UserClient"/>
+        <relationship name="ignoredClients" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="ignoredByClients" inverseEntity="UserClient"/>
+        <relationship name="messagesMissingRecipient" optional="YES" transient="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="missingRecipients" inverseEntity="Message"/>
+        <relationship name="missedByClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="missingClients" inverseEntity="UserClient"/>
+        <relationship name="missingClients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="missedByClient" inverseEntity="UserClient"/>
+        <relationship name="trustedByClients" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="trustedClients" inverseEntity="UserClient"/>
+        <relationship name="trustedClients" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="trustedByClients" inverseEntity="UserClient"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="clients" inverseEntity="User"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="remoteIdentifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>
