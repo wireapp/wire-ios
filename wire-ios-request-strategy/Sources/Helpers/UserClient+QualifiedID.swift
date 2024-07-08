@@ -16,14 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-enum Logging {
+public extension UserClient {
 
-    // For logs related to processing message data, which may included
-    // work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
-    // and `ZMAssetClientMessage` container types.
+    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are missing.
+    var qualifiedClientID: QualifiedClientID? {
+        guard
+            let clientID = remoteIdentifier,
+            let qualifiedID = user?.qualifiedID
+        else {
+            return nil
+        }
 
-    static let messageProcessing = ZMSLog(tag: "message-processing")
-    static let localStorage = ZMSLog(tag: "local-storage")
+        return QualifiedClientID(
+            userID: qualifiedID.uuid,
+            domain: qualifiedID.domain,
+            clientID: clientID
+        )
+    }
 }
