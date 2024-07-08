@@ -16,22 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMAvailability)
-public enum Availability: Int, CaseIterable {
-    case none, available, busy, away
-}
+import WireTransport
 
-extension Availability: CustomStringConvertible {
-    public var description: String {
-          switch self {
-          case .none:
-              "none"
-          case .available:
-              "available"
-          case .busy:
-              "busy"
-          case .away:
-              "away"
-          }
-      }
+public protocol HttpClient {
+
+    func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
+
 }

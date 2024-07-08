@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+
 @testable import WireDataModel
 
-class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
+final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
     func testThatMessagesAddedToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
