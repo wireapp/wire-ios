@@ -1383,6 +1383,7 @@ extension SessionManager {
             // If the user isn't logged in it's because they still need
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
+                session.trackAppOpenAnalyticEventWhenAppBecomesActive()
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()

@@ -392,14 +392,6 @@ public final class ZMUserSession: NSObject {
         self.dependencies = dependencies
 
         super.init()
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAppDidBecomeActive),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-
     }
 
     private func setupAnalyticsSession() {
@@ -431,7 +423,7 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    @objc private func handleAppDidBecomeActive() {
+    func trackAppOpenAnalyticEventWhenAppBecomesActive() {
         analyticsSession?.trackEvent(.appOpen)
     }
 
@@ -499,7 +491,6 @@ public final class ZMUserSession: NSObject {
 
         if !ProcessInfo.processInfo.isRunningTests {
             setupAnalyticsSession()
-
             self.analyticsSession?.startSession()
         }
 
