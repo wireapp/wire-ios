@@ -44,17 +44,21 @@ public final class TemporaryBackendInfoToken {
     }
 
     public init(
+        apiVersion: APIVersion? = nil,
         domain: String? = nil,
-        isFederationEnabled: Bool = false
+        isFederationEnabled: Bool = false,
+        preferredAPIVersion: APIVersion? = nil
     ) {
         originalStorage = BackendInfo.storage
 
-        // self initialized
+        // initialized
 
         BackendInfo.storage = .temporary()
 
+        self.apiVersion = apiVersion
         self.domain = domain
         self.isFederationEnabled = isFederationEnabled
+        self.preferredAPIVersion = preferredAPIVersion
     }
 
     deinit {
