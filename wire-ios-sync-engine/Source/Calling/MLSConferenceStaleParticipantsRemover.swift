@@ -165,12 +165,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                     guard let self else { return }
 
                     WaitingGroupTask(context: syncContext) { [self] in
-                        // swiftlint:disable redundant_self_in_closure
                         await self.remove(
                             client: clientID,
                             from: groupID
                         )
-                        // swiftlint:enable redundant_self_in_closure
                     }
                 }
             )
