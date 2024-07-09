@@ -893,6 +893,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         account: Account,
         onCompletion: @escaping (ZMUserSession?) -> Void
     ) {
+        let tp = ZMSTimePoint(interval: 60, label: "setup coreDataStack")
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
@@ -911,7 +912,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     assertionFailure("expected 'self' to continue!")
                     return
                 }
-
+                WireLogger.localStorage.info("time spent loading database: \(tp.elapsedTime) in seconds")
                 let userSession = self.startBackgroundSession(
                     for: account,
                     with: coreDataStack
