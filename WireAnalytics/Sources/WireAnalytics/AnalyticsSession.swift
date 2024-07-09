@@ -28,6 +28,7 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         userProfile: AnalyticsUserProfile
     ) {
         let config = WireCountlyConfig()
+
         config.appKey = appKey
         config.host = host.absoluteString
         config.deviceID = userProfile.analyticsIdentifier
