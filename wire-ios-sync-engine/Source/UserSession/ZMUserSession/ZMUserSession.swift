@@ -957,13 +957,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         recurringActionService.performActionsIfNeeded()
 
-        Task {
-            await self.cRLsChecker.checkExpiredCRLs()
-        }
-
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
-            self?.checkE2EICertificateExpiryStatus()
+        }
+
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                checkE2EICertificateExpiryStatus()
+                await cRLsChecker.checkExpiredCRLs()
+            }
         }
     }
 
@@ -1077,7 +1080,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        guard e2eiFeature.isEnabled else { return }
         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
