@@ -99,7 +99,13 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let conversationExists = (try? await mlsService.conversationExists(groupID: mlsGroupID)) ?? false
+        let conversationExists: Bool
+        do {
+            conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
+        } catch {
+            WireLogger.mls.error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
+            conversationExists = false
+        }
         let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {

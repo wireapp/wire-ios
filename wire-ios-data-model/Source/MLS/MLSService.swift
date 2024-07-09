@@ -906,7 +906,8 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: nil,
                 context: context
             ) else {
-                return logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
+                logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
+                return
             }
 
             try await joinGroupAndAppendGapSystemMessage(
@@ -972,7 +973,8 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: subgroup,
                 context: context
             ) else {
-                return logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
+                logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
+                return
             }
 
             try await joinSubgroup(
