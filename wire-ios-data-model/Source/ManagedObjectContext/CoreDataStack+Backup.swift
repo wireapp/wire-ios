@@ -203,6 +203,7 @@ extension CoreDataStack {
             }
         }
 
+        let loadingDbTimePoint = ZMSTimePoint(interval: 60.0, label: "load db")
         let accountDirectory = accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
         let backupStoreFile = backupDirectory.appendingPathComponent(databaseDirectoryName).appendingStoreFile()
@@ -250,6 +251,7 @@ extension CoreDataStack {
                 WireLogger.localStorage.info("successfully imported backup with metadata: \(metadata)", attributes: .safePublic)
 
                 DispatchQueue.main.async(group: dispatchGroup) {
+                    WireLogger.localStorage.info("time spent restoring database: \(loadingDbTimePoint.elapsedTime) seconds", attributes: .safePublic)
                     completion(.success(accountDirectory))
                 }
             } catch let error {
