@@ -117,7 +117,7 @@ extension SessionManager {
                     case .success:
                         let restoreBackupSucceeded = RestoreBackupSucceeded()
                         self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupSucceeded)
-                    case .failure(let error):
+                    case .failure:
                         let restoreBackupFailed = RestoreBackupFailed()
                         self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupFailed)
                     }
