@@ -16,8 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "warnings.xcconfig"
+import WireDataModel
 
-// LLVM - Warning Policies
-//
-GCC_TREAT_WARNINGS_AS_ERRORS = YES
+public extension UserClient {
+
+    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are missing.
+    var qualifiedClientID: QualifiedClientID? {
+        guard
+            let clientID = remoteIdentifier,
+            let qualifiedID = user?.qualifiedID
+        else {
+            return nil
+        }
+
+        return QualifiedClientID(
+            userID: qualifiedID.uuid,
+            domain: qualifiedID.domain,
+            clientID: clientID
+        )
+    }
+}

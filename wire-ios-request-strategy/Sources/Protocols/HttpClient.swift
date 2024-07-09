@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "warnings.xcconfig"
+import WireTransport
 
-// LLVM - Warning Policies
-//
-GCC_TREAT_WARNINGS_AS_ERRORS = YES
+public protocol HttpClient {
+
+    func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
+
+}

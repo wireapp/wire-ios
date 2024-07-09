@@ -608,7 +608,7 @@
 }
 
 
-- (void)testThatItSetsTheExpirationDateOnATextMessage
+- (void)testThatItSetsShouldExpireOnATextMessage
 {
     // given
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -626,9 +626,7 @@
     ZMMessage *message = (id)[sut appendMessageWithText:@"Quux"];
 
     // then
-    XCTAssertNotNil(message.expirationDate);
-    NSDate *expectedDate = [NSDate dateWithTimeIntervalSinceNow:[ZMMessage defaultExpirationTime]];
-    XCTAssertLessThan(fabs([message.expirationDate timeIntervalSinceDate:expectedDate]), 1);
+    XCTAssertTrue(message.shouldExpire);
 }
 
 
