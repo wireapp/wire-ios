@@ -329,7 +329,7 @@ final class AppStateCalculatorTests: XCTestCase {
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
-        BackendInfo.apiVersion = nil
+        backendInfoToken.apiVersion = nil
 
         let blacklistState = AppState.blacklisted(reason: .clientAPIVersionObsolete)
         sut.testHelper_setAppState(blacklistState)

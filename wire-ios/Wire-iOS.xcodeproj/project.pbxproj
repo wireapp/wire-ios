@@ -1310,6 +1310,8 @@
 		E6579E7D2AFFA97F004E7FD8 /* OrientationDeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */; };
 		E6579E7E2AFFA98C004E7FD8 /* HandleChangeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542CDF3F24B32E2100DF0B39 /* HandleChangeStateTests.swift */; };
 		E6579E7F2AFFA99E004E7FD8 /* AnimatedListMenuViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A990059A23F195A70089CDEB /* AnimatedListMenuViewTests.swift */; };
+		E65B37FD2C3D61D800AA103F /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E65B37FC2C3D61D800AA103F /* WireTransportSupport.framework */; };
+		E65B37FE2C3D61D800AA103F /* WireTransportSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E65B37FC2C3D61D800AA103F /* WireTransportSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E66258872B4D393400C23E79 /* DeveloperDebugActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */; };
 		E66258892B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */; };
 		E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662588A2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift */; };
@@ -2006,6 +2008,7 @@
 				5996E8A52C19D074007A52F0 /* WireRequestStrategySupport.framework in Embed Frameworks */,
 				5996E8A12C19D02C007A52F0 /* WireDataModelSupport.framework in Embed Frameworks */,
 				5996E8AE2C19D0DF007A52F0 /* WireTesting.framework in Embed Frameworks */,
+				E65B37FE2C3D61D800AA103F /* WireTransportSupport.framework in Embed Frameworks */,
 				5996E8A92C19D09D007A52F0 /* WireSyncEngineSupport.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -3405,6 +3408,7 @@
 		E6579E402AFF9BDB004E7FD8 /* UnitTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTests.xctestplan; sourceTree = "<group>"; };
 		E6579E712AFFA150004E7FD8 /* Wire-iOS-UnitTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Wire-iOS-UnitTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E6579E722AFFA232004E7FD8 /* Mocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mocks.h; sourceTree = "<group>"; };
+		E65B37FC2C3D61D800AA103F /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E66258862B4D393400C23E79 /* DeveloperDebugActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsView.swift; sourceTree = "<group>"; };
 		E66258882B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsViewModel.swift; sourceTree = "<group>"; };
 		E662588A2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDebugActionsDisplayModel.swift; sourceTree = "<group>"; };
@@ -4065,6 +4069,7 @@
 				59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */,
 				5996E8A02C19D02C007A52F0 /* WireDataModelSupport.framework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
+				E65B37FD2C3D61D800AA103F /* WireTransportSupport.framework in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
@@ -5514,6 +5519,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E65B37FC2C3D61D800AA103F /* WireTransportSupport.framework */,
 				016DB6DD2C261A4900DEB81B /* WireDomain.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
 				EEE25B3429719BD30008B894 /* WireCryptobox.framework */,
