@@ -41,10 +41,13 @@ disabled_rules:
   - large_tuple
   - nesting
   - no_fallthrough_only
+  - non_optional_string_data_conversion
   - notification_center_detachment
+  - static_over_final_class
   - todo
   - type_body_length
   - type_name
+  - unused_enumerated
   - unused_setter_value
   - xctfail_message
 
@@ -107,4 +110,4 @@ line_length:
   warning: 500
   error: 500
 
-swiftlint_version: 0.54.0
+swiftlint_version: 0.55.1
