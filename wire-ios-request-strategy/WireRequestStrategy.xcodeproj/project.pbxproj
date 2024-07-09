@@ -947,7 +947,6 @@
 		F1E47FE9207E0B72008D4299 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		F1E47FEB207E0B72008D4299 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		F1E47FED207E0B72008D4299 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		F1E47FEE207E0B72008D4299 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2087,7 +2086,6 @@
 				F1E47FE9207E0B72008D4299 /* project.xcconfig */,
 				F1E47FEB207E0B72008D4299 /* tests.xcconfig */,
 				F1E47FED207E0B72008D4299 /* project-debug.xcconfig */,
-				F1E47FEE207E0B72008D4299 /* warnings-debug.xcconfig */,
 			);
 			path = "zmc-config";
 			sourceTree = "<group>";
