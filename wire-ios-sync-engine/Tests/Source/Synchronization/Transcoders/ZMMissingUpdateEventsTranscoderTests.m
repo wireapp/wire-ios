@@ -32,7 +32,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 @interface ZMMissingUpdateEventsTranscoderTests : MessagingTest
 
 @property (nonatomic, readonly) ZMMissingUpdateEventsTranscoder *sut;
-@property (nonatomic, readonly) id<PreviouslyReceivedEventIDsCollection> mockEventIDsCollection;
 @property (nonatomic) id mockPushNotificationStatus;
 @property (nonatomic) id requestSync;
 @property (nonatomic) BOOL mockHasPushNotificationEventsToFetch;
@@ -67,14 +66,12 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
         [invocation setReturnValue:&value];
     }] hasEventsToFetch];
     
-    _mockEventIDsCollection = OCMProtocolMock(@protocol(PreviouslyReceivedEventIDsCollection));
 
     [self verifyMockLater:self.mockPushNotificationStatus];
     
     _sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.uiMOC
                                                             notificationsTracker:nil
                                                                   eventProcessor:self.mockUpdateEventProcessor
-                                            previouslyReceivedEventIDsCollection:(id)self.mockEventIDsCollection
                                                                applicationStatus:self.mockApplicationDirectory
                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                       syncStatus:self.mockSyncStatus
@@ -84,8 +81,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 }
 
 - (void)tearDown {
-    _mockEventIDsCollection = nil;
-    
     self.mockUpdateEventProcessor = nil;
     
     [self.mockPushNotificationStatus stopMocking];
@@ -399,7 +394,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     ZMMissingUpdateEventsTranscoder *sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.syncMOC
                                                                                             notificationsTracker:nil
                                                                                                   eventProcessor:self.mockUpdateEventProcessor
-                                                                            previouslyReceivedEventIDsCollection:(id)self.mockEventIDsCollection
                                                                                                applicationStatus:self.mockApplicationDirectory
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                                                       syncStatus:self.mockSyncStatus
@@ -687,45 +681,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     NSURLComponents *components3 = [NSURLComponents componentsWithString:request3.path];
     XCTAssertTrue([components3.queryItems containsObject:[NSURLQueryItem queryItemWithName:@"since" value:lastUpdateEventID2.transportString]]);
 }
-
-- (void)testThatItDiscardsThePreviouslyReceivedEventIDsWhenReachingTheEndOfPagination
-{
-    // given
-    NSUUID *lastUpdateEventID1 = [NSUUID createUUID];
-    NSUUID *lastUpdateEventID2 = [NSUUID createUUID];
-    
-    [self setLastUpdateEventID:lastUpdateEventID1 hasMore:NO];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // when
-    [self.sut startDownloadingMissingNotifications];
-    ZMTransportRequest *request1 = [self.sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    [request1 completeWithResponse:[self responseForSettingLastUpdateEventID:lastUpdateEventID2 hasMore:NO]];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    OCMVerify([self.mockEventIDsCollection discardListOfAlreadyReceivedPushEventIDs]);
-}
-
-- (void)testThatItDoesNotDiscardsThePreviouslyReceivedEventIDsWhenNotReachingTheEndOfPagination
-{
-    // given
-    NSUUID *lastUpdateEventID1 = [NSUUID createUUID];
-    NSUUID *lastUpdateEventID2 = [NSUUID createUUID];
-    
-    [self setLastUpdateEventID:lastUpdateEventID1 hasMore:NO];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // expect
-    OCMReject([self.mockEventIDsCollection discardListOfAlreadyReceivedPushEventIDs]);
-
-    // when
-    [self.sut startDownloadingMissingNotifications];
-    ZMTransportRequest *request1 = [self.sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    [request1 completeWithResponse:[self responseForSettingLastUpdateEventID:lastUpdateEventID2 hasMore:YES]];
-    WaitForAllGroupsToBeEmpty(0.5);
-}
-
 
 // MARK: - FallbackCancellation
 
