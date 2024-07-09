@@ -765,16 +765,13 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
-        do {
-            let result = try await coreCrypto.perform { coreCrypto in
-                await coreCrypto.conversationExists(conversationId: groupID.data)
-            }
-            logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
-            return result
-        } catch {
-            logger.error("checking if group (\(groupID)) exists threw an error: \(error)")
-            throw error
+
+        logger.info("checking if group (\(groupID)) exists...")
+        let result = try await coreCrypto.perform { coreCrypto in
+            await coreCrypto.conversationExists(conversationId: groupID.data)
         }
+        logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
+        return result
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
