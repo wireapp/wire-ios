@@ -18,21 +18,15 @@
 
 import Foundation
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {
-    var logInformation: LogAttributes { get }
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
+
+    /// Messages can expire, e.g. if network conditions are too slow to send.
+    var shouldExpire: Bool { get }
+
+    /// Sets the expiration date with the default time interval.
+    func setExpirationDate()
 }
 
-extension ZMClientMessage: ProteusMessage {
-
-    public var logInformation: LogAttributes {
-
-        return [
-            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
-
-    }
-}
+extension ZMClientMessage: ProteusMessage {}
 
 extension ZMAssetClientMessage: ProteusMessage {}

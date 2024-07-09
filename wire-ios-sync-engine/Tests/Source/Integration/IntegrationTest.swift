@@ -58,7 +58,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration?,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {

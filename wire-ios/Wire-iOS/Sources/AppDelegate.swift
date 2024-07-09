@@ -311,19 +311,6 @@ private extension AppDelegate {
         // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let countlyKey = Bundle.countlyAppKey
-        let host = BackendEnvironment.shared.countlyURL
-
-        let analyticsSessionConfiguration: AnalyticsSessionConfiguration?
-        if let countlyKey, let host {
-            analyticsSessionConfiguration = AnalyticsSessionConfiguration(
-                countlyKey: countlyKey,
-                host: host
-            )
-        } else {
-            analyticsSessionConfiguration = nil
-        }
-
         let sessionManager = SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             appVersion: appVersion,
@@ -341,7 +328,7 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsSessionConfiguration: analyticsSessionConfiguration
+            analyticsSessionConfiguration: AnalyticsSessionConfigurationBuilder().build()
         )
 
         voIPPushManager.delegate = sessionManager

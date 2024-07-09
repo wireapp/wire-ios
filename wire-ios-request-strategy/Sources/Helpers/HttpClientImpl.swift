@@ -16,32 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
-import XCTest
+import WireSystem
+import WireTransport
 
-@testable import Wire
+public struct HttpClientImpl: HttpClient {
 
-final class VersionInfoViewControllerSnapshotTests: XCTestCase {
+    let transportSession: any TransportSessionType
+    let queue: any ZMSGroupQueue
 
-    var sut: VersionInfoViewController!
-    private var snapshotHelper: SnapshotHelper!
-
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-        let path = Bundle(for: type(of: self)).path(forResource: "DummyComponentsVersions", ofType: "plist")!
-
-        sut = VersionInfoViewController(versionsPlist: path)
+    public init(transportSession: any TransportSessionType, queue: any ZMSGroupQueue) {
+        self.transportSession = transportSession
+        self.queue = queue
     }
 
-    override func tearDown() {
-        snapshotHelper = nil
-        sut = nil
-        super.tearDown()
-    }
+    public func send(_ request: ZMTransportRequest) async -> ZMTransportResponse {
+        await withCheckedContinuation { continuation in
+            let handler = ZMCompletionHandler(on: queue) { response in
+                continuation.resume(returning: response)
+            }
+            request.add(handler)
 
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
+            transportSession.enqueueOneTime(request)
+        }
     }
 }

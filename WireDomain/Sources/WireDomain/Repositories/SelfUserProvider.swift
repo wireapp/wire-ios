@@ -17,25 +17,32 @@
 //
 
 import Foundation
+import WireDataModel
 
-/**
- * Represents an item for the licenses pane.
- */
+// sourcery: AutoMockable
+public protocol SelfUserProviderProtocol {
 
-struct SettingsLicenseItem: Decodable, Equatable {
+    func fetchSelfUser() -> ZMUser
 
-    /// The name of the license software.
-    let name: String
+}
 
-    /// The text of the license.
-    let licenseText: String
+@available(*, deprecated, message: "Use UserRepository instead")
+public final class SelfUserProvider: SelfUserProviderProtocol {
 
-    /// The URL to the project.
-    let projectURL: URL
+    // MARK: - Properties
 
-    enum CodingKeys: String, CodingKey {
-        case name = "Name"
-        case licenseText = "LicenseText"
-        case projectURL = "ProjectURL"
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
+
+    // MARK: - Methods
+
+    public func fetchSelfUser() -> ZMUser {
+        ZMUser.selfUser(in: context)
+    }
+
 }

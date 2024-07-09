@@ -204,7 +204,7 @@ public final class ZMUserSession: NSObject {
         return managedObjectContext.conversationListDirectory()
     }
 
-    public private(set) var networkState: ZMNetworkState = .online {
+    public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
                 ZMNetworkAvailabilityChangeNotification.notify(
@@ -392,14 +392,6 @@ public final class ZMUserSession: NSObject {
         self.dependencies = dependencies
 
         super.init()
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAppDidBecomeActive),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-
     }
 
     private func setupAnalyticsSession() {
@@ -431,9 +423,8 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    @objc private func handleAppDidBecomeActive() {
-        let appOpenEvent = AppOpenEvent()
-        analyticsSession?.trackEvent(appOpenEvent)
+    func trackAppOpenAnalyticEventWhenAppBecomesActive() {
+        analyticsSession?.trackEvent(.appOpen)
     }
 
     func setup(
@@ -500,7 +491,6 @@ public final class ZMUserSession: NSObject {
 
         if !ProcessInfo.processInfo.isRunningTests {
             setupAnalyticsSession()
-
             self.analyticsSession?.startSession()
         }
 
@@ -792,7 +782,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        let state: ZMNetworkState
+        let state: NetworkState
 
         if isNetworkOnline {
             if isPerformingSync {

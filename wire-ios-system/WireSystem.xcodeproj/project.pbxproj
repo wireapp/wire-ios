@@ -95,8 +95,6 @@
 		096A3A1D1B67CEF700565001 /* ZMSLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMSLogging.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		096A3A1E1B67CEF700565001 /* ZMSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLog.swift; sourceTree = "<group>"; };
 		09F186211B68FD52007A3DA6 /* WireSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WireSystem-Info.plist"; sourceTree = "<group>"; };
-		16962EDB20221F970069D88D /* ZMSLogNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogNotifications.h; sourceTree = "<group>"; };
-		16962EDC20221F970069D88D /* ZMSLogNotifications.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSLogNotifications.m; sourceTree = "<group>"; };
 		16AAA6292C21903200080A06 /* ExpiringActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiringActivity.swift; sourceTree = "<group>"; };
 		16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiringActivityTests.swift; sourceTree = "<group>"; };
 		16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemLogger.swift; sourceTree = "<group>"; };
@@ -106,7 +104,6 @@
 		546BC7D01EFD49B400DDB12A /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		546BC7D21EFD49B400DDB12A /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		546BC7D71EFD49B400DDB12A /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5473E7C71B31A95A00C6A937 /* WireSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WireSystem.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5473E7E41B31AA2600C6A937 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -234,7 +231,6 @@
 				546BC7D01EFD49B400DDB12A /* project-common.xcconfig */,
 				546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */,
 				546BC7D21EFD49B400DDB12A /* project.xcconfig */,
-				546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */,
 				546BC7D71EFD49B400DDB12A /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -265,8 +261,6 @@
 				D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */,
 				54F249C61BB9242900040600 /* ZMSDispatchGroup.h */,
 				54F249C71BB9242900040600 /* ZMSDispatchGroup.m */,
-				16962EDB20221F970069D88D /* ZMSLogNotifications.h */,
-				16962EDC20221F970069D88D /* ZMSLogNotifications.m */,
 				EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */,
 				16AAA6292C21903200080A06 /* ExpiringActivity.swift */,
 			);

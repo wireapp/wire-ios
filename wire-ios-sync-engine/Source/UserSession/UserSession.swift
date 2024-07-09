@@ -212,7 +212,7 @@ public protocol UserSession: AnyObject {
 
     func cancelProxiedRequest(_ request: ProxyRequest)
 
-    var networkState: ZMNetworkState { get }
+    var networkState: NetworkState { get }
 
     var selfUserClient: UserClient? { get }
 

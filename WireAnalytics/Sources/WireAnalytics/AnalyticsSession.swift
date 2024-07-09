@@ -42,13 +42,14 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
         userProfile: AnalyticsUserProfile
     ) {
         let config = WireCountlyConfig()
+
         config.appKey = appKey
         config.host = host.absoluteString
         config.deviceID = userProfile.analyticsIdentifier
 
-        self.countly = .init()
-        self.countly.start(with: config)
-        self.countly.changeDeviceID(withMerge: userProfile.analyticsIdentifier)
+        countly = .init()
+        countly.start(with: config)
+        countly.changeDeviceID(withMerge: userProfile.analyticsIdentifier)
 
         if let teamInfo = userProfile.teamInfo {
             WireCountly.user().set("team_team_id", value: teamInfo.id)
@@ -65,7 +66,7 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
 
     /// Starts the analytics session.
     public func startSession() {
-        self.countly.beginSession()
+        countly.beginSession()
     }
 
     /// Ends the analytics session.
