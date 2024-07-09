@@ -115,7 +115,7 @@ struct ZMUserSessionBuilder {
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration?
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
         earService: (any EARServiceInterface)?,

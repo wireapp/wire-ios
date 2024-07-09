@@ -337,7 +337,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration?
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -456,7 +456,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          sharedUserDefaults: UserDefaults,
          minTLSVersion: String? = nil,
          deleteUserLogs: (() -> Void)? = nil,
-         analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil
+         analyticsSessionConfiguration: AnalyticsSessionConfiguration?
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment

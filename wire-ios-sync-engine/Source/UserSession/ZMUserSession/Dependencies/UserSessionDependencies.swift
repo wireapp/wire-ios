@@ -22,7 +22,7 @@ final class UserSessionDependencies {
 
     init(
         caches: Caches,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration?
     ) {
         self.caches = caches
         self.analyticsSessionConfiguration = analyticsSessionConfiguration
