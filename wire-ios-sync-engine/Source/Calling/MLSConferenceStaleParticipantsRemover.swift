@@ -164,7 +164,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 completion: { [weak self] in
                     guard let self else { return }
 
-                    WaitingGroupTask(context: syncContext) { [self] in
+                    WaitingGroupTask(context: syncContext) {
                         await self.remove(
                             client: clientID,
                             from: groupID

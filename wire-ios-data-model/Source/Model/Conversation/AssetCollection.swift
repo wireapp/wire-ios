@@ -91,13 +91,11 @@ public class AssetCollection: NSObject, ZMCollection {
             fatal("syncMOC not accessible")
         }
         syncMOC.performGroupedBlock { [weak self] in
-            // swiftlint:disable redundant_self_in_closure
-            guard let self, !self.tornDown else { return }
-            guard let conversation = self.conversation,
+            guard let self, !tornDown else { return }
+            guard let conversation = self.conversation, // swiftlint:disable:this redundant_self_in_closure
                 let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
             }
-            // swiftlint:enable redundant_self_in_closure
             let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: matchingCategories)
             if categorizedMessages.count > 0 {
                 let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: matchingCategories)
