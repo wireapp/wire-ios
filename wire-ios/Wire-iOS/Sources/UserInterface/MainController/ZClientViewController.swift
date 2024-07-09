@@ -702,6 +702,8 @@ final class ZClientViewController: UIViewController {
         transitionToList(animated: true, completion: nil)
     }
 
+    // MARK: - Profile
+
     func showSelfProfile() {
         conversationListViewController.presentProfile()
     }
