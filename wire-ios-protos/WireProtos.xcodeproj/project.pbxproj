@@ -60,7 +60,6 @@
 		54B5E1F41F0A6B77001F43A6 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54B5E1F51F0A6B77001F43A6 /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		54B5E1F71F0A6B77001F43A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F81F0A6B77001F43A6 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5E13807B21A30A9D004A646C /* messages.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = messages.pb.swift; sourceTree = "<group>"; };
 		5E13807C21A30A9D004A646C /* otr.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = otr.pb.swift; sourceTree = "<group>"; };
@@ -189,7 +188,6 @@
 				54B5E1F41F0A6B77001F43A6 /* simulator.xcconfig */,
 				54B5E1F51F0A6B77001F43A6 /* test-host-ios.xcconfig */,
 				54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */,
-				54B5E1F71F0A6B77001F43A6 /* warnings-debug.xcconfig */,
 				54B5E1F81F0A6B77001F43A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";

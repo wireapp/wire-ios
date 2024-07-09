@@ -30,7 +30,6 @@
 		16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		16CB8A411DBA73B900B5BC47 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		16CB8A441DBA73B900B5BC47 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireCanvas.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,7 +115,6 @@
 				16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */,
 				16CB8A411DBA73B900B5BC47 /* project.xcconfig */,
 				16CB8A441DBA73B900B5BC47 /* tests.xcconfig */,
-				16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */,
 				16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";

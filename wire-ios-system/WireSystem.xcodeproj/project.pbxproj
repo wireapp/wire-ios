@@ -104,7 +104,6 @@
 		546BC7D01EFD49B400DDB12A /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		546BC7D21EFD49B400DDB12A /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		546BC7D71EFD49B400DDB12A /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5473E7C71B31A95A00C6A937 /* WireSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WireSystem.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5473E7E41B31AA2600C6A937 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -232,7 +231,6 @@
 				546BC7D01EFD49B400DDB12A /* project-common.xcconfig */,
 				546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */,
 				546BC7D21EFD49B400DDB12A /* project.xcconfig */,
-				546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */,
 				546BC7D71EFD49B400DDB12A /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
