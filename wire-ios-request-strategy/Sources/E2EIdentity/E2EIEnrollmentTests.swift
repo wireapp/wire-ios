@@ -16,26 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCoreCrypto
+import WireDataModelSupport
+import WireRequestStrategySupport
+import WireTransportSupport
 
-@testable import WireDataModelSupport
 @testable import WireRequestStrategy
-@testable import WireRequestStrategySupport
 
-class E2EIEnrollmentTests: ZMTBaseTest {
+final class E2EIEnrollmentTests: ZMTBaseTest {
 
     var sut: E2EIEnrollment!
     var mockAcmeApi: MockAcmeAPIInterface!
     var mockApiProvider: MockAPIProviderInterface!
     var mockE2eiService: MockE2EIServiceInterface!
     var mockKeyRotator: MockE2EIKeyPackageRotating!
-    var previousApiVersion: APIVersion!
+    var backendInfoToken: TemporaryBackendInfoToken!
 
     override func setUp() {
         super.setUp()
 
-        previousApiVersion = BackendInfo.apiVersion
         let acmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                           newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
                                           newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
@@ -44,6 +43,9 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         mockApiProvider = MockAPIProviderInterface()
         mockE2eiService = MockE2EIServiceInterface()
         mockKeyRotator = MockE2EIKeyPackageRotating()
+
+        backendInfoToken = TemporaryBackendInfoToken()
+
         sut = E2EIEnrollment(
             acmeApi: mockAcmeApi,
             apiProvider: mockApiProvider,
@@ -51,17 +53,16 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             acmeDirectory: acmeDirectory,
             keyRotator: mockKeyRotator
         )
-        BackendInfo.storage = .temporary()
     }
 
     override func tearDown() {
         sut = nil
+
+        backendInfoToken = nil
         mockAcmeApi = nil
         mockApiProvider = nil
         mockE2eiService = nil
         mockKeyRotator = nil
-        BackendInfo.apiVersion = previousApiVersion
-        BackendInfo.storage = .standard
 
         super.tearDown()
     }
@@ -186,7 +187,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedNonce = "Nonce"
 
         // given
-        BackendInfo.apiVersion = .v5
+        backendInfoToken.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
         e2eIAPI.getWireNonceClientId_MockMethod = {_ in
             return expectedNonce
@@ -221,7 +222,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedAccessToken = AccessTokenResponse(expiresIn: 1, token: "", type: "")
 
         // given
-        BackendInfo.apiVersion = .v5
+        backendInfoToken.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
         e2eIAPI.getAccessTokenClientIdDpopToken_MockMethod = {_, _ in
             return expectedAccessToken

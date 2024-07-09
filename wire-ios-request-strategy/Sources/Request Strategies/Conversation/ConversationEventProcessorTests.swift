@@ -16,19 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategySupport
+import WireTransportSupport
 import XCTest
 
 @testable import WireRequestStrategy
-@testable import WireRequestStrategySupport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
 
-    var sut: ConversationEventProcessor!
-    var conversationService: MockConversationServiceInterface!
-    var mockMLSEventProcessor: MockMLSEventProcessing!
+    private var sut: ConversationEventProcessor!
+
+    private var conversationService: MockConversationServiceInterface!
+    private var mockMLSEventProcessor: MockMLSEventProcessing!
+    private var backendInfoTemporary: TemporaryBackendInfoToken!
 
     override func setUp() {
         super.setUp()
+
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
         conversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
@@ -48,14 +52,16 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             mlsEventProcessor: mockMLSEventProcessor
         )
 
-        BackendInfo.storage = .temporary()
-        BackendInfo.apiVersion = .v0
+        backendInfoTemporary = TemporaryBackendInfoToken(apiVersion: .v0)
     }
 
     override func tearDown() {
         sut = nil
+
+        backendInfoTemporary = nil
         conversationService = nil
         mockMLSEventProcessor = nil
+
         super.tearDown()
     }
 

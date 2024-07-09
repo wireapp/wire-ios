@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import WireTransportSupport
 import XCTest
+
+@testable import WireRequestStrategy
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
 
@@ -143,7 +145,8 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_Success() throws {
         // Given
-        BackendInfo.apiVersion = .v2
+        let backendInfoToken = TemporaryBackendInfoToken(apiVersion: .v2)
+
         let sut = SyncConversationActionHandler(context: syncMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
@@ -186,6 +189,8 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             XCTAssertNotNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: syncMOC))
         }
+
+        withExtendedLifetime(backendInfoToken) { }
     }
 
     func test_HandleResponse_400_InvalidBody() throws {

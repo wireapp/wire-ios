@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTransportSupport
 import XCTest
 
 @testable import WireRequestStrategy
@@ -64,18 +64,16 @@ private struct CodableObject: Codable {
     init() { }
 }
 
-class Payload_CodingTests: XCTestCase {
+final class Payload_CodingTests: XCTestCase {
 
-    var data: Data!
+    private var data: Data!
 
-    override func setUp() {
-        super.setUp()
-        data = try! JSONSerialization.data(withJSONObject: ["foo": "bar"], options: [])
-        BackendInfo.apiVersion = nil
+    override func setUp() async throws {
+        try await super.setUp()
+        data = try JSONSerialization.data(withJSONObject: ["foo": "bar"], options: [])
     }
 
     override func tearDown() {
-        BackendInfo.apiVersion = .v3
         data = nil
         super.tearDown()
     }
@@ -111,6 +109,8 @@ class Payload_CodingTests: XCTestCase {
 
     func test_EncodingThrows_MissingAPIVersion() {
         // Given
+        let backendInfoToken = TemporaryBackendInfoToken(apiVersion: nil)
+
         let encoder = JSONEncoder()
         let object = CodableAPIVersionAwareObject()
 
@@ -118,10 +118,13 @@ class Payload_CodingTests: XCTestCase {
         XCTAssertThrowsError(try encoder.encode(object)) {
             XCTAssertEqual($0 as? APIVersionAwareCodingError, .missingAPIVersion)
         }
+
+        withExtendedLifetime(backendInfoToken) { }
     }
 
     func test_DecodingThrows_MissingAPIVersion() {
         // Given
+        let backendInfoToken = TemporaryBackendInfoToken(apiVersion: nil)
         let decoder = JSONDecoder()
 
         // When / Then
@@ -130,6 +133,8 @@ class Payload_CodingTests: XCTestCase {
         ) {
             XCTAssertEqual($0 as? APIVersionAwareCodingError, .missingAPIVersion)
         }
+
+        withExtendedLifetime(backendInfoToken) { }
     }
 
     func test_itEncodesWithAPIVersion() {

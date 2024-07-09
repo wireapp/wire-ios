@@ -17,8 +17,10 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
+import WireTransportSupport
 import XCTest
+
+@testable import WireRequestStrategy
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
 
@@ -26,17 +28,19 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     typealias ResponsePayload = Payload.Conversation
     typealias ErrorResponse = CreateGroupConversationActionHandler.ErrorResponse
 
-    var sut: CreateGroupConversationActionHandler!
+    private var sut: CreateGroupConversationActionHandler!
 
-    var conversationID: QualifiedID!
-    var mlsGroupID: MLSGroupID!
-    var teamID: UUID!
-    var user1ID: QualifiedID!
-    var user2ID: QualifiedID!
+    private var conversationID: QualifiedID!
+    private var mlsGroupID: MLSGroupID!
+    private var teamID: UUID!
+    private var user1ID: QualifiedID!
+    private var user2ID: QualifiedID!
 
-    var expectedRequestPayload: RequestPayload!
-    var successResponsePayloadProteus: ResponsePayload!
-    var successResponsePayloadMLS: ResponsePayload!
+    private var expectedRequestPayload: RequestPayload!
+    private var successResponsePayloadProteus: ResponsePayload!
+    private var successResponsePayloadMLS: ResponsePayload!
+
+    private var backendInfoTemporary: TemporaryBackendInfoToken!
 
     override func setUp() {
         super.setUp()
@@ -99,12 +103,13 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .temporary()
-        BackendInfo.domain = "example.com"
+        backendInfoTemporary = TemporaryBackendInfoToken(domain: "example.com")
     }
 
     override func tearDown() {
         sut = nil
+
+        backendInfoTemporary = nil
         conversationID = nil
         mlsGroupID = nil
         teamID = nil
@@ -113,7 +118,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
-        BackendInfo.storage = .standard
+
         super.tearDown()
     }
 
@@ -151,7 +156,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_RequestGeneration_V0() throws {
         // Given
-        BackendInfo.apiVersion = .v0
+        backendInfoTemporary.apiVersion = .v0
         let action = createAction()
 
         // When
@@ -172,7 +177,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_RequestGeneration_V1() throws {
         // Given
-        BackendInfo.apiVersion = .v1
+        backendInfoTemporary.apiVersion = .v1
         let action = createAction()
 
         // When
@@ -193,7 +198,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_RequestGeneration_V2() throws {
         // Given
-        BackendInfo.apiVersion = .v2
+        backendInfoTemporary.apiVersion = .v2
         let action = createAction()
 
         // When
@@ -214,7 +219,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_RequestGeneration_V3() throws {
         // Given
-        BackendInfo.apiVersion = .v3
+        backendInfoTemporary.apiVersion = .v3
         let action = createAction()
 
         // When
@@ -235,7 +240,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     func test_RequestGeneration_V4() throws {
         // Given
-        BackendInfo.apiVersion = .v4
+        backendInfoTemporary.apiVersion = .v4
         let action = createAction()
 
         // When
@@ -259,7 +264,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     func test_HandleResponse_200() throws {
         // Given
         let apiVersion = APIVersion.v2
-        BackendInfo.apiVersion = apiVersion
+        backendInfoTemporary.apiVersion = apiVersion
         action = createAction()
         handler = sut
 
@@ -315,7 +320,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     func test_ItUpdatesMLSConversation() throws {
         // Given
         let apiVersion = APIVersion.v5
-        BackendInfo.apiVersion = apiVersion
+        backendInfoTemporary.apiVersion = apiVersion
         action = createAction(messageProtocol: .mls)
         handler = sut
         let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
@@ -359,7 +364,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
         syncMOC.performGroupedAndWait { [self] in
             // Given
-            BackendInfo.apiVersion = .v4
+            backendInfoTemporary.apiVersion = .v4
             let unreachableDomain = "foma.wire.link"
             let unreachableUserID = QualifiedID(uuid: UUID(), domain: unreachableDomain)
 
@@ -411,7 +416,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     func testThatItCallsResultHandler_OnNonFederatingDomainsError() {
         syncMOC.performGroupedAndWait { [self] in
             // Given
-            BackendInfo.apiVersion = .v4
+            backendInfoTemporary.apiVersion = .v4
             let applesDomain = "apples@domain.com"
             let bananasDomain = "bananas@domain.com"
 
