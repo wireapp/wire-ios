@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTransportSupport
+import XCTest
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
@@ -31,6 +32,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSServiceInterface!
 
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     // MARK: - setUp
 
     override func setUp() {
@@ -40,6 +43,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockMLSService = MockMLSServiceInterface()
+
+        backendInfoToken = TemporaryBackendInfoToken()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
@@ -66,11 +71,13 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     override func tearDown() {
         sut = nil
+
         mockStorage = nil
         mockFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
-        BackendInfo.storage = .standard
+        backendInfoToken = nil
+
         DeveloperFlag.storage = .standard
         super.tearDown()
     }
@@ -483,7 +490,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         startTime: Date?
     ) {
         // Set APIVersion
-        BackendInfo.apiVersion = isAPIV5Supported ? .v5 : .v0
+        backendInfoToken.apiVersion = isAPIV5Supported ? .v5 : .v0
 
         // Set MLS flag
         var flag = DeveloperFlag.enableMLSSupport

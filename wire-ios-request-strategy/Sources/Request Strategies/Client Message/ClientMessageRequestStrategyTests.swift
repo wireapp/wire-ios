@@ -16,27 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTransportSupport
 import XCTest
 
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
-class ClientMessageRequestStrategyTests: MessagingTestBase {
+final class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
     var mockMessageSender: MockMessageSenderInterface!
+
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
+
+        backendInfoToken = TemporaryBackendInfoToken()
+        apiVersion = .v0
 
         syncMOC.performAndWait { [self] in
             localNotificationDispatcher = MockPushMessageHandler()
@@ -50,18 +57,18 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                applicationStatus: mockApplicationStatus,
                                                messageSender: mockMessageSender)
         }
-
-        apiVersion = .v0
-
     }
 
     override func tearDown() {
+        sut = nil
+
         self.localNotificationDispatcher = nil
         self.mockApplicationStatus = nil
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
-        self.sut = nil
+
         apiVersion = nil
+        backendInfoToken = nil
 
         super.tearDown()
     }

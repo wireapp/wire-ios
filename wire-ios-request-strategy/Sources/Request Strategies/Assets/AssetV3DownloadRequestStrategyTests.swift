@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
+import WireTransportSupport
 import XCTest
+
+@testable import WireRequestStrategy
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
@@ -43,14 +44,19 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     var conversation: ZMConversation!
     var user: ZMUser!
 
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
+
+        backendInfoToken = TemporaryBackendInfoToken()
+        apiVersion = .v0
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
@@ -60,8 +66,6 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             self.user = self.createUser(alsoCreateClient: true)
             self.conversation = self.createGroupConversation(with: self.user)
         }
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
@@ -70,6 +74,8 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         user = nil
         conversation = nil
         apiVersion = nil
+        backendInfoToken = nil
+
         super.tearDown()
     }
 

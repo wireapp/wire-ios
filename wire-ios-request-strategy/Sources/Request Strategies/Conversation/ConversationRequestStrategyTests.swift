@@ -16,24 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
+import WireTransportSupport
 import XCTest
 
-class ConversationRequestStrategyTests: MessagingTestBase {
+@testable import WireRequestStrategy
+
+final class ConversationRequestStrategyTests: MessagingTestBase {
 
     var sut: ConversationRequestStrategy!
+
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
     var mockMLSService: MockMLSServiceInterface!
 
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
@@ -50,6 +54,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
         mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
 
+        backendInfoToken = TemporaryBackendInfoToken()
+        apiVersion = .v0
+
         sut = ConversationRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
@@ -57,16 +64,16 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             mlsService: mockMLSService,
             removeLocalConversation: mockRemoveLocalConversation
         )
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
+
         mockSyncProgress = nil
         mockApplicationStatus = nil
         mockRemoveLocalConversation = nil
         apiVersion = nil
+        backendInfoToken = nil
 
         super.tearDown()
     }

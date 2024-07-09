@@ -17,9 +17,11 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
+import WireTransportSupport
 import XCTest
+
+@testable import WireRequestStrategy
 
 final class ConnectionRequestStrategyTests: MessagingTestBase {
 
@@ -28,9 +30,11 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     var mockSyncProgress: MockSyncProgress!
     var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
@@ -47,20 +51,24 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
 
+        backendInfoToken = TemporaryBackendInfoToken()
+        apiVersion = .v0
+
         sut = ConnectionRequestStrategy(withManagedObjectContext: syncMOC,
                                         applicationStatus: mockApplicationStatus,
                                         syncProgress: mockSyncProgress,
                                         oneOneOneResolver: mockOneOnOneResolver)
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
+
         mockSyncProgress = nil
         mockApplicationStatus = nil
         apiVersion = nil
+        backendInfoToken = nil
         mockOneOnOneResolver = nil
+
         super.tearDown()
     }
 

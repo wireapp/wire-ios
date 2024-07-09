@@ -16,25 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
+import WireTransportSupport
 import XCTest
 
-class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
+@testable import WireRequestStrategy
+
+final class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var oneToOneconversationOnSync: ZMConversation!
 
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
+
+        backendInfoToken = TemporaryBackendInfoToken()
+        apiVersion = .v0
 
         syncMOC.performGroupedAndWait {
             self.mockApplicationStatus = MockApplicationStatus()
@@ -43,8 +49,6 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
             self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
         }
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
@@ -56,6 +60,8 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
         }
         try? uiMOC.zm_fileAssetCache.wipeCaches()
         apiVersion = nil
+        backendInfoToken = nil
+
         super.tearDown()
     }
 

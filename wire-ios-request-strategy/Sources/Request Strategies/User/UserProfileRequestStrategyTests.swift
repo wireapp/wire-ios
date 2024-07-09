@@ -16,20 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
+import WireTransportSupport
 import XCTest
 
-class UserProfileRequestStrategyTests: MessagingTestBase {
+@testable import WireRequestStrategy
+
+final class UserProfileRequestStrategyTests: MessagingTestBase {
 
     var sut: UserProfileRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
 
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
@@ -43,20 +46,23 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         mockSyncProgress.currentSyncPhase = .done
         mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
 
+        backendInfoToken = TemporaryBackendInfoToken()
+        apiVersion = .v0
+
         sut = UserProfileRequestStrategy(
             managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             syncProgress: mockSyncProgress
         )
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
+
         mockSyncProgress = nil
         mockApplicationStatus = nil
         apiVersion = nil
+        backendInfoToken = nil
 
         super.tearDown()
     }

@@ -18,25 +18,33 @@
 
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
+import WireTransportSupport
 import WireUtilities
 import XCTest
 
-class ClientMessageRequestFactoryTests: MessagingTestBase {
+@testable import WireRequestStrategy
+
+final class ClientMessageRequestFactoryTests: MessagingTestBase {
+
+    private var backendInfoToken: TemporaryBackendInfoToken!
 
     private var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
+
+        backendInfoToken = TemporaryBackendInfoToken()
         apiVersion = .v0
     }
 
     override func tearDown() {
         apiVersion = nil
+        backendInfoToken = nil
+
         super.tearDown()
     }
 

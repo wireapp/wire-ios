@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import WireTesting
+import WireTransportSupport
+import XCTest
+
+@testable import WireRequestStrategy
 
 private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
-class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
+final class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
+
+    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String, token: String, domain: String)
 
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3PreviewDownloadRequestStrategy!
@@ -31,11 +35,11 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            backendInfoToken.apiVersion = apiVersion
         }
     }
 
-    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String, token: String, domain: String)
+    private var backendInfoToken: TemporaryBackendInfoToken!
 
     override func setUp() {
         super.setUp()
@@ -46,14 +50,17 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             self.conversation = self.createConversation()
         }
 
-        apiVersion = .v0
+        backendInfoToken = TemporaryBackendInfoToken(apiVersion: nil)
     }
 
     override func tearDown() {
-        mockApplicationStatus = nil
         sut = nil
+
+        mockApplicationStatus = nil
         conversation = nil
         apiVersion = nil
+        backendInfoToken = nil
+
         super.tearDown()
     }
 
