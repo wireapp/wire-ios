@@ -16,16 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct BackupRestoreFailedAnalyticsEvent: AnalyticsEvent {
+public enum RestoreBackupResult {
+    case succeeded
+    case failed
+}
 
-    public init() {}
+public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
+    public let result: RestoreBackupResult
+
+    public init(result: RestoreBackupResult) {
+        self.result = result
+    }
 
     public var eventName: String {
-        "restoreBackupFailed"
+        switch result {
+        case .succeeded:
+            return "restoreBackupSucceeded"
+        case .failed:
+            return "restoreBackupFailed"
+        }
     }
 
     public var segmentation: [String: String] {
         [:]
     }
-
 }
