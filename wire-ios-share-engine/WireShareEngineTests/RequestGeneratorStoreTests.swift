@@ -18,8 +18,10 @@
 
 import Foundation
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
+import WireTransportSupport
+
+@testable import WireShareEngine
 
 final class RequestGeneratorStoreTests: ZMTBaseTest {
 
@@ -57,19 +59,25 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
     }
 
-    var mockStrategy: MockStrategy!
+    private var mockStrategy: MockStrategy!
+    private var backendInfoToken: TemporaryBackendInfoToken!
+
     var sut: RequestGeneratorStore! = nil
 
     override func setUp() {
         super.setUp()
-        BackendInfo.apiVersion = .v0
+
+        backendInfoToken = TemporaryBackendInfoToken(apiVersion: .v0)
         mockStrategy = MockStrategy()
     }
 
     override func tearDown() {
         mockStrategy = nil
+        backendInfoToken = nil
+
         sut.tearDown()
         sut = nil
+
         super.tearDown()
     }
 
@@ -83,7 +91,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         XCTAssertNotNil(sut.nextRequest())
 
         // When
-        BackendInfo.apiVersion = nil
+        backendInfoToken.apiVersion = nil
 
         // Then
         XCTAssertNil(sut.nextRequest())

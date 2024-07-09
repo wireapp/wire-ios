@@ -19,6 +19,7 @@
 import SnapshotTesting
 import WireSyncEngine
 import WireSyncEngineSupport
+import WireTransportSupport
 import WireUITesting
 import XCTest
 
@@ -450,7 +451,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
         // GIVEN
-        BackendInfo.apiVersion = .v4
+        let backendInfoToken = TemporaryBackendInfoToken(apiVersion: .v4)
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = makeViewModel(config: config)
         let mock = MockConversationGuestOptionsViewModelDelegate()
@@ -466,11 +467,13 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
+
+        withExtendedLifetime(backendInfoToken) { }
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
         // GIVEN
-        BackendInfo.apiVersion = .v3
+        let backendInfoToken = TemporaryBackendInfoToken(apiVersion: .v3)
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = makeViewModel(config: config)
 
@@ -488,7 +491,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
-
+        withExtendedLifetime(backendInfoToken) { }
     }
 
 }

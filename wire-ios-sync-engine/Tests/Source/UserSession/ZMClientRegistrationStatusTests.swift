@@ -17,28 +17,32 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
+import WireTransportSupport
 import XCTest
 
-class MockCookieStorage: CookieProvider {
+@testable import WireSyncEngine
+
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 
     var didCallDeleteKeychainItems: Bool = false
+
     func deleteKeychainItems() {
         didCallDeleteKeychainItems = true
     }
-
 }
 
-class ZMClientRegistrationStatusTests: MessagingTest {
+final class ZMClientRegistrationStatusTests: MessagingTest {
 
     private var sut: ZMClientRegistrationStatus!
+
     private var mockCookieStorage: MockCookieStorage!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockClientRegistationDelegate: MockClientRegistrationStatusDelegate!
+    private var backendInfoToken: TemporaryBackendInfoToken!
 
     override func setUp() {
         super.setUp()
@@ -49,6 +53,8 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         mockCookieStorage.isAuthenticated = true
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
+        backendInfoToken = TemporaryBackendInfoToken(apiVersion: .v0)
+
         self.sut = ZMClientRegistrationStatus(
             context: self.syncMOC,
             cookieProvider: mockCookieStorage,
@@ -58,9 +64,10 @@ class ZMClientRegistrationStatusTests: MessagingTest {
     }
 
     override func tearDown() {
-        self.mockClientRegistationDelegate = nil
-        self.mockCookieStorage = nil
-        self.sut = nil
+        backendInfoToken = nil
+        mockClientRegistationDelegate = nil
+        mockCookieStorage = nil
+        sut = nil
 
         super.tearDown()
     }
@@ -624,7 +631,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
             DeveloperFlag.enableMLSSupport.enable(false)
-            BackendInfo.apiVersion = .v5
 
             // then
             XCTAssertFalse(sut.needsToRegisterMLSCLient)
@@ -782,15 +788,15 @@ class ZMClientRegistrationStatusTests: MessagingTest {
     }
 
     @objc
-    func enableMLS() {
+    private func enableMLS() {
         DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
-        BackendInfo.apiVersion = .v5
+
+        backendInfoToken.apiVersion = .v5
     }
 
     @objc
-    func enableE2EI() {
+    private func enableE2EI() {
         FeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
     }
 }

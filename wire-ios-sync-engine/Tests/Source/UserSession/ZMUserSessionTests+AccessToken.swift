@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import WireTransport
+import WireTransportSupport
 import XCTest
+
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
@@ -43,12 +44,11 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         shouldRenew: Bool
     ) {
         // given
-        let previousApiVersion = BackendInfo.apiVersion
         defer {
-            BackendInfo.apiVersion = previousApiVersion
             transportSession.renewAccessTokenCalls = []
         }
-        BackendInfo.apiVersion = apiVersion
+
+        let backendInfoToken = TemporaryBackendInfoToken()
 
         // when
         sut.didRegisterSelfUserClient(userClient)
@@ -61,6 +61,7 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
             XCTAssertEqual(transportSession.renewAccessTokenCalls.count, 0)
         }
 
+        withExtendedLifetime(backendInfoToken) { }
     }
 
 }
