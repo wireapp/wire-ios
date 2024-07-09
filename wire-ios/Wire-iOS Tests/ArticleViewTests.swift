@@ -68,7 +68,7 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 
     func perform(
         action: MessageAction,
-        for message: ZMConversationMessage!,
+        for message: ZMConversationMessage,
         view: UIView
     ) {
         // no-op
@@ -93,7 +93,7 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
 
 // MARK: - ArticleViewTests
 
-final class ArticleViewTests: BaseSnapshotTestCase {
+final class ArticleViewTests: XCTestCase {
 
     // MARK: - Properties
 

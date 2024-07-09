@@ -92,6 +92,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     private func createSut() {
         sut = MLSService(
             context: uiMOC,
+            notificationContext: uiMOC.notificationContext,
             coreCryptoProvider: mockCoreCryptoProvider,
             encryptionService: mockEncryptionService,
             decryptionService: mockDecryptionService,
@@ -1392,9 +1393,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             self.mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
                 guard let tuple = conversationAndOutOfSyncTuples.first(
                     where: { element in
-                        self.uiMOC.performGroupedAndWait({ _ in
+                        self.uiMOC.performGroupedAndWait {
                             element.conversation.mlsGroupID?.data
-                        }) == groupID }
+                        } == groupID }
                 ) else {
                     return 1
                 }

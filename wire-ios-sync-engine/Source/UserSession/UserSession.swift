@@ -116,7 +116,11 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: SelfUserType { get }
+    var selfUser: any UserType { get }
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable { get }
+
+    var editableSelfUser: any UserType & EditableUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -164,14 +168,14 @@ public protocol UserSession: AnyObject {
 
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol
 
-    func conversationList() -> ZMConversationList
+    func conversationList() -> ConversationList
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList
+    func pendingConnectionConversationsInUserSession() -> ConversationList
 
-    func archivedConversationsInUserSession() -> ZMConversationList
+    func archivedConversationsInUserSession() -> ConversationList
 
     var ringingCallConversation: ZMConversation? { get }
 
@@ -208,7 +212,7 @@ public protocol UserSession: AnyObject {
 
     func cancelProxiedRequest(_ request: ProxyRequest)
 
-    var networkState: ZMNetworkState { get }
+    var networkState: NetworkState { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -222,6 +226,15 @@ public protocol UserSession: AnyObject {
         with user: UserType,
         completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     )
+
+    // MARK: MLS
+
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)? { get }
+
+    // MARK: Notifications
+
+    /// Provides a unique context to bind notifications this user session.
+    var notificationContext: any NotificationContext { get }
 
     // MARK: Use Cases
 
@@ -237,13 +250,15 @@ public protocol UserSession: AnyObject {
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
 
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
-
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol { get }
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
+
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

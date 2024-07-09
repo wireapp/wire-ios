@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 extension UITableViewCell {
     func showDisclosureIndicator() {

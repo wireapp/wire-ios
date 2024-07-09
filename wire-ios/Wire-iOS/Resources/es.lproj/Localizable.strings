@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archivar";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Los chats empiezan aquí";
@@ -1041,16 +1043,11 @@
 "self.add_email_password" = "Añadir email y contraseña";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Términos de uso";
 "about.privacy.title" = "Política de privacidad";
-"about.license.title" = "Información de licencia";
 "about.website.title" = "Sitio web de Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Detalles";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Tu cuenta fue usada en:";
@@ -1293,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Si tienes problemas con las notificaciones 'push', el soporte de Wire puede pedirte de renueves este token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Se ha renovado el token de notificaciones";
 "self.settings.advanced.reset_push_token_alert.message" = "Las notificaciones se restaurarán en unos segundos.";
-"self.settings.advanced.version_technical_details.title" = "Detalles técnicos de la versión";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Permisos de uso de datos";

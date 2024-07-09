@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -50,7 +51,6 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
         imageView.image = object.icon
         conversation = object.conversation
     }
-
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
@@ -106,7 +106,12 @@ extension ConversationLegalHoldSystemMessageCell {
             let conversation,
             let clientViewController = ZClientViewController.shared {
 
-            LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation, userSession: clientViewController.userSession)
+            LegalHoldDetailsViewController.present(
+                in: clientViewController,
+                conversation: conversation,
+                userSession: clientViewController.userSession,
+                mainCoordinator: MainCoordinator(zClientViewController: clientViewController)
+            )
 
             return true
         }

@@ -393,7 +393,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -430,7 +430,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageSucceeds_thenCommitPendingProposalsInGroup() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -468,7 +468,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageFailsWithPermanentError_thenThrowError() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -500,7 +500,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageWithoutMlsService_thenThrowError() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -524,7 +524,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageWithoutGroupID_thenThrowError() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.messageProtocol = .mls
         }
         let message = GenericMessageEntity(

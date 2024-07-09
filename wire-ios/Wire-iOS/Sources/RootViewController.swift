@@ -19,17 +19,13 @@
 import UIKit
 
 final class RootViewController: UIViewController {
+
     // MARK: - SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
 
     // MARK: - PopoverPresenter
     var presentedPopover: UIPopoverPresentationController?
     var popoverPointToView: UIView?
-
-    // MARK: - Public Property
-    var isPresenting: Bool {
-        return presentedViewController != nil
-    }
 
     // MARK: - Private Property
     private var childViewController: UIViewController?
@@ -126,7 +122,7 @@ final class RootViewController: UIViewController {
         transition(
             from: fromViewController,
             to: toViewController,
-            duration: 0.5,
+            duration: animated ? 0.5 : 0,
             options: .transitionCrossDissolve,
             animations: {
                 self.view.bringSubviewToFront(fromViewController.view)

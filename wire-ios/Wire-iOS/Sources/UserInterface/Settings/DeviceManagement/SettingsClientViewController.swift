@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -51,7 +52,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     var userClientToken: NSObjectProtocol!
-    var credentials: ZMEmailCredentials?
+    var credentials: UserEmailCredentials?
 
     var tableView: UITableView!
     let topSeparator = OverflowSeparatorView()
@@ -63,14 +64,14 @@ final class SettingsClientViewController: UIViewController,
     convenience init(userClient: UserClient,
                      userSession: UserSession,
                      fromConversation: Bool,
-                     credentials: ZMEmailCredentials? = .none) {
+                     credentials: UserEmailCredentials? = .none) {
         self.init(userClient: userClient, userSession: userSession, credentials: credentials)
         self.fromConversation = fromConversation
     }
 
     required init(userClient: UserClient,
                   userSession: UserSession,
-                  credentials: ZMEmailCredentials? = .none) {
+                  credentials: UserEmailCredentials? = .none) {
         self.userSession = userSession
         self.viewModel = SettingsClientViewModel(userClient: userClient,
                                                  getUserClientFingerprint: userSession.getUserClientFingerprint)
@@ -82,7 +83,6 @@ final class SettingsClientViewController: UIViewController,
             self?.tableView.reloadData()
         }
 
-        setupNavigationTitle()
         self.credentials = credentials
     }
 
@@ -106,17 +106,16 @@ final class SettingsClientViewController: UIViewController,
 
     func setupFromConversationStyle() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: SemanticColors.Label.textDefault]
     }
 
     private func setupNavigationTitle() {
         guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
-        navigationItem.setupNavigationBarTitle(title: deviceClass.capitalized)
+        setupNavigationBarTitle(deviceClass.capitalized)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupNavigationTitle()
         // presented modally from conversation
         if let navController = self.navigationController,
             navController.viewControllers.count > 0 &&

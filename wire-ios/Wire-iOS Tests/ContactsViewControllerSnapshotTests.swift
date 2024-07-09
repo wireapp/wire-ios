@@ -17,19 +17,23 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ContactsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     var sut: ContactsViewController!
+    var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         XCTestCase.accentColor = .blue
         sut = ContactsViewController()
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
@@ -40,6 +44,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -55,7 +60,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForNoSearchResult() {
@@ -67,7 +72,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForContactsWithoutSections() {
@@ -79,7 +84,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForContactsAndIndexSectionBarAreShown() {
@@ -92,7 +97,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Methods

@@ -21,17 +21,18 @@ import WireRequestStrategy
 
 protocol PushNotificationStrategyDelegate: AnyObject {
 
-    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async
+    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async throws
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 
 }
 
-final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
+final class PushNotificationStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
+    private var isProcessingNotifications = false
 
     weak var delegate: PushNotificationStrategyDelegate?
 
@@ -66,8 +67,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     }
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard isFetchingStreamForAPNS else { return nil }
-        let request = requestGenerators.nextRequest(for: apiVersion)
+        guard isFetchingStreamForAPNS && !isProcessingNotifications else { return nil }
+        let request = sync.nextRequest(for: apiVersion)
 
         if request != nil {
             pushNotificationStatus.didStartFetching()
@@ -75,10 +76,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 
         return request
     }
-
-    public var requestGenerators: [ZMRequestGenerator] {
-           return [sync]
-       }
 
     public var isFetchingStreamForAPNS: Bool {
         return self.pushNotificationStatus.hasEventsToFetch
@@ -93,22 +90,37 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
         WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
 
+        isProcessingNotifications = true
+
         let eventIds = events.compactMap(\.uuid)
         let latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
         for event in events {
             event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
+            WireLogger.updateEvent.info("received event", attributes: event.logAttributes)
         }
 
         Task {
-            await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
-            await managedObjectContext.perform {
-                self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
-            }
+            do {
+                try await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
+                await managedObjectContext.perform {
+                    self.isProcessingNotifications = false
+                    self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+                    RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+                }
 
-            if !hasMoreToFetch {
+                if !hasMoreToFetch {
+                    delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
+                }
+            } catch {
+                WireLogger.notifications.warn("Failed to process fetched events: \(error)")
+                await managedObjectContext.perform {
+                    self.isProcessingNotifications = false
+                }
+                sync.reset()
                 delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
             }
+
         }
 
     }

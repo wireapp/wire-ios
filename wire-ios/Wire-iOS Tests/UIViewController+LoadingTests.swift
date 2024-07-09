@@ -17,8 +17,10 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 // MARK: - MockLoadingViewController
 
@@ -28,16 +30,18 @@ final class MockLoadingViewController: SpinnerCapableViewController {
 
 // MARK: - LoadingViewControllerTests
 
-final class LoadingViewControllerTests: BaseSnapshotTestCase {
+final class LoadingViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
     var sut: MockLoadingViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = MockLoadingViewController()
         sut.view.backgroundColor = .white
     }
@@ -45,6 +49,7 @@ final class LoadingViewControllerTests: BaseSnapshotTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -67,7 +72,7 @@ final class LoadingViewControllerTests: BaseSnapshotTestCase {
 
         // THEN
         XCTAssertFalse(sut.isLoadingViewVisible)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsLoadingIndicatorWithSubtitle() {

@@ -36,11 +36,10 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
+        let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
         let dataModelVersion = CoreDataStack.loadMessagingModel().version
 
         // when
-        let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
-
         // then
         XCTAssertEqual(
             latestMigrationVersion?.dataModelVersion,
@@ -105,13 +104,13 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             let connectionCount = try directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
             let userClientCount = try directory.viewContext.count(for: UserClient.sortedFetchRequest())
             let assetClientMessagesCount = try directory.viewContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
-            let messages = directory.viewContext.executeFetchRequestOrAssert(ZMMessage.sortedFetchRequest()) as! [ZMMessage]
+            let messages = try directory.viewContext.fetch(ZMMessage.sortedFetchRequest()) as! [ZMMessage]
             let users = directory.viewContext.fetchOrAssert(request: NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
 
             let userFetchRequest = ZMUser.sortedFetchRequest()
             userFetchRequest.resultType = .dictionaryResultType
             userFetchRequest.propertiesToFetch = userPropertiesToFetch
-            let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
+            let userDictionaries = try directory.viewContext.fetch(userFetchRequest)
 
             // THEN
             XCTAssertEqual(assetClientMessagesCount, 0)

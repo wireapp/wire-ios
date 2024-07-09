@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class ContactsViewController: UIViewController {
 
@@ -67,6 +68,11 @@ final class ContactsViewController: UIViewController {
         setupLayout()
         setupStyle()
         observeKeyboardFrame()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(ContactsUI.title.capitalized)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -132,7 +138,6 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
-        navigationItem.setupNavigationBarTitle(title: ContactsUI.title.capitalized)
 
         view.backgroundColor = .clear
 

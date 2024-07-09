@@ -67,13 +67,20 @@ final class UserSessionMock: UserSession {
 
     var _passcode: String?
 
-    var networkState: ZMNetworkState = .offline
+    var networkState: NetworkState = .offline
 
-    var selfUser: SelfUserType
-    var mockConversationList: ZMConversationList?
+    var selfUser: any UserType
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable
+
+    var editableSelfUser: any EditableUserType & UserType
+
+    var mockConversationList: ConversationList?
 
     var searchUsersCache: SearchUsersCache
     var contextProvider: ContextProvider?
+
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
@@ -82,15 +89,30 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(mockUser: MockZMEditableUser) {
-        self.init(selfUser: mockUser)
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
+        )
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(selfUser: mockUser)
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
+        )
     }
 
-    init(selfUser: SelfUserType) {
+    init(
+        selfUser: any UserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
+        editableSelfUser: any EditableUserType & UserType
+    ) {
         self.selfUser = selfUser
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
+        self.editableSelfUser = editableSelfUser
+
         searchUsersCache = .init()
     }
 
@@ -168,22 +190,22 @@ final class UserSessionMock: UserSession {
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol {
         return NSObject()
     }
 
-    func conversationList() -> ZMConversationList {
+    func conversationList() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+    func pendingConnectionConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func archivedConversationsInUserSession() -> ZMConversationList {
+    func archivedConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
@@ -291,8 +313,12 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        MockCreateConversationGuestLinkUseCaseProtocol()
+    }
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
@@ -323,6 +349,12 @@ final class UserSessionMock: UserSession {
     var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
     }
 }
 

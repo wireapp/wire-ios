@@ -21,7 +21,15 @@ import Foundation
 extension ZMUpdateEvent: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        return type.stringValue ?? "unknown"
+        return "\(safeUUID) - \(safeType)"
+    }
+
+    public var safeUUID: String {
+        uuid?.transportString().redactedAndTruncated() ?? "unknown"
+    }
+
+    public var safeType: String {
+        type.stringValue ?? "unknown"
     }
 
 }

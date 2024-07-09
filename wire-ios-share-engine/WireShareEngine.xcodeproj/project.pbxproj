@@ -92,7 +92,6 @@
 		5470D4111D76E2A400FDE440 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		5470D4121D76E2A400FDE440 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5470D4151D76E2A400FDE440 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		5470D4161D76E2A400FDE440 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5470D42B1D770CEE00FDE440 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -222,7 +221,6 @@
 				5470D4111D76E2A400FDE440 /* project-debug.xcconfig */,
 				5470D4121D76E2A400FDE440 /* project.xcconfig */,
 				5470D4151D76E2A400FDE440 /* tests.xcconfig */,
-				5470D4161D76E2A400FDE440 /* warnings-debug.xcconfig */,
 				5470D4171D76E2A400FDE440 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";

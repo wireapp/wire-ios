@@ -30,6 +30,7 @@
 		09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */; };
 		09A218041B78E01A0076547A /* FakeGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A218031B78E01A0076547A /* FakeGroupContext.swift */; };
 		166264A7216BB64100300F45 /* large.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166264A6216BB64000300F45 /* large.jpg */; };
+		16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */; };
 		16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */; };
 		5454E14A1B73A09100F131F8 /* ZMTExpectationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */; };
 		54AFD7E11CB6986A0090E33A /* 1900x1500.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DB1CB698690090E33A /* 1900x1500.jpg */; };
@@ -39,10 +40,11 @@
 		54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DF1CB698690090E33A /* not_animated.gif */; };
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
 		54AFD7E81CB699710090E33A /* ZMTTestBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */; };
+		595D4B1B2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */; };
+		595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */; };
 		634CCB112BAC54FF00A11AB3 /* GenericArrayActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */; };
 		87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */; };
 		A94B2335266F9C1200D89927 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
-		A971FAE123D7477200AB25B4 /* ZMTBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */; };
 		CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = CE6B7B2C1C11ED5F00FC4C2E /* ZMMockEntity.m */; };
 		CE6B7B321C11ED5F00FC4C2E /* ZMMockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = CE6B7B2E1C11ED5F00FC4C2E /* ZMMockEntity2.m */; };
 		CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */; };
@@ -107,6 +109,7 @@
 		09F1863A1B6903A4007A3DA6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTesting.xcconfig; sourceTree = "<group>"; };
 		166264A6216BB64000300F45 /* large.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = large.jpg; sourceTree = "<group>"; };
+		16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManger+RandomCacheURL.swift"; sourceTree = "<group>"; };
 		16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Helpers.swift"; sourceTree = "<group>"; };
 		5454E1471B73A09100F131F8 /* WireTesting-iosTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireTesting-iosTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTExpectationTests.swift; sourceTree = "<group>"; };
@@ -114,7 +117,6 @@
 		54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54AFD7DB1CB698690090E33A /* 1900x1500.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1900x1500.jpg; sourceTree = "<group>"; };
 		54AFD7DC1CB698690090E33A /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animated.gif; sourceTree = "<group>"; };
@@ -124,9 +126,10 @@
 		54AFD7E01CB698690090E33A /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
 		54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTTestBaseTests.swift; sourceTree = "<group>"; };
 		54BD49F11D41FA56006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+waitForPredicate.swift"; sourceTree = "<group>"; };
+		595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestExpectation+inverted.swift"; sourceTree = "<group>"; };
 		634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericArrayActor.swift; sourceTree = "<group>"; };
 		87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectContextChangesMerger.swift; sourceTree = "<group>"; };
-		A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMTBaseTest.swift; sourceTree = "<group>"; };
 		CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity.h; sourceTree = "<group>"; };
 		CE6B7B2C1C11ED5F00FC4C2E /* ZMMockEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockEntity.m; sourceTree = "<group>"; };
 		CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity2.h; sourceTree = "<group>"; };
@@ -263,7 +266,6 @@
 				09A217ED1B78DFAF0076547A /* ZMTAsserts.h */,
 				09A217EE1B78DFAF0076547A /* ZMTBaseTest.h */,
 				09A217EF1B78DFAF0076547A /* ZMTBaseTest.m */,
-				A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */,
 				098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */,
 				098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */,
 				16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */,
@@ -279,6 +281,9 @@
 				CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */,
 				87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */,
 				634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */,
+				595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */,
+				595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */,
+				16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -300,7 +305,6 @@
 				54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */,
 				54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */,
 				54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */,
-				54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */,
 				54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -475,6 +479,7 @@
 			files = (
 				EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */,
 				87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */,
+				595D4B1B2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift in Sources */,
 				09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */,
 				634CCB112BAC54FF00A11AB3 /* GenericArrayActor.swift in Sources */,
 				09A217FE1B78DFAF0076547A /* ZMTBaseTest.m in Sources */,
@@ -487,9 +492,10 @@
 				098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */,
 				CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */,
 				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
-				A971FAE123D7477200AB25B4 /* ZMTBaseTest.swift in Sources */,
+				16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */,
 				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
+				595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */,
 				F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */,
 				16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */,
 				098CFBC11B7BA68C000B02B1 /* NSObject+WireTesting.swift in Sources */,
@@ -540,7 +546,6 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";

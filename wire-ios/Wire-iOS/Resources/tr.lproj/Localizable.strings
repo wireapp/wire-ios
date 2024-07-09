@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arşiv";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Konuşmalar buradan başlıyor";
@@ -1041,16 +1043,11 @@
 "self.add_email_password" = "E-posta adresi ve parola ekleyin";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Kullanım Şartları";
 "about.privacy.title" = "Gizlilik Politikası";
-"about.license.title" = "Lisans Bilgileri";
 "about.website.title" = "Wire İnternet Sitesi";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Ayrıntılar";
-"about.license.open_project_button" = "Proje Sayfasını Görüntüle";
-"about.license.license_header" = "Onay";
 
 // Self new devices
 "self.new_device_alert.title" = "Hesabınızın kullanıldığı cihazlar:";
@@ -1293,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Eğer anlık bildirimler ile sorun yaşıyorsanız, Wire Destek sizden jetonu sıfırlamanızı isteyebilir.";
 "self.settings.advanced.reset_push_token_alert.title" = "Anlık Belirteş sıfırlandı";
 "self.settings.advanced.reset_push_token_alert.message" = "Bildirimleri birkaç saniye içinde geri yüklenecektir.";
-"self.settings.advanced.version_technical_details.title" = "Versiyonun Teknik Ayrıntıları";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Veri Kullanımı İzinleri";

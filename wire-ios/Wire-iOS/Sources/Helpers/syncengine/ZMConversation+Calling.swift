@@ -21,6 +21,7 @@ import WireDataModel
 import WireSyncEngine
 import class WireCommonComponents.NetworkStatus
 
+// TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
 
     var isCallingSupported: Bool {
@@ -98,22 +99,19 @@ extension ZMConversation {
         }
 
         let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
-
         if networkInfo.qualityType() == .type2G {
+
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,
                 preferredStyle: .alert
             )
-
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { _ in
+            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default) { _ in
                 handler(false)
-            }))
-
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { _ in
+            })
+            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
                 handler(true)
-            }))
-
+            })
             ZClientViewController.shared?.present(badConnectionController, animated: true)
         } else {
             handler(false)
@@ -126,10 +124,17 @@ extension ZMConversation {
             return false
         }
 
-        let internetConnectionAlert = UIAlertController.alertWithOKButton(title: VoiceNetworkErrorLocale.title,
-                                                                          message: VoiceNetworkErrorLocale.body)
+        let alert = UIAlertController(
+            title: VoiceNetworkErrorLocale.title,
+            message: VoiceNetworkErrorLocale.body,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
-        AppDelegate.shared.window?.rootViewController?.present(internetConnectionAlert, animated: true)
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
 
         return true
     }

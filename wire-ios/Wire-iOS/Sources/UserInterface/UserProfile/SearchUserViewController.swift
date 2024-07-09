@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class SearchUserViewController: UIViewController, SpinnerCapable {
@@ -31,16 +32,23 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     private let userId: UUID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
+    private let mainCoordinator: MainCoordinating
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
 
     // MARK: - Init
 
-    init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
+    init(
+        userId: UUID,
+        profileViewControllerDelegate: ProfileViewControllerDelegate?,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
 
         super.init(nibName: nil, bundle: nil)
 
@@ -106,16 +114,28 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
                 user: profileUser,
                 viewer: selfUser,
                 context: .profileViewer,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             profileViewController.delegate = profileViewControllerDelegate
 
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
         } else if isCompleted {
-            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] _ in
-                self?.dismiss(animated: true)
-            })
+            let alert = UIAlertController(
+                title: L10n.Localizable.UrlAction.InvalidUser.title,
+                message: L10n.Localizable.UrlAction.InvalidUser.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .cancel,
+                handler: { [weak self] _ in
+                    self?.dismiss(animated: true)
+                }
+            ))
+
+            present(alert, animated: true)
         }
     }
 

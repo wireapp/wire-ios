@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "الأرشيف";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "المحادثات تبدأ هنا";
@@ -1041,16 +1043,11 @@
 "self.add_email_password" = "إضافة عنوان البريد الإلكتروني وكلمة المرور";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "شروط الاستخدام";
 "about.privacy.title" = "سياسة الخصوصية";
-"about.license.title" = "معلومات عن الترخيص";
 "about.website.title" = "الموقع الإلكتروني ل واير";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "التفاصيل";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "تم استخدام الحساب الخاص بك على:";
@@ -1293,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "في حال وجود مشكلة في تدفق الإشعارات، من المحتمل أن يخبرك Wire Support بإعادة تعيين هذه الأذون.";
 "self.settings.advanced.reset_push_token_alert.title" = "تم إعادة تعيين أذون التدفق";
 "self.settings.advanced.reset_push_token_alert.message" = "سيتم إستعادة الإشعارات خلال ثوانٍ.";
-"self.settings.advanced.version_technical_details.title" = "نسخة التفاصيل الفنية";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "السماح باستخدام البيانات";

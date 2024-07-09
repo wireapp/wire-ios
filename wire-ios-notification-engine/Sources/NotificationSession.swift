@@ -267,7 +267,8 @@ public final class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor),
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -283,7 +284,8 @@ public final class NotificationSession {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
         proteusService: ProteusServiceInterface,
-        mlsDecryptionService: MLSDecryptionServiceInterface
+        mlsDecryptionService: MLSDecryptionServiceInterface,
+        lastEventIDRepository: LastEventIDRepositoryInterface
 
     ) throws {
         self.coreDataStack = coreDataStack
@@ -296,7 +298,8 @@ public final class NotificationSession {
 
         eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
-            syncMOC: coreDataStack.syncContext
+            syncMOC: coreDataStack.syncContext,
+            lastEventIDRepository: lastEventIDRepository
         )
 
         pushNotificationStrategy.delegate = self
@@ -395,13 +398,13 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
-    ) async {
-        let decodedEvents = await eventDecoder.decryptAndStoreEvents(
+    ) async throws {
+        let decodedEvents = try await self.eventDecoder.decryptAndStoreEvents(
             events,
-            publicKeys: try? earService.fetchPublicKeys()
+            publicKeys: try? self.earService.fetchPublicKeys()
         )
 
-        await context.perform { [self] in
+        await self.context.perform { [self] in
             processDecodedEvents(decodedEvents)
         }
     }
@@ -409,18 +412,24 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
         WireLogger.notifications.info("processing \(events.count) decoded events...")
 
+        // Dictionary to filter notifications fetched in same batch with same messageOnce
+        // i.e: textMessage and linkPreview
+        var tempNotifications = [Int: ZMLocalNotification]()
+
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
-                WireLogger.calling.info("detected a call event")
+                WireLogger.calling.info("detected a call event", attributes: event.logAttributes)
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                WireLogger.notifications.info("generated a notification from an event")
-                localNotifications.append(notification)
+                WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes)
+                tempNotifications[notification.contentHashValue] = notification
             } else {
-                WireLogger.notifications.info("ignoring event")
+                WireLogger.notifications.info("ignoring event", attributes: event.logAttributes)
             }
         }
+
+        localNotifications = Array(tempNotifications.values)
         context.saveOrRollback()
     }
 

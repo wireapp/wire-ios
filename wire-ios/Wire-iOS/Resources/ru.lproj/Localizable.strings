@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "архив";
+"archived_list.empty_placeholder.headline" = "В архиве пока ничего нет";
+"archived_list.empty_placeholder.subheadline" = "Для поддержания порядка в списке бесед переместите сюда неиспользуемые. Позже их всегда можно будет разархивировать.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Общение начинается здесь";
@@ -1041,16 +1043,11 @@
 "self.add_email_password" = "Добавить email и пароль";
 
 // About screen
+"about.legal.title" = "Юридическая информация";
 "about.tos.title" = "Условия использования";
 "about.privacy.title" = "Политика конфиденциальности";
-"about.license.title" = "Информация о лицензии";
 "about.website.title" = "Веб-сайт Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Профиль";
-"about.license.open_project_button" = "Просмотреть страницу проекта";
-"about.license.license_header" = "Благодарности";
 
 // Self new devices
 "self.new_device_alert.title" = "Ваша учетная запись использовалась на:";
@@ -1293,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "При возникновении проблем с push-уведомлениями, служба поддержки Wire может попросить вас обновить токен.";
 "self.settings.advanced.reset_push_token_alert.title" = "Токен Push-уведомлений был обновлен";
 "self.settings.advanced.reset_push_token_alert.message" = "Уведомления будут восстановлены в течение нескольких секунд.";
-"self.settings.advanced.version_technical_details.title" = "Техническая информация о версии";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Разрешение на использование данных";

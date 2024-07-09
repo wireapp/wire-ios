@@ -27,6 +27,9 @@ import XCTest
 // + mockProteusService setup
 // as a cleanup we should remove the duplication and refactor this - WPB-5980
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
+    enum FakeCCError: Error {
+        case randomError
+    }
 
     var mockProteusService: MockProteusServiceInterface!
 
@@ -52,7 +55,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             return plaintext
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.proteusService = self.mockProteusService
         }
     }
@@ -181,7 +184,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             if sessionID.clientID.isOne(of: expectedRecipientClientIDs) {
                 return plaintext
             } else {
-                throw ProteusService.EncryptionError.failedToEncryptData
+                throw ProteusService.EncryptionError.failedToEncryptData(FakeCCError.randomError)
             }
         }
 

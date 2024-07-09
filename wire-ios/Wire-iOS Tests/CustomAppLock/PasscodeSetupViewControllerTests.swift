@@ -17,25 +17,30 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class PasscodeSetupViewControllerTests: XCTestCase {
 
     // MARK: Properties
 
     var sut: PasscodeSetupViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
     }
 
     // MARK: tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
     }
 
@@ -70,16 +75,18 @@ final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
         sut = PasscodeSetupViewController(useCompactLayout: false,
                                           context: .createPasscode,
                                           callback: nil)
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme_ifForcedApplock() {
         sut = PasscodeSetupViewController(useCompactLayout: false,
                                           context: .forcedForTeam,
                                           callback: nil)
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testForPasscodePassed() {
@@ -95,6 +102,6 @@ final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
         }
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

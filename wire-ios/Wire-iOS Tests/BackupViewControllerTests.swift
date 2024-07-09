@@ -16,17 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCommonComponents
+import WireDesign
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
 final class BackupViewControllerTests: XCTestCase {
 
+    private var snapshotHelper: SnapshotHelper!
+
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
     }
 
     func testInitialState() {
@@ -34,7 +41,7 @@ final class BackupViewControllerTests: XCTestCase {
         let sut = makeViewController()
 
         // WHEN && THEN
-        self.verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     // MARK: Helpers

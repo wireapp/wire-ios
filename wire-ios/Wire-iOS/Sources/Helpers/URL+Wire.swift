@@ -22,6 +22,7 @@ import WireTransport
 private enum WebsitePages {
     case termsOfServices
     case privacyPolicy
+    case legal
 }
 
 enum TeamSource: Int {
@@ -38,7 +39,6 @@ enum TeamSource: Int {
 struct WireURL: Codable {
     let wireAppOnItunes: URL
     let support: URL
-    let randomProfilePictureSource: URL
 
     static var shared: WireURL! = {
         WireURL(filePath: Bundle.fileURL(for: "url", with: "json")!)
@@ -91,10 +91,6 @@ extension URL {
         WireURL.shared.wireAppOnItunes
     }
 
-    static var wr_randomProfilePictureSource: URL {
-        WireURL.shared.randomProfilePictureSource
-    }
-
     static var wr_emailAlreadyInUseLearnMore: URL {
         wr_support.appendingPathComponent("hc/en-us/articles/115004082129-My-email-address-is-already-in-use-and-I-cannot-create-an-account-What-can-I-do-")
     }
@@ -117,6 +113,10 @@ extension URL {
 
     static var wr_privacyPolicy: URL {
         BackendEnvironment.localizedWebsiteLink(forPage: .privacyPolicy)
+    }
+
+    static var wr_legal: URL {
+        BackendEnvironment.localizedWebsiteLink(forPage: .legal)
     }
 
     static var wr_licenseInformation: URL {
@@ -209,13 +209,17 @@ private extension BackendEnvironment {
     }
 
     static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
+        let languageCode = Locale.autoupdatingCurrent.languageCode
+        let baseURL = shared.websiteURL
+
         switch page {
         case .termsOfServices, .privacyPolicy:
-            if Locale.autoupdatingCurrent.languageCode == "de" {
-                return shared.websiteURL.appendingPathComponent("datenschutz")
-            } else {
-                return shared.websiteURL.appendingPathComponent("legal")
-            }
+            let pathComponent = (languageCode == "de") ? "datenschutz" : "legal"
+            return baseURL.appendingPathComponent(pathComponent)
+
+        case .legal:
+            let pathComponent = (languageCode == "de") ? "de/nutzungsbedingungen" : "legal"
+            return baseURL.appendingPathComponent(pathComponent)
         }
     }
 

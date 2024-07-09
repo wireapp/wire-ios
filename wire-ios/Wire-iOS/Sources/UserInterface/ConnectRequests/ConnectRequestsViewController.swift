@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class ConnectRequestsViewController: UIViewController,
@@ -55,7 +56,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+            connectionRequests = pendingConnectionsList.items
             pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
             userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
         }
@@ -73,7 +74,6 @@ final class ConnectRequestsViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         setupNavigationBar()
     }
 
@@ -99,7 +99,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     private func setupNavigationBar() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Inbox.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Inbox.title.capitalized)
         let button = AuthenticationNavigationBar.makeBackButton()
         button.addTarget(self, action: #selector(onBackButtonPressed), for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
@@ -197,7 +197,7 @@ final class ConnectRequestsViewController: UIViewController,
     func reload(animated: Bool = true) {
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+            connectionRequests = pendingConnectionsList.items
         }
 
         tableView.reloadData()

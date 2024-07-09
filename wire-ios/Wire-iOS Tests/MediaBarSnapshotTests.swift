@@ -19,7 +19,7 @@
 @testable import Wire
 import XCTest
 
-final class MediaBarSnapshotTests: ZMSnapshotTestCase {
+final class MediaBarSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

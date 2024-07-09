@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 extension ConversationListViewController {
@@ -88,7 +89,7 @@ extension ConversationListViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        if viewModel.selfUser.isTeamMember {
+        if viewModel.selfUserLegalHoldSubject.isTeamMember {
             defer { userStatusViewController?.userStatus = viewModel.selfUserStatus }
             guard userStatusViewController == nil else { return }
 
@@ -172,7 +173,7 @@ extension ConversationListViewController {
     }
 
     func updateLegalHoldIndictor() {
-        switch viewModel.selfUser.legalHoldStatus {
+        switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
         case .disabled:
             navigationItem.rightBarButtonItem = nil
         case .pending:
@@ -189,12 +190,17 @@ extension ConversationListViewController {
             return
         }
 
-        LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: viewModel.userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            user: selfUser,
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     @objc
     func presentLegalHoldRequest() {
-        guard case .pending = viewModel.selfUser.legalHoldStatus else {
+        guard case .pending = viewModel.selfUserLegalHoldSubject.legalHoldStatus else {
             return
         }
 
@@ -211,7 +217,7 @@ extension ConversationListViewController: UserStatusViewControllerDelegate {
 
         // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
         viewModel.userSession.perform { [weak self] in
-            self?.viewModel.selfUser.availability = availability
+            self?.viewModel.selfUserLegalHoldSubject.availability = availability
         }
     }
 }

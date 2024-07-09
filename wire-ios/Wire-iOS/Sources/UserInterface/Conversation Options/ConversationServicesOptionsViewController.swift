@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class ConversationServicesOptionsViewController: UIViewController,
@@ -55,7 +56,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceConversationSettings.CloseButton.description
     }

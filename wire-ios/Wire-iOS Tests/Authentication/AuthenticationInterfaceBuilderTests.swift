@@ -17,17 +17,20 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
-final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
         accentColor = .blue
 
@@ -42,6 +45,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         builder = nil
         featureProvider = nil
 
@@ -131,11 +135,11 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     func testTooManyDevicesScreen() {
-        runSnapshotTest(for: .clientManagement(clients: [], credentials: nil))
+        runSnapshotTest(for: .clientManagement(clients: []))
     }
 
     func testClientRemovalScreen() {
-        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()], credentials: nil))
+        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()]))
     }
 
     func testAddEmailPasswordScreen() {
@@ -143,7 +147,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     func testVerifyEmailLinkTests() {
-        let credentials = ZMEmailCredentials(email: "test@example.com", password: "12345678")
+        let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 
@@ -183,8 +187,8 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
             let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
             navigationController.viewControllers = [viewController]
 
-            verify(matching: navigationController,
-                   customSize: customSize,
+            snapshotHelper.verify(matching: navigationController,
+                   size: customSize,
                    file: file,
                    testName: testName,
                    line: line)

@@ -16,17 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class BackupPasswordViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class BackupPasswordViewControllerTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
 
     func testDefaultState() {
         // GIVEN
         let sut = makeViewController()
 
         // WHEN & THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testThatItCallsTheCallback() {

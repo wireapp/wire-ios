@@ -1,0 +1,41 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+
+/// A label used to categorize conversations.
+
+public struct ConversationLabel: Equatable, Codable {
+
+    /// The label's id.
+
+    public let id: UUID
+
+    /// The label's name.
+
+    public let name: String?
+
+    /// The label's raw type.
+
+    public let type: Int16
+
+    /// The conversation ids associated with the label.
+
+    public let conversationIDs: [UUID]
+
+}

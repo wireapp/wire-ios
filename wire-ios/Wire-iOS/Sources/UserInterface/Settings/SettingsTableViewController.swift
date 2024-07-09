@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
@@ -160,11 +161,15 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(group.title)
+    }
+
     required init(group: SettingsInternalGroupCellDescriptorType) {
         self.group = group
         self.sections = group.visibleItems
         super.init(style: group.style == .plain ? .plain : .grouped)
-        setupNavigationTitle()
 
         self.group.items.flatMap { return $0.cellDescriptors }.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
@@ -306,10 +311,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         if let headerFooterView = view as? UITableViewHeaderFooterView {
             headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionFooter
         }
-    }
-
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: group.title.capitalized)
     }
 
 }

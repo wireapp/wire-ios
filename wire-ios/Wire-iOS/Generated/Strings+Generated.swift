@@ -709,6 +709,40 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "createConversation.unselectedUser.hint", fallback: "Double tap to select")
       }
     }
+    internal enum CreateSecureGuestLink {
+      internal enum CreateLinkButton {
+        /// Create guest link
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.CreateLinkButton.description", fallback: "Create guest link")
+        /// Tap to create a secure guest link
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.CreateLinkButton.hint", fallback: "Tap to create a secure guest link")
+      }
+      internal enum GeneratePasswordButton {
+        /// Generate password
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.description", fallback: "Generate password")
+        /// Tap to generate a random password
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.hint", fallback: "Tap to generate a random password")
+      }
+      internal enum CloseButton {
+        /// Close Secure guest link
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.closeButton.description", fallback: "Close Secure guest link")
+      }
+      internal enum SecuredGuestLinkPasswordTextfield {
+        /// Password validation error. Please make sure the password meets the requirements.
+        internal static let announcement = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement", fallback: "Password validation error. Please make sure the password meets the requirements.")
+        /// Guest link password
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordTextfield.description", fallback: "Guest link password")
+        /// Enter a new password for the secure guest link
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordTextfield.hint", fallback: "Enter a new password for the secure guest link")
+      }
+      internal enum SecuredGuestLinkPasswordValidatedTextField {
+        /// Password validation error. Please make sure the password matches the one above
+        internal static let announcement = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement", fallback: "Password validation error. Please make sure the password matches the one above")
+        /// Confirm Guest Link Password
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description", fallback: "Confirm Guest Link Password")
+        /// Re-enter the password for verification
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint", fallback: "Re-enter the password for verification")
+      }
+    }
     internal enum DeveloperOptionsSettings {
       internal enum BackButton {
         /// Go back to Developer options
@@ -757,18 +791,6 @@ internal enum L10n {
       internal enum LoginEnterpriseButton {
         /// Log in with SSO
         internal static let description = L10n.tr("Accessibility", "landing.loginEnterpriseButton.description", fallback: "Log in with SSO")
-      }
-    }
-    internal enum LicenseDetailsSettings {
-      internal enum BackButton {
-        /// Go back to License details
-        internal static let description = L10n.tr("Accessibility", "licenseDetailsSettings.backButton.description", fallback: "Go back to License details")
-      }
-    }
-    internal enum LicenseInformationSettings {
-      internal enum BackButton {
-        /// Go back to License information
-        internal static let description = L10n.tr("Accessibility", "licenseInformationSettings.backButton.description", fallback: "Go back to License information")
       }
     }
     internal enum MessageAction {
@@ -1022,15 +1044,9 @@ internal enum L10n {
         /// © Wire Swiss GmbH
         internal static let title = L10n.tr("Localizable", "about.copyright.title", fallback: "© Wire Swiss GmbH")
       }
-      internal enum License {
-        /// Acknowledgements
-        internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
-        /// View Project Page
-        internal static let openProjectButton = L10n.tr("Localizable", "about.license.open_project_button", fallback: "View Project Page")
-        /// Details
-        internal static let projectHeader = L10n.tr("Localizable", "about.license.project_header", fallback: "Details")
-        /// License Information
-        internal static let title = L10n.tr("Localizable", "about.license.title", fallback: "License Information")
+      internal enum Legal {
+        /// Legal
+        internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
       }
       internal enum Privacy {
         /// Privacy Policy
@@ -2679,16 +2695,6 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.folders.title", fallback: "Folders")
         }
       }
-      internal enum DataUsagePermissionAlert {
-        /// I Agree
-        internal static let agree = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.agree", fallback: "I Agree")
-        /// No
-        internal static let disagree = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.disagree", fallback: "No")
-        /// I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.
-        internal static let message = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.message", fallback: "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.")
-        /// Help us make Wire better
-        internal static let title = L10n.tr("Localizable", "conversation_list.data_usage_permission_alert.title", fallback: "Help us make Wire better")
-      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived
@@ -3469,6 +3475,16 @@ internal enum L10n {
         /// Allow guests
         internal static let title = L10n.tr("Localizable", "guest_room.allow_guests.title", fallback: "Allow guests")
       }
+      internal enum Create {
+        internal enum LinkWithPassword {
+          /// Create password secured link
+          internal static let action = L10n.tr("Localizable", "guest_room.create.link_with_password.action", fallback: "Create password secured link")
+        }
+        internal enum LinkWithoutPassword {
+          /// Create link without password
+          internal static let action = L10n.tr("Localizable", "guest_room.create.link_without_password.action", fallback: "Create link without password")
+        }
+      }
       internal enum Error {
         internal enum Generic {
           /// Check your connection and try again
@@ -3527,6 +3543,16 @@ internal enum L10n {
         /// New guests will not be able to join with this link. Current guests will still have access.
         internal static let message = L10n.tr("Localizable", "guest_room.revoke_link.message", fallback: "New guests will not be able to join with this link. Current guests will still have access.")
       }
+      internal enum SecureLink {
+        internal enum Header {
+          /// People who want to join the conversation via the guest link need to enter this password first. 
+          /// 
+          /// Forgot password? Revoke the link and create a new one.
+          internal static let subtitle = L10n.tr("Localizable", "guest_room.secure_link.header.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.")
+          /// Link is password secured
+          internal static let title = L10n.tr("Localizable", "guest_room.secure_link.header.title", fallback: "Link is password secured")
+        }
+      }
       internal enum Share {
         /// Join me in a conversation on Wire:
         /// %@
@@ -3583,6 +3609,33 @@ internal enum L10n {
         internal static let message = L10n.tr("Localizable", "jailbrokendevice.alert.message", fallback: "For security reasons, Wire can't be used on this device. Any existing Wire data has been erased.")
         /// Jailbreak detected
         internal static let title = L10n.tr("Localizable", "jailbrokendevice.alert.title", fallback: "Jailbreak detected")
+      }
+    }
+    internal enum Join {
+      internal enum Group {
+        internal enum Conversation {
+          internal enum Alert {
+            /// This conversation is password protected
+            internal static let message = L10n.tr("Localizable", "join.group.conversation.alert.message", fallback: "This conversation is password protected")
+            /// %@ 
+            ///  Enter Password
+            internal static func title(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "join.group.conversation.alert.title", String(describing: p1), fallback: "%@ \n Enter Password")
+            }
+            internal enum JoinAction {
+              /// Join conversation
+              internal static let title = L10n.tr("Localizable", "join.group.conversation.alert.joinAction.title", fallback: "Join conversation")
+            }
+            internal enum LearnMoreAction {
+              /// Learn more about guest links
+              internal static let title = L10n.tr("Localizable", "join.group.conversation.alert.learnMoreAction.title", fallback: "Learn more about guest links")
+            }
+            internal enum Textfield {
+              /// Enter conversation password
+              internal static let placeholder = L10n.tr("Localizable", "join.group.conversation.alert.textfield.placeholder", fallback: "Enter conversation password")
+            }
+          }
+        }
       }
     }
     internal enum KeyboardPhotosAccess {
@@ -3814,6 +3867,14 @@ internal enum L10n {
       }
     }
     internal enum Location {
+      internal enum Error {
+        internal enum Alert {
+          /// Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.
+          internal static let description = L10n.tr("Localizable", "location.error.alert.description", fallback: "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.")
+          /// Location can’t be sent.
+          internal static let title = L10n.tr("Localizable", "location.error.alert.title", fallback: "Location can’t be sent.")
+        }
+      }
       internal enum SendButton {
         /// Send
         internal static let title = L10n.tr("Localizable", "location.send_button.title", fallback: "Send")
@@ -4977,6 +5038,45 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "revoked_certificate.alert.title", fallback: "End-to-end certificate revoked")
       }
     }
+    internal enum SecuredGuestLinkWithPassword {
+      internal enum AlertController {
+        /// The password was copied to your device clipboard.
+        internal static let message = L10n.tr("Localizable", "secured_guest_link_with_password.alertController.message", fallback: "The password was copied to your device clipboard.")
+        /// Password copied
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.alertController.title", fallback: "Password copied")
+      }
+      internal enum CreateLinkButton {
+        /// Create Link
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.createLinkButton.title", fallback: "Create Link")
+      }
+      internal enum GeneratePasswordButton {
+        /// Generate password
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.generate_password_button.title", fallback: "Generate password")
+      }
+      internal enum Header {
+        /// Create password secured link
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")
+      }
+      internal enum Textfield {
+        /// Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.
+        internal static let footer = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.footer", fallback: "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        /// Set password
+        internal static let header = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.header", fallback: "Set password")
+        /// Enter password
+        internal static let placeholder = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.placeholder", fallback: "Enter password")
+      }
+      internal enum VerifyPasswordTextField {
+        /// Confirm password
+        internal static let header = L10n.tr("Localizable", "secured_guest_link_with_password.verifyPasswordTextField.header", fallback: "Confirm password")
+        /// Confirm your password
+        internal static let placeholder = L10n.tr("Localizable", "secured_guest_link_with_password.verifyPasswordTextField.placeholder", fallback: "Confirm your password")
+      }
+      internal enum WarningLabel {
+        /// People who want to join the conversation via the guest link need to enter this password first.
+        /// **You can’t change the password later. Make sure to copy and store it.**
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.warning_label.title", fallback: "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**")
+      }
+    }
     internal enum SecurityClassification {
       /// Security level:
       internal static let securityLevel = L10n.tr("Localizable", "security_classification.security_level", fallback: "Security level:")
@@ -5291,10 +5391,6 @@ internal enum L10n {
               /// Debug Report
               internal static let title = L10n.tr("Localizable", "self.settings.advanced.troubleshooting.submit_debug.title", fallback: "Debug Report")
             }
-          }
-          internal enum VersionTechnicalDetails {
-            /// Version Technical Details
-            internal static let title = L10n.tr("Localizable", "self.settings.advanced.version_technical_details.title", fallback: "Version Technical Details")
           }
         }
         internal enum ApnsLogging {
@@ -5892,6 +5988,10 @@ internal enum L10n {
             internal enum ConverationIsFull {
               /// The conversation is full.
               internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.converation_is_full.message", fallback: "The conversation is full.")
+            }
+            internal enum InvalidPassword {
+              /// Password is incorrect, please try again.
+              internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.invalid_password.message", fallback: "Password is incorrect, please try again.")
             }
             internal enum LearnMore {
               /// Learn more about guest links
