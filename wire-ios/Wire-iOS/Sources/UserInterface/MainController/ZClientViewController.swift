@@ -702,6 +702,8 @@ final class ZClientViewController: UIViewController {
         transitionToList(animated: true, completion: nil)
     }
 
+    // MARK: - Profile
+
     func showSelfProfile() {
         conversationListViewController.presentProfile()
     }
@@ -750,12 +752,6 @@ final class ZClientViewController: UIViewController {
         completion: Completion?
     ) {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
-    }
-
-    // MARK: - Profile
-
-    func showSelfProfile() {
-        conversationListViewController.presentProfile()
     }
 
     // MARK: - Archive Tab

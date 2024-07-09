@@ -3,7 +3,6 @@
 --enable blankLineAfterSwitchCase
 --disable hoistTry
 
---typeblanklines preserve
 --ifdef outdent
 --stripunusedargs unnamed-only
 --patternlet inline
