@@ -115,7 +115,7 @@ extension SessionManager {
                 DispatchQueue.main.async(group: dispatchGroup) {
                     switch result {
                     case .success:
-                        let restoreBackupSucceeded = RestoreBackupSucceeded()
+                        let restoreBackupSucceeded = RestoreBackupSucceededAnalyticsEvent()
                         self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupSucceeded)
                     case .failure:
                         let restoreBackupFailed = BackupRestoreFailedAnalyticsEvent()
