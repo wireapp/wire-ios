@@ -55,6 +55,7 @@ NSString * const ZMMessageOriginalSizeDataKey = @"originalSize_data";
 NSString * const ZMMessageOriginalSizeKey = @"originalSize";
 NSString * const ZMMessageConversationKey = @"visibleInConversation";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
+NSString * const ZMMessageShouldExpireKey = @"shouldExpire";
 NSString * const ZMMessageExpirationDateKey = @"expirationDate";
 NSString * const ZMMessageNameKey = @"name";
 NSString * const ZMMessageNeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
@@ -110,6 +111,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 
 @interface ZMMessage (CoreDataForward)
 
+@property (nonatomic) BOOL shouldExpire;
 @property (nonatomic) BOOL isExpired;
 @property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic) NSDate *expirationDate;
@@ -130,6 +132,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 @implementation ZMMessage
 
 @dynamic missingRecipients;
+@dynamic shouldExpire;
 @dynamic isExpired;
 @dynamic expirationReasonCode;
 @dynamic expirationDate;
@@ -214,15 +217,13 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 - (void)resend;
 {
     self.isExpired = NO;
-    [self setExpirationDate];
+    [self removeExpirationDate];
     [self prepareToSend];
 }
 
-- (NSDate *)setExpirationDate;
+- (void)setExpirationDate;
 {
-    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
-    self.expirationDate = expirationDate;
-    return expirationDate;
+    self.expirationDate = [NSDate dateWithTimeIntervalSinceNow:[self.class defaultExpirationTime]];
 }
 
 - (void)removeExpirationDate;
@@ -557,6 +558,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         NSSet *keys = [super ignoredKeys];
         NSArray *newKeys = @[
                              ZMMessageConversationKey,
+                             ZMMessageShouldExpireKey,
                              ZMMessageExpirationDateKey,
                              ZMMessageExpirationReasonCodeKey,
                              ZMMessageImageTypeKey,
