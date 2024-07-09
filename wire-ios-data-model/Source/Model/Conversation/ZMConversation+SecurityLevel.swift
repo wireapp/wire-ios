@@ -19,8 +19,6 @@
 import Foundation
 import WireCryptobox
 
-private let zmLog = ZMSLog(tag: "event-processing")
-
 @objc public enum ZMConversationLegalHoldStatus: Int16 {
     case disabled = 0
     case pendingApproval = 1
@@ -310,7 +308,7 @@ extension ZMConversation {
             return
         }
 
-        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier })")
+        WireLogger.eventProcessing.debug("Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier.safeForLoggingDescription })")
 
         switch conversationType {
         case .group:
@@ -633,10 +631,7 @@ extension ZMConversation {
         domains: [String]? = nil
     ) -> ZMSystemMessage {
         guard let context = managedObjectContext else {
-            let message = "can not append system message without managedObjectContext!"
-            WireLogger.updateEvent.critical(message)
-            zmLog.safePublic(SanitizedString(stringLiteral: message))
-            fatalError("can not append system message without managedObjectContext!")
+            fatal("can not append system message without managedObjectContext!")
         }
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
         systemMessage.systemMessageType = type

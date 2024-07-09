@@ -125,7 +125,7 @@ extension EventDecoder {
         )
 
         if !events.isEmpty {
-            Logging.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
+            WireLogger.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
         }
 
         return decryptedEvents
@@ -192,6 +192,10 @@ extension EventDecoder {
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
         let decryptedEvents = await decryptEvent(event: event, publicKeys: publicKeys, proteusService: proteusService)
+
+        guard !decryptedEvents.isEmpty else {
+            return []
+        }
 
         await eventMOC.perform {
             self.storeUpdateEvents(decryptedEvents, startingAtIndex: index, publicKeys: publicKeys)
@@ -304,7 +308,11 @@ extension EventDecoder {
             )
         }
 
-        self.eventMOC.saveOrRollback()
+        do {
+            try self.eventMOC.save()
+        } catch {
+            WireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
+        }
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.
@@ -359,18 +367,25 @@ extension EventDecoder {
 
     private func processBatch(
         _ events: [ZMUpdateEvent],
-        storedEvents: [NSManagedObject],
+        storedEvents: [StoredUpdateEvent],
         block: ConsumeBlock
     ) async {
         if !events.isEmpty {
-            Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
+            WireLogger.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
         }
 
         await block(filterInvalidEvents(from: events))
 
         await eventMOC.performGrouped {
-            storedEvents.forEach(self.eventMOC.delete(_:))
-            self.eventMOC.saveOrRollback()
+            storedEvents.forEach { storedEvent in
+                self.eventMOC.delete(storedEvent)
+                WireLogger.eventProcessing.info("delete stored event", attributes: [.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"], .safePublic)
+            }
+            do {
+                try self.eventMOC.save()
+            } catch {
+                WireLogger.eventProcessing.critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
+            }
         }
     }
 }

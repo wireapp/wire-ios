@@ -16,22 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMAvailability)
-public enum Availability: Int, CaseIterable {
-    case none, available, busy, away
-}
+import WireDataModel
 
-extension Availability: CustomStringConvertible {
-    public var description: String {
-          switch self {
-          case .none:
-              "none"
-          case .available:
-              "available"
-          case .busy:
-              "busy"
-          case .away:
-              "away"
-          }
-      }
+public extension UserClient {
+
+    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are missing.
+    var qualifiedClientID: QualifiedClientID? {
+        guard
+            let clientID = remoteIdentifier,
+            let qualifiedID = user?.qualifiedID
+        else {
+            return nil
+        }
+
+        return QualifiedClientID(
+            userID: qualifiedID.uuid,
+            domain: qualifiedID.domain,
+            clientID: clientID
+        )
+    }
 }
