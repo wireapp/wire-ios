@@ -1258,14 +1258,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = conversationEventPayload(
+            let payload = self.conversationEventPayload( // swiftlint:disable:this redundant_self_in_closure
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
                 timestamp: nil
             )
 
-            let updateEvent = updateEvent(from: payload.payloadData()!)
+            let updateEvent = self.updateEvent(from: payload.payloadData()!) // swiftlint:disable:this redundant_self_in_closure
             return (payload, updateEvent)
         }
 
@@ -1301,14 +1301,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = conversationEventPayload(
+            let payload = self.conversationEventPayload( // swiftlint:disable:this redundant_self_in_closure
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: user.qualifiedID,
                 timestamp: nil
             )
 
-            let updateEvent = updateEvent(from: payload.payloadData()!)
+            let updateEvent = self.updateEvent(from: payload.payloadData()!) // swiftlint:disable:this redundant_self_in_closure
             return (payload, updateEvent)
         }
 
@@ -1341,14 +1341,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = conversationEventPayload(
+            let payload = self.conversationEventPayload( // swiftlint:disable:this redundant_self_in_closure
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
                 timestamp: nil
             )
 
-            let updateEvent = updateEvent(from: payload.payloadData()!)
+            let updateEvent = self.updateEvent(from: payload.payloadData()!) // swiftlint:disable:this redundant_self_in_closure
             return (payload, updateEvent)
         }
 
