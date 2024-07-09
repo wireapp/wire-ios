@@ -49,26 +49,3 @@ public struct ContributedEvent: AnalyticEvent {
         self.conversationSize = conversationSize
     }
 }
-
-/// An enumeration representing the type of contribution.
-public enum ContributionType {
-
-    case textMessage
-    case likeMessage
-    case pingMessage
-    case fileMessage
-    case imageMessage
-    case locationMessage
-    case audioMessage
-    case videoMessage
-    case audioCallMessage
-    case videoCallMessage
-
-}
-
-/// An enumeration representing the type of conversation.
-public enum ConversationType {
-    case group
-    case oneOnOne
-    case unknown
-}
