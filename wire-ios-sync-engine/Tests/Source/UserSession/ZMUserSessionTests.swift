@@ -270,8 +270,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(contextSaved)
 
         // and WHEN
-        let waitExpectation = XCTestExpectation().inverted()
-        wait(for: [waitExpectation], timeout: 0.5)
+        spinMainQueue(withTimeout: 0.2) // the delayed save will wait 0.1 seconds
 
         // THEN
         XCTAssertTrue(executed)

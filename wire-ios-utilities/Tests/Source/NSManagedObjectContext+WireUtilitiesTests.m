@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import ObjectiveC;
-@import XCTest;
+#import <XCTest/XCTest.h>
+#import "NSManagedObjectContext+WireUtilities.h"
+#import <objc/runtime.h>
 @import WireSystem;
 @import WireTesting;
-@import WireUtilities;
 
 @interface NSManagedObjectContext_WireUtilitiesTests : ZMTBaseTest
 
