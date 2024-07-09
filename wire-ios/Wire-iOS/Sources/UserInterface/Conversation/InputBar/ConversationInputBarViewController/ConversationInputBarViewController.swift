@@ -21,6 +21,7 @@ import UIKit
 import WireSyncEngine
 import avs
 import AVFoundation
+import WireCommonComponents
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -252,7 +253,18 @@ final class ConversationInputBarViewController: UIViewController,
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 
+        // Remove locationButton if feature flag does not allow it
+        if shouldExcludeLocationButton {
+            if let index = buttonsArray.firstIndex(of: locationButton) {
+                buttonsArray.remove(at: index)
+            }
+        }
+
         return buttonsArray
+    }
+
+    private var shouldExcludeLocationButton: Bool {
+        !SecurityFlags.locationSharing.isEnabled
     }
 
     var mode: ConversationInputBarViewControllerMode = .textInput {
