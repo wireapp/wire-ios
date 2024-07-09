@@ -143,7 +143,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 notificationsTracker: nil,
                 eventProcessor: updateEventProcessor,
-                previouslyReceivedEventIDsCollection: nil,
                 applicationStatus: applicationStatusDirectory,
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,

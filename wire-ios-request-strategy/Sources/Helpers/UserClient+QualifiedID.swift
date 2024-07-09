@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
+public extension UserClient {
 
-    /// Messages can expire, e.g. if network conditions are too slow to send.
-    var shouldExpire: Bool { get }
+    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are missing.
+    var qualifiedClientID: QualifiedClientID? {
+        guard
+            let clientID = remoteIdentifier,
+            let qualifiedID = user?.qualifiedID
+        else {
+            return nil
+        }
 
-    /// Sets the expiration date with the default time interval.
-    func setExpirationDate()
+        return QualifiedClientID(
+            userID: qualifiedID.uuid,
+            domain: qualifiedID.domain,
+            clientID: clientID
+        )
+    }
 }
-
-extension ZMClientMessage: ProteusMessage {}
-
-extension ZMAssetClientMessage: ProteusMessage {}
