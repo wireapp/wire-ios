@@ -30,6 +30,6 @@ public protocol AnalyticsSessionProtocol {
     /// - Parameter event: The `AnalyticEvent` to be tracked.
     ///
     /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: any AnalyticEvent)
+    func trackEvent(_ event: any AnalyticsEvent)
 
 }

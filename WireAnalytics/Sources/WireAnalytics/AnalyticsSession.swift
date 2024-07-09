@@ -76,7 +76,7 @@ public struct AnalyticsSession: AnalyticsSessionProtocol {
 
     /// Tracks an analytic event.
     /// - Parameter event: The event to be tracked.
-    public func trackEvent(_ event: any AnalyticEvent) {
+    public func trackEvent(_ event: any AnalyticsEvent) {
         let defaultSegmentation = [
             "os_version": osVersion,
             "device_model": deviceModel,

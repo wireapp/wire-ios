@@ -75,7 +75,7 @@ final class AnalyticsSessionTests: XCTestCase {
 
     func testTrackEvent() {
         // GIVEN
-        let event = AnalyticEvent.appOpen
+        let event = AnalyticsEvent.appOpen
         let expectation = expectation(description: "trackEvent called")
         mockAnalyticsSession.trackEvent_MockMethod = { receivedEvent in
             XCTAssertEqual(receivedEvent, event)

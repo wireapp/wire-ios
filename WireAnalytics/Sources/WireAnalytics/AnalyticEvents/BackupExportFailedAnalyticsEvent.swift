@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct BackupExportFailedAnalyticsEvent: AnalyticEvent {
+public struct BackupExportFailedAnalyticsEvent: AnalyticsEvent {
 
     public init() {}
 

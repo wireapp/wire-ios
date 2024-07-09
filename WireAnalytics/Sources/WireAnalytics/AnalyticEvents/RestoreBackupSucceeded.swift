@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct RestoreBackupSucceeded: AnalyticEvent {
+public struct RestoreBackupSucceeded: AnalyticsEvent {
 
     public init() {}
 

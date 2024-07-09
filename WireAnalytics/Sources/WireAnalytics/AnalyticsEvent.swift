@@ -18,7 +18,7 @@
 
 /// All possible analytic events that can be tracked
 
-public protocol AnalyticEvent {
+public protocol AnalyticsEvent {
 
     var eventName: String { get }
     var segmentation: [String: String] { get }

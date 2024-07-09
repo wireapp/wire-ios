@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct JoinedCallAnaltyicsEvent: AnalyticEvent {
+public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
 
     public var eventName: String {
         "callJoined"
