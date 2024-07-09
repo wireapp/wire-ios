@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireDataModel
 
-class ZMConversationMessagesTests: ZMConversationTestsBase {
+final class ZMConversationMessagesTests: ZMConversationTestsBase {
 
     func testThatWeCanInsertATextMessage() {
 
@@ -452,7 +452,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         // then
         XCTAssertNil(message.underlyingMessage?.imageAssetData)
         XCTAssertNotNil(message.underlyingMessage?.locationData)
-        XCTAssertNotNil(message.expirationDate)
+        XCTAssertTrue(message.shouldExpire)
     }
 
     func testThatWeCanInsertAVideoMessage() {
