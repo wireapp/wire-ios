@@ -19,7 +19,7 @@
 public struct CallStartedEvent: AnalyticEvent {
 
     public var eventName: String {
-        "call_started"
+        "callStarted"
     }
 
     public var segmentation: [String: String] {
