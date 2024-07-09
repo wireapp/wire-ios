@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct ExportBackupFailed: AnalyticEvent {
+public struct AppOpenAnalyticsEvent: AnalyticEvent {
 
     public init() {}
 
     public var eventName: String {
-        "exportBackupFailed"
+        "appOpen"
     }
 
     public var segmentation: [String: String] {

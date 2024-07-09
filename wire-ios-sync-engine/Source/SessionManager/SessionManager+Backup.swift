@@ -60,7 +60,7 @@ extension SessionManager {
                 case .success:
                     break
                 case .failure:
-                    let exportBackupFailed = ExportBackupFailed()
+                    let exportBackupFailed = BackupExportFailedAnalyticsEvent()
                     activeUserSession.analyticsSession?.trackEvent(exportBackupFailed)
                 }
 
@@ -118,7 +118,7 @@ extension SessionManager {
                         let restoreBackupSucceeded = RestoreBackupSucceeded()
                         self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupSucceeded)
                     case .failure:
-                        let restoreBackupFailed = RestoreBackupFailed()
+                        let restoreBackupFailed = BackupRestoreFailedAnalyticsEvent()
                         self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupFailed)
                     }
                     completion(result)

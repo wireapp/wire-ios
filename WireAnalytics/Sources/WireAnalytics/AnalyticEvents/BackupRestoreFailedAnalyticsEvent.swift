@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct CallJoinedEvent: AnalyticEvent {
+public struct BackupRestoreFailedAnalyticsEvent: AnalyticEvent {
+
+    public init() {}
 
     public var eventName: String {
-        "callJoined"
+        "restoreBackupFailed"
     }
 
     public var segmentation: [String: String] {
-        ["group_type": String(describing: conversationType),
-        "is_video_call": String(describing: isVideoCall)]
+        [:]
     }
-
-    public var isVideoCall: Bool
-    public var conversationType: ConversationType
 
 }

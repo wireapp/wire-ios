@@ -50,7 +50,7 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         )
         conversation.draftMessage = nil
         analyticsSession?.trackEvent(
-            ContributedEvent(
+            ConversationContributionAnalyticsEvent(
                 contributionType: .textMessage,
                 conversationType: .init(conversation.conversationType),
                 conversationSize: UInt(

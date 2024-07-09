@@ -38,7 +38,7 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
     ) throws {
         try conversation.appendImage(from: imageData)
         analyticsSession?.trackEvent(
-            ContributedEvent(
+            ConversationContributionAnalyticsEvent(
                 contributionType: .imageMessage,
                 conversationType: .init(
                     conversation.conversationType

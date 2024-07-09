@@ -41,7 +41,7 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
         try conversation.appendLocation(with: locationData)
 
         analyticsSession?.trackEvent(
-            ContributedEvent(
+            ConversationContributionAnalyticsEvent(
                 contributionType: .locationMessage,
                 conversationType: .init(conversation.conversationType),
                 conversationSize: UInt(

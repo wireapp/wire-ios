@@ -69,7 +69,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
         XCTAssertNil(mockConversation.draftMessage)
 
         XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
-        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ContributedEvent)
+        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
         XCTAssertEqual(trackEventInvocation.contributionType, .pingMessage)
         XCTAssertEqual(trackEventInvocation.conversationType, .group)
 

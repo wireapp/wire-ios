@@ -17,7 +17,7 @@
 //
 
 /// A structure representing a contributed event for analytics.
-public struct ContributedEvent: AnalyticEvent {
+public struct ConversationContributionAnalyticsEvent: AnalyticEvent {
 
     /// The name of the event.
     public var eventName: String {

@@ -77,7 +77,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
         XCTAssertNil(mockConversation.draftMessage)
 
         XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
-        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ContributedEvent)
+        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
         XCTAssertEqual(trackEventInvocation.contributionType, .textMessage)
         XCTAssertEqual(trackEventInvocation.conversationType, .group)
     }
