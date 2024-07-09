@@ -16,27 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSystem
-import WireUtilities
+import WireTransport
 
-public enum Logging {
+public struct HttpClientImpl: HttpClient {
 
-    /// For logs related to processing message data, which may included
-    /// work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
-    /// and `ZMAssetClientMessage` container types.
+    let transportSession: any TransportSessionType
+    let queue: any ZMSGroupQueue
 
-    public static let messageProcessing = ZMSLog(tag: "message-processing")
+    public init(transportSession: any TransportSessionType, queue: any ZMSGroupQueue) {
+        self.transportSession = transportSession
+        self.queue = queue
+    }
 
-    /// For logs related to network requests.
+    public func send(_ request: ZMTransportRequest) async -> ZMTransportResponse {
+        await withCheckedContinuation { continuation in
+            let handler = ZMCompletionHandler(on: queue) { response in
+                continuation.resume(returning: response)
+            }
+            request.add(handler)
 
-    public static let network = ZMSLog(tag: "Network")
-
-    /// For logs related to push notifications.
-
-    public static let push = ZMSLog(tag: "Push")
-
-    /// For logs related to encryption at rest.
-
-    public static let EAR = ZMSLog(tag: "EAR")
+            transportSession.enqueueOneTime(request)
+        }
+    }
 }

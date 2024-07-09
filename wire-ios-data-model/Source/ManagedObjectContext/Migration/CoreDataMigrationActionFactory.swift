@@ -18,15 +18,15 @@
 
 import Foundation
 
-struct CoreDataMigrationActionFactory {
+enum CoreDataMigrationActionFactory {
 
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_111:
+        case .v111:
             return RemoveDuplicatePreAction()
 
-        case .version2_107:
-            return CleanupModels2_107PreAction()
+        case .v107:
+            return CleanupModels107PreAction()
 
         default:
             return nil
@@ -35,13 +35,13 @@ struct CoreDataMigrationActionFactory {
 
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_116:
+        case .v116:
             return IsPendingInitialFetchMigrationAction()
 
-        case .version2_114:
+        case .v114:
             return OneOnOneConversationMigrationAction()
 
-        case .version2_111:
+        case .v111:
             return PrefillPrimaryKeyAction()
 
         default:

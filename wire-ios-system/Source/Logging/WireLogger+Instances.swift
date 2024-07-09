@@ -54,5 +54,5 @@ public extension WireLogger {
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
     static let network = WireLogger(tag: "network")
-
+    static let eventProcessing = WireLogger(tag: "event-processing")
 }
