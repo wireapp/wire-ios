@@ -194,7 +194,7 @@ public final class ZMUserSession: NSObject {
             crlAPI: CertificateRevocationListAPI(),
             mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
-            fetchE2eiFeatureConfig: { [weak self] in
+            fetchE2EIFeatureConfig: { [weak self] in
                 guard let self else { return nil }
 
                 let featureRepository = FeatureRepository(context: self.coreDataStack.syncContext)
