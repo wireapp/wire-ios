@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
+import UIKit
 
-NS_ASSUME_NONNULL_BEGIN
+private let searchDebounceInterval: TimeInterval = 0.2
 
-@interface NSString (Normalization)
+extension ConversationListViewController: UISearchResultsUpdating {
 
-- (instancetype)normalizedString;
-- (instancetype)normalizedForSearch;
-- (instancetype)normalizedForMentionSearch;
-- (instancetype)normalizedEmailaddress;
+    func updateSearchResults(for searchController: UISearchController) {
 
-- (BOOL)zmHasOnlyWhitespaceCharacters;
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(applySearchText),
+            object: nil
+        )
 
-@end
-
-NS_ASSUME_NONNULL_END
+        perform(#selector(applySearchText), with: nil, afterDelay: searchDebounceInterval)
+    }
+}

@@ -25,7 +25,6 @@ public struct MiniatureAccountImageFactory: AccountImageFactory {
     public init() {}
 
     public func createImage(initials: String, backgroundColor: UIColor) -> UIImage {
-
         let initials = initials.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { return .init() }
 
@@ -54,12 +53,12 @@ private final class InitialsRenderer: UIView {
         setupLabel(initials)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 
     private func setupLabel(_ initials: String) {
-
         initialsLabel.font = .systemFont(ofSize: 27, weight: .light)
         initialsLabel.textAlignment = .center
         initialsLabel.text = initials
@@ -71,7 +70,6 @@ private final class InitialsRenderer: UIView {
     // MARK: - Methods
 
     fileprivate func renderImage() -> UIImage {
-
         setNeedsLayout()
         layoutIfNeeded()
 

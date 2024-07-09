@@ -16,19 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
+/// A use case which returns a list of conversations which match the provided search text.
+public protocol SearchConversationsUseCaseProtocol {
+    associatedtype ConversationContainer: SearchableConversationContainer
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface NSString (Normalization)
-
-- (instancetype)normalizedString;
-- (instancetype)normalizedForSearch;
-- (instancetype)normalizedForMentionSearch;
-- (instancetype)normalizedEmailaddress;
-
-- (BOOL)zmHasOnlyWhitespaceCharacters;
-
-@end
-
-NS_ASSUME_NONNULL_END
+    /// Returns conversations which match the `searchText`.
+    func invoke(searchText: String) -> [ConversationContainer]
+}

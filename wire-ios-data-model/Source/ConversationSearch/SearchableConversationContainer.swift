@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
+/// A mutable container of conversations used by the `ConversationSearchUseCase`.
+/// This can be interpreted as a section in a table where a row is a conversation.
+public protocol SearchableConversationContainer {
+    associatedtype Conversation: SearchableConversation
 
-NS_ASSUME_NONNULL_BEGIN
+    var conversations: [Conversation] { get }
 
-@interface NSString (Normalization)
-
-- (instancetype)normalizedString;
-- (instancetype)normalizedForSearch;
-- (instancetype)normalizedForMentionSearch;
-- (instancetype)normalizedEmailaddress;
-
-- (BOOL)zmHasOnlyWhitespaceCharacters;
-
-@end
-
-NS_ASSUME_NONNULL_END
+    mutating func removeConversation(at index: Int)
+}

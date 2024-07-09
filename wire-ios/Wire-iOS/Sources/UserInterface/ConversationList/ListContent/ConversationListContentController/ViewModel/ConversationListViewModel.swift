@@ -33,6 +33,10 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    var appliedSearchText = "" {
+        didSet { reloadConversationList() }
+    }
+
     fileprivate struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
@@ -527,7 +531,15 @@ final class ConversationListViewModel: NSObject {
             kinds = [.conversations, .contactRequests]
         }
 
-        return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
+        let sections = kinds.map { kind in
+            Section(
+                kind: kind,
+                conversationDirectory: conversationDirectory,
+                collapsed: state.collapsed.contains(kind.identifier)
+            )
+        }
+        let searchUseCase = SearchConversationsUseCase(conversationContainers: sections)
+        return searchUseCase.invoke(searchText: appliedSearchText)
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
@@ -615,11 +627,11 @@ final class ConversationListViewModel: NSObject {
     // MARK: - folder badge
 
     func folderBadge(at sectionIndex: Int) -> Int {
-        return sections[sectionIndex].items.filter({
+        sections[sectionIndex].items.filter {
             let status = ($0.item as? ZMConversation)?.status
             return status?.messagesRequiringAttention.isEmpty == false &&
             status?.showingAllMessages == true
-        }).count
+        }.count
     }
 
     func collapsed(at sectionIndex: Int) -> Bool {
@@ -786,5 +798,20 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 
         return kind
 
+    }
+}
+
+// MARK: - Section + SearchableConversationContainer
+
+extension ConversationListViewModel.Section: SearchableConversationContainer {
+
+    var conversations: [SearchableZMConversationWrapper] {
+        items
+            .compactMap { $0.item as? ZMConversation }
+            .map(SearchableZMConversationWrapper.init(conversation:))
+    }
+
+    mutating func removeConversation(at index: Int) {
+        items.remove(at: index)
     }
 }

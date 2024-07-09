@@ -23,10 +23,6 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-enum ConversationFilterType {
-    case favorites, groups, oneToOneConversations
-}
-
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModel(
