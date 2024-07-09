@@ -127,26 +127,10 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
 
-    static var debugLogs: [URL] {
-        let oslogs = LogFileDestination.allCases.compactMap { $0.log }
-        let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
-
-        return ZMSLog.previousZipLogURLs + oslogs + currentLog
-    }
-
-    static var areDebugLogsPresent: Bool {
-        return !debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isEmpty
-    }
-
     /// Sends recorded logs by email
     static func sendLogsByEmail(message: String, shareWithAVS: Bool = false) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
-
-        guard areDebugLogsPresent else {
-            DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
-            return
-        }
 
         // Prepare subject & body
         let user = SelfUser.provider?.providedSelfUser as? ZMUser
