@@ -80,6 +80,7 @@ custom_rules:
     severity: warning
 
 excluded:
+  - "**/.build"
   - "**/*/Package.swift"
   - "**/.build"
   - Carthage
