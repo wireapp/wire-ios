@@ -19,6 +19,7 @@
 import Foundation
 import SwiftUI
 
+// TODO: do we need this class?
 final class EditGroupIconViewController: UIHostingController<GroupIconPickerView> {
     weak var dismisser: ViewControllerDismisser?
 

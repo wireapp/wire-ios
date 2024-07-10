@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireDesign
 import WireSyncEngine
@@ -467,9 +468,13 @@ extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let menu = EditGroupIconViewController()
-        menu.dismisser = self
-        navigationController?.pushViewController(menu, animated: animated)
+//        let menu = EditGroupIconViewController()
+//        menu.dismisser = self
+
+        let view = GroupIconPickerView()
+        let viewController = UIHostingController(rootView: view)
+
+        navigationController?.pushViewController(viewController, animated: animated)
     }
 }
 
