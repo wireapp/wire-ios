@@ -29,7 +29,10 @@ public enum BackendInfo {
 
     }
 
-    public static var storage = UserDefaults.standard
+    private static let productionStorage = UserDefaults.standard
+
+    // TODO: add private(set) after test methods?
+    public static var storage = productionStorage
 
     /// The currently selected API Version.
 
@@ -68,5 +71,18 @@ public enum BackendInfo {
         let storedValue = storage.integer(forKey: key.rawValue)
         return APIVersion(rawValue: Int32(storedValue))
     }
+}
 
+// MARK: - Mock
+
+extension BackendInfo {
+    @_spi(MockBackendInfo)
+    public static func enableMocking() {
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+    }
+
+    @_spi(MockBackendInfo)
+    public static func resetMocking() {
+        BackendInfo.storage = productionStorage
+    }
 }
