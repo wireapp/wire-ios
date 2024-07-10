@@ -16,9 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
+
 struct UpdateGroupIconUseCase {
 
-    func invoke(colorString: String) {
+    var conversationId: QualifiedID
+    var context: NSManagedObjectContext
+
+    func invoke(colorString: String?, emoji: String?) async {
+        guard colorString != nil || emoji != nil else {
+            debugPrint("nothing to update")
+            return
+        }
         debugPrint("send \(colorString) to the backend!")
+        // TODO: do the request here
+        await saveConversation(colorString: colorString, emoji: emoji)
+    }
+
+    private func saveConversation(colorString: String?, emoji: String?) async {
+        await context.perform {
+            let conversation = ZMConversation.fetchOrCreate(with: conversationId.uuid, domain: conversationId.domain, in: context)
+            conversation.groupColor = colorString
+            conversation.groupEmoji = emoji
+            context.saveOrRollback()
+        }
     }
 }

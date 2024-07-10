@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDataModel
 import WireDesign
 
 final class GroupIconPickerViewModel: ObservableObject {
@@ -42,8 +43,15 @@ final class GroupIconPickerViewModel: ObservableObject {
     ]
 
     @Published var selectedItem: GroupIconPickerDisplayModel.Item?
+    let conversation: ZMConversation
+    private let updateGroupIconUseCase: UpdateGroupIconUseCase
 
-    private let updateGroupIconUseCase = UpdateGroupIconUseCase()
+    init(conversation: ZMConversation, syncContext: NSManagedObjectContext) {
+        self.conversation = conversation
+        self.updateGroupIconUseCase = UpdateGroupIconUseCase(conversationId: conversation.qualifiedID!, context: syncContext)
+        selectedItem = conversation.groupColor.flatMap { GroupIconPickerDisplayModel.Item(hexColor: $0) }
+        print(selectedItem)
+    }
 
     func selectItem(_ item: GroupIconPickerDisplayModel.Item) {
         if selectedItem == item {
@@ -60,7 +68,37 @@ final class GroupIconPickerViewModel: ObservableObject {
     }
 
     private func updateGroupIcon(_ item: GroupIconPickerDisplayModel.Item) {
-        let colorString = String(describing: selectedItem?.color)
-        updateGroupIconUseCase.invoke(colorString: colorString)
+        Task {
+            await updateGroupIconUseCase.invoke(colorString: selectedItem?.color.toHexString(), emoji: nil)
+        }
+    }
+}
+
+extension Color {
+    func toHexString() -> String? {
+        // Convert SwiftUI Color to UIColor to extract RGB components
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        // Extract RGBA components
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
+            return nil
+        }
+
+        // Convert components to hex string
+        let redInt = Int(red * 255)
+        let greenInt = Int(green * 255)
+        let blueInt = Int(blue * 255)
+        let alphaInt = Int(alpha * 255)
+
+        // Format the string with or without alpha channel
+        if alphaInt == 255 {
+            return String(format: "#%02X%02X%02X", redInt, greenInt, blueInt)
+        } else {
+            return String(format: "#%02X%02X%02X%02X", redInt, greenInt, blueInt, alphaInt)
+        }
     }
 }

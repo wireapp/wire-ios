@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDataModel
 
 struct GroupIconPickerView: View {
 
@@ -26,9 +27,16 @@ struct GroupIconPickerView: View {
         GridItem(.adaptive(minimum: 50, maximum: 60))
     ]
 
-    @StateObject var viewModel = GroupIconPickerViewModel()
+    @StateObject var viewModel: GroupIconPickerViewModel
+
+    init(conversation: ZMConversation, syncContext: NSManagedObjectContext) {
+        print("🕵🏽 conversation")
+        _viewModel = StateObject(wrappedValue: .init(conversation: conversation, syncContext: syncContext))
+    }
 
     var body: some View {
+        Self._printChanges()
+        return
         VStack(alignment: .leading) {
             Text("Select a color for the group avatar:")
 
@@ -65,8 +73,4 @@ struct GroupIconPickerView: View {
             }
         }
     }
-}
-
-#Preview {
-    GroupIconPickerView()
 }

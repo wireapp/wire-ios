@@ -471,7 +471,7 @@ extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
 //        let menu = EditGroupIconViewController()
 //        menu.dismisser = self
 
-        let view = GroupIconPickerView()
+        let view = GroupIconPickerView(conversation: conversation, syncContext: userSession.syncManagedObjectContext)
         let viewController = UIHostingController(rootView: view)
 
         navigationController?.pushViewController(viewController, animated: animated)
