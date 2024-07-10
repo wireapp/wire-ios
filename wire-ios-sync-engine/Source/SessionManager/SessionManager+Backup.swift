@@ -101,6 +101,31 @@ extension SessionManager {
     // MARK: - Import
 
     public func restoreFromUniversalBackup(at location: URL) async throws {
+        guard let userId = unauthenticatedSession?.authenticationStatus.authenticatedUserIdentifier else {
+            throw BackupError.notAuthenticated
+        }
+
+        let unzippedURL = Self.temporaryURL(for: location)
+        guard location.unzip(to: unzippedURL) else {
+            throw BackupError.compressionError
+        }
+
+        let metadataURL = unzippedURL.appendingPathComponent("exports.json")
+        let conversationsURL = unzippedURL.appendingPathComponent("conversations.json")
+        let usersURL = unzippedURL.appendingPathComponent("users.json")
+        let eventsURL = unzippedURL.appendingPathComponent("events.json")
+
+        let metadataData = try Data(contentsOf: conversationsURL)
+        let conversationsData = try Data(contentsOf: conversationsURL)
+        let usersData = try Data(contentsOf: conversationsURL)
+        let eventsData = try Data(contentsOf: conversationsURL)
+
+        let decoder = JSONDecoder()
+        let metadata = try JSONDecoder().decode(MetadataBackupModel.self, from: metadataData)
+        let conversations = try JSONDecoder().decode([ConversationBackupModel].self, from: conversationsData)
+        let users = try JSONDecoder().decode([UserBackupModel].self, from: usersData)
+        let events = try JSONDecoder().decode([TextMessageBackupModel].self, from: eventsData)
+
         // TODO: basic validation
         // TODO: unzip the url
         // TODO: parse export.json to extract self user info

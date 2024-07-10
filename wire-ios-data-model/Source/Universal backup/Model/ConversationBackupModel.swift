@@ -18,22 +18,25 @@
 
 import Foundation
 
-public struct ConversationBackupModel {
+public struct ConversationBackupModel: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id
+        case domain
+        case name
+        case otherParticipants = "qualified_others"
+    }
 
-    public let qualifiedID: QualifiedID
+    public let id: UUID
+    public let domain: String
 
     public let name: String
 
-    public let participants: Set<QualifiedID>
+    public let otherParticipants: Set<QualifiedID>
 
-    public init(
-        qualifiedID: QualifiedID,
-        name: String,
-        participants: Set<QualifiedID>
-    ) {
-        self.qualifiedID = qualifiedID
+    public init(id: UUID, domain: String, name: String, otherParticipants: Set<QualifiedID>) {
+        self.id = id
+        self.domain = domain
         self.name = name
-        self.participants = participants
+        self.otherParticipants = otherParticipants
     }
-
 }

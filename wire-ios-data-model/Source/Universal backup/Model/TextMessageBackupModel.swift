@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct TextMessageBackupModel {
+public struct TextMessageBackupModel: Codable {
 
     public let nonce: UUID
 
