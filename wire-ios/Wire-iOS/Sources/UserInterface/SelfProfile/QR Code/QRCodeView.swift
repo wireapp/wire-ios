@@ -33,11 +33,12 @@ struct QRCodeView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 250, height: 250)
 
-                    Image(systemName: "qrcode")
+                    Image(uiImage: QRCodeGenerator.generateQRCode(from: "Custom string"))
+                        .interpolation(.none)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 200, height: 200)
-                        .padding()
+                }
                 }
                 .padding()
 
@@ -53,4 +54,7 @@ struct QRCodeView: View {
             })
         }
     }
+
+#Preview {
+    QRCodeView()
 }

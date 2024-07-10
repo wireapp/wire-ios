@@ -1432,6 +1432,7 @@
 		E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */; };
 		E9F3183B28D9B03100FDB244 /* UIButton+RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */; };
 		E9F3250D2C3E8CDF00487092 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */; };
+		E9F325102C3E99C200487092 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3250F2C3E99C200487092 /* QRCodeGenerator.swift */; };
 		EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08025ADA3D5001DB205 /* AppLockModule.swift */; };
 		EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */; };
 		EE01D08725ADA3D5001DB205 /* AppLockModule.Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */; };
@@ -3513,6 +3514,7 @@
 		E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+RoundedCorners.swift"; sourceTree = "<group>"; };
 		E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
+		E9F3250F2C3E99C200487092 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
 		EE01D08025ADA3D5001DB205 /* AppLockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.swift; sourceTree = "<group>"; };
 		EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Presenter.swift; sourceTree = "<group>"; };
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
@@ -5953,7 +5955,7 @@
 				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
 				EFDAC64622DE2AD100D63025 /* TeamImageView.swift */,
 				D3BF754A29B093FD008459B5 /* WarningLabelView.swift */,
-				E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */,
+				E9F3250E2C3E99A200487092 /* QR Code */,
 			);
 			path = SelfProfile;
 			sourceTree = "<group>";
@@ -7964,6 +7966,15 @@
 				E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */,
 			);
 			path = Styles;
+			sourceTree = "<group>";
+		};
+		E9F3250E2C3E99A200487092 /* QR Code */ = {
+			isa = PBXGroup;
+			children = (
+				E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */,
+				E9F3250F2C3E99C200487092 /* QRCodeGenerator.swift */,
+			);
+			path = "QR Code";
 			sourceTree = "<group>";
 		};
 		EE01D07F25ADA3AD001DB205 /* App Lock */ = {
@@ -10406,6 +10417,7 @@
 				160D691D212AC95A00096EAD /* ImageResourceView.swift in Sources */,
 				1639A80D225F604100868AB9 /* Settings+Availability.swift in Sources */,
 				F10F46D420288CEB00261449 /* ConversationCreationController.swift in Sources */,
+				E9F325102C3E99C200487092 /* QRCodeGenerator.swift in Sources */,
 				A965F89E23DB3359005209E1 /* ConversationInputBarViewController.swift in Sources */,
 				87E8D0BB2182179F00BD26AC /* ConversationInputBarViewController+Reply.swift in Sources */,
 				BF0555BD1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift in Sources */,
