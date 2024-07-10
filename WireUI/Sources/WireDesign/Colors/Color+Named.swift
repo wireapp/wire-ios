@@ -57,6 +57,12 @@ public extension Color {
     )
     )
 
+    static let secondaryButtonBackgroundHighlighted = Color(uiColor: UIColor(
+        light: .white,
+        dark: .gray80
+    )
+    )
+
     static let secondaryButtonBorder = Color(uiColor: UIColor(
         light: .gray40,
         dark: .gray80
