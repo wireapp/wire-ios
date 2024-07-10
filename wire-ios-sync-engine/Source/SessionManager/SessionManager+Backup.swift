@@ -146,7 +146,7 @@ extension SessionManager {
         _ type: T.Type,
         from url: URL
     ) throws -> T {
-        let decoder = JSONDecoder()
+        let decoder = JSONDecoder.defaultDecoder
         let data = try Data(contentsOf: url)
         return try decoder.decode(T.self, from: data)
     }
