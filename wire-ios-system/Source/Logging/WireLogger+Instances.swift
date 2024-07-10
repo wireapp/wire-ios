@@ -36,11 +36,13 @@ public extension WireLogger {
     static let featureConfigs = WireLogger(tag: "feature-configurations")
     static let keychain = WireLogger(tag: "keychain")
     static let localStorage = WireLogger(tag: "local-storage")
+    static let mainCoordinator = WireLogger(tag: "main-coordinator")
     static let messaging = WireLogger(tag: "messaging")
     static let mls = WireLogger(tag: "mls")
     static let notifications = WireLogger(tag: "notifications")
     static let performance = WireLogger(tag: "performance")
     static let push = WireLogger(tag: "push")
+    static let pushChannel = WireLogger(tag: "push-channel")
     static let proteus = WireLogger(tag: "proteus")
     static let session = WireLogger(tag: "session")
     static let sessionManager = WireLogger(tag: "SessionManager")
@@ -52,5 +54,5 @@ public extension WireLogger {
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
     static let network = WireLogger(tag: "network")
-
+    static let eventProcessing = WireLogger(tag: "event-processing")
 }

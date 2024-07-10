@@ -201,7 +201,7 @@ public final class ZMUserSession: NSObject {
         return managedObjectContext.conversationListDirectory()
     }
 
-    public private(set) var networkState: ZMNetworkState = .online {
+    public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
                 ZMNetworkAvailabilityChangeNotification.notify(
@@ -524,7 +524,8 @@ public final class ZMUserSession: NSObject {
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
+            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor],
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -738,7 +739,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        let state: ZMNetworkState
+        let state: NetworkState
 
         if isNetworkOnline {
             if isPerformingSync {

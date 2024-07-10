@@ -115,7 +115,7 @@ public extension String {
         return String(repeating: self, count: count)
     }
 
-    func redactedAndTruncated(maxVisibleCharacters: Int, length: Int) -> String {
+    func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {
         if self.count <= maxVisibleCharacters {
             return redacted
         }

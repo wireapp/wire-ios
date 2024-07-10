@@ -23,10 +23,6 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-enum ConversationFilterType {
-    case favorites, groups, oneToOneConversations
-}
-
 extension ConversationListViewController {
 
     func conversationListViewControllerViewModel(
@@ -362,7 +358,12 @@ extension ConversationListViewController {
             return
         }
 
-        LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: viewModel.userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            user: selfUser,
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     @objc

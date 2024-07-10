@@ -22,6 +22,7 @@ import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
+    private let mainCoordinator: MainCoordinating
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -44,10 +45,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
+        mainCoordinator: MainCoordinating,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
@@ -347,7 +350,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
             conversation: conversation,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
 
         detailsViewController.delegate = self
@@ -368,7 +372,12 @@ extension GroupDetailsViewController {
     func presentLegalHoldDetails() {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
 }
@@ -457,7 +466,7 @@ extension GroupDetailsViewController: ViewControllerDismisser {
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }
@@ -472,7 +481,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
 
         navigationController?.pushViewController(viewController, animated: true)

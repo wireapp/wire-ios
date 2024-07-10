@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import WireAPI
 import WireDataModel
 
 @testable import WireDomain
@@ -55,6 +56,95 @@ import WireDataModel
 
 
 
+class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - decryptedEventData
+
+    var decryptedEventDataFrom_Invocations: [ConversationProteusMessageAddEvent] = []
+    var decryptedEventDataFrom_MockError: Error?
+    var decryptedEventDataFrom_MockMethod: ((ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent)?
+    var decryptedEventDataFrom_MockValue: ConversationProteusMessageAddEvent?
+
+    func decryptedEventData(from eventData: ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent {
+        decryptedEventDataFrom_Invocations.append(eventData)
+
+        if let error = decryptedEventDataFrom_MockError {
+            throw error
+        }
+
+        if let mock = decryptedEventDataFrom_MockMethod {
+            return try await mock(eventData)
+        } else if let mock = decryptedEventDataFrom_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptedEventDataFrom`")
+        }
+    }
+
+}
+
+public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchSelfUser
+
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
+
+    public func fetchSelfUser() -> ZMUser {
+        fetchSelfUser_Invocations.append(())
+
+        if let mock = fetchSelfUser_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfUser`")
+        }
+    }
+
+}
+
+class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - decryptEvents
+
+    var decryptEventsIn_Invocations: [UpdateEventEnvelope] = []
+    var decryptEventsIn_MockError: Error?
+    var decryptEventsIn_MockMethod: ((UpdateEventEnvelope) async throws -> [UpdateEvent])?
+    var decryptEventsIn_MockValue: [UpdateEvent]?
+
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
+        decryptEventsIn_Invocations.append(eventEnvelope)
+
+        if let error = decryptEventsIn_MockError {
+            throw error
+        }
+
+        if let mock = decryptEventsIn_MockMethod {
+            return try await mock(eventEnvelope)
+        } else if let mock = decryptEventsIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptEventsIn`")
+        }
+    }
+
+}
+
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - Life cycle
@@ -78,6 +168,46 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         } else {
             fatalError("no mock for `fetchSelfUser`")
         }
+    }
+
+    // MARK: - pullKnownUsers
+
+    public var pullKnownUsers_Invocations: [Void] = []
+    public var pullKnownUsers_MockError: Error?
+    public var pullKnownUsers_MockMethod: (() async throws -> Void)?
+
+    public func pullKnownUsers() async throws {
+        pullKnownUsers_Invocations.append(())
+
+        if let error = pullKnownUsers_MockError {
+            throw error
+        }
+
+        guard let mock = pullKnownUsers_MockMethod else {
+            fatalError("no mock for `pullKnownUsers`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - pullUsers
+
+    public var pullUsersUserIDs_Invocations: [[WireDataModel.QualifiedID]] = []
+    public var pullUsersUserIDs_MockError: Error?
+    public var pullUsersUserIDs_MockMethod: (([WireDataModel.QualifiedID]) async throws -> Void)?
+
+    public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {
+        pullUsersUserIDs_Invocations.append(userIDs)
+
+        if let error = pullUsersUserIDs_MockError {
+            throw error
+        }
+
+        guard let mock = pullUsersUserIDs_MockMethod else {
+            fatalError("no mock for `pullUsersUserIDs`")
+        }
+
+        try await mock(userIDs)
     }
 
 }

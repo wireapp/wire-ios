@@ -43,8 +43,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
         _ conversation: ZMConversation!,
         scrollTo message: ZMConversationMessage?,
         focusOnView focus: Bool,
-        animated: Bool,
-        completion: (() -> Void)?
+        animated: Bool
     ) -> Bool {
         isSelectedOnListContentController = true
         return false

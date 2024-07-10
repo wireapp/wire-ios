@@ -88,8 +88,17 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
      * - parameter message: The message to display the details of.
      */
 
-    convenience init(message: ZMConversationMessage, userSession: UserSession) {
-        self.init(message: message, preferredDisplayMode: .receipts, userSession: userSession)
+    convenience init(
+        message: ZMConversationMessage,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
+        self.init(
+            message: message,
+            preferredDisplayMode: .receipts,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     /**
@@ -100,7 +109,12 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
      * if the data source says it is unavailable for the message.
      */
 
-    init(message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode, userSession: UserSession) {
+    init(
+        message: ZMConversationMessage,
+        preferredDisplayMode: MessageDetailsDisplayMode,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.message = message
         self.dataSource = MessageDetailsDataSource(message: message)
         self.userSession = userSession
@@ -110,12 +124,14 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
             let readReceiptsViewController = MessageDetailsContentViewController(
                 contentType: .receipts(enabled: dataSource.supportsReadReceipts),
                 conversation: dataSource.conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             let reactionsViewController = MessageDetailsContentViewController(
                 contentType: .reactions,
                 conversation: dataSource.conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             viewControllers = .combinedView(readReceipts: readReceiptsViewController, reactions: reactionsViewController)
 
@@ -123,7 +139,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
             let reactionsViewController = MessageDetailsContentViewController(
                 contentType: .reactions,
                 conversation: dataSource.conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             viewControllers = .singleView(reactionsViewController)
 
@@ -131,7 +148,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
             let readReceiptsViewController = MessageDetailsContentViewController(
                 contentType: .receipts(enabled: dataSource.supportsReadReceipts),
                 conversation: dataSource.conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             viewControllers = .singleView(readReceiptsViewController)
         }

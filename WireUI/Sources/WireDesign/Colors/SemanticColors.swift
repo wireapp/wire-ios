@@ -275,9 +275,9 @@ public enum SemanticColors {
     }
 }
 
-extension UIColor {
+private extension UIColor {
 
-    fileprivate convenience init(light: ColorResource, dark: ColorResource) {
+    convenience init(light: ColorResource, dark: ColorResource) {
         self.init { traits in
             .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
         }

@@ -19,10 +19,6 @@
 import SwiftUI
 import WireDesign
 
-enum MainTabBarControllerTab: Int {
-    case conversations, archive, settings
-}
-
 func MainTabBarController(
     conversations: UIViewController,
     archive: UIViewController,

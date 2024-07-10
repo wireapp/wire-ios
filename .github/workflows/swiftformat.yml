@@ -19,5 +19,12 @@ jobs:
       steps:
         - uses: actions/checkout@v4
         - name: GitHub Action for SwiftFormat
-          run: |
-            swiftformat --lint ./WireAPI --reporter github-actions-log
+          run: >
+            swiftformat --lint
+            ./SourceryPlugin
+            ./WireAPI
+            ./WireAnalytics
+            ./WireDomain
+            ./WireUI
+            --reporter github-actions-log
+            --config .swiftformat

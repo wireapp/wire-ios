@@ -837,18 +837,6 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "landing.loginEnterpriseButton.description", fallback: "Log in with SSO")
       }
     }
-    internal enum LicenseDetailsSettings {
-      internal enum BackButton {
-        /// Go back to License details
-        internal static let description = L10n.tr("Accessibility", "licenseDetailsSettings.backButton.description", fallback: "Go back to License details")
-      }
-    }
-    internal enum LicenseInformationSettings {
-      internal enum BackButton {
-        /// Go back to License information
-        internal static let description = L10n.tr("Accessibility", "licenseInformationSettings.backButton.description", fallback: "Go back to License information")
-      }
-    }
     internal enum MessageAction {
       internal enum CopyButton {
         /// Copy picture
@@ -1097,16 +1085,6 @@ internal enum L10n {
       internal enum Legal {
         /// Legal
         internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
-      }
-      internal enum License {
-        /// Acknowledgements
-        internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
-        /// View Project Page
-        internal static let openProjectButton = L10n.tr("Localizable", "about.license.open_project_button", fallback: "View Project Page")
-        /// Details
-        internal static let projectHeader = L10n.tr("Localizable", "about.license.project_header", fallback: "Details")
-        /// License Information
-        internal static let title = L10n.tr("Localizable", "about.license.title", fallback: "License Information")
       }
       internal enum Privacy {
         /// Privacy Policy
@@ -5469,10 +5447,6 @@ internal enum L10n {
               /// Debug Report
               internal static let title = L10n.tr("Localizable", "self.settings.advanced.troubleshooting.submit_debug.title", fallback: "Debug Report")
             }
-          }
-          internal enum VersionTechnicalDetails {
-            /// Version Technical Details
-            internal static let title = L10n.tr("Localizable", "self.settings.advanced.version_technical_details.title", fallback: "Version Technical Details")
           }
         }
         internal enum ApnsLogging {
