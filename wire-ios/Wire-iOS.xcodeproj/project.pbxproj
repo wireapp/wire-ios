@@ -1322,6 +1322,9 @@
 		E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E66C51D62C13395400F82F88 /* WireAnalytics */; };
 		E66C51D92C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */; };
 		E66D4E822BE525DF00C7F374 /* AVSVideoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */; };
+		E67D5C892C3EB58A0001AF81 /* GroupIconPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C882C3EB58A0001AF81 /* GroupIconPickerViewModel.swift */; };
+		E67D5C8B2C3EB5960001AF81 /* GroupIconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C8A2C3EB5960001AF81 /* GroupIconPickerView.swift */; };
+		E67D5C8D2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C8C2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
 		E68C005C2C1C533000747C9E /* WireAnalytics+Datadog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */; };
 		E6A09CD12C2D50AA0069C15A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8FC850BA199245760008B66B /* Settings.bundle */; };
@@ -3417,6 +3420,9 @@
 		E66C51D42C13375700F82F88 /* WireAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalytics.swift; sourceTree = "<group>"; };
 		E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireDatadog+LoggerProtocol.swift"; sourceTree = "<group>"; };
 		E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSVideoContainerView.swift; sourceTree = "<group>"; };
+		E67D5C882C3EB58A0001AF81 /* GroupIconPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIconPickerViewModel.swift; sourceTree = "<group>"; };
+		E67D5C8A2C3EB5960001AF81 /* GroupIconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIconPickerView.swift; sourceTree = "<group>"; };
+		E67D5C8C2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIconPickerDisplayModel.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
 		E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+Datadog.swift"; sourceTree = "<group>"; };
 		E6A09CD62C2ECA960069C15A /* SystemSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsTests.swift; sourceTree = "<group>"; };
@@ -7666,6 +7672,7 @@
 				E9D141632AC704E9005EE75D /* CreateSecureGuestLink */,
 				E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */,
 				015FE4332C3EB18C00F3355F /* EditGroupIconViewController.swift */,
+				E67D5C872C3EB57A0001AF81 /* GroupIconPicker */,
 			);
 			path = "Conversation Options";
 			sourceTree = "<group>";
@@ -7798,6 +7805,16 @@
 				D5D65A10207509F300D7F3C3 /* BackupPasswordViewController.swift */,
 			);
 			path = Backup;
+			sourceTree = "<group>";
+		};
+		E67D5C872C3EB57A0001AF81 /* GroupIconPicker */ = {
+			isa = PBXGroup;
+			children = (
+				E67D5C8A2C3EB5960001AF81 /* GroupIconPickerView.swift */,
+				E67D5C882C3EB58A0001AF81 /* GroupIconPickerViewModel.swift */,
+				E67D5C8C2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift */,
+			);
+			path = GroupIconPicker;
 			sourceTree = "<group>";
 		};
 		E68293972B9B5FF300322645 /* ConfigurationMessageCell */ = {
@@ -9908,6 +9925,7 @@
 				16271BC61D9EB12E00689486 /* TypingIndicatorView.swift in Sources */,
 				5E8DA762211B286900360979 /* AuthenticationBackupReadyEventHandler.swift in Sources */,
 				876113E21DD1DD4D007F5969 /* CanvasViewController.swift in Sources */,
+				E67D5C8D2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift in Sources */,
 				870C92691E8CE5E500A10995 /* ConversationAvatarView.swift in Sources */,
 				BFF8076620BC275D0063E5D4 /* CallHapticsController.swift in Sources */,
 				5EFD915021CA688700080599 /* AuthenticationIncrementalUserCreationInputHandler.swift in Sources */,
@@ -10152,6 +10170,7 @@
 				A9275F6124223AB4007CB2BC /* DynamicsProxy.swift in Sources */,
 				252183272B4C183A000C4325 /* SystemSaveFilePresenter.swift in Sources */,
 				5E769C5821AE948F00785EB7 /* MessageDetailsDataSource.swift in Sources */,
+				E67D5C892C3EB58A0001AF81 /* GroupIconPickerViewModel.swift in Sources */,
 				EF066E1621EF938C00D56CAD /* MessageActionResponder.swift in Sources */,
 				D311F87E29EEA1BE00D9CF7E /* MessageActionsViewController.swift in Sources */,
 				637387C726443C31004FEF79 /* VideoKind.swift in Sources */,
@@ -10244,6 +10263,7 @@
 				A9D19B182385245E00F6E14A /* ProfileViewControllerViewModel.swift in Sources */,
 				D3095762283CEB1C00CEC620 /* MediaShareRestrictionManager.swift in Sources */,
 				16C02A0D204D407100811912 /* TopPeopleSectionController.swift in Sources */,
+				E67D5C8B2C3EB5960001AF81 /* GroupIconPickerView.swift in Sources */,
 				EE8E9267202496C2000F4752 /* NSAttributedString+Down.swift in Sources */,
 				A9C9D35E23E84EA20098CACC /* MediaPlayerDelegate.swift in Sources */,
 				16CB8DB91DC0F777000C5F47 /* DefaultNavigationBar.swift in Sources */,

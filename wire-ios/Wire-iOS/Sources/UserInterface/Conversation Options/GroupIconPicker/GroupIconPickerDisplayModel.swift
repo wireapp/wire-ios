@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 
-final class EditGroupIconViewController: UIHostingController<GroupIconPickerView> {
-    weak var dismisser: ViewControllerDismisser?
+enum GroupIconPickerDisplayModel {
+    struct Item: Identifiable, Equatable {
+        var id: Color { color }
 
-    init() {
-        super.init(rootView: GroupIconPickerView())
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder, rootView: GroupIconPickerView())
+        let color: Color
     }
 }
