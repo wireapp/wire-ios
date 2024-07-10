@@ -186,11 +186,20 @@ final class SelfProfileViewController: UIViewController {
         let qrCodeView = QRCodeView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: qrCodeView)
 
-        // Set the title for the navigation bar
-        hostingController.title = "Share Profile"
+        hostingController.title = L10n.Localizable.Qrcode.title
 
         // Create a UIBarButtonItem for dismissal
-        let dismissButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissQRCodeView))
+        let dismissButton = UIBarButtonItem(
+            image: UIImage(
+                systemName: "xmark"
+            ),
+            style: .plain,
+            target: self,
+            action: #selector(
+                dismissQRCodeView
+            )
+        )
+        dismissButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
         hostingController.navigationItem.leftBarButtonItem = dismissButton
 
         // Wrap the UIHostingController in a UINavigationController

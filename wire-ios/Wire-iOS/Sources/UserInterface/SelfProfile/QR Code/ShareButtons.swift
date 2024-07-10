@@ -30,17 +30,19 @@ struct ShareButtons: View {
 
     var body: some View {
         VStack {
-            Button("Share Link") {
+            Button(L10n.Localizable.Qrcode.ShareProfileLink.Button.title) {
                 isShareTextSheetPresented = true
             }
+            .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareTextSheetPresented) {
                 ShareSheet(activityItems: [viewModel.profileLink])
             }
 
-            Button("Share QR Code") {
+            Button(L10n.Localizable.Qrcode.ShareQrcode.Button.title) {
                 isShareImageSheetPresented = true
             }
+            .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareImageSheetPresented) {
                 ShareSheet(activityItems: [viewModel.profileLinkQRCode])

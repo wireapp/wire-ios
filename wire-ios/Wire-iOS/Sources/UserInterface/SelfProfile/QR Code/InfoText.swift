@@ -23,7 +23,7 @@ struct InfoText: View {
     // MARK: - View
 
     var body: some View {
-        Text("Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
+        Text(L10n.Localizable.Qrcode.shareMessage)
             .font(.textStyle(.body1))
             .multilineTextAlignment(.center)
             .lineLimit(nil)
