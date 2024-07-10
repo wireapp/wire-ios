@@ -125,6 +125,8 @@ extension Payload {
                 accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 legacyAccessRole = nil
             }
+
+            // TODO: add emoji and groupColor here
         }
 
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {

@@ -78,6 +78,7 @@ import WireUtilities
     case featureConfigUpdate = 40
     case federationDelete = 43
     case federationConnectionRemoved = 44
+    // TODO: add event type here
 
     // Current max value: conversationProtocolUpdate = 45
 }

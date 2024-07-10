@@ -111,7 +111,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
         case .conversationProtocolUpdate:
             await processConversationProtocolChange(event)
-
+        // TODO: add event for groupIcon here
         default:
             break
         }
