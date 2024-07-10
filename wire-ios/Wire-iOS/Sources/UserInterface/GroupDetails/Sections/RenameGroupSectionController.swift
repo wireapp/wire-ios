@@ -80,7 +80,8 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         let cell = collectionView.dequeueReusableCell(ofType: UICollectionViewCell.self, for: indexPath)
         if #available(iOS 16.0, *) {
             cell.contentConfiguration = UIHostingConfiguration(content: {
-                GroupIconCell(color: conversation.groupColor, emoji: conversation.groupEmoji)
+                GroupIconCell(color: conversation.groupColor,
+                              emoji: conversation.groupEmoji)
             })
         } else {
             // Fallback on earlier versions
@@ -134,7 +135,6 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         }
 
     }
-
 }
 
 extension RenameGroupSectionController: ZMConversationObserver {
@@ -186,16 +186,6 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
 
 }
 
-extension ConversationLike {
-    var groupColor: String {
-        "d733ff"
-    }
-
-    var groupEmoji: String {
-        "💩"
-    }
-}
-
 struct GroupIconCell: View {
     var color: String?
     var emoji: String?
@@ -206,7 +196,7 @@ struct GroupIconCell: View {
                 .font(Font.textStyle(.body1))
                 .fontWeight(.bold)
             Spacer()
-            if let color, let emoji {
+            if let color {
                 GroupIconView(color: color, emoji: emoji)
             }
             Image(systemName: "chevron.right")
@@ -218,7 +208,7 @@ struct GroupIconCell: View {
 
 struct GroupIconView: View {
     let size: CGSize = .init(width: 40, height: 40)
-    var color: String
+    var color: String?
     var emoji: String?
 
     var body: some View {
@@ -226,9 +216,14 @@ struct GroupIconView: View {
             .fontWeight(.bold)
             .font(Font.textStyle(.body1))
             .padding(5)
-            .background(Color(hex: color))
+            .background(backgroundColor)
             .frame(width: size.width, height: size.height)
             .cornerRadius(5)
+    }
+
+    // TODO: add dark / light support
+    var backgroundColor: Color {
+        color != nil ? Color(hex: color!) : Color.clear
     }
 }
 

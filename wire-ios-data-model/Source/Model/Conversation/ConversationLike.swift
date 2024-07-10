@@ -51,6 +51,10 @@ public protocol ConversationLike: AnyObject {
 
     var areServicesPresent: Bool { get }
     var domain: String? { get }
+
+    var groupColor: String? { get }
+
+    var groupEmoji: String? { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
