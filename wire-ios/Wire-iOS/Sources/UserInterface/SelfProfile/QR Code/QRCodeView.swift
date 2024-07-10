@@ -36,7 +36,7 @@ struct QRCodeView: View {
                         .padding(.top, 24)
                 }
 
-                VStack(spacing: 4) {
+                VStack {
                     Text(viewModel.handle)
                         .font(.textStyle(.h2))
                         .foregroundColor(.black)
@@ -46,8 +46,8 @@ struct QRCodeView: View {
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal)
-                        .padding(.top, 8)
-                        .padding(.bottom, 8)
+                        .padding(.top, 11)
+                        .padding(.bottom, 21)
                 }
             }
             .background(Color.white)
