@@ -49,7 +49,7 @@ final class GroupIconPickerViewModel: ObservableObject {
     init(conversation: ZMConversation, syncContext: NSManagedObjectContext) {
         self.conversation = conversation
         self.updateGroupIconUseCase = UpdateGroupIconUseCase(conversationId: conversation.qualifiedID!, context: syncContext)
-        selectedItem = conversation.groupColor.flatMap { GroupIconPickerDisplayModel.Item(hexColor: $0) }
+        selectedItem = items.first { $0.color.toHexString() == conversation.groupColor }
         print(selectedItem)
     }
 
