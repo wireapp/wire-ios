@@ -181,7 +181,8 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - QR Code
 
-    @objc func qrCodeButtonTapped() {
+    @objc
+    func qrCodeButtonTapped() {
         guard let viewModel = makeUserQRCodeViewModel(selfUser: selfUser) else {
             return
         }

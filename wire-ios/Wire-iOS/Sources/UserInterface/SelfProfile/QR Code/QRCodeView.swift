@@ -19,46 +19,94 @@
 import SwiftUI
 
 struct QRCodeView: View {
-    @ObservedObject var viewModel: UserQRCodeViewModel
     @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var viewModel: UserQRCodeViewModel
 
     var body: some View {
-        NavigationView {
+        VStack {
+            Spacer()
             VStack {
-                Text("This is the QR Code View")
-                    .font(.largeTitle)
-                    .padding()
-
+                // QR Code with logo
                 ZStack {
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 250, height: 250)
-
-                    Image(uiImage: QRCodeGenerator.generateQRCode(from: viewModel.profileLink))
-                        .interpolation(.none)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
+                    VStack {
+                        Image(uiImage: QRCodeGenerator.generateQRCode(from: viewModel.profileLink))
+                            .interpolation(.none)
+                            .resizable()
+                            .frame(width: 250, height: 250)
+                    }
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 60, height: 60)
+                        .overlay(
+                            Text("W")
+                                .foregroundColor(.white)
+                                .font(.system(size: 30, weight: .bold))
+                        )
                 }
-                }
-                .padding()
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(radius: 5)
 
-                Spacer()
+                VStack(spacing: 5) {
+                    Text("")
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    Text("")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .lineLimit(0)
+                        .truncationMode(.middle)
+                        .padding()
+                }
             }
-            .navigationBarTitle("QR Code", displayMode: .inline)
-            .navigationBarItems(leading: Button(action: {
-                // Dismiss the view
-                self.presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "xmark")
-                    .imageScale(.large)
-            })
-        }
-    }
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
+            .cornerRadius(12)
 
-#Preview {
-    QRCodeView(viewModel: UserQRCodeViewModel(
-        profileLink: "http://wire.com",
-        accentColor: .blue,
-        handle: "Handle"))
+            Spacer()
+
+            // Informational text
+            Text("Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
+                .font(.footnote)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+                .foregroundColor(.gray)
+
+            // Share buttons
+            Button(action: {
+                // Implement share link action
+            }) {
+                Text("Share Link")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+
+            Button(action: {
+                // Implement share QR code action
+            }) {
+                HStack {
+                    Image(systemName: "qrcode")
+                    Text("Share QR Code")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.yellow)
+                .foregroundColor(.black)
+                .cornerRadius(10)
+            }
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1).edgesIgnoringSafeArea(.all))
+        .navigationBarTitle("Share Profile", displayMode: .inline)
+        .navigationBarItems(leading: Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "xmark")
+                .imageScale(.large)
+        })
+    }
 }
