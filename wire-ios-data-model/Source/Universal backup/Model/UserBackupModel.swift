@@ -19,10 +19,6 @@
 import Foundation
 
 public struct UserBackupModel: Codable {
-    enum CodingKeys: String, CodingKey {
-        case qualifiedID = "qualified_id"
-        case name
-    }
 
     public let qualifiedID: QualifiedID
 
@@ -34,6 +30,13 @@ public struct UserBackupModel: Codable {
     ) {
         self.qualifiedID = qualifiedID
         self.name = name
+    }
+
+    enum CodingKeys: String, CodingKey {
+
+        case qualifiedID = "qualified_id"
+        case name
+
     }
 
 }

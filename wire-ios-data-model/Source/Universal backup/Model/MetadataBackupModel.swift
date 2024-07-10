@@ -19,13 +19,17 @@
 import Foundation
 
 public struct MetadataBackupModel: Codable {
-    enum CodingKeys: String, CodingKey {
-        case id = "user_id"
-    }
 
     public let id: UUID
 
     public init(id: UUID) {
         self.id = id
     }
+
+    enum CodingKeys: String, CodingKey {
+
+        case id = "user_id"
+
+    }
+
 }

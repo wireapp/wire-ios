@@ -2741,10 +2741,10 @@
 		EEF46F142C3E8DF900FE4FDB /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CB34A01A2C3E9AFB0091B387 /* MetadataBackupModel.swift */,
 				EEF46F152C3E8E0A00FE4FDB /* ConversationBackupModel.swift */,
 				EEF46F172C3E8EC600FE4FDB /* UserBackupModel.swift */,
 				EEF46F192C3E8EEF00FE4FDB /* TextMessageBackupModel.swift */,
-				CB34A01A2C3E9AFB0091B387 /* MetadataBackupModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
