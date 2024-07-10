@@ -94,7 +94,7 @@ struct QRCodeView: View {
 
         }
         .padding()
-        .background(Color.gray.opacity(0.1).edgesIgnoringSafeArea(.all))
+        .background(Color.primaryViewBackground.edgesIgnoringSafeArea(.all))
         .navigationBarTitle("Share Profile", displayMode: .inline)
         .navigationBarItems(leading: Button(action: {
             self.presentationMode.wrappedValue.dismiss()

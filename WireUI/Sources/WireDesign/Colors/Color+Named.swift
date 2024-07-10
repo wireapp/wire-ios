@@ -20,6 +20,13 @@ import SwiftUI
 
 public extension Color {
 
+    static let primaryViewBackground = Color(
+        uiColor: UIColor(
+            light: .gray20,
+            dark: .gray100
+        )
+    )
+
     static let primaryText = Color(uiColor: UIColor(
         light: .black,
         dark: .white
