@@ -16,20 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-// sourcery: AutoMockable
-/// Access to conversations API.
-public protocol ConversationsAPI {
-
-    /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID>
-
-    /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID>
-
-    /// Fetch conversation list with qualified identifiers.
-    func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
-
+public protocol ConversationRepositoryProtocol {
     func updateGroupIcon() async throws
+
+    // TODO: [WPB-8701] add all other repository funcs
+}
+
+public final class ConversationRepository: ConversationRepositoryProtocol {
+
+    private let conversationAPI: any ConversationsAPI
+
+    public init(conversationAPI: any ConversationsAPI) {
+        self.conversationAPI = conversationAPI
+    }
+
+    public func updateGroupIcon() async throws {
+        try await conversationAPI.updateGroupIcon()
+    }
 }

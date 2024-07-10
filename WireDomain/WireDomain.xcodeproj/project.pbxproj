@@ -28,6 +28,8 @@
 		162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356562C2B22A300C6666C /* UserModelMappings.swift */; };
 		162356582C2C2F6100C6666C /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356512C2B223B00C6666C /* UserRepository.swift */; };
 		162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356522C2B223B00C6666C /* UserRepositoryError.swift */; };
+		E67D5C912C3EBE000001AF81 /* ConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C902C3EBE000001AF81 /* ConversationRepository.swift */; };
+		E67D5C942C3EC1F70001AF81 /* ConversationRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C922C3EC1950001AF81 /* ConversationRepositoryTests.swift */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -86,6 +88,8 @@
 		162356512C2B223B00C6666C /* UserRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
+		E67D5C902C3EBE000001AF81 /* ConversationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepository.swift; sourceTree = "<group>"; };
+		E67D5C922C3EC1950001AF81 /* ConversationRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryTests.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryError.swift; sourceTree = "<group>"; };
 		EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
@@ -144,6 +148,7 @@
 				017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */,
 				017F67982C20801800B6E02D /* TeamRepositoryTests.swift */,
 				EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */,
+				E67D5C922C3EC1950001AF81 /* ConversationRepositoryTests.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -169,9 +174,9 @@
 				017F679F2C20802300B6E02D /* TeamRepository.swift */,
 				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
 				017F67A12C20802300B6E02D /* SelfUserProvider.swift */,
-				017F67A12C20802300B6E02D /* UserRepository.swift */,
 				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
 				EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */,
+				E67D5C902C3EBE000001AF81 /* ConversationRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
+				E67D5C912C3EBE000001AF81 /* ConversationRepository.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
 				162356582C2C2F6100C6666C /* UserRepository.swift in Sources */,
 				162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */,
@@ -519,6 +525,7 @@
 			files = (
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
+				E67D5C942C3EC1F70001AF81 /* ConversationRepositoryTests.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,

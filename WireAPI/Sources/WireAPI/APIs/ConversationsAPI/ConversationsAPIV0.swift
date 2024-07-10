@@ -90,6 +90,10 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .failure(code: 400, error: ConversationsAPIError.invalidBody)
             .parse(response)
     }
+
+    func updateGroupIcon() async throws {
+        fatalError("not implemented")
+    }
 }
 
 // MARK: Encodables

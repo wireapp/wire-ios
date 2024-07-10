@@ -18,4 +18,8 @@
 
 final class ConversationsAPIV6: ConversationsAPIV5 {
     override var apiVersion: APIVersion { .v6 }
+
+    override func updateGroupIcon() async throws {
+        debugPrint("ConversationsAPI \(apiVersion) updateGroupIcon")
+    }
 }
