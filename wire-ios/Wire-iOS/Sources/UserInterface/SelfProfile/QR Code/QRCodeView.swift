@@ -32,15 +32,7 @@ struct QRCodeView: View {
                         .interpolation(.none)
                         .resizable()
                         .frame(width: 250, height: 250)
-
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 60, height: 60)
-                        .overlay(
-                            Text("W")
-                                .foregroundColor(.white)
-                                .font(.system(size: 30, weight: .bold))
-                        )
+                        .padding(.top, 24)
                 }
 
                 VStack(spacing: 4) {
