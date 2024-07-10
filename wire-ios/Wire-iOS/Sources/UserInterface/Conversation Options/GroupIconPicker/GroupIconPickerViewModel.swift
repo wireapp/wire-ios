@@ -32,6 +32,8 @@ final class GroupIconPickerViewModel: ObservableObject {
 
     @Published var selectedItem: GroupIconPickerDisplayModel.Item?
 
+    private let updateGroupIconUseCase = UpdateGroupIconUseCase()
+
     func selectItem(_ item: GroupIconPickerDisplayModel.Item) {
         if selectedItem == item {
             // unselect
@@ -42,5 +44,12 @@ final class GroupIconPickerViewModel: ObservableObject {
             selectedItem = item
             print("select item with color: \(item.color)")
         }
+
+        updateGroupIcon(item)
+    }
+
+    private func updateGroupIcon(_ item: GroupIconPickerDisplayModel.Item) {
+        let colorString = String(describing: selectedItem?.color)
+        updateGroupIconUseCase.invoke(colorString: colorString)
     }
 }

@@ -1325,6 +1325,7 @@
 		E67D5C892C3EB58A0001AF81 /* GroupIconPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C882C3EB58A0001AF81 /* GroupIconPickerViewModel.swift */; };
 		E67D5C8B2C3EB5960001AF81 /* GroupIconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C8A2C3EB5960001AF81 /* GroupIconPickerView.swift */; };
 		E67D5C8D2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C8C2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift */; };
+		E67D5C8F2C3EBA6D0001AF81 /* UpdateGroupIconUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D5C8E2C3EBA6D0001AF81 /* UpdateGroupIconUseCase.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
 		E68C005C2C1C533000747C9E /* WireAnalytics+Datadog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */; };
 		E6A09CD12C2D50AA0069C15A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8FC850BA199245760008B66B /* Settings.bundle */; };
@@ -3423,6 +3424,7 @@
 		E67D5C882C3EB58A0001AF81 /* GroupIconPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIconPickerViewModel.swift; sourceTree = "<group>"; };
 		E67D5C8A2C3EB5960001AF81 /* GroupIconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIconPickerView.swift; sourceTree = "<group>"; };
 		E67D5C8C2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIconPickerDisplayModel.swift; sourceTree = "<group>"; };
+		E67D5C8E2C3EBA6D0001AF81 /* UpdateGroupIconUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateGroupIconUseCase.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
 		E68C005B2C1C533000747C9E /* WireAnalytics+Datadog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+Datadog.swift"; sourceTree = "<group>"; };
 		E6A09CD62C2ECA960069C15A /* SystemSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsTests.swift; sourceTree = "<group>"; };
@@ -7813,6 +7815,7 @@
 				E67D5C8A2C3EB5960001AF81 /* GroupIconPickerView.swift */,
 				E67D5C882C3EB58A0001AF81 /* GroupIconPickerViewModel.swift */,
 				E67D5C8C2C3EB5C60001AF81 /* GroupIconPickerDisplayModel.swift */,
+				E67D5C8E2C3EBA6D0001AF81 /* UpdateGroupIconUseCase.swift */,
 			);
 			path = GroupIconPicker;
 			sourceTree = "<group>";
@@ -10288,6 +10291,7 @@
 				5E8DA76C211B2EC200360979 /* AuthenticationEventResponderChain.swift in Sources */,
 				5E8DA758211B055100360979 /* AuthenticationClientLimitErrorHandler.swift in Sources */,
 				AFD4E72A1E449925002A4732 /* Analytics+StorableTrackingEvent.swift in Sources */,
+				E67D5C8F2C3EBA6D0001AF81 /* UpdateGroupIconUseCase.swift in Sources */,
 				BF10B58D1E6452B800E7036E /* ZMConversationMessage+Reactions.swift in Sources */,
 				5E2945992190A1680045ACFA /* SenderNameCellComponent.swift in Sources */,
 				8751BA442069455E00DF8667 /* BackupViewController.swift in Sources */,
