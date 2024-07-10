@@ -20,23 +20,24 @@ import SwiftUI
 
 struct QRCodeView: View {
 
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
     @ObservedObject var viewModel: UserQRCodeViewModel
 
     var body: some View {
         VStack {
-            VStack(spacing: 20) {
+            VStack {
                 ZStack {
                     Image(uiImage: viewModel.profileLinkQRCode)
                         .interpolation(.none)
                         .resizable()
                         .frame(width: 250, height: 250)
                         .padding(.top, 24)
+                        .padding(.horizontal, 24)
                 }
 
-                VStack {
+                VStack(alignment: .center) {
                     Text(viewModel.handle)
                         .font(.textStyle(.h2))
                         .foregroundColor(.black)
@@ -46,19 +47,20 @@ struct QRCodeView: View {
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal)
-                        .padding(.top, 11)
+                        .padding(.top, 4)
                         .padding(.bottom, 21)
                 }
             }
+            .padding(.horizontal, 24)
             .background(Color.white)
-            .cornerRadius(20)
+            .cornerRadius(12)
 
             // Informational text
             Text("Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
                 .font(.textStyle(.body1))
+                .padding(.horizontal, 24)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
-                .padding(.horizontal)
                 .foregroundColor(Color.secondaryText)
 
             Spacer()
@@ -91,7 +93,8 @@ struct QRCodeView: View {
         .background(Color.primaryViewBackground.edgesIgnoringSafeArea(.all))
         .navigationBarTitle("Share Profile", displayMode: .inline)
         .navigationBarItems(leading: Button(action: {
-            self.presentationMode.wrappedValue.dismiss()
+            print("X button tapped")
+            dismiss()
         }) {
             Image(systemName: "xmark")
                 .imageScale(.large)
