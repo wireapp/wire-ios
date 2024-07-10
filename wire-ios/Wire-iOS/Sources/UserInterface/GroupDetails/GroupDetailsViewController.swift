@@ -471,7 +471,11 @@ extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
 //        let menu = EditGroupIconViewController()
 //        menu.dismisser = self
 
-        let view = GroupIconPickerView(conversation: conversation, syncContext: userSession.syncManagedObjectContext)
+        let useCase = UpdateGroupIconUseCase(api: userSession.makeConversationsAPI(),
+                                                            conversationId: conversation.qualifiedID!, context: userSession.syncContext)
+        // TODO: add emoji
+        let viewModel = GroupIconPickerViewModel(updateGroupIconUseCase: useCase, initialGroupColor: conversation.groupColor)
+        let view = GroupIconPickerView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
 
         navigationController?.pushViewController(viewController, animated: animated)

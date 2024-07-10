@@ -16,10 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+struct UpdateGroupIconParameters: Encodable {
+    var color: String?
+    var emoji: String?
+}
+
+import Foundation
+
 final class ConversationsAPIV6: ConversationsAPIV5 {
     override var apiVersion: APIVersion { .v6 }
 
-    override func updateGroupIcon() async throws {
-        debugPrint("ConversationsAPI \(apiVersion) updateGroupIcon")
+    override func updateGroupIcon(for identifier: QualifiedID, hexColor: String?, emoji: String?) async throws {
+        let parameters = UpdateGroupIconParameters(color: hexColor, emoji: emoji)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let resourcePath = "\(pathPrefix)/conversations/\(identifier.uuid)/icon"
+
+        let request = HTTPRequest(
+            path: resourcePath,
+            method: .put,
+            body: body
+        )
+        let response = try await httpClient.executeRequest(request)
+
+        let code = response.code
+        switch code {
+        case 204:
+            break
+        default:
+            guard let data = response.payload else {
+                throw ResponseParserError.missingPayload
+            }
+
+            let failure = try JSONDecoder().decode(FailureResponse.self, from: data)
+            throw failure
+        }
     }
 }

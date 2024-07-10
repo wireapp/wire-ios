@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireSystem
+import WireTransport
 
 // Note: this is just a tempory helper for debugging
 // purposes and should eventually be removed.
@@ -33,6 +34,18 @@ extension ZMUserSession {
 
         return BackendInfoAPIBuilder(httpClient: httpClient)
             .makeAPI()
+    }
+
+    public func makeConversationsAPI() -> ConversationsAPI {
+        let httpClient = HTTPClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let version: WireAPI.APIVersion = .v6
+        // TODO: use preferred apiversion and handle other versions
+        // .init(rawValue: UInt(BackendInfo.apiVersion?.rawValue ?? 6)) ?? .v6
+        return ConversationsAPIBuilder(httpClient: httpClient)
+            .makeAPI(for: version)
     }
 }
 

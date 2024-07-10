@@ -31,5 +31,5 @@ public protocol ConversationsAPI {
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
 
-    func updateGroupIcon() async throws
+    func updateGroupIcon(for identifier: QualifiedID, hexColor: String?, emoji: String?) async throws
 }

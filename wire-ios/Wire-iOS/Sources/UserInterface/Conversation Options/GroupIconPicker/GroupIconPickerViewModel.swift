@@ -43,13 +43,12 @@ final class GroupIconPickerViewModel: ObservableObject {
     ]
 
     @Published var selectedItem: GroupIconPickerDisplayModel.Item?
-    let conversation: ZMConversation
+
     private let updateGroupIconUseCase: UpdateGroupIconUseCase
 
-    init(conversation: ZMConversation, syncContext: NSManagedObjectContext) {
-        self.conversation = conversation
-        self.updateGroupIconUseCase = UpdateGroupIconUseCase(conversationId: conversation.qualifiedID!, context: syncContext)
-        selectedItem = items.first { $0.color.toHexString() == conversation.groupColor }
+    init(updateGroupIconUseCase: UpdateGroupIconUseCase, initialGroupColor: String?) {
+        self.updateGroupIconUseCase = updateGroupIconUseCase
+        selectedItem = items.first { $0.color.toHexString() == initialGroupColor }
         print(selectedItem)
     }
 
@@ -69,7 +68,11 @@ final class GroupIconPickerViewModel: ObservableObject {
 
     private func updateGroupIcon(_ item: GroupIconPickerDisplayModel.Item) {
         Task {
-            await updateGroupIconUseCase.invoke(colorString: selectedItem?.color.toHexString(), emoji: nil)
+            do {
+                try await updateGroupIconUseCase.invoke(colorString: selectedItem?.color.toHexString(), emoji: nil)
+            } catch {
+                WireLogger.conversation.error("error updatingGroupIcon: \(error)")
+            }
         }
     }
 }

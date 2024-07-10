@@ -29,14 +29,12 @@ struct GroupIconPickerView: View {
 
     @StateObject var viewModel: GroupIconPickerViewModel
 
-    init(conversation: ZMConversation, syncContext: NSManagedObjectContext) {
+    init(viewModel: @autoclosure @escaping () -> GroupIconPickerViewModel) {
         print("🕵🏽 conversation")
-        _viewModel = StateObject(wrappedValue: .init(conversation: conversation, syncContext: syncContext))
+        _viewModel = StateObject(wrappedValue: viewModel())
     }
 
     var body: some View {
-        Self._printChanges()
-        return
         VStack(alignment: .leading) {
             Text("Select a color for the group avatar:")
 

@@ -16,20 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import WireDataModel
 
-struct UpdateGroupIconUseCase {
+public struct UpdateGroupIconUseCase {
 
-    var conversationId: QualifiedID
-    var context: NSManagedObjectContext
+    let conversationId: WireDataModel.QualifiedID
+    let context: NSManagedObjectContext
+    let api: WireAPI.ConversationsAPI
 
-    func invoke(colorString: String?, emoji: String?) async {
+    init(api: WireAPI.ConversationsAPI, conversationId: WireDataModel.QualifiedID, context: NSManagedObjectContext) {
+        self.conversationId = conversationId
+        self.context = context
+        self.api = api
+    }
+
+    public func invoke(colorString: String?, emoji: String?) async throws {
         guard colorString != nil || emoji != nil else {
             debugPrint("nothing to update")
             return
         }
-        debugPrint("send \(colorString) to the backend!")
-        // TODO: do the request here
+        let id = conversationId.toWireAPIQualifiedId()
+        try await api.updateGroupIcon(for: id, hexColor: colorString, emoji: emoji)
+
         await saveConversation(colorString: colorString, emoji: emoji)
     }
 
@@ -40,5 +49,11 @@ struct UpdateGroupIconUseCase {
             conversation.groupEmoji = emoji
             context.saveOrRollback()
         }
+    }
+}
+
+private extension WireDataModel.QualifiedID {
+    func toWireAPIQualifiedId() -> WireAPI.QualifiedID {
+        .init(uuid: self.uuid, domain: self.domain)
     }
 }

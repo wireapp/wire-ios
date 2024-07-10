@@ -91,7 +91,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .parse(response)
     }
 
-    func updateGroupIcon() async throws {
+    func updateGroupIcon(for identifier: QualifiedID, hexColor: String?, emoji: String?) async throws {
         fatalError("not implemented")
     }
 }
