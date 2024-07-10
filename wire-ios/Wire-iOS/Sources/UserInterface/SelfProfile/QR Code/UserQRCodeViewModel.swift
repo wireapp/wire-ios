@@ -32,7 +32,7 @@ final class UserQRCodeViewModel: ObservableObject {
     ) {
         self.profileLink = profileLink
         self.accentColor = accentColor
-        self.handle = handle
+        self.handle = "@" + handle
     }
 
 }
