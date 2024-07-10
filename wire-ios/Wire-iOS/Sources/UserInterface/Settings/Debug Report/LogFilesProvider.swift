@@ -33,12 +33,12 @@ protocol LogFilesProviding {
     /// 
     /// - Returns: the log files archive URL
 
-    func generateLogFilesZip() -> URL
+    func generateLogFilesZip() throws -> URL
 
-    /// Clears the temporary directory. 
+    /// Clears the logs directory.
     /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
 
-    func clearTemporaryDirectory() throws
+    func clearLogsDirectory() throws
 
 }
 
@@ -53,6 +53,14 @@ struct LogFilesProvider: LogFilesProviding {
     // MARK: - Properties
 
     private let temporaryDirectory = NSTemporaryDirectory()
+
+    private var logsDirectory: URL {
+        let baseURL = URL(
+            fileURLWithPath: temporaryDirectory,
+            isDirectory: false
+        )
+        return baseURL.appendingPathComponent("logs")
+    }
 
     private var logFilesURLs: [URL] {
         var urls = WireLogger.logFiles
@@ -80,24 +88,22 @@ struct LogFilesProvider: LogFilesProviding {
         return data
     }
 
-    func generateLogFilesZip() -> URL {
+    func generateLogFilesZip() throws -> URL {
+        try? clearLogsDirectory()
 
-        var tmpURL = URL(
-            fileURLWithPath: temporaryDirectory,
-            isDirectory: false
-        )
+        var url = logsDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 
-        tmpURL.appendPathComponent("logs.zip")
-
+        url.appendPathComponent("logs.zip")
         SSZipArchive.createZipFile(
-            atPath: tmpURL.path,
+            atPath: url.path,
             withFilesAtPaths: logFilesURLs.map { $0.path }
         )
 
-        return tmpURL
+        return url
     }
 
-    func clearTemporaryDirectory() throws {
-        try FileManager.default.removeItem(atPath: temporaryDirectory)
+    func clearLogsDirectory() throws {
+        try FileManager.default.removeItem(atPath: logsDirectory.path)
     }
 }

@@ -722,14 +722,19 @@ class MockLogFilesProviding: LogFilesProviding {
     // MARK: - generateLogFilesZip
 
     var generateLogFilesZip_Invocations: [Void] = []
-    var generateLogFilesZip_MockMethod: (() -> URL)?
+    var generateLogFilesZip_MockError: Error?
+    var generateLogFilesZip_MockMethod: (() throws -> URL)?
     var generateLogFilesZip_MockValue: URL?
 
-    func generateLogFilesZip() -> URL {
+    func generateLogFilesZip() throws -> URL {
         generateLogFilesZip_Invocations.append(())
 
+        if let error = generateLogFilesZip_MockError {
+            throw error
+        }
+
         if let mock = generateLogFilesZip_MockMethod {
-            return mock()
+            return try mock()
         } else if let mock = generateLogFilesZip_MockValue {
             return mock
         } else {
@@ -737,21 +742,21 @@ class MockLogFilesProviding: LogFilesProviding {
         }
     }
 
-    // MARK: - clearTemporaryDirectory
+    // MARK: - clearLogsDirectory
 
-    var clearTemporaryDirectory_Invocations: [Void] = []
-    var clearTemporaryDirectory_MockError: Error?
-    var clearTemporaryDirectory_MockMethod: (() throws -> Void)?
+    var clearLogsDirectory_Invocations: [Void] = []
+    var clearLogsDirectory_MockError: Error?
+    var clearLogsDirectory_MockMethod: (() throws -> Void)?
 
-    func clearTemporaryDirectory() throws {
-        clearTemporaryDirectory_Invocations.append(())
+    func clearLogsDirectory() throws {
+        clearLogsDirectory_Invocations.append(())
 
-        if let error = clearTemporaryDirectory_MockError {
+        if let error = clearLogsDirectory_MockError {
             throw error
         }
 
-        guard let mock = clearTemporaryDirectory_MockMethod else {
-            fatalError("no mock for `clearTemporaryDirectory`")
+        guard let mock = clearLogsDirectory_MockMethod else {
+            fatalError("no mock for `clearLogsDirectory`")
         }
 
         try mock()
@@ -1288,17 +1293,17 @@ class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
 
     // MARK: - presentShareViewController
 
-    var presentShareViewControllerDestinationsDebugReportOnDismiss_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport, onDismiss: () -> Void)] = []
-    var presentShareViewControllerDestinationsDebugReportOnDismiss_MockMethod: (([ZMConversation], ShareableDebugReport, @escaping () -> Void) -> Void)?
+    var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
+    var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
 
-    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport, onDismiss: @escaping () -> Void) {
-        presentShareViewControllerDestinationsDebugReportOnDismiss_Invocations.append((destinations: destinations, debugReport: debugReport, onDismiss: onDismiss))
+    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport) {
+        presentShareViewControllerDestinationsDebugReport_Invocations.append((destinations: destinations, debugReport: debugReport))
 
-        guard let mock = presentShareViewControllerDestinationsDebugReportOnDismiss_MockMethod else {
-            fatalError("no mock for `presentShareViewControllerDestinationsDebugReportOnDismiss`")
+        guard let mock = presentShareViewControllerDestinationsDebugReport_MockMethod else {
+            fatalError("no mock for `presentShareViewControllerDestinationsDebugReport`")
         }
 
-        mock(destinations, debugReport, onDismiss)
+        mock(destinations, debugReport)
     }
 
 }
