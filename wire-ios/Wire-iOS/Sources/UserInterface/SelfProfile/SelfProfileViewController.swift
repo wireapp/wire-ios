@@ -188,28 +188,36 @@ final class SelfProfileViewController: UIViewController {
 
         hostingController.title = L10n.Localizable.Qrcode.title
 
-        // Create a UIBarButtonItem for dismissal
-        let dismissButton = UIBarButtonItem(
-            image: UIImage(
-                systemName: "xmark"
-            ),
+        // Create a UIBarButtonItem with a "Close" label for dismissal
+        let closeButton = UIBarButtonItem(
+            title: "Close",
             style: .plain,
             target: self,
             action: #selector(
                 dismissQRCodeView
             )
         )
-        dismissButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
-        hostingController.navigationItem.leftBarButtonItem = dismissButton
 
-        // Wrap the UIHostingController in a UINavigationController
-        let navigationController = UINavigationController(rootViewController: hostingController)
+        // Set the font for the close button
+        let font = UIFont.systemFont(ofSize: 17)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font
+        ]
+        closeButton.setTitleTextAttributes(attributes, for: .normal)
+        closeButton.setTitleTextAttributes(attributes, for: .highlighted)
 
-        self.present(navigationController, animated: true, completion: nil)
+        hostingController.navigationItem.rightBarButtonItem = closeButton
+
+        navigationController?.pushViewController(hostingController, animated: true)
     }
 
-    @objc func dismissQRCodeView() {
-        dismiss(animated: true, completion: nil)
+    @objc
+    func dismissQRCodeView() {
+        if let navigationController = self.navigationController {
+            navigationController.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
 
     private func makeUserQRCodeViewModel(selfUser: SettingsSelfUser) -> UserQRCodeViewModel? {
