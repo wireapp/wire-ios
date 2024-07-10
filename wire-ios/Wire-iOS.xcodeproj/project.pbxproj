@@ -1382,6 +1382,7 @@
 		E96DF05E2C3F24840093293C /* QRCodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF05D2C3F24840093293C /* QRCodeCard.swift */; };
 		E96DF0602C3F25270093293C /* InfoText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF05F2C3F25270093293C /* InfoText.swift */; };
 		E96DF0622C3F25660093293C /* ShareButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0612C3F25660093293C /* ShareButtons.swift */; };
+		E96DF0642C3F27AD0093293C /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0632C3F27AD0093293C /* ShareSheet.swift */; };
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
@@ -3472,6 +3473,7 @@
 		E96DF05D2C3F24840093293C /* QRCodeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCard.swift; sourceTree = "<group>"; };
 		E96DF05F2C3F25270093293C /* InfoText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoText.swift; sourceTree = "<group>"; };
 		E96DF0612C3F25660093293C /* ShareButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareButtons.swift; sourceTree = "<group>"; };
+		E96DF0632C3F27AD0093293C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureLinkHeaderCell.swift; sourceTree = "<group>"; };
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
@@ -7985,6 +7987,7 @@
 				E96DF05D2C3F24840093293C /* QRCodeCard.swift */,
 				E96DF05F2C3F25270093293C /* InfoText.swift */,
 				E96DF0612C3F25660093293C /* ShareButtons.swift */,
+				E96DF0632C3F27AD0093293C /* ShareSheet.swift */,
 			);
 			path = "QR Code";
 			sourceTree = "<group>";
@@ -10380,6 +10383,7 @@
 				87F18BB01E01533F00C69D9B /* CollectionFileCell.swift in Sources */,
 				EF6E9FE423193439000B7785 /* ConversationListViewController+State.swift in Sources */,
 				16E0FBAA2331119F000E3235 /* SettingsSignOutCellDescriptor.swift in Sources */,
+				E96DF0642C3F27AD0093293C /* ShareSheet.swift in Sources */,
 				5EA73D8920D901000001D106 /* ImageContainer.swift in Sources */,
 				5E8DA768211B2D9A00360979 /* AuthenticationSuccessEventHandler.swift in Sources */,
 				EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */,
