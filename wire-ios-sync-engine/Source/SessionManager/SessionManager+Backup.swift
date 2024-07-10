@@ -100,6 +100,20 @@ extension SessionManager {
 
     // MARK: - Import
 
+    public func restoreFromUniversalBackup(at location: URL) async throws {
+        // TODO: basic validation
+        // TODO: unzip the url
+        // TODO: parse export.json to extract self user info
+        // TODO: parse conversations.json into ConversationBackupModel
+        // TODO: parse users.json into UserBackupModel
+        // TODO: parse events.json into TextMessageBackupModel
+
+        // TODO: initialize new Core Data stack
+        // TODO: populate conversations with backup models
+        // TODO: populate users with backup models
+        // TODO: populate messages with backup models
+    }
+
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
