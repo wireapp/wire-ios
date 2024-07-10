@@ -32,6 +32,7 @@
 		014389632BC8203700EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895F2BC8200600EC6920 /* PrivacyInfo.xcprivacy */; };
 		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
 		014A63AC2B234EAB00827558 /* MFMailComposeViewController+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */; };
+		015FE4342C3EB18C00F3355F /* EditGroupIconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015FE4332C3EB18C00F3355F /* EditGroupIconViewController.swift */; };
 		016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; };
 		016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
@@ -2072,6 +2073,7 @@
 		014389602BC8201700EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MFMailComposeViewController+Logs.swift"; sourceTree = "<group>"; };
+		015FE4332C3EB18C00F3355F /* EditGroupIconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGroupIconViewController.swift; sourceTree = "<group>"; };
 		016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		016DB6DD2C261A4900DEB81B /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01874DD62C18581C00208716 /* DeveloperToolsContextItemsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsContextItemsProvider.swift; sourceTree = "<group>"; };
@@ -7663,6 +7665,7 @@
 				E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */,
 				E9D141632AC704E9005EE75D /* CreateSecureGuestLink */,
 				E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */,
+				015FE4332C3EB18C00F3355F /* EditGroupIconViewController.swift */,
 			);
 			path = "Conversation Options";
 			sourceTree = "<group>";
@@ -9932,6 +9935,7 @@
 				EE6CA1832A8BBDDB006725CE /* ConversationCreationValues.swift in Sources */,
 				EF2388882211B8C500331C07 /* UserType+DisplayString.swift in Sources */,
 				A90BECF124A23E6500E5C008 /* LinkViewDelegate.swift in Sources */,
+				015FE4342C3EB18C00F3355F /* EditGroupIconViewController.swift in Sources */,
 				A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */,
 				D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */,
 				E662588B2B4D3C9D00C23E79 /* DeveloperDebugActionsDisplayModel.swift in Sources */,

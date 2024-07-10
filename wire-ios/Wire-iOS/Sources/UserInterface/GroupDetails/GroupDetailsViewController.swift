@@ -162,6 +162,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         var sections = [CollectionViewSectionController]()
 
         let renameGroupSectionController = RenameGroupSectionController(conversation: conversation, userSession: userSession)
+        renameGroupSectionController.delegate = self
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
@@ -454,6 +455,21 @@ private extension GroupDetailsViewController {
             }
             collectionViewController.sections = computeVisibleSections()
         }
+    }
+}
+
+protocol RenameGroupSectionControllerDelegate: AnyObject {
+    func presentGroupIconOptions(animated: Bool)
+}
+
+extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
+    func presentGroupIconOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation else { return }
+        guard let userSession = ZMUserSession.shared() else { return }
+
+        let menu = EditGroupIconViewController()
+        menu.dismisser = self
+        navigationController?.pushViewController(menu, animated: animated)
     }
 }
 

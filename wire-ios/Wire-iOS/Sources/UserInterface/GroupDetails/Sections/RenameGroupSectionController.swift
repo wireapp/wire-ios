@@ -16,11 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
 final class RenameGroupSectionController: NSObject, CollectionViewSectionController {
+    enum CellIndex: Int {
+        case groupDetailsRenameCell
+        case groupIconCell
+    }
+
+    weak var delegate: RenameGroupSectionControllerDelegate?
 
     private var validName: String?
     private var conversation: GroupDetailsConversationType
@@ -50,14 +57,38 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
 
     func prepareForUse(in collectionView: UICollectionView?) {
         collectionView.flatMap(GroupDetailsRenameCell.register)
+        collectionView.flatMap(UICollectionViewCell.register)
         collectionView?.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return 2
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch CellIndex(rawValue: indexPath.row) {
+        case .groupDetailsRenameCell:
+            return groupDetailsRenameCell(for: collectionView, at: indexPath)
+        case .groupIconCell:
+            return groupIconCell(for: collectionView, at: indexPath)
+        default:
+            fatalError("cell doesn't exist")
+        }
+    }
+
+    private func groupIconCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(ofType: UICollectionViewCell.self, for: indexPath)
+        if #available(iOS 16.0, *) {
+            cell.contentConfiguration = UIHostingConfiguration(content: {
+                GroupIconCell(color: conversation.groupColor, emoji: conversation.groupEmoji)
+            })
+        } else {
+            // Fallback on earlier versions
+        }
+        return cell
+    }
+
+    private func groupDetailsRenameCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: GroupDetailsRenameCell.self, for: indexPath)
 
         if let user = SelfUser.provider?.providedSelfUser {
@@ -93,7 +124,15 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        focus()
+        switch CellIndex(rawValue: indexPath.row) {
+        case .groupDetailsRenameCell:
+            focus()
+        case .groupIconCell:
+            delegate?.presentGroupIconOptions(animated: true)
+        default:
+            fatalError("cell doesn't exist")
+        }
+
     }
 
 }
@@ -145,4 +184,81 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
         renameCell?.accessoryIconView.isHidden = false
     }
 
+}
+
+extension ConversationLike {
+    var groupColor: String {
+        "d733ff"
+    }
+
+    var groupEmoji: String {
+        "💩"
+    }
+}
+
+struct GroupIconCell: View {
+    var color: String?
+    var emoji: String?
+
+    var body: some View {
+        HStack {
+            Text("Group Icon")
+                .font(Font.textStyle(.body1))
+                .fontWeight(.bold)
+            Spacer()
+            if let color, let emoji {
+                GroupIconView(color: color, emoji: emoji)
+            }
+            Image(systemName: "chevron.right")
+        }
+        .background(Color.white)
+        .frame(height: 44)
+    }
+}
+
+struct GroupIconView: View {
+    let size: CGSize = .init(width: 40, height: 40)
+    var color: String
+    var emoji: String?
+
+    var body: some View {
+        Text(emoji ?? "")
+            .fontWeight(.bold)
+            .font(Font.textStyle(.body1))
+            .padding(5)
+            .background(Color(hex: color))
+            .frame(width: size.width, height: size.height)
+            .cornerRadius(5)
+    }
+}
+
+#Preview {
+    GroupIconCell(color: "d733ff", emoji: "💩")
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
 }
