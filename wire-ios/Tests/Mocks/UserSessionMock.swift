@@ -357,7 +357,7 @@ final class UserSessionMock: UserSession {
     }
 
     // MARK: - Context Provider
-   
+
     var coreDataStack: CoreDataStack?
 
     var contextProvider: any ContextProvider {

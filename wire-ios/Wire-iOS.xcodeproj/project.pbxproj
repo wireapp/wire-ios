@@ -588,6 +588,7 @@
 		6316C42F2657F0CE00D7E806 /* RoundedBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6316C42E2657F0CE00D7E806 /* RoundedBlurView.swift */; };
 		631D27A2255ADEBF00BCF8C4 /* CallStateExtending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631D27A1255ADEBF00BCF8C4 /* CallStateExtending.swift */; };
 		631ED088257558A400EFDD05 /* PulsingIconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631ED087257558A400EFDD05 /* PulsingIconImageView.swift */; };
+		6321E1632C3EDD1C00D20D14 /* MockContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2545AEBB2B85FDF2007B5721 /* MockContextProvider.swift */; };
 		63238C6B2B860E2B00951467 /* DeveloperE2eiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63238C6A2B860E2B00951467 /* DeveloperE2eiView.swift */; };
 		63238C6D2B860E4600951467 /* DeveloperE2eiViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63238C6C2B860E4600951467 /* DeveloperE2eiViewModel.swift */; };
 		63256D8224D46456009FC58B /* BitRateLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63256D8124D46455009FC58B /* BitRateLabel.swift */; };
@@ -10964,6 +10965,7 @@
 				E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */,
 				E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,
 				E6579E5D2AFFA024004E7FD8 /* MockUserClient.swift in Sources */,
+				6321E1632C3EDD1C00D20D14 /* MockContextProvider.swift in Sources */,
 				E6579E6B2AFFA024004E7FD8 /* MockUser+Service.swift in Sources */,
 				E6C25FF02B027C0200406A1C /* ZMUserMentionsTest.swift in Sources */,
 				E6579E672AFFA024004E7FD8 /* MockUser+MockUserArray.swift in Sources */,
