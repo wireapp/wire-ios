@@ -48,10 +48,12 @@ extension SettingsCellDescriptorFactory {
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
                 let router = SettingsDebugReportRouter()
+                let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
+                let fetchShareableConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
-                    shareFile: userSession.shareFileUseCase,
-                    fetchShareableConversations: userSession.fetchShareableConversationsUseCase
+                    shareFile: shareFile,
+                    fetchShareableConversations: fetchShareableConversations
                 )
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController

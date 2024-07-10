@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCommonComponents
 import WireSystem
 import ZipArchive
@@ -74,7 +73,7 @@ struct LogFilesProvider: LogFilesProviding {
 
         let urls = logFilesURLs
 
-        guard let data = FileManager.default.zipData(from: urls) else {
+        guard !urls.isEmpty, let data = FileManager.default.zipData(from: urls) else {
             throw Error.noLogs(description: urls.description)
         }
 

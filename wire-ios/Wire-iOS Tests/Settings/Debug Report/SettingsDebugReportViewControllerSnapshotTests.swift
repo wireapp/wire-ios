@@ -26,8 +26,8 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var snapshotHelper: SnapshotHelper!
-    var sut: SettingsDebugReportViewController!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: SettingsDebugReportViewController!
 
     // MARK: - setUp
 

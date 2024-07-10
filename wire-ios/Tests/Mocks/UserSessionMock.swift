@@ -78,7 +78,6 @@ final class UserSessionMock: UserSession {
     var mockConversationList: ConversationList?
 
     var searchUsersCache: SearchUsersCache
-    var contextProvider: ContextProvider?
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
@@ -312,14 +311,6 @@ final class UserSessionMock: UserSession {
     var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
-    
-    var fetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {
-        MockFetchShareableConversationsUseCaseProtocol()
-    }
-
-    var shareFileUseCase: ShareFileUseCaseProtocol {
-        MockShareFileUseCaseProtocol()
-    }
 
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         MockCreateConversationGuestLinkUseCaseProtocol()
@@ -364,15 +355,24 @@ final class UserSessionMock: UserSession {
     var notificationContext: any NotificationContext {
         viewContext.notificationContext
     }
+
+    // MARK: - Context Provider
+   
+    var coreDataStack: CoreDataStack?
+
+    var contextProvider: any ContextProvider {
+        coreDataStack ?? MockContextProvider()
+    }
+
 }
 
 // MARK: - UserSessionMock + ContextProvider
 
 extension UserSessionMock: ContextProvider {
 
-    var account: Account { contextProvider!.account }
-    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
-    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
-    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
-    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
+    var account: Account { contextProvider.account }
+    var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 }

@@ -57,7 +57,7 @@ class FetchShareableConversationUseCaseTests: XCTestCase {
         shareable.addParticipantAndUpdateConversationState(user: selfUser)
 
         // create a non-shareable conversation
-        let nonShareable = createConversation()
+        createConversation()
 
         // When
         let result = sut.invoke()
@@ -68,6 +68,7 @@ class FetchShareableConversationUseCaseTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @discardableResult
     private func createConversation() -> ZMConversation {
         let context = coreDataStack.viewContext
 

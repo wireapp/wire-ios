@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
 import UIKit
 import WireDataModel
 import WireDesign
 
 class SettingsDebugReportViewController: UIViewController {
+
+    // MARK: - Constants
+
+    enum LayoutConstants {
+        static let spacing: CGFloat = 8
+        static let padding: CGFloat = 20
+        static let safeBottomPadding: CGFloat = 30
+        static let buttonHeight: CGFloat = 48
+    }
 
     // MARK: - Types
 
@@ -34,10 +42,12 @@ class SettingsDebugReportViewController: UIViewController {
 
     // MARK: - Views
 
-    private let infoLabel: UILabel = {
-        let label = UILabel()
-        label.text = Strings.TechnicalReport.info
-        label.textColor = SemanticColors.Label.textDefault
+    private lazy var infoLabel: UILabel = {
+        let label = DynamicFontLabel(
+            text: Strings.TechnicalReport.info,
+            style: .body1,
+            color: SemanticColors.Label.textDefault
+        )
         label.numberOfLines = 0
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -47,14 +57,14 @@ class SettingsDebugReportViewController: UIViewController {
     private lazy var sendReportButton: UIButton = {
         return createButton(
             title: Strings.TechnicalReport.sendReport.capitalized,
-            action: #selector(didTapSendReport)
+            action: UIAction { [weak self] _ in self?.didTapSendReport() }
         )
     }()
 
     private lazy var shareReportButton: UIButton = {
         return createButton(
             title: Strings.TechnicalReport.shareReport.capitalized,
-            action: #selector(didTapShareReport)
+            action: UIAction { [weak self] _ in self?.didTapShareReport() }
         )
     }()
 
@@ -74,10 +84,14 @@ class SettingsDebugReportViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.setDynamicFontLabel(title: Strings.TechnicalReportSection.title.capitalized)
 
         setupViews()
         setupConstraints()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle()
     }
 
     // MARK: - Setup
@@ -90,20 +104,42 @@ class SettingsDebugReportViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            infoLabel.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: 20),
-            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            infoLabel.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: LayoutConstants.padding),
+            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
+            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
 
-            shareReportButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -30),
-            shareReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            shareReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            shareReportButton.heightAnchor.constraint(equalToConstant: 48),
+            shareReportButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -LayoutConstants.safeBottomPadding),
+            shareReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
+            shareReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
+            shareReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight),
 
-            sendReportButton.bottomAnchor.constraint(equalTo: shareReportButton.topAnchor, constant: -8),
-            sendReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            sendReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            sendReportButton.heightAnchor.constraint(equalToConstant: 48)
+            sendReportButton.bottomAnchor.constraint(equalTo: shareReportButton.topAnchor, constant: -LayoutConstants.spacing),
+            sendReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
+            sendReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
+            sendReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight)
         ])
+    }
+
+    private func setupNavigationBarTitle() {
+        // Set the navigation item title
+        navigationItem.title = Strings.TechnicalReportSection.title.capitalized
+
+        // Set the navigation bar title color and font
+        let titleTextAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.font(for: .h3)
+        ]
+        navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
+
+        // Ensure title supports LargeContentViewer
+        navigationItem.titleView?.isAccessibilityElement = true
+        navigationItem.titleView?.accessibilityTraits = .header
+        navigationItem.titleView?.accessibilityLabel = navigationItem.title
+
+        if let titleView = navigationItem.titleView {
+            titleView.showsLargeContentViewer = true
+            titleView.largeContentTitle = navigationItem.title
+        }
     }
 
     // MARK: - Actions
@@ -118,14 +154,14 @@ class SettingsDebugReportViewController: UIViewController {
 
     // MARK: - Helpers
 
-    private func createButton(title: String, action: Selector) -> UIButton {
+    private func createButton(title: String, action: UIAction) -> UIButton {
         let button = ZMButton(
             style: .secondaryTextButtonStyle,
             cornerRadius: 16,
             fontSpec: .buttonBigSemibold
         )
         button.setTitle(title, for: .normal)
-        button.addTarget(self, action: action, for: .touchUpInside)
+        button.addAction(action, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }
