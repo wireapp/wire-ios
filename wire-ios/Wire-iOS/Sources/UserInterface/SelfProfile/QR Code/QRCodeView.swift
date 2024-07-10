@@ -38,11 +38,11 @@ struct QRCodeView: View {
 
                 VStack(spacing: 4) {
                     Text(viewModel.handle)
-                        .font(.title2)
-                        .fontWeight(.bold)
+                        .font(.textStyle(.h2))
+                        .foregroundColor(.black)
                     Text(viewModel.profileLink)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.textStyle(.subline1))
+                        .foregroundColor(.black)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal)
@@ -53,21 +53,21 @@ struct QRCodeView: View {
             .background(Color.white)
             .cornerRadius(20)
 
-            Spacer()
-
             // Informational text
             Text("Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
-                .font(.footnote)
+                .font(.textStyle(.body1))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.secondaryText)
+
+            Spacer()
 
             // Share buttons
             Button(action: {
                 isShareTextSheetPresented = true
             }) {
                 Text("Share Link")
-                    .font(Font.textStyle(.buttonBig))
+                    .font(.textStyle(.buttonBig))
             }
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareTextSheetPresented) {
@@ -77,7 +77,7 @@ struct QRCodeView: View {
                 isShareImageSheetPresented = true
             }) {
                     Text("Share QR Code")
-                        .font(Font.textStyle(.buttonBig))
+                        .font(.textStyle(.buttonBig))
 
             }
             .buttonStyle(SecondaryButtonStyle())
