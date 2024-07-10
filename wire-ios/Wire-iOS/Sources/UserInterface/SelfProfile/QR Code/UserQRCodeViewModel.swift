@@ -32,9 +32,38 @@ final class UserQRCodeViewModel: ObservableObject {
         handle: String
     ) {
         self.profileLink = profileLink
-        self.profileLinkQRCode = QRCodeGenerator.generateQRCode(from: profileLink)
+        let qrCodeImage = QRCodeGenerator.generateQRCode(from: profileLink)
+        self.profileLinkQRCode = qrCodeImage.addImageCentered(
+            UIImage(resource: .Wire.roundIcon),
+            borderWidth: 2,
+            borderColor: .white
+        )
         self.accentColor = accentColor
         self.handle = "@" + handle
+    }
+
+}
+
+private extension UIImage {
+
+    func addImageCentered(_ overlayImage: UIImage, borderWidth: CGFloat, borderColor: UIColor) -> UIImage {
+        let size = CGSize(width: self.size.width, height: self.size.height)
+
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let combinedImage = renderer.image { context in
+            self.draw(in: CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height))
+
+            let xPosition = (self.size.width - overlayImage.size.width) / 2
+            let yPosition = (self.size.height - overlayImage.size.height) / 2
+
+            let borderRect = CGRect(x: xPosition - borderWidth, y: yPosition - borderWidth, width: overlayImage.size.width + 2 * borderWidth, height: overlayImage.size.height + 2 * borderWidth)
+            borderColor.setFill()
+            context.cgContext.fill(borderRect)
+
+            overlayImage.draw(in: CGRect(x: xPosition, y: yPosition, width: overlayImage.size.width, height: overlayImage.size.height))
+        }
+
+        return combinedImage
     }
 
 }
