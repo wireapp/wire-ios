@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -165,8 +166,27 @@ final class SelfProfileViewController: UIViewController {
         } else {
             setupNavigationBarTitle(L10n.Localizable.Self.account.capitalized)
         }
+
+        let qrCodeButton = UIBarButtonItem(
+            image: UIImage(systemName: "qrcode"),
+            style: .plain,
+            target: self,
+            action: #selector(qrCodeButtonTapped)
+        )
+
+        navigationItem.leftBarButtonItem = qrCodeButton
     }
 
+    @objc func qrCodeButtonTapped() {
+        // Create the SwiftUI view
+        let qrCodeView = QRCodeView()
+
+        // Create a UIHostingController with the SwiftUI view
+        let hostingController = UIHostingController(rootView: qrCodeView)
+
+        // Present the UIHostingController modally
+        self.present(hostingController, animated: true, completion: nil)
+    }
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         profileContainerView.translatesAutoresizingMaskIntoConstraints = false

@@ -1431,6 +1431,7 @@
 		E9F2D6462B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */; };
 		E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */; };
 		E9F3183B28D9B03100FDB244 /* UIButton+RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */; };
+		E9F3250D2C3E8CDF00487092 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */; };
 		EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08025ADA3D5001DB205 /* AppLockModule.swift */; };
 		EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */; };
 		EE01D08725ADA3D5001DB205 /* AppLockModule.Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */; };
@@ -3511,6 +3512,7 @@
 		E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFailedToAddParticipantsSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+RoundedCorners.swift"; sourceTree = "<group>"; };
+		E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		EE01D08025ADA3D5001DB205 /* AppLockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.swift; sourceTree = "<group>"; };
 		EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Presenter.swift; sourceTree = "<group>"; };
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
@@ -5951,6 +5953,7 @@
 				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
 				EFDAC64622DE2AD100D63025 /* TeamImageView.swift */,
 				D3BF754A29B093FD008459B5 /* WarningLabelView.swift */,
+				E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */,
 			);
 			path = SelfProfile;
 			sourceTree = "<group>";
@@ -10395,6 +10398,7 @@
 				1682AEB920483CC5003A052A /* RenameGroupSectionController.swift in Sources */,
 				5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */,
 				EF23740E230D37EE006F53F3 /* NetworkInfo.swift in Sources */,
+				E9F3250D2C3E8CDF00487092 /* QRCodeView.swift in Sources */,
 				5E8FFC3121F098E00052DF03 /* ConfirmationCodeCell.swift in Sources */,
 				873C5FE81C10426A00D5132A /* ClientTableViewCell.swift in Sources */,
 				87C39A8A206947A1008DA100 /* UIView+Constraints.swift in Sources */,
