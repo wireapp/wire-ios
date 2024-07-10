@@ -48,7 +48,7 @@ final class ConversationRepositoryTests: XCTestCase {
         try await repository.updateGroupIcon()
 
         // then
-        await fulfillment(of: [expectation])
+        await fulfillment(of: [expectation], timeout: 0.1)
     }
 
     // MARK: Helpers
