@@ -19,6 +19,7 @@
 import SwiftUI
 
 struct QRCodeView: View {
+    @ObservedObject var viewModel: UserQRCodeViewModel
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -33,7 +34,7 @@ struct QRCodeView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 250, height: 250)
 
-                    Image(uiImage: QRCodeGenerator.generateQRCode(from: "Custom string"))
+                    Image(uiImage: QRCodeGenerator.generateQRCode(from: viewModel.profileLink))
                         .interpolation(.none)
                         .resizable()
                         .scaledToFit()
@@ -56,5 +57,8 @@ struct QRCodeView: View {
     }
 
 #Preview {
-    QRCodeView()
+    QRCodeView(viewModel: UserQRCodeViewModel(
+        profileLink: "http://wire.com",
+        accentColor: .blue,
+        handle: "Handle"))
 }

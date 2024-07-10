@@ -42,6 +42,7 @@ final class SelfProfileViewController: UIViewController {
 
     let userSession: UserSession
     private let accountSelector: AccountSelector?
+    private let selfUser: SettingsSelfUser
 
     // MARK: - AppLock
     private var callback: ResultHandler?
@@ -69,6 +70,7 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.accountSelector = accountSelector
+        self.selfUser = selfUser
 
         // Create the settings hierarchy
 
@@ -177,16 +179,31 @@ final class SelfProfileViewController: UIViewController {
         navigationItem.leftBarButtonItem = qrCodeButton
     }
 
-    @objc func qrCodeButtonTapped() {
-        // Create the SwiftUI view
-        let qrCodeView = QRCodeView()
+    // MARK: - QR Code
 
-        // Create a UIHostingController with the SwiftUI view
+    @objc func qrCodeButtonTapped() {
+        guard let viewModel = makeUserQRCodeViewModel(selfUser: selfUser) else {
+            return
+        }
+        let qrCodeView = QRCodeView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: qrCodeView)
 
-        // Present the UIHostingController modally
         self.present(hostingController, animated: true, completion: nil)
     }
+
+    private func makeUserQRCodeViewModel(selfUser: SettingsSelfUser) -> UserQRCodeViewModel? {
+        guard let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+              let handle = selfUser.handle else {
+            return nil
+        }
+
+        return UserQRCodeViewModel(
+            profileLink: profileLink,
+            accentColor: Color(uiColor: selfUser.accentColor),
+            handle: handle
+        )
+    }
+
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         profileContainerView.translatesAutoresizingMaskIntoConstraints = false
