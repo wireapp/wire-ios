@@ -50,9 +50,11 @@ struct QRCodeView: View {
                     Text(viewModel.profileLink)
                         .font(.caption)
                         .foregroundColor(.gray)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal)
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)
                 }
             }
             .background(Color.white)
@@ -107,17 +109,19 @@ struct QRCodeView: View {
         }) {
             Image(systemName: "xmark")
                 .imageScale(.large)
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primaryText)
         })
 
     }
 }
 
 #Preview {
-    QRCodeView(viewModel: UserQRCodeViewModel(
-        profileLink: "http://link",
-        accentColor: .blue,
-        handle: "handle"))
+    NavigationView {
+        QRCodeView(viewModel: UserQRCodeViewModel(
+            profileLink: "http://link,knfieoqrngorengoejnbgjroqekgnbojqre3bgqjore3bgn3ejjeqrlw3bglrejkbgnjorqwbglejrqg",
+            accentColor: .blue,
+            handle: "handle"))
+    }
 }
 
 struct ShareSheet: UIViewControllerRepresentable {
