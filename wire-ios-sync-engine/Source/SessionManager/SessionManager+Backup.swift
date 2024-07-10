@@ -109,19 +109,21 @@ extension SessionManager {
         guard location.unzip(to: unzippedURL) else {
             throw BackupError.compressionError
         }
+        let folderName = location.deletingPathExtension().lastPathComponent
+        let folderURL = unzippedURL.appendingPathComponent(folderName)
 
-        let metadataURL = unzippedURL.appendingPathComponent("exports.json")
+        let metadataURL = folderURL.appendingPathComponent("export.json")
         let metadata = try decodeBackupModel(MetadataBackupModel.self, from: metadataURL)
 
-        let conversationsURL = unzippedURL.appendingPathComponent("conversations.json")
+        let conversationsURL = folderURL.appendingPathComponent("conversations.json")
         let conversations = try decodeBackupModel([ConversationBackupModel].self, from: conversationsURL)
 
-        let usersURL = unzippedURL.appendingPathComponent("users.json")
+        let usersURL = folderURL.appendingPathComponent("users.json")
         let users = try decodeBackupModel([UserBackupModel].self, from: usersURL)
 
-        let eventsURL = unzippedURL.appendingPathComponent("events.json")
+        let eventsURL = folderURL.appendingPathComponent("events.json")
         let events = try decodeBackupModel([EventBackupModel].self, from: eventsURL)
-        
+
         let messages = events.compactMap {
             switch $0 {
             case .messageAdd(let eventData):
@@ -131,6 +133,8 @@ extension SessionManager {
                 nil
             }
         }
+
+        print(">>>", messages)
 
         // TODO: initialize new Core Data stack
         // TODO: populate conversations with backup models

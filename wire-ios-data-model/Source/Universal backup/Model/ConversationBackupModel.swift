@@ -19,14 +19,14 @@
 import Foundation
 
 public struct ConversationBackupModel: Codable {
-    
+
     public let id: UUID
 
     public let domain: String
 
-    public let name: String
+    public let name: String?
 
-    public let otherParticipants: Set<QualifiedID>
+    public let otherParticipants: Set<QualifiedID>?
 
     public init(
         id: UUID,

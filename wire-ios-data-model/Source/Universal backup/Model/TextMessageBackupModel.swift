@@ -26,13 +26,13 @@ public struct MessageAddBackupModel {
 
     public let conversationID: QualifiedID
 
-    public let senderUserID: QualifiedID
+    public let senderUserID: QualifiedID?
 
     public init(
         nonce: UUID,
         content: String,
         conversationID: QualifiedID,
-        senderUserID: QualifiedID
+        senderUserID: QualifiedID?
     ) {
         self.nonce = nonce
         self.content = content
@@ -62,9 +62,9 @@ public enum EventBackupModel: Decodable {
         let type = try container.decode(String.self, forKey: .type)
 
         switch type {
-        case "conversation.meesage-add":
+        case "conversation.message-add":
             let conversationID = try container.decode(QualifiedID.self, forKey: .conversationID)
-            let senderUserID = try container.decode(QualifiedID.self, forKey: .senderUserID)
+            let senderUserID = try container.decodeIfPresent(QualifiedID.self, forKey: .senderUserID)
             let time = try container.decode(String.self, forKey: .time)
             let payload = try container.decode(MessageAddEventPayload.self, forKey: .data)
 
@@ -81,7 +81,6 @@ public enum EventBackupModel: Decodable {
             self = .unknown
         }
     }
-
 
 }
 

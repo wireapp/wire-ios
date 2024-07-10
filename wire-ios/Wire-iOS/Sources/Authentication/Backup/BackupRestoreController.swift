@@ -75,7 +75,7 @@ final class BackupRestoreController: NSObject {
         let picker: UIDocumentPickerViewController
         if #available(iOS 14.0, *) {
             picker = UIDocumentPickerViewController(
-                forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
+                forOpeningContentTypes: [.zip],
                 asCopy: true)
         } else {
             picker = UIDocumentPickerViewController(documentTypes: BackupRestoreController.WireBackupUTIs, in: .import)
@@ -104,37 +104,28 @@ final class BackupRestoreController: NSObject {
         }
         target.isLoadingViewVisible = true
 
-        sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let self else {
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
-                WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
-                return
-            }
-            switch result {
-            case .failure(SessionManager.BackupError.decryptionError):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
-                WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
-                self.target.isLoadingViewVisible = false
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                self.showWrongPasswordAlert { _ in
-                    self.restore(with: url)
+        Task.detached {
+            do {
+                try await sessionManager.restoreFromUniversalBackup(at: url)
+                await MainActor.run {
+                    BackupEvent.importSucceeded.track()
+                    self.temporaryFilesService.removeTemporaryData()
+                    self.target.isLoadingViewVisible = false
+                    self.delegate?.backupResoreControllerDidFinishRestoring(self)
+                    BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+
                 }
-
-            case .failure(let error):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
-                WireLogger.localStorage.error("Failed restoring backup: \(error)")
-                BackupEvent.importFailed.track()
-                self.showRestoreError(error)
-                self.target.isLoadingViewVisible = false
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-
-            case .success:
-                BackupEvent.importSucceeded.track()
-                self.temporaryFilesService.removeTemporaryData()
-                self.delegate?.backupResoreControllerDidFinishRestoring(self)
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+            } catch {
+                await MainActor.run {
+                    zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+                    WireLogger.localStorage.error("Failed restoring backup: \(error)")
+                    BackupEvent.importFailed.track()
+                    self.showRestoreError(error)
+                    self.target.isLoadingViewVisible = false
+                    BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+                }
             }
+
         }
     }
 
