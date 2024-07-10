@@ -57,6 +57,7 @@ struct QRCodeView: View {
             Text("Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
                 .font(.textStyle(.body1))
                 .multilineTextAlignment(.center)
+                .lineLimit(nil)
                 .padding(.horizontal)
                 .foregroundColor(Color.secondaryText)
 
