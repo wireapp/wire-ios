@@ -1379,6 +1379,9 @@
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
 		E96C8831281706640003245E /* UIViewController+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96C8830281706640003245E /* UIViewController+DynamicType.swift */; };
+		E96DF05E2C3F24840093293C /* QRCodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF05D2C3F24840093293C /* QRCodeCard.swift */; };
+		E96DF0602C3F25270093293C /* InfoText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF05F2C3F25270093293C /* InfoText.swift */; };
+		E96DF0622C3F25660093293C /* ShareButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0612C3F25660093293C /* ShareButtons.swift */; };
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
@@ -3466,6 +3469,9 @@
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		E96C8830281706640003245E /* UIViewController+DynamicType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DynamicType.swift"; sourceTree = "<group>"; };
+		E96DF05D2C3F24840093293C /* QRCodeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCard.swift; sourceTree = "<group>"; };
+		E96DF05F2C3F25270093293C /* InfoText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoText.swift; sourceTree = "<group>"; };
+		E96DF0612C3F25660093293C /* ShareButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareButtons.swift; sourceTree = "<group>"; };
 		E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureLinkHeaderCell.swift; sourceTree = "<group>"; };
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
@@ -7976,6 +7982,9 @@
 				E9F3250C2C3E8CDF00487092 /* QRCodeView.swift */,
 				E9F3250F2C3E99C200487092 /* QRCodeGenerator.swift */,
 				067F99BA2C3EA1D000079288 /* UserQRCodeViewModel.swift */,
+				E96DF05D2C3F24840093293C /* QRCodeCard.swift */,
+				E96DF05F2C3F25270093293C /* InfoText.swift */,
+				E96DF0612C3F25660093293C /* ShareButtons.swift */,
 			);
 			path = "QR Code";
 			sourceTree = "<group>";
@@ -9496,6 +9505,7 @@
 				EFEC7D9B2362011E0003CF33 /* MessageAction.swift in Sources */,
 				5E8DA774211B452100360979 /* AuthenticationFlowStep+ClientsDeletion.swift in Sources */,
 				E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */,
+				E96DF0602C3F25270093293C /* InfoText.swift in Sources */,
 				87E3C5081FA76B7C008D1FC3 /* AnalyticsProviderFactory.swift in Sources */,
 				5EA73D8220D900A10001D106 /* GroupDetailsRenameCell.swift in Sources */,
 				BFCF31D71DA3A9350039B3DC /* SettingsCellDescriptorFactory+Options.swift in Sources */,
@@ -9861,6 +9871,7 @@
 				EFF3DA452097587F007A3358 /* UIPasteboard+MediaAsset.swift in Sources */,
 				1682AEB620480C80003A052A /* UIViewController+Navigation.swift in Sources */,
 				5E33F0D020AD629D00414EA6 /* CallPermissionsConfiguration.swift in Sources */,
+				E96DF0622C3F25660093293C /* ShareButtons.swift in Sources */,
 				EF2388862211A67900331C07 /* UserRight.swift in Sources */,
 				5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */,
 				871BC2551D34F8F800DF0793 /* CrossfadeTransition.swift in Sources */,
@@ -10104,6 +10115,7 @@
 				F19C3A8F20513532004387E4 /* DatabaseStatisticsController.swift in Sources */,
 				EFB97F7022EF45D50092A620 /* UIImage+ImageUtilities.swift in Sources */,
 				D50892FB2056BD51004D3AE2 /* ZMUser+ExpirationTimeFormatting.swift in Sources */,
+				E96DF05E2C3F24840093293C /* QRCodeCard.swift in Sources */,
 				5502C6E222B7B729000684B7 /* LegalHoldAlertFactory.swift in Sources */,
 				EEAC0A1221AD875900BE5F5D /* ConversationCreateNameSectionController.swift in Sources */,
 				59A27BB32C2ACCDA00195393 /* TopOverlayPresenter.swift in Sources */,

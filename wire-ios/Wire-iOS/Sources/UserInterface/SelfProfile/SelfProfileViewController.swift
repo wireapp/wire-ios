@@ -179,20 +179,29 @@ final class SelfProfileViewController: UIViewController {
         navigationItem.leftBarButtonItem = qrCodeButton
     }
 
-    // MARK: - QR Code
-
     @objc func qrCodeButtonTapped() {
-            guard let viewModel = makeUserQRCodeViewModel(selfUser: selfUser) else {
-                return
-            }
-            let qrCodeView = QRCodeView(viewModel: viewModel)
-            let hostingController = UIHostingController(rootView: qrCodeView)
-
-            // Wrap the UIHostingController in a UINavigationController
-            let navigationController = UINavigationController(rootViewController: hostingController)
-
-            self.present(navigationController, animated: true, completion: nil)
+        guard let viewModel = makeUserQRCodeViewModel(selfUser: selfUser) else {
+            return
         }
+        let qrCodeView = QRCodeView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: qrCodeView)
+
+        // Set the title for the navigation bar
+        hostingController.title = "Share Profile"
+
+        // Create a UIBarButtonItem for dismissal
+        let dismissButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissQRCodeView))
+        hostingController.navigationItem.leftBarButtonItem = dismissButton
+
+        // Wrap the UIHostingController in a UINavigationController
+        let navigationController = UINavigationController(rootViewController: hostingController)
+
+        self.present(navigationController, animated: true, completion: nil)
+    }
+
+    @objc func dismissQRCodeView() {
+        dismiss(animated: true, completion: nil)
+    }
 
     private func makeUserQRCodeViewModel(selfUser: SettingsSelfUser) -> UserQRCodeViewModel? {
         guard let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
