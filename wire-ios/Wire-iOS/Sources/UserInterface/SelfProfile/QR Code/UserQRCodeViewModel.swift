@@ -33,9 +33,11 @@ final class UserQRCodeViewModel: ObservableObject {
     ) {
         self.profileLink = profileLink
         let qrCodeImage = QRCodeGenerator.generateQRCode(from: profileLink)
+        let overlaySize = CGSize(width: qrCodeImage.size.width * 0.25, height: qrCodeImage.size.height * 0.25)
         self.profileLinkQRCode = qrCodeImage.addImageCentered(
             UIImage(resource: .Wire.roundIcon),
-            borderWidth: 2,
+            overlaySize: overlaySize,
+            borderWidth: 1,
             borderColor: .white
         )
         self.accentColor = accentColor
@@ -44,23 +46,33 @@ final class UserQRCodeViewModel: ObservableObject {
 
 }
 
-private extension UIImage {
+extension UIImage {
 
-    func addImageCentered(_ overlayImage: UIImage, borderWidth: CGFloat, borderColor: UIColor) -> UIImage {
-        let size = CGSize(width: self.size.width, height: self.size.height)
+    func addImageCentered(
+        _ overlayImage: UIImage,
+        overlaySize: CGSize,
+        borderWidth: CGFloat,
+        borderColor: UIColor
+    ) -> UIImage {
+        let size = self.size
 
         let renderer = UIGraphicsImageRenderer(size: size)
         let combinedImage = renderer.image { context in
-            self.draw(in: CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height))
+            self.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
 
-            let xPosition = (self.size.width - overlayImage.size.width) / 2
-            let yPosition = (self.size.height - overlayImage.size.height) / 2
+            let xPosition = (size.width - overlaySize.width) / 2
+            let yPosition = (size.height - overlaySize.height) / 2
 
-            let borderRect = CGRect(x: xPosition - borderWidth, y: yPosition - borderWidth, width: overlayImage.size.width + 2 * borderWidth, height: overlayImage.size.height + 2 * borderWidth)
+            let borderRect = CGRect(
+                x: xPosition - borderWidth,
+                y: yPosition - borderWidth,
+                width: overlaySize.width + 2 * borderWidth,
+                height: overlaySize.height + 2 * borderWidth
+            )
             borderColor.setFill()
             context.cgContext.fill(borderRect)
 
-            overlayImage.draw(in: CGRect(x: xPosition, y: yPosition, width: overlayImage.size.width, height: overlayImage.size.height))
+            overlayImage.draw(in: CGRect(x: xPosition, y: yPosition, width: overlaySize.width, height: overlaySize.height))
         }
 
         return combinedImage
