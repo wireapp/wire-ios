@@ -62,6 +62,9 @@ actor EventProcessor: UpdateEventProcessor {
 
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
         guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+        events.forEach { event in
+            WireLogger.updateEvent.debug("buffer event", attributes: event.logAttributes)
+        }
         bufferedEvents.append(contentsOf: events)
     }
 
@@ -91,8 +94,10 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
+        defer { processingTask = nil }
+
         processingTask = Task { [processingTask] in
-            _ = await processingTask?.result
+            _ = try await processingTask?.value
             return try await block()
         }
 
@@ -159,11 +164,11 @@ actor EventProcessor: UpdateEventProcessor {
 
             WireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
 
-            Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
+            WireLogger.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
             for event in decryptedUpdateEvents {
-                WireLogger.updateEvent.info("process decrypted event", attributes: [.eventId: event.safeUUID,
-                                                                                    .nonce: event.messageNonce])
+                WireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)
+
                 await syncContext.perform {
                     for eventConsumer in self.eventConsumers {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)

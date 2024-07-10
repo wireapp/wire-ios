@@ -66,7 +66,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
 
-            return WireAPI.PayloadPager.Page(
+            WireAPI.PayloadPager.Page(
                 element: [
                     brokenConnection,
                     connection
@@ -99,13 +99,15 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
     // MARK: Private
 
-    func internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: Bool,
-                                                                 file: StaticString = #file,
-                                                                 line: UInt = #line) async throws {
+    func internalTestPullConnections_GivenConnectionDoesNotExist(
+        federationEnabled: Bool,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async throws {
         // Mock
         let connection = Scaffolding.connection
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
-            return WireAPI.PayloadPager.Page(element: [connection], hasMore: false, nextStart: "first")
+            WireAPI.PayloadPager.Page(element: [connection], hasMore: false, nextStart: "first")
         })
 
         // When

@@ -27,6 +27,9 @@ public enum LogAttributesKey: String {
     case nonce = "message_nonce"
     case messageType = "message_type"
     case lastEventID = "last_event_id"
+    case conversationId = "conversation_id"
+    case syncPhase = "sync_phase"
+    case eventSource = "event_source"
     case `public`
     case tag
 }
