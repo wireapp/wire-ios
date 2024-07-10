@@ -19,6 +19,7 @@
 import SwiftUI
 
 struct QRCodeView: View {
+
     @Environment(\.presentationMode) var presentationMode
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
@@ -66,28 +67,20 @@ struct QRCodeView: View {
                 isShareTextSheetPresented = true
             }) {
                 Text("Share Link")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .font(Font.textStyle(.buttonBig))
             }
+            .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareTextSheetPresented) {
                 ShareSheet(activityItems: [viewModel.profileLink])
             }
             Button(action: {
                 isShareImageSheetPresented = true
             }) {
-                HStack {
-                    Image(systemName: "qrcode")
                     Text("Share QR Code")
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.yellow)
-                .foregroundColor(.black)
-                .cornerRadius(10)
+                        .font(Font.textStyle(.buttonBig))
+
             }
+            .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareImageSheetPresented) {
                 ShareSheet(activityItems: [viewModel.profileLinkQRCode])
             }
