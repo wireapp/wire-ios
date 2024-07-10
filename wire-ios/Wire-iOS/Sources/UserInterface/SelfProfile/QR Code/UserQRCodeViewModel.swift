@@ -21,9 +21,10 @@ import SwiftUI
 
 final class UserQRCodeViewModel: ObservableObject {
 
-    @Published var profileLink: String = ""
-    @Published var accentColor: Color = .black
-    @Published var handle: String = ""
+    @Published var profileLink: String
+    @Published var profileLinkQRCode: UIImage
+    @Published var accentColor: Color
+    @Published var handle: String
 
     init(
         profileLink: String,
@@ -31,6 +32,7 @@ final class UserQRCodeViewModel: ObservableObject {
         handle: String
     ) {
         self.profileLink = profileLink
+        self.profileLinkQRCode = QRCodeGenerator.generateQRCode(from: profileLink)
         self.accentColor = accentColor
         self.handle = "@" + handle
     }

@@ -20,13 +20,15 @@ import SwiftUI
 
 struct QRCodeView: View {
     @Environment(\.presentationMode) var presentationMode
+    @State private var isShareTextSheetPresented = false
+    @State private var isShareImageSheetPresented = false
     @ObservedObject var viewModel: UserQRCodeViewModel
 
     var body: some View {
         VStack {
             VStack(spacing: 20) {
                 ZStack {
-                    Image(uiImage: QRCodeGenerator.generateQRCode(from: viewModel.profileLink))
+                    Image(uiImage: viewModel.profileLinkQRCode)
                         .interpolation(.none)
                         .resizable()
                         .frame(width: 250, height: 250)
@@ -67,7 +69,7 @@ struct QRCodeView: View {
 
             // Share buttons
             Button(action: {
-                // Implement share link action
+                isShareTextSheetPresented = true
             }) {
                 Text("Share Link")
                     .frame(maxWidth: .infinity)
@@ -76,9 +78,11 @@ struct QRCodeView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
-
+            .sheet(isPresented: $isShareTextSheetPresented) {
+                ShareSheet(activityItems: [viewModel.profileLink])
+            }
             Button(action: {
-                // Implement share QR code action
+                isShareImageSheetPresented = true
             }) {
                 HStack {
                     Image(systemName: "qrcode")
@@ -89,6 +93,9 @@ struct QRCodeView: View {
                 .background(Color.yellow)
                 .foregroundColor(.black)
                 .cornerRadius(10)
+            }
+            .sheet(isPresented: $isShareImageSheetPresented) {
+                ShareSheet(activityItems: [viewModel.profileLinkQRCode])
             }
 
         }
@@ -103,5 +110,25 @@ struct QRCodeView: View {
                 .foregroundStyle(.black)
         })
 
+    }
+}
+
+#Preview {
+    QRCodeView(viewModel: UserQRCodeViewModel(
+        profileLink: "http://link",
+        accentColor: .blue,
+        handle: "handle"))
+}
+
+struct ShareSheet: UIViewControllerRepresentable {
+    var activityItems: [Any]
+    var applicationActivities: [UIActivity]?
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
     }
 }
