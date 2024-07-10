@@ -193,8 +193,8 @@ struct GroupIconCell: View {
     var body: some View {
         HStack {
             Text("Group Icon")
-                .font(Font.textStyle(.body1))
-                .fontWeight(.bold)
+                .font(Font.textStyle(.subline1))
+                .fontWeight(.semibold)
             Spacer()
             if let color {
                 GroupIconView(color: color, emoji: emoji)
@@ -203,6 +203,7 @@ struct GroupIconCell: View {
         }
         .background(Color.white)
         .frame(height: 44)
+        .ignoresSafeArea()
     }
 }
 

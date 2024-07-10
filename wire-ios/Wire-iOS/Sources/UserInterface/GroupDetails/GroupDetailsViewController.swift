@@ -467,17 +467,15 @@ extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
     func presentGroupIconOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
-
-//        let menu = EditGroupIconViewController()
-//        menu.dismisser = self
+        guard let qualifiedID = conversation.qualifiedID else { return }
 
         let useCase = UpdateGroupIconUseCase(api: userSession.makeConversationsAPI(),
-                                                            conversationId: conversation.qualifiedID!, context: userSession.syncContext)
-        // TODO: add emoji
-        let viewModel = GroupIconPickerViewModel(updateGroupIconUseCase: useCase, initialGroupColor: conversation.groupColor)
+                                             conversationId: qualifiedID,
+                                             context: userSession.syncContext)
+        let viewModel = GroupIconPickerViewModel(updateGroupIconUseCase: useCase, initialGroupIcon: (conversation.groupColor, conversation.groupEmoji))
         let view = GroupIconPickerView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
-
+        viewController.title = "Group Icon"
         navigationController?.pushViewController(viewController, animated: animated)
     }
 }

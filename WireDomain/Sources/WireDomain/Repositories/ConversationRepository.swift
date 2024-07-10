@@ -33,6 +33,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func updateGroupIcon() async throws {
-        try await conversationAPI.updateGroupIcon()
+//        try await conversationAPI.updateGroupIcon(for: <#QualifiedID#>, hexColor: <#String?#>, emoji: <#String?#>)
     }
 }

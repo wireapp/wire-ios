@@ -22,9 +22,10 @@ import WireDataModel
 struct GroupIconPickerView: View {
 
     private static let cellSize: CGFloat = 60
+    private let cornerRadius: CGFloat = 12
 
     private let columns = [
-        GridItem(.adaptive(minimum: 50, maximum: 60))
+        GridItem(.adaptive(minimum: 50, maximum: Self.cellSize))
     ]
 
     @StateObject var viewModel: GroupIconPickerViewModel
@@ -37,21 +38,58 @@ struct GroupIconPickerView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("Select a color for the group avatar:")
+                .fontWeight(.regular)
+                .font(.body)
 
-            grid
+            sectionTitle("Group Color")
+            colorList
+
+            sectionTitle("Group Icon")
+            ScrollView {
+                emojiList
+            }
         }
         .padding()
         .background(.background)
     }
 
     @ViewBuilder
-    private var grid: some View {
+    func sectionTitle(_ title: String) -> some View {
+        HStack {
+            Text(title)
+                .fontWeight(.semibold)
+                .font(.subheadline)
+                .foregroundColor(.gray.darker(by: 50))
+            Spacer()
+        }
+        .background(Color.gray)
+    }
+
+    private var emojiList: some View {
+        LazyVGrid(columns: columns, spacing: 8) {
+            ForEach(viewModel.emojis) { item in
+                Button {
+                    viewModel.selectEmoji(item)
+                } label: {
+                    ZStack {
+                        if viewModel.selectedEmoji == item {
+                            CircleView()
+                        }
+                        Text(item.value)
+                            .font(.system(size: 25))
+                            .padding()
+                    }
+                }
+            }
+        }
+    }
+
+    private var colorList: some View {
         LazyVGrid(columns: columns, spacing: 8) {
             ForEach(viewModel.items) { item in
                 Button {
                     viewModel.selectItem(item)
                 } label: {
-                    let cornerRadius: CGFloat = 12
 
                     ZStack {
                         Rectangle()
@@ -70,5 +108,45 @@ struct GroupIconPickerView: View {
                 }
             }
         }
+    }
+}
+
+extension Emoji: Identifiable {
+    var id: String {
+        self.value
+    }
+}
+
+struct CircleView: View {
+    var body: some View {
+        Circle()
+            .fill(Color.gray)
+            .frame(width: 40, height: 40) // Adjust the size as needed
+            .overlay(
+                Circle()
+                    .stroke(Color.gray.darker(), lineWidth: 4) // Adjust the line width as needed
+            )
+    }
+}
+
+extension Color {
+    func darker(by percentage: CGFloat = 30.0) -> Color {
+        return self.adjust(brightnessBy: -1 * percentage)
+    }
+
+    func adjust(brightnessBy percentage: CGFloat = 30.0) -> Color {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        UIColor(self).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        return Color(
+            red: min(red + percentage / 100, 1.0),
+            green: min(green + percentage / 100, 1.0),
+            blue: min(blue + percentage / 100, 1.0),
+            opacity: Double(alpha)
+        )
     }
 }

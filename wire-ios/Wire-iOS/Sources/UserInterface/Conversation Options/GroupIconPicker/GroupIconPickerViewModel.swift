@@ -20,6 +20,8 @@ import SwiftUI
 import WireDataModel
 import WireDesign
 
+typealias GroupIcon = (color: String?, emoji: String?)
+
 final class GroupIconPickerViewModel: ObservableObject {
     let items: [GroupIconPickerDisplayModel.Item] = [
         // blue
@@ -42,14 +44,35 @@ final class GroupIconPickerViewModel: ObservableObject {
         // TODO: add more colors
     ]
 
-    @Published var selectedItem: GroupIconPickerDisplayModel.Item?
+    let emojiRepository = EmojiRepository()
+    private (set) var emojis: [Emoji] = []
+
+    @Published private (set) var selectedItem: GroupIconPickerDisplayModel.Item?
+    @Published private (set) var selectedEmoji: Emoji?
 
     private let updateGroupIconUseCase: UpdateGroupIconUseCase
 
-    init(updateGroupIconUseCase: UpdateGroupIconUseCase, initialGroupColor: String?) {
+    init(updateGroupIconUseCase: UpdateGroupIconUseCase, initialGroupIcon: GroupIcon) {
         self.updateGroupIconUseCase = updateGroupIconUseCase
-        selectedItem = items.first { $0.color.toHexString() == initialGroupColor }
-        print(selectedItem)
+        emojis = emojiRepository.allEmojis()
+        selectedItem = items.first { $0.color.toHexString() == initialGroupIcon.color }
+        selectedEmoji = emojis.first { $0.value == initialGroupIcon.emoji }
+        print(selectedItem, selectedEmoji)
+
+    }
+
+    func selectEmoji(_ emoji: Emoji) {
+        if selectedEmoji == emoji {
+            // unselect
+            selectedEmoji = nil
+            print("unselect item")
+        } else {
+            // select
+            selectedEmoji = emoji
+            print("select emoji : \(emoji.name)")
+        }
+
+        updateGroupIcon()
     }
 
     func selectItem(_ item: GroupIconPickerDisplayModel.Item) {
@@ -63,13 +86,14 @@ final class GroupIconPickerViewModel: ObservableObject {
             print("select item with color: \(item.color)")
         }
 
-        updateGroupIcon(item)
+        updateGroupIcon()
     }
 
-    private func updateGroupIcon(_ item: GroupIconPickerDisplayModel.Item) {
+    private func updateGroupIcon() {
         Task {
             do {
-                try await updateGroupIconUseCase.invoke(colorString: selectedItem?.color.toHexString(), emoji: nil)
+                try await updateGroupIconUseCase.invoke(colorString: selectedItem?.color.toHexString(),
+                                                        emoji: selectedEmoji?.value)
             } catch {
                 WireLogger.conversation.error("error updatingGroupIcon: \(error)")
             }
