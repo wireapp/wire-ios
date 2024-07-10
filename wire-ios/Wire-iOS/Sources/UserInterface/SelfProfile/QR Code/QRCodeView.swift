@@ -24,16 +24,13 @@ struct QRCodeView: View {
 
     var body: some View {
         VStack {
-            Spacer()
-            VStack {
-                // QR Code with logo
+            VStack(spacing: 20) {
                 ZStack {
-                    VStack {
-                        Image(uiImage: QRCodeGenerator.generateQRCode(from: viewModel.profileLink))
-                            .interpolation(.none)
-                            .resizable()
-                            .frame(width: 250, height: 250)
-                    }
+                    Image(uiImage: QRCodeGenerator.generateQRCode(from: viewModel.profileLink))
+                        .interpolation(.none)
+                        .resizable()
+                        .frame(width: 250, height: 250)
+
                     Circle()
                         .fill(Color.blue)
                         .frame(width: 60, height: 60)
@@ -43,26 +40,21 @@ struct QRCodeView: View {
                                 .font(.system(size: 30, weight: .bold))
                         )
                 }
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(radius: 5)
 
-                VStack(spacing: 5) {
-                    Text("")
+                VStack(spacing: 4) {
+                    Text(viewModel.handle)
                         .font(.title2)
                         .fontWeight(.bold)
-
-                    Text("")
+                    Text(viewModel.profileLink)
                         .font(.caption)
                         .foregroundColor(.gray)
-                        .lineLimit(0)
+                        .lineLimit(1)
                         .truncationMode(.middle)
-                        .padding()
+                        .padding(.horizontal)
                 }
             }
-            .frame(maxWidth: .infinity)
             .background(Color.white)
-            .cornerRadius(12)
+            .cornerRadius(20)
 
             Spacer()
 
@@ -98,6 +90,7 @@ struct QRCodeView: View {
                 .foregroundColor(.black)
                 .cornerRadius(10)
             }
+
         }
         .padding()
         .background(Color.gray.opacity(0.1).edgesIgnoringSafeArea(.all))
@@ -107,6 +100,8 @@ struct QRCodeView: View {
         }) {
             Image(systemName: "xmark")
                 .imageScale(.large)
+                .foregroundStyle(.black)
         })
+
     }
 }

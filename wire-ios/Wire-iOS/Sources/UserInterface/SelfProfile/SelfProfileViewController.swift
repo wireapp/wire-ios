@@ -181,16 +181,18 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - QR Code
 
-    @objc
-    func qrCodeButtonTapped() {
-        guard let viewModel = makeUserQRCodeViewModel(selfUser: selfUser) else {
-            return
-        }
-        let qrCodeView = QRCodeView(viewModel: viewModel)
-        let hostingController = UIHostingController(rootView: qrCodeView)
+    @objc func qrCodeButtonTapped() {
+            guard let viewModel = makeUserQRCodeViewModel(selfUser: selfUser) else {
+                return
+            }
+            let qrCodeView = QRCodeView(viewModel: viewModel)
+            let hostingController = UIHostingController(rootView: qrCodeView)
 
-        self.present(hostingController, animated: true, completion: nil)
-    }
+            // Wrap the UIHostingController in a UINavigationController
+            let navigationController = UINavigationController(rootViewController: hostingController)
+
+            self.present(navigationController, animated: true, completion: nil)
+        }
 
     private func makeUserQRCodeViewModel(selfUser: SettingsSelfUser) -> UserQRCodeViewModel? {
         guard let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
