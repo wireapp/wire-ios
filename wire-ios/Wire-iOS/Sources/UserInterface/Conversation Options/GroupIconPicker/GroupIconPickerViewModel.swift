@@ -17,17 +17,28 @@
 //
 
 import SwiftUI
+import WireDesign
 
 final class GroupIconPickerViewModel: ObservableObject {
     let items: [GroupIconPickerDisplayModel.Item] = [
-        GroupIconPickerDisplayModel.Item(color: .red),
-        GroupIconPickerDisplayModel.Item(color: .blue),
-        GroupIconPickerDisplayModel.Item(color: .green),
-        GroupIconPickerDisplayModel.Item(color: .orange),
-        GroupIconPickerDisplayModel.Item(color: .gray),
-        GroupIconPickerDisplayModel.Item(color: .brown),
-        GroupIconPickerDisplayModel.Item(color: .indigo),
-        GroupIconPickerDisplayModel.Item(color: .yellow)
+        // blue
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue300),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.blue500),
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue700),
+
+        // green
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.green300),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.green500),
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.green700),
+
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.petrol500),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.purple500),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.red500),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.amber500),
+
+        .init(uiColor: BaseColorPalette.Grays.gray70)
+
+        // TODO: add more colors
     ]
 
     @Published var selectedItem: GroupIconPickerDisplayModel.Item?

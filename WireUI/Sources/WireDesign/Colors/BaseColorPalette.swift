@@ -44,6 +44,9 @@ public enum BaseColorPalette {
             public static let blue700 = UIColor(resource: .blue700Light)
             public static let blue800 = UIColor(resource: .blue800Light)
             public static let blue900 = UIColor(resource: .blue900Light)
+
+            public static let green300 = UIColor(resource: .green300Light)
+            public static let green700 = UIColor(resource: .green700Light)
         }
     }
 

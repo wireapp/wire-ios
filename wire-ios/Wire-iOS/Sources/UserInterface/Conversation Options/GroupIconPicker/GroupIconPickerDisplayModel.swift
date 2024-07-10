@@ -17,11 +17,20 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum GroupIconPickerDisplayModel {
     struct Item: Identifiable, Equatable {
         var id: Color { color }
 
         let color: Color
+
+        init(color: Color) {
+            self.color = color
+        }
+
+        init(uiColor: UIColor) {
+            self.color = .init(uiColor: uiColor)
+        }
     }
 }
