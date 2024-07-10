@@ -48,11 +48,11 @@ struct QRCodeView: View {
                 .shadow(radius: 5)
 
                 VStack(spacing: 5) {
-                    Text("")
+                    Text(viewModel.handle)
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("")
+                    Text(viewModel.profileLink)
                         .font(.caption)
                         .foregroundColor(.gray)
                         .lineLimit(0)
