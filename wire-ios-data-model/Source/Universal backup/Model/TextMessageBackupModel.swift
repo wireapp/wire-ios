@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct TextMessageBackupModel: Codable {
+public struct MessageAddBackupModel {
 
     public let nonce: UUID
 
@@ -39,5 +39,54 @@ public struct TextMessageBackupModel: Codable {
         self.conversationID = conversationID
         self.senderUserID = senderUserID
     }
+
+}
+
+public enum EventBackupModel: Decodable {
+
+    case messageAdd(MessageAddBackupModel)
+    case unknown
+
+    enum CodingKeys: String, CodingKey {
+
+        case type
+        case conversationID = "qualified_conversation"
+        case senderUserID = "qualified_from"
+        case time
+        case data
+
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+
+        switch type {
+        case "conversation.meesage-add":
+            let conversationID = try container.decode(QualifiedID.self, forKey: .conversationID)
+            let senderUserID = try container.decode(QualifiedID.self, forKey: .senderUserID)
+            let time = try container.decode(String.self, forKey: .time)
+            let payload = try container.decode(MessageAddEventPayload.self, forKey: .data)
+
+            let messageAddData = MessageAddBackupModel(
+                nonce: UUID(),
+                content: payload.content,
+                conversationID: conversationID,
+                senderUserID: senderUserID
+            )
+
+            self = .messageAdd(messageAddData)
+
+        default:
+            self = .unknown
+        }
+    }
+
+
+}
+
+struct MessageAddEventPayload: Decodable {
+
+    let content: String
 
 }

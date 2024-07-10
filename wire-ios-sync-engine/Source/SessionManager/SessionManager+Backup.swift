@@ -120,14 +120,17 @@ extension SessionManager {
         let users = try decodeBackupModel([UserBackupModel].self, from: usersURL)
 
         let eventsURL = unzippedURL.appendingPathComponent("events.json")
-        let messages = try decodeBackupModel([TextMessageBackupModel].self, from: eventsURL)
+        let events = try decodeBackupModel([EventBackupModel].self, from: eventsURL)
+        
+        let messages = events.compactMap {
+            switch $0 {
+            case .messageAdd(let eventData):
+                eventData
 
-        // TODO: basic validation
-        // TODO: unzip the url
-        // TODO: parse export.json to extract self user info
-        // TODO: parse conversations.json into ConversationBackupModel
-        // TODO: parse users.json into UserBackupModel
-        // TODO: parse events.json into TextMessageBackupModel
+            default:
+                nil
+            }
+        }
 
         // TODO: initialize new Core Data stack
         // TODO: populate conversations with backup models
