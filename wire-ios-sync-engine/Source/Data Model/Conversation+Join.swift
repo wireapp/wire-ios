@@ -82,7 +82,7 @@ extension ZMConversation {
                 }
 
                 Task {
-                    // swiftlint:disable todo_requires_jira_link
+                    // swiftlint:disable:next todo_requires_jira_link
                     // FIXME: [jacob] replace with ConversationEventProcessor
                     try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
