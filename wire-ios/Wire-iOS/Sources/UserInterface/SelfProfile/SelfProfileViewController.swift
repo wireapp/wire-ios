@@ -186,7 +186,7 @@ final class SelfProfileViewController: UIViewController {
         let qrCodeView = QRCodeView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: qrCodeView)
 
-        hostingController.title = L10n.Localizable.Qrcode.title
+        hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
 
         // Create a UIBarButtonItem with a "Close" label for dismissal
         let closeButton = UIBarButtonItem(
