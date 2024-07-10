@@ -111,20 +111,16 @@ extension SessionManager {
         }
 
         let metadataURL = unzippedURL.appendingPathComponent("exports.json")
+        let metadata = try decodeBackupModel(MetadataBackupModel.self, from: metadataURL)
+
         let conversationsURL = unzippedURL.appendingPathComponent("conversations.json")
+        let conversations = try decodeBackupModel([ConversationBackupModel].self, from: conversationsURL)
+
         let usersURL = unzippedURL.appendingPathComponent("users.json")
+        let users = try decodeBackupModel([UserBackupModel].self, from: usersURL)
+
         let eventsURL = unzippedURL.appendingPathComponent("events.json")
-
-        let metadataData = try Data(contentsOf: conversationsURL)
-        let conversationsData = try Data(contentsOf: conversationsURL)
-        let usersData = try Data(contentsOf: conversationsURL)
-        let eventsData = try Data(contentsOf: conversationsURL)
-
-        let decoder = JSONDecoder()
-        let metadata = try JSONDecoder().decode(MetadataBackupModel.self, from: metadataData)
-        let conversations = try JSONDecoder().decode([ConversationBackupModel].self, from: conversationsData)
-        let users = try JSONDecoder().decode([UserBackupModel].self, from: usersData)
-        let events = try JSONDecoder().decode([TextMessageBackupModel].self, from: eventsData)
+        let messages = try decodeBackupModel([TextMessageBackupModel].self, from: eventsURL)
 
         // TODO: basic validation
         // TODO: unzip the url
@@ -137,6 +133,15 @@ extension SessionManager {
         // TODO: populate conversations with backup models
         // TODO: populate users with backup models
         // TODO: populate messages with backup models
+    }
+
+    private func decodeBackupModel<T: Decodable>(
+        _ type: T.Type,
+        from url: URL
+    ) throws -> T {
+        let decoder = JSONDecoder()
+        let data = try Data(contentsOf: url)
+        return try decoder.decode(T.self, from: data)
     }
 
     /// Restores the account database from the Wire iOS database back up file.
