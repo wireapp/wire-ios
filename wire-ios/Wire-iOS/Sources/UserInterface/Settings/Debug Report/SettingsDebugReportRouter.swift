@@ -94,7 +94,7 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
     }
 
     func presentFallbackAlert() {
-        guard let viewController = viewController else { return }
+        guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
             logPaths: DebugLogSender.debugLogs,
