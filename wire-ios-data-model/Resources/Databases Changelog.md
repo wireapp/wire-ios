@@ -4,6 +4,11 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.119.0
+
+* added `groupIcon` and `groupEmoji` attributes on the Conversation entity
+
+
 ### 2.118.0
 
 * added `shouldExpire` attribute on the Messaging entity

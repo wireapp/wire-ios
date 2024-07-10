@@ -20,6 +20,14 @@ import Foundation
 
 extension ZMConversation {
 
+    /// Hexadecimal value of color for group conversation
+    @NSManaged
+    public var groupColor: String?
+
+    /// Emoji  for group conversation
+    @NSManaged
+    public var groupEmoji: String?
+
     /// Whether the conversation was deleted on the backend.
 
     @NSManaged
