@@ -160,13 +160,15 @@ extension MessagingTestBase {
     ) async throws -> ZMUpdateEvent {
 
         let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
+        // Note: [F] added info to make it ZMSLog SafeTypes happy - this event conversation.otr-asset-add is deprecated
         let innerPayload = await syncMOC.perform { [self] in
-             [
+            [
                 "recipient": selfClient.remoteIdentifier!,
                 "sender": otherClient.remoteIdentifier!,
                 "id": UUID.create().transportString(),
-                "key": cyphertext.base64String()
-             ]
+                "key": cyphertext.base64String(),
+                "info": cyphertext.base64String()
+            ]
         }
         return try await decryptedUpdateEventFromOtherClient(
             innerPayload: innerPayload,
@@ -506,7 +508,7 @@ extension MessagingTestBase {
 extension MessagingTestBase {
 
     private var cacheFolder: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.randomCacheURL!
     }
 
     fileprivate func deleteAllFilesInCache() {

@@ -18,7 +18,15 @@
 
 import Foundation
 
-public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {}
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
+
+    /// Messages can expire, e.g. if network conditions are too slow to send.
+    var shouldExpire: Bool { get }
+
+    /// Sets the expiration date with the default time interval.
+    func setExpirationDate()
+}
 
 extension ZMClientMessage: ProteusMessage {}
+
 extension ZMAssetClientMessage: ProteusMessage {}

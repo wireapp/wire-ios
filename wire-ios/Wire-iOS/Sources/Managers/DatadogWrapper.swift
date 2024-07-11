@@ -88,7 +88,6 @@ public final class DatadogWrapper {
             .sendNetworkInfo(true)
             .sendLogsToDatadog(true)
             .set(loggerName: "iOS Wire App")
-            .printLogsToConsole(true, usingFormat: .shortWith(prefix: "[iOS App] "))
             .set(datadogReportingThreshold: level)
             .build()
 
@@ -241,6 +240,11 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
+
+    public var logFiles: [URL] {
+        return []
+    }
+
     public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
     }

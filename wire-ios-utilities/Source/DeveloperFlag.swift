@@ -29,6 +29,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case debugDuplicateObjects
+    case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
 
     public var description: String {
@@ -53,6 +54,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .debugDuplicateObjects:
             return "Turn on to have actions to insert duplicate users, conversations, teams"
+
+        case .decryptAndStoreEventsSleep:
+            return "Adds a delay when decrypting and storing events"
 
         case .forceCRLExpiryAfterOneMinute:
             return "Turn on to force CRLs to expire after 1 minute"
@@ -92,7 +96,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute:
+        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"

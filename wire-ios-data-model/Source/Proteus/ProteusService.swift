@@ -121,9 +121,21 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusEncrypt
 
-    enum EncryptionError: Error {
-        case failedToEncryptData
-        case failedToEncryptDataBatch
+    enum EncryptionError: Error, Equatable {
+        case failedToEncryptData(Error)
+        case failedToEncryptDataBatch(Error)
+
+        static func == (lhs: ProteusService.EncryptionError, rhs: ProteusService.EncryptionError) -> Bool {
+            switch (lhs, rhs) {
+            case (let failedToEncryptData(lhsError), let failedToEncryptData(rhsError)):
+                return lhsError as NSError == rhsError as NSError
+            case (let failedToEncryptDataBatch(lhsError), let failedToEncryptDataBatch(rhsError)):
+                return lhsError as NSError == rhsError as NSError
+
+            default:
+                return false
+            }
+        }
     }
 
     public func encrypt(
@@ -141,8 +153,7 @@ public final class ProteusService: ProteusServiceInterface {
             }
             return encryptedData
         } catch {
-            logger.error("failed to encrypt data: \(String(describing: error))")
-            throw EncryptionError.failedToEncryptData
+            throw EncryptionError.failedToEncryptData(error)
         }
     }
 
@@ -163,8 +174,7 @@ public final class ProteusService: ProteusServiceInterface {
             }
             return encryptedBatch
         } catch {
-            logger.error("failed to encrypt data batch: \(String(describing: error))")
-            throw EncryptionError.failedToEncryptDataBatch
+            throw EncryptionError.failedToEncryptDataBatch(error)
         }
     }
 
@@ -236,7 +246,7 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     public func generatePrekey(id: UInt16) async throws -> String {
-        logger.info("generating prekey")
+        logger.info("generating prekey with id: \(id)")
 
         do {
             return try await coreCrypto.perform { try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString() }

@@ -64,7 +64,6 @@ extension Settings {
             "URL",
             "EmoticonSubstitutionConfiguration",
             "URL Helper",
-            "Performance",
             "message-processing",
             "backend-environment",
             "Analytics",
@@ -149,8 +148,7 @@ extension Settings {
             "safeFileContext",
             "UpdateEvents",
             "Push channel",
-            "SafeTypes",
-            "background-activity"
+            "SafeTypes"
         ]
 
         // NOTE: WPB-5754: force enable logs for now

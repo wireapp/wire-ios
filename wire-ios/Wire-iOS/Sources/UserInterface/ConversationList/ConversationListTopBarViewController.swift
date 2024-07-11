@@ -29,15 +29,18 @@ final class ConversationListTopBarViewController: UIViewController {
 
     /// Name, availability and verification info about the self user.
     public var selfUserStatus = UserStatus() {
-        didSet { updateTitleView() }
+        didSet {
+            guard viewIfLoaded != nil else { return }
+            updateTitleView()
+        }
     }
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
     private var observerToken: NSObjectProtocol?
 
-    var topBar: TopBar? {
-        view as? TopBar
+    private var topBar: TopBar? {
+        viewIfLoaded as? TopBar
     }
 
     private weak var userStatusViewController: UserStatusViewController?
@@ -85,7 +88,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     // MARK: - Title View
 
-    func updateTitleView() {
+    private func updateTitleView() {
         if selfUser.isTeamMember {
             defer { userStatusViewController?.userStatus = selfUserStatus }
             guard userStatusViewController == nil else { return }
@@ -169,7 +172,7 @@ final class ConversationListTopBarViewController: UIViewController {
         return button
     }
 
-    func updateAccountView() {
+    private func updateAccountView() {
         topBar?.leftView = createAccountView()
     }
 

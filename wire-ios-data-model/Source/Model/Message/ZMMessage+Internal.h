@@ -84,6 +84,9 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @property (nonatomic) BOOL delivered;
 
+/// Sets the expiration date with the default time interval.
+- (void)setExpirationDate;
+
 /// Removes the message and deletes associated content
 /// @param clearingSender Whether information about the sender should be removed or not
 - (void)removeMessageClearingSender:(BOOL)clearingSender;
@@ -158,6 +161,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic, readonly) NSDate * _Nullable destructionDate;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
+@property (nonatomic) BOOL shouldExpire;
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic, readonly) NSDate * _Nullable expirationDate;
@@ -168,7 +172,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic) NSSet <Reaction *> * _Nonnull reactions;
 @property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> * _Nonnull confirmations;
 
-- (NSDate * _Nonnull)setExpirationDate;
 - (void)removeExpirationDate;
 - (void)expire;
 

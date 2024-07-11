@@ -370,18 +370,21 @@ extension ZMConversation {
     ///     - `AppendMessageError` if the message couldn't be appended.
 
     private func append(_ message: ZMClientMessage, expires: Bool, hidden: Bool) throws {
-        WireLogger.messaging.debug("appending message to conversation \(message.debugInfo)")
+        let logAttributes: LogAttributes = [
+            LogAttributesKey.nonce.rawValue: message.nonce.safeForLoggingDescription,
+            LogAttributesKey.messageType.rawValue: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId.rawValue: self.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
+
+        WireLogger.messaging.debug("appending message to conversation",
+                                   attributes: logAttributes)
 
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
 
         message.sender = ZMUser.selfUser(in: moc)
-
-        if expires {
-            let expirationDate = message.setExpirationDate()
-            WireLogger.messaging.debug("set expiration date \(expirationDate)")
-        }
+        message.shouldExpire = expires
 
         if hidden {
             message.hiddenInConversation = self
