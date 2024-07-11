@@ -302,6 +302,8 @@
 		3E288A6C19C859210031CFCE /* NotificationObservers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E288A6A19C859210031CFCE /* NotificationObservers.m */; };
 		3E9848BD1A65253000F7B050 /* Hack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9848BC1A65253000F7B050 /* Hack.swift */; };
 		3ED972FB1A0A65D800BAFC61 /* ZMBlacklistVerificatorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F9F11A061A0A630900F1DCEE /* ZMBlacklistVerificatorTest.m */; };
+		4E76BB722C3FF56F0021C5B4 /* backup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E09988E2C3FE1BD00B7C12F /* backup.xcframework */; };
+		4E76BB732C3FF56F0021C5B4 /* backup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E09988E2C3FE1BD00B7C12F /* backup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54034F381BB1A6D900F4ED62 /* ZMUserSession+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54034F371BB1A6D900F4ED62 /* ZMUserSession+Logs.swift */; };
 		540818A61BCA647D00257CA7 /* ZMBlacklistVerificator+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 540818A51BCA647D00257CA7 /* ZMBlacklistVerificator+Testing.h */; };
 		540A0BA51954859E00FB7D61 /* ZMSyncStrategyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D85104C6D06FA902E3253C /* ZMSyncStrategyTests.m */; };
@@ -775,6 +777,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4E76BB742C3FF5700021C5B4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4E76BB732C3FF56F0021C5B4 /* backup.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5996E8912C19CAF3007A52F0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1051,6 +1064,7 @@
 		3E799CF2192140300020A438 /* WireSyncEngine-Tests.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireSyncEngine-Tests.pch"; sourceTree = "<group>"; };
 		3E9848BC1A65253000F7B050 /* Hack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hack.swift; sourceTree = "<group>"; };
 		3EEA678A199D079600AF7665 /* UserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTests.m; sourceTree = "<group>"; };
+		4E09988E2C3FE1BD00B7C12F /* backup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = backup.xcframework; path = "../hackaton-frameworks/backup.xcframework"; sourceTree = "<group>"; };
 		54034F371BB1A6D900F4ED62 /* ZMUserSession+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+Logs.swift"; sourceTree = "<group>"; };
 		540818A51BCA647D00257CA7 /* ZMBlacklistVerificator+Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMBlacklistVerificator+Testing.h"; sourceTree = "<group>"; };
 		541228431AEE422C00D9ED1C /* ZMAuthenticationStatusTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAuthenticationStatusTests.m; sourceTree = "<group>"; };
@@ -1635,6 +1649,7 @@
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				015519462C20D20800037358 /* WireDomain.framework in Frameworks */,
+				4E76BB722C3FF56F0021C5B4 /* backup.xcframework in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
 			);
@@ -2014,6 +2029,7 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4E09988E2C3FE1BD00B7C12F /* backup.xcframework */,
 				0155194D2C20D29400037358 /* WireDomainSupport.framework */,
 				015519492C20D25300037358 /* WireDomainSupport.framework */,
 				015519452C20D20800037358 /* WireDomain.framework */,
@@ -3168,6 +3184,7 @@
 				5498158F1A43232400A7CE2E /* Frameworks */,
 				667FC69E27356C3F00E82FEF /* Run SwiftLint */,
 				549815911A43232400A7CE2E /* Resources */,
+				4E76BB742C3FF5700021C5B4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

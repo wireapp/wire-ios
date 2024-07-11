@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import backup
 import Foundation
 
 public protocol ImportMessagesUseCaseProtocol {
@@ -57,6 +58,7 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
         self.syncContext = syncContext
     }
 
+    @MainActor
     public func invoke(backupURL: URL) async throws {
         guard backupURL.startAccessingSecurityScopedResource() else {
             throw ImportMessagesUseCaseError.backupResourceUnavailable
@@ -66,61 +68,53 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
             backupURL.stopAccessingSecurityScopedResource()
         }
 
-        let unzippedURL = temporaryURL(for: backupURL)
+        let importer = MPBackupImporter(pathToFile: backupURL.path, selfUserDomain: "wire.com")
 
-        guard backupURL.unzip(to: unzippedURL) else {
-            throw ImportMessagesUseCaseError.failedToUnzipBackup
-        }
-
-        let metadataURL = unzippedURL.appendingPathComponent("export.json")
-        let metadata = try decodeBackupModel(MetadataBackupModel.self, from: metadataURL)
-
-        // TODO: guard it's for self user
-
-        let eventsURL = unzippedURL.appendingPathComponent("events.json")
-        let events = try decodeBackupModel([EventBackupModel].self, from: eventsURL)
-
-        let messages = events.compactMap {
-            switch $0 {
-            case .messageAdd(let eventData):
-                eventData
-            default:
-                nil
+        var messages = [BackupDataMessageText]()
+        try await importer.import { restoredData in
+            switch restoredData {
+            case let message as BackupDataMessageText: messages.append(message)
+            default: break // Do nothing for now
             }
         }
 
         try await syncContext.perform { [self] in
             for backup in messages {
+                guard let nonce = UUID(uuidString: backup.messageId) else {
+                    return
+                }
                 // TODO: only create if message doesn't already exist
                 let genericMessage = GenericMessage(
-                    content: Text(content: backup.content),
-                    nonce: backup.nonce
+                    content: Text(content: backup.textValue),
+                    nonce: nonce
                 )
 
                 let message = ZMClientMessage(
-                    nonce: backup.nonce,
+                    nonce: nonce,
                     managedObjectContext: syncContext
                 )
 
                 try message.setUnderlyingMessage(genericMessage)
-                message.serverTimestamp = backup.time
+                message.serverTimestamp = Date(
+                    timeIntervalSince1970: TimeInterval(backup.time.epochSeconds)
+                )
 
                 message.sender = ZMUser.fetchOrCreate(
-                    with: backup.senderUserID,
-                    domain: nil,
+                    with: UUID(transportString: backup.senderUserId.value)!,
+                    domain: backup.senderUserId.domain,
                     in: syncContext
                 )
 
-                if let senderClientID = backup.senderClientID {
-                    message.senderClientID = senderClientID
+                if !backup.senderClientId.isEmpty {
+                    message.senderClientID = backup.senderClientId
                 } else {
                     // Message is from self user
                     message.delivered = true
                 }
 
                 message.visibleInConversation = ZMConversation.fetchOrCreate(
-                    with: backup.conversationID,
-                    domain: nil,
+                    with: UUID(transportString: backup.conversationId.value)!,
+                    domain: backup.conversationId.domain,
                     in: syncContext
                 )
             }
