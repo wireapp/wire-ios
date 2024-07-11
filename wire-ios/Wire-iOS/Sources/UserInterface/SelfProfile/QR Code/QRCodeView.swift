@@ -19,13 +19,22 @@
 import SwiftUI
 
 struct QRCodeView: View {
+
+    // MARK: Environment
+
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+
+    // MARK: - ViewModel
+
     @ObservedObject var viewModel: UserQRCodeViewModel
+
+    // MARK: - Properties
+
     @State private var selectedMode: QRCodeMode = .share
     @State private var scannedCode: String?
     @State private var latestCode: String?
     @State private var capturedImage: UIImage?
-    @Environment(\.openURL) private var openURL
 
     var body: some View {
         VStack(spacing: 0) {
@@ -59,7 +68,7 @@ struct QRCodeView: View {
             Spacer()
             ShareButtons(viewModel: viewModel, capturedImage: $capturedImage, captureQRCode: captureQRCode)
         }
-        .padding(.horizontal, 24)
+        .padding()
     }
 
     private var scanView: some View {
