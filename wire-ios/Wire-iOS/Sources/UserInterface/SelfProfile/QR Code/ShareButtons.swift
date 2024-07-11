@@ -19,13 +19,13 @@
 import SwiftUI
 
 struct ShareButtons: View {
-
     // MARK: - Properties
 
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
     @ObservedObject var viewModel: UserQRCodeViewModel
     @Binding var capturedImage: UIImage?
+    var captureQRCode: () -> Void
 
     // MARK: - view
 
@@ -41,13 +41,13 @@ struct ShareButtons: View {
             }
 
             Button(L10n.Localizable.Qrcode.ShareQrcode.Button.title) {
+                captureQRCode()
                 isShareImageSheetPresented = true
-
             }
             .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareImageSheetPresented) {
-                ShareSheet(activityItems: [capturedImage])
+                ShareSheet(activityItems: [capturedImage as Any])
             }
         }
     }
