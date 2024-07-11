@@ -69,9 +69,6 @@ final class GroupIconPickerViewModel: ObservableObject {
             selectedEmoji = emoji
             print("select emoji : \(emoji.name)")
         }
-
-        onSelection((selectedItem?.color.toHexString(),
-                     selectedEmoji?.value))
     }
 
     func selectItem(_ item: GroupIconPickerDisplayModel.Item) {
@@ -84,9 +81,15 @@ final class GroupIconPickerViewModel: ObservableObject {
             selectedItem = item
             print("select item with color: \(item.color)")
         }
+    }
 
-        onSelection((selectedItem?.color.toHexString(),
-                     selectedEmoji?.value))
+    func confirmSelection() {
+        onSelection(
+            (
+                selectedItem?.color.toHexString(),
+                selectedEmoji?.value
+            )
+        )
     }
 }
 

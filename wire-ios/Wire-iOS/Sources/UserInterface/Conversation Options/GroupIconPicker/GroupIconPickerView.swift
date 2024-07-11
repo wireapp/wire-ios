@@ -47,6 +47,11 @@ struct GroupIconPickerView: View {
             ScrollView {
                 emojiList
             }
+
+            Button("OK") {
+                viewModel.confirmSelection()
+            }
+            .buttonStyle(PrimaryButtonStyle())
         }
         .padding()
         .background(.background)

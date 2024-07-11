@@ -473,7 +473,11 @@ extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
     func presentGroupIconOptions(animated: Bool) {
 
         let viewModel = GroupIconPickerViewModel(initialGroupIcon: (conversation.groupColor, conversation.groupEmoji)) { [weak self] groupIcon in
-            self?.updateGroupIcon(groupIcon)
+            Task {
+                guard let self else { return }
+                await self.updateGroupIcon(groupIcon)
+                self.navigationController?.popViewController(animated: true)
+            }
         }
         let view = GroupIconPickerView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
@@ -481,14 +485,12 @@ extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
         navigationController?.pushViewController(viewController, animated: animated)
     }
 
-    private func updateGroupIcon(_ groupIcon: GroupIcon) {
-        Task {
-            do {
-                try await updateGroupIconUseCase.invoke(colorString: groupIcon.color,
-                                                        emoji: groupIcon.emoji)
-            } catch {
-                WireLogger.conversation.error("error updatingGroupIcon: \(error)")
-            }
+    private func updateGroupIcon(_ groupIcon: GroupIcon) async {
+        do {
+            try await updateGroupIconUseCase.invoke(colorString: groupIcon.color,
+                                                    emoji: groupIcon.emoji)
+        } catch {
+            WireLogger.conversation.error("error updatingGroupIcon: \(error)")
         }
     }
 }
