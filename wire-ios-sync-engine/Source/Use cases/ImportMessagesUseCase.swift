@@ -68,20 +68,16 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
 
         let unzippedURL = temporaryURL(for: backupURL)
 
-
         guard backupURL.unzip(to: unzippedURL) else {
             throw ImportMessagesUseCaseError.failedToUnzipBackup
         }
 
-        let folderName = backupURL.deletingPathExtension().lastPathComponent
-        let folderURL = unzippedURL.appendingPathComponent(folderName)
-
-        let metadataURL = folderURL.appendingPathComponent("export.json")
+        let metadataURL = unzippedURL.appendingPathComponent("export.json")
         let metadata = try decodeBackupModel(MetadataBackupModel.self, from: metadataURL)
 
         // TODO: guard it's for self user
 
-        let eventsURL = folderURL.appendingPathComponent("events.json")
+        let eventsURL = unzippedURL.appendingPathComponent("events.json")
         let events = try decodeBackupModel([EventBackupModel].self, from: eventsURL)
 
         let messages = events.compactMap {
