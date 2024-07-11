@@ -22,14 +22,17 @@ struct QRCodeCard: View {
 
     // MARK: - Properties
 
-    @ObservedObject var viewModel: UserQRCodeViewModel
+    let profileLinkQRCode: UIImage
+    let handle: String
+    let profileLink: String
+
     @State private var isImageTapped = false
 
     // MARK: - View
 
     var body: some View {
         VStack {
-            Image(uiImage: viewModel.profileLinkQRCode)
+            Image(uiImage: profileLinkQRCode)
                 .interpolation(.none)
                 .resizable()
                 .frame(width: 250, height: 250)
@@ -47,10 +50,10 @@ struct QRCodeCard: View {
                 }
 
             VStack(alignment: .center) {
-                Text(viewModel.handle)
+                Text(handle)
                     .font(.textStyle(.h2))
                     .foregroundColor(.black)
-                Text(viewModel.profileLink)
+                Text(profileLink)
                     .font(.textStyle(.subline1))
                     .foregroundColor(.black)
                     .fixedSize(horizontal: false, vertical: true)

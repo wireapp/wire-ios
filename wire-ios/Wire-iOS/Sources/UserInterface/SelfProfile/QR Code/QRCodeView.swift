@@ -62,22 +62,30 @@ struct QRCodeView: View {
     }
 
     private var shareView: some View {
-        VStack {
-            QRCodeCard(viewModel: viewModel)
-            InfoText()
-            Spacer()
-            ShareButtons(viewModel: viewModel, capturedImage: $capturedImage, captureQRCode: captureQRCode)
-        }
-        .padding()
-    }
+           VStack {
+               QRCodeCard(profileLinkQRCode: viewModel.profileLinkQRCode,
+                          handle: viewModel.handle,
+                          profileLink: viewModel.profileLink)
+               InfoText()
+               Spacer()
+               ShareButtons(profileLink: viewModel.profileLink,
+                            capturedImage: $capturedImage,
+                            captureQRCode: captureQRCode)
+           }
+           .padding()
+       }
 
     private var scanView: some View {
         QRCodeScannerContainer(scannedCode: $scannedCode, latestCode: $latestCode)
     }
 
     private func captureQRCode() {
-        capturedImage = captureImage(from: QRCodeCard(viewModel: viewModel))
-    }
+            capturedImage = captureImage(from: QRCodeCard(
+                profileLinkQRCode: viewModel.profileLinkQRCode,
+                handle: viewModel.handle,
+                profileLink: viewModel.profileLink
+            ))
+        }
 
     private func captureImage<Content: View>(from view: Content) -> UIImage? {
         let controller = UIHostingController(rootView: view)

@@ -19,11 +19,12 @@
 import SwiftUI
 
 struct ShareButtons: View {
+
     // MARK: - Properties
 
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
-    @ObservedObject var viewModel: UserQRCodeViewModel
+    var profileLink: String
     @Binding var capturedImage: UIImage?
     var captureQRCode: () -> Void
 
@@ -37,7 +38,7 @@ struct ShareButtons: View {
             .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareTextSheetPresented) {
-                ShareSheet(activityItems: [viewModel.profileLink])
+                ShareSheet(activityItems: [profileLink])
             }
 
             Button(L10n.Localizable.Qrcode.ShareQrcode.Button.title) {
