@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1530"
+   LastUpgradeVersion = "1540"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "592996512C2EB98A008C334F"
-               BuildableName = "Format Swift Code (SwiftFormat)"
-               BlueprintName = "Format Swift Code (SwiftFormat)"
+               BlueprintIdentifier = "593E785B2C4030E000ACF7A8"
+               BuildableName = "Lint Swift Code (SwiftLint)"
+               BlueprintName = "Lint Swift Code (SwiftLint)"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "592996512C2EB98A008C334F"
-            BuildableName = "Format Swift Code (SwiftFormat)"
-            BlueprintName = "Format Swift Code (SwiftFormat)"
+            BlueprintIdentifier = "593E785B2C4030E000ACF7A8"
+            BuildableName = "Lint Swift Code (SwiftLint)"
+            BlueprintName = "Lint Swift Code (SwiftLint)"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
