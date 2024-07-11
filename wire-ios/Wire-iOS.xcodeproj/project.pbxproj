@@ -1464,6 +1464,7 @@
 		EE43324B1F1A785800096D90 /* PopUpIconButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE43324A1F1A785800096D90 /* PopUpIconButtonView.swift */; };
 		EE44D7EA259BD85F000C6345 /* Viper+Relationships.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5F54D1259B77DD00F11F3C /* Viper+Relationships.swift */; };
 		EE469EB62A9E3AE800620EA4 /* emojis.json in Resources */ = {isa = PBXBuildFile; fileRef = EE469EB52A9E3AE700620EA4 /* emojis.json */; };
+		EE4F6F122C3F146C00CB4760 /* ImportMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4F6F112C3F146C00CB4760 /* ImportMessagesView.swift */; };
 		EE52378423F5567300D4FE79 /* MockUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */; };
 		EE52378723F556DE00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */; };
 		EE52378F23F557A600D4FE79 /* MockServiceUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */; };
@@ -3542,6 +3543,7 @@
 		EE4332481F1A67E500096D90 /* PopUpIconButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpIconButton.swift; sourceTree = "<group>"; };
 		EE43324A1F1A785800096D90 /* PopUpIconButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpIconButtonView.swift; sourceTree = "<group>"; };
 		EE469EB52A9E3AE700620EA4 /* emojis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
+		EE4F6F112C3F146C00CB4760 /* ImportMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportMessagesView.swift; sourceTree = "<group>"; };
 		EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+Creation.swift"; sourceTree = "<group>"; };
 		EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+SelfLegalHoldSubject.swift"; sourceTree = "<group>"; };
 		EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServiceUserType.swift; sourceTree = "<group>"; };
@@ -6600,6 +6602,7 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				EE4F6F102C3F144900CB4760 /* ImportMessages */,
 				590A5F052BF4CB06008E87D8 /* ShareContacts */,
 				87DCF4741D34E95B00BB420F /* PermissionDeniedHint */,
 				EEF37ECE2BDFC74C0055C9E1 /* SwitchBackend */,
@@ -8016,6 +8019,14 @@
 				BFBBD1EC20D9238B00BFC4AD /* ScreenCurtainWindow.swift */,
 			);
 			path = ScreenCurtain;
+			sourceTree = "<group>";
+		};
+		EE4F6F102C3F144900CB4760 /* ImportMessages */ = {
+			isa = PBXGroup;
+			children = (
+				EE4F6F112C3F146C00CB4760 /* ImportMessagesView.swift */,
+			);
+			path = ImportMessages;
 			sourceTree = "<group>";
 		};
 		EE593F982B73C3D2008D1109 /* DeepLinks */ = {
@@ -10168,6 +10179,7 @@
 				871BC2571D34F8F800DF0793 /* NavigationTransition.swift in Sources */,
 				8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */,
 				253C67492B88A3BB00965DE1 /* UserClientDeveloperActionsProvider.swift in Sources */,
+				EE4F6F122C3F146C00CB4760 /* ImportMessagesView.swift in Sources */,
 				5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */,
 				06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */,
 				166390D61DC8AC0C00D7BF1C /* String+Image.swift in Sources */,
