@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
-final class UserDetailViewControllerFactory {
+enum UserDetailViewControllerFactory {
 
     /// Create a ServiceDetailViewController if the user is a serviceUser, otherwise return a ProfileViewController
     ///
@@ -35,7 +35,8 @@ final class UserDetailViewControllerFactory {
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         viewControllerDismisser: ViewControllerDismisser,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
     ) -> UIViewController {
 
         if user.isServiceUser, let serviceUser = user as? ServiceUser {
@@ -52,7 +53,8 @@ final class UserDetailViewControllerFactory {
                 user: user,
                 viewer: userSession.selfUser,
                 conversation: conversation,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
             )
             profileViewController.delegate = profileViewControllerDelegate
             profileViewController.viewControllerDismisser = viewControllerDismisser

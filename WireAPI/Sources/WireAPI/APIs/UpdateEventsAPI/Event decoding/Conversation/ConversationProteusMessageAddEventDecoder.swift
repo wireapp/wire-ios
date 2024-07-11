@@ -47,10 +47,10 @@ struct ConversationProteusMessageAddEventDecoder {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp.date,
-            message: payload.text,
-            externalData: payload.data,
-            messageSenderID: payload.sender,
-            messageRecipientID: payload.recipient
+            message: .ciphertext(payload.text),
+            externalData: payload.data.map { .ciphertext($0) },
+            messageSenderClientID: payload.sender,
+            messageRecipientClientID: payload.recipient
         )
     }
 
@@ -58,8 +58,8 @@ struct ConversationProteusMessageAddEventDecoder {
 
         let text: String
         let data: String?
-        let sender: UUID
-        let recipient: UUID
+        let sender: String
+        let recipient: String
 
     }
 
