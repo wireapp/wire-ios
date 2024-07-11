@@ -25,6 +25,7 @@ struct QRCodeView: View {
     @State private var scannedCode: String?
     @State private var latestCode: String?
     @State private var capturedImage: UIImage?
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         VStack(spacing: 0) {
@@ -44,6 +45,11 @@ struct QRCodeView: View {
             }
         }
         .background(Color.primaryViewBackground.edgesIgnoringSafeArea(.all))
+        .onChange(of: scannedCode) { newValue in
+            if let code = newValue {
+                openScannedCode(code)
+            }
+        }
     }
 
     private var shareView: some View {
@@ -59,6 +65,19 @@ struct QRCodeView: View {
 
     private var scanView: some View {
         QRCodeScannerContainer(scannedCode: $scannedCode, latestCode: $latestCode)
+    }
+
+    private func openScannedCode(_ code: String) {
+        guard let url = URL(string: code) else {
+            print("Invalid URL")
+            return
+        }
+
+        openURL(url) { success in
+            if !success {
+                print("Failed to open URL")
+            }
+        }
     }
 }
 

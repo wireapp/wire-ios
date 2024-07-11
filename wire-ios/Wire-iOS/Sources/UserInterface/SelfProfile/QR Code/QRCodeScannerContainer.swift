@@ -22,6 +22,7 @@ struct QRCodeScannerContainer: View {
 
     @Binding var scannedCode: String?
     @Binding var latestCode: String?
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         ZStack {
@@ -29,9 +30,9 @@ struct QRCodeScannerContainer: View {
 
             VStack {
                 Spacer()
-                if latestCode != nil {
+                if let latestCode {
                     Button(action: {
-                        scannedCode = latestCode
+                        openScannedCode(latestCode)
                     }) {
                         Text("Tap to connect")
                             .padding()
@@ -41,6 +42,19 @@ struct QRCodeScannerContainer: View {
                     }
                     .padding(.bottom, 50)
                 }
+            }
+        }
+    }
+
+    private func openScannedCode(_ code: String) {
+        guard let url = URL(string: code) else {
+            print("Invalid URL")
+            return
+        }
+
+        openURL(url) { success in
+            if !success {
+                print("Failed to open URL")
             }
         }
     }
