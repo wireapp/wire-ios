@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import backup
 
 public protocol ImportMessagesUseCaseProtocol {
 
@@ -66,26 +67,13 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
             backupURL.stopAccessingSecurityScopedResource()
         }
 
-        let unzippedURL = temporaryURL(for: backupURL)
-
-        guard backupURL.unzip(to: unzippedURL) else {
-            throw ImportMessagesUseCaseError.failedToUnzipBackup
-        }
-
-        let metadataURL = unzippedURL.appendingPathComponent("export.json")
-        let metadata = try decodeBackupModel(MetadataBackupModel.self, from: metadataURL)
-
-        // TODO: guard it's for self user
-
-        let eventsURL = unzippedURL.appendingPathComponent("events.json")
-        let events = try decodeBackupModel([EventBackupModel].self, from: eventsURL)
-
-        let messages = events.compactMap {
-            switch $0 {
-            case .messageAdd(let eventData):
-                eventData
-            default:
-                nil
+        let importer = MPBackupImporter(pathToFile: backupURL.path(), selfUserDomain: "wire.com")
+        
+        var messages = [BackupDataMessageText]()
+        importer.import { restoredData in
+            switch restoredData {
+            case let message as BackupDataMessageText: restoredMessages.append(message)
+            default: // Do nothing for now
             }
         }
 
@@ -93,21 +81,23 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
             for backup in messages {
                 // TODO: only create if message doesn't already exist
                 let genericMessage = GenericMessage(
-                    content: Text(content: backup.content),
-                    nonce: backup.nonce
+                    content: Text(content: backup.textValue),
+                    nonce: backup.messageId
                 )
 
                 let message = ZMClientMessage(
-                    nonce: backup.nonce,
+                    nonce: backup.messageId,
                     managedObjectContext: syncContext
                 )
 
                 try message.setUnderlyingMessage(genericMessage)
-                message.serverTimestamp = backup.time
+                message.serverTimestamp = Date(
+                    timeIntervalSince1970: TimeInterval(backup.time.epochSeconds)
+                )
 
                 message.sender = ZMUser.fetchOrCreate(
-                    with: backup.senderUserID,
-                    domain: nil,
+                    with: backup.senderUserId.value,
+                    domain: backup.senderUserId.domain,
                     in: syncContext
                 )
 
@@ -119,8 +109,8 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
                 }
 
                 message.visibleInConversation = ZMConversation.fetchOrCreate(
-                    with: backup.conversationID,
-                    domain: nil,
+                    with: backup.conversationId.value,
+                    domain: backup.conversationId.domain,
                     in: syncContext
                 )
             }
