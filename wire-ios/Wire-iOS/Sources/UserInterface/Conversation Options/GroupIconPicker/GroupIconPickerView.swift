@@ -95,18 +95,33 @@ struct GroupIconPickerView: View {
                     viewModel.selectItem(item)
                 } label: {
                     ZStack {
-                        Rectangle()
-                            .foregroundColor(item.color)
+                        Color(viewModel.selectedItem == item ? .gray : .clear)
                             .frame(
                                 width: Self.cellSize,
                                 height: Self.cellSize
                             )
                             .cornerRadius(cornerRadius)
+
+                        Color(.white)
+                            .frame(
+                                width: Self.cellSize - 2,
+                                height: Self.cellSize - 2
+                            )
+                            .cornerRadius(cornerRadius - 1)
+
+                        Rectangle()
+                            .foregroundColor(item.color)
+                            .frame(
+                                width: Self.cellSize - 10,
+                                height: Self.cellSize - 10
+                            )
+                            .cornerRadius(cornerRadius - 4)
                             .accessibilityIdentifier(item.accessibilityIdentifier)
 
                         if viewModel.selectedItem == item {
                             Image(systemName: "checkmark.circle.fill")
                                 .tint(.white)
+                                .font(.title2)
                         }
                     }
                 }
