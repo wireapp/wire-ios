@@ -1385,6 +1385,8 @@
 		E96DF0642C3F27AD0093293C /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0632C3F27AD0093293C /* ShareSheet.swift */; };
 		E96DF0662C3FCE290093293C /* QRCodeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0652C3FCE290093293C /* QRCodeMode.swift */; };
 		E96DF0682C3FD3F50093293C /* QRCodeScannedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0672C3FD3F50093293C /* QRCodeScannedView.swift */; };
+		E96DF06A2C3FDB3B0093293C /* QRScannerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0692C3FDB3B0093293C /* QRScannerCoordinator.swift */; };
+		E96DF06C2C3FDBFD0093293C /* QRCodeScannerContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF06B2C3FDBFD0093293C /* QRCodeScannerContainer.swift */; };
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
@@ -3478,6 +3480,8 @@
 		E96DF0632C3F27AD0093293C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		E96DF0652C3FCE290093293C /* QRCodeMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeMode.swift; sourceTree = "<group>"; };
 		E96DF0672C3FD3F50093293C /* QRCodeScannedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannedView.swift; sourceTree = "<group>"; };
+		E96DF0692C3FDB3B0093293C /* QRScannerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerCoordinator.swift; sourceTree = "<group>"; };
+		E96DF06B2C3FDBFD0093293C /* QRCodeScannerContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerContainer.swift; sourceTree = "<group>"; };
 		E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureLinkHeaderCell.swift; sourceTree = "<group>"; };
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
@@ -7994,6 +7998,8 @@
 				E96DF0632C3F27AD0093293C /* ShareSheet.swift */,
 				E96DF0652C3FCE290093293C /* QRCodeMode.swift */,
 				E96DF0672C3FD3F50093293C /* QRCodeScannedView.swift */,
+				E96DF0692C3FDB3B0093293C /* QRScannerCoordinator.swift */,
+				E96DF06B2C3FDBFD0093293C /* QRCodeScannerContainer.swift */,
 			);
 			path = "QR Code";
 			sourceTree = "<group>";
@@ -9515,6 +9521,7 @@
 				5E8DA774211B452100360979 /* AuthenticationFlowStep+ClientsDeletion.swift in Sources */,
 				E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */,
 				E96DF0602C3F25270093293C /* InfoText.swift in Sources */,
+				E96DF06C2C3FDBFD0093293C /* QRCodeScannerContainer.swift in Sources */,
 				87E3C5081FA76B7C008D1FC3 /* AnalyticsProviderFactory.swift in Sources */,
 				5EA73D8220D900A10001D106 /* GroupDetailsRenameCell.swift in Sources */,
 				BFCF31D71DA3A9350039B3DC /* SettingsCellDescriptorFactory+Options.swift in Sources */,
@@ -10312,6 +10319,7 @@
 				D5674610208F39D200DC7F26 /* TintColorCorrectedViewController.swift in Sources */,
 				A9076C8223B1047E004FD3C9 /* ConversationContentViewController+Header.swift in Sources */,
 				A96A21F123D5B865005B5579 /* ConversationInputBarViewController+Files.swift in Sources */,
+				E96DF06A2C3FDB3B0093293C /* QRScannerCoordinator.swift in Sources */,
 				5E15D31B219DB9060038439D /* ConversationFileMessageCell.swift in Sources */,
 				161ACB3823F6AFB100ABFF33 /* Error+Localization.swift in Sources */,
 				EEA4F47C2410054100DBEA3D /* HashBox.swift in Sources */,
