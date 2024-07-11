@@ -19,7 +19,13 @@
 import SwiftUI
 
 struct QRCodeCard: View {
+
+    // MARK: - Properties
+
     @ObservedObject var viewModel: UserQRCodeViewModel
+    @State private var isImageTapped = false
+
+    // MARK: - View
 
     var body: some View {
         VStack {
@@ -29,6 +35,16 @@ struct QRCodeCard: View {
                 .frame(width: 250, height: 250)
                 .padding(.top, 24)
                 .padding(.horizontal, 24)
+                .scaleEffect(isImageTapped ? 1.1 : 1.0)
+                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isImageTapped)
+                .onTapGesture {
+                    withAnimation {
+                        isImageTapped = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            isImageTapped = false
+                        }
+                    }
+                }
 
             VStack(alignment: .center) {
                 Text(viewModel.handle)
@@ -37,7 +53,6 @@ struct QRCodeCard: View {
                 Text(viewModel.profileLink)
                     .font(.textStyle(.subline1))
                     .foregroundColor(.black)
-                    .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal)
                     .padding(.top, 4)
