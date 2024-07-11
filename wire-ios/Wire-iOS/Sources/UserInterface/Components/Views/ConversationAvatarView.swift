@@ -87,7 +87,7 @@ enum Mode: Equatable {
     /// 0 participants in conversation:
     /// /    \
     /// \    /
-    case none
+    case none // Note: Apple recommends to replace 'none' with optionality!
     /// 1-2 participants in conversation:
     /// / AA \
     /// \ AA /
@@ -96,6 +96,8 @@ enum Mode: Equatable {
     /// / AB \
     /// \ CD /
     case four
+    /// Customized group icon
+    case groupIcon
 }
 
 extension Mode {
@@ -129,8 +131,8 @@ extension Mode {
 
     var shape: AvatarImageView.Shape {
         switch self {
-        case .one(serviceUser: true): return .relative
-        default: return .rectangle
+        case .one(serviceUser: true): .relative
+        default: .rectangle
         }
     }
 }
@@ -185,7 +187,7 @@ final class ConversationAvatarView: UIView {
     private(set) var mode: Mode = .one(serviceUser: false) {
         didSet {
             self.clippingView.subviews.forEach { $0.isHidden = true }
-            self.userImages().forEach { $0.isHidden = false }
+            self.shownImages().forEach { $0.isHidden = false }
 
             if case .one = mode {
                 layer.borderWidth = 0
@@ -196,34 +198,52 @@ final class ConversationAvatarView: UIView {
                 backgroundColor = UIColor(white: 0, alpha: 0.16)
             }
 
-            var index: Int = 0
-            self.userImages().forEach { userImage in
-                userImage.userSession = ZMUserSession.shared()
-                userImage.shouldDesaturate = false
-                userImage.size = mode == .four ? .tiny : .small
-                if index < users.count {
-                    userImage.user = users[index]
-                } else {
-                    userImage.user = nil
-                    userImage.container.isOpaque = false
-                    userImage.container.backgroundColor = UIColor(white: 0, alpha: 0.24)
-                    userImage.avatar = .image(.init())
-                }
-
-                userImage.allowsInitials = mode.showInitials
-                userImage.shape = mode.shape
-                index += 1
+            switch mode {
+            case .none:
+                break
+            case .one:
+                updateUserImages([imageViewLeftTop])
+            case .four:
+                updateUserImages(userImageViews)
+            case .groupIcon:
+                groupIconView.image = UIImage(resource: .animalsNature)
             }
 
             setNeedsLayout()
         }
     }
 
-    private var userImageViews: [UserImageView] {
-        return [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
+    private func updateUserImages(_ userImages: [UserImageView]) {
+        var index: Int = 0
+        userImages.forEach { userImage in
+            userImage.userSession = ZMUserSession.shared()
+            userImage.shouldDesaturate = false
+            userImage.size = mode == .four ? .tiny : .small
+            if index < users.count {
+                userImage.user = users[index]
+            } else {
+                userImage.user = nil
+                userImage.container.isOpaque = false
+                userImage.container.backgroundColor = UIColor(white: 0, alpha: 0.24)
+                userImage.avatar = .image(.init())
+            }
+
+            userImage.allowsInitials = mode.showInitials
+            userImage.shape = mode.shape
+            index += 1
+        }
     }
 
-    func userImages() -> [UserImageView] {
+    private var userImageViews: [UserImageView] {
+        [
+            imageViewLeftTop,
+            imageViewRightTop,
+            imageViewLeftBottom,
+            imageViewRightBottom
+        ]
+    }
+
+    private func shownImages() -> [UIView] {
         switch mode {
         case .none:
             return []
@@ -233,6 +253,9 @@ final class ConversationAvatarView: UIView {
 
         case .four:
             return userImageViews
+
+        case .groupIcon:
+            return [groupIconView]
         }
     }
 
@@ -247,17 +270,13 @@ final class ConversationAvatarView: UIView {
 
         return userImageView
     }()
-    lazy var imageViewRightTop: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewRightTop = UserImageView()
 
-    lazy var imageViewLeftBottom: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewLeftBottom = UserImageView()
 
-    lazy var imageViewRightBottom: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewRightBottom = UserImageView()
+
+    private lazy var groupIconView: UIImageView = UIImageView()
 
     init() {
         super.init(frame: .zero)
@@ -291,11 +310,17 @@ final class ConversationAvatarView: UIView {
         case .none:
             break
         case .one:
-            userImages().forEach { userImage in
-                userImage.frame = clippingView.bounds
-            }
+            imageViewLeftTop.frame = clippingView.bounds
         case .four:
-            layoutMultipleAvatars(with: CGSize(width: (containerSize.width - interAvatarInset) / 2.0, height: (containerSize.height - interAvatarInset) / 2.0))
+            layoutMultipleAvatars(
+                with: CGSize(
+                    width: (containerSize.width - interAvatarInset) / 2.0,
+                    height: (containerSize.height - interAvatarInset) / 2.0
+                )
+            )
+        case .groupIcon:
+            // TODO: implement
+            break
         }
 
         updateCornerRadius()
@@ -305,7 +330,7 @@ final class ConversationAvatarView: UIView {
         var xPosition: CGFloat = 0
         var yPosition: CGFloat = 0
 
-        userImages().forEach { userImage in
+        userImageViews.forEach { userImage in
             userImage.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
             if xPosition + size.width >= containerSize.width {
                 xPosition = 0
@@ -321,9 +346,13 @@ final class ConversationAvatarView: UIView {
         case .one(serviceUser: let serviceUser):
             layer.cornerRadius = serviceUser ? 0 : layer.bounds.width / 2.0
             clippingView.layer.cornerRadius = serviceUser ? 0 : clippingView.layer.bounds.width / 2.0
-        default:
+        case .none, .four:
             layer.cornerRadius = 6
             clippingView.layer.cornerRadius = 4
+        case .groupIcon:
+            // TODO?
+            layer.cornerRadius = 0
+            clippingView.layer.cornerRadius = 0
         }
     }
 }
