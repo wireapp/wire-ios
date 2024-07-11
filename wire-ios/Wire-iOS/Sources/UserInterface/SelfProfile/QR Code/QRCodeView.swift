@@ -27,12 +27,13 @@ struct QRCodeView: View {
     var body: some View {
         VStack {
             QRCodeCard(viewModel: viewModel)
+            let capturedImage = captureImage(from: QRCodeCard(viewModel: viewModel))
 
             InfoText()
 
             Spacer()
 
-            ShareButtons(viewModel: viewModel)
+            ShareButtons(viewModel: viewModel, capturedImage: capturedImage)
         }
         .padding(.horizontal, 24)
         .background(Color.primaryViewBackground.edgesIgnoringSafeArea(.all))
@@ -47,5 +48,17 @@ struct QRCodeView: View {
             profileLink: "http://link,knfieoqrngorengoejnbgjroqekgnbojqre3bgqjore3bgn3ejjeqrlw3bglrejkbgnjorqwbglejrqg",
             accentColor: .blue,
             handle: "handle"))
+    }
+}
+
+func captureImage<Content: View>(from view: Content) -> UIImage? {
+    let controller = UIHostingController(rootView: view)
+    let targetSize = CGSize(width: 400, height: 400)
+    controller.view.bounds = CGRect(origin: .zero, size: targetSize)
+    controller.view.backgroundColor = .clear
+
+    let renderer = UIGraphicsImageRenderer(size: targetSize)
+    return renderer.image { _ in
+        controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
     }
 }

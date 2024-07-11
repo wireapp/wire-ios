@@ -25,6 +25,7 @@ struct ShareButtons: View {
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
     @ObservedObject var viewModel: UserQRCodeViewModel
+    let capturedImage: UIImage?
 
     // MARK: - view
 
@@ -45,7 +46,7 @@ struct ShareButtons: View {
             .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareImageSheetPresented) {
-                ShareSheet(activityItems: [viewModel.profileLinkQRCode])
+                ShareSheet(activityItems: [capturedImage])
             }
         }
     }
