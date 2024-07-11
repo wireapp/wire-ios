@@ -94,15 +94,12 @@ import Foundation
     /// Removes the message from the list of messages being processed when the processing is completed
     fileprivate func notifyWhenProcessingIsComplete(_ message: ZMAssetClientMessage) {
         processingGroup.notify(on: .global()) { [weak self] in
-            guard let self else { return }
-
-            managedObjectContext.performGroupedBlock {
-                self.objectsBeingProcessed.remove(message)
+            self?.managedObjectContext.performGroupedBlock {
+                self?.objectsBeingProcessed.remove(message)
                 let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
-                // swiftlint:disable:next todo_requires_jira_link
-                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO: jacob hacky
+                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO jacob hacky
                 message.managedObjectContext?.saveOrRollback()
-                self.managedObjectContext.leaveAllGroups(self.managedObjectContext.allGroups)
+                self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
         }
     }
