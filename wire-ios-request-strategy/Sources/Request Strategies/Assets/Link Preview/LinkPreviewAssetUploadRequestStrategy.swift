@@ -163,10 +163,10 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
         guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
         guard let payload = response.payload?.asDictionary(), let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload") }
 
-        if
-            var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
+        if var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
             let messageText = message.textMessageData?.messageText,
             let mentions = message.textMessageData?.mentions {
+
             let assetToken = payload["token"] as? String
             let assetDomain = payload["domain"] as? String
             linkPreview.update(withAssetKey: assetKey, assetToken: assetToken, assetDomain: assetDomain)

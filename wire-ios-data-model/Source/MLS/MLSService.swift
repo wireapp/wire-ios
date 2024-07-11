@@ -1608,13 +1608,11 @@ public final class MLSService: MLSServiceInterface {
             )
         }
 
-        if
-            let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
+        if let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            await conversationExists(groupID: subConversationGroupID)
-        {
+            await conversationExists(groupID: subConversationGroupID) {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {
             let subconversation = try await actionsProvider.fetchSubgroup(
