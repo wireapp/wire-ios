@@ -50,7 +50,7 @@ struct ImportMessagesView: View {
                 ProgressView("Loading")
 
             case .importButton:
-                VStack {
+                VStack(alignment: .leading, spacing: 15) {
                     Text("Import messages")
                         .font(.largeTitle)
 
@@ -63,6 +63,7 @@ struct ImportMessagesView: View {
                     }
                     .buttonStyle(PrimaryButtonStyle())
                 }
+                .padding()
             }
         }
         .fileImporter(

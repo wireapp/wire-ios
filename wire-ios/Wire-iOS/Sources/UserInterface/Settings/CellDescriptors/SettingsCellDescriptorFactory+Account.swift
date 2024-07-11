@@ -352,7 +352,7 @@ extension SettingsCellDescriptorFactory {
 
     func importMessagesElement() -> SettingsCellDescriptorType {
         SettingsExternalScreenCellDescriptor(
-            title: "Import messages",
+            title: "Import Messages",
             isDestructive: false,
             presentationStyle: .navigation
         ) {
