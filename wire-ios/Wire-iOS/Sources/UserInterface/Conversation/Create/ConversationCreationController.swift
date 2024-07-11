@@ -262,7 +262,8 @@ final class ConversationCreationController: UIViewController {
 
     private func presentGroupIconOptions() {
 
-        let viewModel = GroupIconPickerViewModel(initialGroupIcon: (nil, nil)) { [weak self] selectedGroupIcon in
+        let viewModel = GroupIconPickerViewModel(initialGroupIcon: nil)
+        viewModel.onSelection = { [weak self] selectedGroupIcon in
             self?.values.groupIcon = selectedGroupIcon
             self?.presentParticipantsList()
         }

@@ -472,12 +472,14 @@ protocol RenameGroupSectionControllerDelegate: AnyObject {
 extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
     func presentGroupIconOptions(animated: Bool) {
 
-        let viewModel = GroupIconPickerViewModel(initialGroupIcon: (conversation.groupColor, conversation.groupEmoji)) { [weak self] groupIcon in
+        let viewModel = GroupIconPickerViewModel(initialGroupIcon: (conversation.groupColor, conversation.groupEmoji))
+        viewModel.onSelection = { [weak self] groupIcon in
             Task {
                 guard let self else { return }
                 await self.updateGroupIcon(groupIcon)
                 self.navigationController?.popViewController(animated: true)
             }
+
         }
         let view = GroupIconPickerView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)

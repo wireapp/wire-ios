@@ -50,13 +50,12 @@ final class GroupIconPickerViewModel: ObservableObject {
     @Published private (set) var selectedItem: GroupIconPickerDisplayModel.ColorItem?
     @Published private (set) var selectedEmoji: Emoji?
 
-    var onSelection: GroupIconSelection
+    var onSelection: GroupIconSelection?
 
-    init(initialGroupIcon: GroupIcon, onSelection: @escaping GroupIconSelection) {
-        self.onSelection = onSelection
+    init(initialGroupIcon: GroupIcon?) {
         emojis = emojiRepository.allEmojis()
-        selectedItem = items.first { $0.color.toHexString() == initialGroupIcon.color }
-        selectedEmoji = emojis.first { $0.value == initialGroupIcon.emoji }
+        selectedItem = items.first { $0.color.toHexString() == initialGroupIcon?.color }
+        selectedEmoji = emojis.first { $0.value == initialGroupIcon?.emoji }
     }
 
     func selectEmoji(_ emoji: Emoji) {
@@ -84,12 +83,11 @@ final class GroupIconPickerViewModel: ObservableObject {
     }
 
     func confirmSelection() {
-        onSelection(
-            (
-                selectedItem?.color.toHexString(),
-                selectedEmoji?.value
-            )
+        let selectedValues = (
+            selectedItem?.color.toHexString(),
+            selectedEmoji?.value
         )
+        onSelection?(selectedValues)
     }
 }
 
