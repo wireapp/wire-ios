@@ -22,6 +22,8 @@ struct QRCodeView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: UserQRCodeViewModel
     @State private var selectedMode: QRCodeMode = .share
+    @State private var scannedCode: String?
+    @State private var latestCode: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,21 +51,14 @@ struct QRCodeView: View {
             let capturedImage = captureImage(from: QRCodeCard(viewModel: viewModel))
             InfoText()
             Spacer()
-
             ShareButtons(viewModel: viewModel, capturedImage: capturedImage)
         }
         .padding(.horizontal, 24)
     }
 
     private var scanView: some View {
-        GeometryReader { geometry in
-            VStack {
-                Text("Camera view for scanning QR codes goes here")
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-            }
-        }
+        QRCodeScannerContainer(scannedCode: $scannedCode, latestCode: $latestCode)
     }
-
 }
 
 // MARK: - Preview
