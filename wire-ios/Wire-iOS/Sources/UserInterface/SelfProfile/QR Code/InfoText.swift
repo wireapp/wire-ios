@@ -26,8 +26,8 @@ struct InfoText: View {
         Text(L10n.Localizable.Qrcode.shareMessage)
             .font(.textStyle(.body1))
             .multilineTextAlignment(.center)
-            .lineLimit(nil)
             .foregroundColor(Color.secondaryText)
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 
