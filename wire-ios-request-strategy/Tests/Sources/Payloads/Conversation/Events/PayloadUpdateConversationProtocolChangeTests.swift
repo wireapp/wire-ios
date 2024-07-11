@@ -61,4 +61,4 @@ private let jsonData = """
 {
     "protocol": "mockProtocol"
 }
-""".data(using: .utf8)!
+Data(""".utf8)

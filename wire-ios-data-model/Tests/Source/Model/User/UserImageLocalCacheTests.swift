@@ -67,8 +67,8 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     func testThatPersistedDataCanBeRetrievedAsynchronously() {
         // given
-        let largeData = "LARGE".data(using: .utf8)!
-        let smallData = "SMALL".data(using: .utf8)!
+        let largeData = Data("LARGE".utf8)
+        let smallData = Data("SMALL".utf8)
 
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)

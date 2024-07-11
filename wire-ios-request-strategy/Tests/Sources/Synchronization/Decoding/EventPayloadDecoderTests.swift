@@ -111,4 +111,4 @@ private let jsonDataExample = """
     "title": "Hello World!",
     "published": "2024-01-04T12:34:56.78+02:00"
 }
-""".data(using: .utf8)!
+Data(""".utf8)

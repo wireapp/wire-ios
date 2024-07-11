@@ -26,7 +26,7 @@ class DebugEncryptor: Encryptor {
     func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         var result = plainText
         result.append(recipientIdentifier.rawValue.data(using: .utf8)!)
-        result.append("\(index)".data(using: .utf8)!)
+        result.append(Data("\(index)".utf8))
         index += 1
         return result
     }

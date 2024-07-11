@@ -434,7 +434,7 @@ private enum MockJSON {
                 }
             }
         }
-    """.data(using: .utf8)!
+    Data(""".utf8)
 
     static let mlsWithDefaultProtocolMLS = """
         {
@@ -459,5 +459,5 @@ private enum MockJSON {
                 }
             }
         }
-    """.data(using: .utf8)!
+    Data(""".utf8)
 }

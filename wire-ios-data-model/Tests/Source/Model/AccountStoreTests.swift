@@ -305,7 +305,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
             "image": "",
             "unreadConversationCount": 1
         }
-        """.data(using: .utf8)!
+        Data(""".utf8)
 
         try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
 
@@ -335,7 +335,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
                 "usesCompanyLogin": false
             }
         }
-        """.data(using: .utf8)!
+        Data(""".utf8)
 
         try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
 

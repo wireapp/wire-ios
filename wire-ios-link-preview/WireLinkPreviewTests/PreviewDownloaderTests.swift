@@ -278,7 +278,7 @@ class PreviewDownloaderTests: XCTestCase {
         let completion: PreviewDownloader.DownloadCompletion = { _ in downloadExpectation.fulfill() }
         let originalRequest = URLRequest(url: URL(string: "www.example.com")!)
         sut.requestOpenGraphData(fromURL: url, completion: completion)
-        sut.processReceivedData("bytes".data(using: .utf8)!, forTask: mockDataTask, withIdentifier: 0)
+        sut.processReceivedData(Data("bytes".utf8), forTask: mockDataTask, withIdentifier: 0)
 
         // when
         let response = HTTPURLResponse(
