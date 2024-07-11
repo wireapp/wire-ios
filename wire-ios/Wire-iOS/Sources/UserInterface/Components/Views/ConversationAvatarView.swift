@@ -211,6 +211,7 @@ final class ConversationAvatarView: UIView {
                 updateUserImages(userImageViews)
                 userImageViews.forEach { $0.isHidden = false }
             case  .groupIcon:
+                // remove old renderings
                 if let groupIconView {
                     groupIconView.removeFromSuperview()
                 }
@@ -223,15 +224,8 @@ final class ConversationAvatarView: UIView {
 
                     clippingView.addSubview(contentView)
                     groupIconView = contentView
+                    groupIconView?.isHidden = false
                 }
-
-//                if let backgroundColorString = conversation?.groupColor {
-//                    groupIconView.backgroundColor = UIColor(hex: backgroundColorString)
-//                }
-
-                // groupIconView.contentMode = .scaleAspectFit
-                // groupIconView.image = nil // TODO: implement
-                groupIconView?.isHidden = false
             }
 
             setNeedsLayout()
