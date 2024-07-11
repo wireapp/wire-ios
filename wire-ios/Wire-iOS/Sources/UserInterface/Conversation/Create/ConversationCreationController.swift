@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
@@ -255,18 +256,35 @@ final class ConversationCreationController: UIViewController {
             nameSection.resignFirstResponder()
             values.name = trimmed
 
-            if let parts = preSelectedParticipants {
-                values.participants = parts
-            }
-
-            let participantsController = AddParticipantsViewController(
-                context: .create(values),
-                userSession: userSession
-            )
-
-            participantsController.conversationCreationDelegate = self
-            navigationController?.pushViewController(participantsController, animated: true)
+            presentGroupIconOptions()
         }
+    }
+
+    private func presentGroupIconOptions() {
+
+        let viewModel = GroupIconPickerViewModel(initialGroupIcon: (nil, nil)) { [weak self] selectedGroupIcon in
+            self?.values.groupIcon = selectedGroupIcon
+            self?.presentParticipantsList()
+        }
+        let view = GroupIconPickerView(viewModel: viewModel)
+        let viewController = UIHostingController(rootView: view)
+        viewController.title = "Group Icon"
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+
+    private func presentParticipantsList() {
+
+        if let parts = preSelectedParticipants {
+            values.participants = parts
+        }
+
+        let participantsController = AddParticipantsViewController(
+            context: .create(values),
+            userSession: userSession
+        )
+
+        participantsController.conversationCreationDelegate = self
+        navigationController?.pushViewController(participantsController, animated: true)
     }
 
     @objc

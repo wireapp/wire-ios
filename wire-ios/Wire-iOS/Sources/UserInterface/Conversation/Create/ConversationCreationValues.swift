@@ -33,6 +33,7 @@ final class ConversationCreationValues {
     private let selfUser: UserType
 
     var name: String
+    var groupIcon: GroupIcon?
     var allowGuests: Bool
     var allowServices: Bool
     var enableReceipts: Bool
@@ -63,6 +64,7 @@ final class ConversationCreationValues {
 
     init(
         name: String = "",
+        groupIcon: GroupIcon? = nil,
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
         allowServices: Bool = true,
@@ -71,6 +73,7 @@ final class ConversationCreationValues {
         selfUser: UserType
     ) {
         self.name = name
+        self.groupIcon = groupIcon
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
         self.allowServices = allowServices

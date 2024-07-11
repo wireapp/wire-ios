@@ -31,7 +31,6 @@ struct GroupIconPickerView: View {
     @StateObject var viewModel: GroupIconPickerViewModel
 
     init(viewModel: @autoclosure @escaping () -> GroupIconPickerViewModel) {
-        print("🕵🏽 conversation")
         _viewModel = StateObject(wrappedValue: viewModel())
     }
 

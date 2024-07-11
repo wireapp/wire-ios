@@ -21,7 +21,7 @@ import WireDataModel
 import WireDesign
 
 typealias GroupIcon = (color: String?, emoji: String?)
-
+typealias GroupIconSelection = (GroupIcon) -> Void
 final class GroupIconPickerViewModel: ObservableObject {
     let items: [GroupIconPickerDisplayModel.Item] = [
         // blue
@@ -50,15 +50,13 @@ final class GroupIconPickerViewModel: ObservableObject {
     @Published private (set) var selectedItem: GroupIconPickerDisplayModel.Item?
     @Published private (set) var selectedEmoji: Emoji?
 
-    private let updateGroupIconUseCase: UpdateGroupIconUseCase
+    var onSelection: GroupIconSelection
 
-    init(updateGroupIconUseCase: UpdateGroupIconUseCase, initialGroupIcon: GroupIcon) {
-        self.updateGroupIconUseCase = updateGroupIconUseCase
+    init(initialGroupIcon: GroupIcon, onSelection: @escaping GroupIconSelection) {
+        self.onSelection = onSelection
         emojis = emojiRepository.allEmojis()
         selectedItem = items.first { $0.color.toHexString() == initialGroupIcon.color }
         selectedEmoji = emojis.first { $0.value == initialGroupIcon.emoji }
-        print(selectedItem, selectedEmoji)
-
     }
 
     func selectEmoji(_ emoji: Emoji) {
@@ -72,7 +70,8 @@ final class GroupIconPickerViewModel: ObservableObject {
             print("select emoji : \(emoji.name)")
         }
 
-        updateGroupIcon()
+        onSelection((selectedItem?.color.toHexString(),
+                     selectedEmoji?.value))
     }
 
     func selectItem(_ item: GroupIconPickerDisplayModel.Item) {
@@ -86,18 +85,8 @@ final class GroupIconPickerViewModel: ObservableObject {
             print("select item with color: \(item.color)")
         }
 
-        updateGroupIcon()
-    }
-
-    private func updateGroupIcon() {
-        Task {
-            do {
-                try await updateGroupIconUseCase.invoke(colorString: selectedItem?.color.toHexString(),
-                                                        emoji: selectedEmoji?.value)
-            } catch {
-                WireLogger.conversation.error("error updatingGroupIcon: \(error)")
-            }
-        }
+        onSelection((selectedItem?.color.toHexString(),
+                     selectedEmoji?.value))
     }
 }
 

@@ -34,6 +34,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+    private var updateGroupIconUseCase: UpdateGroupIconUseCase!
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -66,6 +67,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             if let session = ZMUserSession.shared() {
+
+                self.updateGroupIconUseCase = UpdateGroupIconUseCase(api: session.makeConversationsAPI(),
+                                                     conversationId: conversation.qualifiedID!,
+                                                     context: session.syncContext)
+
                 if session.hasCompletedInitialSync {
                     didCompleteInitialSync = true
                 } else {
@@ -465,18 +471,25 @@ protocol RenameGroupSectionControllerDelegate: AnyObject {
 
 extension GroupDetailsViewController: RenameGroupSectionControllerDelegate {
     func presentGroupIconOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
-        guard let qualifiedID = conversation.qualifiedID else { return }
 
-        let useCase = UpdateGroupIconUseCase(api: userSession.makeConversationsAPI(),
-                                             conversationId: qualifiedID,
-                                             context: userSession.syncContext)
-        let viewModel = GroupIconPickerViewModel(updateGroupIconUseCase: useCase, initialGroupIcon: (conversation.groupColor, conversation.groupEmoji))
+        let viewModel = GroupIconPickerViewModel(initialGroupIcon: (conversation.groupColor, conversation.groupEmoji)) { [weak self] groupIcon in
+            self?.updateGroupIcon(groupIcon)
+        }
         let view = GroupIconPickerView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
         viewController.title = "Group Icon"
         navigationController?.pushViewController(viewController, animated: animated)
+    }
+
+    private func updateGroupIcon(_ groupIcon: GroupIcon) {
+        Task {
+            do {
+                try await updateGroupIconUseCase.invoke(colorString: groupIcon.color,
+                                                        emoji: groupIcon.emoji)
+            } catch {
+                WireLogger.conversation.error("error updatingGroupIcon: \(error)")
+            }
+        }
     }
 }
 
