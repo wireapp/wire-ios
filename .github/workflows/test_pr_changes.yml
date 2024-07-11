@@ -9,7 +9,7 @@ on:
 # This is what will cancel the workflow
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # This job will tell us which frameworks have source code changes.
