@@ -65,7 +65,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
-            if clientEntry?.text == "💣".data(using: .utf8) {
+            if clientEntry?.text == Data("💣".utf8) {
                 messagesReceived += 1
             }
         }
@@ -119,7 +119,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
 
-            if clientEntry?.text == "💣".data(using: .utf8) {
+            if clientEntry?.text == Data("💣".utf8) {
                 bombsReceived += 1
             }
         }

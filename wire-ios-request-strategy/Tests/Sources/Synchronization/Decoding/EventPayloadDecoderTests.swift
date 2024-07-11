@@ -50,7 +50,7 @@ final class EventPayloadDecoderTests: XCTestCase {
     func testDecodeDataFails() throws {
         // given
         let decoder = EventPayloadDecoder()
-        let jsonDataEmpty = try XCTUnwrap("".data(using: .utf8))
+        let jsonDataEmpty = try XCTUnwrap(Data("".utf8))
 
         // when
         // then
