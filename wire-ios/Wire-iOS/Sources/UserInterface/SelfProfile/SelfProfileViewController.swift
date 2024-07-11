@@ -225,9 +225,10 @@ final class SelfProfileViewController: UIViewController {
               let handle = selfUser.handle else {
             return nil
         }
+        let profileLinkNew = "wire://user/\(selfUser.remoteIdentifier.uuidString)"
 
         return UserQRCodeViewModel(
-            profileLink: profileLink,
+            profileLink: profileLinkNew,
             accentColor: Color(uiColor: selfUser.accentColor),
             handle: handle
         )
