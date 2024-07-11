@@ -21,6 +21,7 @@ import SwiftUI
 
 public struct QRCodeGenerator {
     public static func generateQRCode(from string: String, size: CGFloat = 200) -> UIImage {
+
         let context = CIContext()
         let filter = CIFilter.qrCodeGenerator()
 
@@ -36,16 +37,5 @@ public struct QRCodeGenerator {
         }
 
         return UIImage(systemName: "xmark.circle") ?? UIImage()
-    }
-}
-
-public extension View {
-    func asQRCode(size: CGFloat = 200) -> some View {
-        let uiImage = QRCodeGenerator.generateQRCode(from: String(describing: self), size: size)
-        return Image(uiImage: uiImage)
-            .interpolation(.none)
-            .resizable()
-            .scaledToFit()
-            .frame(width: size, height: size)
     }
 }
