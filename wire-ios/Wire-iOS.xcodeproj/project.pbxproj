@@ -1383,6 +1383,8 @@
 		E96DF0602C3F25270093293C /* InfoText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF05F2C3F25270093293C /* InfoText.swift */; };
 		E96DF0622C3F25660093293C /* ShareButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0612C3F25660093293C /* ShareButtons.swift */; };
 		E96DF0642C3F27AD0093293C /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0632C3F27AD0093293C /* ShareSheet.swift */; };
+		E96DF0662C3FCE290093293C /* QRCodeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0652C3FCE290093293C /* QRCodeMode.swift */; };
+		E96DF0682C3FD3F50093293C /* QRCodeScannedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96DF0672C3FD3F50093293C /* QRCodeScannedView.swift */; };
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
@@ -3474,6 +3476,8 @@
 		E96DF05F2C3F25270093293C /* InfoText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoText.swift; sourceTree = "<group>"; };
 		E96DF0612C3F25660093293C /* ShareButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareButtons.swift; sourceTree = "<group>"; };
 		E96DF0632C3F27AD0093293C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		E96DF0652C3FCE290093293C /* QRCodeMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeMode.swift; sourceTree = "<group>"; };
+		E96DF0672C3FD3F50093293C /* QRCodeScannedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannedView.swift; sourceTree = "<group>"; };
 		E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureLinkHeaderCell.swift; sourceTree = "<group>"; };
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
@@ -7988,6 +7992,8 @@
 				E96DF05F2C3F25270093293C /* InfoText.swift */,
 				E96DF0612C3F25660093293C /* ShareButtons.swift */,
 				E96DF0632C3F27AD0093293C /* ShareSheet.swift */,
+				E96DF0652C3FCE290093293C /* QRCodeMode.swift */,
+				E96DF0672C3FD3F50093293C /* QRCodeScannedView.swift */,
 			);
 			path = "QR Code";
 			sourceTree = "<group>";
@@ -9519,6 +9525,7 @@
 				D58192002091CEBF003BA7EC /* UIStackView+Helper.swift in Sources */,
 				EF20BE4322CB57B1004F8910 /* UIViewController+Present.swift in Sources */,
 				EF2A8DED214AA36E002C9058 /* SeparatorViewProtocol.swift in Sources */,
+				E96DF0682C3FD3F50093293C /* QRCodeScannedView.swift in Sources */,
 				EECDB2562029F5AB00D0D268 /* MarkdownTextStorage.swift in Sources */,
 				5EFD4526215A78E800BEE703 /* IndexedListView.swift in Sources */,
 				A9EB722523C3A47B00DA8240 /* AppDelegate.swift in Sources */,
@@ -9800,6 +9807,7 @@
 				EF3CBC0A2147D81800566295 /* ConversationListViewController+PushPermissions.swift in Sources */,
 				5489E20E252C84BE0010461D /* AppStateCalculator.swift in Sources */,
 				F16427081FCC5BF800D2ABFC /* SetPasswordStepDescription.swift in Sources */,
+				E96DF0662C3FCE290093293C /* QRCodeMode.swift in Sources */,
 				06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */,
 				0665DF7328F01D3B0094482B /* ProfileImagePickerManager.swift in Sources */,
 				5E8FFC0321ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift in Sources */,

@@ -18,25 +18,50 @@
 
 import SwiftUI
 
-// MARK: - QRCodeView
-
 struct QRCodeView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: UserQRCodeViewModel
+    @State private var selectedMode: QRCodeMode = .share
 
     var body: some View {
+        VStack(spacing: 0) {
+            Picker("Mode", selection: $selectedMode) {
+                ForEach(QRCodeMode.allCases, id: \.self) { mode in
+                    Text(mode.rawValue).tag(mode)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
+
+            switch selectedMode {
+            case .share:
+                shareView
+            case .scan:
+                scanView
+            }
+        }
+        .background(Color.primaryViewBackground.edgesIgnoringSafeArea(.all))
+    }
+
+    private var shareView: some View {
         VStack {
             QRCodeCard(viewModel: viewModel)
-
             InfoText()
-
             Spacer()
-
             ShareButtons(viewModel: viewModel)
         }
         .padding(.horizontal, 24)
-        .background(Color.primaryViewBackground.edgesIgnoringSafeArea(.all))
     }
+
+    private var scanView: some View {
+        GeometryReader { geometry in
+            VStack {
+                Text("Camera view for scanning QR codes goes here")
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+        }
+    }
+
 }
 
 // MARK: - Preview
