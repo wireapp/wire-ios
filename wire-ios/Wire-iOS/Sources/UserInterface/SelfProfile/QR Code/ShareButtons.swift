@@ -25,7 +25,7 @@ struct ShareButtons: View {
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
     @ObservedObject var viewModel: UserQRCodeViewModel
-    let capturedImage: UIImage?
+    @Binding var capturedImage: UIImage?
 
     // MARK: - view
 
@@ -42,6 +42,7 @@ struct ShareButtons: View {
 
             Button(L10n.Localizable.Qrcode.ShareQrcode.Button.title) {
                 isShareImageSheetPresented = true
+
             }
             .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())

@@ -24,6 +24,7 @@ struct QRCodeView: View {
     @State private var selectedMode: QRCodeMode = .share
     @State private var scannedCode: String?
     @State private var latestCode: String?
+    @State private var capturedImage: UIImage?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -48,10 +49,10 @@ struct QRCodeView: View {
     private var shareView: some View {
         VStack {
             QRCodeCard(viewModel: viewModel)
-            let capturedImage = captureImage(from: QRCodeCard(viewModel: viewModel))
+                .captureImage(capturedImage: $capturedImage)
             InfoText()
             Spacer()
-            ShareButtons(viewModel: viewModel, capturedImage: capturedImage)
+            ShareButtons(viewModel: viewModel, capturedImage: $capturedImage)
         }
         .padding(.horizontal, 24)
     }
@@ -72,14 +73,40 @@ struct QRCodeView: View {
     }
 }
 
-func captureImage<Content: View>(from view: Content) -> UIImage? {
-    let controller = UIHostingController(rootView: view)
-    let targetSize = CGSize(width: 400, height: 400)
-    controller.view.bounds = CGRect(origin: .zero, size: targetSize)
-    controller.view.backgroundColor = .clear
+extension View {
 
-    let renderer = UIGraphicsImageRenderer(size: targetSize)
-    return renderer.image { _ in
-        controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+    func snapshot() -> UIImage {
+        let controller = UIHostingController(rootView: self)
+        let view = controller.view
+
+        let targetSize = controller.view.intrinsicContentSize
+        view?.bounds = CGRect(origin: .zero, size: targetSize)
+        view?.backgroundColor = .clear
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+
+        return renderer.image { _ in
+            view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+    }
+}
+
+struct CaptureImageView<Content: View>: View {
+    @Binding var capturedImage: UIImage?
+    let content: () -> Content
+
+    var body: some View {
+        content()
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.capturedImage = content().snapshot()
+                }
+            }
+    }
+}
+
+extension View {
+    func captureImage(capturedImage: Binding<UIImage?>) -> some View {
+        CaptureImageView(capturedImage: capturedImage) { self }
     }
 }
