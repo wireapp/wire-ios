@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "592996512C2EB98A008C334F"
-               BuildableName = "Format Swift Code"
-               BlueprintName = "Format Swift Code"
+               BuildableName = "Format Swift Code (SwiftFormat)"
+               BlueprintName = "Format Swift Code (SwiftFormat)"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "592996512C2EB98A008C334F"
-            BuildableName = "Format Swift Code"
-            BlueprintName = "Format Swift Code"
+            BuildableName = "Format Swift Code (SwiftFormat)"
+            BlueprintName = "Format Swift Code (SwiftFormat)"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
