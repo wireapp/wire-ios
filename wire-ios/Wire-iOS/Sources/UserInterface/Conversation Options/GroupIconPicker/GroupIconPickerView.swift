@@ -39,6 +39,7 @@ struct GroupIconPickerView: View {
             Text("Select a color for the group avatar:")
                 .fontWeight(.regular)
                 .font(.body)
+                .padding(.bottom)
 
             sectionTitle("Group Color")
             colorList
@@ -54,19 +55,17 @@ struct GroupIconPickerView: View {
             .buttonStyle(PrimaryButtonStyle())
         }
         .padding()
-        .background(.background)
     }
 
     @ViewBuilder
     func sectionTitle(_ title: String) -> some View {
         HStack {
-            Text(title)
+            Text(title.uppercased())
                 .fontWeight(.semibold)
-                .font(.subheadline)
-                .foregroundColor(.gray.darker(by: 50))
+                .font(.callout)
             Spacer()
         }
-        .background(Color.gray)
+        .padding(.vertical, 8)
     }
 
     private var emojiList: some View {
@@ -89,7 +88,7 @@ struct GroupIconPickerView: View {
     }
 
     private var colorList: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: 4) {
             ForEach(viewModel.items) { item in
                 Button {
                     viewModel.selectItem(item)
