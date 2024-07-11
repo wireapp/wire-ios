@@ -102,25 +102,6 @@ enum Mode: Equatable {
 
 extension Mode {
 
-    /// create a Mode for different cases
-    ///
-    /// - Parameters:
-    ///   - conversationType: when conversationType is nil, it is a incoming connection request
-    ///   - users: number of users involved in the conversation
-    fileprivate init(conversationType: ZMConversationType? = nil, users: [UserType]) {
-        switch (users.count, conversationType) {
-        case (0, _):
-            self = .none
-        case (1, .group?):
-            let isServiceUser = users[0].isServiceUser
-            self = isServiceUser ? .one(serviceUser: isServiceUser) : .four
-        case (1, _):
-            self = .one(serviceUser: users[0].isServiceUser)
-        default:
-            self = .four
-        }
-    }
-
     var showInitials: Bool {
         if case .one = self {
             return true
@@ -150,11 +131,29 @@ final class ConversationAvatarView: UIView {
     func configure(context: Context) {
         switch context {
         case .connect(let users):
-            self.users = users
-            mode = Mode(users: users)
+            mode = determineMode(users: users)
         case .conversation(let conversation):
             self.conversation = conversation
-            mode = Mode(conversationType: conversation.conversationType, users: users)
+
+            if conversation.groupColor != nil || conversation.groupEmoji != nil {
+                mode = .groupIcon
+            } else {
+                mode = determineMode(conversationType: conversation.conversationType, users: users)
+            }
+        }
+
+        func determineMode(conversationType: ZMConversationType? = nil, users: [UserType]) -> Mode {
+            switch (users.count, conversationType) {
+            case (0, _):
+                return .none
+            case (1, .group):
+                let isServiceUser = users[0].isServiceUser
+                return isServiceUser ? .one(serviceUser: isServiceUser) : .four
+            case (1, _):
+                return .one(serviceUser: users[0].isServiceUser)
+            default:
+                return .four
+            }
         }
     }
 
@@ -186,27 +185,29 @@ final class ConversationAvatarView: UIView {
 
     private(set) var mode: Mode = .one(serviceUser: false) {
         didSet {
-            self.clippingView.subviews.forEach { $0.isHidden = true }
-            self.shownImages().forEach { $0.isHidden = false }
+            clippingView.subviews.forEach { $0.isHidden = true }
 
-            if case .one = mode {
-                layer.borderWidth = 0
-                backgroundColor = .clear
-            } else {
-                layer.borderWidth = .hairline
-                layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
-                backgroundColor = UIColor(white: 0, alpha: 0.16)
-            }
+            layer.borderWidth = .hairline
+            layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
+            backgroundColor = UIColor(white: 0, alpha: 0.16)
 
             switch mode {
             case .none:
                 break
             case .one:
+                layer.borderWidth = 0
+                backgroundColor = .clear
+
                 updateUserImages([imageViewLeftTop])
+                imageViewLeftTop.isHidden = false
             case .four:
                 updateUserImages(userImageViews)
-            case .groupIcon:
-                groupIconView.image = UIImage(resource: .animalsNature)
+                userImageViews.forEach { $0.isHidden = false }
+            case  .groupIcon:
+                layer.borderWidth = 0
+                groupIconView.contentMode = .scaleAspectFit
+                groupIconView.image = UIImage(resource: .addEmojis)
+                groupIconView.isHidden = false
             }
 
             setNeedsLayout()
@@ -243,24 +244,8 @@ final class ConversationAvatarView: UIView {
         ]
     }
 
-    private func shownImages() -> [UIView] {
-        switch mode {
-        case .none:
-            return []
-
-        case .one:
-            return [imageViewLeftTop]
-
-        case .four:
-            return userImageViews
-
-        case .groupIcon:
-            return [groupIconView]
-        }
-    }
-
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
+        CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
     }
 
     let clippingView = UIView()
@@ -280,12 +265,19 @@ final class ConversationAvatarView: UIView {
 
     init() {
         super.init(frame: .zero)
-        userImageViews.forEach(self.clippingView.addSubview)
+
+        clippingView.addSubview(imageViewLeftTop)
+        clippingView.addSubview(imageViewRightTop)
+        clippingView.addSubview(imageViewLeftBottom)
+        clippingView.addSubview(imageViewRightBottom)
+        clippingView.addSubview(groupIconView)
+
         updateCornerRadius()
         autoresizesSubviews = false
         layer.masksToBounds = true
         clippingView.clipsToBounds = true
-        self.addSubview(clippingView)
+
+        addSubview(clippingView)
     }
 
     @available(*, unavailable)
@@ -300,9 +292,8 @@ final class ConversationAvatarView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard self.bounds != .zero else {
-            return
-        }
+
+        if bounds == .zero { return }
 
         clippingView.frame = self.bounds.insetBy(dx: 2, dy: 2)
 
@@ -319,8 +310,7 @@ final class ConversationAvatarView: UIView {
                 )
             )
         case .groupIcon:
-            // TODO: implement
-            break
+            groupIconView.frame = clippingView.bounds
         }
 
         updateCornerRadius()
