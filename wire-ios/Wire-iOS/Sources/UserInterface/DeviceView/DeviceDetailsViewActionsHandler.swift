@@ -125,7 +125,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     @MainActor
     func getProteusFingerPrint() async -> String {
         guard let data = await getProteusFingerprint.invoke(userClient: userClient),
-                let fingerPrint = String(data: data, encoding: .utf8) else {
+                let fingerPrint = String(decoding: data, as: UTF8.self) else {
             logger.error("Valid fingerprint data is missing")
             return ""
         }

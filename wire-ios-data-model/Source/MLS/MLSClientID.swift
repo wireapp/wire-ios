@@ -68,7 +68,7 @@ public struct MLSClientID: Equatable, Hashable {
     }
 
     public init?(data: Data) {
-        guard let string = String(data: data, encoding: .utf8) else { return nil }
+        guard let string = String(decoding: data, as: UTF8.self) else { return nil }
         self.init(rawValue: string)
     }
 

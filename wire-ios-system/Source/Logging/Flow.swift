@@ -109,7 +109,7 @@ struct FlowLog: LogConvertible, Encodable {
       encoder.outputFormatting = .sortedKeys
       guard
         let data = try? encoder.encode(self),
-      let string = String(data: data, encoding: .utf8)
+      let string = String(decoding: data, as: UTF8.self)
     else {
       return "FLOW: \(name) ENCODING ERROR"
     }

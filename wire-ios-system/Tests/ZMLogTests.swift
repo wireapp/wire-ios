@@ -683,7 +683,7 @@ extension ZMLogTests {
 
         guard let currentLog = ZMSLog.currentLogURL,
               let data = FileManager.default.contents(atPath: currentLog.path),
-            let logContent = String(data: data, encoding: .utf8) else {
+            let logContent = String(decoding: data, as: UTF8.self) else {
                 XCTFail(file: file, line: line)
                 return []
         }

@@ -122,7 +122,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         try await eventContext.perform { [eventContext, encoder] in
             let data = try encoder.encode(eventEnvelope)
 
-            if let string = String(data: data, encoding: .utf8) {
+            if let string = String(decoding: data, as: UTF8.self) {
                 print("persisting event: \(string)")
             }
 

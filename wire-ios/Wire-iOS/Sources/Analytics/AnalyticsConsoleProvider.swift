@@ -59,7 +59,7 @@ extension AnalyticsConsoleProvider: AnalyticsProvider {
 
     private func print(loggingData data: [String: Any]) {
         if let jsonData = try? JSONSerialization.data(withJSONObject: data, options: JSONSerialization.WritingOptions.prettyPrinted),
-            let string = String(data: jsonData, encoding: .utf8) {
+            let string = String(decoding: jsonData, as: UTF8.self) {
             zmLog.info(string)
         }
     }

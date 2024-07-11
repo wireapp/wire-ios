@@ -136,7 +136,7 @@ extension WireLogger {
 
         do {
             let data = try JSONEncoder().encode(info)
-            let jsonString = String(data: data, encoding: .utf8)
+            let jsonString = String(decoding: data, as: UTF8.self)
             let message = "REQUEST: \(jsonString ?? request.description)"
             self.info(message, attributes: .safePublic)
         } catch {
@@ -150,7 +150,7 @@ extension WireLogger {
 
         do {
             let data = try JSONEncoder().encode(info)
-            let jsonString = String(data: data, encoding: .utf8)
+            let jsonString = String(decoding: data, as: UTF8.self)
             let message = "RESPONSE: \(jsonString ?? response.description)"
             self.info(message, attributes: .safePublic)
         } catch {

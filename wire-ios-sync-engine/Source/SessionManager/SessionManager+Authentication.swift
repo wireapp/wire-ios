@@ -23,7 +23,7 @@ public extension SessionManager {
     static var previousSystemBootTime: Date? {
         get {
             guard let data = ZMKeychain.data(forAccount: previousSystemBootTimeContainer),
-                let string = String(data: data, encoding: .utf8),
+                let string = String(decoding: data, as: UTF8.self),
                 let timeInterval = TimeInterval(string) else {
                     return nil
             }

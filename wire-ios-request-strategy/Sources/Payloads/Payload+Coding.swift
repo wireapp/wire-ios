@@ -135,14 +135,14 @@ extension Encodable {
 
     func payloadString(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> String? {
         return payloadData(apiVersion: apiVersion, encoder: encoder).flatMap {
-            String(data: $0, encoding: .utf8)
+            String(decoding: $0, as: UTF8.self)
         }
     }
 
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
         let data = try encodeToJSON(encoder: encoder)
 
-        guard let string = String(data: data, encoding: .utf8) else {
+        guard let string = String(decoding: data, as: UTF8.self) else {
             throw JSONEncodingFailure.failedToConvertToString
         }
 
