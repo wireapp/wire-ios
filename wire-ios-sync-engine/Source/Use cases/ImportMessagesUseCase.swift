@@ -29,6 +29,7 @@ public enum ImportMessagesUseCaseError: LocalizedError {
     case backupResourceUnavailable
     case failedToUnzipBackup
     case decodingError(Error)
+    case notSelfUserBackup
     case failedToSaveDatabase(Error)
 
     public var errorDescription: String? {
@@ -41,6 +42,9 @@ public enum ImportMessagesUseCaseError: LocalizedError {
 
         case .decodingError(let error):
             "The backup file could not be decoded: \(error)"
+
+        case .notSelfUserBackup:
+            "This backup does not belong to you!"
 
         case .failedToSaveDatabase(let error):
             "The database could not be saved: \(error)"
@@ -75,7 +79,12 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
         let metadataURL = unzippedURL.appendingPathComponent("export.json")
         let metadata = try decodeBackupModel(MetadataBackupModel.self, from: metadataURL)
 
-        // TODO: guard it's for self user
+        try await syncContext.perform { [syncContext] in
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            guard selfUser.remoteIdentifier == metadata.selfUserID else {
+                throw ImportMessagesUseCaseError.notSelfUserBackup
+            }
+        }
 
         let eventsURL = unzippedURL.appendingPathComponent("events.json")
         let events = try decodeBackupModel([EventBackupModel].self, from: eventsURL)

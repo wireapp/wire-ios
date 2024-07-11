@@ -78,10 +78,8 @@ struct ImportMessagesView: View {
                 print("failed to import file: ", error)
             }
         }
-        .alert(isPresented: $isErrorAlertPresented, error: error) { _ in
-            Text("Ok")
-        } message: { error in
-            Text(error.localizedDescription)
+        .alert(isPresented: $isErrorAlertPresented, error: error) {
+            Button("Ok") {}
         }
     }
 
