@@ -106,7 +106,7 @@ extension CGFloat {
     }
 
     enum ConversationAvatarView {
-        static let iconSize: CGFloat = 32
+        static let iconSize: CGFloat = 40
     }
 
     enum AccountView {
