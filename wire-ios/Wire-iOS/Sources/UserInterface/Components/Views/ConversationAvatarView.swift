@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+import SwiftUI
 import WireSyncEngine
+
 
 /// Source of random values.
 protocol RandomGenerator {
@@ -187,27 +190,48 @@ final class ConversationAvatarView: UIView {
         didSet {
             clippingView.subviews.forEach { $0.isHidden = true }
 
-            layer.borderWidth = .hairline
-            layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
-            backgroundColor = UIColor(white: 0, alpha: 0.16)
+            switch mode {
+            case .one:
+                layer.borderWidth = 0
+                backgroundColor = .clear
+            case .none, .four, .groupIcon:
+                layer.borderWidth = .hairline
+                layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
+                backgroundColor = UIColor(white: 0, alpha: 0.16)
+            }
+
 
             switch mode {
             case .none:
                 break
             case .one:
-                layer.borderWidth = 0
-                backgroundColor = .clear
-
                 updateUserImages([imageViewLeftTop])
                 imageViewLeftTop.isHidden = false
             case .four:
                 updateUserImages(userImageViews)
                 userImageViews.forEach { $0.isHidden = false }
             case  .groupIcon:
-                layer.borderWidth = 0
-                groupIconView.contentMode = .scaleAspectFit
-                groupIconView.image = UIImage(resource: .addEmojis)
-                groupIconView.isHidden = false
+                if let groupIconView {
+                    groupIconView.removeFromSuperview()
+                }
+
+                if #available(iOS 16, *) {
+                    let config = UIHostingConfiguration {
+                        GroupIconView(color: conversation?.groupColor, emoji: conversation?.groupEmoji)
+                    }
+                    let contentView = config.makeContentView()
+
+                    clippingView.addSubview(contentView)
+                    groupIconView = contentView
+                }
+
+//                if let backgroundColorString = conversation?.groupColor {
+//                    groupIconView.backgroundColor = UIColor(hex: backgroundColorString)
+//                }
+
+                // groupIconView.contentMode = .scaleAspectFit
+                // groupIconView.image = nil // TODO: implement
+                groupIconView?.isHidden = false
             }
 
             setNeedsLayout()
@@ -261,7 +285,7 @@ final class ConversationAvatarView: UIView {
 
     lazy var imageViewRightBottom = UserImageView()
 
-    private lazy var groupIconView: UIImageView = UIImageView()
+    private var groupIconView: UIView?
 
     init() {
         super.init(frame: .zero)
@@ -270,7 +294,6 @@ final class ConversationAvatarView: UIView {
         clippingView.addSubview(imageViewRightTop)
         clippingView.addSubview(imageViewLeftBottom)
         clippingView.addSubview(imageViewRightBottom)
-        clippingView.addSubview(groupIconView)
 
         updateCornerRadius()
         autoresizesSubviews = false
@@ -310,7 +333,7 @@ final class ConversationAvatarView: UIView {
                 )
             )
         case .groupIcon:
-            groupIconView.frame = clippingView.bounds
+            groupIconView?.frame = clippingView.bounds
         }
 
         updateCornerRadius()
@@ -340,9 +363,8 @@ final class ConversationAvatarView: UIView {
             layer.cornerRadius = 6
             clippingView.layer.cornerRadius = 4
         case .groupIcon:
-            // TODO?
-            layer.cornerRadius = 0
-            clippingView.layer.cornerRadius = 0
+            layer.cornerRadius = 10
+            clippingView.layer.cornerRadius = 8
         }
     }
 }
