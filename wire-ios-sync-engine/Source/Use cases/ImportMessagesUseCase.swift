@@ -58,6 +58,7 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
         self.syncContext = syncContext
     }
 
+    @MainActor
     public func invoke(backupURL: URL) async throws {
         guard backupURL.startAccessingSecurityScopedResource() else {
             throw ImportMessagesUseCaseError.backupResourceUnavailable
@@ -68,7 +69,7 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
         }
 
         let importer = MPBackupImporter(pathToFile: backupURL.path, selfUserDomain: "wire.com")
-        
+
         var messages = [BackupDataMessageText]()
         try await importer.import { restoredData in
             switch restoredData {

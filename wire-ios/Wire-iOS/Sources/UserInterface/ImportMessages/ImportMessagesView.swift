@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import WireSyncEngine
 
 struct ImportMessagesView: View {
@@ -68,7 +69,11 @@ struct ImportMessagesView: View {
         }
         .fileImporter(
             isPresented: $isFileImporterPresented,
-            allowedContentTypes: [.zip]
+            allowedContentTypes: [
+                .zip,
+                UTType.init(filenameExtension: "wbu")!,
+                UTType.init(filenameExtension: "desktop_wbu")!
+            ]
         ) { result in
             switch result {
             case .success(let url):

@@ -210,6 +210,9 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ios_wbu</string>
+					<string>desktop_wbu</string>
+					<string>wbu</string>
+					<string>zip</string>
 				</array>
 			</dict>
 		</dict>
@@ -235,6 +238,9 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ios-wbu</string>
+					<string>desktop_wbu</string>
+					<string>wbu</string>
+					<string>zip</string>
 				</array>
 			</dict>
 		</dict>
