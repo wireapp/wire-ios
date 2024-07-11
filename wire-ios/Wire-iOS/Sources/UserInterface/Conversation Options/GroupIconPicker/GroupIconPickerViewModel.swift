@@ -23,7 +23,7 @@ import WireDesign
 typealias GroupIcon = (color: String?, emoji: String?)
 typealias GroupIconSelection = (GroupIcon) -> Void
 final class GroupIconPickerViewModel: ObservableObject {
-    let items: [GroupIconPickerDisplayModel.Item] = [
+    let items: [GroupIconPickerDisplayModel.ColorItem] = [
         // blue
         .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue300, accessibilityIdentifier: "blue300"),
         .init(uiColor: BaseColorPalette.LightUI.MainColor.blue500, accessibilityIdentifier: "blue500"),
@@ -47,7 +47,7 @@ final class GroupIconPickerViewModel: ObservableObject {
     let emojiRepository = EmojiRepository()
     private (set) var emojis: [Emoji] = []
 
-    @Published private (set) var selectedItem: GroupIconPickerDisplayModel.Item?
+    @Published private (set) var selectedItem: GroupIconPickerDisplayModel.ColorItem?
     @Published private (set) var selectedEmoji: Emoji?
 
     var onSelection: GroupIconSelection
@@ -71,7 +71,7 @@ final class GroupIconPickerViewModel: ObservableObject {
         }
     }
 
-    func selectItem(_ item: GroupIconPickerDisplayModel.Item) {
+    func selectItem(_ item: GroupIconPickerDisplayModel.ColorItem) {
         if selectedItem == item {
             // unselect
             selectedItem = nil
