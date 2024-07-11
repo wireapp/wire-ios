@@ -26,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSManagedObjectContext (ZMSGroupQueue) <ZMSGroupQueue>
 
+@property (nonatomic, readonly, nullable) ZMSDispatchGroup *dispatchGroup;
+
+- (void)performGroupedBlock:(dispatch_block_t)block;
+
 @property (nonatomic, readonly, null_unspecified) DispatchGroupContext *dispatchGroupContext;
 
 - (void)createDispatchGroups;
