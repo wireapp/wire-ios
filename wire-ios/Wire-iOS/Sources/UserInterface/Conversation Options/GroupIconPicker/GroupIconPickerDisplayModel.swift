@@ -34,8 +34,7 @@ enum GroupIconPickerDisplayModel {
         }
 
         init(hexColor: String) {
-            let a = Color(hex: hexColor)
-            self.color = a
+            self.color = Color(hex: hexColor)!
         }
     }
 }
