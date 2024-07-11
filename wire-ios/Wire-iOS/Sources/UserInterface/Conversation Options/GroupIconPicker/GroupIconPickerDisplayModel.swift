@@ -24,17 +24,21 @@ enum GroupIconPickerDisplayModel {
         var id: Color { color }
 
         let color: Color
+        let accessibilityIdentifier: String
 
-        init(color: Color) {
+        init(color: Color, accessibilityIdentifier: String) {
             self.color = color
+            self.accessibilityIdentifier = accessibilityIdentifier
         }
 
-        init(uiColor: UIColor) {
+        init(uiColor: UIColor, accessibilityIdentifier: String) {
             self.color = .init(uiColor: uiColor)
+            self.accessibilityIdentifier = accessibilityIdentifier
         }
 
-        init(hexColor: String) {
+        init(hexColor: String, accessibilityIdentifier: String) {
             self.color = Color(hex: hexColor)!
+            self.accessibilityIdentifier = accessibilityIdentifier
         }
     }
 }

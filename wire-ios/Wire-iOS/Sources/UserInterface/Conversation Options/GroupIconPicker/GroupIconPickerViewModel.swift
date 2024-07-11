@@ -25,21 +25,21 @@ typealias GroupIconSelection = (GroupIcon) -> Void
 final class GroupIconPickerViewModel: ObservableObject {
     let items: [GroupIconPickerDisplayModel.Item] = [
         // blue
-        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue300),
-        .init(uiColor: BaseColorPalette.LightUI.MainColor.blue500),
-        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue700),
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue300, accessibilityIdentifier: "blue300"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.blue500, accessibilityIdentifier: "blue500"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.blue700, accessibilityIdentifier: "blue700"),
 
         // green
-        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.green300),
-        .init(uiColor: BaseColorPalette.LightUI.MainColor.green500),
-        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.green700),
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.green300, accessibilityIdentifier: "green300"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.green500, accessibilityIdentifier: "green500"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColorShade.green700, accessibilityIdentifier: "green700"),
 
-        .init(uiColor: BaseColorPalette.LightUI.MainColor.petrol500),
-        .init(uiColor: BaseColorPalette.LightUI.MainColor.purple500),
-        .init(uiColor: BaseColorPalette.LightUI.MainColor.red500),
-        .init(uiColor: BaseColorPalette.LightUI.MainColor.amber500),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.petrol500, accessibilityIdentifier: "petrol500"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.purple500, accessibilityIdentifier: "purple500"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.red500, accessibilityIdentifier: "red500"),
+        .init(uiColor: BaseColorPalette.LightUI.MainColor.amber500, accessibilityIdentifier: "amber500"),
 
-        .init(uiColor: BaseColorPalette.Grays.gray70)
+        .init(uiColor: BaseColorPalette.Grays.gray70, accessibilityIdentifier: "gray70")
 
         // TODO: add more colors
     ]

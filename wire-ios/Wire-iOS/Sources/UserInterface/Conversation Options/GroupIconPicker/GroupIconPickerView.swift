@@ -94,7 +94,6 @@ struct GroupIconPickerView: View {
                 Button {
                     viewModel.selectItem(item)
                 } label: {
-
                     ZStack {
                         Rectangle()
                             .foregroundColor(item.color)
@@ -103,6 +102,7 @@ struct GroupIconPickerView: View {
                                 height: Self.cellSize
                             )
                             .cornerRadius(cornerRadius)
+                            .accessibilityIdentifier(item.accessibilityIdentifier)
 
                         if viewModel.selectedItem == item {
                             Image(systemName: "checkmark.circle.fill")
