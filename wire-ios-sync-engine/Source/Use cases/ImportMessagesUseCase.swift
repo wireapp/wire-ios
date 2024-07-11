@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import backup
+import Foundation
 
 public protocol ImportMessagesUseCaseProtocol {
 
@@ -67,26 +67,29 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
             backupURL.stopAccessingSecurityScopedResource()
         }
 
-        let importer = MPBackupImporter(pathToFile: backupURL.path(), selfUserDomain: "wire.com")
+        let importer = MPBackupImporter(pathToFile: backupURL.path, selfUserDomain: "wire.com")
         
         var messages = [BackupDataMessageText]()
-        importer.import { restoredData in
+        try await importer.import { restoredData in
             switch restoredData {
-            case let message as BackupDataMessageText: restoredMessages.append(message)
-            default: // Do nothing for now
+            case let message as BackupDataMessageText: messages.append(message)
+            default: break // Do nothing for now
             }
         }
 
         try await syncContext.perform { [self] in
             for backup in messages {
+                guard let nonce = UUID(uuidString: backup.messageId) else {
+                    return
+                }
                 // TODO: only create if message doesn't already exist
                 let genericMessage = GenericMessage(
                     content: Text(content: backup.textValue),
-                    nonce: backup.messageId
+                    nonce: nonce
                 )
 
                 let message = ZMClientMessage(
-                    nonce: backup.messageId,
+                    nonce: nonce,
                     managedObjectContext: syncContext
                 )
 
@@ -96,20 +99,20 @@ public struct ImportMessagesUseCase: ImportMessagesUseCaseProtocol {
                 )
 
                 message.sender = ZMUser.fetchOrCreate(
-                    with: backup.senderUserId.value,
+                    with: UUID(transportString: backup.senderUserId.value)!,
                     domain: backup.senderUserId.domain,
                     in: syncContext
                 )
 
-                if let senderClientID = backup.senderClientID {
-                    message.senderClientID = senderClientID
+                if !backup.senderClientId.isEmpty {
+                    message.senderClientID = backup.senderClientId
                 } else {
                     // Message is from self user
                     message.delivered = true
                 }
 
                 message.visibleInConversation = ZMConversation.fetchOrCreate(
-                    with: backup.conversationId.value,
+                    with: UUID(transportString: backup.conversationId.value)!,
                     domain: backup.conversationId.domain,
                     in: syncContext
                 )
