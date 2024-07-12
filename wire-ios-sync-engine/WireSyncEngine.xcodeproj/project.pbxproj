@@ -551,6 +551,7 @@
 		E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */; };
 		E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */; };
 		E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */; };
+		E6A6FE292C4175DE001407E8 /* IntegrationTest+BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A6FE282C4175DE001407E8 /* IntegrationTest+BackendInfo.swift */; };
 		E6BB79542C36B36E003B821B /* NetworkState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB79532C36B36E003B821B /* NetworkState.swift */; };
 		E6BD767F2BDBAAE300FB1F8B /* CoreDataStack+Caches.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BD767E2BDBAAE300FB1F8B /* CoreDataStack+Caches.swift */; };
 		E6C6C6B62B877429007585DF /* TeamMembersDownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C6C6B42B87741D007585DF /* TeamMembersDownloadRequestStrategyTests.swift */; };
@@ -1369,6 +1370,7 @@
 		E666EDEB2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+MultiUserSession.swift"; sourceTree = "<group>"; };
 		E666EDED2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AppLock.swift"; sourceTree = "<group>"; };
 		E666EDF12B74ED2F00C03E2B /* MockSessionManagerObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSessionManagerObserver.swift; sourceTree = "<group>"; };
+		E6A6FE282C4175DE001407E8 /* IntegrationTest+BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntegrationTest+BackendInfo.swift"; sourceTree = "<group>"; };
 		E6BB79532C36B36E003B821B /* NetworkState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkState.swift; sourceTree = "<group>"; };
 		E6BD767E2BDBAAE300FB1F8B /* CoreDataStack+Caches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataStack+Caches.swift"; sourceTree = "<group>"; };
 		E6C6C6B22B877404007585DF /* TeamMembersDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMembersDownloadRequestStrategy.swift; sourceTree = "<group>"; };
@@ -2394,6 +2396,7 @@
 				16FF47481F0CD6610044C491 /* IntegrationTest.h */,
 				16FF47461F0CD58A0044C491 /* IntegrationTest.m */,
 				16FF47431F0BF5C70044C491 /* IntegrationTest.swift */,
+				E6A6FE282C4175DE001407E8 /* IntegrationTest+BackendInfo.swift */,
 				54ADA7611E3B3CBE00B90C7D /* IntegrationTest+Encryption.swift */,
 				166D191E23157EBE001288CD /* IntegrationTest+Messages.swift */,
 				163BB8111EE1A65A00DF9384 /* IntegrationTest+Search.swift */,
@@ -3421,6 +3424,7 @@
 				169BA24625EF73B100374343 /* EventProcessingPerformanceTests.swift in Sources */,
 				169BA23625ED101C00374343 /* LoginFlowTests.m in Sources */,
 				169BA21225ED0F7600374343 /* UserTests+AccountDeletion.swift in Sources */,
+				E6A6FE292C4175DE001407E8 /* IntegrationTest+BackendInfo.swift in Sources */,
 				E666EDEA2B74E9EF00C03E2B /* SessionManagerTests+Teams.swift in Sources */,
 				169BA1DF25ECE4D000374343 /* IntegrationTest.m in Sources */,
 				169BA1F125ECEB2900374343 /* FlowManagerMock.swift in Sources */,
