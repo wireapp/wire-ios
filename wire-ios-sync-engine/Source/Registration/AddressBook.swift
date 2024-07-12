@@ -18,6 +18,7 @@
 
 import Contacts
 import Foundation
+import libPhoneNumber
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone
@@ -192,7 +193,6 @@ struct EncodedAddressBookChunk {
 }
 
 // MARK: - Phone number and email normalization
-
 extension NBPhoneNumberUtil {
 
     /// Returns a normalized version of the phone number, or nil
