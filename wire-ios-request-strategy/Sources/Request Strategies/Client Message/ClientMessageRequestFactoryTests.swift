@@ -18,32 +18,28 @@
 
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
 import WireUtilities
 import XCTest
 
-class ClientMessageRequestFactoryTests: MessagingTestBase {
+@_spi(MockBackendInfo)
+import WireTransport
 
-    private var apiVersion: APIVersion! {
-        didSet {
-            setCurrentAPIVersion(apiVersion)
-        }
-    }
+@testable import WireRequestStrategy
+
+final class ClientMessageRequestFactoryTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        apiVersion = .v0
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
-        apiVersion = nil
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
-}
-
-// MARK: - Client discovery
-extension ClientMessageRequestFactoryTests {
+    // MARK: - Client discovery
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
         syncMOC.performGroupedAndWait {
@@ -60,7 +56,7 @@ extension ClientMessageRequestFactoryTests {
                 conversationId: conversationID,
                 domain: nil,
                 selfClient: self.selfClient,
-                apiVersion: self.apiVersion
+                apiVersion: BackendInfo.apiVersion!
             )
 
             guard let data = request?.binaryData else {
@@ -78,7 +74,9 @@ extension ClientMessageRequestFactoryTests {
     }
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
-        apiVersion = .v1
+        let apiVersion: APIVersion = .v1
+        BackendInfo.apiVersion = apiVersion
+
         syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
@@ -95,7 +93,7 @@ extension ClientMessageRequestFactoryTests {
                 conversationId: conversationID,
                 domain: domain,
                 selfClient: self.selfClient,
-                apiVersion: self.apiVersion
+                apiVersion: apiVersion
             )
 
             guard let data = request?.binaryData else {
