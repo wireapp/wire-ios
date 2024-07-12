@@ -39,7 +39,6 @@ final class ZMUserConsentTests: DatabaseTest {
     override func tearDown() {
         mockTransportSession.cleanUp()
         mockTransportSession = nil
-        resetCurrentAPIVersion()
 
         BackendInfo.resetMocking()
 

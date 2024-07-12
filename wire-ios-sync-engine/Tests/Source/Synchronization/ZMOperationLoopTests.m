@@ -63,7 +63,8 @@
                                              [self pushChannelDidChange:note];
                                          }];
 
-    [self setCurrentAPIVersion:APIVersionV0];
+    [self enableBackendInfoMocking];
+    [self setBackendInfoAPIVersion:APIVersionV0];
 }
 
 - (void)tearDown;
@@ -79,7 +80,9 @@
     self.mockUpdateEventProcessor = nil;
     [self.sut tearDown];
     self.sut = nil;
-    [self resetCurrentAPIVersion];
+    
+    [self resetBackendInfoMocking];
+
     [super tearDown];
 }
 
