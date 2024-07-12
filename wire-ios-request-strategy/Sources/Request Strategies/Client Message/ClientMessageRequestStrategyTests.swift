@@ -22,18 +22,13 @@ import XCTest
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
-class ClientMessageRequestStrategyTests: MessagingTestBase {
+final class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
     var mockMessageSender: MockMessageSenderInterface!
-    var apiVersion: APIVersion! {
-        didSet {
-            setCurrentAPIVersion(apiVersion)
-        }
-    }
 
     override func setUp() {
         super.setUp()
@@ -50,9 +45,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                applicationStatus: mockApplicationStatus,
                                                messageSender: mockMessageSender)
         }
-
-        apiVersion = .v0
-
     }
 
     override func tearDown() {
@@ -61,7 +53,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         self.sut = nil
-        apiVersion = nil
 
         super.tearDown()
     }
@@ -137,11 +128,10 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItNotifiesWhenMessageCannotBeSent_MissingLegalholdConsent() {
-
         // GIVEN
         var confirmationMessage: ZMMessage!
         var token: Any?
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         let missingLegalholdConsentFailure = Payload.ResponseFailure(
             code: 403,
             label: .missingLegalholdConsent,
