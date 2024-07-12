@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
 
 final class ZMUserConsentTests: DatabaseTest {
 
@@ -25,7 +29,10 @@ final class ZMUserConsentTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-        setCurrentAPIVersion(.v0)
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
+
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
     }
 
@@ -33,6 +40,9 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.cleanUp()
         mockTransportSession = nil
         resetCurrentAPIVersion()
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

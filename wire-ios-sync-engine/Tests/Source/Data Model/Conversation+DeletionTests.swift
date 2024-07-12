@@ -16,23 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
 
-class Conversation_DeletionTests: DatabaseTest {
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
+
+final class Conversation_DeletionTests: DatabaseTest {
 
     var mockTransportSession: MockTransportSession!
 
     override func setUp() {
         super.setUp()
-        setCurrentAPIVersion(.v0)
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
+
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
     }
 
     override func tearDown() {
         mockTransportSession.cleanUp()
         mockTransportSession = nil
-        resetCurrentAPIVersion()
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

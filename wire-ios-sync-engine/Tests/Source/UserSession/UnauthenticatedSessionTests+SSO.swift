@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import WireTesting
+import XCTest
 
-public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
+
+final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     var transportSession: TestUnauthenticatedTransportSession!
     var sut: UnauthenticatedSession!
@@ -30,6 +34,10 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     public override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
+
         transportSession = TestUnauthenticatedTransportSession()
         mockDelegate = MockUnauthenticatedSessionDelegate()
         reachability = MockReachability()
@@ -41,7 +49,6 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
             userPropertyValidator: UserPropertyValidator()
         )
         sut.groupQueue.add(dispatchGroup)
-        setCurrentAPIVersion(.v0)
     }
 
     public override func tearDown() {
@@ -50,7 +57,9 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
         transportSession = nil
         mockDelegate = nil
         reachability = nil
-        resetCurrentAPIVersion()
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

@@ -862,7 +862,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItEncodesAPlusCharacterInTheSearchURL() {
         // given
-        setCurrentAPIVersion(.v2)
+        BackendInfo.apiVersion = .v2
         let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 

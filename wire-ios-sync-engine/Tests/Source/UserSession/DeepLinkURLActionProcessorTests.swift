@@ -18,7 +18,6 @@
 
 @_spi(MockBackendInfo)
 import WireTransport
-import WireTransportSupport
 import XCTest
 
 @testable import WireSyncEngine

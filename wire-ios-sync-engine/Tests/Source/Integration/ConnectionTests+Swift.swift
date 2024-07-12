@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
 
 class ConnectionTests_Swift: IntegrationTest {
     var tokens = [Any]()
@@ -24,14 +27,19 @@ class ConnectionTests_Swift: IntegrationTest {
 
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
+
         createSelfUserAndConversation()
-        setCurrentAPIVersion(.v0)
     }
 
     override func tearDown() {
-        resetCurrentAPIVersion()
         listObserver = nil
         tokens = .init()
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 
