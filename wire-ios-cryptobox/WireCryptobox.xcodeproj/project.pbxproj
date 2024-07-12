@@ -154,7 +154,6 @@
 		54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54B5E1E21F0A482B001F43A6 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		54B5E1E61F0A482B001F43A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54B5E1E71F0A482B001F43A6 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectoryTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54B949931D2541350041CC55 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
@@ -325,7 +324,6 @@
 				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
 				54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */,
 				54B5E1E21F0A482B001F43A6 /* project.xcconfig */,
-				54B5E1E61F0A482B001F43A6 /* warnings-debug.xcconfig */,
 				54B5E1E71F0A482B001F43A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
