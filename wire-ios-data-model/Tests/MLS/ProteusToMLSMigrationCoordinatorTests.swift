@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
@@ -58,7 +61,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockMLSService.joinGroupWith_MockMethod = { _ in }
         mockFeatureRepository.fetchMLSMigration_MockValue = .init()
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         DeveloperFlag.storage = .temporary()
     }
 
@@ -70,8 +73,10 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
-        BackendInfo.storage = .standard
+
         DeveloperFlag.storage = .standard
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 
@@ -482,6 +487,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         isMLSMigrationFeatureEnabled: Bool,
         startTime: Date?
     ) {
+        // right?
+
         // Set APIVersion
         BackendInfo.apiVersion = isAPIV5Supported ? .v5 : .v0
 
