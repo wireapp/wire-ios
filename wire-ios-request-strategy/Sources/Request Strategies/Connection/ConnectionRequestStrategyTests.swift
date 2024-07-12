@@ -17,9 +17,13 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireRequestStrategy
 
 final class ConnectionRequestStrategyTests: MessagingTestBase {
 
@@ -28,14 +32,11 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     var mockSyncProgress: MockSyncProgress!
     var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
-    var apiVersion: APIVersion! {
-        didSet {
-            setCurrentAPIVersion(apiVersion)
-        }
-    }
-
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
@@ -51,16 +52,16 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
                                         applicationStatus: mockApplicationStatus,
                                         syncProgress: mockSyncProgress,
                                         oneOneOneResolver: mockOneOnOneResolver)
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
-        apiVersion = nil
         mockOneOnOneResolver = nil
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 
@@ -69,7 +70,8 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue_Federated() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
 
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.otherUser
@@ -77,7 +79,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([connection])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
 
             // then
             XCTAssertEqual(request.path, "/v1/connections/\(self.otherUser.domain!)/\(self.otherUser.remoteIdentifier!.transportString())")
@@ -94,7 +96,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([connection])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
 
             // then
             XCTAssertEqual(request.path, "/connections/\(self.otherUser.remoteIdentifier!.transportString())")
@@ -107,12 +109,13 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchAllConnectionsIsGenerated_DuringFetchingConnectionsSyncPhase_Federated() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
 
             self.mockSyncProgress.currentSyncPhase = .fetchingConnections
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
 
             // then
             XCTAssertEqual(request.path, "/v1/list-connections")
@@ -126,7 +129,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
             self.mockSyncProgress.currentSyncPhase = .fetchingConnections
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
 
             // then
             XCTAssertEqual(request.path, "/connections?size=200")
@@ -137,18 +140,19 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchAllConnectionsIsNotGenerated_WhenFetchIsAlreadyInProgress() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
             self.mockSyncProgress.currentSyncPhase = .fetchingConnections
-            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNotNil(self.sut.nextRequest(for: apiVersion))
 
             // then
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -160,7 +164,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenThereIsNoConnectionsToFetch() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -172,7 +176,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConnectionsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -186,10 +190,11 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_Federated() {
         // given
-        self.apiVersion = .v1
+        let apiVersion: APIVersion = .v1
+        BackendInfo.apiVersion = apiVersion
 
         // when
-        fetchConnection(self.oneToOneConnection, response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion))
+        fetchConnection(self.oneToOneConnection, response: responseFailure(code: 403, label: .unknown, apiVersion: apiVersion))
 
         // then
         self.syncMOC.performGroupedAndWait {
@@ -199,7 +204,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_NonFederated() {
         // when
-        fetchConnection(self.oneToOneConnection, response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion))
+        fetchConnection(self.oneToOneConnection, response: responseFailure(code: 403, label: .unknown, apiVersion: BackendInfo.apiVersion!))
 
         // then
         self.syncMOC.performGroupedAndWait {
@@ -209,7 +214,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_Federated() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         var payload: Payload.Connection!
         self.syncMOC.performGroupedAndWait {
             payload = self.createConnectionPayload(self.oneToOneConnection, status: .cancelled)
@@ -308,7 +313,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([connection])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
             request.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -316,7 +321,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func fetchConnectionsDuringSlowSync(connections: [Payload.Connection]) {
         syncMOC.performGroupedAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
             guard let payload = Payload.PaginationStatus(request) else {
                 return XCTFail("Invalid Payload")
             }
@@ -328,8 +333,8 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func fetchConnectionsDuringSlowSyncWithPermanentError() {
         syncMOC.performGroupedAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-            request.complete(with: self.responseFailure(code: 404, label: .noEndpoint, apiVersion: self.apiVersion))
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
+            request.complete(with: self.responseFailure(code: 404, label: .noEndpoint, apiVersion: BackendInfo.apiVersion!))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -346,7 +351,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: 200,
                                            transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
+                                           apiVersion: BackendInfo.apiVersion!.rawValue)
 
         return response
     }
@@ -357,7 +362,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: 200,
                                            transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
+                                           apiVersion: BackendInfo.apiVersion!.rawValue)
 
         return response
     }

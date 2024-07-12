@@ -19,11 +19,15 @@
 import Foundation
 import WireDataModel
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
 
-class ConversationRequestStrategyTests: MessagingTestBase {
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireRequestStrategy
+
+final class ConversationRequestStrategyTests: MessagingTestBase {
 
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -31,14 +35,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
     var mockMLSService: MockMLSServiceInterface!
 
-    var apiVersion: APIVersion! {
-        didSet {
-            setCurrentAPIVersion(apiVersion)
-        }
-    }
-
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
@@ -57,8 +58,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             mlsService: mockMLSService,
             removeLocalConversation: mockRemoveLocalConversation
         )
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
@@ -66,7 +65,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockSyncProgress = nil
         mockApplicationStatus = nil
         mockRemoveLocalConversation = nil
-        apiVersion = nil
+
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -76,7 +76,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
+
             let domain = "example.com"
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.domain = domain
@@ -84,7 +86,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
@@ -102,7 +104,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
@@ -113,7 +115,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToUpdateConversationNameIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
+
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.userDefinedName = "Hello World"
@@ -122,7 +126,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
             let payload = Payload.UpdateConversationName(request)
 
             // then
@@ -135,7 +139,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToUpdateArchiveStatusIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
+
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.isArchived = true
@@ -144,7 +150,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
             let payload = Payload.UpdateConversationStatus(request)
 
             // then
@@ -157,7 +163,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToUpdateMutedStatusIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
+
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.mutedMessageTypes = .all
@@ -166,7 +174,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
             let payload = Payload.UpdateConversationStatus(request)
 
             // then
@@ -181,11 +189,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToListConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
+
             self.mockSyncProgress.currentSyncPhase = .fetchingConversations
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: apiVersion)!
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/list-ids")
@@ -195,24 +205,28 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToListConversationsIsNotGenerated_WhenFetchIsAlreadyInProgress() {
         syncMOC.performGroupedAndWait {
             // given
-            self.apiVersion = .v1
+            let apiVersion: APIVersion = .v1
+            BackendInfo.apiVersion = apiVersion
+
             self.mockSyncProgress.currentSyncPhase = .fetchingConversations
-            _ = self.sut.nextRequest(for: self.apiVersion)!
+            _ = self.sut.nextRequest(for: apiVersion)!
 
             // when
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatRequestToFetchConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
         // given
-        apiVersion = .v1
+        let apiVersion: APIVersion = .v1
+        BackendInfo.apiVersion = apiVersion
+
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
         syncMOC.performGroupedAndWait {
             // when
-            let fetchRequest = self.sut.nextRequest(for: self.apiVersion)!
+            let fetchRequest = self.sut.nextRequest(for: apiVersion)!
 
             // then
             guard let fetchPayload = Payload.QualifiedUserIDList(fetchRequest) else {
@@ -228,7 +242,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
+
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -243,7 +258,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenThereIsNoConversationsToFetch() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -257,7 +272,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -271,7 +286,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationMembershipStatusIsQueried_WhenNotFoundDuringSlowSyncPhase() {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -286,7 +301,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
         // given
-        self.apiVersion = .v4
+        BackendInfo.apiVersion = .v4
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -301,7 +316,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
-        self.apiVersion = .v1
+        BackendInfo.apiVersion = .v1
         let conversationID = QualifiedID(uuid: UUID(), domain: owningDomain)
         startSlowSync()
         fetchConversationListDuringSlowSync()
@@ -322,6 +337,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
+        let apiVersion = BackendInfo.apiVersion!
+
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
 
         // when
@@ -337,6 +354,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatLocalConversationRemovalUseCaseIsExecuted_WhenResponseIs_404() {
         // given
+        let apiVersion = BackendInfo.apiVersion!
         let response = responseFailure(code: 404, label: .notFound, apiVersion: apiVersion)
 
         // when
@@ -351,6 +369,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {
         // given
+        let apiVersion = BackendInfo.apiVersion!
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
 
         // when
@@ -397,7 +416,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             let qualifiedConversationID = QualifiedID(uuid: self.groupConversation.remoteIdentifier!,
                                                       domain: self.groupConversation.domain!)
 
-            let listRequest = self.sut.nextRequest(for: self.apiVersion)!
+            let listRequest = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
             guard let listPayload = Payload.PaginationStatus(listRequest) else {
                 return XCTFail("List payload is invalid")
             }
@@ -409,7 +428,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func fetchConversationListDuringSlowSyncWithEmptyResponse() {
         syncMOC.performGroupedAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
             guard let listPayload = Payload.PaginationStatus(request) else {
                 return XCTFail("List payload is invalid")
             }
@@ -421,7 +440,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func fetchConversationListDuringSlowSyncWithPermanentError() {
         syncMOC.performGroupedAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
             request.complete(with: self.responseFailure(code: 404, label: .noEndpoint, apiVersion: .v1))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -432,7 +451,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            let request = self.sut.nextRequest(for: BackendInfo.apiVersion!)!
 
             guard let payload = Payload.QualifiedUserIDList(request) else {
                 return XCTFail("Payload is invalid")
@@ -454,7 +473,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: 200,
                                            transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
+                                           apiVersion: BackendInfo.apiVersion!.rawValue)
 
         return response
     }
@@ -470,7 +489,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: 200,
                                            transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
+                                           apiVersion: BackendInfo.apiVersion!.rawValue)
 
         return response
     }
