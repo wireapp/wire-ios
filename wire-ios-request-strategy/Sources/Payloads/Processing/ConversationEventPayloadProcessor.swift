@@ -74,6 +74,30 @@ struct ConversationEventPayloadProcessor {
     }
 
     func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.ConversationGroupIcon>,
+        in context: NSManagedObjectContext
+    ) async {
+        guard let timestamp = payload.timestamp else {
+            WireLogger.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
+            return
+        }
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
+            WireLogger.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
+            return
+        }
+        await context.perform {
+
+            let conv = ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+            conv?.groupEmoji = payload.data.emoji
+            conv?.groupColor = payload.data.color
+            context.saveOrRollback()
+        }
+    }
+
+
+
+    func processPayload(
         _ payload: Payload.ConversationEvent<Payload.Conversation>,
         in context: NSManagedObjectContext
     ) async {

@@ -85,4 +85,37 @@ extension Payload {
             self.conversationRole = conversationRole
         }
     }
+
+
+    struct ConversationGroupIcon: CodableEventData {
+
+
+        enum CodingKeys: String, CodingKey {
+            case id
+            case qualifiedID = "qualified_id"
+            case emoji
+            case color
+        }
+
+        static var eventType: ZMUpdateEventType {
+            return .conversationGroupIconUpdate
+        }
+
+        let id: UUID?
+        let qualifiedID: QualifiedID?
+        let emoji: String?
+        let color: String?
+
+        init(id: UUID? = nil,
+             qualifiedID: QualifiedID? = nil,
+             emoji: String? = nil,
+             color: String? = nil
+        ) {
+            self.id = id
+            self.qualifiedID = qualifiedID
+            self.emoji = emoji
+            self.color = color
+        }
+    }
+
 }

@@ -40,6 +40,8 @@ extension Payload {
             case mlsGroupID = "group_id"
             case epoch
             case epochTimestamp = "epoch_timestamp"
+            case emoji
+            case color
         }
 
         static var eventType: ZMUpdateEventType {
@@ -65,6 +67,8 @@ extension Payload {
         var mlsGroupID: String?
         var epoch: UInt?
         var epochTimestamp: Date?
+        var color: String?
+        var emoji: String?
 
         init(qualifiedID: QualifiedID? = nil,
              id: UUID?  = nil,
@@ -84,7 +88,10 @@ extension Payload {
              messageProtocol: String? = nil,
              mlsGroupID: String? = nil,
              epoch: UInt? = nil,
-             epochTimestamp: Date? = nil
+             epochTimestamp: Date? = nil,
+             emoji: String? = nil,
+             color: String? = nil
+
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -105,6 +112,8 @@ extension Payload {
             self.mlsGroupID = mlsGroupID
             self.epoch = epoch
             self.epochTimestamp = epochTimestamp
+            self.emoji = emoji
+            self.color = color
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -153,6 +162,14 @@ extension Payload {
             case .v5, .v6:
                 cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+            }
+
+            switch apiVersion {
+            case .v6:
+                emoji = try container.decodeIfPresent(String.self, forKey: .emoji)
+                color = try container.decodeIfPresent(String.self, forKey: .color)
+            default:
+                break
             }
         }
 

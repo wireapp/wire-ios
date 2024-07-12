@@ -37,7 +37,7 @@ public struct UpdateGroupIconUseCase {
             return
         }
         let id = conversationId.toWireAPIQualifiedId()
-//        try await api.updateGroupIcon(for: id, hexColor: colorString, emoji: emoji)
+        try await api.updateGroupIcon(for: id, hexColor: colorString, emoji: emoji)
 
         await saveConversation(colorString: colorString, emoji: emoji)
     }

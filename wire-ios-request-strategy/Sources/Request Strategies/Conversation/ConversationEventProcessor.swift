@@ -111,12 +111,24 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
         case .conversationProtocolUpdate:
             await processConversationProtocolChange(event)
+        case .conversationGroupIconUpdate:
+            await processConversationGroupIconUpdate(event)
         // TODO: add event for groupIcon here
         default:
             break
         }
     }
 
+    private func processConversationGroupIconUpdate(_ event: ZMUpdateEvent) async {
+        guard let payload = try? eventPayloadDecoder.decode(
+            Payload.ConversationEvent<Payload.Conversation>.self,
+            from: event.payload
+        ) else { return }
+
+        await processor.processPayload(payload, in: context)
+    }
+
+    
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.Conversation>.self,
