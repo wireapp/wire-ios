@@ -18,10 +18,13 @@
 
 import XCTest
 
+@_spi(MockBackendInfo)
+import WireTransport
+
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
-class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
+final class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     private var sut: LinkPreviewUpdateRequestStrategy!
     private var mockMessageSender: MockMessageSenderInterface!
@@ -29,7 +32,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     private var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -47,13 +50,16 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             )
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
     override func tearDown() {
         applicationStatus = nil
         sut = nil
-        apiVersion = nil
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

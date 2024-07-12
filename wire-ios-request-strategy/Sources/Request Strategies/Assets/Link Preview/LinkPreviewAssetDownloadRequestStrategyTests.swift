@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
 
-class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireRequestStrategy
+
+final class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -29,7 +32,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -44,6 +47,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
@@ -55,7 +59,9 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             try? syncMOC.zm_fileAssetCache.wipeCaches()
         }
         try? uiMOC.zm_fileAssetCache.wipeCaches()
-        apiVersion = nil
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

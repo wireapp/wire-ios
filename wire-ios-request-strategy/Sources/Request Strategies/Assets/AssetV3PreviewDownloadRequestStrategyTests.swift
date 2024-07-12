@@ -16,14 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import WireTesting
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireRequestStrategy
 
 private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
-class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
+final class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3PreviewDownloadRequestStrategy!
@@ -31,7 +34,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -46,6 +49,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             self.conversation = self.createConversation()
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
@@ -53,7 +57,9 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = nil
         sut = nil
         conversation = nil
-        apiVersion = nil
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 
