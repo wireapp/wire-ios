@@ -226,6 +226,7 @@ public extension WireLogger {
     static let userClient = WireLogger(tag: "user-client")
     static let pushChannel = WireLogger(tag: "push-channel")
     static let eventProcessing = WireLogger(tag: "event-processing")
+    static let safeFileContext = WireLogger(tag: "safe-file-context")
 
 }
 
