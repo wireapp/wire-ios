@@ -60,7 +60,7 @@ public class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
-        var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"
+        var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: attributes))"
 
         if let tag = attributes?["tag"] as? String {
             entry = "[\(tag)] - \(entry)"
@@ -72,5 +72,20 @@ public class CocoaLumberjackLogger: LoggerProtocol {
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
+    }
+
+    private func formattedLevel(_ level: DDLogLevel) -> String {
+        switch level {
+        case .error:
+            "ERROR"
+        case .warning:
+            "WARN"
+        case .info:
+            "INFO"
+        case .debug:
+            "DEBUG"
+        default:
+            "VERBOSE"
+        }
     }
 }
