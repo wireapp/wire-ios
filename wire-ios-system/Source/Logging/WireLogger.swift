@@ -173,7 +173,16 @@ extension LoggerProtocol {
         // drop attributes used for visibility and category
         logAttributes?.removeValue(forKey: "public")
         logAttributes?.removeValue(forKey: "tag")
-        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
+        guard let logAttributes, !logAttributes.isEmpty else {
+            return ""
+        }
+        var description = " - ["
+        description += logAttributes.keys.sorted().map { key in
+            "\(key): \(logAttributes[key] ?? "<nil>")"
+        }.joined(separator: ", ")
+        description += "]"
+
+        return description
     }
 
 }
