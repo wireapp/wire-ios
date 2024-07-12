@@ -60,6 +60,12 @@ public class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
+        let isSafe = attributes?["public"] as? Bool == true
+        guard isDebug || isSafe else {
+            // skips logs in production builds with non redacted info
+            return
+        }
+
         var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: attributes))"
 
         if let tag = attributes?["tag"] as? String {
@@ -87,5 +93,13 @@ public class CocoaLumberjackLogger: LoggerProtocol {
         default:
             "VERBOSE"
         }
+    }
+
+    private var isDebug: Bool {
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
     }
 }
