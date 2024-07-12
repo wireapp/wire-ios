@@ -253,7 +253,7 @@ final class ConversationInputBarViewController: UIViewController,
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 
-        // Remove locationButton if feature flag does not allow it
+        // Remove locationButton if security flag does not allow it
         if shouldExcludeLocationButton {
             if let index = buttonsArray.firstIndex(of: locationButton) {
                 buttonsArray.remove(at: index)
