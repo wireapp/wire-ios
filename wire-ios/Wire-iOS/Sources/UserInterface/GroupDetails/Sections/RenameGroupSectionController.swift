@@ -194,17 +194,20 @@ struct GroupIconCell: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            Text("Group Icon")
-                .font(Font.textStyle(.body1))
-                .fontWeight(.semibold)
-                .padding(.leading, 40)
-            Spacer()
             if let color {
                 GroupIconView(color: color, emoji: emoji)
             }
+
+            Text("Group Icon")
+                .font(Font.textStyle(.body1))
+                .fontWeight(.semibold)
+            
+            Spacer()
+
             Image(systemName: "chevron.right")
-        }.padding(.horizontal, 8)
-        .background(Color.white)
+        }
+        .padding(.horizontal, 8)
+        .background(.white)
         .ignoresSafeArea()
     }
 }
