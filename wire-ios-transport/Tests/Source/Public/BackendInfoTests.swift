@@ -21,11 +21,16 @@ import WireTransport
 import XCTest
 
 final class BackendInfoTests: XCTestCase {
-    func testMocking() {
-        // use property `apiVersion` as test example, but it works for the full storage.
 
-        // given
+    override func setUp() {
+        super.setUp()
+
+        // use property `apiVersion` as test example, but it works for the full storage.
         XCTAssertNil(BackendInfo.apiVersion)
+    }
+
+    func testMocking() {
+        // given
         BackendInfo.apiVersion = .v1 // ⚠️ never do this in tests before `enableMocking()`!
 
         // when
@@ -40,5 +45,35 @@ final class BackendInfoTests: XCTestCase {
         XCTAssertEqual(BackendInfo.apiVersion, .v1)
 
         BackendInfo.apiVersion = nil // ⚠️ manual cleanup required
+    }
+
+    func testMockingEnabledTwice() {
+        // given
+        // when
+        BackendInfo.enableMocking()
+        BackendInfo.enableMocking()
+        XCTAssertNil(BackendInfo.apiVersion)
+
+        BackendInfo.apiVersion = .v2
+        XCTAssertEqual(BackendInfo.apiVersion, .v2)
+
+        // then
+        BackendInfo.resetMocking()
+        XCTAssertNil(BackendInfo.apiVersion)
+    }
+
+    func testMockingResetTwice() {
+        // given
+        // when
+        BackendInfo.enableMocking()
+        XCTAssertNil(BackendInfo.apiVersion)
+
+        BackendInfo.apiVersion = .v2
+        XCTAssertEqual(BackendInfo.apiVersion, .v2)
+
+        // then
+        BackendInfo.resetMocking()
+        BackendInfo.resetMocking()
+        XCTAssertNil(BackendInfo.apiVersion)
     }
 }
