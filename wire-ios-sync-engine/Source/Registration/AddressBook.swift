@@ -18,7 +18,7 @@
 
 import Contacts
 import Foundation
-import libPhoneNumber
+import libPhoneNumberiOS
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone
