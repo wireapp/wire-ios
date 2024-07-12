@@ -73,10 +73,6 @@ final class BackupViewController: UIViewController, SpinnerCapable {
         tableView.fitIn(view: view)
     }
 
-    private func setupNavigationTitle() {
-
-    }
-
     var loadingHostController: SpinnerCapableViewController {
         return (navigationController as? SpinnerCapableViewController) ?? self
     }
