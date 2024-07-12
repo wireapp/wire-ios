@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "warnings.xcconfig"
-
-// LLVM - Warning Policies
-//
-GCC_TREAT_WARNINGS_AS_ERRORS = YES
+@objc(ZMNetworkState)
+public enum NetworkState: Int {
+    case online = 0
+    case offline
+    case onlineSynchronizing
+}

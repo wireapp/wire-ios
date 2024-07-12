@@ -24,6 +24,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
 final class StartUIViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: SpinnerCompletion?
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
@@ -60,6 +61,16 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let backgroundColor = SemanticColors.View.backgroundDefault
 
+    private var navigationBarTitle: String? {
+        if let title = userSession.selfUser.membership?.team?.name {
+            return title
+        } else if let title = userSession.selfUser.name {
+            return title
+        }
+
+        return nil
+    }
+
     /// init method for injecting mock addressBookHelper
     ///
     /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
@@ -93,17 +104,20 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     // MARK: - Overloaded methods
+
     override func loadView() {
         view = StartUIView(frame: CGRect.zero)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let title = navigationBarTitle {
+            setupNavigationBarTitle(title)
+        }
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
     }
 
@@ -122,12 +136,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.mode = .list
         searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
-
-        if let title = userSession.selfUser.membership?.team?.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        } else if let title = userSession.selfUser.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        }
 
         searchHeader.delegate = self
         searchHeader.allowsMultipleSelection = false

@@ -16,8 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "warnings.xcconfig"
+import Foundation
 
-// LLVM - Warning Policies
-//
-GCC_TREAT_WARNINGS_AS_ERRORS = YES
+enum UserRepositoryError: Error {
+
+    /// Failed to fetch data from the server.
+
+    case failedToFetchRemotely(Error)
+    case failedToCollectKnownUsers(Error)
+
+}

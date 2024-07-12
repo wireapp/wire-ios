@@ -16,8 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "warnings.xcconfig"
+import Foundation
+import WireDataModel
 
-// LLVM - Warning Policies
-//
-GCC_TREAT_WARNINGS_AS_ERRORS = YES
+// sourcery: AutoMockable
+public protocol SelfUserProviderProtocol {
+
+    func fetchSelfUser() -> ZMUser
+
+}
+
+@available(*, deprecated, message: "Use UserRepository instead")
+public final class SelfUserProvider: SelfUserProviderProtocol {
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: - Methods
+
+    public func fetchSelfUser() -> ZMUser {
+        ZMUser.selfUser(in: context)
+    }
+
+}
