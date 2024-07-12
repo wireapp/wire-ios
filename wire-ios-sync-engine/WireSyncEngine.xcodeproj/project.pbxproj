@@ -589,8 +589,6 @@
 		EE2DE5E8292519EC00F42F4C /* CallKitCallRegister.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DE5E7292519EC00F42F4C /* CallKitCallRegister.swift */; };
 		EE2DE5EA2926377C00F42F4C /* CallObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DE5E92926377C00F42F4C /* CallObserver.swift */; };
 		EE2DE5EC29263C5100F42F4C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DE5EB29263C5100F42F4C /* Logger.swift */; };
-		EE2DF75A2875DB1C0028ECA2 /* XCTestCase+APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DF7592875DB1C0028ECA2 /* XCTestCase+APIVersion.swift */; };
-		EE2DF75B2875DB1C0028ECA2 /* XCTestCase+APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DF7592875DB1C0028ECA2 /* XCTestCase+APIVersion.swift */; };
 		EE38DDEE280437E500D4983D /* BlacklistReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE38DDED280437E500D4983D /* BlacklistReason.swift */; };
 		EE3E43F62BF62BB9001A43A1 /* SupportedProtocolsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3E43F52BF62BB9001A43A1 /* SupportedProtocolsServiceTests.swift */; };
 		EE3E43F92BF62BF6001A43A1 /* SelfSupportedProtocolsRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3E43F82BF62BF6001A43A1 /* SelfSupportedProtocolsRequestStrategyTests.swift */; };
@@ -1409,7 +1407,6 @@
 		EE2DE5E7292519EC00F42F4C /* CallKitCallRegister.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallKitCallRegister.swift; sourceTree = "<group>"; };
 		EE2DE5E92926377C00F42F4C /* CallObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallObserver.swift; sourceTree = "<group>"; };
 		EE2DE5EB29263C5100F42F4C /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		EE2DF7592875DB1C0028ECA2 /* XCTestCase+APIVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+APIVersion.swift"; sourceTree = "<group>"; };
 		EE38DDED280437E500D4983D /* BlacklistReason.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlacklistReason.swift; sourceTree = "<group>"; };
 		EE3E43F52BF62BB9001A43A1 /* SupportedProtocolsServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedProtocolsServiceTests.swift; sourceTree = "<group>"; };
 		EE3E43F82BF62BF6001A43A1 /* SelfSupportedProtocolsRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -2744,7 +2741,6 @@
 				169E303120D29C200012C219 /* PushRegistryMock.swift */,
 				5E67168F2174CA6300522E61 /* MockUser+LoginCredentials.swift */,
 				169BA1FE25ED0DAD00374343 /* ZMUserSession+Messages.swift */,
-				EE2DF7592875DB1C0028ECA2 /* XCTestCase+APIVersion.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -3440,7 +3436,6 @@
 				169BA24D25EF753100374343 /* MockReachability.swift in Sources */,
 				169BA24F25EF76A400374343 /* NetworkStateRecorder.swift in Sources */,
 				169BA21D25ED0FAC00374343 /* ConversationTests+OTR.swift in Sources */,
-				EE2DF75B2875DB1C0028ECA2 /* XCTestCase+APIVersion.swift in Sources */,
 				169BA20125ED0EFE00374343 /* ZMUserSessionLegalHoldTests.swift in Sources */,
 				169BA21925ED0F9900374343 /* SendAndReceiveMessagesTests.m in Sources */,
 				169BA22625ED0FD300374343 /* ConversationTests+ReceiptMode.swift in Sources */,
@@ -3551,7 +3546,6 @@
 				160C314A1E82AC170012E4BC /* OperationStatusTests.swift in Sources */,
 				169E303320D29C670012C219 /* PushRegistryMock.swift in Sources */,
 				1671F7532B6A835300C2D8A3 /* ZMClientRegistrationStatusTests.swift in Sources */,
-				EE2DF75A2875DB1C0028ECA2 /* XCTestCase+APIVersion.swift in Sources */,
 				3E05F252192A4FBD00F22D80 /* UserSessionErrorTests.m in Sources */,
 				E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */,
 				06ADE9EA2BC02B65008BA0B3 /* CertificateRevocationListsCheckerTests.swift in Sources */,
