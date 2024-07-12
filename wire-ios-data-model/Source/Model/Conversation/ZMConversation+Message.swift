@@ -302,9 +302,10 @@ extension ZMConversation {
 
         message.sender = ZMUser.selfUser(in: moc)
 
-        if expires {
-            message.setExpirationDate()
-        }
+//        if expires {
+//            message.setExpirationDate()
+//        }
+        message.shouldExpire = expires
 
         append(message)
         unarchiveIfNeeded()
