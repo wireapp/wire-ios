@@ -170,7 +170,7 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self clearCurrentAPIVersion];
+    [self setBackendInfoAPIVersionNil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"

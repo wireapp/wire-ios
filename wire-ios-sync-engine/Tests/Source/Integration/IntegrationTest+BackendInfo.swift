@@ -30,6 +30,10 @@ extension IntegrationTest {
         BackendInfo.apiVersion = apiVersion
     }
 
+    func setBackendInfoAPIVersionNil() {
+        BackendInfo.apiVersion = nil
+    }
+
     func resetBackendInfoMocking() {
         BackendInfo.resetMocking()
     }

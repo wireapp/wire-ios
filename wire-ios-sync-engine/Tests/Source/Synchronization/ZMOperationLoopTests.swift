@@ -36,6 +36,11 @@ extension ZMOperationLoopTests {
     }
 
     @objc
+    func setBackendInfoAPIVersionNil() {
+        BackendInfo.apiVersion = nil
+    }
+
+    @objc
     func resetBackendInfoMocking() {
         BackendInfo.resetMocking()
     }

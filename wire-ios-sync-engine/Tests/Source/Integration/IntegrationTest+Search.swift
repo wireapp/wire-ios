@@ -28,7 +28,7 @@ extension IntegrationTest {
         // swiftlint:disable todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
         // swiftlint:enable todo_requires_jira_link
-        setCurrentAPIVersion(.v2)
+        setBackendInfoAPIVersion(.v2)
 
         let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
@@ -43,7 +43,8 @@ extension IntegrationTest {
         }
 
         task?.start()
-        self.resetCurrentAPIVersion()
+
+        setBackendInfoAPIVersionNil()
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
