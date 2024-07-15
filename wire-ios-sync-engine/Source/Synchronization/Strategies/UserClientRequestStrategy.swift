@@ -324,7 +324,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             } else if clientUpdateStatus?.currentPhase == .waitingForPrekeys {
                 clientUpdateStatus?.willGeneratePrekeys()
                 let nextPrekeyIndex = UInt16(userClient.preKeysRangeMax) + 1
-                let groups = managedObjectContext?.enterAllGroupsExceptSecondary() ?? []
+                let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
                 Task {
                     do {
                         let prekeys = try await prekeyGenerator.generatePrekeys(startIndex: nextPrekeyIndex)
@@ -337,7 +337,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                         // swiftlint:enable todo_requires_jira_link
                         WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
-                    managedObjectContext?.leaveAllGroups(groups ?? [])
+                    managedObjectContext?.leaveAllGroups(groups)
                 }
                 return false
             } else {

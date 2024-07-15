@@ -25,7 +25,7 @@ extension ZMUpdateEvent: SafeForLoggingStringConvertible {
     }
 
     public var safeUUID: String {
-        uuid?.transportString().readableHash ?? "unknown"
+        uuid?.transportString().redactedAndTruncated() ?? "unknown"
     }
 
     public var safeType: String {

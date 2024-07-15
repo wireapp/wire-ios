@@ -45,7 +45,7 @@ final class UserSessionMock: UserSession {
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
         mock.invokeUserClient_MockMethod = { _ in
-            return "102030405060708090102030405060708090102030405060708090".data(using: .utf8)
+            return Data("102030405060708090102030405060708090102030405060708090".utf8)
         }
         return mock
     }()
@@ -67,7 +67,7 @@ final class UserSessionMock: UserSession {
 
     var _passcode: String?
 
-    var networkState: ZMNetworkState = .offline
+    var networkState: NetworkState = .offline
 
     var selfUser: any UserType
 

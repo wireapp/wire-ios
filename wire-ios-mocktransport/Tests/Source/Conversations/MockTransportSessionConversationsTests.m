@@ -847,8 +847,9 @@
     NSUUID *assetId = [NSUUID createUUID];
     __block NSMutableDictionary *expectedPayloadData = [@{@"data": [NSNull null],
                                                           @"key": [info base64EncodedStringWithOptions:0],
-                                                          @"id": assetId.transportString} mutableCopy];
-    
+                                                          @"id": assetId.transportString,
+                                                          @"info": [imageData base64EncodedStringWithOptions:0]} mutableCopy];
+
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> session, MockConversation *conversation) {
         MockUserClient *client1 = [session registerClientForUser:self.sut.selfUser label:@"client1" type:@"permanent" deviceClass:@"phone"];
         MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent" deviceClass:@"phone"];
@@ -867,8 +868,9 @@
     NSUUID *assetId = [NSUUID createUUID];
     __block NSMutableDictionary *expectedPayloadData = [@{@"data": [imageData base64EncodedStringWithOptions:0],
                                                           @"key": [info base64EncodedStringWithOptions:0],
-                                                          @"id": assetId.transportString} mutableCopy];
-    
+                                                          @"id": assetId.transportString,
+                                                          @"info": [imageData base64EncodedStringWithOptions:0]} mutableCopy];
+
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> session, MockConversation *conversation) {
         MockUserClient *client1 = [self.sut.selfUser.clients anyObject];
         MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent" deviceClass:@"phone"];

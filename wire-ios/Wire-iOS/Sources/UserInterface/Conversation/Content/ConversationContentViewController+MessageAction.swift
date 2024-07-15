@@ -37,7 +37,13 @@ extension ConversationContentViewController {
             return
         }
 
-        messagePresenter.open(message, targetView: tableView.targetView(for: message, dataSource: dataSource), actionResponder: self, userSession: userSession)
+        messagePresenter.open(
+            message,
+            targetView: tableView.targetView(for: message, dataSource: dataSource),
+            actionResponder: self,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     func openSketch(for message: ZMConversationMessage, in editMode: CanvasViewControllerEditMode) {
@@ -46,15 +52,17 @@ extension ConversationContentViewController {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }
         canvasViewController.delegate = self
-        canvasViewController.navigationItem.setupNavigationBarTitle(title: message.conversationLike?.displayName ?? "")
+        canvasViewController.setupNavigationBarTitle(message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
         present(canvasViewController.wrapInNavigationController(), animated: true)
     }
 
-    func messageAction(actionId: MessageAction,
-                       for message: ZMConversationMessage,
-                       view: UIView) {
+    func messageAction(
+        actionId: MessageAction,
+        for message: ZMConversationMessage,
+        view: UIView
+    ) {
         switch actionId {
         case .cancel:
             userSession.enqueue({
@@ -130,7 +138,11 @@ extension ConversationContentViewController {
                 }
             }
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+            let detailsViewController = MessageDetailsViewController(
+                message: message,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
             parent?.present(detailsViewController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }

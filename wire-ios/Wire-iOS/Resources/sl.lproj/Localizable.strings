@@ -1046,14 +1046,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Pogoji uporabe";
 "about.privacy.title" = "Politika zasebnosti";
-"about.license.title" = "Podatki licence";
 "about.website.title" = "Wire spletna stran";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Podrobnosti";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Vaš račun je bil uporabljen na:";
@@ -1296,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Če imate težave s push obvestili, vas bo podpora Wire morda zaprosila za ponastavitev tega žetona.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push žeton je bil ponastavljen";
 "self.settings.advanced.reset_push_token_alert.message" = "Obvestila bodo obnovljena v nekaj sekundah.";
-"self.settings.advanced.version_technical_details.title" = "Tehnične podrobnosti o različici";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";
