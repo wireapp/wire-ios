@@ -21,6 +21,7 @@ import CallKit
 import Foundation
 import PushKit
 import UserNotifications
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireTransport
@@ -203,7 +204,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
     public weak var loginDelegate: LoginDelegate?
-    public var analyticsSessionConfiguration: AnalyticsSessionConfiguration?
 
     public internal(set) var activeUserSession: ZMUserSession? {
         willSet {
@@ -311,6 +311,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private let minTLSVersion: String?
+
+    private var analyticsManager: (any AnalyticsManagerProtocol)?
 
     public override init() {
         fatal("init() not implemented")
@@ -518,7 +520,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = nil
         }
 
-        self.analyticsSessionConfiguration = analyticsSessionConfiguration
+        if let analyticsSessionConfiguration {
+            self.analyticsManager = AnalyticsManager(
+                appKey: analyticsSessionConfiguration.countlyKey, 
+                host: analyticsSessionConfiguration.host
+            )
+        }
 
         super.init()
 
@@ -862,6 +869,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
+
+            let analyticsSession = self.analyticsManager?.switchUser(AnalyticsUserProfile(analyticsIdentifier: "foo"))
+            self.activeUserSession?.analyticsSession = analyticsSession
 
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
 

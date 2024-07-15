@@ -79,7 +79,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    private var analyticsSession: AnalyticsSession?
+    var analyticsSession: (any AnalyticsSessionProtocol)?
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable

@@ -18,41 +18,72 @@
 
 import Countly
 
-public struct AnalyticsSession: AnalyticsSessionProtocol {
+public struct AnalyticsManager: AnalyticsManagerProtocol {
 
-    private let countly: WireCountly
+    private let analyticsService: any AnalyticsService
 
     public init(
         appKey: String,
-        host: URL,
-        userProfile: AnalyticsUserProfile
+        host: URL
     ) {
-        let config = WireCountlyConfig()
+        self.init(
+            appKey: appKey,
+            host: host,
+            analyticsService: Countly.sharedInstance()
+        )
+    }
 
+    init(
+        appKey: String,
+        host: URL,
+        analyticsService: any AnalyticsService
+    ) {
+        self.analyticsService = analyticsService
+        self.analyticsService.start(appKey: appKey, host: host)
+    }
+
+    public func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+        analyticsService.endSession()
+        analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
+        analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: "team_team_id")
+        analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: "team_user_type")
+        analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: "team_team_size")
+        analyticsService.beginSession()
+        return analyticsService
+    }
+
+}
+
+// sourcery: AutoMockable
+protocol AnalyticsService: AnalyticsSessionProtocol {
+
+    func start(appKey: String, host: URL)
+    func beginSession()
+    func endSession()
+    func changeDeviceID(_ id: String)
+    func setUserValue(_ value: Any?, forKey key: String)
+
+}
+
+extension Countly: AnalyticsService {
+
+    func start(appKey: String, host: URL) {
+        let config = CountlyConfig()
         config.appKey = appKey
         config.host = host.absoluteString
-        config.deviceID = userProfile.analyticsIdentifier
-
-        countly = .init()
-        countly.start(with: config)
-        countly.changeDeviceID(withMerge: userProfile.analyticsIdentifier)
-
-        if let teamInfo = userProfile.teamInfo {
-            WireCountly.user().set("team_team_id", value: teamInfo.id)
-            WireCountly.user().set("team_user_type", value: teamInfo.role)
-            WireCountly.user().set("team_team_size", value: String(teamInfo.size.logRound()))
-        }
+        start(with: config)
     }
 
-    public func startSession() {
-        countly.beginSession()
+    func changeDeviceID(_ id: String) {
+        changeDeviceID(withMerge: id)
     }
 
-    public func endSession() {
-        countly.endSession()
+    func setUserValue(_ value: Any?, forKey key: String) {
+        WireCountly.user().setValue(value, forKey: key)
     }
 
     public func trackEvent(_ event: AnalyticEvent) {
-        countly.recordEvent(event.rawValue)
+        recordEvent(event.rawValue)
     }
+
 }
