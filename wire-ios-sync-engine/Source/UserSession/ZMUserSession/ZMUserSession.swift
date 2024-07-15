@@ -166,37 +166,8 @@ public final class ZMUserSession: NSObject {
             accountId: account.userIdentifier)
     }()
 
-<<<<<<< HEAD
     var cRLsChecker: CertificateRevocationListsChecker?
     var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
-=======
-    lazy var cRLsChecker: CertificateRevocationListsChecker = {
-        return CertificateRevocationListsChecker(
-            userID: userId,
-            crlAPI: CertificateRevocationListAPI(),
-            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
-            selfClientCertificateProvider: selfClientCertificateProvider,
-            fetchE2EIFeatureConfig: { [weak self] in
-                guard let self else { return nil }
-
-                let featureRepository = FeatureRepository(context: self.coreDataStack.syncContext)
-                return featureRepository.fetchE2EI().config
-            },
-            coreCryptoProvider: coreCryptoProvider,
-            context: coreDataStack.syncContext
-        )
-    }()
-
-    lazy var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver = {
-        return CRLsDistributionPointsObserver(
-            cRLsChecker: self.cRLsChecker
-        )
-    }()
-
-    public var hasCompletedInitialSync: Bool = false
-
-    public var topConversationsDirectory: TopConversationsDirectory
->>>>>>> 6758ab0f2c (feat: CRL Proxy support if needed - WPB-8795 (#1614))
 
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
         return coreDataStack.viewContext
@@ -887,24 +858,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         recurringActionService.performActionsIfNeeded()
 
-<<<<<<< HEAD
         checkExpiredCertificateRevocationLists()
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.checkE2EICertificateExpiryStatus()
-=======
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.notifyThirdPartyServices()
-        }
-
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                checkE2EICertificateExpiryStatus()
-                await cRLsChecker.checkExpiredCRLs()
-            }
->>>>>>> 6758ab0f2c (feat: CRL Proxy support if needed - WPB-8795 (#1614))
-        }
+        checkE2EICertificateExpiryStatus()
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
@@ -1030,12 +985,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-<<<<<<< HEAD
-        guard e2eiFeature.isEnabled else { return }
-
-=======
->>>>>>> 6758ab0f2c (feat: CRL Proxy support if needed - WPB-8795 (#1614))
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+            }
+        }
     }
 }
 

@@ -113,8 +113,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
-<<<<<<< HEAD
-=======
         let e2eiFeatureConfig = await context.perform {
             self.fetchE2EIFeatureConfig()
         }
@@ -122,7 +120,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
             proxyURLString: e2eiFeatureConfig?.crlProxy)
 
->>>>>>> 6758ab0f2c (feat: CRL Proxy support if needed - WPB-8795 (#1614))
         var shouldNotifyAboutRevokedCertificate = false
 
         for distributionPoint in distributionPoints {
