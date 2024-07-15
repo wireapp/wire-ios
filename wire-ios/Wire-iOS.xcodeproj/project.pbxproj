@@ -7,27 +7,16 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		592996512C2EB98A008C334F /* Format Swift Code (SwiftFormat) */ = {
+		592996512C2EB98A008C334F /* Format & Lint Swift Code */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format Swift Code (SwiftFormat)" */;
+			buildConfigurationList = 592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */;
 			buildPhases = (
 				592996552C2EB996008C334F /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = "Format Swift Code (SwiftFormat)";
+			name = "Format & Lint Swift Code";
 			productName = "Format Swift Code";
-		};
-		593E785B2C4030E000ACF7A8 /* Lint Swift Code (SwiftLint) */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 593E785C2C4030E000ACF7A8 /* Build configuration list for PBXAggregateTarget "Lint Swift Code (SwiftLint)" */;
-			buildPhases = (
-				593E785F2C4030EC00ACF7A8 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Lint Swift Code (SwiftLint)";
-			productName = "Lint Swift Code";
 		};
 /* End PBXAggregateTarget section */
 
@@ -8850,9 +8839,6 @@
 					592996512C2EB98A008C334F = {
 						CreatedOnToolsVersion = 15.3;
 					};
-					593E785B2C4030E000ACF7A8 = {
-						CreatedOnToolsVersion = 15.4;
-					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1000;
@@ -8925,8 +8911,7 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
-				592996512C2EB98A008C334F /* Format Swift Code (SwiftFormat) */,
-				593E785B2C4030E000ACF7A8 /* Lint Swift Code (SwiftLint) */,
+				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
 			);
 		};
 /* End PBXProject section */
@@ -9074,25 +9059,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n\"$PROJECT_DIR/../SourceryPlugin\" \\\n\"$PROJECT_DIR/../WireAPI\" \\\n\"$PROJECT_DIR/../WireAnalytics\" \\\n\"$PROJECT_DIR/../WireDomain\" \\\n\"$PROJECT_DIR/../WireUI\"\n";
-		};
-		593E785F2C4030EC00ACF7A8 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh --no-cache \"$PROJECT_DIR/..\"\n";
+			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n\"$PROJECT_DIR/../SourceryPlugin\" \\\n\"$PROJECT_DIR/../WireAPI\" \\\n\"$PROJECT_DIR/../WireAnalytics\" \\\n\"$PROJECT_DIR/../WireDomain\" \\\n\"$PROJECT_DIR/../WireUI\"\n\n# Lint\n\"$PROJECT_DIR../scripts/run-swiftlint.sh\" --no-cache \"$PROJECT_DIR/..\"\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11421,22 +11388,6 @@
 			};
 			name = Release;
 		};
-		593E785D2C4030E000ACF7A8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		593E785E2C4030E000ACF7A8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11768,20 +11719,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format Swift Code (SwiftFormat)" */ = {
+		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				592996522C2EB98A008C334F /* Debug */,
 				592996532C2EB98A008C334F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		593E785C2C4030E000ACF7A8 /* Build configuration list for PBXAggregateTarget "Lint Swift Code (SwiftLint)" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				593E785D2C4030E000ACF7A8 /* Debug */,
-				593E785E2C4030E000ACF7A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
