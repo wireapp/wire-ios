@@ -54,7 +54,7 @@ public final class ZMSDispatchGroup: NSObject {
     }
 
     @discardableResult @objc(waitWithDeltaFromNow:)
-    public func wait(withDeltaFromNow nanoseconds: Int) -> Int {
+    public func wait(deltaFromNow nanoseconds: Int) -> Int {
         wait(withTimeout: .now() + .nanoseconds(nanoseconds))
     }
 
