@@ -141,11 +141,7 @@ extension Encodable {
 
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
         let data = try encodeToJSON(encoder: encoder)
-
-        guard let string = String(decoding: data, as: UTF8.self) else {
-            throw JSONEncodingFailure.failedToConvertToString
-        }
-
+        let string = String(decoding: data, as: UTF8.self)
         return string
     }
 
@@ -162,7 +158,6 @@ extension Encodable {
 enum JSONEncodingFailure: Error {
 
     case failedToEncode(Error)
-    case failedToConvertToString
 
 }
 

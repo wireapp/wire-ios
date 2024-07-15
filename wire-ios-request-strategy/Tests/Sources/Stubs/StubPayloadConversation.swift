@@ -36,7 +36,7 @@ extension Payload.Conversation {
         messageTimer: TimeInterval? = nil,
         readReceiptMode: Int? = nil,
         messageProtocol: String? = "proteus",
-        mlsGroupID: String? = Data("id".utf8)?.base64EncodedString()
+        mlsGroupID: String? = Data("id".utf8).base64EncodedString()
     ) -> Self {
         self.init(
             qualifiedID: qualifiedID,

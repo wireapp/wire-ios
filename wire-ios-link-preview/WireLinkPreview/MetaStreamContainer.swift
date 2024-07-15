@@ -58,8 +58,6 @@ final class MetaStreamContainer {
     }
 
     private func parseString(from data: Data) -> String? {
-        return String(decoding: data, as: UTF8.self)
-            ?? String(data: data, encoding: .isoLatin1)
+        String(decoding: data, as: UTF8.self)
     }
-
 }

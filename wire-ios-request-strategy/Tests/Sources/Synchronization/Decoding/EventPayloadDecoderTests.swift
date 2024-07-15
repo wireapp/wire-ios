@@ -106,9 +106,9 @@ private struct Book: Decodable {
 
 // MARK: JSON
 
-private let jsonDataExample = """
+private let jsonDataExample = Data("""
 {
     "title": "Hello World!",
     "published": "2024-01-04T12:34:56.78+02:00"
 }
-Data(""".utf8)
+""".utf8)

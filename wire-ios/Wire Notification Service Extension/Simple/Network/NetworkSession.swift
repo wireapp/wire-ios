@@ -111,9 +111,8 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
             delegate: self
         )
 
-        if let jsonPayload = String(decoding: data, as: UTF8.self) {
-            logger.info("received response payload for request \(request.path, privacy: .public): \(jsonPayload, privacy: .public)")
-        }
+        let jsonPayload = String(decoding: data, as: UTF8.self)
+        logger.info("received response payload for request \(request.path, privacy: .public): \(jsonPayload, privacy: .public)")
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse

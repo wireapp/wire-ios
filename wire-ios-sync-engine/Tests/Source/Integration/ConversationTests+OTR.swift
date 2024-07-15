@@ -36,7 +36,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        Data("key": "invalid key".utf8).base64String()
+                        "key": Data("invalid key".utf8).base64String()
                     ]
                 ]
             ]
@@ -89,7 +89,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        Data("key": "invalid key".utf8).base64String()
+                        "key": Data("invalid key".utf8).base64String()
                     ]
                 ]
             ]

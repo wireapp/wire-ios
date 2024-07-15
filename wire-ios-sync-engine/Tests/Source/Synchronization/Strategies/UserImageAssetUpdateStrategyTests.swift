@@ -156,9 +156,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTExpectFailure("this could be flaky", strict: false)
         // GIVEN
         let previewData = Data("--1--".utf8)
-        let previewRequest = sut.requestFactory.upstreamRequestForAsset(withData: previewData!, shareable: true, retention: .eternal, apiVersion: .v0)
+        let previewRequest = sut.requestFactory.upstreamRequestForAsset(withData: previewData, shareable: true, retention: .eternal, apiVersion: .v0)
         let completeData = Data("1111111".utf8)
-        let completeRequest = sut.requestFactory.upstreamRequestForAsset(withData: completeData!, shareable: true, retention: .eternal, apiVersion: .v0)
+        let completeRequest = sut.requestFactory.upstreamRequestForAsset(withData: completeData, shareable: true, retention: .eternal, apiVersion: .v0)
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
