@@ -71,6 +71,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private(set) var launchType: ApplicationLaunchType = .unknown
 
     // MARK: - Public Set Property
+
+    @available(*, deprecated, message: "Don't access this property!")
     var window: UIWindow?
 
     // Singletons
@@ -144,6 +146,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: nil)
 
         self.launchOptions = launchOptions ?? [:]
+
+        setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
@@ -271,7 +275,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // MARK: - Private Helpers
+
 private extension AppDelegate {
+
+    private func setupWindowAndRootViewController() {
+
+        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
+        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        let rootViewController = RootViewController()
+        rootViewController.view.backgroundColor = .black
+        rootViewController.view.addSubview(shieldImageView)
+        NSLayoutConstraint.activate([
+            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.centerXAnchor),
+            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.centerYAnchor)
+        ])
+
+        window = .init(frame: UIScreen.main.bounds)
+        window?.rootViewController = rootViewController
+        window?.makeKeyAndVisible()
+    }
+
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
