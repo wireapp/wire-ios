@@ -19,6 +19,9 @@
 import WireTransport
 import XCTest
 
+@_spi(MockBackendInfo)
+import WireTransport
+
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
