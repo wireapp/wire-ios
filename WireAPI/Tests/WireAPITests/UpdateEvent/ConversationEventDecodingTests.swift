@@ -25,7 +25,7 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -38,7 +38,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationAccessUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -52,7 +55,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationCodeUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -66,7 +72,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationCreate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -80,7 +89,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationDelete")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -94,7 +106,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberJoin")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -108,7 +123,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberLeave")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -122,7 +140,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -136,7 +157,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMessageTimerUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -150,7 +174,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMLSMessageAdd")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -164,7 +191,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMLSWelcome")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -178,7 +208,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationProteusMessageAdd")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -192,7 +225,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationProtocolUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -206,7 +242,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationReceiptModeUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -220,7 +259,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationRename")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -234,7 +276,10 @@ final class ConversationEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "ConversationTyping")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -245,8 +290,12 @@ final class ConversationEventDecodingTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static func date(from string: String) -> Date {
+        static func fractionalDate(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
 
         static let conversationID = ConversationID(
@@ -259,7 +308,7 @@ final class ConversationEventDecodingTests: XCTestCase {
             domain: "example.com"
         )
 
-        static let timestamp = date(from: "2024-06-04T15:03:07.598Z")
+        static let timestamp = fractionalDate(from: "2024-06-04T15:03:07.598Z")
 
         static let accessUpdateEvent = ConversationAccessUpdateEvent(
             conversationID: conversationID,
@@ -291,7 +340,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                 mlsGroupID: "group_id",
                 cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 epoch: 123,
-                epochTimestamp: timestamp,
+                epochTimestamp: date(from: "2024-06-04T15:03:07Z"),
                 creator: UUID(uuidString: "6d88b1b9-f882-4990-ade5-86643fc6006e")!,
                 members: Conversation.Members(
                     others: [
@@ -335,13 +384,13 @@ final class ConversationEventDecodingTests: XCTestCase {
                     )
                 ),
                 name: "Foo Bar",
-                messageTimer: 123456,
+                messageTimer: 123_456,
                 readReceiptMode: 1,
                 access: [.invite],
                 accessRoles: [.teamMember],
                 legacyAccessRole: .nonActivated,
                 lastEvent: "lastEvent",
-                lastEventTime: date(from: "1970-01-01T00:00:00.000Z")
+                lastEventTime: fractionalDate(from: "1970-01-01T00:00:00.000Z")
             )
         )
 
@@ -422,10 +471,10 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
-            message: "foo",
-            externalData: "bar",
-            messageSenderID: senderID.uuid,
-            messageRecipientID: senderID.uuid
+            message: .ciphertext("foo"),
+            externalData: .ciphertext("bar"),
+            messageSenderClientID: "abc123",
+            messageRecipientClientID: "def456"
         )
 
         static let protocolUpdateEvent = ConversationProtocolUpdateEvent(

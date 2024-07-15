@@ -17,8 +17,9 @@
 //
 
 import DifferenceKit
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
@@ -37,7 +38,7 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
         using stagedChangeset: StagedChangeset<C>,
         interrupt: ((Changeset<C>) -> Bool)?,
         setData: (C?) -> Void
-        ) {
+    ) {
         setData(stagedChangeset.first?.data)
     }
 
@@ -48,10 +49,6 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?) {
         // no-op
     }
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateConversationWithChange change: ConversationChangeInfo?) {
-        // no-op
-    }
 }
 
 final class ConversationListViewModelTests: XCTestCase {
@@ -59,20 +56,17 @@ final class ConversationListViewModelTests: XCTestCase {
     var sut: ConversationListViewModel!
     var mockUserSession: UserSessionMock!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
-    var mockBar: MockBar!
     var mockConversation: ZMConversation!
     var coreDataFixture: CoreDataFixture!
 
-    /// constants
-    let sectionGroups: Int = 2
-    let sectionContacts: Int = 3
+    // Constants for section indices
+    let sectionGroups: Int = 0
 
     override func setUp() {
         super.setUp()
         removeViewModelState()
-        mockBar = MockBar()
         mockUserSession = UserSessionMock()
-        sut = ConversationListViewModel(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
+        sut = ConversationListViewModel(userSession: mockUserSession)
 
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
@@ -85,7 +79,6 @@ final class ConversationListViewModelTests: XCTestCase {
         sut = nil
         mockUserSession = nil
         mockConversationListViewModelDelegate = nil
-        mockBar = nil
         mockConversation = nil
         coreDataFixture = nil
 
@@ -98,7 +91,7 @@ final class ConversationListViewModelTests: XCTestCase {
         try? FileManager.default.removeItem(at: persistentURL)
     }
 
-    // folders with 2 group conversations and 1 contact. First group conversation is mock conversation
+    // 2 group conversations and 1 contact. First group conversation is mock conversation
     func fillDummyConversations(mockConversation: ZMConversation) {
         let info = ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [.groups, .contacts], updatedFolders: false)
 
@@ -115,27 +108,26 @@ final class ConversationListViewModelTests: XCTestCase {
 
     func testForNumberOfItems() {
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.numberOfItems(inSection: 0), 0)
-        XCTAssertEqual(sut.numberOfItems(inSection: Int(sectionGroups)), 2)
-        XCTAssertEqual(sut.numberOfItems(inSection: Int(sectionContacts)), 1)
+        // WHEN & THEN
+        XCTAssertEqual(sut.numberOfItems(inSection: sectionGroups), 2)
         XCTAssertEqual(sut.numberOfItems(inSection: 100), 0)
     }
 
     func testForIndexPathOfItemAndItemForIndexPath() {
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
-        guard let indexPath = sut.indexPath(for: mockConversation) else { XCTFail("indexPath is nil ")
+        guard let indexPath = sut.indexPath(for: mockConversation) else {
+            XCTFail("indexPath is nil")
             return
         }
 
@@ -154,85 +146,58 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func testThatNonExistConversationHasNilIndexPath() {
-        // GIVEN & WHEN
-
-        // THEN
+        //  GIVEN, WHEN && THEN
         XCTAssertNil(sut.indexPath(for: ZMConversation()))
     }
 
     func testForSectionCount() {
         // GIVEN
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
-        // WHEN
-        sut.folderEnabled = true
-
-        // THEN
-        XCTAssertEqual(sut.sectionCount, 4)
-
-        // WHEN
-        sut.folderEnabled = false
-        XCTAssertEqual(sut.sectionCount, 2)
+        XCTAssertEqual(sut.sectionCount, 1)
     }
 
     func testForSectionAtIndex() {
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
+        guard let sectionItems = sut.section(at: sectionGroups) else {
+            XCTFail("Section at index \(sectionGroups) is nil")
+            return
+        }
 
         // THEN
-        XCTAssertEqual(sut.section(at: Int(sectionGroups))?.first as? AnyHashable, mockConversation)
+        let containsMockConversation = sectionItems.contains {
+            guard let conversation = $0 as? ZMConversation else { return false }
+            return conversation.remoteIdentifier == mockConversation.remoteIdentifier
+        }
+
+        XCTAssertTrue(containsMockConversation, "Section does not contain the mock conversation")
 
         XCTAssertNil(sut.section(at: 100))
     }
 
-    func testForItemAfter() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.item(after: 0, section: sectionGroups), IndexPath(item: 1, section: Int(sectionGroups)))
-        XCTAssertEqual(sut.item(after: 1, section: 1), IndexPath(item: 0, section: 2))
-        XCTAssertEqual(sut.item(after: 0, section: sectionContacts), nil)
-    }
-
-    func testForItemPervious() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionGroups), nil)
-
-        XCTAssertEqual(sut.itemPrevious(to: 1, section: sectionGroups), IndexPath(item: 0, section: Int(sectionGroups)))
-
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionContacts), IndexPath(item: 1, section: Int(sectionGroups)))
-    }
-
     func testForSelectItem() {
-        sut.folderEnabled = true
+        // GIVEN
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN & THEN
         XCTAssert(sut.select(itemToSelect: mockConversation))
-
-        // THEN
         XCTAssertEqual(sut.selectedItem as? AnyHashable, mockConversation)
     }
 
     func testThatSelectItemAtIndexReturnCorrectConversation() {
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
@@ -243,67 +208,18 @@ final class ConversationListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.selectItem(at: indexPath) as? AnyHashable, mockConversation)
     }
 
-    // MARK: - state
-    func testThatSectionIsExpandedAfterSelected() {
+    func testForItemPrevious() {
         // GIVEN
-        sut.folderEnabled = true
-        fillDummyConversations(mockConversation: mockConversation)
-        sut.setCollapsed(sectionIndex: Int(sectionGroups), collapsed: true) // todo
-
-        // WHEN
-        XCTAssert(sut.collapsed(at: Int(sectionGroups)))
-        XCTAssert(sut.select(itemToSelect: mockConversation))
-
-        // THEN
-        XCTAssertFalse(sut.collapsed(at: Int(sectionGroups)))
-    }
-
-    func testThatCollapseStateCanBeRestoredAfterFolderDisabled() {
-        // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
-        XCTAssertFalse(sut.collapsed(at: 1))
+        // WHEN & THEN
+        // Since index 0 has no previous item in the same section, it should return nil
+        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionGroups), nil)
 
-        // WHEN
-        sut.setCollapsed(sectionIndex: 1, collapsed: true)
-
-        XCTAssert(sut.collapsed(at: 1))
-
-        // all folder are not collapsed when folder disabled
-        sut.folderEnabled = false
-
-        XCTAssertFalse(sut.collapsed(at: 1))
-        sut.folderEnabled = true
-
-        // THEN
-        // collapsed state is restored
-        XCTAssert(sut.collapsed(at: 1))
-    }
-
-    func testThatStateJsonFormatIsCorrect() {
-        // GIVEN
-
-        // state is initial value when first run
-        XCTAssertEqual(sut.jsonString, #"{"collapsed":[],"folderEnabled":false}"#)
-
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-        sut.setCollapsed(sectionIndex: 2, collapsed: true)
-
-        // THEN
-        XCTAssertEqual(sut.jsonString, #"{"collapsed":["groups"],"folderEnabled":true}"#)
-    }
-}
-
-final class MockBar: ConversationListViewModelRestorationDelegate {
-    var folderEnabled: Bool = false
-
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
-        folderEnabled = enabled
+        // Index 1 in the same section should return the item at index 0
+        XCTAssertEqual(sut.itemPrevious(to: 1, section: sectionGroups), IndexPath(item: 0, section: sectionGroups))
     }
 }

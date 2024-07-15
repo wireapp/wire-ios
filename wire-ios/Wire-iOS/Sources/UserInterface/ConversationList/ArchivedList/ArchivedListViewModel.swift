@@ -22,7 +22,6 @@ import WireSyncEngine
 
 protocol ArchivedListViewModelDelegate: AnyObject {
     func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> Void)
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo)
 }
 
 final class ArchivedListViewModel: NSObject {
@@ -42,7 +41,7 @@ final class ArchivedListViewModel: NSObject {
 
         let list = userSession.archivedConversationsInUserSession()
         archivedConversationListObserverToken = userSession.addConversationListObserver(self, for: list)
-        archivedConversations = list.asArray() as! [ZMConversation]
+        archivedConversations = list.items
     }
 
     var count: Int {
@@ -52,18 +51,19 @@ final class ArchivedListViewModel: NSObject {
     subscript(key: Int) -> ZMConversation? {
         return archivedConversations[key]
     }
-
 }
 
 extension ArchivedListViewModel: ZMConversationListObserver {
+
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         guard changeInfo.conversationList == userSession.archivedConversationsInUserSession() else { return }
         delegate?.archivedListViewModel(self, didUpdateArchivedConversationsWithChange: changeInfo) { [weak self] in
-            self?.archivedConversations = self?.userSession.archivedConversationsInUserSession().asArray() as! [ZMConversation]
+            guard let self else { return }
+            archivedConversations = userSession.archivedConversationsInUserSession().items
         }
     }
 
-    func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
-        delegate?.archivedListViewModel(self, didUpdateConversationWithChange: changeInfo)
+    func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
+        // no-op
     }
 }

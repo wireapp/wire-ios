@@ -21,6 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 extension ZClientViewController {
+
     private func wrapInNavigationControllerAndPresent(viewController: UIViewController) {
         let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
         navWrapperController.modalPresentationStyle = .formSheet
@@ -31,7 +32,12 @@ extension ZClientViewController {
     }
 
     func showConnectionRequest(userId: UUID) {
-        let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self, userSession: userSession)
+        let searchUserViewConroller = SearchUserViewController(
+            userId: userId,
+            profileViewControllerDelegate: self,
+            userSession: userSession,
+            mainCoordinator: MainCoordinator(zClientViewController: self)
+        )
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
     }
@@ -42,7 +48,13 @@ extension ZClientViewController {
             return
         }
 
-        let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .profileViewer, userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession,
+            mainCoordinator: MainCoordinator(zClientViewController: self)
+        )
         profileViewController.delegate = self
 
         wrapInNavigationControllerAndPresent(viewController: profileViewController)
@@ -56,15 +68,9 @@ extension ZClientViewController {
             select(conversation: conversation,
                    scrollTo: message,
                    focusOnView: true,
-                   animated: true,
-                   completion: nil)
+                   animated: true)
         default:
             break
         }
     }
-
-    func showConversationList() {
-        transitionToList(animated: true, completion: nil)
-    }
-
 }

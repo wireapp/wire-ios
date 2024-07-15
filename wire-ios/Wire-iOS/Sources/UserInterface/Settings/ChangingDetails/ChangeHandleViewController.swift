@@ -211,22 +211,37 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var popOnSuccess = true
     private var federationEnabled: Bool
 
-    convenience init() {
+    convenience init(
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
         let user = SelfUser.provider?.providedSelfUser
-        self.init(state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown))
+        self.init(
+            state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+        )
     }
 
-    convenience init(suggestedHandle handle: String) {
-        self.init(state: .init(currentHandle: nil, newHandle: handle, availability: .unknown))
+    convenience init(
+        suggestedHandle handle: String,
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
+        self.init(
+            state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+        )
         setupViews()
         checkAvailability(of: handle)
     }
 
     /// Used to inject a specific `HandleChangeState` in tests. See `ChangeHandleViewControllerTests`.
-    init(state: HandleChangeState, federationEnabled: Bool = BackendInfo.isFederationEnabled) {
+    init(
+        state: HandleChangeState,
+        useTypeIntrinsicSizeTableView: Bool,
+        federationEnabled: Bool = BackendInfo.isFederationEnabled
+    ) {
         self.state = state
         self.federationEnabled = federationEnabled
-        super.init(style: .grouped)
+        super.init(style: .grouped, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
 
         setupViews()
     }
@@ -238,6 +253,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setupNavigationBar()
         updateUI()
         observerToken = userProfile?.add(observer: self)
     }
@@ -248,7 +264,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: HandleChange.title.capitalized)
         view.backgroundColor = .clear
         ChangeHandleTableViewCell.register(in: tableView)
         tableView.allowsSelection = false
@@ -257,13 +272,17 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
         footerLabel.numberOfLines = 0
         updateUI()
+    }
 
+    func setupNavigationBar() {
+        setupNavigationBarTitle(HandleChange.title.capitalized)
         let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
                                                                                   systemImage: false,
                                                                                   target: self,
                                                                                   action: #selector(saveButtonTapped))
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
+
     }
 
     @objc func saveButtonTapped(sender: UIBarButtonItem) {

@@ -96,7 +96,6 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         setNeedsUpdateConstraints()
 
         AVSMediaManagerClientChangeNotification.add(self)
-        backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
         addBorder(for: .bottom)
     }
 

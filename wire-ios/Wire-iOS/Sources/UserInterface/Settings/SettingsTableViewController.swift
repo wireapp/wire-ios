@@ -23,6 +23,7 @@ import WireSyncEngine
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
+    let useTypeIntrinsicSizeTableView: Bool
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
@@ -47,8 +48,16 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+    init(
+        style: UITableView.Style,
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        tableView = if useTypeIntrinsicSizeTableView {
+            IntrinsicSizeTableView(frame: .zero, style: style)
+        } else {
+            UITableView(frame: .zero, style: style)
+        }
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = UIRectEdge()
     }
@@ -152,7 +161,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
@@ -161,11 +169,18 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(group.title)
+    }
+
     required init(group: SettingsInternalGroupCellDescriptorType) {
         self.group = group
         self.sections = group.visibleItems
-        super.init(style: group.style == .plain ? .plain : .grouped)
-        setupNavigationTitle()
+        super.init(
+            style: group.style == .plain ? .plain : .grouped,
+            useTypeIntrinsicSizeTableView: true
+        )
 
         self.group.items.flatMap { return $0.cellDescriptors }.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
@@ -193,7 +208,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         super.viewDidLoad()
 
         setupTableView()
-        setupNavigationBar()
+        setupNavigationBarAccessibility()
     }
 
     private func setupTableView() {
@@ -215,15 +230,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        setupAccessibility()
-    }
-
-    private func setupAccessibility() {
+    private func setupNavigationBarAccessibility() {
         typealias Accessibility = L10n.Accessibility.Settings
 
-        navigationItem.rightBarButtonItem?.accessibilityLabel = Accessibility.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
@@ -280,8 +289,8 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
-        let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+        let sectionDescriptor = sections[indexPath.section]
+        let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
 
         property.select(SettingsPropertyValue.none)
         tableView.deselectRow(at: indexPath, animated: false)
@@ -307,10 +316,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         if let headerFooterView = view as? UITableViewHeaderFooterView {
             headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionFooter
         }
-    }
-
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: group.title.capitalized)
     }
 
 }

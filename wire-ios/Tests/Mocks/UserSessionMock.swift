@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -67,7 +68,7 @@ final class UserSessionMock: UserSession {
 
     var _passcode: String?
 
-    var networkState: ZMNetworkState = .offline
+    var networkState: NetworkState = .offline
 
     var selfUser: any UserType
 
@@ -75,7 +76,7 @@ final class UserSessionMock: UserSession {
 
     var editableSelfUser: any EditableUserType & UserType
 
-    var mockConversationList: ZMConversationList?
+    var mockConversationList: ConversationList?
 
     var searchUsersCache: SearchUsersCache
     var contextProvider: ContextProvider?
@@ -190,22 +191,22 @@ final class UserSessionMock: UserSession {
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol {
         return NSObject()
     }
 
-    func conversationList() -> ZMConversationList {
+    func conversationList() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+    func pendingConnectionConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func archivedConversationsInUserSession() -> ZMConversationList {
+    func archivedConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
@@ -349,6 +350,12 @@ final class UserSessionMock: UserSession {
     var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
     }
 }
 

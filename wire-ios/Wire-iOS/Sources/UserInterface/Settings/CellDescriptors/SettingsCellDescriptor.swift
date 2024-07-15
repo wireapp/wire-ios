@@ -95,10 +95,11 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 }
 
 extension SettingsInternalGroupCellDescriptorType {
+
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
-            return section.allCellDescriptors()
-        })
+        items.flatMap { section in
+            section.allCellDescriptors()
+        }
     }
 }
 
@@ -197,6 +198,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     func select(_ value: SettingsPropertyValue?) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
+            controllerToPush.hidesBottomBarWhenPushed = true
             navigationController.pushViewController(controllerToPush, animated: true)
         }
     }

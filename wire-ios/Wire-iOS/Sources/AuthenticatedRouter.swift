@@ -28,17 +28,17 @@ enum NavigationDestination {
 
 protocol AuthenticatedRouterProtocol: AnyObject {
     func updateActiveCallPresentationState()
-    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?)
+    func minimizeCallOverlay(animated: Bool, completion: Completion?)
     func navigate(to destination: NavigationDestination)
 }
 
-final class AuthenticatedRouter: NSObject {
+final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
     private let builder: AuthenticatedWireFrame
     private let rootViewController: RootViewController
-    private let activeCallRouter: ActiveCallRouter
+    private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
@@ -65,7 +65,11 @@ final class AuthenticatedRouter: NSObject {
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
         self.rootViewController = rootViewController
-        activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
+        activeCallRouter = ActiveCallRouter(
+            rootviewController: rootViewController,
+            userSession: userSession,
+            topOverlayPresenter: .init(rootViewController: rootViewController)
+        )
 
         builder = AuthenticatedWireFrame(
             account: account,
@@ -75,8 +79,6 @@ final class AuthenticatedRouter: NSObject {
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
-
-        super.init()
 
         featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
@@ -122,7 +124,7 @@ final class AuthenticatedRouter: NSObject {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        _viewController?.presentAlert(alert)
+        _viewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
@@ -132,22 +134,24 @@ final class AuthenticatedRouter: NSObject {
             session.logoutCurrentSession()
         }
 
-        _viewController?.presentAlert(alert)
+        _viewController?.present(alert, animated: true)
     }
 }
 
 // MARK: - AuthenticatedRouterProtocol
+
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
+
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
+    func minimizeCallOverlay(animated: Bool, completion: Completion?) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
 
     func navigate(to destination: NavigationDestination) {
+
         switch destination {
         case .conversation(let converation, let message):
             _viewController?.showConversation(converation, at: message)
@@ -163,6 +167,7 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
 // MARK: - AuthenticatedWireFrame
 struct AuthenticatedWireFrame {
+
     private var account: Account
     private var userSession: UserSession
 
@@ -181,17 +186,8 @@ struct AuthenticatedWireFrame {
     }
 }
 
-private extension UIViewController {
-
-    func presentAlert(_ alert: UIAlertController) {
-        present(alert, animated: true, completion: nil)
-    }
-}
-
 protocol FeatureRepositoryProvider {
-
     var featureRepository: FeatureRepository { get }
-
 }
 
 extension ZMUserSession: FeatureRepositoryProvider {}

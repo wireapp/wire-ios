@@ -30,15 +30,15 @@ struct MLSMigrationFeatureConfigDecoder {
 
         return MLSMigrationFeatureConfig(
             status: payload.status,
-            startTime: payload.config.startTime,
-            finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter
+            startTime: payload.config.startTime?.date,
+            finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter?.date
         )
     }
 
     private struct Payload: Decodable {
 
-        let startTime: Date?
-        let finaliseRegardlessAfter: Date?
+        let startTime: UTCTime?
+        let finaliseRegardlessAfter: UTCTime?
 
     }
 

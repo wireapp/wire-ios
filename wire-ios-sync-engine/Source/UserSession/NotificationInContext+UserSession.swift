@@ -18,50 +18,28 @@
 
 import WireDataModel
 
-extension ZMUserSession: NotificationContext { } // Mark ZMUserSession as valid notification context
-
-// MARK: - Network Availability
-
-@objcMembers public class ZMNetworkAvailabilityChangeNotification: NSObject {
-
-    private static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
-
-    private static let stateKey = "networkState"
-
-    public static func addNetworkAvailabilityObserver(_ observer: ZMNetworkAvailabilityObserver, userSession: ZMUserSession) -> Any {
-        return NotificationInContext.addObserver(name: name,
-                                                 context: userSession) { [weak observer] note in
-            observer?.didChangeAvailability(newState: note.userInfo[stateKey] as! ZMNetworkState)
-        }
-    }
-
-    public static func notify(networkState: ZMNetworkState, userSession: ZMUserSession) {
-        NotificationInContext(name: name, context: userSession, userInfo: [stateKey: networkState]).post()
-    }
-
-}
-
-@objc public protocol ZMNetworkAvailabilityObserver: NSObjectProtocol {
-    func didChangeAvailability(newState: ZMNetworkState)
-}
-
 // MARK: - Typing
 
 private let typingNotificationUsersKey = "typingUsers"
 
 extension ZMConversation {
 
-    @objc
-    public func addTypingObserver(_ observer: ZMTypingChangeObserver) -> Any {
-        return NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
-                                                 context: self.managedObjectContext!.notificationContext,
-                                                 object: self) { [weak observer, weak self] note in
-            guard let self else { return }
+        @objc
+        public func addTypingObserver(_ observer: ZMTypingChangeObserver) -> Any? {
+            guard let managedObjectContext = self.managedObjectContext?.notificationContext else {
+                return nil
+            }
 
-            let users = note.userInfo[typingNotificationUsersKey] as? Set<ZMUser> ?? Set()
-            observer?.typingDidChange(conversation: self, typingUsers: Array(users))
+            return NotificationInContext.addObserver(
+                name: ZMConversation.typingNotificationName,
+                context: managedObjectContext,
+                object: self
+            ) { [weak observer, weak self] note in
+                guard let self else { return }
+                let users = note.userInfo[typingNotificationUsersKey] as? Set<ZMUser> ?? Set()
+                observer?.typingDidChange(conversation: self, typingUsers: Array(users))
+            }
         }
-    }
 
     @objc
     func notifyTyping(typingUsers: Set<ZMUser>) {

@@ -89,21 +89,6 @@ final class TeamAccountView: BaseAccountView {
         accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.teamName ?? "") + " " + accessibilityState
         accessibilityIdentifier = "\(account.teamName ?? "") team"
     }
-
-    override func createDotConstraints() -> [NSLayoutConstraint] {
-        let dotSize: CGFloat = 9
-        let dotInset: CGFloat = 2
-
-        dotView.translatesAutoresizingMaskIntoConstraints = false
-        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        return [
-            dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
-            dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
-            dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-            dotView.widthAnchor.constraint(equalToConstant: dotSize)
-        ]
-    }
 }
 
 extension TeamAccountView: TeamObserver {

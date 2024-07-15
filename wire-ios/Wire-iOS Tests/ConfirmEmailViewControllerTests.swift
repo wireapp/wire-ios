@@ -28,7 +28,7 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
-        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession)
+        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession, useTypeIntrinsicSizeTableView: true)
         sut.overrideUserInterfaceStyle = .dark
     }
 

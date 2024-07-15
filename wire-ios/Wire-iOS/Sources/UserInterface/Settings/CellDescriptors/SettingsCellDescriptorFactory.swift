@@ -28,14 +28,14 @@ struct SettingsCellDescriptorFactory {
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
 
-    func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func rootGroup() -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
+        rootElements.append(settingsCell())
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
@@ -103,11 +103,26 @@ struct SettingsCellDescriptorFactory {
                                                     copiableText: nil)
     }
 
-    func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func settingsCell() -> SettingsCellDescriptorType {
+
+        SettingsDismissProfileAndSwitchTabDescriptor(
+            title: L10n.Localizable.Self.settings,
+            identifier: type(of: self).settingsDevicesCellIdentifier,
+            icon: .gear,
+            targetTab: .settings
+        )
+    }
+
+    func settingsGroup(
+        isTeamMember: Bool,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
                 isTeamMember: isTeamMember,
-                userSession: userSession
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),
             devicesCell(),
             optionsGroup,
@@ -217,12 +232,15 @@ struct SettingsCellDescriptorFactory {
 
     func aboutSection() -> SettingsCellDescriptorType {
 
-        let legalButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Legal.title,
-                                                               isDestructive: false,
-                                                               presentationStyle: .modal,
-                                                               presentationAction: {
-            return BrowserViewController(url: URL.wr_legal.appendingLocaleParameter)
-        }, previewGenerator: .none)
+        let legalButton = SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.About.Legal.title,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: URL.wr_legal.appendingLocaleParameter)
+            },
+            previewGenerator: .none
+        )
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
         let buildNumber = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
@@ -236,7 +254,7 @@ struct SettingsCellDescriptorFactory {
         let copyrightInfo = String(format: L10n.Localizable.About.Copyright.title, currentYear)
 
         let linksSection = SettingsSectionDescriptor(
-            cellDescriptors: [legalButton, licensesSection()],
+            cellDescriptors: [legalButton],
             header: nil,
             footer: "\n" + version + "\n" + copyrightInfo
         )
@@ -256,46 +274,5 @@ struct SettingsCellDescriptorFactory {
             icon: .about,
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description
         )
-    }
-
-    func licensesSection() -> SettingsCellDescriptorType {
-        guard let licenses = LicensesLoader.shared.loadLicenses() else {
-            return webLicensesSection()
-        }
-
-        let childItems: [SettingsGroupCellDescriptor] = licenses.map { item in
-            let projectCell = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.License.openProjectButton, isDestructive: false, presentationStyle: .modal, presentationAction: {
-                return BrowserViewController(url: item.projectURL)
-            }, previewGenerator: .none)
-            let detailsSection = SettingsSectionDescriptor(cellDescriptors: [projectCell], header: L10n.Localizable.About.License.projectHeader, footer: nil)
-
-            let licenseCell = SettingsStaticTextCellDescriptor(text: item.licenseText)
-            let licenseSection = SettingsSectionDescriptor(cellDescriptors: [licenseCell], header: L10n.Localizable.About.License.licenseHeader, footer: nil)
-
-            return SettingsGroupCellDescriptor(items: [detailsSection, licenseSection],
-                                               title: item.name,
-                                               style: .grouped,
-                                               accessibilityBackButtonText: L10n.Accessibility.LicenseDetailsSettings.BackButton.description)
-        }
-
-        let licensesSection = SettingsSectionDescriptor(cellDescriptors: childItems)
-        return SettingsGroupCellDescriptor(items: [licensesSection],
-                                           title: L10n.Localizable.About.License.title,
-                                           style: .plain,
-                                           accessibilityBackButtonText: L10n.Accessibility.LicenseInformationSettings.BackButton.description)
-
-    }
-
-    func webLicensesSection() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.License.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: .modal,
-                                                    presentationAction: {
-            let url = URL.wr_licenseInformation.appendingLocaleParameter
-            return BrowserViewController(
-                url: url
-            )
-        },
-                                                    previewGenerator: .none)
     }
 }

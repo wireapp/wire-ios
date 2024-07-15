@@ -364,7 +364,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         }()
 
         guard let title else { return }
-        navigationItem.setupNavigationBarTitle(title: title.capitalized)
+        setupNavigationBarTitle(title.capitalized)
 
     }
 
@@ -480,10 +480,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation) {
-        // no-op
-    }
-
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction) {
         // no-op
     }
 

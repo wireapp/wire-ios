@@ -20,6 +20,7 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 typealias Completion = () -> Void
@@ -29,12 +30,13 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
-        didUpdate selfUserStatus: UserStatus
+        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
     )
 
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion?)
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    )
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
@@ -43,14 +45,20 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func showPermissionDeniedViewController()
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) -> Bool
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {
+
     final class ViewModel: NSObject {
+
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
                 guard viewController != nil else { return }
@@ -66,6 +74,10 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
+        private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
+        }
+
         let selfUserLegalHoldSubject: any SelfUserLegalHoldable
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
@@ -76,22 +88,29 @@ extension ConversationListViewController {
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: (any NSObjectProtocol)?
+
         private var userObservationToken: NSObjectProtocol?
+        private var teamObservationToken: NSObjectProtocol?
+
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
+        let mainCoordinator: MainCoordinating
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
+
+        let miniatureAccountImageFactory = MiniatureAccountImageFactory()
 
         init(
             account: Account,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-            notificationCenter: NotificationCenter = .default
+            notificationCenter: NotificationCenter = .default,
+            mainCoordinator: some MainCoordinating
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -101,9 +120,11 @@ extension ConversationListViewController {
             shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
+            self.mainCoordinator = mainCoordinator
             super.init()
 
             updateE2EICertifiedStatus()
+            updateAccountImage()
         }
 
         deinit {
@@ -123,25 +144,30 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            let context = userSession.managedObjectContext
-
             initialSyncObserverToken = NotificationInContext.addObserver(
                 name: .initialSync,
-                context: context.notificationContext
+                context: userSession.notificationContext
             ) { [weak self] _ in
-                context.performGroupedBlock {
+                userSession.managedObjectContext.performGroupedBlock {
                     self?.requestMarketingConsentIfNeeded()
                 }
             }
 
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
+
+            if let team = userSession.selfUser.membership?.team {
+                team.requestImage()
+                teamObservationToken = TeamChangeInfo.add(observer: self, for: team)
+            }
         }
 
         updateObserverTokensForActiveTeam()
 
-        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
-                                                                          object: nil,
-                                                                          queue: .main) { [weak self] _ in
+        didBecomeActiveNotificationToken = notificationCenter.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
 
@@ -151,6 +177,42 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
+        }
+    }
+
+    private func updateAccountImage() {
+
+        if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
+
+            // Team image
+            if case .teamImage(let data) = teamImageViewContent, let accountImage = UIImage(data: data) {
+                self.accountImage = (accountImage, true)
+                return
+            }
+
+            // Team initials
+            let teamName: String
+            if case .teamName(let value) = teamImageViewContent {
+                teamName = value
+            } else {
+                teamName = team.name ?? account.teamName ?? ""
+            }
+            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
+            let accountImage = miniatureAccountImageFactory.createImage(initials: initials, backgroundColor: .white)
+            self.accountImage = (accountImage, true)
+
+        } else {
+
+            // User image
+            if let data = account.imageData, let accountImage = UIImage(data: data) {
+                self.accountImage = (accountImage, false)
+                return
+            }
+
+            // User initials
+            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
+            let accountImage = miniatureAccountImageFactory.createImage(initials: personName.initials, backgroundColor: .white)
+            self.accountImage = (accountImage, false)
         }
     }
 
@@ -168,16 +230,20 @@ extension ConversationListViewController.ViewModel {
     ///   - focus: focus on the view or not
     ///   - animated: perform animation or not
     ///   - completion: the completion block
-    func select(conversation: ZMConversation,
-                scrollTo message: ZMConversationMessage? = nil,
-                focusOnView focus: Bool = false,
-                animated: Bool = false,
-                completion: Completion? = nil) {
-        selectedConversation = conversation
+    func select(
+        conversation: ZMConversation,
+        scrollTo message: ZMConversationMessage? = nil,
+        focusOnView focus: Bool = false,
+        animated: Bool = false
+    ) {
 
-        viewController?.setState(.conversationList, animated: animated) { [weak self] in
-            self?.viewController?.selectOnListContentController(self?.selectedConversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
-        }
+        selectedConversation = conversation
+        viewController?.selectOnListContentController(
+            selectedConversation,
+            scrollTo: message,
+            focusOnView: focus,
+            animated: animated
+        )
     }
 
     func requestMarketingConsentIfNeeded() {
@@ -240,24 +306,47 @@ extension ConversationListViewController.ViewModel {
     }
 }
 
+// MARK: - UserObserving
+
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.nameChanged {
-            selfUserStatus.name = changeInfo.user.name ?? ""
+
+        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
+            updateAccountImage()
         }
-        if changeInfo.nameChanged || changeInfo.teamsChanged {
-            viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
-        }
+
         if changeInfo.trustLevelChanged {
             selfUserStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
         }
+
         if changeInfo.legalHoldStatusChanged {
             viewController?.conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(self)
         }
+
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
+        }
+
+        if changeInfo.teamsChanged {
+            if let team = changeInfo.user.membership?.team {
+                teamObservationToken = TeamChangeInfo.add(observer: self, for: team)
+            } else {
+                teamObservationToken = nil
+            }
+        }
+    }
+}
+
+// MARK: - TeamObserver
+
+extension ConversationListViewController.ViewModel: TeamObserver {
+
+    func teamDidChange(_ changeInfo: TeamChangeInfo) {
+
+        if changeInfo.imageDataChanged {
+            updateAccountImage()
         }
     }
 }

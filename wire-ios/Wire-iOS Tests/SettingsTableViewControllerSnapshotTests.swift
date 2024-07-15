@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
@@ -28,11 +30,13 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     var settingsPropertyFactory: SettingsPropertyFactory!
     var userSession: UserSessionMock!
     var selfUser: MockZMEditableUser!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         selfUser = MockZMEditableUser()
 
         selfUser.teamName = "Wire"
@@ -59,6 +63,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         settingsCellDescriptorFactory = nil
         settingsPropertyFactory = nil
@@ -77,7 +82,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     func testForSettingGroup() {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
-        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession, useTypeIntrinsicSizeTableView: true)
         verify(group: group)
     }
 
@@ -92,7 +97,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession, useTypeIntrinsicSizeTableView: true)
         verify(group: group, file: file, testName: testName, line: line)
     }
 
@@ -134,7 +139,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         sut.view.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
         sut.view.layoutIfNeeded()
 
-        verify(matching: sut, customSize: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
+        snapshotHelper.verify(matching: sut, size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
     }
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
@@ -177,9 +182,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         sut = SettingsTableViewController(group: group as! SettingsInternalGroupCellDescriptorType)
 
         sut.view.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
-
-        verify(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, file: file, testName: testName, line: line)
     }
 
     // MARK: - advanced

@@ -97,7 +97,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         addBorder(for: .bottom)
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
-        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron)
         accessoryIconView.tintColor = IconColors.foregroundDefault
     }
 

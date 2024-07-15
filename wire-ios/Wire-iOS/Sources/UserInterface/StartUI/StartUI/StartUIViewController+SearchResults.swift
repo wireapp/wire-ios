@@ -25,7 +25,7 @@ final class StartUIView: UIView { }
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
                                               at indexPath: IndexPath?) {
-        _ = searchHeaderViewController.tokenField.resignFirstResponder()
+        _ = searchController.searchBar.resignFirstResponder()
 
         guard let indexPath,
             let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
@@ -35,7 +35,7 @@ extension StartUIViewController {
                 let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
                 self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
             } else if self.profilePresenter.keyboardPersistedAfterOpeningProfile {
-                    _ = self.searchHeaderViewController.tokenField.becomeFirstResponder()
+                _ = self.searchController.searchBar.becomeFirstResponder()
                     self.profilePresenter.keyboardPersistedAfterOpeningProfile = false
             }
         })
@@ -99,63 +99,14 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         navigationController?.pushViewController(detail, animated: true)
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     wantsToPerformAction action: SearchResultsViewControllerAction) {
-        switch action {
-        case .createGroup:
-            openCreateGroupController()
-        case .createGuestRoom:
-            createGuestRoom()
-        }
-    }
-
     func openCreateGroupController() {
         let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {
-            let avoiding = KeyboardAvoidingViewController(viewController: controller)
-            navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateConversation.BackButton.description
-            self.navigationController?.pushViewController(avoiding, animated: true) {
-            }
+            self.navigationController?.pushViewController(controller, animated: true)
         } else {
-            let embeddedNavigationController = controller.wrapInNavigationController()
-            embeddedNavigationController.modalPresentationStyle = .formSheet
-            self.present(embeddedNavigationController, animated: true)
-        }
-    }
-
-    func createGuestRoom() {
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-        // swiftlint:enable todo_requires_jira_link
-        guard let userSession = userSession as? ZMUserSession else {
-            return WireLogger.conversation.error("failed to create guest room: no user session")
-        }
-
-        isLoadingViewVisible = true
-
-        let service = ConversationService(context: userSession.viewContext)
-        service.createGroupConversation(
-            name: L10n.Localizable.General.guestRoomName,
-            users: [],
-            allowGuests: true,
-            allowServices: true,
-            enableReceipts: false,
-            messageProtocol: .proteus
-        ) { [weak self] in
-            switch $0 {
-            case .success(let conversation):
-                guard let self else { return }
-                self.delegate?.startUI(
-                    self,
-                    didSelect: conversation
-                )
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
-            }
-
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 }

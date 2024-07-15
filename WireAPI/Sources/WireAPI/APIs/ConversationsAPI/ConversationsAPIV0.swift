@@ -83,7 +83,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             method: .post,
             body: body
         )
-        let response = try await self.httpClient.executeRequest(request)
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationListV0.self)
@@ -129,9 +129,9 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 
 struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found = "found"
+        case found
         case notFound = "not_found"
-        case failed = "failed"
+        case failed
     }
 
     let found: [ConversationV0]
@@ -176,7 +176,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: Date?
+    var lastEventTime: UTCTimeMillis?
     var legacyAccessRole: ConversationAccessRoleLegacy?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
@@ -208,7 +208,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: legacyAccessRole,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime?.date
         )
     }
 }
