@@ -263,6 +263,7 @@ final class ConversationInputBarViewController: UIViewController,
         return buttonsArray
     }
 
+    /// Remove locationButton if security flag does not allow it
     private var shouldExcludeLocationButton: Bool {
         !SecurityFlags.locationSharing.isEnabled
     }
