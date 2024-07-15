@@ -17,19 +17,21 @@
 //
 
 import FLAnimatedImage
-import Foundation
+import UIKit
 import WireDataModel
 
 final class ImageResourceView: FLAnimatedImageView {
 
     // MARK: - context menu
-    weak var delegate: ContextMenuDelegate?
-    private lazy var messagePresenter: MessagePresenter = {
-        let messagePresenter = MessagePresenter(mediaPlaybackManager: nil)
-        messagePresenter.modalTargetController = AppDelegate.shared.window?.rootViewController
 
-        return messagePresenter
-    }()
+    weak var delegate: ContextMenuDelegate?
+
+//    var messagePresenterModalTargetController: UIViewController? {
+//        get { messagePresenter.modalTargetController }
+//        set { messagePresenter.modalTargetController = newValue }
+//    }
+//
+//    private lazy var messagePresenter = MessagePresenter(mediaPlaybackManager: nil)
 
     fileprivate var loadingView = ThreeDotsLoadingView()
 
@@ -40,18 +42,15 @@ final class ImageResourceView: FLAnimatedImageView {
 
     var imageSizeLimit: ImageSizeLimit = .deviceOptimized
     var imageResource: WireImageResource? {
-        get {
-            return imageResourceInternal
-        }
-
-        set {
-            setImageResource(newValue)
-        }
+        get { imageResourceInternal }
+        set { setImageResource(newValue) }
     }
 
-    func setImageResource(_ imageResource: WireImageResource?,
-                          hideLoadingView: Bool = false,
-                          completion: Completion? = nil) {
+    func setImageResource(
+        _ imageResource: WireImageResource?,
+        hideLoadingView: Bool = false,
+        completion: Completion? = nil
+    ) {
         let token = UUID()
         mediaAsset = nil
 
@@ -82,25 +81,20 @@ final class ImageResourceView: FLAnimatedImageView {
         })
     }
 
-    convenience init() {
-        self.init(frame: .zero)
-    }
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         loadingView.accessibilityIdentifier = "loading"
-
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(loadingView)
-
-        [self, loadingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
-            centerYAnchor.constraint(equalTo: loadingView.centerYAnchor)])
+            centerYAnchor.constraint(equalTo: loadingView.centerYAnchor)
+        ])
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 }

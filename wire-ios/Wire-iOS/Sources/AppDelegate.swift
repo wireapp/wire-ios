@@ -72,8 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    @available(*, deprecated, message: "Don't access this property!")
-    var window: UIWindow?
+    private let keyWindow = UIWindow()
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -287,13 +286,14 @@ private extension AppDelegate {
         rootViewController.view.backgroundColor = .black
         rootViewController.view.addSubview(shieldImageView)
         NSLayoutConstraint.activate([
-            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.centerYAnchor)
+            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerXAnchor),
+            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        window = .init(frame: UIScreen.main.bounds)
-        window?.rootViewController = rootViewController
-        window?.makeKeyAndVisible()
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = rootViewController
+        window.makeKeyAndVisible()
+        self.window = window
     }
 
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
