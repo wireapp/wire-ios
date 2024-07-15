@@ -62,7 +62,7 @@ public final class TimePoint: NSObject {
         return true
     }
 
-    private class var isTimePointEnabled: Bool {
+    private static var isTimePointEnabled: Bool {
         let timePointsCallStack = ProcessInfo.processInfo.environment["ZM_TIMEPOINTS_CALLSTACK"] as? NSString
         return timePointsCallStack?.boolValue ?? false
     }

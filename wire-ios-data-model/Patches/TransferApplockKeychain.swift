@@ -38,7 +38,7 @@ struct TransferApplockKeychain {
             return
         }
 
-        selfUser.isAppLockActive = String(data: data, encoding: .utf8) == "YES"
+        selfUser.isAppLockActive = String(decoding: data, as: UTF8.self) == "YES"
     }
 
     /// Migrate the single legacy passcode (account agnostic) to potentially several (account specific)

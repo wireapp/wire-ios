@@ -718,8 +718,7 @@ struct ConversationEventPayloadProcessor {
 
         if
             let base64String = payload.mlsGroupID,
-            let mlsGroupID = MLSGroupID(base64Encoded: base64String)
-        {
+            let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
             conversation.mlsGroupID = mlsGroupID
         }
 

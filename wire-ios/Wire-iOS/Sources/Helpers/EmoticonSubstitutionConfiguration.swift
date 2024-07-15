@@ -33,7 +33,7 @@ final class EmoticonSubstitutionConfiguration {
     // key is substitution string like ':)', value is smile string 😊
     let substitutionRules: [String: String]
 
-    class var sharedInstance: EmoticonSubstitutionConfiguration {
+    static var sharedInstance: EmoticonSubstitutionConfiguration {
         guard let filePath = Bundle.main.path(forResource: "emoticons.min", ofType: "json") else {
             fatal("emoticons.min does not exist!")
         }

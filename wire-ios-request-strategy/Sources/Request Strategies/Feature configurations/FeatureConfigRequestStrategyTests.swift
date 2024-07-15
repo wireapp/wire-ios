@@ -411,7 +411,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 // MARK: JSON
 
 private enum MockJSON {
-    static let mlsWithDefaultProtocolProteus = """
+    static let mlsWithDefaultProtocolProteus = Data("""
         {
             "type": "feature-config.update",
             "name": "mls",
@@ -434,9 +434,9 @@ private enum MockJSON {
                 }
             }
         }
-    """.data(using: .utf8)!
+        """.utf8)
 
-    static let mlsWithDefaultProtocolMLS = """
+    static let mlsWithDefaultProtocolMLS = Data("""
         {
             "type": "feature-config.update",
             "name": "mls",
@@ -459,5 +459,5 @@ private enum MockJSON {
                 }
             }
         }
-    """.data(using: .utf8)!
+        """.utf8)
 }

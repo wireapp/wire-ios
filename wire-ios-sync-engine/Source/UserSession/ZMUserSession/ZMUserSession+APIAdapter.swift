@@ -69,7 +69,7 @@ private extension HTTPRequest {
         .init(
             path: path,
             method: method.toZMTransportRequestMethod(),
-            payload: body.map { String(data: $0, encoding: .utf8) } as? ZMTransportData,
+            payload: body.map { String(decoding: $0, as: UTF8.self) } as? ZMTransportData,
             apiVersion: 0
         )
     }

@@ -58,26 +58,20 @@ public class V2Asset: NSObject, ZMImageMessageData {
                 return
             }
 
-            if
-                let mediumEncryptedKey,
+            if let mediumEncryptedKey,
                 let key,
                 let digest,
                 let data = cache.decryptData(
                     key: mediumEncryptedKey,
                     encryptionKey: key,
                     sha256Digest: digest
-                )
-            {
+                ) {
                 completionHandler(data)
-            } else if
-                let mediumKey,
-                let data = cache.assetData(mediumKey)
-            {
+            } else if let mediumKey,
+                let data = cache.assetData(mediumKey) {
                 completionHandler(data)
-            } else if
-                let originalKey,
-                let data = cache.assetData(originalKey)
-            {
+            } else if let originalKey,
+                let data = cache.assetData(originalKey) {
                 completionHandler(data)
             } else {
                 completionHandler(nil)

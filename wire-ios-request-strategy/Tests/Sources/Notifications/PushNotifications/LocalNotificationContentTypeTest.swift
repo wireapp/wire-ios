@@ -188,7 +188,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     }
 
     private func createTestFile(at url: URL) -> Data {
-        let data: Data! = "Some other data".data(using: String.Encoding.utf8)
+        let data = Data("Some other data".utf8)
         try! data.write(to: url, options: [])
         return data
     }

@@ -681,14 +681,16 @@ extension ZMLogTests {
 
     func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
 
-        guard let currentLog = ZMSLog.currentLogURL,
-              let data = FileManager.default.contents(atPath: currentLog.path),
-            let logContent = String(data: data, encoding: .utf8) else {
-                XCTFail(file: file, line: line)
-                return []
+        guard
+            let currentLog = ZMSLog.currentLogURL,
+            let data = FileManager.default.contents(atPath: currentLog.path)
+        else {
+            XCTFail(file: file, line: line)
+            return []
         }
 
         var lines: [String] = []
+        let logContent = String(decoding: data, as: UTF8.self)
         logContent.enumerateLines { str, _ in
             lines.append(str)
         }

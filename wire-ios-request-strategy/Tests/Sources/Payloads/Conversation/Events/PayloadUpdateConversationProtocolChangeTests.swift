@@ -57,8 +57,8 @@ final class PayloadUpdateConversationProtocolChangeTests: XCTestCase {
     }
 }
 
-private let jsonData = """
+private let jsonData = Data("""
 {
     "protocol": "mockProtocol"
 }
-""".data(using: .utf8)!
+""".utf8)

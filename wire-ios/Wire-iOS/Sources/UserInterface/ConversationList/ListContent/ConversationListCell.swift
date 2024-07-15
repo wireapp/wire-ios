@@ -220,7 +220,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         return cellSize
     }
 
-    class func invalidateCachedCellSize() {
+    static func invalidateCachedCellSize() {
         cachedSize = CGSize.zero
     }
 

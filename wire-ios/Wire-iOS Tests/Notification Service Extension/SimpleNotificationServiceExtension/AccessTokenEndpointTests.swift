@@ -39,19 +39,19 @@ class AccessTokenEndpointTests: XCTestCase {
 
     // MARK: - Response parsing
 
-    let validPayload = """
+    let validPayload = Data("""
         {
             "access_token": "testToken",
             "token_type": "type",
             "expires_in": 3600
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
-    let invalidPayload = """
+    let invalidPayload = Data("""
         {
             "foo": "bar"
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
     func test_ParseSuccessResponse() {
         // Given

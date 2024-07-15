@@ -171,7 +171,7 @@ extension UserClientRequestFactory {
 
         let payload = MLSPublicKeyUploadPayload(keys: client.mlsPublicKeys)
         let payloadData = try JSONEncoder().encode(payload)
-        let payloadDataString = String(data: payloadData, encoding: .utf8)!
+        let payloadDataString = String(decoding: payloadData, as: UTF8.self)
 
         let request = ZMTransportRequest(
             path: "/clients/\(clientID)",

@@ -22,7 +22,7 @@ import XCTest
 final class GenericHashBuilderTests: XCTestCase {
     func testThatItHashesTheData() {
         // GIVEN
-        let data = "some data".data(using: .utf8)!
+        let data = Data("some data".utf8)
         // WHEN
         let builder = GenericHashBuilder()
         builder.append(data)
@@ -35,8 +35,8 @@ final class GenericHashBuilderTests: XCTestCase {
 
     func testThatDifferentDataHasDifferentHash() {
         // GIVEN
-        let data = "some data".data(using: .utf8)!
-        let otherData = "some other data".data(using: .utf8)!
+        let data = Data("some data".utf8)
+        let otherData = Data("some other data".utf8)
         // WHEN
         let builder = GenericHashBuilder()
         builder.append(data)
@@ -51,8 +51,8 @@ final class GenericHashBuilderTests: XCTestCase {
 
     func testThatSameDataHasSameHash() {
         // GIVEN
-        let data = "some data".data(using: .utf8)!
-        let otherData = "some data".data(using: .utf8)!
+        let data = Data("some data".utf8)
+        let otherData = Data("some data".utf8)
         // WHEN
         let builder = GenericHashBuilder()
         builder.append(data)
@@ -67,9 +67,9 @@ final class GenericHashBuilderTests: XCTestCase {
 
     func testThatDataCanBeAppended() {
         // GIVEN
-        let data = "some data".data(using: .utf8)!
-        let otherData1 = "some ".data(using: .utf8)!
-        let otherData2 = "data".data(using: .utf8)!
+        let data = Data("some data".utf8)
+        let otherData1 = Data("some ".utf8)
+        let otherData2 = Data("data".utf8)
         // WHEN
         let builder = GenericHashBuilder()
         builder.append(data)

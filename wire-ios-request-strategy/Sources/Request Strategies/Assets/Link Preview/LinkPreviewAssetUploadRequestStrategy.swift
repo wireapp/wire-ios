@@ -22,15 +22,15 @@ import WireLinkPreview
 public final class LinkPreviewDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
 
-    public class func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType? {
+    public static func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType? {
         return _test_debug_linkPreviewDetector
     }
 
-    public class func setTest_debug_linkPreviewDetector(_ detectorType: LinkPreviewDetectorType?) {
+    public static func setTest_debug_linkPreviewDetector(_ detectorType: LinkPreviewDetectorType?) {
         _test_debug_linkPreviewDetector = detectorType
     }
 
-    public class func tearDown() {
+    public static func tearDown() {
         _test_debug_linkPreviewDetector = nil
     }
 
@@ -163,11 +163,10 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
         guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
         guard let payload = response.payload?.asDictionary(), let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload") }
 
-        if
-            var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
+        if var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
             let messageText = message.textMessageData?.messageText,
-            let mentions = message.textMessageData?.mentions
-        {
+            let mentions = message.textMessageData?.mentions {
+
             let assetToken = payload["token"] as? String
             let assetDomain = payload["domain"] as? String
             linkPreview.update(withAssetKey: assetKey, assetToken: assetToken, assetDomain: assetDomain)

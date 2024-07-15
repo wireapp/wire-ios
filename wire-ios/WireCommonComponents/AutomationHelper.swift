@@ -106,10 +106,8 @@ public final class AutomationHelper: NSObject {
         }
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
-        if
-            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
-            let apiVersion = Int32(value)
-        {
+        if let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
+            let apiVersion = Int32(value) {
             preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 

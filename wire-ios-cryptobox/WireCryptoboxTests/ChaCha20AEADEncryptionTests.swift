@@ -36,7 +36,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItEncryptsAndDecryptsMessage() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
 
         // When
@@ -106,7 +106,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptWithDifferentKey() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key1 = Data.zmRandomSHA256Key()
         let key2 = Data.zmRandomSHA256Key()
 
@@ -125,7 +125,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptWithDifferentNonce() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
         let randomNonce = Sut.generateRandomNonceBytes().data
 
@@ -144,7 +144,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptWithDifferentContext() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
         let randomNonce = Sut.generateRandomNonceBytes().data
 

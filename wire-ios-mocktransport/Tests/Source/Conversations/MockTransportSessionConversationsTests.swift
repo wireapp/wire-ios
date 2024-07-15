@@ -345,7 +345,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         let previousNotificationsCount = sut.generatedPushEvents.count
 
-        let data = "foobar".data(using: .utf8)!
+        let data = Data("foobar".utf8)
         let messageData = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, redundantClient], plainText: data).serializedData()
 
         sut.performRemoteChanges { _ in
@@ -404,7 +404,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         let previousNotificationCount = sut.generatedPushEvents.count
 
-        let data = "foobar".data(using: .utf8)!
+        let data = Data("foobar".utf8)
         let message = selfClient.newOtrMessageWithRecipients(for: [secondSelfClient, otherUserClient, secondOtherUserClient], plainText: data)
         let messageData = try? message.serializedData()
 

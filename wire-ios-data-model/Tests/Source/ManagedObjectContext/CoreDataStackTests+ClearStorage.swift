@@ -132,7 +132,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
 
             for storeFile in storeFiles {
                 let success = fileManager.createFile(atPath: storeFile.path,
-                                                     contents: "hello".data(using: .utf8)!,
+                                                     contents: Data("hello".utf8),
                                                      attributes: nil)
 
                 XCTAssertTrue(success)

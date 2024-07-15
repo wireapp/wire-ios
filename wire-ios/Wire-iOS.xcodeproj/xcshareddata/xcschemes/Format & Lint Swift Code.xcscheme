@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1530"
+   LastUpgradeVersion = "1540"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "592996512C2EB98A008C334F"
-               BuildableName = "Format Swift Code"
-               BlueprintName = "Format Swift Code"
+               BuildableName = "Format &amp; Lint Swift Code"
+               BlueprintName = "Format &amp; Lint Swift Code"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "592996512C2EB98A008C334F"
-            BuildableName = "Format Swift Code"
-            BlueprintName = "Format Swift Code"
+            BuildableName = "Format &amp; Lint Swift Code"
+            BlueprintName = "Format &amp; Lint Swift Code"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

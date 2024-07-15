@@ -105,7 +105,7 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let contentType = "application/octet-stream"
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: NSUUID.create(), assetToken: NSUUID.create(), assetData: "data".data(using: .utf8)!, contentType: contentType)
+            asset = session.insertAsset(with: NSUUID.create(), assetToken: NSUUID.create(), assetData: Data("data".utf8), contentType: contentType)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(asset)
@@ -187,7 +187,7 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let contentType = "application/octet-stream"
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: NSUUID.create(), domain: UUID.create().transportString(), assetToken: NSUUID.create(), assetData: "data".data(using: .utf8)!, contentType: contentType)
+            asset = session.insertAsset(with: NSUUID.create(), domain: UUID.create().transportString(), assetToken: NSUUID.create(), assetData: Data("data".utf8), contentType: contentType)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(asset)

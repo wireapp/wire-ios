@@ -162,7 +162,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             if response.httpStatus == 200 {
                 var payloadAsString: String?
                 if let payload = response.payload, let data = try? JSONSerialization.data(withJSONObject: payload, options: []) {
-                    payloadAsString = String(data: data, encoding: .utf8)
+                    payloadAsString = String(decoding: data, as: UTF8.self)
                 }
                 zmLog.debug("Callback: \(String(describing: self.callConfigCompletion))")
                 self.callConfigCompletion?(payloadAsString, response.httpStatus)
@@ -333,12 +333,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         overMLSSelfConversation: Bool,
         completionHandler: @escaping ((Int) -> Void)
     ) {
-        guard let dataString = String(data: data, encoding: .utf8) else {
-            zmLog.error("Not sending calling messsage since it's not UTF-8")
-            completionHandler(500)
-            return
-        }
-
+        let dataString = String(decoding: data, as: UTF8.self)
         let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
 
         managedObjectContext.performGroupedBlock {

@@ -49,7 +49,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
     func test_itHandlesSuccess() throws {
         // Given
         let groupState = Data([1, 2, 3])
-        let payload = try XCTUnwrap(String(data: groupState, encoding: .utf8)) as ZMTransportData
+        let payload = try XCTUnwrap(String(decoding: groupState, as: UTF8.self)) as ZMTransportData
 
         // When
         let receivedGroupState = test_itHandlesSuccess(status: 200, payload: payload)

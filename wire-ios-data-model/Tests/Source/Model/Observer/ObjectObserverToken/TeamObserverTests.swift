@@ -102,7 +102,7 @@ class TeamObserverTests: NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(team,
-                                                     modifier: { $0.imageData = "image".data(using: .utf8)! },
+                                                     modifier: { $0.imageData = Data("image".utf8) },
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.imageDataChanged)]
         )
     }

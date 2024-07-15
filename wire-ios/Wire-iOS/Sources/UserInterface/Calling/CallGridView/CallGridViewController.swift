@@ -73,11 +73,7 @@ final class CallGridViewController: SpinnerCapableViewController {
             guard !configuration.isEqual(to: oldValue) else { return }
             dismissMaximizedViewIfNeeded(oldPresentationMode: oldValue.presentationMode)
             updateState()
-            if
-                configuration.isGroupCall,
-                configuration.isConnected,
-                !oldValue.isConnected
-            {
+            if configuration.isGroupCall, configuration.isConnected, !oldValue.isConnected {
                 updateHint(for: .connectionEstablished)
             }
         }

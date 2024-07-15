@@ -550,8 +550,8 @@ final class ConversationListViewModel: NSObject {
            let sectionNumber = sectionNumber(for: kind) {
             delegate?.listViewModel(self, didUpdateSection: sectionNumber)
         } else {
-            sections.enumerated().forEach {
-                delegate?.listViewModel(self, didUpdateSection: $0.offset)
+            sections.indices.forEach {
+                delegate?.listViewModel(self, didUpdateSection: $0)
             }
         }
     }
@@ -667,7 +667,7 @@ final class ConversationListViewModel: NSObject {
             guard let jsonData = try? encoder.encode(self) else {
                 return nil }
 
-            return String(data: jsonData, encoding: .utf8)
+            return String(decoding: jsonData, as: UTF8.self)
         }
     }
 

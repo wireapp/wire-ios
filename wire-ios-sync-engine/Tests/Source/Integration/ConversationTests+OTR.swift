@@ -36,7 +36,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        "key": "invalid key".data(using: .utf8)!.base64String()
+                        "key": Data("invalid key".utf8).base64String()
                     ]
                 ]
             ]
@@ -65,7 +65,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
-            if clientEntry?.text == "💣".data(using: .utf8) {
+            if clientEntry?.text == Data("💣".utf8) {
                 messagesReceived += 1
             }
         }
@@ -89,7 +89,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        "key": "invalid key".data(using: .utf8)!.base64String()
+                        "key": Data("invalid key".utf8).base64String()
                     ]
                 ]
             ]
@@ -119,7 +119,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
 
-            if clientEntry?.text == "💣".data(using: .utf8) {
+            if clientEntry?.text == Data("💣".utf8) {
                 bombsReceived += 1
             }
         }
@@ -733,7 +733,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.selfToUser1Conversation.insertOTRMessage(
                     from: self.user1.clients.anyObject() as! MockUserClient,
                     to: self.selfUser.clients.anyObject() as! MockUserClient,
-                    data: "foo".data(using: .utf8)!
+                    data: Data("foo".utf8)
                 )
             }
 

@@ -297,7 +297,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let store = AccountStore(root: url)
         let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
 
-        let accountJSON = """
+        let accountJSON = Data("""
         {
             "name": "Alexis",
             "identifier": "\(accountID)",
@@ -305,7 +305,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
             "image": "",
             "unreadConversationCount": 1
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
 
@@ -322,7 +322,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let store = AccountStore(root: url)
         let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
 
-        let accountJSON = """
+        let accountJSON = Data("""
         {
             "name": "Alexis",
             "identifier": "\(accountID)",
@@ -335,7 +335,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
                 "usesCompanyLogin": false
             }
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
 

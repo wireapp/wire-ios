@@ -89,7 +89,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
             let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
                                 "sender": self.otherClient.remoteIdentifier!,
                                 "id": UUID.create().transportString(),
-                                "key": "bah".data(using: .utf8)!.base64String()
+                                "key": Data("bah".utf8).base64String()
             ]
 
             let payload = [
@@ -198,7 +198,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
                             "data": text,
                             "recipient": self.selfClient.remoteIdentifier!,
                             "sender": self.otherClient.remoteIdentifier!,
-                            "text": "something with less than 18000 characters count".data(using: .utf8)!.base64String()
+                            "text": Data("something with less than 18000 characters count".utf8).base64String()
                         ]
                     ]
                 ]

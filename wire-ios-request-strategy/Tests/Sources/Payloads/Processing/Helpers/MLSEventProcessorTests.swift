@@ -33,7 +33,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
     var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
-    let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
+    let groupIdString = Data("identifier".utf8).base64EncodedString()
 
     override func setUp() {
         super.setUp()

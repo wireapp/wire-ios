@@ -51,7 +51,7 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
     func testThatAuthenticationStatusIsInformed_OnCompanyLoginSuccessAction() {
         // given
         let accountId = UUID()
-        let cookieData = "cookie".data(using: .utf8)!
+        let cookieData = Data("cookie".utf8)
         let userInfo = UserInfo(identifier: accountId, cookieData: cookieData)
         let action: URLAction = .companyLoginSuccess(userInfo: userInfo)
 

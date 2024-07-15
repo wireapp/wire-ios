@@ -99,7 +99,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
     func testThatItDeletesAnAssetMessage_File() {
         // given
-        let data = "Hello World".data(using: String.Encoding.utf8)!
+        let data = Data("Hello World".utf8)
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let url = URL(fileURLWithPath: documents).appendingPathComponent("file.dat")
 
