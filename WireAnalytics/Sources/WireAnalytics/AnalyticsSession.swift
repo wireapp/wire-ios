@@ -54,17 +54,6 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
 
 }
 
-// sourcery: AutoMockable
-protocol AnalyticsService: AnalyticsSessionProtocol {
-
-    func start(appKey: String, host: URL)
-    func beginSession()
-    func endSession()
-    func changeDeviceID(_ id: String)
-    func setUserValue(_ value: Any?, forKey key: String)
-
-}
-
 extension Countly: AnalyticsService {
 
     func start(appKey: String, host: URL) {
