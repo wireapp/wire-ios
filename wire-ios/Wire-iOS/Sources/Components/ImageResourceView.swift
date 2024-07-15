@@ -22,16 +22,7 @@ import WireDataModel
 
 final class ImageResourceView: FLAnimatedImageView {
 
-    // MARK: - context menu
-
     weak var delegate: ContextMenuDelegate?
-
-//    var messagePresenterModalTargetController: UIViewController? {
-//        get { messagePresenter.modalTargetController }
-//        set { messagePresenter.modalTargetController = newValue }
-//    }
-//
-//    private lazy var messagePresenter = MessagePresenter(mediaPlaybackManager: nil)
 
     fileprivate var loadingView = ThreeDotsLoadingView()
 
@@ -79,6 +70,10 @@ final class ImageResourceView: FLAnimatedImageView {
                 UIView.transition(with: self, duration: 0.15, options: .transitionCrossDissolve, animations: update)
             }
         })
+    }
+
+    convenience init() {
+        self.init(frame: .zero)
     }
 
     override init(frame: CGRect) {

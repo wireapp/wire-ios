@@ -33,33 +33,31 @@ extension ZMConversation {
         return participant?.user
     }
 
-    func startAudioCall() {
-        if warnAboutNoInternetConnection() {
-            return
-        }
-
-        joinVoiceChannel(video: false)
+    func startAudioCall(alertPresenter: UIViewController) {
+        if warnAboutNoInternetConnection(alertPresenter) { return }
+        joinVoiceChannel(alertPresenter: alertPresenter, video: false)
     }
 
-    func startVideoCall() {
-        if warnAboutNoInternetConnection() {
-            return
-        }
+    func startVideoCall(alertPresenter: UIViewController) {
+        if warnAboutNoInternetConnection(alertPresenter) { return }
 
         warnAboutSlowConnection { abortCall in
             guard !abortCall else { return }
-            self.joinVoiceChannel(video: true)
+            self.joinVoiceChannel(alertPresenter: alertPresenter, video: true)
         }
     }
 
-    func joinCall() {
+    func joinCall(alertPresenter: UIViewController) {
         if conversationType == .group {
             voiceChannel?.muted = true
         }
-        joinVoiceChannel(video: false)
+        joinVoiceChannel(alertPresenter: alertPresenter, video: false)
     }
 
-    func joinVoiceChannel(video: Bool) {
+    func joinVoiceChannel(
+        alertPresenter: UIViewController,
+        video: Bool
+    ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
         let onGranted: (_ granted: Bool ) -> Void = { granted in
@@ -74,9 +72,9 @@ extension ZMConversation {
             }
         }
 
-        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
+        UIApplication.wr_requestOrWarnAboutMicrophoneAccess(alertPresenter: alertPresenter) { granted in
             if video {
-                UIApplication.wr_requestOrWarnAboutVideoAccess { _ in
+                UIApplication.wr_requestOrWarnAboutVideoAccess(alertPresenter: alertPresenter) { _ in
                     // We still allow starting the call, even if the video permissions were not granted.
                     onGranted(granted)
                 }
@@ -85,7 +83,6 @@ extension ZMConversation {
                 onGranted(granted)
             }
         }
-
     }
 
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
@@ -118,7 +115,8 @@ extension ZMConversation {
         }
     }
 
-    func warnAboutNoInternetConnection() -> Bool {
+    private func warnAboutNoInternetConnection(_ alertPresenter: UIViewController) -> Bool {
+
         typealias VoiceNetworkErrorLocale = L10n.Localizable.Voice.NetworkError
         guard case .unreachable = NetworkStatus.shared.reachability else {
             return false
@@ -133,8 +131,7 @@ extension ZMConversation {
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        alertPresenter.present(alert, animated: true)
 
         return true
     }

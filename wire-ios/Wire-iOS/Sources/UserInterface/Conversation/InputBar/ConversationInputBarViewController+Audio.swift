@@ -59,12 +59,12 @@ extension ConversationInputBarViewController {
                 self.inputBar.textView.becomeFirstResponder()
             }
         default:
-            UIApplication.wr_requestOrWarnAboutMicrophoneAccess({ accepted in
+            UIApplication.wr_requestOrWarnAboutMicrophoneAccess(alertPresenter: self) { accepted in
                 if accepted {
                     self.mode = .audioRecord
                     self.inputBar.textView.becomeFirstResponder()
                 }
-            })
+            }
         }
     }
 
@@ -96,7 +96,7 @@ extension ConversationInputBarViewController {
         if audioSession.recordPermission == .granted {
             audioRecordViewController?.beginRecording()
         } else {
-            requestMicrophoneAccess()
+            requestMicrophoneAccess(alertPresenter: self)
         }
     }
 
@@ -138,8 +138,8 @@ extension ConversationInputBarViewController {
         audioRecordViewController = nil
     }
 
-    fileprivate func requestMicrophoneAccess() {
-        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
+    fileprivate func requestMicrophoneAccess(alertPresenter: UIViewController) {
+        UIApplication.wr_requestOrWarnAboutMicrophoneAccess(alertPresenter: alertPresenter) { granted in
             guard granted else { return }
         }
     }

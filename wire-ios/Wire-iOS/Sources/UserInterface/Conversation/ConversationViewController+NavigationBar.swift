@@ -211,7 +211,7 @@ extension ConversationViewController {
     }
 
     @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
-        startCallController.joinCall()
+        startCallController.joinCall(alertPresenter: self)
     }
 
     @objc func dismissCollectionIfNecessary() {

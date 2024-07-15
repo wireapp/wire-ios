@@ -123,15 +123,13 @@ extension ConversationInputBarViewController {
     }
 
     func execute(videoPermissions toExecute: @escaping () -> Void) {
-        UIApplication.wr_requestOrWarnAboutVideoAccess({ granted in
-            if granted {
-                UIApplication.wr_requestOrWarnAboutMicrophoneAccess({ granted in
-                    if granted {
-                        toExecute()
-                    }
-                })
+        UIApplication.wr_requestOrWarnAboutVideoAccess(alertPresenter: self) { granted in
+            guard granted else { return }
+            UIApplication.wr_requestOrWarnAboutMicrophoneAccess(alertPresenter: self) { granted in
+                guard granted else { return }
+                toExecute()
             }
-        })
+        }
     }
 
     private func showAlertForFileTooBig() {

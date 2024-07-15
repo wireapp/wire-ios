@@ -35,9 +35,9 @@ final class ConversationCallController: NSObject {
     func startAudioCall(started: Completion?) {
         let startCall = { [weak self] in
             guard let self else { return }
-            self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
+            conversation.confirmJoiningCallIfNeeded(alertPresenter: target) {
                 started?()
-                self.conversation.startAudioCall()
+                self.conversation.startAudioCall(alertPresenter: self.target)
             }
         }
 
@@ -56,9 +56,9 @@ final class ConversationCallController: NSObject {
     func startVideoCall(started: Completion?) {
         let startVideoCall = { [weak self] in
             guard let self else { return }
-            self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
+            conversation.confirmJoiningCallIfNeeded(alertPresenter: target) {
                 started?()
-                self.conversation.startVideoCall()
+                self.conversation.startVideoCall(alertPresenter: self.target)
             }
         }
 
@@ -74,13 +74,13 @@ final class ConversationCallController: NSObject {
         }
     }
 
-    func joinCall() {
+    func joinCall(alertPresenter: UIViewController) {
         guard conversation.canJoinCall else { return }
 
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
             conversation.acknowledgePrivacyChanges()
             conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
-                conversation.joinCall() // This will result in joining an ongoing call.
+                conversation.joinCall(alertPresenter: alertPresenter) // This will result in joining an ongoing call.
             }
         }, cancelAction: { [weak self] in
             guard let userSession = ZMUserSession.shared() else { return }

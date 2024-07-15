@@ -119,13 +119,16 @@ final class CallController: NSObject {
         }
     }
 
-    private func acceptDegradedCall(conversation: ZMConversation) {
+    private func acceptDegradedCall(
+        alertPresenter: UIViewController,
+        conversation: ZMConversation
+    ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
         userSession.enqueue({
             conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
         }, completionHandler: {
-            conversation.joinCall()
+            conversation.joinCall(alertPresenter: alertPresenter)
         })
     }
 
@@ -139,12 +142,13 @@ final class CallController: NSObject {
 // MARK: - WireCallCenterCallStateObserver
 extension CallController: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState,
-                             conversation: ZMConversation,
-                             caller: UserType,
-                             timestamp: Date?,
-                             previousCallState: CallState?) {
-
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
@@ -162,10 +166,13 @@ extension CallController: WireCallCenterCallStateObserver {
     /// - Parameters:
     ///   - conversation: unverified conversation
     ///   - callState: state of the incoming call
+    ///   - alertPresenter: a view controller instance which is used to present alert controllers
     ///   - continueCallBlock: block to execute if no alert is shown or after user confirm or cancel choice on alert
-    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation,
-                                                         callState: CallState,
-                                                         continueCallBlock: @escaping (Bool) -> Void) {
+    private func presentSecurityDegradedAlertIfNecessary(
+        for conversation: ZMConversation,
+        callState: CallState,
+        continueCallBlock: @escaping (Bool) -> Void
+    ) {
         guard let voiceChannel = conversation.voiceChannel else {
             // no alert to show, continue
             continueCallBlock(true)
@@ -180,7 +187,7 @@ extension CallController: WireCallCenterCallStateObserver {
                 self?.cancelCall(conversation: conversation)
                 continueCallBlock(false)
             case .confirm:
-                self?.acceptDegradedCall(conversation: conversation)
+                self?.acceptDegradedCall(alertPresenter: alertPresenter, conversation: conversation)
                 continueCallBlock(true)
             case .ok:
                 continueCallBlock(true)

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 protocol CallPermissionsConfiguration {
     var canAcceptAudioCalls: Bool { get }
@@ -25,9 +25,9 @@ protocol CallPermissionsConfiguration {
     var canAcceptVideoCalls: Bool { get }
     var isPendingVideoPermissionRequest: Bool { get }
 
-    func requestVideoPermissionWithoutWarning(resultHandler: @escaping (Bool) -> Void)
-    func requestOrWarnAboutVideoPermission(resultHandler: @escaping (Bool) -> Void)
-    func requestOrWarnAboutAudioPermission(resultHandler: @escaping (Bool) -> Void)
+    func requestVideoPermissionWithoutWarning(alertPresenter: UIViewController, resultHandler: @escaping (Bool) -> Void)
+    func requestOrWarnAboutVideoPermission(alertPresenter: UIViewController, resultHandler: @escaping (Bool) -> Void)
+    func requestOrWarnAboutAudioPermission(alertPresenter: UIViewController, resultHandler: @escaping (Bool) -> Void)
 }
 
 extension CallPermissionsConfiguration {

@@ -20,17 +20,15 @@ import UIKit
 
 extension UIApplication {
 
-    static let wr_statusBarStyleChangeNotification: Notification.Name = Notification.Name("wr_statusBarStyleChangeNotification")
+    static let wr_statusBarStyleChangeNotification = Notification.Name("wr_statusBarStyleChangeNotification")
 
     /// return the visible window on the top most which fulfills these conditions:
     /// 1. the windows has rootViewController
     /// 2. the window's rootViewController is RootViewController
     var topMostVisibleWindow: UIWindow? {
-        let orderedWindows = windows.sorted { win1, win2 in
-            win1.windowLevel < win2.windowLevel
-        }
 
-        let visibleWindow = orderedWindows.filter {
+        let sortedWindows = windows.sorted { $0.windowLevel < $1.windowLevel }
+        let visibleWindow = sortedWindows.filter {
             guard let controller = $0.rootViewController else {
                 return false
             }

@@ -72,7 +72,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    private let keyWindow = UIWindow()
+    private let keyWindow = UIWindow(frame: UIScreen.main.bounds)
+
+    @available(*, deprecated, message: "Don't access this property!")
+    var window: UIWindow? {
+        get { keyWindow }
+        set { fatalError() }
+    }
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -290,10 +296,8 @@ private extension AppDelegate {
             shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = rootViewController
-        window.makeKeyAndVisible()
-        self.window = window
+        keyWindow.rootViewController = rootViewController
+        keyWindow.makeKeyAndVisible()
     }
 
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {

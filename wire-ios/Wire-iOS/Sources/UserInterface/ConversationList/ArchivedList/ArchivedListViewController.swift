@@ -231,7 +231,7 @@ extension ArchivedListViewController: ConversationListCellDelegate {
         guard let conversation = cell.conversation as? ZMConversation else { return }
 
         startCallController = ConversationCallController(conversation: conversation, target: self)
-        startCallController?.joinCall()
+        startCallController?.joinCall(alertPresenter: self)
     }
 
     func conversationListCellOverscrolled(_ cell: ConversationListCell) {
