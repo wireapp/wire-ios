@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireCommonComponents
 import WireSystem
 import ZipArchive
@@ -79,10 +80,21 @@ struct LogFilesProvider: LogFilesProviding {
             }
         }
 
-        let urls = logFilesURLs
+        // Create a unique directory
+        var url = try createUniqueLogDirectory()
 
-        guard !urls.isEmpty, let data = FileManager.default.zipData(from: urls) else {
-            throw Error.noLogs(description: urls.description)
+        // Create the info file
+        let infoFileURL = try createInfoFile(at: url)
+
+        // Set the list of files to be zipped
+        var filesToZip = try filesToZipURLs(
+            logFilesURLs: logFilesURLs,
+            infoFileURL: infoFileURL
+        )
+
+        // Create the zip file data
+        guard let data = FileManager.default.zipData(from: filesToZip) else {
+            throw Error.noLogs(description: filesToZip.description)
         }
 
         return data
@@ -91,13 +103,23 @@ struct LogFilesProvider: LogFilesProviding {
     func generateLogFilesZip() throws -> URL {
         try? clearLogsDirectory()
 
-        var url = logsDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        // Create a unique directory
+        var url = try createUniqueLogDirectory()
 
+        // Create the info file
+        let infoFileURL = try createInfoFile(at: url)
+
+        // Set the list of files to be zipped
+        var filesToZip = try filesToZipURLs(
+            logFilesURLs: logFilesURLs,
+            infoFileURL: infoFileURL
+        )
+
+        // Create the zip file
         url.appendPathComponent("logs.zip")
         SSZipArchive.createZipFile(
             atPath: url.path,
-            withFilesAtPaths: logFilesURLs.map { $0.path }
+            withFilesAtPaths: filesToZip.map { $0.path }
         )
 
         return url
@@ -106,4 +128,48 @@ struct LogFilesProvider: LogFilesProviding {
     func clearLogsDirectory() throws {
         try FileManager.default.removeItem(atPath: logsDirectory.path)
     }
+
+    // MARK: - Helpers
+
+    private func filesToZipURLs(logFilesURLs: [URL], infoFileURL: URL) throws -> [URL] {
+        guard !logFilesURLs.isEmpty else {
+            throw Error.noLogs(description: logFilesURLs.description)
+        }
+        
+        return logFilesURLs + [infoFileURL]
+    }
+
+    private func createUniqueLogDirectory() throws -> URL {
+        let url = logsDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
+    }
+
+    private func createInfoFile(at url: URL) throws -> URL {
+        let date = Date()
+
+        var body = """
+        App Version: \(Bundle.main.appInfo.fullVersion)
+        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
+        Device: \(UIDevice.current.zm_model())
+        iOS version: \(UIDevice.current.systemVersion)
+        Date: \(date.transportString())
+        """
+
+        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
+            // display only when enabled
+            body.append("\nDatadog ID: \(datadogUserIdentifier)")
+        }
+
+        let infoFileURL = url.appendingPathComponent("info.txt")
+
+        try body.write(
+            to: infoFileURL,
+            atomically: true,
+            encoding: .utf8
+        )
+
+        return infoFileURL
+    }
+
 }
