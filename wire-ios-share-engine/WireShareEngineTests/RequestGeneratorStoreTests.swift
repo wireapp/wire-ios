@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
+import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireShareEngine
 
 final class RequestGeneratorStoreTests: ZMTBaseTest {
 
@@ -62,7 +66,9 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
     override func setUp() {
         super.setUp()
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
+
         mockStrategy = MockStrategy()
     }
 
@@ -70,6 +76,9 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         mockStrategy = nil
         sut.tearDown()
         sut = nil
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

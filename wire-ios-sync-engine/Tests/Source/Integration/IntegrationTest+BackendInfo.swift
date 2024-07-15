@@ -22,6 +22,8 @@ import WireTransport
 @objc
 extension IntegrationTest {
 
+    // Please try to avoid these methods and call the functions in place.
+
     func enableBackendInfoMocking() {
         BackendInfo.enableMocking()
     }

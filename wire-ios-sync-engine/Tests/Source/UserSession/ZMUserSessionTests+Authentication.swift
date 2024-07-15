@@ -16,17 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
 
-    var previousApiVersion: APIVersion?
-
     override func setUp() {
         super.setUp()
-        previousApiVersion = BackendInfo.apiVersion
+
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
 
         syncMOC.performGroupedAndWait {
@@ -36,7 +38,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
     }
 
     override func tearDown() {
-        BackendInfo.apiVersion = previousApiVersion
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 

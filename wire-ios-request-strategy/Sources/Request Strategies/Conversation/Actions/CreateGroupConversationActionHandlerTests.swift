@@ -17,8 +17,12 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireRequestStrategy
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
 
@@ -99,7 +103,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.domain = "example.com"
     }
 
@@ -113,7 +117,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
-        BackendInfo.storage = .standard
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 

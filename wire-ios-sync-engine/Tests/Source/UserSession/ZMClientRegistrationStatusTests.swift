@@ -17,10 +17,14 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
 import XCTest
 
-class MockCookieStorage: CookieProvider {
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
+
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
@@ -33,7 +37,7 @@ class MockCookieStorage: CookieProvider {
 
 }
 
-class ZMClientRegistrationStatusTests: MessagingTest {
+final class ZMClientRegistrationStatusTests: MessagingTest {
 
     private var sut: ZMClientRegistrationStatus!
     private var mockCookieStorage: MockCookieStorage!
@@ -42,6 +46,8 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
 
         // be sure to call this before initializing sut
         uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
@@ -61,6 +67,8 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         self.mockClientRegistationDelegate = nil
         self.mockCookieStorage = nil
         self.sut = nil
+
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -761,28 +769,28 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
     // MARK: - Helpers
 
-    func needsPasswordError() -> NSError {
+    private func needsPasswordError() -> NSError {
         NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue))
     }
 
-    func tooManyClientsError() -> NSError {
+    private func tooManyClientsError() -> NSError {
         NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue))
     }
 
-    func needToRegisterEmailError() -> NSError {
+    private func needToRegisterEmailError() -> NSError {
         NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue))
     }
 
-    func needToToEnrollE2EIToRegisterClientError() -> NSError {
+    private func needToToEnrollE2EIToRegisterClientError() -> NSError {
         NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue))
     }
 
-    func needToSetHandleError() -> NSError {
+    private func needToSetHandleError() -> NSError {
         NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue))
     }
 
     @objc
-    func enableMLS() {
+    private func enableMLS() {
         DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
         BackendInfo.storage = .temporary()
@@ -790,7 +798,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
     }
 
     @objc
-    func enableE2EI() {
+    private func enableE2EI() {
         FeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
     }
 }

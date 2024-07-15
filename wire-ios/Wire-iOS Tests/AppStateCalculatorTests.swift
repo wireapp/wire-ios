@@ -18,6 +18,9 @@
 
 import XCTest
 
+@_spi(MockBackendInfo)
+import WireTransport
+
 @testable import Wire
 
 final class AppStateCalculatorTests: XCTestCase {
@@ -28,19 +31,22 @@ final class AppStateCalculatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
+
         sut = AppStateCalculator()
         delegate = MockAppStateCalculatorDelegate()
         delegate.appStateCalculatorDidCalculateCompletion_MockMethod = { _, _, completion in
             completion()
         }
         sut.delegate = delegate
-        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
         delegate = nil
-        BackendInfo.apiVersion = nil
+
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }

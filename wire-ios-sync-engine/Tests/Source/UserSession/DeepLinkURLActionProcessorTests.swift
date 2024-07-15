@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
+
 @_spi(MockBackendInfo)
 import WireTransport
-import XCTest
 
 @testable import WireSyncEngine
 

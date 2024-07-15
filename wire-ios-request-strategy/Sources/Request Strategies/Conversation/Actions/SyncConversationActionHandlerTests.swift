@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireRequestStrategy
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
 
@@ -143,7 +147,13 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_Success() throws {
         // Given
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v2
+
+        defer {
+            BackendInfo.resetMocking()
+        }
+
         let sut = SyncConversationActionHandler(context: syncMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
