@@ -38,6 +38,13 @@ extension UIBarButtonItem {
         )
     }
 
+    func setIcon(_ icon: StyleKitIcon) {
+        image = icon.makeImage(
+            size: .tiny,
+            color: IconColors.foregroundDefaultBlack
+        )
+    }
+
     static func createCloseItem() -> UIBarButtonItem {
         let item = UIBarButtonItem(icon: .cross, target: nil, action: nil)
         item.tintColor = IconColors.foregroundDefault
