@@ -23,7 +23,7 @@ final class RegistrationStrategy: NSObject {
     weak var userInfoParser: UserInfoParser?
     var registrationSync: ZMSingleRequestSync!
 
-    init(groupQueue: ZMSGroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
+    init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
         registrationStatus = status
         self.userInfoParser = userInfoParser
         super.init()

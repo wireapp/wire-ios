@@ -29,7 +29,7 @@ final class APIVersionResolver {
     let clientDevVersions: Set<APIVersion>
     let isDeveloperModeEnabled: Bool
 
-    private let queue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
+    private let queue: GroupQueue = DispatchGroupQueue(queue: .main)
     private let transportSession: UnauthenticatedTransportSessionProtocol
 
     // MARK: - Life cycle

@@ -39,11 +39,11 @@ extension ZMUserSession {
 private class HTTPClientImpl: HTTPClient {
 
     let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
+    let queue: GroupQueue
 
     public init(
         transportSession: TransportSessionType,
-        queue: ZMSGroupQueue
+        queue: GroupQueue
     ) {
         self.transportSession = transportSession
         self.queue = queue

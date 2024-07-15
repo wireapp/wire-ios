@@ -23,7 +23,7 @@ import WireDataModel
 // MARK: - Mocks
 
 @objc
-final class FakeGroupQueue: NSObject, ZMSGroupQueue {
+final class FakeGroupQueue: NSObject, GroupQueue {
 
     var dispatchGroup: ZMSDispatchGroup? {
         nil
