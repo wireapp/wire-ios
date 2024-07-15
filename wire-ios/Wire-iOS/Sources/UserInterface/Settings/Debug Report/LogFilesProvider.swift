@@ -52,15 +52,15 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Properties
 
-    private let temporaryDirectory = NSTemporaryDirectory()
-
-    private var logsDirectory: URL {
+    private var logsDirectory: URL = {
         let baseURL = URL(
-            fileURLWithPath: temporaryDirectory,
-            isDirectory: false
+            fileURLWithPath: NSTemporaryDirectory(),
+            isDirectory: true
         )
-        return baseURL.appendingPathComponent("logs")
-    }
+        return baseURL
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathComponent("logs")
+    }()
 
     private var logFilesURLs: [URL] {
         var urls = WireLogger.logFiles
