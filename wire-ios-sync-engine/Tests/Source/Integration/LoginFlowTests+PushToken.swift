@@ -33,7 +33,7 @@ class LoginFlowTests_PushToken: IntegrationTest {
 
     func testThatItRegistersThePushTokenWithTheBackend() throws {
         // given
-        let deviceToken = "asdfasdf".data(using: .utf8)!
+        let deviceToken = Data("asdfasdf".utf8)
         let deviceTokenAsHex = "6173646661736466"
         XCTAssertTrue(self.login())
 
