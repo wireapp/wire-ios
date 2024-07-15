@@ -194,6 +194,12 @@ public final class ZMUserSession: NSObject {
             crlAPI: CertificateRevocationListAPI(),
             mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            fetchE2EIFeatureConfig: { [weak self] in
+                guard let self else { return nil }
+
+                let featureRepository = FeatureRepository(context: self.coreDataStack.syncContext)
+                return featureRepository.fetchE2EI().config
+            },
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
         )
@@ -951,13 +957,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         recurringActionService.performActionsIfNeeded()
 
-        Task {
-            await self.cRLsChecker.checkExpiredCRLs()
-        }
-
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
-            self?.checkE2EICertificateExpiryStatus()
+        }
+
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                checkE2EICertificateExpiryStatus()
+                await cRLsChecker.checkExpiredCRLs()
+            }
         }
     }
 
@@ -1071,7 +1080,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        guard e2eiFeature.isEnabled else { return }
         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
