@@ -84,7 +84,7 @@ extension MessagingTest {
     }
 
     @objc
-    public func setDefaults() {
+    public func setBackendInfoDefaults() {
         BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
@@ -94,7 +94,7 @@ extension MessagingTest {
     }
 
     @objc
-    public func unsetDefaultAPIVersion() {
+    public func resetBackendInfo() {
         BackendInfo.resetMocking()
     }
 }
