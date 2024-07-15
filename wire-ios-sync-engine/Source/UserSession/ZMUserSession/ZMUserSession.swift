@@ -394,35 +394,6 @@ public final class ZMUserSession: NSObject {
         super.init()
     }
 
-    private func setupAnalyticsSession() {
-        guard let config = dependencies.analyticsSessionConfiguration else {
-            return
-        }
-
-        let teamInfo: TeamInfo? = {
-            guard let team = selfUser.membership?.team,
-                  let teamID = team.remoteIdentifier?.uuidString else {
-                return nil
-            }
-
-            let teamRole = selfUser.teamRole.analyticsValue
-            let teamSize = team.members.count
-
-            return TeamInfo(id: teamID, role: teamRole, size: teamSize)
-        }()
-
-        let analyticsUserProfile = AnalyticsUserProfile(
-            analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
-            teamInfo: teamInfo
-        )
-
-        self.analyticsSession = AnalyticsSession(
-            appKey: config.countlyKey,
-            host: config.host,
-            userProfile: analyticsUserProfile
-        )
-    }
-
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
         analyticsSession?.trackEvent(.appOpen)
     }
@@ -488,11 +459,6 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
-
-        if !ProcessInfo.processInfo.isRunningTests {
-            setupAnalyticsSession()
-            self.analyticsSession?.startSession()
-        }
 
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
