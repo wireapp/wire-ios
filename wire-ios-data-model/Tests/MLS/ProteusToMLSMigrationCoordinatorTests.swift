@@ -487,8 +487,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         isMLSMigrationFeatureEnabled: Bool,
         startTime: Date?
     ) {
-        // right?
-
         // Set APIVersion
         BackendInfo.apiVersion = isAPIV5Supported ? .v5 : .v0
 
