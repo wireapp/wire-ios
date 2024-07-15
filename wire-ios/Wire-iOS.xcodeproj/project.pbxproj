@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		592996512C2EB98A008C334F /* Format Swift Code */ = {
+		592996512C2EB98A008C334F /* Format & Lint Swift Code */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format Swift Code" */;
+			buildConfigurationList = 592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */;
 			buildPhases = (
 				592996552C2EB996008C334F /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = "Format Swift Code";
+			name = "Format & Lint Swift Code";
 			productName = "Format Swift Code";
 		};
 /* End PBXAggregateTarget section */
@@ -8764,7 +8764,6 @@
 				8F42C536199244A700288E4D /* Resources */,
 				160EABBA1D47BD7200F83CA7 /* Copy Extra Audio Notifications */,
 				5E055B28228AAF1500E91314 /* Update Settings.bundle */,
-				EE00ACE125E43FA2005FEC14 /* Run SwiftLint */,
 				A96867A826A5E52F00679D95 /* Embed Frameworks */,
 				065A5AE9279B07AC002D4D1E /* Embed App Extensions */,
 			);
@@ -8950,7 +8949,7 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
-				592996512C2EB98A008C334F /* Format Swift Code */,
+				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
 			);
 		};
 /* End PBXProject section */
@@ -9098,7 +9097,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftformat.sh \\\n../SourceryPlugin \\\n../WireAPI \\\n../WireAnalytics \\\n../WireDomain \\\n../WireUI\n";
+			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n\"$PROJECT_DIR/../SourceryPlugin\" \\\n\"$PROJECT_DIR/../WireAPI\" \\\n\"$PROJECT_DIR/../WireAnalytics\" \\\n\"$PROJECT_DIR/../WireDomain\" \\\n\"$PROJECT_DIR/../WireUI\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" --no-cache \"$PROJECT_DIR/..\"\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9137,6 +9136,7 @@
 		};
 		E64120D52C1C7A820097526C /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -9171,26 +9171,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-swiftgen.sh --config swiftgenShareExtension.yml\n";
-		};
-		EE00ACE125E43FA2005FEC14 /* Run SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run SwiftLint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 		EEF9786E25D2923A00F7333E /* Run SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11785,7 +11765,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format Swift Code" */ = {
+		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				592996522C2EB98A008C334F /* Debug */,

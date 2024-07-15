@@ -22,9 +22,9 @@ import WireTransport
 public struct HttpClientImpl: HttpClient {
 
     let transportSession: any TransportSessionType
-    let queue: any ZMSGroupQueue
+    let queue: any GroupQueue
 
-    public init(transportSession: any TransportSessionType, queue: any ZMSGroupQueue) {
+    public init(transportSession: any TransportSessionType, queue: any GroupQueue) {
         self.transportSession = transportSession
         self.queue = queue
     }

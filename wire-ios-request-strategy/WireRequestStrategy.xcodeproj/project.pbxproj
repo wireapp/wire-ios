@@ -281,11 +281,11 @@
 		E69A02172B84F02800126FF6 /* SelfSupportedProtocolsRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02162B84F02800126FF6 /* SelfSupportedProtocolsRequestBuilder.swift */; };
 		E69A02222B85096000126FF6 /* ProteusToMLSMigrationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02202B85095F00126FF6 /* ProteusToMLSMigrationState.swift */; };
 		E69A022A2B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02292B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift */; };
-		E6BBCF172C32EBA600BD0259 /* MessageLogAttributesBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF162C32EBA600BD0259 /* MessageLogAttributesBuilder.swift */; };
-		E6BBCF1D2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF1C2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift */; };
 		E6BBCF112C32C52600BD0259 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF102C32C52600BD0259 /* HttpClient.swift */; };
 		E6BBCF132C32C55700BD0259 /* HttpClientImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF122C32C55700BD0259 /* HttpClientImpl.swift */; };
 		E6BBCF152C32D78F00BD0259 /* UserClient+QualifiedID.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF142C32D78F00BD0259 /* UserClient+QualifiedID.swift */; };
+		E6BBCF172C32EBA600BD0259 /* MessageLogAttributesBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF162C32EBA600BD0259 /* MessageLogAttributesBuilder.swift */; };
+		E6BBCF1D2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF1C2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift */; };
 		E6E0CE872B70D2C60004ED88 /* SyncPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */; };
 		E6E0CE892B70DDAB0004ED88 /* SynchronizationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */; };
 		E6E0CE8B2B70DE430004ED88 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E0CE8A2B70DE430004ED88 /* OperationState.swift */; };
@@ -805,11 +805,11 @@
 		E69A02162B84F02800126FF6 /* SelfSupportedProtocolsRequestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsRequestBuilder.swift; sourceTree = "<group>"; };
 		E69A02202B85095F00126FF6 /* ProteusToMLSMigrationState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusToMLSMigrationState.swift; sourceTree = "<group>"; };
 		E69A02292B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSupportedProtocolsRequestBuilderTests.swift; sourceTree = "<group>"; };
-		E6BBCF162C32EBA600BD0259 /* MessageLogAttributesBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLogAttributesBuilder.swift; sourceTree = "<group>"; };
-		E6BBCF1C2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLogAttributesBuilderTests.swift; sourceTree = "<group>"; };
 		E6BBCF102C32C52600BD0259 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
 		E6BBCF122C32C55700BD0259 /* HttpClientImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientImpl.swift; sourceTree = "<group>"; };
 		E6BBCF142C32D78F00BD0259 /* UserClient+QualifiedID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+QualifiedID.swift"; sourceTree = "<group>"; };
+		E6BBCF162C32EBA600BD0259 /* MessageLogAttributesBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLogAttributesBuilder.swift; sourceTree = "<group>"; };
+		E6BBCF1C2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLogAttributesBuilderTests.swift; sourceTree = "<group>"; };
 		E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPhase.swift; sourceTree = "<group>"; };
 		E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationState.swift; sourceTree = "<group>"; };
 		E6E0CE8A2B70DE430004ED88 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -2182,7 +2182,6 @@
 				166901671D707509000FE4AF /* Headers */,
 				166901651D707509000FE4AF /* Sources */,
 				166901661D707509000FE4AF /* Frameworks */,
-				668E958827425E0A0028C1F8 /* Run Swiftlint */,
 				166901681D707509000FE4AF /* Resources */,
 			);
 			buildRules = (
@@ -2389,26 +2388,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-sourcery.sh --config ./Support/Sourcery/config.yml\n";
-		};
-		668E958827425E0A0028C1F8 /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -33,7 +33,7 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     func enqueueOneTime(_ request: ZMTransportRequest)
 
     @objc(enqueueRequest:queue:completionHandler:)
-    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse
+    func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse
 
     @objc(attemptToEnqueueSyncRequestWithGenerator:)
     func attemptToEnqueueSyncRequest(generator: ZMTransportRequestGenerator) -> ZMTransportEnqueueResult
@@ -50,7 +50,7 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void)
 
     @objc(configurePushChannelWithConsumer:groupQueue:)
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: ZMSGroupQueue)
+    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue)
 
     @objc(renewAccessTokenWithClientID:)
     func renewAccessToken(with clientID: String)
