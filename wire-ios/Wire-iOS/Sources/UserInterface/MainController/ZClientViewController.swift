@@ -164,7 +164,6 @@ final class ZClientViewController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        wireSplitViewController.delegate = self
         addToSelf(wireSplitViewController)
 
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -765,24 +764,7 @@ final class ZClientViewController: UIViewController {
 
 // MARK: - ZClientViewController + SplitViewControllerDelegate
 
-extension ZClientViewController: UISplitViewControllerDelegate, SplitViewControllerDelegate {
+extension ZClientViewController: UISplitViewControllerDelegate {
 
-    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-
-        print("#^$% splitViewControllerShouldMoveLeftViewController:", splitViewController.rightViewController != nil &&
-              splitViewController.leftViewController == conversationListViewController.tabBarController &&
-              conversationListViewController.tabBarController?.selectedIndex == MainTabBarControllerTab.conversations.rawValue &&
-              (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false))
-
-        print("#^$% splitViewController.rightViewController", splitViewController.rightViewController != nil)
-        print("#^$% splitViewController.leftViewController == conversationListViewController.tabBarController", splitViewController.leftViewController == conversationListViewController.tabBarController)
-        print("#^$% conversationListViewController.tabBarController?.selectedIndex == MainTabBarControllerTab.conversations.rawValue", conversationListViewController.tabBarController?.selectedIndex == MainTabBarControllerTab.conversations.rawValue)
-        print("#^$% conversationListViewController.presentedViewController", conversationListViewController.presentedViewController as Any)
-        print("#^$% splitViewController.isLeftViewControllerRevealed", splitViewController.isLeftViewControllerRevealed)
-
-        return splitViewController.rightViewController != nil &&
-        splitViewController.leftViewController == conversationListViewController.tabBarController &&
-        conversationListViewController.tabBarController?.selectedIndex == MainTabBarControllerTab.conversations.rawValue &&
-        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
-    }
+    // TODO: [WPB-9727] is `UISplitViewControllerDelegate` protocol conformance needed?
 }

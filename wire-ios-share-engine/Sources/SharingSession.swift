@@ -479,11 +479,6 @@ extension SharingSession: LinkPreviewDetectorType {
 fileprivate extension ConversationList {
 
     var writeableConversations: [Conversation] {
-        items.filter {
-            if let conversation = $0 as? ZMConversation {
-                return !conversation.isReadOnly
-            }
-            return false
-        }
+        items.filter { !$0.isReadOnly }
     }
 }
