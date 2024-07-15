@@ -607,7 +607,7 @@ extension AppRootRouter: ApplicationStateObserving {
         if let size {
             screenCurtain.frame.size = size
         } else {
-            screenCurtain.frame = UIApplication.shared.firstKeyWindow?.frame ?? UIScreen.main.bounds
+            screenCurtain.frame = UIApplication.shared.wr_keyWindow?.frame ?? UIScreen.main.bounds
         }
     }
 }

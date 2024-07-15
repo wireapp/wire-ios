@@ -23,7 +23,7 @@ extension UIDevice {
         if orientation.isPortrait || orientation.isLandscape {
             return orientation
         }
-        guard let interfaceOrientation = UIApplication.shared.firstKeyWindow?.windowScene?.interfaceOrientation else {
+        guard let interfaceOrientation = UIApplication.shared.wr_keyWindow?.windowScene?.interfaceOrientation else {
             return .portrait
         }
         return interfaceOrientation.isLandscape ? .landscapeLeft : .portrait
