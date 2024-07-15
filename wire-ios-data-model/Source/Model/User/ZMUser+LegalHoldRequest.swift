@@ -327,7 +327,7 @@ extension ZMUser: SelfLegalHoldSubject {
 
     private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through keystore: UserClientKeysStore) -> String? {
         guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
-        return String(data: fingerprintData, encoding: .utf8)
+        return String(decoding: fingerprintData, as: UTF8.self)
     }
 
 }
