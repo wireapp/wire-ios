@@ -59,10 +59,24 @@ extension ConversationContentViewController {
         switch actionId {
         case .cancel:
             userSession.enqueue({
+                WireLogger.messaging.info(
+                    "cancel message",
+                    attributes: [
+                        LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ].merging(.safePublic, uniquingKeysWith: { new, _ in new })
+                )
+
                 message.fileMessageData?.cancelTransfer()
             })
         case .resend:
             userSession.enqueue({
+                WireLogger.messaging.info(
+                    "resend message",
+                    attributes: [
+                        LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ].merging(.safePublic, uniquingKeysWith: { new, _ in new })
+                )
+
                 message.resend()
             })
         case .delete:
