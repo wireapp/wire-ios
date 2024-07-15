@@ -53,26 +53,3 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     }
 
 }
-
-extension Countly: AnalyticsService {
-
-    func start(appKey: String, host: URL) {
-        let config = CountlyConfig()
-        config.appKey = appKey
-        config.host = host.absoluteString
-        start(with: config)
-    }
-
-    func changeDeviceID(_ id: String) {
-        changeDeviceID(withMerge: id)
-    }
-
-    func setUserValue(_ value: Any?, forKey key: String) {
-        WireCountly.user().setValue(value, forKey: key)
-    }
-
-    public func trackEvent(_ event: AnalyticEvent) {
-        recordEvent(event.rawValue)
-    }
-
-}
