@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import WireRequestStrategy
 
@@ -64,19 +66,23 @@ private struct CodableObject: Codable {
     init() { }
 }
 
-class Payload_CodingTests: XCTestCase {
+final class Payload_CodingTests: XCTestCase {
 
     var data: Data!
 
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
+
         data = try! JSONSerialization.data(withJSONObject: ["foo": "bar"], options: [])
-        BackendInfo.apiVersion = nil
     }
 
     override func tearDown() {
-        BackendInfo.apiVersion = .v3
         data = nil
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 
