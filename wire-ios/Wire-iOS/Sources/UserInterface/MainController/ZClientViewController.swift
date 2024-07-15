@@ -33,8 +33,6 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = SplitViewController()
-
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: UITabBarController!
