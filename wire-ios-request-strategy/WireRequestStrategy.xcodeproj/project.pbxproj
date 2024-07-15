@@ -2179,7 +2179,6 @@
 				166901671D707509000FE4AF /* Headers */,
 				166901651D707509000FE4AF /* Sources */,
 				166901661D707509000FE4AF /* Frameworks */,
-				668E958827425E0A0028C1F8 /* Run Swiftlint */,
 				166901681D707509000FE4AF /* Resources */,
 			);
 			buildRules = (
@@ -2386,26 +2385,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-sourcery.sh --config ./Support/Sourcery/config.yml\n";
-		};
-		668E958827425E0A0028C1F8 /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
