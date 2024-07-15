@@ -135,7 +135,6 @@ struct LogFilesProvider: LogFilesProviding {
         guard !logFilesURLs.isEmpty else {
             throw Error.noLogs(description: logFilesURLs.description)
         }
-        
         return logFilesURLs + [infoFileURL]
     }
 
