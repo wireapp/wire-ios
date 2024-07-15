@@ -17,15 +17,15 @@
 //
 
 import Foundation
-import XCTest
 import WireCoreCrypto
+import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
 class ProteusServiceTests: XCTestCase {
 
-    struct MockError: Error {}
+    struct MockError: Error, Equatable {}
 
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
@@ -199,17 +199,18 @@ class ProteusServiceTests: XCTestCase {
         let sessionID = ProteusSessionID.random()
         let plaintext = Data.secureRandomData(length: 8)
 
+        let error = MockError()
         // Mock
         var encryptCalls = 0
         mockCoreCrypto.proteusEncryptSessionIdPlaintext_MockMethod = { sessionIDString, plaintextData in
             encryptCalls += 1
             XCTAssertEqual(sessionIDString, sessionID.rawValue)
             XCTAssertEqual(plaintextData, plaintext)
-            throw MockError()
+            throw error
         }
 
         // Then
-        await assertItThrows(error: ProteusService.EncryptionError.failedToEncryptData) {
+        await assertItThrows(error: ProteusService.EncryptionError.failedToEncryptData(error)) {
             // When
             _ = try await sut.encrypt(
                 data: plaintext,

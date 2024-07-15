@@ -446,7 +446,7 @@
     NSString *completeId = @"09873-1";
     NSDictionary *payload = @{
                               @"name" : @"This is the new name",
-                              @"accent_id" : @"4",
+                              @"accent_id" : @"5",
                               @"assets" : @[
                                            @{ @"key" : previewId, @"type" : @"image", @"size" : @"preview" },
                                            @{ @"key" : completeId, @"type" : @"image", @"size" : @"complete" },

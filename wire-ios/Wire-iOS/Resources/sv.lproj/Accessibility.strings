@@ -86,6 +86,9 @@
 "conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
 "conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
 
+"sendLocation.address.description" = "Selected address %@";
+"sendLocation.address.hint" = "It shows the currently selected address for sending.";
+
 "audioRecord.stopButton.description" = "Stop recording";
 "audioRecord.startButton.description" = "Start recording";
 "audioRecord.startButton.hint" = "Double tap to record";
@@ -101,7 +104,7 @@
 "audioRecord.roboticEffectButton.description" = "Robotic";
 "audioRecord.highToDeepEffectButton.description" = "High to deep";
 
-"createConversation.backButton.description" = "Go back to contact list";
+"createConversation.backButton.description" = "Gå tillbaka till kontaktlistan";
 
 "pictureView.closeButton.description" = "Close picture view";
 
@@ -140,7 +143,7 @@
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
 "conversationDetails.participantCell.hint" = "Double tap to open profile";
 
-"createConversation.backButton.description" = "Go back to contact list";
+"createConversation.backButton.description" = "Gå tillbaka till kontaktlistan";
 "createConversation.hideSettings.hint" = "Double tap to hide settings";
 "createConversation.openSettings.hint" = "Double tap to open settings";
 "createConversation.searchView.description" = "Type group name";
@@ -182,7 +185,7 @@
 "profile.closeButton.description" = "Close profile";
 
 "accountPage.availabilityStatus.description" = "Status";
-"accountPage.availabilityStatus.hint" = "Double tap to change status";
+"accountPage.availabilityStatus.hint" = "Dubbeltryck för att ändra status";
 "accountPage.handle.description" = "Användarnanm";
 "accountPage.name.description" = "Profilnamn";
 "accountPage.teamName.description" = "Team name";

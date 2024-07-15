@@ -86,6 +86,9 @@
 "conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
 "conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
 
+"sendLocation.address.description" = "Selected address %@";
+"sendLocation.address.hint" = "It shows the currently selected address for sending.";
+
 "audioRecord.stopButton.description" = "Stop recording";
 "audioRecord.startButton.description" = "Start recording";
 "audioRecord.startButton.hint" = "Double tap to record";

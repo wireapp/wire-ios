@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConnectRequestsCellSnapshotTests: XCTestCase {
 
@@ -25,7 +25,7 @@ final class ConnectRequestsCellSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .brightOrange
+        accentColor = .amber
         sut = ConnectRequestsCell(frame: CGRect(x: 0, y: 0, width: 375, height: 56))
         let titleString = L10n.Localizable.List.ConnectRequest.peopleWaiting(1)
         let title = NSAttributedString(string: titleString)

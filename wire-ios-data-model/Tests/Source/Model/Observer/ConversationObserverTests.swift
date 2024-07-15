@@ -205,18 +205,17 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        otherUser.accentColorValue = .brightOrange
+        otherUser.accentColor = .amber
         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _, _ in
-                                                        otherUser.accentColorValue = ZMAccentColor.softPink
-            },
-                                                     expectedChangedField: nil,
-                                                     expectedChangedKeys: []
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in otherUser.accentColor = .turquoise },
+            expectedChangedField: nil,
+            expectedChangedKeys: []
         )
     }
 
@@ -501,7 +500,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         var conversation: ZMConversation!
         var message: ZMMessage!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             conversation = self.syncMOC.object(with: uiConversation.objectID) as? ZMConversation
             message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             message.visibleInConversation = conversation
@@ -519,7 +518,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             conversation.lastReadServerTimeStamp = message.serverTimestamp
             conversation.calculateLastUnreadMessages()
             XCTAssertEqual(conversation.estimatedUnreadCount, 0)
@@ -749,7 +748,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         var conversation: ZMConversation!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             conversation = self.syncMOC.object(with: uiConversation.objectID) as? ZMConversation
             self.syncMOC.saveOrRollback()
         }
@@ -758,7 +757,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.addUnreadMissedCall(conversation)
             self.syncMOC.saveOrRollback()
         }

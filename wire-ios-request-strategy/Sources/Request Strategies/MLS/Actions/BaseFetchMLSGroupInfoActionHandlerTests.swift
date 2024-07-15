@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModel
 @testable import WireRequestStrategy
+import XCTest
 
 class BaseFetchMLSGroupInfoActionHandlerTests<
     Action: BaseFetchMLSGroupInfoAction,
@@ -49,7 +49,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
     func test_itHandlesSuccess() throws {
         // Given
         let groupState = Data([1, 2, 3])
-        let payload = try XCTUnwrap(String(data: groupState, encoding: .utf8)) as ZMTransportData
+        let payload = try XCTUnwrap(String(decoding: groupState, as: UTF8.self)) as ZMTransportData
 
         // When
         let receivedGroupState = test_itHandlesSuccess(status: 200, payload: payload)

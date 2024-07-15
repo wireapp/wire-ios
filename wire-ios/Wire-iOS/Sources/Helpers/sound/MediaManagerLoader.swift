@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
+import Foundation
 import WireSyncEngine
 
 // The AVS library consists of several components, those are:
@@ -44,7 +44,7 @@ enum MediaManagerState {
 // This enum is implementing the redundant Elm architecture state change. There is a single state and it's mutated by
 // sending it the messages (there is no way to directly alter the state).
 extension MediaManagerState {
-    public mutating func send(message: LoadingMessage) {
+    mutating func send(message: LoadingMessage) {
         switch (self, message) {
         case (.initial, .flowManagerLoaded):
             self = .loaded

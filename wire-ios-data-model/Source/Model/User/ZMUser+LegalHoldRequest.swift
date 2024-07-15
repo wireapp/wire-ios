@@ -21,6 +21,8 @@ import WireCryptobox
 
 private let log = ZMSLog(tag: "UserClient")
 
+public typealias SelfUserLegalHoldable = UserType & EditableUserType & SelfLegalHoldSubject
+
 /**
  * A protocol for objects that provide the legal hold status for the self user.
  */
@@ -325,7 +327,7 @@ extension ZMUser: SelfLegalHoldSubject {
 
     private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through keystore: UserClientKeysStore) -> String? {
         guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
-        return String(data: fingerprintData, encoding: .utf8)
+        return String(decoding: fingerprintData, as: UTF8.self)
     }
 
 }

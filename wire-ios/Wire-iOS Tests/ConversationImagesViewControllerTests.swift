@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 extension SelfUser {
 
@@ -69,7 +69,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             collection: assetWrapper,
             initialMessage: initialMessage,
             inverse: true,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: .mock
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)

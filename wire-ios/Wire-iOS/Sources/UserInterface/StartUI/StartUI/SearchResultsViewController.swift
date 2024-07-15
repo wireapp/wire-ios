@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
@@ -107,7 +106,7 @@ extension UIViewController {
             } else if let controller = current.parent {
                 candidate = controller
             }
-            if let candidate = candidate {
+            if let candidate {
                 current = candidate
             }
             return candidate
@@ -157,10 +156,9 @@ final class SearchResultsViewController: UIViewController {
 
     lazy var topPeopleSection: TopPeopleSectionController = {
         let userSession = (userSession as? ZMUserSession)
+        let directory = userSession?.topConversationsDirectory
 
-        return TopPeopleSectionController(
-            topConversationsDirectory: userSession?.topConversationsDirectory
-        )
+        return TopPeopleSectionController(topConversationsDirectory: directory)
     }()
 
     let servicesSection: SearchServicesSectionController

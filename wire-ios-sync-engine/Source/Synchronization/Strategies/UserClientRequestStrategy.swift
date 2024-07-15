@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import WireCryptobox
+import WireDataModel
 import WireSystem
 import WireTransport
 import WireUtilities
-import WireCryptobox
-import WireDataModel
 
 private let zmLog = ZMSLog(tag: "userClientRS")
 
@@ -140,7 +140,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let managedObjectContext = managedObjectContext else {
+        guard let managedObjectContext else {
             assertionFailure("UserClientRequestStrategy has no context")
             return nil
         }
@@ -323,10 +323,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 return false
             } else if clientUpdateStatus?.currentPhase == .waitingForPrekeys {
                 clientUpdateStatus?.willGeneratePrekeys()
+                let nextPrekeyIndex = UInt16(userClient.preKeysRangeMax) + 1
                 let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
                 Task {
                     do {
-                        let prekeys = try await prekeyGenerator.generatePrekeys()
+                        let prekeys = try await prekeyGenerator.generatePrekeys(startIndex: nextPrekeyIndex)
                         await managedObjectContext?.perform {
                             self.clientUpdateStatus?.didGeneratePrekeys(prekeys)
                         }
@@ -336,7 +337,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                         // swiftlint:enable todo_requires_jira_link
                         WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
-                    managedObjectContext?.leaveAllGroups(groups)
+                    managedObjectContext?.leaveAllGroups(groups!)
                 }
                 return false
             } else {
@@ -423,7 +424,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
         var errorCode: ClientUpdateError = .none
-        if let response = response, response.result == .permanentError {
+        if let response, response.result == .permanentError {
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
                 switch errorLabel {
                 case "client-not-found":
@@ -443,7 +444,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func errorFromFailedInsertResponse(_ response: ZMTransportResponse!) -> NSError {
         var errorCode: ZMUserSessionErrorCode = .unknownError
-        if let moc = self.managedObjectContext, let response = response, response.result == .permanentError {
+        if let moc = self.managedObjectContext, let response, response.result == .permanentError {
 
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
                 switch errorLabel {

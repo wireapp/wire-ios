@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
 extension ZClientViewController {
+
     private func wrapInNavigationControllerAndPresent(viewController: UIViewController) {
         let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
         navWrapperController.modalPresentationStyle = .formSheet
@@ -31,25 +31,36 @@ extension ZClientViewController {
         })
     }
 
-    public func showConnectionRequest(userId: UUID) {
-        let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self, userSession: userSession)
+    func showConnectionRequest(userId: UUID) {
+        let searchUserViewConroller = SearchUserViewController(
+            userId: userId,
+            profileViewControllerDelegate: self,
+            userSession: userSession,
+            mainCoordinator: MainCoordinator(zClientViewController: self)
+        )
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
     }
 
-    public func showUserProfile(user: UserType) {
+    func showUserProfile(user: UserType) {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
         }
 
-        let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .profileViewer, userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession,
+            mainCoordinator: MainCoordinator(zClientViewController: self)
+        )
         profileViewController.delegate = self
 
         wrapInNavigationControllerAndPresent(viewController: profileViewController)
     }
 
-    public func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
+    func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
         switch conversation.conversationType {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
@@ -57,15 +68,13 @@ extension ZClientViewController {
             select(conversation: conversation,
                    scrollTo: message,
                    focusOnView: true,
-                   animated: true,
-                   completion: nil)
+                   animated: true)
         default:
             break
         }
     }
 
-    public func showConversationList() {
+    func showConversationList() {
         transitionToList(animated: true, completion: nil)
     }
-
 }

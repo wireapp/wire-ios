@@ -24,6 +24,7 @@ public protocol E2EIActivationDateRepositoryProtocol {
 
     var e2eiActivatedAt: Date? { get }
     func storeE2EIActivationDate(_ date: Date)
+    func removeE2EIActivationDate()
 
 }
 

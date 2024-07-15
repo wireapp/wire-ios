@@ -16,22 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
 import WireDataModel
+import WireUITesting
+import XCTest
 
-final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!
     var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
-        mockUser.accentColorValue = .brightOrange
+        mockUser.zmAccentColor = .amber
         mockUser.handle = "bruno"
 
         mockConnectionRequest = SwiftMockConversation()
@@ -39,7 +42,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock(mockUser: mockUser)
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         sut = ConnectRequestsViewController(userSession: userSession)
 
         sut.loadViewIfNeeded()
@@ -51,6 +54,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
         mockConnectionRequest = nil
@@ -59,12 +63,12 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForOneRequest() {
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     func testForTwoRequests() {
         let otherUser = MockUserType.createConnectedUser(name: "Bill")
-        otherUser.accentColorValue = .brightYellow
+        otherUser.zmAccentColor = .amber
         otherUser.handle = "bill"
 
         let secondConnectionRequest = SwiftMockConversation()
@@ -73,6 +77,6 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.connectionRequests = [secondConnectionRequest, mockConnectionRequest]
         sut.reload(animated: false)
 
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 }

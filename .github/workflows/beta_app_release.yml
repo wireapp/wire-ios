@@ -1,7 +1,12 @@
 name: Beta
 
-on: workflow_dispatch
-
+on: 
+  workflow_dispatch:
+    inputs:
+      distribute_externals:
+        type: boolean
+        description: 'Distribute externally'
+        default: false
 permissions: 
   checks: write
 
@@ -9,5 +14,7 @@ jobs:
   testflight_beta:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      datadog_enabled: true
       fastlane_action: testflight_beta
+      distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit

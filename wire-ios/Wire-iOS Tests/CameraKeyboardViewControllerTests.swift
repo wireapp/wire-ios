@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import AVFoundation
 import Photos
 import SnapshotTesting
+import WireDesign
+import XCTest
+
 @testable import Wire
 
 // MARK: - CameraKeyboardViewControllerDelegateMock
@@ -97,7 +99,7 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 
 // MARK: - CameraKeyboardViewControllerTests
 
-final class CameraKeyboardViewControllerTests: BaseSnapshotTestCase {
+final class CameraKeyboardViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 

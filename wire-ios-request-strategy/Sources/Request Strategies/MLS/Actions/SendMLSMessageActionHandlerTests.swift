@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageAction, SendMLSMessageActionHandler> {
 
-    let mlsMessage = "mlsMessage".data(using: .utf8)!
+    let mlsMessage = Data("mlsMessage".utf8)
 
     override func setUp() {
         super.setUp()

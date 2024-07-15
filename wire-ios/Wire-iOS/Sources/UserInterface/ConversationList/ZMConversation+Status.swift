@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 // Describes the icon to be shown for the conversation in the list.
 enum ConversationStatusIcon: Equatable {
@@ -105,7 +105,7 @@ enum StatusMessageType: Int, CaseIterable {
     }
 
     func localizedString(with count: UInt) -> String? {
-        guard let localizationKey = localizationKey else { return nil }
+        guard let localizationKey else { return nil }
 
         return String(format: localizationKey.localized, count)
     }
@@ -203,7 +203,7 @@ final class ContentSizeCategoryUpdater {
     private var observer: NSObjectProtocol!
 
     deinit {
-        if let observer = observer {
+        if let observer {
             NotificationCenter.default.removeObserver(observer)
         }
     }
@@ -226,7 +226,7 @@ final class ConversationStatusStyle {
 
     init() {
         contentSizeStyleUpdater = ContentSizeCategoryUpdater { [weak self] in
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
 
@@ -312,9 +312,9 @@ final class CallingMatcher: ConversationStatusMatcher {
         return CallingMatcher.icon(for: conversation.voiceChannel?.state, conversation: conversation)
     }
 
-    public static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
+    static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
 
-        guard let state = state else {
+        guard let state else {
             return nil
         }
 
@@ -351,7 +351,7 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
         })
 
         let text: String
-        if let textItem = textItem,
+        if let textItem,
            case let .text(data) = textItem,
            let messageText = data.messageText {
             text = messageText

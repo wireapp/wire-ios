@@ -3,21 +3,4 @@
    uuid = "742BD204-111B-48F2-9141-E63A150EA255"
    type = "3"
    version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
-         <BreakpointContent
-            uuid = "19AA3E78-E6B0-4B09-B06D-EF3DF0CDEF5C"
-            shouldBeEnabled = "Yes"
-            nameForDebugger = "attemptToPresentWhilePresentationInProgress"
-            condition = "[(UIViewController *)$arg1 presentedViewController] != nil"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            symbolName = "-[UIViewController presentViewController:animated:completion:]"
-            moduleName = "">
-            <Locations>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
 </Bucket>

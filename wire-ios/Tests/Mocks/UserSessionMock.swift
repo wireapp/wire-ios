@@ -18,10 +18,10 @@
 
 import Foundation
 import LocalAuthentication
-import WireSyncEngine
-import WireSyncEngineSupport
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireSyncEngine
+import WireSyncEngineSupport
 
 @testable import Wire
 
@@ -45,7 +45,7 @@ final class UserSessionMock: UserSession {
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
         mock.invokeUserClient_MockMethod = { _ in
-            return "102030405060708090102030405060708090102030405060708090".data(using: .utf8)
+            return Data("102030405060708090102030405060708090102030405060708090".utf8)
         }
         return mock
     }()
@@ -67,11 +67,20 @@ final class UserSessionMock: UserSession {
 
     var _passcode: String?
 
-    var networkState: ZMNetworkState = .offline
+    var networkState: NetworkState = .offline
 
-    var selfUser: UserType
-    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
-    var mockConversationList: ZMConversationList?
+    var selfUser: any UserType
+
+    var selfUserLegalHoldSubject: any SelfUserLegalHoldable
+
+    var editableSelfUser: any EditableUserType & UserType
+
+    var mockConversationList: ConversationList?
+
+    var searchUsersCache: SearchUsersCache
+    var contextProvider: ContextProvider?
+
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
@@ -82,23 +91,29 @@ final class UserSessionMock: UserSession {
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
             selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
         )
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
         self.init(
             selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
         )
     }
 
     init(
-        selfUser: UserType,
-        selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+        selfUser: any UserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
+        editableSelfUser: any EditableUserType & UserType
     ) {
         self.selfUser = selfUser
-        self.selfLegalHoldSubject = selfLegalHoldSubject
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
+        self.editableSelfUser = editableSelfUser
+
+        searchUsersCache = .init()
     }
 
     var lock: SessionLock? = .screen
@@ -175,22 +190,22 @@ final class UserSessionMock: UserSession {
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol {
         return NSObject()
     }
 
-    func conversationList() -> ZMConversationList {
+    func conversationList() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+    func pendingConnectionConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func archivedConversationsInUserSession() -> ZMConversationList {
+    func archivedConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
@@ -298,11 +313,58 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        MockCreateConversationGuestLinkUseCaseProtocol()
+    }
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
+    var mlsFeature: Feature.MLS = Feature.MLS(
+        status: .enabled,
+        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+    )
+
     func fetchAllClients() {}
+
+    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+        createTeamOneOnOneWithCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createTeamOneOnOneWithCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneWithCompletion`")
+        }
+
+        mock(user, completion)
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
+    }
+}
+
+// MARK: - UserSessionMock + ContextProvider
+
+extension UserSessionMock: ContextProvider {
+
+    var account: Account { contextProvider!.account }
+    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
 }

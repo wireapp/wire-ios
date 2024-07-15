@@ -16,47 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension UIViewController {
 
-    /// Present an alert with a OK button
-    ///
-    /// - Parameters:
-    ///   - title: optional title of the alert
-    ///   - message: message of the alert
-    ///   - animated: present the alert animated or not
-    ///   - okActionHandler: optional closure for the OK button
-    /// - Returns: the alert presented
-    @discardableResult
-    func presentAlertWithOKButton(title: String? = nil,
-                                  message: String,
-                                  animated: Bool = true,
-                                  okActionHandler: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
-
-        let alert = UIAlertController.alertWithOKButton(title: title,
-                                                        message: message,
-                                                        okActionHandler: okActionHandler)
-
-        present(alert, animated: animated)
-
-        return alert
-    }
-
     func presentLocalizedErrorAlert(_ error: LocalizedError) {
-        let alertController = UIAlertController(error, preferredStyle: .alert)
-        alertController.addAction(.ok())
-        present(alertController, animated: true, completion: nil)
-    }
-
-    // MARK: - user profile deep link
-
-    @discardableResult
-    func presentInvalidUserProfileLinkAlert(okActionHandler: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
-        return presentAlertWithOKButton(title: L10n.Localizable.UrlAction.InvalidUser.title,
-                                        message: L10n.Localizable.UrlAction.InvalidUser.message,
-                                        okActionHandler: okActionHandler)
+        let alertController = UIAlertController(
+            title: error.localizedDescription,
+            message: error.failureReason,
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
+        present(alertController, animated: true)
     }
 
 }

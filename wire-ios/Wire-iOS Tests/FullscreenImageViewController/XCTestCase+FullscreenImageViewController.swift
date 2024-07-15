@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 extension XCTestCase {
     func doubleTap(fullscreenImageViewController: FullscreenImageViewController) {
@@ -32,7 +32,11 @@ extension XCTestCase {
 
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let sut = FullscreenImageViewController(message: message, userSession: userSession)
+        let sut = FullscreenImageViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
         sut.setBoundsSizeAsIPhone4_7Inch()
         sut.viewDidLoad()
 

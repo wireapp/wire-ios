@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationCallController: NSObject {
 
@@ -34,7 +34,7 @@ final class ConversationCallController: NSObject {
 
     func startAudioCall(started: Completion?) {
         let startCall = { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
                 started?()
                 self.conversation.startAudioCall()
@@ -55,7 +55,7 @@ final class ConversationCallController: NSObject {
 
     func startVideoCall(started: Completion?) {
         let startVideoCall = { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
                 started?()
                 self.conversation.startVideoCall()
@@ -77,7 +77,7 @@ final class ConversationCallController: NSObject {
     func joinCall() {
         guard conversation.canJoinCall else { return }
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
+        let checker = PrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
             conversation.acknowledgePrivacyChanges()
             conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
                 conversation.joinCall() // This will result in joining an ongoing call.
@@ -96,7 +96,7 @@ final class ConversationCallController: NSObject {
 
     private func presentIncomingCallDegradedAlert() {
         let alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
-            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: answerDegradedCall)
+            PrivacyWarningChecker.privacyWarningConfirm(sendAnyway: answerDegradedCall)
         })
         target.present(alert, animated: true)
     }

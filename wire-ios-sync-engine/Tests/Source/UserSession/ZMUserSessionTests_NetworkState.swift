@@ -16,48 +16,64 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import WireDataModelSupport
 @testable import WireSyncEngine
+import XCTest
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
     func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
         // given
-        let selfClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
         let userId = NSUUID.create()!
 
         mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: userId, useCache: true)
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
+        let coreDataStack = createCoreDataStack()
+        let selfClient = coreDataStack.syncContext.performAndWait {
+            self.setupSelfClient(inMoc: coreDataStack.syncContext)
+        }
 
         // when
-        let testSession = ZMUserSession(
-            userId: userId,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManagerMock,
+        let mockContextStore = MockLAContextStorable()
+        mockContextStore.clear_MockMethod = { }
+        let configuration = ZMUserSession.Configuration()
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: nil,
+            appVersion: "00000",
+            application: application,
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            coreDataStack: coreDataStack,
+            configuration: configuration,
+            contextStorage: mockContextStore,
+            earService: mockEARService,
+            flowManager: flowManagerMock,
+            mediaManager: mediaManager,
+            mlsService: mockMLSService,
+            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            recurringActionService: mockRecurringActionService,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            userId: userId
+        )
+        let testSession = builder.build()
+        testSession.setup(
             eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            application: application,
-            appVersion: "00000",
-            coreDataStack: coreDataStack,
-            configuration: .init(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
         XCTAssertEqual(mockPushChannel.keepOpen, true)
-        syncMOC.performAndWait {
+        coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
         }
         testSession.tearDown()

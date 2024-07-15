@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireDesign
 
 protocol ClientListViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: ClientListViewController)

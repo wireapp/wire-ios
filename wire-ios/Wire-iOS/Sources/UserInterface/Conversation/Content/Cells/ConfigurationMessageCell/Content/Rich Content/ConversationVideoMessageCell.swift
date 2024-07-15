@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
 
@@ -115,7 +115,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
         ])
     }
 
-    override public var tintColor: UIColor! {
+    override var tintColor: UIColor! {
         didSet {
             self.transferView.tintColor = self.tintColor
         }
@@ -133,7 +133,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
 
 extension ConversationVideoMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        guard let message = message else { return }
+        guard let message else { return }
 
         delegate?.perform(action: action, for: message, view: self)
     }

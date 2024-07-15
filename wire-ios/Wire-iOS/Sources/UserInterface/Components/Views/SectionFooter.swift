@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 final class SectionFooterView: UIView {
@@ -73,7 +72,7 @@ final class SectionFooter: UICollectionReusableView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    class func register(collectionView: UICollectionView) {
+    static func register(collectionView: UICollectionView) {
         collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
     }
 }

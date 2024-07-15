@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
 
@@ -357,7 +357,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // Given
             BackendInfo.apiVersion = .v4
             let unreachableDomain = "foma.wire.link"
@@ -409,7 +409,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     func testThatItCallsResultHandler_OnNonFederatingDomainsError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // Given
             BackendInfo.apiVersion = .v4
             let applesDomain = "apples@domain.com"

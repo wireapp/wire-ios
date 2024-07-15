@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSystem
 import WireDataModel
 import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
@@ -31,11 +30,14 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let profileViewController = ProfileViewController(user: user,
-                                                          viewer: selfUser,
-                                                          conversation: conversation,
-                                                          viewControllerDismisser: self,
-                                                          userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: selfUser,
+            conversation: conversation,
+            viewControllerDismisser: self,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
         profileViewController.delegate = self
@@ -110,7 +112,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         performImageSaveAnimation snapshotView: UIView?,
         sourceRect: CGRect
     ) {
-        if let snapshotView = snapshotView {
+        if let snapshotView {
             view.addSubview(snapshotView)
         }
         snapshotView?.frame = view.convert(sourceRect, from: contentViewController.view)
@@ -144,6 +146,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
@@ -163,6 +166,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
@@ -183,7 +187,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                 )
         }
 
-        if let participantsController = participantsController {
+        if let participantsController {
             presentParticipantsViewController(participantsController, from: sourceView)
         }
     }

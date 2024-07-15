@@ -26,7 +26,7 @@ final class DotView: UIView {
     private var userObserver: NSObjectProtocol!
     private var clientsObserverTokens: [NSObjectProtocol] = []
     private let user: ZMUser?
-    public var hasUnreadMessages: Bool = false {
+    var hasUnreadMessages: Bool = false {
         didSet { self.updateIndicator() }
     }
 
@@ -62,7 +62,7 @@ final class DotView: UIView {
         createConstraints()
 
         if let userSession = ZMUserSession.shared(),
-            let user = user {
+            let user {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
@@ -87,14 +87,20 @@ final class DotView: UIView {
     }
 
     private func createClientObservers() {
-        guard let user = user else { return }
+        guard let user else { return }
         clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
     }
 
     func updateIndicator() {
-        showIndicator = hasUnreadMessages ||
-                        user?.clientsRequiringUserAttention.count > 0 ||
-                        user?.readReceiptsEnabledChangedRemotely == true
+        if hasUnreadMessages || user?.readReceiptsEnabledChangedRemotely == true {
+            showIndicator = true
+            return
+        }
+
+        if let count = user?.clientsRequiringUserAttention.count, count > 0 {
+            showIndicator = true
+            return
+        }
     }
 }
 

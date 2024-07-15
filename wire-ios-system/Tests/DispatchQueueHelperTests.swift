@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireSystem
+import XCTest
 
-class DispatchQueueHelperTests: XCTestCase {
+final class DispatchQueueHelperTests: XCTestCase {
+
     func testThatItEntersAndLeavesADispatchGroup() {
         // Given
         let group = ZMSDispatchGroup(label: name)

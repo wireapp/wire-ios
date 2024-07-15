@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import WireDesign
+import XCTest
+
 @testable import Wire
 
-final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCase {
+final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -78,5 +80,4 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
         // THEN
         verify(matching: sut)
     }
-
 }

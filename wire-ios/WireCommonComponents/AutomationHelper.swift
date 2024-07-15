@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
 import WireSyncEngine
+import WireSystem
 
 public final class AutomationEmailCredentials: NSObject {
     public var email: String
@@ -35,21 +35,7 @@ public final class AutomationEmailCredentials: NSObject {
 /// command line when running automation tests. 
 /// These values typically do not need to be stored in `Settings`.
 public final class AutomationHelper: NSObject {
-    static public let sharedHelper = AutomationHelper()
-    private var useAppCenterLaunchOption: Bool?
-    /// Whether AppCenter should be used
-    /// Launch option `--use-app-center` overrides user defaults setting.
-    public var useAppCenter: Bool {
-        // useAppCenterLaunchOption has higher priority
-        if let useAppCenterLaunchOption = useAppCenterLaunchOption {
-            return useAppCenterLaunchOption
-        }
-        if UserDefaults.standard.object(forKey: "UseAppCenter") != nil {
-            return UserDefaults.standard.bool(forKey: "UseAppCenter")
-        }
-        // When UserDefaults's useAppCenter is not set, default is true to allow app center start
-        return true
-    }
+    public static let sharedHelper = AutomationHelper()
     /// Whether analytics should be used
     public var useAnalytics: Bool {
     // swiftlint:disable todo_requires_jira_link
@@ -69,28 +55,28 @@ public final class AutomationHelper: NSObject {
     /// Whether autocorrection is disabled
     public let disableAutocorrection: Bool
     /// Whether address book upload is enabled on simulator
-    public let uploadAddressbookOnSimulator: Bool
+    let uploadAddressbookOnSimulator: Bool
     /// Whether we should disable the call quality survey.
     public let disableCallQualitySurvey: Bool
     /// Whether we should disable dismissing the conversation input bar keyboard by dragging it downwards.
     public let disableInteractiveKeyboardDismissal: Bool
     /// Delay in address book remote search override
-    public let delayInAddressBookRemoteSearch: TimeInterval?
+    let delayInAddressBookRemoteSearch: TimeInterval?
     /// Debug data to install in the share container
-    public let debugDataToInstall: URL?
+    let debugDataToInstall: URL?
 
     /// The name of the arguments file in the /tmp directory
     private let fileArgumentsName = "wire_arguments.txt"
 
     /// Whether the backend environment type should be persisted as a setting.
-    public let shouldPersistBackendType: Bool
+    let shouldPersistBackendType: Bool
 
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
 
-    public var preferredAPIVersion: APIVersion?
-    public var allowMLSGroupCreation: Bool?
-    public var enableMLSSupport: Bool?
+    public private(set) var preferredAPIVersion: APIVersion?
+    public private(set) var allowMLSGroupCreation: Bool?
+    public private(set) var enableMLSSupport: Bool?
 
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
@@ -103,10 +89,6 @@ public final class AutomationHelper: NSObject {
         shouldPersistBackendType = arguments.hasFlag(AutomationKey.persistBackendType)
         disableInteractiveKeyboardDismissal = arguments.hasFlag(AutomationKey.disableInteractiveKeyboardDismissal)
         keepCallingOverlayVisible = arguments.hasFlag(AutomationKey.keepCallingOverlayVisible)
-
-        if let value = arguments.flagValueIfPresent(AutomationKey.useAppCenter.rawValue) {
-            useAppCenterLaunchOption = (value != "0")
-        }
 
         automationEmailCredentials = AutomationHelper.credentials(arguments)
         if arguments.hasFlag(AutomationKey.logNetwork) {
@@ -124,10 +106,8 @@ public final class AutomationHelper: NSObject {
         }
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
-        if
-            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
-            let apiVersion = Int32(value)
-        {
+        if let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
+            let apiVersion = Int32(value) {
             preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
@@ -151,7 +131,6 @@ public final class AutomationHelper: NSObject {
         case disableCallQualitySurvey = "disable-call-quality-survey"
         case persistBackendType = "persist-backend-type"
         case disableInteractiveKeyboardDismissal = "disable-interactive-keyboard-dismissal"
-        case useAppCenter = "use-app-center"
         case keepCallingOverlayVisible = "keep-calling-overlay-visible"
         case preferredAPIVersion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"

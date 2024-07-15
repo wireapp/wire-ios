@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 import WireSystem
 
-public protocol E2EINotificationActions {
+protocol E2EINotificationActions {
 
     func getCertificate() async
     func updateCertificate() async
@@ -39,7 +39,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
-    private let e2eiActivationDateRepository: E2EIActivationDateRepository
+    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     private let e2eiFeature: Feature.E2EI
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
@@ -64,12 +64,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
-        e2eiActivationDateRepository: E2EIActivationDateRepository,
+        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         e2eiFeature: Feature.E2EI,
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        targetVC: UIViewController) {
+        targetVC: UIViewController
+    ) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
             self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
@@ -96,7 +97,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         NotificationCenter.default.removeObserver(observer)
     }
 
-    public func getCertificate() async {
+    func getCertificate() async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
         do {
             let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
@@ -109,7 +110,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     @MainActor
-    public func updateCertificate() async {
+    func updateCertificate() async {
         do {
             guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
 
@@ -132,7 +133,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
     }
 
-    public func snoozeReminder() async {
+    func snoozeReminder() async {
         let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
         guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate,
               !endOfPeriod.isInThePast,

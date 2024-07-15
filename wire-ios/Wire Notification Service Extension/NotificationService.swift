@@ -17,14 +17,11 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UserNotifications
+import WireCommonComponents
 import WireUtilities
-#if DATADOG_IMPORT
-import Datadog
-#endif
 
-public final class NotificationService: UNNotificationServiceExtension {
+final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
@@ -33,11 +30,12 @@ public final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Methods
 
-    public override func didReceive(
+    override func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        DatadogWrapper.shared?.startMonitoring()
+        WireAnalytics.Datadog.enable()
+
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if DeveloperFlag.nseV2.isOn {
@@ -53,12 +51,11 @@ public final class NotificationService: UNNotificationServiceExtension {
         }
     }
 
-    public override func serviceExtensionTimeWillExpire() {
+    override func serviceExtensionTimeWillExpire() {
         if DeveloperFlag.nseV2.isOn {
             simpleService.serviceExtensionTimeWillExpire()
         } else {
             legacyService.serviceExtensionTimeWillExpire()
         }
     }
-
 }

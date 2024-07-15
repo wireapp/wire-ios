@@ -159,34 +159,4 @@
     VerifyString(true, "Foo %d", 12);
 }
 
-- (void)testThat_VerifyStringReturnNil_ReturnsOnFailure {
-    
-    // given
-    NSString*(^testBlock)(void) = ^NSString *(){
-        VerifyStringReturnNil(false, "Foo %d", 12);
-        return @"Foo";
-    };
-    
-    // when
-    NSString *result = testBlock();
-    
-    // then
-    XCTAssertNil(result);
-}
-
-- (void)testThat_VerifyStringReturnNil_ReturnsOnSuccess {
-    
-    // given
-    NSString*(^testBlock)(void) = ^NSString *(){
-        VerifyStringReturnNil(true, "Foo %d", 12);
-        return @"Foo";
-    };
-    
-    // when
-    NSString *result = testBlock();
-    
-    // then
-    XCTAssertEqualObjects(result, @"Foo");
-}
-
 @end

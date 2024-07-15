@@ -137,15 +137,16 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfAnAccentColorChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        user.accentColorValue = ZMAccentColor.strongBlue
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.accentColor = .blue
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.accentColorValue = ZMAccentColor.softPink },
-                                                     expectedChangedField: .accentColor)
-
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.accentColor = .turquoise },
+            expectedChangedField: .accentColor
+        )
     }
 
     func testThatItNotifiesTheObserverOfAMediumProfileImageChange() {
@@ -383,7 +384,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         var objectID: NSManagedObjectID!
         var syncMOCUser: ZMUser!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             syncMOCUser = ZMUser.insertNewObject(in: self.syncMOC)
             self.syncMOC.saveOrRollback()
             objectID = syncMOCUser.objectID
@@ -397,7 +398,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         self.token = UserChangeInfo.add(observer: userObserver, for: uiMOCUser, in: self.uiMOC)
 
         // when adding a new client on the syncMOC
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             syncMOCUser.mutableSetValue(forKey: self.UserClientsKey).add(client)
             self.syncMOC.saveOrRollback()

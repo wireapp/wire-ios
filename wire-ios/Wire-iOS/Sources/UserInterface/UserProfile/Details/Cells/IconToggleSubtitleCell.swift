@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurable {
     private let imageContainer = UIView()
@@ -155,7 +156,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
 
         let mainColor = SemanticColors.Label.textDefault
 
-        if let icon = icon {
+        if let icon {
             tintColor = SemanticColors.Label.textDefault
             iconImageView.setTemplateIcon(icon, size: .tiny)
             imageContainerWidthConstraint.constant = CGFloat.IconCell.IconWidth

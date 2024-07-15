@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireTransport
@@ -30,7 +29,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
 
             executeActions([.showLoadingView, .startLoginFlow(loginRequest, proxyCredentials)])
         } else {
-            stateController.transition(to: .provideCredentials(.email, nil))
+            stateController.transition(to: .provideCredentials(nil))
         }
     }
 

@@ -119,7 +119,7 @@ static id<UserType> mockSelfUser = nil;
     return @"";
 }
 
-#pragma mark - ZMBareUser
+#pragma mark - ZMUser
 
 @synthesize name;
 @synthesize emailAddress;
@@ -145,7 +145,7 @@ static id<UserType> mockSelfUser = nil;
 @synthesize refreshMembershipCount;
 @synthesize refreshTeamDataCount;
 
-#pragma mark - ZMBareUserConnection
+#pragma mark - ZMUserConnection
 
 @synthesize isServiceUser;
 
@@ -221,16 +221,6 @@ static id<UserType> mockSelfUser = nil;
 
 - (void)connectWithMessage:(NSString * _Nonnull)message {
     
-}
-
-- (void)imageDataFor:(enum ProfileImageSize)size queue:(dispatch_queue_t _Nonnull)queue completion:(void (^ _Nonnull)(NSData * _Nullable))completion {
-    switch (size) {
-        case ProfileImageSizePreview:
-            completion(previewImageData);
-            break;
-        case ProfileImageSizeComplete:
-            completion(completeImageData);
-    }
 }
 
 - (BOOL)isGuestIn:(ZMConversation * _Nonnull)conversation {

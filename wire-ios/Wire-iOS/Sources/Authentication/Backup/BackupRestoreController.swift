@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireDataModel
 import WireSyncEngine
-import UniformTypeIdentifiers
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
@@ -54,9 +54,19 @@ final class BackupRestoreController: NSObject {
     // MARK: - Flow
 
     func startBackupFlow() {
-        let controller = UIAlertController.historyImportWarning { [showFilePicker] in
-            showFilePicker()
-        }
+        let controller = UIAlertController(
+            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.title,
+            message: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.message,
+            preferredStyle: .alert
+        )
+        controller.addAction(.cancel())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
+            style: .default,
+            handler: { [showFilePicker] _ in
+                showFilePicker()
+            }
+        ))
 
         target.present(controller, animated: true)
     }
@@ -89,13 +99,13 @@ final class BackupRestoreController: NSObject {
         from url: URL
     ) {
         guard let sessionManager = SessionManager.shared,
-              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "restore backup") else {
+              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
             return
         }
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
@@ -131,37 +141,37 @@ final class BackupRestoreController: NSObject {
     // MARK: - Alerts
 
     private func requestPassword(completion: @escaping (String) -> Void) {
-        let controller = UIAlertController.requestRestorePassword { password in
-            password.apply(completion)
+        let controller = requestRestorePassword { password in
+            password.map(completion)
         }
 
         target.present(controller, animated: true, completion: nil)
     }
 
     private func showWrongPasswordAlert(completion: @escaping (UIAlertAction) -> Void) {
-        let controller = UIAlertController.importWrongPasswordError(completion: completion)
+        let controller = importWrongPasswordError(completion: completion)
         target.present(controller, animated: true, completion: nil)
     }
 
     private func showRestoreError(_ error: Error) {
-        let controller = UIAlertController.restoreBackupFailed(with: error) { [unowned self] action in
-            switch action {
-            case .tryAgain: self.showFilePicker()
-            case .cancel: self.delegate?.backupResoreControllerDidFinishRestoring(self)
-            }
-        }
+        let controller = restoreBackupFailed(
+            error: error,
+            onTryAgain: { [unowned self] in self.showFilePicker() },
+            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self) }
+        )
 
         target.present(controller, animated: true)
     }
 }
 
 extension BackupRestoreController: UIDocumentPickerDelegate {
-    public func documentPicker(
+    func documentPicker(
         _ controller: UIDocumentPickerViewController,
-        didPickDocumentAt url: URL) {
-            WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-            zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
+        didPickDocumentAt url: URL
+    ) {
+        WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+        zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
-            self.restore(with: url)
-        }
+        self.restore(with: url)
+    }
 }

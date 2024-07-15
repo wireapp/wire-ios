@@ -27,33 +27,6 @@ public protocol SafeCoreCryptoProtocol {
     func tearDown() throws
 }
 
-extension CiphersuiteName {
-    public var rawValue: UInt16 {
-        switch self {
-        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
-            return 1
-        case .mls128Dhkemp256Aes128gcmSha256P256:
-            return 2
-        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
-            return 3
-        case .mls256Dhkemx448Aes256gcmSha512Ed448:
-            return 4
-        case .mls256Dhkemp521Aes256gcmSha512P521:
-            return 5
-        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
-            return 6
-        case .mls256Dhkemp384Aes256gcmSha384P384:
-            return 7
-        case .mls128X25519kyber768draft00Aes128gcmSha256Ed25519:
-            return 8
-        @unknown default:
-            fatalError("unsupported value of 'CiphersuiteName'!")
-        }
-    }
-
-    static var `default` = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
-}
-
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     public enum CoreCryptoSetupFailure: Error, Equatable {
@@ -65,11 +38,11 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let databasePath: String
 
     public convenience init(path: String, key: String) async throws {
-        // NOTE: the ciphersuites argument is not used here and will eventually be removed.
         let coreCrypto = try await coreCryptoDeferredInit(
             path: path,
             key: key,
-            ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil
+            ciphersuites: [],
+            nbKeyPackage: nil
         )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
@@ -89,26 +62,18 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        var result: T
-        WireLogger.coreCrypto.info("acquiring directory lock")
+        WireLogger.coreCrypto.debug("acquiring directory lock")
         safeContext.acquireDirectoryLock()
-        WireLogger.coreCrypto.info("acquired lock. performing restoreFromDisk()")
+        WireLogger.coreCrypto.debug("acquired lock. performing restoreFromDisk()")
         await restoreFromDisk()
 
         defer {
-            WireLogger.coreCrypto.info("releasing directory lock")
+            WireLogger.coreCrypto.debug("releasing directory lock")
             safeContext.releaseDirectoryLock()
-            WireLogger.coreCrypto.info("released lock")
+            WireLogger.coreCrypto.debug("released lock")
         }
 
-        do {
-            result = try await block(coreCrypto)
-        } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)")
-            throw error
-        }
-
-        return result
+        return try await block(coreCrypto)
     }
 
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
@@ -119,7 +84,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             try await coreCrypto.restoreFromDisk()
         } catch {
-            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)")
+            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)", attributes: .safePublic)
         }
     }
 }

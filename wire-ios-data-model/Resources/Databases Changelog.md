@@ -4,6 +4,14 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.118.0
+
+* added `shouldExpire` attribute on the Messaging entity
+
+### 2.117.0
+
+* added `ciphersuite` attribute on the Conversation entity
+
 ### 2.116.0
 
 * added `isPendingInitialFetch` attribute on the Conversation entity
@@ -49,6 +57,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * removed `activationLocationLongitude` attribute from `UserClient`
  
 ## ZMEventModel
+
+### 5.0
+
+* add new `StoredUpdateEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
 
 ### 4.0
 

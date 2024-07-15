@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SafariServices
 import AuthenticationServices
+import SafariServices
 import UIKit
 import WireSyncEngine
 
@@ -53,7 +52,7 @@ final class CompanyLoginFlowHandler {
     }
 
     deinit {
-        token.apply(NotificationCenter.default.removeObserver)
+        token.map(NotificationCenter.default.removeObserver)
     }
 
     // MARK: - Initialization
@@ -91,7 +90,7 @@ final class CompanyLoginFlowHandler {
 
     private func openSafariAuthenticationSession(at url: URL) {
         let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackScheme) { url, _ in
-            if let url = url {
+            if let url {
                 self.processURL(url)
             }
 

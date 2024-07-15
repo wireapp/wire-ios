@@ -17,8 +17,9 @@
 //
 
 import UIKit
+import WireDesign
 
-public struct ButtonStyle {
+struct ButtonStyle {
 
     typealias ButtonColors = SemanticColors.Button
 

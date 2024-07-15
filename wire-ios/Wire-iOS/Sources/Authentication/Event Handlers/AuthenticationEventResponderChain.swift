@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
+import WireSystem
 
 /**
  * Provides information to the event responder chain and executes actions.
@@ -109,12 +109,10 @@ final class AuthenticationEventResponderChain {
         self.registerDefaultEventHandlers()
     }
 
-    /**
-     * Creates and registers the default error handlers.
-     */
-
+    /// Creates and registers the default error handlers.
     fileprivate func registerDefaultEventHandlers() {
         // flowStartHandlers
+        registerHandler(AuthenticationStartClientLimitErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartE2EIdentityMissingErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingUsernameErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
@@ -138,14 +136,12 @@ final class AuthenticationEventResponderChain {
         registerHandler(AuthenticationClientRegistrationSuccessHandler(), to: &clientRegistrationSuccessHandlers)
 
         // loginErrorHandlers
-        registerHandler(AuthenticationPhoneLoginErrorHandler(), to: &loginErrorHandlers)
         registerHandler(AuthenticationEmailVerificationRequiredErrorHandler(), to: &loginErrorHandlers)
         registerHandler(AuthenticationEmailLoginUnknownErrorHandler(), to: &loginErrorHandlers)
         registerHandler(AuthenticationEmailFallbackErrorHandler(), to: &loginErrorHandlers)
         registerHandler(UserEmailUpdateFailureErrorHandler(), to: &loginErrorHandlers)
 
         // loginCodeHandlers
-        registerHandler(AuthenticationLoginCodeAvailableEventHandler(), to: &loginCodeHandlers)
         registerHandler(UserEmailUpdateCodeSentEventHandler(), to: &loginCodeHandlers)
 
         // registrationErrorHandlers

@@ -28,7 +28,7 @@ extension ZMUserSession {
     }
 
     @objc(setEmailCredentials:)
-    func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
+    func setEmailCredentials(_ emailCredentials: UserEmailCredentials?) {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
@@ -66,9 +66,10 @@ extension ZMUserSession {
     /// Logout the current user
     ///
     /// - parameter deleteCookie: If set to true the cookies associated with the session will be deleted
+    /// - parameter completion: called after the user session has been closed
 
-    @objc(closeAndDeleteCookie:)
-    func close(deleteCookie: Bool) {
+    @objc(closeAndDeleteCookie:completion:)
+    func close(deleteCookie: Bool, completion: @escaping () -> Void) {
         UserDefaults.standard.synchronize()
         UserDefaults.shared()?.synchronize()
 
@@ -81,19 +82,13 @@ extension ZMUserSession {
             deleteUserKeychainItems()
         }
 
-        let uiMOC = managedObjectContext
-        let syncMOC = syncManagedObjectContext
-
-        uiMOC.performGroupedBlockAndWait {}
-        syncMOC.performGroupedBlockAndWait {}
-
-        tearDown()
-
-        uiMOC.performGroupedBlockAndWait {}
-        syncMOC.performGroupedBlockAndWait {}
+        syncManagedObjectContext.dispatchGroup?.notify(on: .main) {
+            self.tearDown()
+            completion()
+        }
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
@@ -112,13 +107,13 @@ extension ZMUserSession {
         let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
-            guard let strongSelf = self else { return }
+            guard let self else { return }
 
             if response.httpStatus == 200 {
-                self?.delegate?.userDidLogout(accountId: accountID)
+                delegate?.userDidLogout(accountId: accountID)
                 completion(.success(()))
             } else {
-                completion(.failure(strongSelf.errorFromFailedDeleteResponse(response)))
+                completion(.failure(errorFromFailedDeleteResponse(response)))
             }
         }))
 

@@ -17,9 +17,11 @@
 //
 
 import Foundation
-import XCTest
-import WireTransport
+import WireDataModelSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+import WireTransport
+import XCTest
 
 class APIMigrationMock: APIMigration {
     var version: APIVersion
@@ -35,7 +37,7 @@ class APIMigrationMock: APIMigration {
     }
 }
 
-class APIMigrationManagerTests: MessagingTest {
+final class APIMigrationManagerTests: MessagingTest {
 
     // MARK: - Verifying if migration is needed
 
@@ -234,7 +236,6 @@ class APIMigrationManagerTests: MessagingTest {
     @MainActor
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
-        let mockUpdateEventProcessor = MockUpdateEventProcessor()
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
@@ -248,22 +249,43 @@ class APIMigrationManagerTests: MessagingTest {
             pushChannel: MockPushChannel()
         )
 
-        return ZMUserSession(
-            userId: .create(),
-            transportSession: mockTransportSession,
-            mediaManager: MockMediaManager(),
-            flowManager: FlowManagerMock(),
+        let mockContextStorable = MockLAContextStorable()
+        mockContextStorable.clear_MockMethod = { }
+        let configuration = ZMUserSession.Configuration()
+
+        let mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: nil,
-            eventProcessor: mockUpdateEventProcessor,
+            appVersion: "999",
+            application: application,
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            coreDataStack: createCoreDataStack(),
+            configuration: configuration,
+            contextStorage: mockContextStorable,
+            earService: nil,
+            flowManager: FlowManagerMock(),
+            mediaManager: MockMediaManager(),
+            mlsService: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: mockRecurringActionService,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: mockTransportSession,
+            userId: .create()
+        )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
-            application: application,
-            appVersion: "999",
-            coreDataStack: createCoreDataStack(),
-            configuration: .init(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
+
+        return userSession
     }
 }

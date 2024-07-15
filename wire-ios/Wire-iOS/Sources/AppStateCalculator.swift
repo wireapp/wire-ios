@@ -62,10 +62,73 @@ enum AppState: Equatable {
     }
 }
 
+extension AppState: CustomDebugStringConvertible {
+
+    var debugDescription: String {
+        switch self {
+        case .retryStart:
+            "retryStart"
+        case .headless:
+            "headless"
+        case .locked:
+            "locked"
+        case .authenticated:
+            "authenticated"
+        case .unauthenticated(error: let error):
+            "unauthenticated: \(error.debugDescription)"
+        case .blacklisted(reason: let reason):
+            "blacklisted: \(reason)"
+        case .jailbroken:
+            "jailbroken"
+        case .certificateEnrollmentRequired:
+            "certificateEnrollmentRequired"
+        case .databaseFailure(reason: let reason):
+            "databaseFailure: \(reason)"
+        case .migrating:
+            "migrating"
+        case .loading:
+            "loading"
+        }
+    }
+}
+
+extension AppState: SafeForLoggingStringConvertible {
+    var safeForLoggingDescription: String {
+        switch self {
+        case .retryStart:
+            return "retryStart"
+        case .headless:
+            return "headless"
+        case .locked:
+            return "locked"
+        case .authenticated:
+            return "authenticated"
+        case .unauthenticated(let error):
+            return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
+        case .blacklisted(let reason):
+            return "blacklisted \(reason)"
+        case .jailbroken:
+            return "jailbroken"
+        case .certificateEnrollmentRequired:
+            return "certificateEnrollmentRequired"
+        case .databaseFailure(let reason):
+            return "databaseFailure \(reason)"
+        case .migrating:
+            return "migrating"
+        case .loading(let account, let from):
+            return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+        }
+    }
+
+}
+
+// sourcery: AutoMockable
 protocol AppStateCalculatorDelegate: AnyObject {
-    func appStateCalculator(_: AppStateCalculator,
-                            didCalculate appState: AppState,
-                            completion: @escaping () -> Void)
+    func appStateCalculator(
+        _ appStateCalculator: AppStateCalculator,
+        didCalculate appState: AppState,
+        completion: @escaping () -> Void
+    )
 }
 
 final class AppStateCalculator {
@@ -99,8 +162,10 @@ final class AppStateCalculator {
     private var hasEnteredForeground: Bool = false
 
     // MARK: - Private Implementation
-    private func transition(to appState: AppState,
-                            completion: (() -> Void)? = nil) {
+    private func transition(
+        to appState: AppState,
+        completion: (() -> Void)? = nil
+    ) {
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -119,10 +184,11 @@ final class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
-        ZMSLog(tag: "AppState").debug("transitioning to app state: \(appState)")
-        delegate?.appStateCalculator(self, didCalculate: appState, completion: {
+
+        WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
+        delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
-        })
+        }
     }
 }
 
@@ -161,11 +227,14 @@ extension AppStateCalculator: SessionManagerDelegate {
         }
     }
 
-    func sessionManagerWillLogout(error: Error?,
-                                  userSessionCanBeTornDown: (() -> Void)?) {
-        let appState: AppState = .unauthenticated(error: error as NSError?)
-        transition(to: appState,
-                   completion: userSessionCanBeTornDown)
+    func sessionManagerWillLogout(
+        error: Error?,
+        userSessionCanBeTornDown: (() -> Void)?
+    ) {
+        transition(
+            to: .unauthenticated(error: error as NSError?),
+            completion: userSessionCanBeTornDown
+        )
     }
 
     func sessionManagerDidFailToLogin(error: Error?) {
@@ -261,7 +330,7 @@ extension AppStateCalculator: AuthenticationCoordinatorDelegate {
 
 extension AppStateCalculator {
     // NOTA BENE: THIS MUST BE USED JUST FOR TESTING PURPOSE
-    public func testHelper_setAppState(_ appState: AppState) {
+    func testHelper_setAppState(_ appState: AppState) {
         self.appState = appState
         transition(to: appState)
     }

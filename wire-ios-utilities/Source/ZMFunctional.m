@@ -91,7 +91,7 @@
     return array;
 }
 
-- (BOOL)containsObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator ZM_NON_NULL(1);
+- (BOOL)containsObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator;
 {
     return ([self firstObjectMatchingWithBlock:evaluator] != nil);
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let participantsHeaderHeight: CGFloat = 42
@@ -29,7 +30,10 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     private let stackView = UIStackView(axis: .vertical)
     private var participantsHeaderView = UIView()
     private let securityLevelView = SecurityLevelView()
-    private var participantsHeaderLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textSectionHeader)
+    private var participantsHeaderLabel = DynamicFontLabel(
+        fontSpec: .smallSemiboldFont,
+        color: SemanticColors.Label.textSectionHeader
+    )
     private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
     var isIncomingCall: Bool = false
 
@@ -42,8 +46,10 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         }
     }
 
-    init(participants: CallParticipantsList,
-         selfUser: UserType) {
+    init(
+        participants: CallParticipantsList,
+        selfUser: UserType
+    ) {
         self.participants = participants
         self.selfUser = selfUser
         super.init(nibName: nil, bundle: nil)
@@ -93,13 +99,21 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         collectionView.bounces = true
         collectionView.delegate = self
         self.collectionView = collectionView
-        [securityLevelView, actionsView, participantsHeaderView, collectionView].forEach(stackView.addArrangedSubview)
+
+        [
+            securityLevelView,
+            actionsView,
+            participantsHeaderView,
+            collectionView
+        ].forEach(stackView.addArrangedSubview)
+
         CallParticipantsListCellConfiguration.prepare(collectionView)
         view.backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
 
     private func createConstraints() {
         actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: 128.0)
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeTopAnchor),
@@ -123,29 +137,45 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         updateActionViewHeight()
     }
 
     func updateActionViewHeight() {
-        guard UIDevice.current.twoDimensionOrientation.isLandscape else {
-            actionsViewHeightConstraint.constant = (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
-            actionsView.verticalStackView.alignment = .fill
-            return
+        actionsViewHeightConstraint.constant = calculateHeightConstant()
+        actionsView.verticalStackView.alignment = determineStackViewAlignment()
+    }
+
+    private func calculateHeightConstant() -> CGFloat {
+        if UIDevice.current.twoDimensionOrientation.isLandscape {
+            return 128
+        } else {
+            return (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
         }
-        actionsViewHeightConstraint.constant = 128.0
-        actionsView.verticalStackView.alignment = .center
+    }
+
+    private func determineStackViewAlignment() -> UIStackView.Alignment {
+        if UIDevice.current.twoDimensionOrientation.isLandscape {
+            return .center
+        } else {
+            return .fill
+        }
     }
 
     private func updateRows() {
         collectionView?.rows = participants
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: cellHeight)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: cellHeight)
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
@@ -154,12 +184,15 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
 }
 
+// MARK: - CallInfoConfigurationObserver
+
 extension CallingActionsInfoViewController: CallInfoConfigurationObserver {
     func didUpdateConfiguration(configuration: CallInfoConfiguration) {
         isIncomingCall = configuration.state.isIncoming
         actionsView.isIncomingCall = isIncomingCall
         actionsView.update(with: configuration)
-        updateActionViewHeight()
         securityLevelView.configure(with: configuration.classification)
+
+        updateActionViewHeight()
     }
 }

@@ -60,7 +60,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     private func performQuickSync() {
-        guard let userSession = userSession else { return }
+        guard let userSession else { return }
 
         Task {
             await userSession.syncStatus.performQuickSync()
@@ -70,10 +70,14 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Proteus to MLS migration
 
     private func updateMLSMigrationStatus() {
-        guard let userSession = userSession else { return }
+        guard let userSession else { return }
 
         Task {
-            try await userSession.updateMLSMigrationStatus()
+            do {
+                try await userSession.updateMLSMigrationStatus()
+            } catch {
+                WireLogger.mls.error("failed to update MLS migration status: \(error)")
+            }
         }
     }
 
@@ -89,8 +93,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
         guard
-            let selfClient = selfClient,
-            let context = selfClient.managedObjectContext
+            let selfClient,
+            let context = selfClient.managedObjectContext,
+            let userSession
         else { return }
 
         Task {
@@ -104,10 +109,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                     qualifiedID: qualifiedID,
                     messageProtocol: messageProtocol
                 )
-                try await updateAction.perform(in: context.notificationContext)
+                try await updateAction.perform(in: userSession.notificationContext)
 
                 var syncAction = SyncConversationAction(qualifiedID: qualifiedID)
-                try await syncAction.perform(in: context.notificationContext)
+                try await syncAction.perform(in: userSession.notificationContext)
             } catch {
                 assertionFailure("failed with error: \(error)!")
             }
@@ -129,4 +134,5 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 .qualifiedID
         }
     }
+
 }

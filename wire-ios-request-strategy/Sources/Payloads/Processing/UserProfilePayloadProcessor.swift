@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 protocol UserProfilePayloadProcessing {
@@ -119,8 +120,8 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             user.managedBy = payload.managedBy
         }
 
-        if let accentColor = payload.accentColor, let accentColorValue = ZMAccentColor(rawValue: Int16(accentColor)) {
-            user.accentColorValue = accentColorValue
+        if let accentColor = payload.accentColor, let accentColorValue = AccentColor(rawValue: Int16(accentColor)) {
+            user.accentColor = accentColorValue
         }
 
         if let expiresAt = payload.expiresAt {
@@ -177,7 +178,7 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
 private extension Payload.UserProfile.MessageProtocol {
 
-    var dataModelMessageProtocol: WireDataModel.MessageProtocol {
+    var dataModelMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:
             return .proteus

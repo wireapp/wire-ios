@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 extension ProfilePresenter: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        guard let controller = controller else { return }
+        guard let controller else { return }
 
         dismiss(viewController: controller) {
-            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

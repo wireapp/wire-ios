@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
 
@@ -29,7 +29,7 @@ final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
     }
 
     // MARK: - tearDown

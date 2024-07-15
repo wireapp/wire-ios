@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 final class ConversationMessageActionController {
 
@@ -57,14 +57,18 @@ final class ConversationMessageActionController {
             guard let title = messageAction.title else { return nil }
 
             let handler: UIActionHandler = { _ in
-                responder?.perform(action: messageAction,
-                                   for: message,
-                                   view: targetView)
+                responder?.perform(
+                    action: messageAction,
+                    for: message!,
+                    view: targetView
+                )
             }
 
-            return UIAction(title: title,
-                            image: messageAction.systemIcon(),
-                            handler: handler)
+            return UIAction(
+                title: title,
+                image: messageAction.systemIcon(),
+                handler: handler
+            )
         }
     }
 
@@ -149,7 +153,7 @@ final class ConversationMessageActionController {
     // MARK: - Single Tap Action
 
     func performSingleTapAction() {
-        guard let singleTapAction = singleTapAction else { return }
+        guard let singleTapAction else { return }
 
         perform(action: singleTapAction)
     }
@@ -172,7 +176,7 @@ final class ConversationMessageActionController {
     // MARK: - Double Tap Action
 
     func performDoubleTapAction() {
-        guard let doubleTapAction = doubleTapAction else { return }
+        guard let doubleTapAction else { return }
         perform(action: doubleTapAction)
     }
 
@@ -240,7 +244,7 @@ final class ConversationMessageActionController {
         perform(action: .react(reaction))
     }
 
-    @objc func visitLink(path: String) {
-        perform(action: .visitLink(path))
+    @objc func visitLink() {
+        perform(action: .visitLink)
     }
 }

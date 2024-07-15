@@ -119,7 +119,7 @@ extension UINavigationController {
         }
 
         set {
-            if let newValue = newValue {
+            if let newValue {
                 (self as? SpinnerCapableViewController)?.isLoadingViewVisible = newValue
             }
         }

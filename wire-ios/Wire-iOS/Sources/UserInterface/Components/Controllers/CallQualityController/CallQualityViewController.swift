@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 // MARK: Call Quality View Controller Delegate
 protocol CallQualityViewControllerDelegate: AnyObject {
@@ -287,7 +287,7 @@ final class QualityScoreSelectorView: UIView {
 
     weak var delegate: CallQualityViewControllerDelegate?
 
-    public let onScoreSet: ((Int) -> Void)
+    let onScoreSet: ((Int) -> Void)
 
     init(onScoreSet: @escaping (Int) -> Void) {
         self.onScoreSet = onScoreSet

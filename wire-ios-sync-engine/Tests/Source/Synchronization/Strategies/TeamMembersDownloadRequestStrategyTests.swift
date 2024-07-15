@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
@@ -34,7 +34,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         )
         sut = TeamMembersDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.remoteIdentifier = UUID()
         }
@@ -90,7 +90,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     func testThatItCreatesRequestToFetchTeamMembers() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
@@ -109,7 +109,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     func testThatItFinishSyncStep_IfSelfUserDoesntBelongToTeam() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
@@ -125,7 +125,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     func testThatItFinishSyncStep_OnSuccessfulResponse() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
@@ -140,7 +140,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNil(self.sut.nextRequest(for: .v0))
             XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
@@ -150,7 +150,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     func testThatItCreatesTeamMembers_WhenHasMoreIsFalse() {
         var team: Team!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
@@ -165,7 +165,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(team.members.count, 2)
         }
@@ -174,7 +174,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     func testThatItCreatesTeamMembers_WhenHasMoreIsTrue() {
         var team: Team!
         var initialTeamMembersCount = 0
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
@@ -190,7 +190,7 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(team.members.count, initialTeamMembersCount + 1)
         }

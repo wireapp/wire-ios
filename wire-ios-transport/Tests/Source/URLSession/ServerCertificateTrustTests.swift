@@ -24,8 +24,8 @@
  */
 
 import Foundation
-import XCTest
 @testable import WireTransport
+import XCTest
 
 struct CertificateData: Decodable {
     var production: [Data]

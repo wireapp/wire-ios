@@ -17,12 +17,13 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
-class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
+final class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
 
     func testThatItCalculatesLastUnreadMessages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group

@@ -20,11 +20,7 @@ import Foundation
 import WireSyncEngine
 
 extension Notification.Name {
-    static let colorSchemeControllerDidApplyColorSchemeChange = Notification.Name("ColorSchemeControllerDidApplyColorSchemeChange")
-}
-
-extension NSNotification {
-    static let colorSchemeControllerDidApplyColorSchemeChange = Notification.Name.colorSchemeControllerDidApplyColorSchemeChange
+    static let colorSchemeControllerDidApplyColorSchemeChange = Self("ColorSchemeControllerDidApplyColorSchemeChange")
 }
 
 final class ColorSchemeController: NSObject {
@@ -62,7 +58,7 @@ final class ColorSchemeController: NSObject {
 }
 
 extension ColorSchemeController: UserObserving {
-    public func userDidChange(_ note: UserChangeInfo) {
+    func userDidChange(_ note: UserChangeInfo) {
         guard note.accentColorValueChanged else { return }
 
         let colorScheme = ColorScheme.default

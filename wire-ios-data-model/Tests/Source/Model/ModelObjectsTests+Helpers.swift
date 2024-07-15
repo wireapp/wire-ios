@@ -27,7 +27,7 @@ extension ModelObjectsTests {
         member.team = .insertNewObject(in: uiMOC)
         member.team?.remoteIdentifier = .create()
         member.user = user
-        if let permissions = permissions {
+        if let permissions {
             member.permissions = permissions
         }
         return (member.team!, member)
@@ -85,7 +85,7 @@ extension ModelObjectsTests {
     }
 
     func createTestFile(at url: URL) -> Data {
-        let data: Data! = "Some other data".data(using: String.Encoding.utf8)
+        let data = Data("Some other data".utf8)
         try! data.write(to: url, options: [])
         return data
     }

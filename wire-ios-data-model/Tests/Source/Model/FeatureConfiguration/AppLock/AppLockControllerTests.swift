@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import LocalAuthentication
-@testable import WireDataModelSupport
 @_spi(AppLockControllerState) @testable import WireDataModel
+@testable import WireDataModelSupport
+import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
@@ -366,7 +366,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         XCTAssertNoThrow(try sut.updatePasscode("boo!"))
 
         // Then
-        XCTAssertEqual(sut.fetchPasscode(), "boo!".data(using: .utf8)!)
+        XCTAssertEqual(sut.fetchPasscode(), Data("boo!".utf8))
 
         // Clean up
         try sut.deletePasscode()
@@ -381,7 +381,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         XCTAssertNoThrow(try sut.updatePasscode("ahh!"))
 
         // Then
-        XCTAssertEqual(sut.fetchPasscode(), "ahh!".data(using: .utf8)!)
+        XCTAssertEqual(sut.fetchPasscode(), Data("ahh!".utf8))
 
         // Clean up
         try sut.deletePasscode()

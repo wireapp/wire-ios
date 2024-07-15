@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Contacts
+import Foundation
 
 /// This is used for testing only
 var debug_searchResultAddressBookOverride: AddressBookAccessor?
@@ -46,22 +46,43 @@ extension SearchResult {
 
         let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(contacts: allMatchingAddressBookContacts,
                                                                                                         managedObjectContext: contextProvider.viewContext)
-        let searchUsersFromAddressBook = addressBookContactsWithoutUser.compactMap { ZMSearchUser(contextProvider: contextProvider, contact: $0) }
+        let searchUsersFromAddressBook = addressBookContactsWithoutUser.compactMap {
+            ZMSearchUser(
+                contextProvider: contextProvider,
+                contact: $0,
+                searchUsersCache: searchUsersCache
+            )
+        }
 
         // of those users, which one are connected and which one are not?
         let additionalConnectedUsers = additionalUsersFromAddressBook
             .filter { $0.connection != nil }
-            .compactMap { ZMSearchUser(contextProvider: contextProvider, user: $0) }
+            .compactMap {
+                ZMSearchUser(
+                    contextProvider: contextProvider,
+                    user: $0,
+                    searchUsersCache: searchUsersCache
+                )
+            }
         let additionalNonConnectedUsers = additionalUsersFromAddressBook
             .filter { $0.connection == nil }
-            .compactMap { ZMSearchUser(contextProvider: contextProvider, user: $0) }
+            .compactMap {
+                ZMSearchUser(
+                    contextProvider: contextProvider,
+                    user: $0,
+                    searchUsersCache: searchUsersCache
+                )
+            }
 
-        return SearchResult(contacts: contacts,
-                            teamMembers: teamMembers,
-                            addressBook: contacts + additionalConnectedUsers + additionalNonConnectedUsers + searchUsersFromAddressBook,
-                            directory: directory,
-                            conversations: conversations,
-                            services: services)
+        return SearchResult(
+            contacts: contacts,
+            teamMembers: teamMembers,
+            addressBook: contacts + additionalConnectedUsers + additionalNonConnectedUsers + searchUsersFromAddressBook,
+            directory: directory,
+            conversations: conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
     }
 
     /// Returns users that are linked to the given address book contacts
@@ -81,7 +102,7 @@ extension SearchResult {
         let fetchRequest = ZMUser.sortedFetchRequest(with: predicate)
         fetchRequest.returnsObjectsAsFaults = false
 
-        guard let users = managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMUser] else {
+        guard let users = try! managedObjectContext.fetch(fetchRequest) as? [ZMUser] else {
             fatal("fetchOrAssert failed")
         }
 

@@ -107,16 +107,14 @@ extension ZMClientMessage {
                 return
             }
 
-            if
-                let mediumKey,
+            if let mediumKey,
                 let encryptionKey,
                 let digest,
                 let data = cache.decryptData(
                     key: mediumKey,
                     encryptionKey: encryptionKey,
                     sha256Digest: digest
-                )
-            {
+                ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))
@@ -232,7 +230,7 @@ extension ZMClientMessage: ZMImageOwner {
             original: original
         )
 
-        if let genericMessage = self.underlyingMessage, let textMessageData = textMessageData {
+        if let genericMessage = self.underlyingMessage, let textMessageData {
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
                 $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
@@ -243,7 +241,7 @@ extension ZMClientMessage: ZMImageOwner {
 
             guard
                 let content = genericMessage.content,
-                let nonce = nonce
+                let nonce
             else {
                 return
             }

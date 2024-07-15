@@ -16,33 +16,53 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
-class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
+final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
+
+    private var mockCache: SearchUsersCache!
+
+    override func setUp() {
+        super.setUp()
+
+        mockCache = SearchUsersCache()
+    }
+
+    override func tearDown() {
+        mockCache = nil
+
+        super.tearDown()
+    }
 
     func testThatItParsesTheBasicPayload() {
         // given
         let uuid = UUID()
         let domain = "foo.bar"
-        let payload: [String: Any] = ["name": "A user that was found",
-                                      "handle": "@user",
-                                      "accent_id": 5,
-                                      "id": uuid.transportString(),
-                                      "qualified_id": [
-                                        "id": uuid.transportString(),
-                                        "domain": domain
-                                      ]]
+        let payload: [String: Any] = [
+            "name": "A user that was found",
+            "handle": "@user",
+            "accent_id": 5,
+            "id": uuid.transportString(),
+            "qualified_id": [
+                "id": uuid.transportString(),
+                "domain": domain
+            ]
+        ]
 
         // when
-        let user = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let user = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertEqual(user.name, "A user that was found")
         XCTAssertEqual(user.handle, "@user")
         XCTAssertEqual(user.domain, domain)
         XCTAssertEqual(user.remoteIdentifier, uuid)
-        XCTAssertEqual(user.accentColorValue, ZMAccentColor.init(rawValue: 5))
+        XCTAssertEqual(user.zmAccentColor?.rawValue, 5)
         XCTAssertFalse(user.isServiceUser)
         XCTAssertTrue(user.canBeConnected)
     }
@@ -51,15 +71,21 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         // given
         let uuid = UUID()
         let provider = UUID()
-        let payload: [String: Any] = ["name": "A user that was found",
-                                      "handle": "@user",
-                                      "accent_id": 5,
-                                      "id": uuid.transportString(),
-                                      "summary": "Short summary",
-                                      "provider": provider.transportString()]
+        let payload: [String: Any] = [
+            "name": "A user that was found",
+            "handle": "@user",
+            "accent_id": 5,
+            "id": uuid.transportString(),
+            "summary": "Short summary",
+            "provider": provider.transportString()
+        ]
 
         // when
-        let user = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let user = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertTrue(user.isServiceUser)
@@ -74,17 +100,25 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         let uuid = UUID()
         let provider = UUID()
         let assetKey = "1234567890-ASSET-KEY"
-        let payload: [String: Any] = ["name": "A user that was found",
-                                      "handle": "@user",
-                                      "accent_id": 5,
-                                      "id": uuid.transportString(),
-                                      "provider": provider.transportString(),
-                                      "assets": [["type": "image",
-                                                  "size": "preview",
-                                                  "key": assetKey]]]
+        let payload: [String: Any] = [
+            "name": "A user that was found",
+            "handle": "@user",
+            "accent_id": 5,
+            "id": uuid.transportString(),
+            "provider": provider.transportString(),
+            "assets": [[
+                "type": "image",
+                "size": "preview",
+                "key": assetKey
+            ]]
+        ]
 
         // when
-        let searchUser = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let searchUser = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertEqual(searchUser.assetKeys?.preview, assetKey)
@@ -95,17 +129,25 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         let uuid = UUID()
         let provider = UUID()
         let assetKey = "1234567890-ASSET-KEY"
-        let payload: [String: Any] = ["name": "A user that was found",
-                                      "handle": "@user",
-                                      "accent_id": 5,
-                                      "id": uuid.transportString(),
-                                      "provider": provider.transportString(),
-                                      "assets": [["type": "image",
-                                                  "size": "full",
-                                                  "key": assetKey]]]
+        let payload: [String: Any] = [
+            "name": "A user that was found",
+            "handle": "@user",
+            "accent_id": 5,
+            "id": uuid.transportString(),
+            "provider": provider.transportString(),
+            "assets": [[
+                "type": "image",
+                "size": "full",
+                "key": assetKey
+            ]]
+        ]
 
         // when
-        let searchUser = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let searchUser = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertNil(searchUser.assetKeys)
@@ -116,19 +158,31 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         let uuid = UUID()
         let provider = UUID()
         let assetKey = "1234567890-ASSET-KEY"
-        let payload: [String: Any] = ["name": "A user that was found",
-                                      "handle": "@user",
-                                      "accent_id": 5,
-                                      "id": uuid.transportString(),
-                                      "provider": provider.transportString(),
-                                      "assets": [["type": "image",
-                                                  "size": "preview",
-                                                  "key": assetKey]]]
+        let payload: [String: Any] = [
+            "name": "A user that was found",
+            "handle": "@user",
+            "accent_id": 5,
+            "id": uuid.transportString(),
+            "provider": provider.transportString(),
+            "assets": [[
+                "type": "image",
+                "size": "preview",
+                "key": assetKey
+            ]]
+        ]
 
-        let searchUser1 = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let searchUser1 = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
 
         // when
-        let searchUser2 = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let searchUser2 = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertNotNil(searchUser2)
@@ -140,23 +194,35 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         let uuid = UUID()
         let provider = UUID()
         let assetKey = "1234567890-ASSET-KEY"
-        let payload: [String: Any] = ["name": "A user that was found",
-                                      "handle": "@user",
-                                      "accent_id": 5,
-                                      "id": uuid.transportString(),
-                                      "provider": provider.transportString(),
-                                      "assets": [["type": "image",
-                                                  "size": "preview",
-                                                  "key": assetKey]]]
+        let payload: [String: Any] = [
+            "name": "A user that was found",
+            "handle": "@user",
+            "accent_id": 5,
+            "id": uuid.transportString(),
+            "provider": provider.transportString(),
+            "assets": [[
+                "type": "image",
+                "size": "preview",
+                "key": assetKey
+            ]]
+        ]
 
-        let searchUser1 = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)!
+        let searchUser1 = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )!
         XCTAssertNil(searchUser1.user)
 
         let localUser = ZMUser.insertNewObject(in: uiMOC)
         localUser.remoteIdentifier = uuid
 
         // when
-        let searchUser2 = ZMSearchUser.searchUser(from: payload, contextProvider: self.coreDataStack)
+        let searchUser2 = ZMSearchUser.searchUser(
+            from: payload,
+            contextProvider: coreDataStack,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertNotNil(searchUser2)

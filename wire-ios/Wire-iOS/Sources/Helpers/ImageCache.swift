@@ -16,20 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 // swiftlint:disable todo_requires_jira_link
 // TODO: remove public after MockUser is convert to Swift
 // swiftlint:enable todo_requires_jira_link
-public final class ImageCache<T: AnyObject> {
+final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
     var processingQueue = DispatchQueue(label: "ImageCacheQueue", qos: .background, attributes: [.concurrent])
     var dispatchGroup: DispatchGroup = DispatchGroup()
 }
 
 extension UIImage {
-    public static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
+    static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 }
 
 final class MediaAssetCache {

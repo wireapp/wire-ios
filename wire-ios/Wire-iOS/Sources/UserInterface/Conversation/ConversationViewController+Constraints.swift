@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension ConversationViewController {
@@ -32,7 +31,7 @@ extension ConversationViewController {
 
             createOutgoingConnectionViewController()
 
-            if let outgoingConnectionViewController = outgoingConnectionViewController {
+            if let outgoingConnectionViewController {
                 outgoingConnectionViewController.willMove(toParent: self)
                 view.addSubview(outgoingConnectionViewController.view)
                 addChild(outgoingConnectionViewController)
@@ -81,9 +80,8 @@ extension ConversationViewController {
         // We only respond to keyboard will change frame if the first responder is not the input bar
         if invisibleInputAccessoryView.window == nil {
             UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrameInView in
-                guard let weakSelf = self else { return }
-
-                weakSelf.inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
+                guard let self else { return }
+                inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
             })
         } else {
             if let screenRect: CGRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,

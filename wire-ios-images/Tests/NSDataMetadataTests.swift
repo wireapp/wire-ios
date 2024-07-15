@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 import ImageIO
 @testable import WireImages
+import WireTesting
+import XCTest
 
 class NSDataMetadataTests: XCTestCase {
     func testThatItThrowsForEmptyData() {

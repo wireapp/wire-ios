@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
 import WireSyncEngine
-import avs
 
 extension ZMConversationMessage {
     var isSentBySelfUser: Bool {
@@ -63,7 +63,10 @@ final class SoundEventListener: NSObject {
         self.userSession = userSession
         super.init()
 
-        networkAvailabilityObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(self, userSession: userSession)
+        networkAvailabilityObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+            self,
+            notificationContext: userSession.managedObjectContext.notificationContext
+        )
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
         unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
@@ -144,7 +147,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
 
         guard let mediaManager = AVSMediaManager.sharedInstance(),
-              let userSession = userSession,
+              let userSession,
               let callCenter = userSession.callCenter,
               let conversationId = conversation.avsIdentifier
         else {
@@ -219,7 +222,7 @@ extension SoundEventListener {
 
 extension SoundEventListener: ZMNetworkAvailabilityObserver {
 
-    func didChangeAvailability(newState: ZMNetworkState) {
+    func didChangeAvailability(newState: NetworkState) {
         guard UIApplication.shared.applicationState != .background else { return }
 
         if newState == .online {

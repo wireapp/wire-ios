@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireDesign
+import WireSyncEngine
 
 protocol CollectionCellDelegate: AnyObject {
     func collectionCell(_ cell: CollectionCell, performAction: MessageAction)
@@ -231,7 +231,8 @@ extension CollectionCell: ZMMessageObserver {
 }
 
 extension CollectionCell: MessageActionResponder {
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
+
+    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         delegate?.collectionCell(self, performAction: action)
     }
 }

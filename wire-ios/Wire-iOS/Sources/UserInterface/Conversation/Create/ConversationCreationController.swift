@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
@@ -65,7 +65,7 @@ final class ConversationCreationController: UIViewController {
         servicesSection,
         receiptsSection,
         shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-    ].compactMap(\.self)
+    ].compactMap { $0 }
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
         if DeveloperFlag.showCreateMLSGroupToggle.isOn {
@@ -155,15 +155,18 @@ final class ConversationCreationController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
-        setupNavigationBar()
         setupViews()
 
         // try to overtake the first responder from the other view
         if UIResponder.currentFirst != nil {
             nameSection.becomeFirstResponder()
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -221,6 +224,7 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
+        setupNavigationBarTitle(CreateGroupName.title.capitalized)
         self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
 
@@ -345,8 +349,12 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let alert = UIAlertController(
             title: ConnectionError.title,
             message: ConnectionError.genericError,
-            alertAction: .ok(style: .cancel)
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         present(
             alert,
@@ -360,8 +368,12 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let alert = UIAlertController(
             title: ConversationError.title,
             message: ConversationError.missingLegalholdConsent,
-            alertAction: .ok(style: .cancel)
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         present(
             alert,

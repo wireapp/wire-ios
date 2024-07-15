@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "CallState")
@@ -183,7 +183,7 @@ extension ZMCallState {
 
     /// returns true if one of the merged states changed due to the merge
     public func mergeChangesFromState(_ other: ZMCallState?) -> Set<NSManagedObjectID> {
-        if let other = other {
+        if let other {
             for (moid, conversationState) in other {
                 self.stateForConversationID(moid).mergeChangesFromState(conversationState)
             }

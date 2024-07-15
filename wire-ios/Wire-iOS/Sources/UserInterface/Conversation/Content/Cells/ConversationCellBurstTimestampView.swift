@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireDesign
+import WireSyncEngine
 
 final class ConversationCellBurstTimestampView: UIView {
 

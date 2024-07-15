@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import XCTest
+
 @testable import Wire
 
 // MARK: - Mentions
@@ -38,7 +39,7 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         super.setUp()
         otherUser = MockUserType.createUser(name: "Bruno")
         selfUser = MockUserType.createDefaultSelfUser()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
     }
 
     // MARK: - tearDown

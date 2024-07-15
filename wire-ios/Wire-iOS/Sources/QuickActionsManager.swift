@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 extension UIApplicationShortcutItem {
     static let markAllAsReadType = "com.wire.shortcut.markAllAsRead"
     static let markAllAsRead = UIApplicationShortcutItem(type: markAllAsReadType,
@@ -28,13 +27,13 @@ extension UIApplicationShortcutItem {
                                                          userInfo: nil)
 }
 
-public final class QuickActionsManager: NSObject {
+final class QuickActionsManager: NSObject {
 
     // MARK: - Public Property
     var sessionManager: SessionManager?
 
     // MARK: - Initialization
-    public init(sessionManager: SessionManager? = nil) {
+    init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
         super.init()
         updateQuickActions()

@@ -115,7 +115,7 @@ public extension String {
         return String(repeating: self, count: count)
     }
 
-    func redactedAndTruncated(maxVisibleCharacters: Int, length: Int) -> String {
+    func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {
         if self.count <= maxVisibleCharacters {
             return redacted
         }
@@ -127,5 +127,50 @@ public extension String {
         let result = String(prefix(maxCharacters))
         let fillCount = count - result.count
         return result + "*".repeat(fillCount)
+    }
+}
+
+extension WireLogger {
+    func log(request: NSURLRequest) {
+        let info = RequestLog(request)
+
+        do {
+            let data = try JSONEncoder().encode(info)
+            let jsonString = String(decoding: data, as: UTF8.self)
+            let message = "REQUEST: \(jsonString)"
+            self.info(message, attributes: .safePublic)
+        } catch {
+            let message = "REQUEST: \(request.description)"
+            self.error(message, attributes: .safePublic)
+        }
+    }
+
+    func log(response: HTTPURLResponse) {
+        guard let info = ResponseLog(response) else { return }
+
+        do {
+            let data = try JSONEncoder().encode(info)
+            let jsonString = String(decoding: data, as: UTF8.self)
+            let message = "RESPONSE: \(jsonString)"
+            self.info(message, attributes: .safePublic)
+        } catch {
+            let message = "RESPONSE: \(response.description)"
+            self.error(message, attributes: .safePublic)
+        }
+    }
+}
+
+extension WireLoggerObjc {
+    static func logRequest(_ request: NSURLRequest) {
+        WireLogger.network.log(request: request)
+    }
+
+    static func logHTTPResponse(_ response: HTTPURLResponse) {
+        WireLogger.network.log(response: response)
+    }
+
+    @objc(logRequestLoopAtPath:)
+    static func logRequestLoop(at path: String) {
+        WireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
     }
 }

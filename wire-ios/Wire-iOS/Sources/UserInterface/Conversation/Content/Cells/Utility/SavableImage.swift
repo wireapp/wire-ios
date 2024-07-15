@@ -17,9 +17,9 @@
 //
 
 import Photos
+import UIKit
 import WireSystem
 import WireUtilities
-import UIKit
 
 protocol PhotoLibraryProtocol {
     func performChanges(_ changeBlock: @escaping () -> Swift.Void, completionHandler: ((Bool, Error?) -> Swift.Void)?)
@@ -90,7 +90,7 @@ final class SavableImage: NSObject {
         return isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
     }
 
-    public func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
+    func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
         guard !writeInProgess else { return }
         writeInProgess = true
         let source = createSource()
@@ -111,7 +111,7 @@ final class SavableImage: NSObject {
             } completionHandler: { success, error in
                 DispatchQueue.main.async {
                     self.writeInProgess = false
-                    error.apply(self.warnAboutError)
+                    error.map(self.warnAboutError)
                     cleanup(success)
                 }
             }
@@ -134,7 +134,12 @@ final class SavableImage: NSObject {
         let alert = UIAlertController(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,
             message: (error as NSError).localizedDescription,
-            alertAction: .ok(style: .cancel))
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }

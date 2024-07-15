@@ -17,9 +17,8 @@
 //
 
 import Foundation
-import ZipArchive
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
@@ -87,15 +86,18 @@ extension ConversationInputBarViewController {
             return
         }
 
-        FileMetaDataGenerator.metadataForFileAtURL(url,
-                                                   UTI: url.UTI(),
-                                                   name: url.lastPathComponent) { [weak self] metadata in
-            guard let weakSelf = self else { return }
+        FileMetaDataGenerator.metadataForFileAtURL(
+            url,
+            UTI: url.UTI(),
+            name: url.lastPathComponent
+        ) { [weak self] metadata in
 
-            weakSelf.impactFeedbackGenerator.prepare()
-            ZMUserSession.shared()?.perform({
+            guard let self else { return }
 
-                weakSelf.impactFeedbackGenerator.impactOccurred()
+            impactFeedbackGenerator.prepare()
+            ZMUserSession.shared()?.perform {
+
+                self.impactFeedbackGenerator.impactOccurred()
 
                 var conversationMediaAction: ConversationMediaAction = .fileTransfer
 
@@ -115,7 +117,7 @@ extension ConversationInputBarViewController {
                 }
 
                 completion()
-            })
+            }
         }
         parent?.dismiss(animated: true)
     }
@@ -137,7 +139,17 @@ extension ConversationInputBarViewController {
 
         let maxSizeString = ByteCountFormatter.string(fromByteCount: Int64(maxUploadFileSize), countStyle: .binary)
         let errorMessage = L10n.Localizable.Content.File.tooBig(maxSizeString)
-        let alert = UIAlertController.alertWithOKButton(message: errorMessage)
+
+        let alert = UIAlertController(
+            title: nil,
+            message: errorMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
         present(alert, animated: true)
     }
 }

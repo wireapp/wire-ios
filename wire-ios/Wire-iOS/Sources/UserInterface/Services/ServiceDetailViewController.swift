@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import UIKit
+import WireDesign
+import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
     var botCanBeAdded: Bool {
@@ -105,10 +106,6 @@ final class ServiceDetailViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let title = self.service.serviceUser.name {
-            navigationItem.setupNavigationBarTitle(title: title.capitalized)
-        }
-
         setupViews()
     }
 
@@ -119,6 +116,10 @@ final class ServiceDetailViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if let title = self.service.serviceUser.name {
+            setupNavigationBarTitle(title.capitalized)
+        }
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(icon: .cross,
                                                                  target: self,

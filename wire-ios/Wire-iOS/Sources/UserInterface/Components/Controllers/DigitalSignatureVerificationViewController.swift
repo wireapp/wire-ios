@@ -17,12 +17,11 @@
 //
 
 import UIKit
-import Foundation
 import WebKit
 import WireUtilities
 
 // MARK: - Error states
-public enum DigitalSignatureVerificationError: Error {
+enum DigitalSignatureVerificationError: Error {
     case postCodeRetry
     case authenticationFailed
     case otherError
@@ -78,7 +77,7 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func loadURL() {
-        guard let url = url else { return }
+        guard let url else { return }
         let request = URLRequest(url: url)
         webView.load(request)
     }

@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
 import UIKit
+import WireDataModel
+import WireDesign
 
 final class TextSearchResultFooter: UIView {
     var message: ZMConversationMessage? {
         didSet {
-            guard let message = message, let serverTimestamp = message.serverTimestamp, let sender = message.senderUser else {
+            guard let message, let serverTimestamp = message.serverTimestamp, let sender = message.senderUser else {
                 return
             }
 

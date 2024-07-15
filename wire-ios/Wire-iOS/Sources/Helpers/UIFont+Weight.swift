@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
-public extension UIFont {
+extension UIFont {
 
     /// Returns a font object that is the same as the receiver but which has the specified weight
     func withWeight(_ weight: Weight) -> UIFont {

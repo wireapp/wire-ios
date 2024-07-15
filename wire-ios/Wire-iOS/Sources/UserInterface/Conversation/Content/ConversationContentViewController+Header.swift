@@ -39,12 +39,12 @@ extension ConversationContentViewController {
 
         let connectionOrOneOnOne = conversation.conversationType == .connection || conversation.conversationType == .oneOnOne
 
-        if connectionOrOneOnOne, let otherParticipant = otherParticipant {
+        if connectionOrOneOnOne, let otherParticipant {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)
             headerView = connectionViewController?.view
         }
 
-        if let headerView = headerView {
+        if let headerView {
             headerView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
             setConversationHeaderView(headerView)
         } else {

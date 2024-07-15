@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
+import WireTesting
+import XCTest
+
 @testable import WireDataModel
 
 class FileAssetCacheTests: XCTestCase {
@@ -46,7 +48,7 @@ class FileAssetCacheTests: XCTestCase {
         }
 
         location = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         try FileManager.default.removeItemIfExists(at: location!)
@@ -80,10 +82,10 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
-        let data1_plain = "data1_plain".data(using: String.Encoding.utf8)!
-        let data2_plain = "data2_plain".data(using: String.Encoding.utf8)!
-        let data1_enc = "data1_enc".data(using: String.Encoding.utf8)!
-        let data2_enc = "data2_enc".data(using: String.Encoding.utf8)!
+        let data1_plain = Data("data1_plain".utf8)
+        let data2_plain = Data("data2_plain".utf8)
+        let data1_enc = Data("data1_enc".utf8)
+        let data2_enc = Data("data2_enc".utf8)
 
         sut.storeEncryptedFile(data: data1_enc, for: message1)
         sut.storeEncryptedFile(data: data2_enc, for: message2)
@@ -108,7 +110,7 @@ class FileAssetCacheTests: XCTestCase {
         message.serverTimestamp = Date(timeIntervalSinceReferenceDate: 1000)
 
         // when
-        sut.storeOriginalFile(data: "data1_plain".data(using: String.Encoding.utf8)!, for: message)
+        sut.storeOriginalFile(data: Data("data1_plain".utf8), for: message)
 
         // then
         let url = try XCTUnwrap(sut.accessAssetURL(message))
@@ -438,7 +440,7 @@ class FileAssetCacheTests: XCTestCase {
 
         // then
         XCTAssertNotNil(assetURL)
-        if let assetURL = assetURL {
+        if let assetURL {
             let data = try? Data(contentsOf: assetURL)
             XCTAssertNil(data)
         }
@@ -449,7 +451,7 @@ class FileAssetCacheTests: XCTestCase {
     func testThatHasDataOnDiskForTeam() {
         // given
         let syncContext = coreDataStack.syncContext
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"
             self.sut.storeImage(data: self.testData(), for: team)
@@ -464,7 +466,7 @@ class FileAssetCacheTests: XCTestCase {
 
     func testThatItDeletesAnExistingAssetDataForTeam() {
         let syncContext = coreDataStack.syncContext
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait {
             // given
             let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"

@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+import UIKit
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -50,7 +51,6 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
         imageView.image = object.icon
         conversation = object.conversation
     }
-
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
@@ -100,13 +100,18 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
 
 extension ConversationLegalHoldSystemMessageCell {
 
-    public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
 
         if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
-            let conversation = conversation,
+            let conversation,
             let clientViewController = ZClientViewController.shared {
 
-            LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation, userSession: clientViewController.userSession)
+            LegalHoldDetailsViewController.present(
+                in: clientViewController,
+                conversation: conversation,
+                userSession: clientViewController.userSession,
+                mainCoordinator: MainCoordinator(zClientViewController: clientViewController)
+            )
 
             return true
         }

@@ -97,6 +97,7 @@ public struct ModelHelper {
         let otherClient = UserClient.insertNewObject(in: context)
         otherClient.remoteIdentifier = id
         otherClient.user = user
+        otherClient.needsSessionMigration = user.domain == nil
         return otherClient
     }
 
@@ -197,10 +198,12 @@ public struct ModelHelper {
     @discardableResult
     public func createGroupConversation(
         id: UUID = .init(),
+        domain: String? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = id
+        conversation.domain = domain
         conversation.conversationType = .group
         return conversation
     }
@@ -220,6 +223,8 @@ public struct ModelHelper {
         return conversation
     }
 
+    // MARK: Conversations - MLS
+
     @discardableResult
     public func createSelfMLSConversation(
         id: UUID = .init(),
@@ -232,6 +237,20 @@ public struct ModelHelper {
         conversation.messageProtocol = .mls
         conversation.mlsStatus = .ready
         conversation.conversationType = .`self`
+        return conversation
+    }
+
+    @discardableResult
+    public func createMLSConversation(
+        mlsGroupID: MLSGroupID? = nil,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.mlsGroupID = mlsGroupID
+        conversation.messageProtocol = .mls
+        conversation.mlsStatus = .ready
+        conversation.conversationType = .group
+
         return conversation
     }
 }

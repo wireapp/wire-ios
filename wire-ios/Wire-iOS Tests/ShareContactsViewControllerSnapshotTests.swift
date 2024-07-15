@@ -16,31 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireUITesting
 import XCTest
+
 @testable import Wire
 
-final class ShareContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class ShareContactsViewControllerSnapshotTests: XCTestCase {
 
     var sut: ShareContactsViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        XCTestCase.accentColor = .vividRed
+        snapshotHelper = SnapshotHelper()
+        XCTestCase.accentColor = .red
         sut = ShareContactsViewController()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForContactsPermissionDenied() {
         sut.displayContactsAccessDeniedMessage(animated: false)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

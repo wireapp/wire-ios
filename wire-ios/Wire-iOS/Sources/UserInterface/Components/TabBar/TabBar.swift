@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 protocol TabBarDelegate: AnyObject {
     func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int)

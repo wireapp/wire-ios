@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
+import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -369,9 +369,11 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
+        // TODO [WPB-9604]: - refactor to avoid processing call data on the UI context 
         handleEventInContext("active-speakers-change") {
+
             guard let data = data.data(using: .utf8) else {
-                zmLog.safePublic("Invalid active speakers data")
+                WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
                 return
             }
 
@@ -389,14 +391,51 @@ extension WireCallCenterV3 {
 
             do {
                 let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
+
                 if let call = self.callSnapshots[conversationId] {
+
                     self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
+
+                    guard self.isSignificantActiveSpeakersChange(
+                        change: change,
+                        in: call
+                    ) else {
+                        return
+                    }
+
                     WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
                 }
             } catch {
-                zmLog.safePublic("Cannot decode active speakers change JSON")
+                WireLogger.calling.error("Cannot decode active speakers change JSON", attributes: .safePublic)
             }
         }
+    }
+
+    private func isSignificantActiveSpeakersChange(
+        change: AVSActiveSpeakersChange,
+        in call: CallSnapshot
+    ) -> Bool {
+        let currentSpeakers = Set(call.activeSpeakers)
+        let newSpeakers = Set(change.activeSpeakers)
+
+        var isSignificant = false
+
+        for newSpeaker in newSpeakers {
+            let currentSpeaker = currentSpeakers.first {
+                $0.client.avsIdentifier == newSpeaker.client.avsIdentifier
+            }
+
+            if let currentSpeaker {
+                let stoppedTalking = currentSpeaker.audioLevelNow > 0 && newSpeaker.audioLevelNow == 0
+                let startedTalking = currentSpeaker.audioLevelNow == 0 && newSpeaker.audioLevelNow > 0
+
+                isSignificant = stoppedTalking || startedTalking
+            } else {
+                isSignificant = newSpeaker.audioLevelNow > 0
+            }
+        }
+
+        return isSignificant
     }
 
     func handleNewEpochRequest(conversationID: AVSIdentifier) {

@@ -16,22 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import WireUITesting
+import XCTest
+
 @testable import Wire
 
 final class WipeCompletionViewControllerTests: XCTestCase {
+
     var sut: WipeCompletionViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
+        snapshotHelper = SnapshotHelper()
         sut = WipeCompletionViewController()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

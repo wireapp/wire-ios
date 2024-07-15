@@ -77,8 +77,8 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
 
     override var accessibilityLabel: String? {
         get {
-            guard let title = title,
-                  let status = status else { return nil }
+            guard let title,
+                  let status else { return nil }
             return "\(title), \(status)"
         }
 

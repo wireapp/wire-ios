@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 private enum Item {
@@ -61,7 +62,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 
     // MARK: - Initialization
 
-    public init(conversation: ZMConversation, userSession: ZMUserSession) {
+    init(conversation: ZMConversation, userSession: ZMUserSession) {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
@@ -78,12 +79,16 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description
 
-        configureSubviews()
-        configureConstraints()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -167,7 +172,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         }
 
         self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
 
@@ -188,7 +193,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     private func requestCustomValue() {
         UIAlertController.requestCustomTimeInterval(over: self) { [weak self] result in
 
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
 

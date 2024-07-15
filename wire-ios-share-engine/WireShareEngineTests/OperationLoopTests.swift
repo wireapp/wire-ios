@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 import WireDataModel
 import WireRequestStrategy
 @testable import WireShareEngine
+import WireTesting
+import XCTest
 
 final class OperationLoopTests: ZMTBaseTest {
 
@@ -109,7 +109,7 @@ extension OperationLoopTests {
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMoc.performGroupedBlockAndWait {
+        syncMoc.performGroupedAndWait {
             syncUser.name = "Jean Claude YouKnowWho"
             self.syncMoc.saveOrRollback()
         }

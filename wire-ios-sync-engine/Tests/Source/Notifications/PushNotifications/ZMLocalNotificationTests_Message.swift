@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import WireDataModel
 @testable import WireSyncEngine
+import WireTesting
 
 class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
@@ -44,7 +44,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
         var quotedMessage: ZMClientMessage?
 
-        if let quotedUser = quotedUser {
+        if let quotedUser {
             quotedMessage = try! conversation.appendText(content: "Don't quote me on this...") as? ZMClientMessage
             quotedMessage?.sender = quotedUser
             quotedMessage?.serverTimestamp = conversation.lastReadServerTimeStamp!.addingTimeInterval(10)

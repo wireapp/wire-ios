@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ContactsDataSourceTests: XCTestCase {
 

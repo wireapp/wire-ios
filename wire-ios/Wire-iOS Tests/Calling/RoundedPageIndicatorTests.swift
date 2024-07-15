@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 class RoundedPageIndicatorTests: XCTestCase {
 
@@ -28,7 +28,7 @@ class RoundedPageIndicatorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         sut = RoundedPageIndicator()
         sut.frame = frame
     }

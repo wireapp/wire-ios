@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 extension Message {
     static func dayFormatter(date: Date) -> DateFormatter {
@@ -26,21 +26,6 @@ extension Message {
 }
 
 extension XCTestCase {
-    /// change the locale of the DateFormatter for snapshot
-    /// Notice: this method changes WRDateFormatter's static formatters, call resetDayFormatter in tearDown() to reset the changes
-    ///
-    /// - Parameters:
-    ///   - identifier: locale identifier
-    ///   - date: date to determine in with or without yera component
-    func setDayFormatterLocale(identifier: String, date: Date) {
-        let dayFormatter = Message.dayFormatter(date: date)
-
-        // Overwrite dayFormatter's locale and update the date format string
-        let locale = Locale(identifier: identifier)
-        let formatString = DateFormatter.dateFormat(fromTemplate: dayFormatter.dateFormat, options: 0, locale: locale)
-
-        dayFormatter.dateFormat = formatString
-    }
 
     class func resetDayFormatter() {
         let locale = Locale(identifier: "en_US")

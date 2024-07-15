@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum ProgressViewType {
     case determ // stands for deterministic
@@ -27,7 +28,7 @@ enum ProgressViewType {
 
 typealias FileMessageViewViewsState = (progressViewType: ProgressViewType?, playButtonIcon: StyleKitIcon?, playButtonBackgroundColor: UIColor?)
 
-public enum FileMessageViewState {
+enum FileMessageViewState {
 
     case unavailable
 

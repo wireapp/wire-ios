@@ -38,7 +38,6 @@ extension ZMUserSession {
 
     @objc
     public func applicationDidEnterBackground(_ note: Notification?) {
-        notifyThirdPartyServices()
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -52,8 +51,6 @@ extension ZMUserSession {
 
     @objc
     public func applicationWillEnterForeground(_ note: Notification?) {
-
-        hasNotifiedThirdPartyServices = false
 
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
@@ -105,7 +102,7 @@ extension ZMUserSession {
         syncManagedObjectContext.performGroupedBlock {
             ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)
             self.syncManagedObjectContext.saveOrRollback()
-            NotificationInContext(name: .calculateBadgeCount, context: self.syncManagedObjectContext.notificationContext).post()
+            NotificationInContext(name: .calculateBadgeCount, context: self.notificationContext).post()
         }
     }
 

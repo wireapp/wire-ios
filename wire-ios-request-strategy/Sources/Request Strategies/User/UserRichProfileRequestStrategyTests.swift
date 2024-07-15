@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class UserRichProfileRequestStrategyTests: MessagingTestBase {
 
@@ -27,10 +27,10 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = UserRichProfileRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
+            self.sut = UserRichProfileRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
         }
     }
 
@@ -42,7 +42,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesARequestWhenSettingIsModified() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
@@ -59,7 +59,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItParsesAResponse() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
@@ -86,7 +86,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItResetsTheFlagOnError() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)

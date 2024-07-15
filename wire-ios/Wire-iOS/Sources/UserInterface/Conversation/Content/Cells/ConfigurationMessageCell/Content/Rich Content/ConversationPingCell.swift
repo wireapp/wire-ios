@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -66,7 +67,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     func createAnimationBlock() -> AnimationBlock {
 
         let animationBlock: AnimationBlock = { [weak self] otherBlock, reps in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.imageView.alpha = 1.0
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
@@ -161,5 +162,4 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
         accessibilityLabel = text.string
         actionController = nil
     }
-
 }

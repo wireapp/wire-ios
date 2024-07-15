@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import avs
 @testable import Wire
+import XCTest
 
 final class AVURLAsset_conversionTests: XCTestCase {
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
-    override class func tearDown() {
+    override static func tearDown() {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }

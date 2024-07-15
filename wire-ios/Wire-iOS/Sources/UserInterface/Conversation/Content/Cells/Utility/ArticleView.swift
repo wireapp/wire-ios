@@ -17,9 +17,10 @@
 //
 
 import UIKit
-import WireLinkPreview
 import WireCommonComponents
 import WireDataModel
+import WireDesign
+import WireLinkPreview
 
 final class ArticleView: UIView {
 
@@ -241,7 +242,7 @@ extension LinkMetadata {
         if let originalURL = URL(string: originalURLString),
            application.canOpenURL(originalURL) {
             return originalURL
-        } else if let permanentURL = permanentURL,
+        } else if let permanentURL,
                   application.canOpenURL(permanentURL) {
             return permanentURL
         }

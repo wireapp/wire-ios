@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import MapKit
+import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -89,7 +90,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.addSubview(addressLabel)
         obfuscationView.isHidden = true
 
-        guard let font = labelFont, let color = labelTextColor, let containerColor = containerColor else { return }
+        guard let font = labelFont, let color = labelTextColor, let containerColor else { return }
         addressLabel.font = font
         addressLabel.textColor = color
         addressContainerView.backgroundColor = containerColor

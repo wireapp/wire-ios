@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
-import WireUtilities
+import Foundation
 import WireDataModel
+import WireUtilities
 
 class MLSConferenceStaleParticipantsRemover: Subscriber {
 
@@ -234,7 +234,7 @@ private extension MLSClientID {
         }
         guard
             let userID = remoteIdentifier?.transportString(),
-            let domain = domain
+            let domain
         else {
             return nil
         }

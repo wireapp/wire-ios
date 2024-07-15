@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireMockTransport
+import XCTest
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
@@ -47,7 +47,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
@@ -74,7 +74,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -106,7 +106,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
@@ -123,7 +123,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -155,7 +155,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
@@ -173,7 +173,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [
@@ -206,7 +206,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
@@ -223,7 +223,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [

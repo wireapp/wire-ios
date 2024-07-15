@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -26,12 +25,14 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
+    let mainCoordinator: MainCoordinating
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
 
-    override init() {
+    init(mainCoordinator: MainCoordinating) {
+        self.mainCoordinator = mainCoordinator
         super.init()
 
         NotificationCenter.default.addObserver(self,
@@ -43,7 +44,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     @objc
     func deviceOrientationChanged(_ notification: Notification?) {
         guard
-            let controllerToPresentOn = controllerToPresentOn,
+            let controllerToPresentOn,
             controllerToPresentOn.isIPadRegular()
         else { return }
 
@@ -58,11 +59,13 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0).size
     }
 
-    func presentProfileViewController(for user: UserType,
-                                      in controller: UIViewController?,
-                                      from rect: CGRect,
-                                      userSession: UserSession,
-                                      onDismiss: @escaping () -> Void) {
+    func presentProfileViewController(
+        for user: UserType,
+        in controller: UIViewController?,
+        from rect: CGRect,
+        userSession: UserSession,
+        onDismiss: @escaping () -> Void
+    ) {
         guard let viewer = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -79,7 +82,8 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             user: user,
             viewer: viewer,
             context: .search,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self

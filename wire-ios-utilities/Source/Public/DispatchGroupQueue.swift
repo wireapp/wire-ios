@@ -19,22 +19,22 @@
 import Foundation
 
 @objcMembers
-public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
+public final class DispatchGroupQueue: NSObject, GroupQueue {
 
     let queue: DispatchQueue
     let dispatchGroupContext: DispatchGroupContext
 
     public init(queue: DispatchQueue) {
         self.queue = queue
-        self.dispatchGroupContext = DispatchGroupContext(groups: [])
+        dispatchGroupContext = DispatchGroupContext(groups: [])
     }
 
-    public  var dispatchGroup: ZMSDispatchGroup! {
-        return self.dispatchGroupContext.groups.first
+    public var dispatchGroup: ZMSDispatchGroup? {
+        dispatchGroupContext.groups.first
     }
 
     public func add(_ group: ZMSDispatchGroup) {
-        self.dispatchGroupContext.add(group)
+        dispatchGroupContext.add(group)
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {
@@ -44,5 +44,4 @@ public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
             self.dispatchGroupContext.leave(groups)
         }
     }
-
 }

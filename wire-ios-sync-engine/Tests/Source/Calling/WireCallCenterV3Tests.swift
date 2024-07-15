@@ -20,6 +20,7 @@ import avs
 import Combine
 import Foundation
 import WireDataModelSupport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -36,13 +37,13 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
     }
 
     func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
-        if let mockCallConfigResponse = mockCallConfigResponse {
+        if let mockCallConfigResponse {
             completionHandler(mockCallConfigResponse.0, mockCallConfigResponse.1)
         }
     }
 
     func requestClientsList(conversationId: AVSIdentifier, completionHandler: @escaping ([AVSClient]) -> Void) {
-        if let mockClientsRequestResponse = mockClientsRequestResponse {
+        if let mockClientsRequestResponse {
             completionHandler(mockClientsRequestResponse)
         }
     }
@@ -1591,7 +1592,7 @@ extension WireCallCenterV3Tests {
         let change = AVSParticipantsChange(convid: conversationId.serialized, members: [member])
 
         let encoded = try! JSONEncoder().encode(change)
-        let string = String(data: encoded, encoding: .utf8)!
+        let string = String(decoding: encoded, as: UTF8.self)
 
         sut.handleParticipantChange(conversationId: conversationId, data: string)
     }
@@ -1745,13 +1746,18 @@ extension WireCallCenterV3Tests {
         case realTime
     }
 
-    private func activeSpeakersChange(for conversationId: AVSIdentifier,
-                                      clients: [AVSClient],
-                                      activeSpeakerKind kind: ActiveSpeakerKind = .realTime) -> AVSActiveSpeakersChange {
-        var activeSpeakers = [AVSActiveSpeakersChange.ActiveSpeaker]()
+    private typealias ActiveSpeaker = AVSActiveSpeakersChange.ActiveSpeaker
+
+    private func activeSpeakersChange(
+        for conversationId: AVSIdentifier,
+        clients: [AVSClient],
+        activeSpeakerKind kind: ActiveSpeakerKind = .realTime
+    ) -> AVSActiveSpeakersChange {
+
+        var activeSpeakers = [ActiveSpeaker]()
 
         for client in clients {
-            activeSpeakers += [AVSActiveSpeakersChange.ActiveSpeaker(
+            activeSpeakers += [ActiveSpeaker(
                 userId: client.userId,
                 clientId: client.clientId,
                 audioLevel: kind == .smoothed ? 100 : 0,
@@ -1772,42 +1778,143 @@ extension WireCallCenterV3Tests {
         ]
     }
 
-    func testThatActiveSpeakersHandlerUpdatesActiveSpeakers() {
+    func test_HandleActiveSpeakersChange_UpdatesActiveSpeakers() throws {
         // GIVEN
-        let conversationId = groupConversationID!
+        let conversationId = try XCTUnwrap(groupConversationID)
         let client = AVSClient.mockClient
 
         sut.callSnapshots = callSnapshot(conversationId: conversationId, clients: [client])
         let change = activeSpeakersChange(for: conversationId, clients: [client])
-        let activeSpeaker = change.activeSpeakers.first!
+        let activeSpeaker = try XCTUnwrap(change.activeSpeakers.first)
 
         // WHEN
         sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(sut.callSnapshots[conversationId]!.activeSpeakers.first, activeSpeaker)
+        let callSnapshot = try XCTUnwrap(sut.callSnapshots[conversationId])
+        XCTAssertEqual(callSnapshot.activeSpeakers.first, activeSpeaker)
     }
 
-    func testThatActiveSpeakersHandlerPostsNotification() {
+    func test_HandleActiveSpeakersChange_PostsNotification_WhenActiveSpeakersChange_IsRelevant() throws {
         // GIVEN
-        let conversationId = groupConversationID!
+        let conversationId = try XCTUnwrap(groupConversationID)
+
+        // We have one client in the call
         let client = AVSClient.mockClient
 
-        sut.callSnapshots = callSnapshot(conversationId: conversationId, clients: [client])
-        let change = activeSpeakersChange(for: conversationId, clients: [client])
+        // We set the speaker levels
+        let speaker = ActiveSpeaker(
+            userId: client.userId,
+            clientId: client.clientId,
+            audioLevel: 0,
+            audioLevelNow: 0
+        )
 
-        // EXPECT
-        customExpectation(forNotification: WireCallCenterActiveSpeakersNotification.notificationName, object: nil) { _ in
-            return true
-        }
+        // We create the call snapshot
+        let callSnapshot = CallSnapshotTestFixture.callSnapshot(
+            conversationId: conversationId,
+            callCenter: sut,
+            clients: [client],
+            activeSpeakers: [speaker]
+        )
+
+        sut.callSnapshots = [conversationId: callSnapshot]
+
+        // We prepare the change of active speaker.
+        // They're not relevant if the audio level stays > 0
+        let newSpeaker = ActiveSpeaker(
+            userId: client.userId,
+            clientId: client.clientId,
+            audioLevel: 0,
+            audioLevelNow: 24
+        )
+
+        let change = AVSActiveSpeakersChange(activeSpeakers: [newSpeaker])
+
+        // We set the expectation for notifications.
+        // We expect a notification to be sent since there has been a relevant change in active speakers.
+        let expectation = XCTNSNotificationExpectation(name: WireCallCenterActiveSpeakersNotification.notificationName)
 
         // WHEN
         sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        wait(for: [expectation], timeout: 0.5)
+    }
 
+    func test_HandleActiveSpeakersChange_DoesntPostNotification_WhenActiveSpeakersChange_IsNotRelevant() throws {
+        // GIVEN
+        let conversationId = try XCTUnwrap(groupConversationID)
+
+        // We have three clients in the call
+        let clientOne = AVSClient.mockClient
+        let clientTwo = AVSClient.mockClient
+        let clientThree = AVSClient.mockClient
+
+        // We set the speaker levels for each client
+        let speakerOne = ActiveSpeaker(
+            userId: clientOne.userId,
+            clientId: clientOne.clientId,
+            audioLevel: 0,
+            audioLevelNow: 0
+        )
+
+        let speakerTwo = ActiveSpeaker(
+            userId: clientTwo.userId,
+            clientId: clientTwo.clientId,
+            audioLevel: 0,
+            audioLevelNow: 99
+        )
+
+        let speakerThree = ActiveSpeaker(
+            userId: clientThree.userId,
+            clientId: clientThree.clientId,
+            audioLevel: 0,
+            audioLevelNow: 38
+        )
+
+        // We create the call snapshot
+        let callSnapshot = CallSnapshotTestFixture.callSnapshot(
+            conversationId: conversationId,
+            callCenter: sut,
+            clients: [clientOne, clientTwo, clientThree],
+            activeSpeakers: [speakerOne, speakerTwo, speakerThree]
+        )
+
+        sut.callSnapshots = [conversationId: callSnapshot]
+
+        // We prepare the change of active speakers.
+        // They're not relevant if the audio level stays >0
+        let newSpeakerTwo = ActiveSpeaker(
+            userId: clientTwo.userId,
+            clientId: clientTwo.clientId,
+            audioLevel: 0,
+            audioLevelNow: 24
+        )
+
+        let newSpeakerThree = ActiveSpeaker(
+            userId: clientThree.userId,
+            clientId: clientThree.clientId,
+            audioLevel: 0,
+            audioLevelNow: 87
+        )
+
+        let change = AVSActiveSpeakersChange(activeSpeakers: [speakerOne, newSpeakerTwo, newSpeakerThree])
+
+        // We set a notification expectation
+        let expectation = XCTNSNotificationExpectation(name: WireCallCenterActiveSpeakersNotification.notificationName)
+        // We expect to NOT receive any notification since there has been no significant change in active speakers
+        // So we set the expectation as inverted
+        expectation.isInverted = true
+
+        // WHEN
+        sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
+
+        // THEN
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        wait(for: [expectation], timeout: 0.5)
     }
 
     typealias CallParticipantsTestsAssertion = ([CallParticipant], Int) -> Void
@@ -2085,6 +2192,6 @@ private extension AVSClient {
 private extension AVSActiveSpeakersChange {
     var data: String {
         let encoded = try! JSONEncoder().encode(self)
-        return String(data: encoded, encoding: .utf8)!
+        return String(decoding: encoded, as: UTF8.self)
     }
 }

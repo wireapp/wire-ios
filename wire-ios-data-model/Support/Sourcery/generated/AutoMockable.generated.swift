@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -405,6 +405,15 @@ public class MockConversationLike: ConversationLike {
     }
 
     public var underlyingIsMLSConversationDegraded: Bool!
+
+    // MARK: - isProteusConversationDegraded
+
+    public var isProteusConversationDegraded: Bool {
+        get { return underlyingIsProteusConversationDegraded }
+        set(value) { underlyingIsProteusConversationDegraded = value }
+    }
+
+    public var underlyingIsProteusConversationDegraded: Bool!
 
     // MARK: - sortedActiveParticipantsUserTypes
 
@@ -3645,6 +3654,48 @@ public class MockLAContextStorable: LAContextStorable {
 
 }
 
+public class MockLastEventIDRepositoryInterface: LastEventIDRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchLastEventID
+
+    public var fetchLastEventID_Invocations: [Void] = []
+    public var fetchLastEventID_MockMethod: (() -> UUID?)?
+    public var fetchLastEventID_MockValue: UUID??
+
+    public func fetchLastEventID() -> UUID? {
+        fetchLastEventID_Invocations.append(())
+
+        if let mock = fetchLastEventID_MockMethod {
+            return mock()
+        } else if let mock = fetchLastEventID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchLastEventID`")
+        }
+    }
+
+    // MARK: - storeLastEventID
+
+    public var storeLastEventID_Invocations: [UUID?] = []
+    public var storeLastEventID_MockMethod: ((UUID?) -> Void)?
+
+    public func storeLastEventID(_ id: UUID?) {
+        storeLastEventID_Invocations.append(id)
+
+        guard let mock = storeLastEventID_MockMethod else {
+            fatalError("no mock for `storeLastEventID`")
+        }
+
+        mock(id)
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle
@@ -3719,24 +3770,24 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - claimKeyPackages
 
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, excludedSelfClientID: String?, context: NotificationContext)] = []
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError: Error?
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod: ((UUID, String?, String?, NotificationContext) async throws -> [KeyPackage])?
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue: [KeyPackage]?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, context: NotificationContext)] = []
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError: Error?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod: ((UUID, String?, MLSCipherSuite, String?, NotificationContext) async throws -> [KeyPackage])?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue: [KeyPackage]?
 
-    func claimKeyPackages(userID: UUID, domain: String?, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
-        claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, excludedSelfClientID: excludedSelfClientID, context: context))
+    func claimKeyPackages(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
+        claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, ciphersuite: ciphersuite, excludedSelfClientID: excludedSelfClientID, context: context))
 
-        if let error = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError {
+        if let error = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError {
             throw error
         }
 
-        if let mock = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod {
-            return try await mock(userID, domain, excludedSelfClientID, context)
-        } else if let mock = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue {
+        if let mock = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod {
+            return try await mock(userID, domain, ciphersuite, excludedSelfClientID, context)
+        } else if let mock = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue {
             return mock
         } else {
-            fatalError("no mock for `claimKeyPackagesUserIDDomainExcludedSelfClientIDIn`")
+            fatalError("no mock for `claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn`")
         }
     }
 
@@ -3934,30 +3985,6 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
-public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerificationStatusUpdating {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - updateAllStatuses
-
-    public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockMethod: (() async -> Void)?
-
-    public func updateAllStatuses() async {
-        updateAllStatuses_Invocations.append(())
-
-        guard let mock = updateAllStatuses_MockMethod else {
-            fatalError("no mock for `updateAllStatuses`")
-        }
-
-        await mock()
-    }
-
-}
-
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -4081,6 +4108,75 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
 
 }
 
+public class MockMLSGroupVerificationProtocol: MLSGroupVerificationProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - startObserving
+
+    public var startObserving_Invocations: [Void] = []
+    public var startObserving_MockMethod: (() -> Void)?
+
+    public func startObserving() {
+        startObserving_Invocations.append(())
+
+        guard let mock = startObserving_MockMethod else {
+            fatalError("no mock for `startObserving`")
+        }
+
+        mock()
+    }
+
+    // MARK: - updateConversation
+
+    public var updateConversationBy_Invocations: [MLSGroupID] = []
+    public var updateConversationBy_MockMethod: ((MLSGroupID) async -> Void)?
+
+    public func updateConversation(by groupID: MLSGroupID) async {
+        updateConversationBy_Invocations.append(groupID)
+
+        guard let mock = updateConversationBy_MockMethod else {
+            fatalError("no mock for `updateConversationBy`")
+        }
+
+        await mock(groupID)
+    }
+
+    // MARK: - updateConversation
+
+    public var updateConversationWith_Invocations: [(conversation: ZMConversation, groupID: MLSGroupID)] = []
+    public var updateConversationWith_MockMethod: ((ZMConversation, MLSGroupID) async -> Void)?
+
+    public func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async {
+        updateConversationWith_Invocations.append((conversation: conversation, groupID: groupID))
+
+        guard let mock = updateConversationWith_MockMethod else {
+            fatalError("no mock for `updateConversationWith`")
+        }
+
+        await mock(conversation, groupID)
+    }
+
+    // MARK: - updateAllConversations
+
+    public var updateAllConversations_Invocations: [Void] = []
+    public var updateAllConversations_MockMethod: (() async -> Void)?
+
+    public func updateAllConversations() async {
+        updateAllConversations_Invocations.append(())
+
+        guard let mock = updateAllConversations_MockMethod else {
+            fatalError("no mock for `updateAllConversations`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - Life cycle
@@ -4106,16 +4202,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - createSelfGroup
 
     public var createSelfGroupFor_Invocations: [MLSGroupID] = []
-    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async -> Void)?
+    public var createSelfGroupFor_MockError: Error?
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async throws -> MLSCipherSuite)?
+    public var createSelfGroupFor_MockValue: MLSCipherSuite?
 
-    public func createSelfGroup(for groupID: MLSGroupID) async {
+    public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
         createSelfGroupFor_Invocations.append(groupID)
 
-        guard let mock = createSelfGroupFor_MockMethod else {
-            fatalError("no mock for `createSelfGroupFor`")
+        if let error = createSelfGroupFor_MockError {
+            throw error
         }
 
-        await mock(groupID)
+        if let mock = createSelfGroupFor_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = createSelfGroupFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createSelfGroupFor`")
+        }
     }
 
     // MARK: - joinGroup
@@ -4162,40 +4266,46 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var establishGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
     public var establishGroupForWith_MockError: Error?
-    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
+    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> MLSCipherSuite)?
+    public var establishGroupForWith_MockValue: MLSCipherSuite?
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
         establishGroupForWith_Invocations.append((groupID: groupID, users: users))
 
         if let error = establishGroupForWith_MockError {
             throw error
         }
 
-        guard let mock = establishGroupForWith_MockMethod else {
+        if let mock = establishGroupForWith_MockMethod {
+            return try await mock(groupID, users)
+        } else if let mock = establishGroupForWith_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `establishGroupForWith`")
         }
-
-        try await mock(groupID, users)
     }
 
     // MARK: - createGroup
 
     public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID?)] = []
     public var createGroupForParentGroupID_MockError: Error?
-    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> Void)?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> MLSCipherSuite)?
+    public var createGroupForParentGroupID_MockValue: MLSCipherSuite?
 
-    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws {
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite {
         createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
 
         if let error = createGroupForParentGroupID_MockError {
             throw error
         }
 
-        guard let mock = createGroupForParentGroupID_MockMethod else {
+        if let mock = createGroupForParentGroupID_MockMethod {
+            return try await mock(groupID, parentGroupID)
+        } else if let mock = createGroupForParentGroupID_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `createGroupForParentGroupID`")
         }
-
-        try await mock(groupID, parentGroupID)
     }
 
     // MARK: - conversationExists
@@ -4668,30 +4778,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
 }
 
-public class MockObserveMLSGroupVerificationStatusUseCaseProtocol: ObserveMLSGroupVerificationStatusUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() -> Void)?
-
-    public func invoke() {
-        invoke_Invocations.append(())
-
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
-        }
-
-        mock()
-    }
-
-}
-
 public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
 
     // MARK: - Life cycle
@@ -4826,7 +4912,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var lastPrekeyID: UInt16 {
         get async {
             lastPrekeyIDCallsCount += 1
-            if let lastPrekeyIDClosure = lastPrekeyIDClosure {
+            if let lastPrekeyIDClosure {
                 return await lastPrekeyIDClosure()
             } else {
                 return underlyingLastPrekeyID
@@ -5104,6 +5190,35 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
 }
 
+public class MockProteusToMLSMigrationCoordinating: ProteusToMLSMigrationCoordinating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateMigrationStatus
+
+    public var updateMigrationStatus_Invocations: [Void] = []
+    public var updateMigrationStatus_MockError: Error?
+    public var updateMigrationStatus_MockMethod: (() async throws -> Void)?
+
+    public func updateMigrationStatus() async throws {
+        updateMigrationStatus_Invocations.append(())
+
+        if let error = updateMigrationStatus_MockError {
+            throw error
+        }
+
+        guard let mock = updateMigrationStatus_MockMethod else {
+            fatalError("no mock for `updateMigrationStatus`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
 
     // MARK: - Life cycle
@@ -5252,29 +5367,26 @@ public class MockUpdateMLSGroupVerificationStatusUseCaseProtocol: UpdateMLSGroup
 
 }
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
+public class MockUserObserving: UserObserving {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - selfUser
+    // MARK: - userDidChange
 
-    public var selfUser_Invocations: [Void] = []
-    public var selfUser_MockMethod: (() -> ZMUser)?
-    public var selfUser_MockValue: ZMUser?
+    public var userDidChange_Invocations: [UserChangeInfo] = []
+    public var userDidChange_MockMethod: ((UserChangeInfo) -> Void)?
 
-    public func selfUser() -> ZMUser {
-        selfUser_Invocations.append(())
+    public func userDidChange(_ changeInfo: UserChangeInfo) {
+        userDidChange_Invocations.append(changeInfo)
 
-        if let mock = selfUser_MockMethod {
-            return mock()
-        } else if let mock = selfUser_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `selfUser`")
+        guard let mock = userDidChange_MockMethod else {
+            fatalError("no mock for `userDidChange`")
         }
+
+        mock(changeInfo)
     }
 
 }

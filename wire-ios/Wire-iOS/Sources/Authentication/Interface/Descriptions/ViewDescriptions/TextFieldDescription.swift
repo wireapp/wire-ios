@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 final class TextFieldDescription: NSObject, ValueSubmission {
@@ -104,7 +103,7 @@ extension TextFieldDescription: UITextFieldDelegate {
 
         let editedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string)
 
-        if let textField = self.textField, let editedText = editedText {
+        if let textField = self.textField, let editedText {
             validationError = textField.validateText(text: editedText)
             return validationError == nil || validationError == .tooShort(kind: kind)
         } else {

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Ziphy
 import WireDataModel
 import WireSyncEngine
+import Ziphy
 
 final class ZiphySession: ZiphyURLRequester {
 
@@ -28,7 +28,7 @@ final class ZiphySession: ZiphyURLRequester {
         self.userSession = userSession
     }
 
-    public func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
+    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
         // Removing the https://host part from the given URL, so WireSyncEngine can prepend it with the Wire giphy proxy host
         // e.g. url = https://api.giphy.com/v1/gifs/trending?limit=50&offset=0
         //      requestPath = /v1/gifs/trending?limit=50&offset=0
@@ -45,7 +45,7 @@ final class ZiphySession: ZiphyURLRequester {
         )
     }
 
-    public func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {
+    func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {
         guard let requestIdentifier = requestIdentifier as? ProxyRequest else { return }
         userSession.cancelProxiedRequest(requestIdentifier)
     }

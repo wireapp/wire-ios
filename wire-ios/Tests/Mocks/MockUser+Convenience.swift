@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
 /**
  * A class that facilitates writing snapshot tests with mock users.
  *
@@ -44,7 +42,7 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .vividRed
+        user.zmAccentColor = .red
         user.remoteIdentifier = UUID()
         return user
     }
@@ -66,10 +64,14 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .brightOrange
+        user.zmAccentColor = .amber
         user.emailAddress = teamID != nil ? "test@email.com" : nil
         user.remoteIdentifier = UUID()
         return user
     }
 
+    var zmAccentColor: ZMAccentColor? {
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? 0 }
+    }
 }

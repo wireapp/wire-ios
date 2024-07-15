@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireCryptobox
+import XCTest
 
 class EncryptionContextTests: XCTestCase {
 
@@ -162,11 +162,11 @@ class EncryptionContextTests: XCTestCase {
             try! context1.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
 
             mainContext.perform { (context2: EncryptionSessionsDirectory) in
-                _ = try! context2.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+                _ = try! context2.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
 
             }
 
-            _ = try! context1.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            _ = try! context1.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
         }
 
         // THEN 

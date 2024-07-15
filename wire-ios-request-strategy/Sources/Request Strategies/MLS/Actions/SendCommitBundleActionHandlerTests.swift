@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundleAction, SendCommitBundleActionHandler> {
 
-    let commitBundle = "bundle".data(using: .utf8)!
+    let commitBundle = Data("bundle".utf8)
 
     override func setUp() {
         super.setUp()

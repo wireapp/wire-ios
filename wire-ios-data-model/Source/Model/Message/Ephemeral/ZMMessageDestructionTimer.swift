@@ -96,11 +96,11 @@ enum MessageDestructionType: String {
     override init(managedObjectContext: NSManagedObjectContext!) {
         super.init(managedObjectContext: managedObjectContext)
         timerCompletionBlock = { [weak self] message, userInfo in
-            guard let strongSelf = self, let message = message, !message.isZombieObject else {
+            guard let self, let message, !message.isZombieObject else {
                 return log.debug("not forwarding timer, nil message or zombie")
             }
 
-            strongSelf.messageTimerDidFire(message: message, userInfo: userInfo)
+            messageTimerDidFire(message: message, userInfo: userInfo)
         }
     }
 
@@ -122,19 +122,24 @@ enum MessageDestructionType: String {
     }
 
     public func startObfuscationTimer(message: ZMMessage, timeout: TimeInterval) {
-        log.debug("starting obfuscation timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
         let fireDate = Date().addingTimeInterval(timeout)
-        start(forMessageIfNeeded: message,
-              fire: fireDate,
+        let started = startTimerIfNeeded(for: message,
+              fireDate: fireDate,
               userInfo: [MessageDestructionType.UserInfoKey: MessageDestructionType.obfuscation.rawValue])
+        if started {
+            log.debug("starting obfuscation timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
+        }
     }
 
     public func startDeletionTimer(message: ZMMessage, timeout: TimeInterval) -> TimeInterval {
-        log.debug("starting deletion timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
         let fireDate = Date().addingTimeInterval(timeout)
-        start(forMessageIfNeeded: message,
-              fire: fireDate,
+        let started = startTimerIfNeeded(for: message,
+              fireDate: fireDate,
               userInfo: [MessageDestructionType.UserInfoKey: MessageDestructionType.deletion.rawValue])
+        if started {
+            log.debug("starting deletion timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
+        }
+
         return timeout
     }
 

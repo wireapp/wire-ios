@@ -16,20 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+import WireUITesting
+import XCTest
 
-final class UnlockViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class UnlockViewControllerTests: XCTestCase {
+
     var sut: UnlockViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         let selfUser = MockUserType.createSelfUser(name: "Bobby McFerrin")
         sut = UnlockViewController(selfUser: selfUser)
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -40,7 +46,7 @@ final class UnlockViewControllerTests: BaseSnapshotTestCase {
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForPasscodeFilled() {
@@ -48,7 +54,7 @@ final class UnlockViewControllerTests: BaseSnapshotTestCase {
         fillPasscode()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForErrorState() {
@@ -59,7 +65,7 @@ final class UnlockViewControllerTests: BaseSnapshotTestCase {
         sut.showWrongPasscodeMessage()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForPasscodeRevealed() {
@@ -70,6 +76,6 @@ final class UnlockViewControllerTests: BaseSnapshotTestCase {
         sut.buttonPressed(UIButton())
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

@@ -23,7 +23,7 @@ final class RegistrationStrategy: NSObject {
     weak var userInfoParser: UserInfoParser?
     var registrationSync: ZMSingleRequestSync!
 
-    init(groupQueue: ZMSGroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
+    init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
         registrationStatus = status
         self.userInfoParser = userInfoParser
         super.init()
@@ -45,7 +45,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
 
     func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         if response.result == .success {
-            response.extractUserInfo().apply {
+            response.extractUserInfo().map {
                 userInfoParser?.upgradeToAuthenticatedSession(with: $0)
             }
             registrationStatus.success()

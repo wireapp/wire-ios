@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
-final class DecodeImageOperationTests: BaseSnapshotTestCase {
+final class DecodeImageOperationTests: XCTestCase {
 
     var operationQueue: OperationQueue!
     var sut: UIImageView!

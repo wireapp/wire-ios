@@ -17,8 +17,9 @@
 //
 
 import UIKit
+import WireDesign
 
-public struct SearchBarStyle {
+struct SearchBarStyle {
 
     typealias SearchBarColors = SemanticColors.SearchBar
 
@@ -40,7 +41,7 @@ public struct SearchBarStyle {
 
 extension UITextView: Stylable {
 
-    public func applyStyle(_ style: SearchBarStyle) {
+    func applyStyle(_ style: SearchBarStyle) {
 
         textColor = style.textColor
         backgroundColor = style.backgroundColor

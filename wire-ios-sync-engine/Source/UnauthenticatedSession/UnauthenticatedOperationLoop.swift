@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireRequestStrategy
+import WireTransport
 
 private let log = ZMSLog(tag: "Network")
 
@@ -26,11 +26,11 @@ class UnauthenticatedOperationLoop: NSObject {
 
     let transportSession: UnauthenticatedTransportSessionProtocol
     let requestStrategies: [RequestStrategy]
-    weak var operationQueue: ZMSGroupQueue?
+    weak var operationQueue: GroupQueue?
     fileprivate var tornDown = false
     fileprivate var shouldEnqueue = true
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
+    init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: GroupQueue, requestStrategies: [RequestStrategy]) {
         self.transportSession = transportSession
         self.requestStrategies = requestStrategies
         self.operationQueue = operationQueue
@@ -69,7 +69,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
 
     private var generator: ZMTransportRequestGenerator {
         return { [weak self] in
-            guard let `self` = self else { return nil }
+            guard let self else { return nil }
             guard let apiVersion = BackendInfo.apiVersion else { return nil }
             let request = (self.requestStrategies as NSArray).nextRequest(for: apiVersion)
             guard let queue = self.operationQueue else { return nil }

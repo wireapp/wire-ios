@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
+import WireSyncEngineSupport
 import XCTest
+
 @testable import Wire
 
 // MARK: - IncomingConnectionViewTests
 
-final class IncomingConnectionViewTests: BaseSnapshotTestCase {
+final class IncomingConnectionViewTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -31,7 +34,7 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - Snapshot Tests
@@ -63,8 +66,8 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersWithSecurityClassification_whenClassified() {
         let user = SwiftMockLoader.mockUsers().first!
-        let mockClassificationProvider = MockClassificationProvider()
-        mockClassificationProvider.returnClassification = .classified
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .classified
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
@@ -74,8 +77,8 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersWithSecurityClassification_whenNotClassified() {
         let user = SwiftMockLoader.mockUsers().first!
-        let mockClassificationProvider = MockClassificationProvider()
-        mockClassificationProvider.returnClassification = .notClassified
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
@@ -85,8 +88,8 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersWithFederatedUser() {
         let user = SwiftMockLoader.mockUsers().first!
-        let mockClassificationProvider = MockClassificationProvider()
-        mockClassificationProvider.returnClassification = .notClassified
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
         user.isFederated = true
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
@@ -99,7 +102,7 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
 // MARK: - UIView extension
 
-fileprivate extension UIView {
+private extension UIView {
 
     func layoutForTest(in size: CGSize = .init(width: 375, height: 667)) -> UIView {
         let fittingSize = systemLayoutSizeFitting(size)

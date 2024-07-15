@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 fileprivate extension UIView {
@@ -129,7 +129,7 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        guard let delegate = delegate else { return false }
+        guard let delegate else { return false }
         let current = (textField.text ?? "") as NSString
         let replacement = current.replacingCharacters(in: range, with: string)
         if delegate.tableViewCell(cell: self, shouldAllowEditingText: replacement) {
@@ -238,6 +238,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setupNavigationBar()
         updateUI()
         observerToken = userProfile?.add(observer: self)
     }
@@ -248,7 +249,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: HandleChange.title.capitalized)
         view.backgroundColor = .clear
         ChangeHandleTableViewCell.register(in: tableView)
         tableView.allowsSelection = false
@@ -257,13 +257,17 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
         footerLabel.numberOfLines = 0
         updateUI()
+    }
 
+    func setupNavigationBar() {
+        setupNavigationBarTitle(HandleChange.title.capitalized)
         let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
                                                                                   systemImage: false,
                                                                                   target: self,
                                                                                   action: #selector(saveButtonTapped))
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
+
     }
 
     @objc func saveButtonTapped(sender: UIBarButtonItem) {

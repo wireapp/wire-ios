@@ -148,7 +148,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @property (nonatomic) NSString *normalizedName;
 @property (nonatomic, copy) NSString *name;
-@property (nonatomic) ZMAccentColor accentColorValue;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
@@ -224,12 +224,12 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (NSData *)imageMediumData
 {
-    return [self imageDataforSize:ProfileImageSizeComplete];
+    return [self imageDataFor:ProfileImageSizeComplete];
 }
 
 - (NSData *)imageSmallProfileData
 {
-    return [self imageDataforSize:ProfileImageSizePreview];
+    return [self imageDataFor:ProfileImageSizePreview];
 }
 
 - (NSString *)smallProfileImageCacheKey
@@ -374,8 +374,8 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSFetchRequest *usersWithEmailFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
     usersWithEmailFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", EmailAddressKey, emailAddress];
-    NSArray<ZMUser *> *users = [context executeFetchRequestOrAssert:usersWithEmailFetch];
-    
+    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithEmailFetch];
+
     RequireString(users.count <= 1, "More than one user with the same email address");
     
     if (0 == users.count) {
@@ -395,7 +395,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSFetchRequest *usersWithPhoneFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
     usersWithPhoneFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", PhoneNumberKey, phoneNumber];
-    NSArray<ZMUser *> *users = [context executeFetchRequestOrAssert:usersWithPhoneFetch];
+    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithPhoneFetch];
     
     RequireString(users.count <= 1, "More than one user with the same phone number");
     
@@ -423,15 +423,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 - (void)setTeamIdentifier:(NSUUID *)teamIdentifier;
 {
     [self setTransientUUID:teamIdentifier forKey:@"teamIdentifier"];
-}
-
-+ (ZMAccentColor)accentColorFromPayloadValue:(NSNumber *)payloadValue
-{
-    ZMAccentColor color = (ZMAccentColor) payloadValue.intValue;
-    if ((color <= ZMAccentColorUndefined) || (ZMAccentColorMax < color)) {
-        color = (ZMAccentColor) (arc4random_uniform(ZMAccentColorMax - 1) + 1);
-    }
-    return color;
 }
 
 // NB: This method is called with **partial** user info and @c authoritative set to false, when the update payload
@@ -527,9 +518,12 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
     if (accentId != nil || authoritative) {
-        self.accentColorValue = [ZMUser accentColorFromPayloadValue:accentId];
+        self.accentColorValue = (ZMAccentColorRawValue) accentId.integerValue;
+        if (!self.zmAccentColor) {
+            self.zmAccentColor = [ZMAccentColor default];
+        }
     }
-    
+
     NSDate *expiryDate = [transportData optionalDateForKey:@"expires_at"];
     if (nil != expiryDate) {
         self.expiresAt = expiryDate;
@@ -750,7 +744,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUser> *)selfUserInUserSession:(id<ContextProvider>)session
++ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
     return [self selfUserInContext:session.viewContext];
@@ -904,11 +898,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     return [self validateName:&value error:nil];
 }
 
-+ (BOOL)validateAccentColorValue:(NSNumber **)ioAccent error:(NSError **)outError
-{
-    return [ZMAccentColorValidator validateValue:ioAccent error:outError];
-}
-
 + (BOOL)validateEmailAddress:(NSString **)ioEmailAddress error:(NSError **)outError
 {
     return [ZMEmailAddressValidator validateValue:ioEmailAddress error:outError];
@@ -984,11 +973,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 - (BOOL)validateName:(NSString **)ioName error:(NSError **)outError
 {
     return [ZMUser validateName:ioName error:outError];
-}
-
-- (BOOL)validateAccentColorValue:(NSNumber **)ioAccent error:(NSError **)outError
-{
-    return [ZMUser validateAccentColorValue:ioAccent error:outError];
 }
 
 @end

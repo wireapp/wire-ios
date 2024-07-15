@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
+import XCTest
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
@@ -98,7 +98,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
         // no-op
     }
 
-    func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) -> Bool {
+    func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool {
         didUpdateCredentials = true
         return willAcceptUpdatedCredentials
     }
@@ -122,10 +122,13 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         mockDelegate = MockUnauthenticatedSessionDelegate()
         reachability = MockReachability()
         mockAuthenticationStatusDelegate = MockAuthenticationStatusDelegate()
-        sut = UnauthenticatedSession(transportSession: transportSession,
-                                     reachability: reachability,
-                                     delegate: mockDelegate,
-                                     authenticationStatusDelegate: mockAuthenticationStatusDelegate)
+        sut = .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: mockDelegate,
+            authenticationStatusDelegate: mockAuthenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
         sut.groupQueue.add(dispatchGroup)
     }
 
@@ -140,7 +143,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
     func testThatTriesToUpdateCredentials() {
         // given
-        let emailCredentials = ZMEmailCredentials(email: "hello@email.com", password: "123456")
+        let emailCredentials = UserEmailCredentials(email: "hello@email.com", password: "123456")
         mockDelegate.willAcceptUpdatedCredentials = true
 
         // when
@@ -154,7 +157,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMCredentials())
+        sut.login(with: UserCredentials())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -166,7 +169,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMEmailCredentials(email: "my@mail.com", password: "my-password"))
+        sut.login(with: UserEmailCredentials(email: "my@mail.com", password: "my-password"))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
@@ -178,7 +181,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMPhoneCredentials(phoneNumber: "+49111111111111", verificationCode: "1234"))
+        sut.login(with: UserPhoneCredentials.credentials(phoneNumber: "1234567890", verificationCode: "123"))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
@@ -268,14 +271,13 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         let response = try createResponse(cookie: cookie, userId: userId, userIdKey: userIdKey, line: line)
 
         // when
-        response.extractUserInfo().apply(sut.upgradeToAuthenticatedSession)
+        response.extractUserInfo().map(sut.upgradeToAuthenticatedSession)
 
         // then
         XCTAssertLessThanOrEqual(mockDelegate.createdAccounts.count, 1, line: line)
         if mockDelegate.createdAccounts.isEmpty { throw NSError(domain: "No account", code: 1) }
         return mockDelegate.createdAccounts.first!
     }
-
 }
 
 fileprivate extension ZMTransportResponse {
@@ -285,5 +287,4 @@ fileprivate extension ZMTransportResponse {
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
         self.init(httpurlResponse: httpResponse, data: data, error: nil, apiVersion: APIVersion.v0.rawValue)
     }
-
 }

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -38,13 +39,13 @@ struct DeviceDetailsProteusView: View {
                 Divider()
 
                 Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
-                    .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                     .font(FontSpec.mediumSemiboldFont.swiftUIFont)
                     .padding([.leading, .top], ViewConstants.Padding.standard)
                     .padding(.bottom, ViewConstants.Padding.small)
 
                 Text(viewModel.addedDate)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                     .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
                     .font(FontSpec.normalRegularFont.swiftUIFont)
             }

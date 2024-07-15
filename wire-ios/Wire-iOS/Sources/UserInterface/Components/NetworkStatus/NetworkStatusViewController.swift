@@ -99,7 +99,10 @@ final class NetworkStatusViewController: UIViewController {
 
         if let userSession = ZMUserSession.shared() {
             enqueue(state: viewState(from: userSession.networkState))
-            networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(self, userSession: userSession)
+            networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+                self,
+                notificationContext: userSession.managedObjectContext.notificationContext
+            )
         }
 
         networkStatusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnNetworkStatusBar)))
@@ -119,13 +122,16 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     func showOfflineAlert() {
-        let offlineAlert = UIAlertController(title: L10n.Localizable.SystemStatusBar.NoInternet.title,
-                                             message: L10n.Localizable.SystemStatusBar.NoInternet.explanation,
-                                             alertAction: .confirm())
-        offlineAlert.presentTopmost()
+        let alert = UIAlertController(
+            title: L10n.Localizable.SystemStatusBar.NoInternet.title,
+            message: L10n.Localizable.SystemStatusBar.NoInternet.explanation,
+            preferredStyle: .alert
+        )
+        alert.addAction(.confirm())
+        alert.presentTopmost()
     }
 
-    private func viewState(from networkState: ZMNetworkState) -> NetworkStatusViewState {
+    private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
             return .offlineExpanded
@@ -133,11 +139,6 @@ final class NetworkStatusViewController: UIViewController {
             return .online
         case .onlineSynchronizing:
             return .onlineSynchronizing
-        @unknown default:
-            // swiftlint:disable todo_requires_jira_link
-            // TODO: ZMNetworkState change to NS_CLOSED_ENUM
-            // swiftlint:enable todo_requires_jira_link
-            fatalError()
         }
     }
 
@@ -174,7 +175,7 @@ final class NetworkStatusViewController: UIViewController {
 
 extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 
-    func didChangeAvailability(newState: ZMNetworkState) {
+    func didChangeAvailability(newState: NetworkState) {
         enqueue(state: viewState(from: newState))
     }
 
@@ -185,7 +186,7 @@ extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 extension NetworkStatusViewController {
     func shouldShowOnIPad() -> Bool {
         guard isIPadRegular(device: device) else { return true }
-        guard let delegate = delegate else { return true }
+        guard let delegate else { return true }
 
         let newOrientation = application.statusBarOrientation
 

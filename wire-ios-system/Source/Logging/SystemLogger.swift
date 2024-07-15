@@ -27,6 +27,10 @@ struct SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
 
+    var logFiles: [URL] {
+        return []
+    }
+
     var lastReportTime: Date? {
         get {
             guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval else { return nil }
@@ -37,106 +41,61 @@ struct SystemLogger: LoggerProtocol {
         }
     }
 
-    var fileLogger = FileLogger()
-
-    func persist(fileDestination: FileLoggerDestination) async {
-        var entries: [String] = []
-
-        do {
-            let store = try OSLogStore(scope: .currentProcessIdentifier)
-            let position: OSLogPosition
-            if let lastReportTime {
-                position = store.position(date: lastReportTime)
-            } else {
-                position = store.position(timeIntervalSinceLatestBoot: 0)
-            }
-            entries = try store
-                .getEntries(at: position)
-                .compactMap { $0 as? OSLogEntryLog }
-                .filter { $0.subsystem == Bundle.main.bundleIdentifier! }
-                .map { "[\($0.date.formatted(.iso8601))] [\($0.category)] \($0.composedMessage)" }
-        } catch {
-            warn(error.localizedDescription, attributes: .safePublic)
-        }
-
-        fileLogger.write(entries: entries, to: fileDestination.log)
-    }
-
-    func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .debug)
     }
 
-    func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .info)
     }
 
-    func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .default)
     }
 
-    func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
-    func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .error)
     }
 
-    func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
-    private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
+    func addTag(_ key: LogAttributesKey, value: String?) {
+       // do nothing, as it's only available on datadog
+    }
+
+    private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
+        var mergedAttributes: LogAttributes = [:]
+        attributes.forEach {
+            mergedAttributes.merge($0) { _, new in new }
+        }
+
         var logger: OSLog = OSLog.default
-        if let tag = attributes?["tag"] as? String {
+        if let tag = mergedAttributes[.tag] as? String {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
-        if attributes?["public"] as? Bool == true {
-            os_log(osLogType, log: logger, "%{public}@", "\(message.logDescription)")
+        let message = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
+
+        if mergedAttributes[.public] as? Bool == true {
+            os_log(osLogType, log: logger, "%{public}@", message)
         } else {
-            os_log(osLogType, log: logger, "\(message.logDescription)")
+            os_log(osLogType, log: logger, "\(message)")
         }
+    }
+
+    private func attributesDescription(from attributes: LogAttributes) -> String {
+        var logAttributes = attributes
+        // drop attributes used for visibility and category
+        logAttributes.removeValue(forKey: .public)
+        logAttributes.removeValue(forKey: .tag)
+        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
     }
 }
 
 private var loggers: [String: OSLog] = [:]
-
-public class FileLogger {
-
-    var updatingHandle: FileHandle?
-
-    func write(entries: [String], to url: URL?) {
-        guard let currentLogPath = url?.path else { return }
-
-        let manager = FileManager.default
-
-        if !manager.fileExists(atPath: currentLogPath) {
-            manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
-            // if there was no file, force to recreate the fileHandle
-            updatingHandle = nil
-        }
-
-        if updatingHandle == nil {
-            updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
-            updatingHandle?.seekToEndOfFile()
-        }
-
-        do {
-            if let data = entries.joined(separator: "\n").data(using: .utf8) {
-                try updatingHandle?.write(contentsOf: data)
-            }
-        } catch {
-            updatingHandle = nil
-        }
-    }
-
-    func closeFile() {
-        updatingHandle?.closeFile()
-        updatingHandle = nil
-    }
-
-    deinit {
-        closeFile()
-    }
-}

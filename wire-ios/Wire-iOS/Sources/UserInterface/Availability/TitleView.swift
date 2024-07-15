@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 class TitleView: UIView, DynamicTypeCapable {
 
@@ -36,17 +37,17 @@ class TitleView: UIView, DynamicTypeCapable {
         isAccessibilityElement = true
         accessibilityIdentifier = "Name"
 
-        if let color = color, let font = fontSpec {
+        if let color, let font = fontSpec {
             titleColor = color
             titleFont = font
         }
 
         createViews()
+        createConstraints()
     }
 
     // MARK: - Private methods
     private func createConstraints() {
-        [titleButton, stackView, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         stackView.fitIn(view: self)
     }
@@ -93,7 +94,6 @@ class TitleView: UIView, DynamicTypeCapable {
         subtitleLabel.text = subtitle
         subtitleLabel.font = .smallLightFont
 
-        createConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {

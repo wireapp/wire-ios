@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 final class DatabaseStatisticsController: UIViewController {
@@ -37,8 +37,6 @@ final class DatabaseStatisticsController: UIViewController {
         spinner.startAnimating()
 
         edgesForExtendedLayout = []
-
-        setupNavigationTitle()
 
         view.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -79,7 +77,7 @@ final class DatabaseStatisticsController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.DeveloperOptions.DatabaseStatistics.title.capitalized)
         guard let session = ZMUserSession.shared() else { return }
         let syncMoc = session.managedObjectContext.zm_sync!
         syncMoc.performGroupedBlock {
@@ -133,9 +131,5 @@ final class DatabaseStatisticsController: UIViewController {
 
             } catch {}
         }
-    }
-
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.Settings.DeveloperOptions.DatabaseStatistics.title.capitalized)
     }
 }

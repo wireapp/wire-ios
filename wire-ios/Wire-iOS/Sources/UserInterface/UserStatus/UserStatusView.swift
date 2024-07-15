@@ -17,9 +17,10 @@
 //
 
 import UIKit
-import WireDataModel
-import WireSyncEngine
 import WireCommonComponents
+import WireDataModel
+import WireDesign
+import WireSyncEngine
 
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {
@@ -27,7 +28,7 @@ final class UserStatusView: TitleView {
     // MARK: - Properties
 
     private let options: Options
-    public var userStatus = UserStatus() {
+    var userStatus = UserStatus() {
         didSet { updateConfiguration() }
     }
 

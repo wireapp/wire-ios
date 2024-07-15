@@ -17,12 +17,13 @@
 //
 
 import UIKit
+import WireDesign
 
 final class RecordingDotView: UIView {
 
     // MARK: - Properties
 
-    public var animating: Bool = false {
+    var animating: Bool = false {
         didSet {
             if oldValue == animating {
                 return
@@ -38,7 +39,7 @@ final class RecordingDotView: UIView {
 
     // MARK: - Init
 
-    public init() {
+    init() {
         super.init(frame: CGRect.zero)
 
         backgroundColor = SemanticColors.Icon.foregroundDefaultRed
@@ -51,7 +52,7 @@ final class RecordingDotView: UIView {
 
     // MARK: - Override Methods
 
-    public override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = self.bounds.width / 2
     }

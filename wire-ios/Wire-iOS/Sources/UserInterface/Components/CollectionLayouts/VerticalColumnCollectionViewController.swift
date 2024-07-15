@@ -22,7 +22,7 @@ import UIKit
  * A number of columns that changes depending on the width of the container.
  */
 
-public struct AdaptiveColumnCount {
+struct AdaptiveColumnCount {
 
     /// The number of columns when the container has a compact horizontal size class.
     let compact: Int
@@ -34,12 +34,6 @@ public struct AdaptiveColumnCount {
     /// The number of columns when the container has a regular horizontal size class,
     /// and a width larger than 1024pt.
     let large: Int
-
-    public init(compact: Int, regular: Int, large: Int) {
-        self.compact = compact
-        self.regular = regular
-        self.large = large
-    }
 
 }
 

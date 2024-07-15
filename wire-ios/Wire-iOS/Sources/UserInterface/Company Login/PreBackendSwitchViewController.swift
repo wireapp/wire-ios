@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol PreBackendSwitchViewControllerDelegate: AnyObject {
     func preBackendSwitchViewControllerDidComplete(_ url: URL)

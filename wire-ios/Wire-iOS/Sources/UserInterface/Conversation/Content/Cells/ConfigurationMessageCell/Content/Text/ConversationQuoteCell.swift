@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import Down
-import WireDataModel
+import UIKit
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class ConversationReplyContentView: UIView {
     typealias View = ConversationReplyCell
@@ -298,7 +299,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     @objc func onTap() {
-        delegate?.perform(action: .openQuote, for: message, view: self)
+        delegate?.perform(action: .openQuote, for: message!, view: self)
     }
 
 }

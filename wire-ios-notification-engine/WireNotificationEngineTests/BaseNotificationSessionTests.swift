@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireNotificationEngine
-import XCTest
 import Foundation
-import WireTesting
 import WireDataModel
-import WireMockTransport
-import WireRequestStrategy
 import WireDataModelSupport
+import WireMockTransport
+@testable import WireNotificationEngine
+import WireRequestStrategy
+import WireTesting
+import XCTest
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
@@ -176,7 +176,8 @@ class BaseTest: ZMTBaseTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: mockEARService,
             proteusService: mockProteusService,
-            mlsDecryptionService: mockMLSDecryptionService
+            mlsDecryptionService: mockMLSDecryptionService,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 }

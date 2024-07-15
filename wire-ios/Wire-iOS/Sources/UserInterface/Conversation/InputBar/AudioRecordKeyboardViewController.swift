@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireSystem
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireDesign
+import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -104,11 +104,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         UIAccessibility.post(notification: .layoutChanged, argument: self)
     }
 
-    public override func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         recorder.stopRecording()
         if isAppLockActive { UIApplication.shared.wr_keyWindow?.endEditing(true) }
@@ -130,7 +130,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.audioPreviewView.gradientColor = backgroundColor
 
         self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
-            if let color = color {
+            if let color {
                 self.audioPreviewView.color = color
             }
         }
@@ -305,7 +305,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - View Updates
 
-    public override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.confirmButton.layer.cornerRadius = self.confirmButton.bounds.size.width / 2
         self.recordButton.layer.cornerRadius = self.recordButton.bounds.size.width / 2
@@ -337,7 +337,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.updateTimeLabel(time)
         }
 
@@ -352,7 +352,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
 
         recorder.recordLevelCallBack = { [weak self] level in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.audioPreviewView.updateWithLevel(level)
         }
     }
@@ -496,7 +496,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 // MARK: - AudioEffectsPickerDelegate
 
 extension AudioRecordKeyboardViewController: AudioEffectsPickerDelegate {
-    public func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String) {
+    func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String) {
         self.currentEffectFilePath = resultFilePath
         self.currentEffect = effect
     }

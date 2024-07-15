@@ -26,14 +26,14 @@ protocol RandomGenerator {
 /// Generates the pseudorandom values from the data given.
 /// @param data the source of random values.
 final class RandomGeneratorFromData: RandomGenerator {
-    public let source: Data
+    let source: Data
     private var step: Int = 0
 
     init(data: Data) {
         source = data
     }
 
-    public func rand<ContentType>() -> ContentType {
+    func rand<ContentType>() -> ContentType {
         let currentStep = self.step
         let result = source.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> ContentType in
             return pointer.baseAddress!.assumingMemoryBound(to: ContentType.self).advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
@@ -161,7 +161,7 @@ final class ConversationAvatarView: UIView {
     private var conversation: ConversationAvatarViewConversation? = .none {
         didSet {
 
-            guard let conversation = conversation else {
+            guard let conversation else {
                 self.clippingView.subviews.forEach { $0.isHidden = true }
                 return
             }

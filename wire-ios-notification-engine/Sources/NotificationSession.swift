@@ -150,7 +150,7 @@ public final class NotificationSession {
             // Currently it is the given behavior, but should be refactored
             // into a "setup" or "load" func that can be async and handle errors.
 
-            if let error = error {
+            if let error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
         }
@@ -240,9 +240,11 @@ public final class NotificationSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
@@ -265,7 +267,8 @@ public final class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor),
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -281,7 +284,8 @@ public final class NotificationSession {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
         proteusService: ProteusServiceInterface,
-        mlsDecryptionService: MLSDecryptionServiceInterface
+        mlsDecryptionService: MLSDecryptionServiceInterface,
+        lastEventIDRepository: LastEventIDRepositoryInterface
 
     ) throws {
         self.coreDataStack = coreDataStack
@@ -294,7 +298,8 @@ public final class NotificationSession {
 
         eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
-            syncMOC: coreDataStack.syncContext
+            syncMOC: coreDataStack.syncContext,
+            lastEventIDRepository: lastEventIDRepository
         )
 
         pushNotificationStrategy.delegate = self
@@ -335,6 +340,11 @@ public final class NotificationSession {
                 WireLogger.notifications.error("Not displaying notification because app is not authenticated")
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
+            }
+
+            let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
+            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.addTag(.selfClientId, value: clientId)
             }
 
             self.fetchEvents(fromPushChannelPayload: payload)
@@ -388,13 +398,13 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
-    ) async {
-        let decodedEvents = await eventDecoder.decryptAndStoreEvents(
+    ) async throws {
+        let decodedEvents = try await self.eventDecoder.decryptAndStoreEvents(
             events,
-            publicKeys: try? earService.fetchPublicKeys()
+            publicKeys: try? self.earService.fetchPublicKeys()
         )
 
-        await context.perform { [self] in
+        await self.context.perform { [self] in
             processDecodedEvents(decodedEvents)
         }
     }
@@ -402,18 +412,24 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
         WireLogger.notifications.info("processing \(events.count) decoded events...")
 
+        // Dictionary to filter notifications fetched in same batch with same messageOnce
+        // i.e: textMessage and linkPreview
+        var tempNotifications = [Int: ZMLocalNotification]()
+
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
-                WireLogger.calling.info("detected a call event")
+                WireLogger.calling.info("detected a call event", attributes: event.logAttributes)
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                WireLogger.notifications.info("generated a notification from an event")
-                localNotifications.append(notification)
+                WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes)
+                tempNotifications[notification.contentHashValue] = notification
             } else {
-                WireLogger.notifications.info("ignoring event")
+                WireLogger.notifications.info("ignoring event", attributes: event.logAttributes)
             }
         }
+
+        localNotifications = Array(tempNotifications.values)
         context.saveOrRollback()
     }
 
@@ -486,12 +502,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         // Should not handle a call if the caller is a self user and it's an incoming call or call end.
         // The caller can be the same as the self user if it's a rejected call or answered elsewhere.
-        if
-            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
+        if let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
             let callerID = callContent.callerID,
             callerID == selfUserID,
-            callContent.isIncomingCall || callContent.isEndCall
-        {
+            callContent.isIncomingCall || callContent.isEndCall {
             WireLogger.calling.info("should not handle call event: self call")
             return nil
         }
@@ -527,7 +541,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func processCallEvent() {
-        if let callEvent = callEvent {
+        if let callEvent {
             delegate?.reportCallEvent(
                 callEvent,
                 currentTimestamp: context.serverTimeDelta
@@ -594,7 +608,7 @@ extension NotificationSession {
     }
 
     private func isEventTimedOut(currentTimestamp: Date, eventTimestamp: Date?) -> Bool {
-        guard let eventTimestamp = eventTimestamp else {
+        guard let eventTimestamp else {
             return true
         }
 

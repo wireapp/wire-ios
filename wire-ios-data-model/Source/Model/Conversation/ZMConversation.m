@@ -35,8 +35,6 @@
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
 
-#import "ZMConversationList+Internal.h"
-
 #import "ZMConversationListDirectory.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 #import "NSPredicate+ZMSearch.h"
@@ -353,7 +351,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.mlsStatusKey,
             ZMConversation.mlsVerificationStatusKey,
             ZMConversation.commitPendingProposalDateKey,
-            ZMConversation.cipherSuiteKey,
+            ZMConversation.ciphersuiteKey,
             ZMConversation.epochKey,
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,

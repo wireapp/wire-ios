@@ -16,16 +16,7 @@
     ],
     "environmentVariableEntries" : [
       {
-        "enabled" : false,
-        "key" : "RECORDING_SNAPSHOTS",
-        "value" : "YES"
-      },
-      {
         "key" : "SNAPSHOT_REFERENCE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages\/de"
-      },
-      {
-        "key" : "FB_REFERENCE_IMAGE_DIR",
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages\/de"
       },
       {

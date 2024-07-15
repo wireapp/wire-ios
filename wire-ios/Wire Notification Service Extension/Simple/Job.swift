@@ -18,9 +18,9 @@
 
 import Foundation
 import UserNotifications
-import WireTransport
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
+import WireTransport
 
 final class Job: NSObject, Loggable {
 
@@ -92,7 +92,7 @@ final class Job: NSObject, Loggable {
         }
     }
 
-    private class func pushPayload(from request: UNNotificationRequest) throws -> PushPayload {
+    private static func pushPayload(from request: UNNotificationRequest) throws -> PushPayload {
         guard
             let notificationData = request.content.userInfo["data"] as? [String: Any],
             let userIDString = notificationData["user"] as? String,

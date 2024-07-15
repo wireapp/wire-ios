@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireDesign
+import WireSyncEngine
 
 protocol CallingActionsViewDelegate: AnyObject {
     func callingActionsViewPerformAction(_ action: CallAction)
@@ -31,7 +32,7 @@ protocol BottomSheetScrollingDelegate: AnyObject {
 
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
-class CallingActionsView: UIView {
+final class CallingActionsView: UIView {
 
     weak var delegate: CallingActionsViewDelegate?
     weak var bottomSheetScrollingDelegate: BottomSheetScrollingDelegate? {
@@ -44,7 +45,7 @@ class CallingActionsView: UIView {
 
     let verticalStackView = UIStackView(axis: .vertical)
     private let topStackView = UIStackView(axis: .horizontal)
-    private let botttomStackView = UIStackView(axis: .horizontal)
+    private let bottomStackView = UIStackView(axis: .horizontal)
     private var input: CallActionsViewInputType?
     private var videoButtonDisabledTapRecognizer: UITapGestureRecognizer?
 
@@ -60,8 +61,15 @@ class CallingActionsView: UIView {
     private let largeHangUpButton = EndCallButton.bigEndCallButton()
 
     private var establishedCallButtons: [IconLabelButton] {
-        return [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton]
+        [
+            microphoneButton,
+            cameraButton,
+            speakerButton,
+            flipCameraButton,
+            endCallButton
+        ]
     }
+
     private var largeButtonsPortraitConstraints: [NSLayoutConstraint] = []
     private var largeButtonsLandscapeConstraints: [NSLayoutConstraint] = []
 
@@ -72,7 +80,12 @@ class CallingActionsView: UIView {
             handleContainerView.isHidden = isIncomingCall
             handleView.accessibilityElementsHidden = isIncomingCall
             if isIncomingCall {
-                [microphoneButton, cameraButton, speakerButton].forEach(topStackView.addArrangedSubview)
+                [
+                    microphoneButton,
+                    cameraButton,
+                    speakerButton
+                ].forEach(topStackView.addArrangedSubview)
+
                 addIncomingCallControllButtons()
                 verticalStackView.layoutMargins = UIEdgeInsets(top: 16, left: 4, bottom: 0, right: 4)
             } else {
@@ -110,7 +123,12 @@ class CallingActionsView: UIView {
         handleView.layer.cornerRadius = 3.0
         handleView.backgroundColor = SemanticColors.View.backgroundCallDragBarIndicator
         handleContainerView.addSubview(handleView)
-        [handleContainerView, topStackView].forEach(verticalStackView.addArrangedSubview)
+
+        [
+            handleContainerView,
+            topStackView
+        ].forEach(verticalStackView.addArrangedSubview)
+
         [
             flipCameraButton,
             cameraButton,
@@ -120,6 +138,7 @@ class CallingActionsView: UIView {
             largeHangUpButton,
             largePickUpButton
         ].forEach { $0.addTarget(self, action: #selector(performButtonAction), for: .touchUpInside) }
+
         setupContentViewer()
     }
 
@@ -153,12 +172,19 @@ class CallingActionsView: UIView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         establishedCallButtons.forEach { $0.updateState() }
-        [largePickUpButton, largeHangUpButton].forEach { $0.updateState() }
+
+        [
+            largePickUpButton,
+            largeHangUpButton
+        ].forEach { $0.updateState() }
 
     }
 
     private func addIncomingCallControllButtons() {
-        [largeHangUpButton, largePickUpButton].forEach {
+        [
+            largeHangUpButton,
+            largePickUpButton
+        ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.updateButtonWidth(width: 72.0)
             $0.subtitleTransformLabel.font = FontSpec(.small, .bold).font!
@@ -169,9 +195,10 @@ class CallingActionsView: UIView {
             largeHangUpButton.centerXAnchor.constraint(equalTo: microphoneButton.centerXAnchor).withPriority(.required),
             largePickUpButton.centerXAnchor.constraint(equalTo: speakerButton.centerXAnchor).withPriority(.required),
 
-            largeHangUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34.0),
-            largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34.0)
+            largeHangUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34),
+            largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34)
         ]
+
         largeButtonsLandscapeConstraints = [
             largeHangUpButton.centerYAnchor.constraint(equalTo: microphoneButton.centerYAnchor).withPriority(.required),
             largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor).withPriority(.required),
@@ -185,7 +212,10 @@ class CallingActionsView: UIView {
     }
 
     private func removeIncomingCallControllButtons() {
-        [largeHangUpButton, largePickUpButton].forEach {
+        [
+            largeHangUpButton,
+            largePickUpButton
+        ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.removeFromSuperview()
         }
@@ -258,7 +288,7 @@ class CallingActionsView: UIView {
     private func updateHandleViewAccessibilityLabel() {
         typealias Calling = L10n.Accessibility.Calling
 
-        guard let bottomSheetScrollingDelegate = bottomSheetScrollingDelegate else { return }
+        guard let bottomSheetScrollingDelegate else { return }
         handleView.accessibilityHint = bottomSheetScrollingDelegate.isBottomSheetExpanded
                                      ? Calling.SwipeDownParticipants.hint
                                      : Calling.SwipeUpParticipants.hint

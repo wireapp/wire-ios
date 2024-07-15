@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireRequestStrategy
 import WireDataModel
+import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
@@ -162,7 +162,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             if response.httpStatus == 200 {
                 var payloadAsString: String?
                 if let payload = response.payload, let data = try? JSONSerialization.data(withJSONObject: payload, options: []) {
-                    payloadAsString = String(data: data, encoding: .utf8)
+                    payloadAsString = String(decoding: data, as: UTF8.self)
                 }
                 zmLog.debug("Callback: \(String(describing: self.callConfigCompletion))")
                 self.callConfigCompletion?(payloadAsString, response.httpStatus)
@@ -237,11 +237,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         Self.logger.trace("process events: \(events)")
-        events.forEach(processEvent)
-    }
-
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
-        Self.logger.trace("process events while in background: \(events)")
         events.forEach(processEvent)
     }
 
@@ -338,12 +333,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         overMLSSelfConversation: Bool,
         completionHandler: @escaping ((Int) -> Void)
     ) {
-        guard let dataString = String(data: data, encoding: .utf8) else {
-            zmLog.error("Not sending calling messsage since it's not UTF-8")
-            completionHandler(500)
-            return
-        }
-
+        let dataString = String(decoding: data, as: UTF8.self)
         let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
 
         managedObjectContext.performGroupedBlock {
@@ -408,14 +398,14 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         request.httpBody = data
 
         ephemeralURLSession.task(with: request) { data, response, error in
-            if let error = error {
+            if let error {
                 completionHandler(.failure(SFTResponseError.transport(error: error)))
                 return
             }
 
             guard
                 let response = response as? HTTPURLResponse,
-                let data = data
+                let data
             else {
                 completionHandler(.failure(SFTResponseError.missingData))
                 return

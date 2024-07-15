@@ -27,7 +27,7 @@ extension MockTransportSession {
                               onlyForUserId: String?) -> [AnyHashable: Any]? {
         var missedClients: [AnyHashable: Any] = [:]
         for user in users {
-            if let onlyForUserId = onlyForUserId,
+            if let onlyForUserId,
                UUID(transportString: user.identifier) != UUID(transportString: onlyForUserId) {
                 continue
             }
@@ -51,7 +51,7 @@ extension MockTransportSession {
 
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "UserClient")
         request.predicate = NSPredicate(format: "identifier == %@", senderClientId)
-        let client = managedObjectContext.executeFetchRequestOrAssert(request).first as? MockUserClient
+        let client = try! managedObjectContext.fetch(request).first as? MockUserClient
         return client
     }
 
@@ -99,7 +99,7 @@ extension MockTransportSession {
                 return nil
             })
 
-            if let recipientClients = recipientClients {
+            if let recipientClients {
                 userClients.subtract(recipientClients)
             }
 
@@ -172,7 +172,7 @@ extension MockTransportSession {
 
         let allClientsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserClient")
         allClientsRequest.predicate = NSPredicate(format: "identifier IN %@", activeClients)
-        let allClients1 = managedObjectContext.executeFetchRequestOrAssert(allClientsRequest)
+        let allClients1 = try! managedObjectContext.fetch(allClientsRequest)
         let allClients = allClients1 as? [MockUserClient]
 
         let clientsEntries = recipients.flatMap { return $0.clients }

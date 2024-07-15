@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+import WireUITesting
+import XCTest
+
+@testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
@@ -38,20 +40,26 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 }
 
-final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
+final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
 
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         SelfUser.provider = nil
         userSession = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -61,7 +69,6 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         let users: [MockUserType] = (0..<20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
-
             return user
         }
 
@@ -70,16 +77,32 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-		let createSut: () -> UIViewController = {
-            let sut = GroupParticipantsDetailViewController(
-                selectedParticipants: selected,
-                conversation: conversation,
-                userSession: self.userSession
-            )
-			return sut.wrapInNavigationController()
-		}
+        let sut = GroupParticipantsDetailViewController(
+            selectedParticipants: selected,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        ).wrapInNavigationController()
 
-        verifyInAllColorSchemes(createSut: createSut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersALotOfUsers_WithoutNames() {
@@ -99,16 +122,14 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         conversation.sortedOtherParticipants = users
 
         // when & then
-        let createSut: () -> UIViewController = {
-            let sut = GroupParticipantsDetailViewController(
-                selectedParticipants: selected,
-                conversation: conversation,
-                userSession: self.userSession
-            )
-            return sut.wrapInNavigationController()
-        }
+        let sut = GroupParticipantsDetailViewController(
+            selectedParticipants: selected,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        )
 
-        verify(matching: createSut())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     func testEmptyState() {
@@ -119,7 +140,8 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         let sut = GroupParticipantsDetailViewController(
             selectedParticipants: [],
             conversation: conversation,
-            userSession: self.userSession
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []
@@ -127,7 +149,6 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         sut.participantsDidChange()
 
         // then
-        let wrapped = sut.wrapInNavigationController()
-        verify(matching: wrapped)
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 }

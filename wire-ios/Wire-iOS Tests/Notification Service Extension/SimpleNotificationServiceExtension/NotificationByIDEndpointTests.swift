@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire_Notification_Service_Extension
+import XCTest
 
 class NotificationByIDEndpointTests: XCTestCase {
 
@@ -48,7 +48,7 @@ class NotificationByIDEndpointTests: XCTestCase {
     let senderClientID = "fd27a34a42e5980"
     let recipientClientID = "b7d8296a54c49151"
 
-    lazy var validPayload = """
+    lazy var validPayload = Data("""
         {
             "id": "\(eventID.uuidString.lowercased())",
             "payload": [
@@ -74,20 +74,20 @@ class NotificationByIDEndpointTests: XCTestCase {
                 }
             ]
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
-    lazy var validPayloadNoEvents = """
+    lazy var validPayloadNoEvents = Data("""
         {
             "id": "\(eventID.uuidString.lowercased())",
             "payload": []
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
-    let invalidPayload = """
+    let invalidPayload = Data("""
         {
             "foo": "bar"
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
     func test_ParseSuccessResponse() {
         // Given

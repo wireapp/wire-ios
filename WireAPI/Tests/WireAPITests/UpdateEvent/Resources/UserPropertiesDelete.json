@@ -1,0 +1,4 @@
+{
+    "type": "user.properties-delete",
+    "key": "foo"
+}

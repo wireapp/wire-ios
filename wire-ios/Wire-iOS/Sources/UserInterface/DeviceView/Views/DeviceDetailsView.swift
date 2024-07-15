@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsView: View {
 
@@ -44,7 +45,7 @@ struct DeviceDetailsView: View {
                 isCertificateViewPresented: $isCertificateViewPresented
             )
         }
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
         .padding(.top, ViewConstants.Padding.medium)
         .frame(maxWidth: .infinity)
     }
@@ -54,7 +55,7 @@ struct DeviceDetailsView: View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
             DeviceDetailsProteusView(viewModel: viewModel, isVerified: viewModel.isProteusVerificationEnabled)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+                .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
                     .font(.footnote)
@@ -70,9 +71,9 @@ struct DeviceDetailsView: View {
     @ViewBuilder
     var mlsView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature(viewModel.mlsCiphersuite?.signature.description ?? "").uppercased())
             DeviceMLSView(viewModel: viewModel)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+                .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
         }
         .frame(maxWidth: .infinity)
     }
@@ -80,14 +81,14 @@ struct DeviceDetailsView: View {
     var body: some View {
         ScrollView {
             if viewModel.isE2eIdentityEnabled {
-                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                if let thumbprint = viewModel.mlsThumbprint, !thumbprint.isEmpty {
                     mlsView
                 }
                 e2eIdentityCertificateView
             }
             proteusView
         }
-        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefault))
         .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
         .listStyle(.plain)
         .overlay(
@@ -97,7 +98,7 @@ struct DeviceDetailsView: View {
                 }
             }
         )
-        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefault))
         .onAppear {
             viewModel.onAppear()
         }
@@ -131,7 +132,7 @@ struct DeviceDetailsView: View {
     func sectionTitleView(title: String) -> some View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
-            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+            .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
             .frame(height: ViewConstants.View.Height.small)
             .padding([.leading, .top], ViewConstants.Padding.standard)
     }

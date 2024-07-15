@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -32,18 +33,16 @@ struct DeviceDetailsBottomView: View {
 
     var resetSessionView: some View {
         HStack {
-            SwiftUI.Button {
+            Button {
                 viewModel.resetSession()
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
                     .padding(.all, ViewConstants.Padding.standard)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
-        }.background(
-            SemanticColors.View.backgroundDefaultWhite.swiftUIColor
-        )
+        }.background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 
     var resetSessionInfoView: some View {
@@ -55,19 +54,19 @@ struct DeviceDetailsBottomView: View {
 
     var removeDeviceView: some View {
         HStack {
-            SwiftUI.Button {
+            Button {
                 Task {
                    await viewModel.removeDevice()
                 }
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
                     .padding(.all, ViewConstants.Padding.standard)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
         }
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 
     var removeDeviceInfoView: some View {

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
+import WireDesign
+import WireSyncEngine
 
 extension ZMConversation: ShareDestination {
 
@@ -134,10 +134,12 @@ extension ZMConversationMessage {
     }
 }
 
-extension ZMConversationList {/// TODO mv to DM
+// swiftlint:disable:next todo_requires_jira_link
+extension ConversationList { // TODO: mv to DM
+
     func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        return map { $0 as! ZMConversation }.filter { (conversation: ZMConversation) -> (Bool) in
-            return (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
+        items.filter { conversation in
+            (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
                 conversation.isSelfAnActiveMember &&
                 !(conversation === excluding)
         }
@@ -172,11 +174,12 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
     func showForwardFor(message: ZMConversationMessage?, from view: UIView?) {
         guard let userSession = ZMUserSession.shared(),
-              let message = message else { return }
+              let message else { return }
 
         endEditing()
 
-        let conversations = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession ).shareableConversations(excluding: message.conversationLike)
+        let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
+            .shareableConversations(excluding: message.conversationLike)
 
         let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
             shareable: message as! ZMMessage,
@@ -191,7 +194,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
         let presenter: PopoverPresenterViewController? = (presentedViewController ?? UIApplication.shared.wr_keyWindow) as? PopoverPresenterViewController
 
-        if let presenter = presenter,
+        if let presenter,
            let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
             keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: presenter)
         }

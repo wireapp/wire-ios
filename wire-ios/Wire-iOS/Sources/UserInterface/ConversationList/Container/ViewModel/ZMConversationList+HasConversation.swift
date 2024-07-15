@@ -16,31 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSyncEngine
 
-extension ZMConversationList {
+extension ConversationList {
+
     static var hasConversations: Bool {
         guard let session = ZMUserSession.shared() else { return false }
 
-        let conversationsCount = ZMConversationList.conversations(inUserSession: session).count + ZMConversationList.pendingConnectionConversations(inUserSession: session).count
+        let conversationsCount = (ConversationList.conversations(inUserSession: session)?.items.count ?? 0) + (ConversationList.pendingConnectionConversations(inUserSession: session)?.items.count ?? 0)
         return conversationsCount > 0
     }
-}
-
-// swiftlint:disable todo_requires_jira_link
-// TODO: move to DM
-// swiftlint:enable todo_requires_jira_link
-extension ZMConversationList: ConversationListHelperType {
-    static var hasArchivedConversations: Bool {
-        guard let session = ZMUserSession.shared() else { return false }
-
-        return ZMConversationList.archivedConversations(inUserSession: session).count > 0
-    }
-}
-
-/// TODO: retire this static helper, refactor as  ZMUserSession's property
-/// // swiftlint:enable todo_requires_jira_link
-protocol ConversationListHelperType {
-    static var hasArchivedConversations: Bool { get }
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol ModalTopBarDelegate: AnyObject {
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar)
@@ -28,7 +29,7 @@ final class ModalTopBar: UIView {
     let dismissButton = IconButton()
     typealias ViewColors = SemanticColors.View
 
-    public let titleLabel: DynamicFontLabel = {
+    let titleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
         let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
                                      color: textColor)
@@ -38,7 +39,7 @@ final class ModalTopBar: UIView {
         return label
     }()
 
-    public let subtitleLabel: DynamicFontLabel = {
+    let subtitleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
         let label = DynamicFontLabel(fontSpec: .smallSemiboldFont,
                                      color: textColor)
@@ -48,13 +49,13 @@ final class ModalTopBar: UIView {
         return label
     }()
 
-    public let separatorView: UIView = {
+    let separatorView: UIView = {
         let view = UIView()
         view.backgroundColor = ViewColors.backgroundSeparatorCell
         return view
     }()
 
-    public let contentStackView: UIStackView = {
+    let contentStackView: UIStackView = {
         let stack = UIStackView()
         stack.distribution = .fillEqually
         stack.alignment = .fill
@@ -93,7 +94,7 @@ final class ModalTopBar: UIView {
         }
     }
 
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         configureViews()
         createConstraints()

@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireTesting
+import XCTest
+
 @testable import WireUtilities
 
 final class NSManagedObjectContext_SwiftTests: XCTestCase {
@@ -27,7 +28,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
     var sut: NSManagedObjectContext!
 
     override func setUp() {
-      super.setUp()
+        super.setUp()
         sut = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)
         sut.createDispatchGroups()
     }
@@ -41,14 +42,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         // given
         let moc = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
         // when & then
-        moc.performGroupedAndWait { _ in }
-    }
-
-    func testThatItPassesSelfInTheClosure() {
-        // when & then
-        sut.performGroupedAndWait { [sut] moc in
-            XCTAssertEqual(moc, sut)
-        }
+        moc.performGroupedAndWait { }
     }
 
     func testThatItReturnsNonOptionalValue() {
@@ -58,7 +52,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         }
 
         // when
-        let result = sut.performGroupedAndWait { _ in
+        let result = sut.performGroupedAndWait {
             closure()
         }
 
@@ -73,7 +67,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         }
 
         // when
-        let result = sut.performGroupedAndWait { _ in
+        let result = sut.performGroupedAndWait {
             closure()
         }
 
@@ -83,7 +77,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
     func testThatItReturnsNonOptionalValue_Throwing() throws {
         // given
-        sut.dispatchGroup.enter()
+        sut.dispatchGroup?.enter()
         let expectation = self.expectation(description: "wait for group to be left on error")
         let group = try XCTUnwrap(sut.dispatchGroup)
         group.notify(on: DispatchQueue.main) {
@@ -96,7 +90,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
         do {
             // when
-            try sut.performGroupedAndWait { _ in
+            try sut.performGroupedAndWait {
                 try closure()
             }
             XCTFail()
@@ -104,7 +98,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
             // then
             XCTAssert(error is TestError)
         }
-        sut.dispatchGroup.leave()
+        sut.dispatchGroup?.leave()
 
         wait(for: [expectation], timeout: 0.5)
     }
@@ -117,7 +111,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
         do {
             // when
-            try sut.performGroupedAndWait { _ in
+            try sut.performGroupedAndWait {
                 try closure()
             }
             XCTFail()

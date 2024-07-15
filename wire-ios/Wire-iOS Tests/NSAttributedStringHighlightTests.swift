@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireCommonComponents
 @testable import Wire
+import WireCommonComponents
+import XCTest
 
 // cutAndPrefixedWithEllipsis
 final class NSAttributedStringHighlightTests: XCTestCase {

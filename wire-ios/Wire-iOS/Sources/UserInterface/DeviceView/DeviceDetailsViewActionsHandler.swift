@@ -25,7 +25,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var userClient: UserClient
     var userSession: UserSession
     var clientRemovalObserver: ClientRemovalObserver?
-    var credentials: ZMEmailCredentials?
+    var credentials: UserEmailCredentials?
     let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
     private let contextProvider: ContextProvider
     private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
@@ -41,7 +41,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     init(
         userClient: UserClient,
         userSession: UserSession,
-        credentials: ZMEmailCredentials?,
+        credentials: UserEmailCredentials?,
         saveFileManager: SaveFileActions,
         getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
         contextProvider: ContextProvider,
@@ -61,7 +61,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await startE2EIdentityEnrollment()
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
             throw error
         }
     }
@@ -124,11 +124,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func getProteusFingerPrint() async -> String {
-        guard let data = await getProteusFingerprint.invoke(userClient: userClient),
-                let fingerPrint = String(data: data, encoding: .utf8) else {
+        guard let data = await getProteusFingerprint.invoke(userClient: userClient) else {
             logger.error("Valid fingerprint data is missing")
             return ""
         }
+        let fingerPrint = String(decoding: data, as: UTF8.self)
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
     }
 
@@ -159,7 +159,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     @MainActor
     private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
         await contextProvider.syncContext.perform { [weak self] in
-            guard let self = self else {
+            guard let self else {
                 return nil
             }
             return ZMConversation.fetchSelfMLSConversation(in: self.contextProvider.syncContext)?.mlsGroupID

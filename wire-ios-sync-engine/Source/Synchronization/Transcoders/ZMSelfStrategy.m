@@ -194,7 +194,7 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         payload[@"name"] = user.name;
     }
     if([keys containsObject:AccentColorValueKey]) {
-        payload[@"accent_id"] = @(user.accentColorValue);
+        payload[@"accent_id"] = @(user.zmAccentColor.rawValue);
     }
     if([keys containsObject:PreviewProfileAssetIdentifierKey] && [keys containsObject:CompleteProfileAssetIdentifierKey]) {
         payload[@"assets"] = [self profilePictureAssetsPayloadForUser:user];

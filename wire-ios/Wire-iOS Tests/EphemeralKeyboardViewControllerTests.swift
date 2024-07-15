@@ -16,37 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import UIKit
+import WireUITesting
+import XCTest
+
+@testable import Wire
 
 final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 
     var sut: EphemeralKeyboardViewController!
     var conversation: ZMConversation!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         conversation = self.createGroupConversation()
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         sut = EphemeralKeyboardViewController(conversation: conversation)
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         conversation = nil
         sut = nil
         super.tearDown()
     }
 
     func testThatItRendersCorrectInitially() {
-        sut.overrideUserInterfaceStyle = .light
-        verify(view: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectIntially_DarkMode() {
-        sut.overrideUserInterfaceStyle = .dark
-        verify(view: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
 }

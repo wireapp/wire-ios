@@ -16,28 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
     // the api version is required to build and should not influence the tests
-    private let minimumAPIVersion: APIVersion = .v4
+    private let minimumAPIVersion: APIVersion = .v5
 
     // MARK: Transport Request
 
-    func testBuildTransportRequest_givenAPIVersion0_thenDontBuildRequest() {
-        // given
-        let builder = makeBuilder(apiVersion: .v0)
-
-        // when
-        let request = builder.buildTransportRequest()
-
-        // then
-        XCTAssertNil(request)
-    }
-
-    func testBuildTransportRequest_givenAPIVersion4_thenBuildRequest() {
+    func testBuildTransportRequest_givenAPIVersion4_thenDontBuildRequest() {
         // given
         let builder = makeBuilder(apiVersion: .v4)
 
@@ -45,7 +34,7 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
         let request = builder.buildTransportRequest()
 
         // then
-        XCTAssertNotNil(request)
+        XCTAssertNil(request)
     }
 
     func testBuildTransportRequest_givenAPIVersion5_thenBuildRequest() {
@@ -61,13 +50,13 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
     func testBuildTransportRequest_thenPathIsSet() {
         // given
-        let builder = makeBuilder(apiVersion: .v4)
+        let builder = makeBuilder(apiVersion: .v5)
 
         // when
         let request = builder.buildTransportRequest()
 
         // then
-        XCTAssertEqual(request?.path, "/v4/self/supported-protocols")
+        XCTAssertEqual(request?.path, "/v5/self/supported-protocols")
     }
 
     func testBuildTransportRequest_thenMethodIsPUT() {
@@ -108,18 +97,7 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
     // MARK: Upstream Request
 
-    func testBuildUpstreamRequest_givenAPIVersion0_thenDontBuildRequest() {
-        // given
-        let builder = makeBuilder(apiVersion: .v0)
-
-        // when
-        let request = builder.buildUpstreamRequest(keys: .init())
-
-        // then
-        XCTAssertNil(request)
-    }
-
-    func testBuildUpstreamRequest_givenAPIVersion4_thenBuildRequest() {
+    func testBuildUpstreamRequest_givenAPIVersion4_thenDontBuildRequest() {
         // given
         let builder = makeBuilder(apiVersion: .v4)
 
@@ -127,7 +105,7 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
         let request = builder.buildUpstreamRequest(keys: .init())
 
         // then
-        XCTAssertNotNil(request)
+        XCTAssertNil(request)
     }
 
     func testBuildUpstreamRequest_givenAPIVersion5_thenBuildRequest() {
@@ -143,13 +121,13 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
 
     func testBuildUpstreamRequest_thenTransportRequestPathIsSet() {
         // given
-        let builder = makeBuilder(apiVersion: .v4)
+        let builder = makeBuilder(apiVersion: .v5)
 
         // when
         let request = builder.buildUpstreamRequest(keys: .init())
 
         // then
-        XCTAssertEqual(request?.transportRequest.path, "/v4/self/supported-protocols")
+        XCTAssertEqual(request?.transportRequest.path, "/v5/self/supported-protocols")
     }
 
     func testBuildUpstreamRequest_thenKeysAreSet() {

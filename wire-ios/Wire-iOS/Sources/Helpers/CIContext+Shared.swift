@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
+import CoreImage
 
 extension CIContext {
     static var shared: CIContext = CIContext(options: nil)

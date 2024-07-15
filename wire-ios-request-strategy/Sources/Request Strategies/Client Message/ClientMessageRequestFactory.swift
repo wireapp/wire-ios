@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireTransport
-import WireImages
-import WireDataModel
 import SwiftProtobuf
+import WireDataModel
+import WireImages
+import WireTransport
 
 private let zmLog = ZMSLog(tag: "Network")
 
@@ -37,6 +37,7 @@ public final class ClientMessageRequestFactory: NSObject {
         var message: SwiftProtobuf.Message
 
         switch apiVersion {
+
         case .v0:
             path = "/" + ["conversations",
                           conversationId.transportString(),
@@ -51,17 +52,21 @@ public final class ClientMessageRequestFactory: NSObject {
                 nativePush: false,
                 recipients: []
             )
+
         case .v1, .v2, .v3, .v4, .v5, .v6:
-            guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else {
+            let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
             }
 
-            path = "/" + ["conversations",
-                          domain,
-                          conversationId.transportString(),
-                          "proteus",
-                          "messages"].joined(separator: "/")
+            path = "/" + [
+                "conversations",
+                domain,
+                conversationId.transportString(),
+                "proteus",
+                "messages"
+            ].joined(separator: "/")
 
             message = Proteus_QualifiedNewOtrMessage(
                 withSender: selfClient,
@@ -104,7 +109,12 @@ extension ClientMessageRequestFactory {
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
 
         let request = ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
+
+        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+        // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
         request.addContentDebugInformation("Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))")
+        request.contentHintForRequestLoop += "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
+
         request.forceToBackgroundSession()
         return request
     }

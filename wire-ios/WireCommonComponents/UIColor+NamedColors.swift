@@ -16,19 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
-public extension UIColor {
+extension UIColor {
 
-    struct Wire {
+    public struct Wire {
 
         public static var primaryLabel: UIColor {
-            return label
+            label
         }
 
         public static var secondaryLabel: UIColor {
-            return label.withAlphaComponent(0.7)
+            label.withAlphaComponent(0.7)
         }
 
     }

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireDataModelSupport
 import WireSyncEngineSupport
-import Foundation
 
 final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
@@ -35,7 +35,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
         resolveOneOnOneConversations.invoke_MockMethod = {}
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(
                 forServerName: "myServer",
                 userIdentifier: self.userIdentifier,
@@ -134,7 +134,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         // when
         await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // then
             XCTAssertEqual(selfUser.clients.count, 2)
             guard let newClient = selfUser.clients.filter({ $0 != selfClient }).first else {
@@ -153,7 +153,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         // given
         let clientId = "94766bd92f56923d"
         var selfUser: ZMUser! = nil
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             XCTAssertEqual(selfUser.clients.count, 0)
         }
@@ -168,7 +168,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        self.syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             XCTAssertEqual(selfUser.clients.count, 1)
             guard let newClient = selfUser.clients.first else {
                 XCTFail()
@@ -185,14 +185,14 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         var selfUser: ZMUser!
         var existingClient: UserClient!
         var event: ZMUpdateEvent?
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             existingClient = self.createSelfClient()
             XCTAssertEqual(selfUser.clients.count, 1)
         }
 
         // when
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             let payload: [String: Any] = [
                 "id": "27330a52-bab6-11e5-8183-22000b080265",
                 "payload": [
@@ -213,7 +213,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             XCTAssertEqual(selfUser.clients.count, 1)
             guard let newClient = selfUser.clients.first else {
                 XCTFail()
@@ -228,7 +228,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         var existingClient1: UserClient!
         var event: ZMUpdateEvent?
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // given
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             existingClient1 = self.createSelfClient()
@@ -258,7 +258,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         // when
         await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // then
             XCTAssertEqual(selfUser.clients.count, 1)
             guard let newClient = selfUser.clients.first else {
@@ -277,7 +277,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         var selfUser: ZMUser!
         var previousLastPrekey: String?
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // given
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             let existingClient = self.createSelfClient()
@@ -307,7 +307,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         // when
         await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             // then
             var newFingerprint: Data?
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in

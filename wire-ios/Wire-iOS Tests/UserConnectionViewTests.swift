@@ -48,7 +48,7 @@ final class UserConnectionViewTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
     }
 
     func testWithUserName() {

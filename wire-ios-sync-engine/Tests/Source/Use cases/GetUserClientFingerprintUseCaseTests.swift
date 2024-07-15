@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
 import WireDataModelSupport
+@testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTesting
-@testable import WireSyncEngine
+import XCTest
 
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!
@@ -142,7 +142,7 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         }
 
         // THEN
-        XCTAssertEqual(String(data: result, encoding: .utf8), fingerprint)
+        XCTAssertEqual(String(decoding: result, as: UTF8.self), fingerprint)
     }
 
     func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagDisabled() async {

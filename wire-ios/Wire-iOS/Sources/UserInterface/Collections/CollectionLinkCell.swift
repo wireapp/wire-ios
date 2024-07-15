@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class CollectionLinkCell: CollectionCell {
     private var articleView: ArticleView? = .none
@@ -80,7 +80,7 @@ final class CollectionLinkCell: CollectionCell {
 
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = message, let textMessageData = message.textMessageData, textMessageData.linkPreview != nil else {
+        guard let message, let textMessageData = message.textMessageData, textMessageData.linkPreview != nil else {
             return
         }
 
@@ -109,7 +109,7 @@ final class CollectionLinkCell: CollectionCell {
         UIPasteboard.general.url = link.openableURL as URL?
     }
 
-    public override func prepareForReuse() {
+    override func prepareForReuse() {
         super.prepareForReuse()
         message = .none
     }

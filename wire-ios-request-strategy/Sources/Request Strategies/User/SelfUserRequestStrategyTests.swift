@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 final class SelfUserRequestStrategyTests: MessagingTestBase {
 
@@ -27,11 +27,11 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
             self.sut = SelfUserRequestStrategy(
-                withManagedObjectContext: context,
+                withManagedObjectContext: syncMOC,
                 applicationStatus: self.applicationStatus
             )
         }
@@ -46,21 +46,35 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Supported protocols
 
-    func test_ItGeneratesARequest_WhenSupportedProtocolsChanges() throws {
+    func test_ItGeneratesANoRequest_givenAPIVersionV4_WhenSupportedProtocolsChanges() throws {
         // GIVEN
         var action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
         action.perform(in: syncMOC.notificationContext) { _ in }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // WHEN
-            guard let request = self.sut.nextRequest(for: .v4) else {
+            let request = self.sut.nextRequest(for: .v4)
+            XCTAssertNil(request)
+        }
+    }
+
+    func test_ItGeneratesARequest_givenAPIVersionV5_WhenSupportedProtocolsChanges() throws {
+        // GIVEN
+        var action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
+        action.perform(in: syncMOC.notificationContext) { _ in }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedAndWait {
+            // WHEN
+            guard let request = self.sut.nextRequest(for: .v5) else {
                 return XCTFail("expected a request")
             }
 
             // Then
-            XCTAssertEqual(request.path, "/v4/self/supported-protocols")
+            XCTAssertEqual(request.path, "/v5/self/supported-protocols")
             XCTAssertEqual(request.method, .put)
 
             guard
@@ -75,7 +89,5 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
                 Set(["mls", "proteus"])
             )
         }
-
     }
-
 }

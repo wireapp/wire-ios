@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireImages
+import XCTest
+
 @testable import WireDataModel
 
-class ZMConversationMessagesTests: ZMConversationTestsBase {
+final class ZMConversationMessagesTests: ZMConversationTestsBase {
 
     func testThatWeCanInsertATextMessage() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -268,7 +269,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
     }
 
     func testThatLastReadUpdatesInSelfConversationDontExpire() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID()
@@ -410,7 +411,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let locationData = self.locationData()
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID()
 
@@ -445,7 +446,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         // then
         XCTAssertNil(message.underlyingMessage?.imageAssetData)
         XCTAssertNotNil(message.underlyingMessage?.locationData)
-        XCTAssertNotNil(message.expirationDate)
+        XCTAssertTrue(message.shouldExpire)
     }
 
     func testThatWeCanInsertAVideoMessage() {

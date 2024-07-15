@@ -217,8 +217,3 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     }
 
 }
-
-public extension Notification.Name {
-    // This notification is used to notify of end-to-end identity certificate changes
-    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
-}

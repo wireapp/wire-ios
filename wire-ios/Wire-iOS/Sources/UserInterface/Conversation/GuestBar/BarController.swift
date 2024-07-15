@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 protocol Bar {
@@ -26,9 +25,9 @@ protocol Bar {
 final class BarController: UIViewController {
     private let stackView = UIStackView()
 
-    public private(set) var bars: [UIViewController] = []
+    private(set) var bars: [UIViewController] = []
 
-    public var topBar: UIViewController? {
+    var topBar: UIViewController? {
         return bars.last
     }
 

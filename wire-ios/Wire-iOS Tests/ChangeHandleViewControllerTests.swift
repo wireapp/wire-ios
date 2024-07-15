@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
-@testable import Wire
+import XCTest
 
-final class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+final class ChangeHandleViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil
         mockSelfUser.domain = "wire.com"

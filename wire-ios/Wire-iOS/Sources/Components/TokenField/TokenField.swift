@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireDesign
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "TokenField")
 
@@ -352,22 +353,22 @@ final class TokenField: UIView {
 
         let compeltionBlock: ((Bool) -> Void)? = {[weak self] _ in
 
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
-            if weakSelf.isCollapsed {
-                weakSelf.textView.attributedText = weakSelf.collapsedString
-                weakSelf.invalidateIntrinsicContentSize()
-                UIView.animate(withDuration: 0.2, animations: {
-                    weakSelf.textView.setContentOffset(CGPoint.zero, animated: false)
-                })
+            if isCollapsed {
+                textView.attributedText = collapsedString
+                invalidateIntrinsicContentSize()
+                UIView.animate(withDuration: 0.2) {
+                    self.textView.setContentOffset(CGPoint.zero, animated: false)
+                }
             } else {
-                weakSelf.textView.attributedText = weakSelf.string(forTokens: weakSelf.tokens)
-                weakSelf.invalidateIntrinsicContentSize()
-                if weakSelf.textView.attributedText.length > 0 {
-                    weakSelf.textView.selectedRange = NSRange(location: weakSelf.textView.attributedText.length, length: 0)
-                    UIView.animate(withDuration: 0.2, animations: {
-                        weakSelf.textView.scrollRangeToVisible(weakSelf.textView.selectedRange)
-                    })
+                textView.attributedText = string(forTokens: tokens)
+                invalidateIntrinsicContentSize()
+                if textView.attributedText.length > 0 {
+                    textView.selectedRange = NSRange(location: textView.attributedText.length, length: 0)
+                    UIView.animate(withDuration: 0.2) {
+                        self.textView.scrollRangeToVisible(self.textView.selectedRange)
+                    }
                 }
             }
         }
@@ -442,7 +443,7 @@ final class TokenField: UIView {
         textView.textStorage.addAttributes(textAttributes, range: NSRange(location: 0, length: textView.textStorage.length))
         textView.textStorage.endEditing()
 
-        if let toLabelText = toLabelText {
+        if let toLabelText {
             toLabel.attributedText = NSMutableAttributedString(string: toLabelText, attributes: textAttributes)
         } else {
             toLabel.text = ""

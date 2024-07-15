@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Contacts
+import Foundation
 import libPhoneNumberiOS
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
@@ -67,14 +67,15 @@ extension AddressBookAccessor {
     ///     if there are no contacts to upload
     /// - parameter maxNumberOfContacts: do not include more than this number of contacts
     /// - parameter startingContactIndex: include contacts starting from this index in the address book
-    func encodeWithCompletionHandler(_ groupQueue: ZMSGroupQueue,
-                                     startingContactIndex: UInt,
-                                     maxNumberOfContacts: UInt,
-                                     completion: @escaping (EncodedAddressBookChunk?) -> Void
-        ) {
+    func encodeWithCompletionHandler(
+        _ groupQueue: GroupQueue,
+        startingContactIndex: UInt,
+        maxNumberOfContacts: UInt,
+        completion: @escaping (EncodedAddressBookChunk?) -> Void
+    ) {
         // here we are explicitly capturing self, this is executed on a queue that is
         // never blocked indefinitely as this is the only function using it
-        groupQueue.dispatchGroup.async(on: addressBookProcessingQueue) {
+        groupQueue.dispatchGroup?.async(on: addressBookProcessingQueue) {
 
             let range: Range<UInt> = startingContactIndex..<(startingContactIndex + maxNumberOfContacts)
             let cards = self.generateContactCards(range: range)
@@ -91,9 +92,9 @@ extension AddressBookAccessor {
             let encodedAB = EncodedAddressBookChunk(numberOfTotalContacts: self.numberOfContacts,
                                                     otherContactsHashes: cards,
                                                     includedContacts: cardsRange)
-            groupQueue.performGroupedBlock({
+            groupQueue.performGroupedBlock {
                 completion(encodedAB)
-            })
+            }
         }
     }
 

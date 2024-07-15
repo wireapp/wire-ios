@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SystemConfiguration
+import UIKit
 import WireCommonComponents
 import WireShareEngine
-import SystemConfiguration
 import WireSystem
-import UIKit
 
 final class SendingProgressViewController: UIViewController {
 
@@ -35,6 +34,8 @@ final class SendingProgressViewController: UIViewController {
     private var circularProgress = CircularProgressView()
     private var connectionStatusLabel = UILabel()
     private let minimumProgress: Float = 0.125
+
+    private let networkStatusObservable: any NetworkStatusObservable
 
     var progress: Float = 0 {
         didSet {
@@ -62,7 +63,9 @@ final class SendingProgressViewController: UIViewController {
         }
     }
 
-    init() {
+    init(networkStatusObservable: any NetworkStatusObservable) {
+        self.networkStatusObservable = networkStatusObservable
+
         super.init(nibName: nil, bundle: nil)
     }
 

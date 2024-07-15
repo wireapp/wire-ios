@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUITesting
 import XCTest
+
 @testable import Wire
 
 final class MockTeam: TeamType {
@@ -41,26 +43,37 @@ final class MockTeam: TeamType {
     }
 }
 
-final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
     var userSession: UserSessionMock!
     var mockSelfUser: MockUserType!
-
     var sut: AddParticipantsViewController!
+    var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
         mockSelfUser = nil
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForEveryOneIsHere() {
         let newValues = ConversationCreationValues(
@@ -72,7 +85,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         sut = AddParticipantsViewController(context: .create(newValues), userSession: userSession)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
@@ -82,7 +95,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatTabBarIsShown_WhenBotCanBeAdded() {
@@ -97,7 +110,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

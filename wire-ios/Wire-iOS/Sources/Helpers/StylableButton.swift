@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 class StylableButton: UIButton, Stylable {
 
     var buttonStyle: ButtonStyle?
 
-    public func applyStyle(_ style: ButtonStyle) {
+    func applyStyle(_ style: ButtonStyle) {
         self.buttonStyle = style
 
         setTitleColor(style.normalStateColors.title, for: .normal)
@@ -64,7 +63,7 @@ class StylableButton: UIButton, Stylable {
     }
 
     func setBackgroundImageColor(_ color: UIColor?, for state: UIControl.State) {
-        if let color = color {
+        if let color {
             setBackgroundImage(UIImage.singlePixelImage(with: color.resolvedColor(with: traitCollection)), for: state)
         } else {
             setBackgroundImage(nil, for: state)

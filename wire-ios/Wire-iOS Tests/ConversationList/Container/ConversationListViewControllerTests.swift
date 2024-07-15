@@ -16,90 +16,91 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
-// MARK: - MockConversationList
-
-final class MockConversationList: ConversationListHelperType {
-    static var hasArchivedConversations: Bool = false
-}
-
-// MARK: - MockConversationListDelegate
-
-final class MockConversationListDelegate: ConversationListTabBarControllerDelegate {
-    func didChangeTab(with type: TabBarItemType) {
-        switch type {
-        case .archive:
-            self.archiveTabCallCount += 1
-        case .startUI:
-            self.startUITabCallCount += 1
-        case .list:
-            self.listTabCallCount += 1
-        case .folder:
-            self.folderTabCallCount += 1
-        }
-    }
-
-    var startUITabCallCount: Int = 0
-    var archiveTabCallCount: Int = 0
-    var listTabCallCount: Int = 0
-    var folderTabCallCount: Int = 0
-}
-
 // MARK: - ConversationListViewControllerTests
 
-final class ConversationListViewControllerTests: BaseSnapshotTestCase {
+final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationListViewController!
-    var mockDelegate: MockConversationListDelegate!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: ConversationListViewController!
+    private var window: UIWindow!
+    private var tabBarController: UITabBarController!
+    private var userSession: UserSessionMock!
+    private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
 
-        userSession = UserSessionMock()
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
+        accentColor = .blue
+
+        coreDataFixture = .init()
+
+        userSession = .init()
+        userSession.contextProvider = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
-            conversationListType: MockConversationList.self,
+            selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
-        sut = ConversationListViewController(viewModel: viewModel)
-        viewModel.viewController = sut
-        sut.onboardingHint.arrowPointToView = sut.tabBar
-        sut.overrideUserInterfaceStyle = .dark
-        sut.view.backgroundColor = .black
-        mockDelegate = MockConversationListDelegate()
-        sut.delegate = self.mockDelegate
+        sut = ConversationListViewController(
+            viewModel: viewModel,
+            isFolderStatePersistenceEnabled: false,
+            zClientViewController: .init(account: account, userSession: userSession),
+            mainCoordinator: mockMainCoordinator,
+            selfProfileViewControllerBuilder: .mock
+        )
+        tabBarController = MainTabBarController(
+            contacts: .init(),
+            conversations: UINavigationController(rootViewController: sut),
+            folders: .init(),
+            archive: .init()
+        )
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
+
+        UIView.setAnimationsEnabled(false)
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
+        window.isHidden = true
+        window.rootViewController = nil
+        window = nil
+        tabBarController = nil
         sut = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
-        mockDelegate = nil
         userSession = nil
+        coreDataFixture = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -107,60 +108,26 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     // MARK: - View controller
 
     func testForNoConversations() {
-        verify(matching: sut)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForEverythingArchived() {
-        MockConversationList.hasArchivedConversations = true
+        let modelHelper = ModelHelper()
+        let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
+        conversation.isArchived = true
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
-
-        verify(matching: sut)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: tabBarController)
     }
 
-    // MARK: - PermissionDeniedViewController
+    // MARK: - Helpers
 
-    func testForPremissionDeniedViewController() {
-        sut.showPermissionDeniedViewController()
-
-        verify(matching: sut)
+    private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
+        let predicate = NSPredicate { _, _ in
+            viewController.viewIfLoaded != nil
+        }
+        return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
-
-    // MARK: - TabBar actions
-
-    func testThatItCallsTheDelegateWhenTheContactsTabIsTapped() {
-        // WHEN
-        let item = UITabBarItem(type: .startUI)
-        sut.tabBar(sut.tabBar, didSelect: item)
-
-        // THEN
-        XCTAssertEqual(mockDelegate.startUITabCallCount, 1)
-    }
-
-    func testThatItCallsTheDelegateWhenTheArchivedTabIsTapped() {
-        // WHEN
-        let item = UITabBarItem(type: .archive)
-        sut.tabBar(sut.tabBar, didSelect: item)
-
-        // THEN
-        XCTAssertEqual(mockDelegate.archiveTabCallCount, 1)
-    }
-
-    func testThatItCallsTheDelegateWhenTheListTabIsTapped() {
-        // WHEN
-        let item = UITabBarItem(type: .list)
-        sut.tabBar(sut.tabBar, didSelect: item)
-
-        // THEN
-        XCTAssertEqual(mockDelegate.listTabCallCount, 1)
-    }
-
-    func testThatItCallsTheDelegateWhenTheFolderTabIsTapped() {
-        // WHEN
-        let item = UITabBarItem(type: .folder)
-        sut.tabBar(sut.tabBar, didSelect: item)
-
-        // THEN
-        XCTAssertEqual(mockDelegate.folderTabCallCount, 1)
-    }
-
 }

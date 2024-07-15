@@ -86,6 +86,9 @@
 "conversation.scrollToBottomButton.description" = "Переход к концу беседы";
 "conversation.scrollToBottomButton.hint" = "Нажмите для перехода к концу беседы";
 
+"sendLocation.address.description" = "Выбранный адрес %@";
+"sendLocation.address.hint" = "Здесь отображается текущий выбранный адрес для отправки.";
+
 "audioRecord.stopButton.description" = "Остановить запись";
 "audioRecord.startButton.description" = "Начать запись";
 "audioRecord.startButton.hint" = "Нажмите дважды, чтобы записать";
@@ -161,8 +164,6 @@
 "supportSettings.backButton.description" = "Вернуться в раздел Поддержка";
 
 "aboutSettings.backButton.description" = "Вернуться в раздел О программе";
-"licenseInformationSettings.backButton.description" = "Вернуться в раздел Информация о лицензии";
-"licenseDetailsSettings.backButton.description" = "Вернуться в раздел Сведения о лицензии";
 
 "developerOptionsSettings.backButton.description" = "Вернуться в раздел Параметры разработчика";
 

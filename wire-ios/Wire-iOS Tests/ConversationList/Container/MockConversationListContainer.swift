@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class MockConversationListContainer: UIViewController, ConversationListContainerViewModelDelegate {
@@ -38,7 +39,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
+    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
         isSelectedOnListContentController = true
         return false
     }
@@ -87,6 +88,14 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func conversationListViewControllerViewModel(_ viewModel: ConversationListViewController.ViewModel, didUpdate selfUserStatus: UserStatus) {
+        // no-op
+    }
+
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: Wire.ConversationListViewController.ViewModel) {
+        // no-op
+    }
+
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: Wire.ConversationListViewController.ViewModel) {
         // no-op
     }
 }

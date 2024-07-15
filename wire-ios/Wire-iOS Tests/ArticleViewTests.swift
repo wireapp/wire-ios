@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import Wire
 import WireDataModel
 import WireLinkPreview
 import XCTest
-@testable import Wire
 
 // MARK: - MockConversationMessageCellDelegate
 
@@ -68,7 +68,7 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 
     func perform(
         action: MessageAction,
-        for message: ZMConversationMessage!,
+        for message: ZMConversationMessage,
         view: UIView
     ) {
         // no-op
@@ -93,7 +93,7 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
 
 // MARK: - ArticleViewTests
 
-final class ArticleViewTests: BaseSnapshotTestCase {
+final class ArticleViewTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -104,7 +104,7 @@ final class ArticleViewTests: BaseSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - tearDown

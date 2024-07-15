@@ -16,24 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import avs
+import WireDesign
+import WireUITesting
+import XCTest
+
 @testable import Wire
 
-final class AudioEffectsPickerViewControllerTests: BaseSnapshotTestCase {
-    var sut: AudioEffectsPickerViewController! = .none
+final class AudioEffectsPickerViewControllerTests: XCTestCase {
 
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
+    var sut: AudioEffectsPickerViewController! = .none
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         let path = Bundle(for: type(of: self)).path(forResource: "audio_sample", ofType: "m4a")!
         self.sut = AudioEffectsPickerViewController(recordingPath: path, duration: TimeInterval(10.0))
         self.sut.normalizedLoudness = (0...100).map { Float($0) / 100.0 }
         self.sut.progressView.samples = self.sut.normalizedLoudness
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        sut = nil
+        super.tearDown()
     }
 
     func prepareForSnapshot() -> UIView {
@@ -61,26 +68,26 @@ final class AudioEffectsPickerViewControllerTests: BaseSnapshotTestCase {
     }
 
     func testInitialState() {
-        verify(matching: prepareForSnapshot())
+        snapshotHelper.verify(matching: prepareForSnapshot())
     }
 
     func testPlayingProgressState() {
         let preparedView = self.prepareForSnapshot()
 
         self.sut.setState(.playing, animated: false)
-        verify(matching: preparedView)
+        snapshotHelper.verify(matching: preparedView)
     }
 
     func testTooltipState() {
         let preparedView = self.prepareForSnapshot()
         self.sut.setState(.tip, animated: false)
-        verify(matching: preparedView)
+        snapshotHelper.verify(matching: preparedView)
     }
 
     func testEffectSelectedState() {
         let preparedView = self.prepareForSnapshot()
 
         sut.selectedAudioEffect = AVSAudioEffectType.chorusMax
-        verify(matching: preparedView)
+        snapshotHelper.verify(matching: preparedView)
     }
 }

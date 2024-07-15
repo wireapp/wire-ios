@@ -16,19 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: ZMConversationListObserver {
-    public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+
+    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateNoConversationVisibility()
-        updateArchiveButtonVisibility()
     }
 }
 
 extension ConversationListViewController.ViewModel {
     func updateNoConversationVisibility(animated: Bool = true) {
-        if !ZMConversationList.hasConversations {
+        if !ConversationList.hasConversations {
             viewController?.showNoContactLabel(animated: animated)
         } else {
             viewController?.hideNoContactLabel(animated: animated)
@@ -37,17 +36,14 @@ extension ConversationListViewController.ViewModel {
 
     func updateObserverTokensForActiveTeam() {
         if let userSession = ZMUserSession.shared() {
-            allConversationsObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
+            allConversationsObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
 
-            connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
     }
 
-    func updateArchiveButtonVisibility() {
-        viewController?.updateArchiveButtonVisibilityIfNeeded(showArchived: ZMConversationList.hasArchivedConversations)
-    }
-
     var hasArchivedConversations: Bool {
-        return conversationListType.hasArchivedConversations
+        guard let contextProvider = userSession as? ContextProvider else { return false }
+        return (ConversationList.archivedConversations(inUserSession: contextProvider)?.items.count ?? 0) > 0
     }
 }

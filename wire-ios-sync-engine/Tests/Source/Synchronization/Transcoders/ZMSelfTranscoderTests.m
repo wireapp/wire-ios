@@ -89,7 +89,7 @@
               @"id" : userID.transportString,
               @"email" : @"pp@example.com",
               @"phone" : @"555-986-45789",
-              @"accent_id" : @3,
+              @"accent_id" : @5,
               @"picture" : @[],
               } mutableCopy];
 }
@@ -372,15 +372,15 @@
 - (void)testThatItGeneratesARequestForUpdatingChangedSelfUser
 {
     NSString *name = @"My new name testThatItGeneratesARequestForUpdatingChangedSelfUser";
-    ZMAccentColor accentColor = ZMAccentColorBrightYellow;
+    ZMAccentColor *accentColor = ZMAccentColor.amber;
     NSDictionary* uploadPayload = @{
-                                    @"name" : name,
-                                    @"accent_id" : @(accentColor)
-                                    };
+        @"name" : name,
+        @"accent_id" : @(accentColor.rawValue)
+    };
     
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"name", @"accentColorValue", nil] userChangeBlock:^(ZMUser *user) {
         user.name = name;
-        user.accentColorValue = accentColor;
+        user.zmAccentColor = accentColor;
     }];
 }
 
@@ -389,9 +389,9 @@
     NSString *name = @"My new name testThatItGeneratesARequestForUpdatingJustTheNameInChangedSelfUser";
 
     NSDictionary* uploadPayload = @{
-                                    @"name" : name
-                                    };
-    
+        @"name" : name
+    };
+
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"name", nil] userChangeBlock:^(ZMUser *user) {
         user.name = name;
     }];
@@ -400,13 +400,13 @@
 
 - (void)testThatItGeneratesARequestForUpdatingJustTheAccentColorInChangedSelfUser
 {
-    ZMAccentColor accentColor = ZMAccentColorBrightYellow;
+    ZMAccentColor *accentColor = ZMAccentColor.amber;
     NSDictionary* uploadPayload = @{
-                                    @"accent_id" : @(accentColor)
-                                    };
+        @"accent_id" : @(accentColor.rawValue)
+    };
     
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"accentColorValue", nil] userChangeBlock:^(ZMUser *user) {
-        user.accentColorValue = accentColor;
+        user.zmAccentColor = accentColor;
     }];
 }
 
@@ -474,7 +474,7 @@
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         user.name = @"Joe Random User";
-        user.accentColorValue = ZMAccentColorBrightYellow;
+        user.zmAccentColor = ZMAccentColor.amber;
         user.remoteIdentifier = [NSUUID createUUID];
         
         // when

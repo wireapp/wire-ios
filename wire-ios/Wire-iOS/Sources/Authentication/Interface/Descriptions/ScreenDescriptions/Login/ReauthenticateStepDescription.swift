@@ -18,10 +18,7 @@
 
 import Foundation
 
-/**
- * An authentication step to ask the user to log in again.
- */
-
+/// An authentication step to ask the user to log in again.
 final class ReauthenticateStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?
@@ -36,25 +33,13 @@ final class ReauthenticateStepDescription: AuthenticationStepDescription {
         mainView = EmptyViewDescription()
         headline = L10n.Localizable.Registration.Signin.title
 
-        switch prefilledCredentials?.primaryCredentialsType {
-        case .email?:
-            if prefilledCredentials?.isExpired == true {
-                subtext = .markdown(from: L10n.Localizable.SigninLogout.Email.subheadline, style: .login)
-            } else {
-                subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
-            }
-        case .phone?:
-            if prefilledCredentials?.isExpired == true {
-                subtext = .markdown(from: L10n.Localizable.SigninLogout.Phone.subheadline, style: .login)
-            } else {
-                subtext = .markdown(from: L10n.Localizable.Signin.Phone.MissingPassword.subtitle, style: .login)
-            }
-        case .none:
-            subtext = .markdown(from: L10n.Localizable.SigninLogout.subheadline, style: .login)
+        if prefilledCredentials?.isExpired == true {
+            subtext = .markdown(from: L10n.Localizable.SigninLogout.Email.subheadline, style: .login)
+        } else {
+            subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
         }
 
         secondaryView = nil
         footerView = nil
     }
-
 }

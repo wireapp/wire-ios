@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arhiv";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Pogovori se začnejo tukaj";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ je začel(-a) z uporabo nove naprave.";
 "call.degraded.alert.message.unknown" = "Nekdo je začel(-a) z uporabo nove naprave.";
 "call.degraded.alert.action.continue" = "Vseeno pokliči";
+"call.degraded.incoming.alert.action.continue" = "Join anyway";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "BLOKIRAN";
 "profile.create_conversation_button_title" = "Ustvari skupino";
 "profile.open_conversation_button_title" = "Odpri pogovor";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
 "profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,16 +1043,11 @@
 "self.add_email_password" = "Dodajte e-poštni naslov in geslo";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Pogoji uporabe";
 "about.privacy.title" = "Politika zasebnosti";
-"about.license.title" = "Podatki licence";
 "about.website.title" = "Wire spletna stran";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Podrobnosti";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Vaš račun je bil uporabljen na:";
@@ -1084,7 +1082,6 @@
 
 "self.settings.account_section.name.title" = "Ime";
 "self.settings.account_section.email.title" = "E-pošta";
-"self.settings.account_section.phone.title" = "Telefon";
 "self.settings.account_section.handle.title" = "Uporabniško ime";
 "self.settings.account_section.add_handle.title" = "Dodaj uporabniško ime";
 "self.settings.account_section.team.title" = "Team";
@@ -1117,7 +1114,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1176,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "E-pošta ponovno poslana";
 "self.settings.account_section.email.change.resend.message" = "Potrditvena e-pošta je bila ponovno poslana na %@. Preverite vaš e-poštni predal in sledite navodilom.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Telefon";
-"self.settings.account_section.phone_number.change.save" = "Shrani";
-"self.settings.account_section.phone_number.change.remove" = "Odstrani telefonsko številko";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Odstrani telefonsko številko";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Shrani";
-"self.settings.account_section.phone_number.change.verify.title" = "Preveri";
-"self.settings.account_section.phone_number.change.verify.description" = "Vnesite verifikacijsko kodo, ki smo jo poslali na: %@.";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Vnesite kodo";
-"self.settings.account_section.phone_number.change.verify.resend" = "Ponovno pošlji kodo";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Koda ni prispela?\nLahko zahtevate novo vsakih 30 sekund.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Koda ponovno poslana";
-"self.settings.account_section.phone_number.change.resend.message" = "Verifikacijska koda je bila ponovno poslana na %@.";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Obvestila";
@@ -1313,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Če imate težave s push obvestili, vas bo podpora Wire morda zaprosila za ponastavitev tega žetona.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push žeton je bil ponastavljen";
 "self.settings.advanced.reset_push_token_alert.message" = "Obvestila bodo obnovljena v nekaj sekundah.";
-"self.settings.advanced.version_technical_details.title" = "Tehnične podrobnosti o različici";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";
@@ -1375,10 +1351,6 @@
 "password.placeholder" = "Geslo";
 "password.guidance.toolong" = "Preveč znakov";
 
-"phone.guidance.invalid" = "Neveljavna telefonska številka";
-"phone.guidance.tooshort" = "Phone number is too short";
-"phone.guidance.toolong" = "Preveč znakov";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1381,6 @@
 "team.activation_code.subheadline" = "Vnesite verifikacijsko kodo, ki smo jo poslali na %@.";
 "team.activation_code.button.resend" = "Resend code";
 "team.activation_code.button.change_email" = "Ponastavitev elektronskega naslova";
-"team.activation_code.button.change_phone" = "Spremeni telefonsko številko";
 
 "team.full_name.headline" = "Your name";
 "team.full_name.textfield.placeholder" = "Full name";
@@ -1466,19 +1437,9 @@
 
 "registration.title" = "Registracija";
 "registration.close_email_invitation_button.email_title" = "Uporabi drugi e-poštni naslov";
-"registration.close_email_invitation_button.phone_title" = "Registriraj po telefonu";
 "registration.close_phone_invitation_button.email_title" = "Registriraj po e-pošti";
-"registration.close_phone_invitation_button.phone_title" = "Uporabi drugi telefon";
 
-"registration.register_by_phone" = "Telefon";
 "registration.register_by_email" = "E-pošta";
-
-"registration.enter_phone_number.title" = "Uredi telefonsko številko";
-"registration.enter_phone_number.placeholder" = "Telefonska številka";
-
-"registration.verify_phone_number.instructions" = "Vnesite verifikacijsko kodo, ki smo jo poslali na %@";
-"registration.verify_phone_number.resend" = "Ponovno pošlji";
-"registration.verify_phone_number.resend_placeholder" = "Koda ni prispela?\nLahko zahtevate novo v %.0f sekundah";
 
 "registration.verify_email.instructions" = "Poslali smo e-pošto na %@.\n Sledite navodilom za preveritev vašega naslova.";
 "registration.verify_email.resend.instructions" = "Niste dobili sporočila?";
@@ -1490,10 +1451,8 @@
 "registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
-"registration.alert.change_phone_action" = "Register with Another Number";
 "registration.alert.change_signin_action" = "Prijava";
 
 // Restore History Warning Alert
@@ -1598,7 +1557,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Upravljanje naprav";
 "registration.signin.too_many_devices.sign_out_button.title" = "Odjava";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
@@ -1636,32 +1595,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Login with Email";
-"signin.use_phone.label" = "Login with Phone";
 "signin.forgot_password" = "Pozabljeno geslo?";
 "signin.use_one_password.label" = "Log in with 1Password";
 "signin.use_one_password.hint" = "Double tap to fill your password with 1Password";
 "signin.confirm" = "Prijava";
 "signin.company_idp.button.title" = "For Companies";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
-"signin_logout.phone.subheadline" = "Your session expired. Enter your phone number to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
 "signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
-"signin.phone.missing_password.subtitle" = "Enter your phone number to continue.";
-
-"registration.phone_country" = "Država";
-"registration.phone_code" = "Koda države";
-"registration.phone_country.hint" = "Double tap to select another country.";
-"registration.phone_code.hint" = "Double tap to select another country code.";
-"registration.phone.verify.label" = "Preveri telefonsko številko";
-"registration.phone.verify_field.label" = "Verification Code";
-
-"registration.add_phone_number.hero.title" = "Dodaj telefonsko številko";
-"registration.add_phone_number.hero.paragraph" = "To nam pomaga najti osebe, ki jih morda poznate. Nikoli tega ne delimo.";
-"registration.add_phone_number.skip_button.title" = "Ne zdaj";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "To vam omogoča uporabo Wire na večih napravah.";
@@ -1670,12 +1614,7 @@
 "registration.email_invitation.hero.title" = "Hej, %@";
 "registration.email_invitation.hero.paragraph" = "Izberite geslo za ustvaritev vašega računa.";
 
-"registration.phone_invitation.title" = "Povabilo";
-"registration.phone_invitation.hero.title" = "Hej, %@";
-"registration.phone_invitation.hero.paragraph" = "Ste en korak oddaljeni od ustvaritve vašega računa.";
-
 "registration.confirm" = "Sign Up";
-"registration.phone.country_code.hint" = "Double tap to use a phone number from this country.";
 
 "error.name_and_email" = "Prosimo vnesite vaše polno ime in veljaven e-poštni naslov";
 "error.full_name" = "Prosimo vnesite polno ime";
@@ -1683,7 +1622,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "Prosimo vnesite veljaven e-poštni naslov";
-"error.phone.invalid" = "Prosimo vnesite veljavno telefonsko številko";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1640,11 @@
 "error.user.account_pending_activation" = "Za račun, do katerega želite dostopati, je aktivacija v teku. Prosimo preverite vaše podatke.";
 "error.user.network_error" = "Zdi se, da je nekje težava z vašim omrežjem. Prosimo poskusite znova kasneje.";
 "error.user.email_is_taken" = "E-poštni naslov, ki ste ga posredovali, je že bil registriran. Prosimo poizkusite ponovno.";
-"error.user.phone_is_taken" = "Telefonska številka, ki ste jo posredovali, je že bila registrirana. Prosimo poizkusite ponovno.";
-"error.user.phone_code_invalid" = "Prosimo vnesite veljavno kodo";
-"error.user.phone_code_too_many" = "Kodo smo vam že poslali preko SMS. Tapnite Pošlji ponovno po 10 minutah za novo.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Nekaj je šlo narobe, prosimo poizkusite znova.";
 "error.user.device_deleted_remotely" = "Odjavljeni ste bili iz druge naprave.";
-"error.user.last_identity_cant_be_deleted" = "Zahtevan je ali e-poštni naslov ali telefonska številka.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
@@ -1735,6 +1672,7 @@
 "error.conversation.cannot_remove" = "Removing the participant failed";
 "error.conversation.too_many_members" = "The conversation is full";
 "error.conversation.offline" = "Zdi se, da je problem z vašo spletno povezavo. Prosim preverite, če deluje.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1860,16 @@
 "url_action.title" = "Confirm URL action";
 "url_action.connect_to_bot.message" = "Would you like to connect to the bot?";
 
-"url_action.switch_backend.title" = "Connect to server";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2092,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

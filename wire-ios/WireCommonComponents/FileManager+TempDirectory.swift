@@ -19,7 +19,7 @@
 import Foundation
 
 extension FileManager {
-    static public func createTmpDirectory(fileName: String? = nil) throws -> URL {
+    public static func createTmpDirectory(fileName: String? = nil) throws -> URL {
         let fileManager = FileManager.default
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(fileName ?? UUID().uuidString) // temp subdir
         if !fileManager.fileExists(atPath: tmp.absoluteString) {

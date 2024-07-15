@@ -16,19 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import WireUITesting
+import XCTest
+
 @testable import Wire
 
-final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
-        accentColor = .strongBlue
+        accentColor = .blue
 
         featureProvider = MockAuthenticationFeatureProvider()
         builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: {
@@ -41,6 +45,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         builder = nil
         featureProvider = nil
 
@@ -65,14 +70,9 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         runSnapshotTest(for: .createCredentials(UnregisteredUser()))
     }
 
-    func testActivationScreen_Phone() {
-        let phoneNumber = UnverifiedCredentials.phone("+0123456789")
-        runSnapshotTest(for: .enterActivationCode(phoneNumber, user: UnregisteredUser()))
-    }
-
     func testActivationScreen_Email() {
-        let email = UnverifiedCredentials.email("test@example.com")
-        runSnapshotTest(for: .enterActivationCode(email, user: UnregisteredUser()))
+        let unverifiedEmail = "test@example.com"
+        runSnapshotTest(for: .enterActivationCode(unverifiedEmail: unverifiedEmail, user: UnregisteredUser()))
     }
 
     func testSetNameScreen() {
@@ -89,12 +89,8 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
 
     // MARK: - Login
 
-    func testLoginScreen_Phone() throws {
-        runSnapshotTest(for: .provideCredentials(.phone, nil))
-    }
-
     func testLoginScreen_Email() {
-        runSnapshotTest(for: .provideCredentials(.email, nil))
+        runSnapshotTest(for: .provideCredentials(nil))
     }
 
     func testLoginScreen_Email_WithProxyAuthenticated() {
@@ -103,7 +99,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         backendEnvironmentProvider.proxy = FakeProxySettings(host: "api.example.org", port: 1345, needsAuthentication: true)
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
         builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
-        runSnapshotTest(for: .provideCredentials(.email, nil), customSize: .init(width: CGSize.iPhoneSize.iPhone4_7Inch.width, height: 1000)) // setting higher value for scrollview content
+        runSnapshotTest(for: .provideCredentials(nil), customSize: .init(width: CGSize.iPhoneSize.iPhone4_7Inch.width, height: 1000)) // setting higher value for scrollview content
     }
 
     func testLoginScreen_Email_WithConfig() {
@@ -112,7 +108,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         backendEnvironmentProvider.proxy = nil
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
         builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
-        runSnapshotTest(for: .provideCredentials(.email, nil))
+        runSnapshotTest(for: .provideCredentials(nil))
     }
 
     func testLoginScreen_Email_WithProxyNoAuthentication() {
@@ -122,16 +118,12 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
 
         builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
-        runSnapshotTest(for: .provideCredentials(.email, nil))
+        runSnapshotTest(for: .provideCredentials(nil))
     }
 
     func testLoginScreen_Email_PhoneDisabled() {
         featureProvider.allowOnlyEmailLogin = true
-        runSnapshotTest(for: .provideCredentials(.email, nil))
-    }
-
-    func testLoginScreen_PhoneNumberVerification() {
-        runSnapshotTest(for: .enterPhoneVerificationCode(phoneNumber: "+0123456789"))
+        runSnapshotTest(for: .provideCredentials(nil))
     }
 
     func testBackupScreen_NewDevice() {
@@ -143,11 +135,11 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     func testTooManyDevicesScreen() {
-        runSnapshotTest(for: .clientManagement(clients: [], credentials: nil))
+        runSnapshotTest(for: .clientManagement(clients: []))
     }
 
     func testClientRemovalScreen() {
-        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()], credentials: nil))
+        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()]))
     }
 
     func testAddEmailPasswordScreen() {
@@ -155,36 +147,22 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     func testVerifyEmailLinkTests() {
-        let credentials = ZMEmailCredentials(email: "test@example.com", password: "12345678")
+        let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 
     func testReauthenticate_Email_TokenExpired() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: .none, hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
     func testReauthenticate_Email_DuringLogin() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
-    }
-
-    func testReauthenticate_EmailAndPhone_TokenExpired() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: "+33123456789", hasPassword: true, usesCompanyLogin: false)
-
-        // Email should have priority
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
-    }
-
-    func testReauthenticate_Phone_DuringLogin() {
-        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: "+33123456789", hasPassword: true, usesCompanyLogin: false)
-
-        // Email should have priority
+        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: .none, hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
     }
 
     func testReauthenticate_CompanyLogin() {
-        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: nil, hasPassword: false, usesCompanyLogin: true)
+        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: .none, hasPassword: false, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
@@ -194,12 +172,13 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
 
     // MARK: - Helpers
 
-    private func runSnapshotTest(for step: AuthenticationFlowStep,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line,
-                                 customSize: CGSize? = nil
-        ) {
+    private func runSnapshotTest(
+        for step: AuthenticationFlowStep,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line,
+        customSize: CGSize? = nil
+    ) {
         if let viewController = builder.makeViewController(for: step) {
             if !step.needsInterface {
                 return XCTFail("An interface was generated but we didn't expect one.", file: file, line: line)
@@ -208,8 +187,8 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
             let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
             navigationController.viewControllers = [viewController]
 
-            verify(matching: navigationController,
-                   customSize: customSize,
+            snapshotHelper.verify(matching: navigationController,
+                   size: customSize,
                    file: file,
                    testName: testName,
                    line: line)
@@ -217,5 +196,4 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
             XCTAssertFalse(step.needsInterface, "Missing interface.", file: file, line: line)
         }
     }
-
 }

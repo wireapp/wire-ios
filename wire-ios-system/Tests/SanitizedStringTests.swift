@@ -18,8 +18,8 @@
 
 import Foundation
 
-import XCTest
 @testable import WireSystem
+import XCTest
 
 struct Item {
     var name: String
@@ -69,14 +69,11 @@ class SanitizedStringTests: XCTestCase {
             SanitizedString(value: "<redacted><redacted>"),
             SanitizedString("\(item)") + item
         )
-        XCTAssertEqual(
-            SanitizedString(value: "<redacted>nil"),
-            SanitizedString("\(item)") + Item?(nil)
-        )
     }
 }
 
 extension SanitizedStringTests {
+
     func testString() {
         let sut = "some"
         let value = SafeValueForLogging(sut)

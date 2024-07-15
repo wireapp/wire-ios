@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Wire
+import XCTest
 
 class MockContainer: NetworkStatusViewDelegate {
     var shouldAnimateNetworkStatusView: Bool = true
@@ -67,14 +67,14 @@ final class NetworkStatusViewTests: XCTestCase {
     }
 }
 
-final class NetworkStatusViewSnapShotTests: BaseSnapshotTestCase {
+final class NetworkStatusViewSnapShotTests: XCTestCase {
 
     var sut: NetworkStatusView!
     var mockContainer: MockContainer!
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
         mockContainer = MockContainer()
         sut = NetworkStatusView()
         sut.overrideUserInterfaceStyle = .light

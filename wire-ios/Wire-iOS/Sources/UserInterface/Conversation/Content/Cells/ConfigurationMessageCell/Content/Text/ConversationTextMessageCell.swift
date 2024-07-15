@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView,
                                          ConversationMessageCell,
@@ -128,7 +127,7 @@ final class ConversationTextMessageCell: UIView,
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
-                menuPresenter?.showSecuredMenu(for: textView.text)
+                menuPresenter?.showSecuredMenu()
             } else {
                 menuPresenter?.showMenu()
             }

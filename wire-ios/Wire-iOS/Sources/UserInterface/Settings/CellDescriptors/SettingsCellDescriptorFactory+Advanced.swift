@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -25,15 +24,13 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
-    var advancedGroup: SettingsCellDescriptorType {
-        var items = [SettingsSectionDescriptor]()
 
-        items.append(contentsOf: [
+    var advancedGroup: SettingsCellDescriptorType {
+        let items = [
             troubleshootingSection,
             debuggingToolsSection,
-            pushSection,
-            versionSection
-        ])
+            pushSection
+        ]
 
         return SettingsGroupCellDescriptor(
             items: items,
@@ -75,16 +72,6 @@ extension SettingsCellDescriptorFactory {
             visibilityAction: { _ in
                 return true
         })
-    }
-
-    private var versionSection: SettingsSectionDescriptor {
-        let versionCell = SettingsButtonCellDescriptor(
-            title: SelfSettingsAdvancedLocale.VersionTechnicalDetails.title,
-            isDestructive: false,
-            selectAction: presentVersionAction
-        )
-
-        return SettingsSectionDescriptor(cellDescriptors: [versionCell])
     }
 
     private var debuggingToolsSection: SettingsSectionDescriptor {
@@ -137,20 +124,5 @@ extension SettingsCellDescriptorFactory {
         alert.addAction(action)
 
         return alert
-    }
-
-    private var presentVersionAction: (SettingsCellDescriptorType) -> Void {
-        return { _ in
-            let versionInfoViewController = VersionInfoViewController()
-            var superViewController = UIApplication.shared.wr_keyWindow?.rootViewController
-
-            if let presentedViewController = superViewController?.presentedViewController {
-                superViewController = presentedViewController
-                versionInfoViewController.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-                versionInfoViewController.navigationController?.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-            }
-
-            superViewController?.present(versionInfoViewController, animated: true, completion: .none)
-        }
     }
 }

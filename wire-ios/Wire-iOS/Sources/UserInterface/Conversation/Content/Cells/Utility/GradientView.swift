@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 final class GradientView: UIView {
-    override public class var layerClass: AnyClass {
+
+    override static var layerClass: AnyClass {
         return CAGradientLayer.self
     }
 
-    public var gradientLayer: CAGradientLayer {
+    var gradientLayer: CAGradientLayer {
         if let gradientLayer = self.layer as? CAGradientLayer {
             return gradientLayer
         }

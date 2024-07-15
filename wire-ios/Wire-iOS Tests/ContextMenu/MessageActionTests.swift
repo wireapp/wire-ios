@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
 import WireCommonComponents
+import XCTest
 
 final class MessageActionTests: XCTestCase {
 

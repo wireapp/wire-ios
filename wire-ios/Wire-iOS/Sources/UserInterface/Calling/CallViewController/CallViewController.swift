@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 protocol CallViewControllerDelegate: AnyObject {
     func callViewControllerDidDisappear(_ callController: CallViewController,
@@ -213,7 +213,7 @@ final class CallViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        guard let delegate = delegate else { return false }
+        guard let delegate else { return false }
         delegate.callViewControllerDidDisappear(self, for: conversation)
         return true
     }
@@ -264,7 +264,7 @@ final class CallViewController: UIViewController {
                                        voiceChannel.addActiveSpeakersObserver(self)]
 
         guard
-            let conversation = conversation,
+            let conversation,
             conversation.managedObjectContext != nil
         else {
             return
@@ -334,7 +334,7 @@ final class CallViewController: UIViewController {
                                sizeLimit: UserImageView.Size.normal.rawValue,
                                isDesaturated: false,
                                completion: { [weak self] image, _ in
-            guard let image = image else { return }
+            guard let image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })
     }
@@ -365,10 +365,16 @@ final class CallViewController: UIViewController {
         else {
             return
         }
-        let alert = UIAlertController.alertWithOKButton(
+
+        let alert = UIAlertController(
             title: L10n.Localizable.Call.Video.TooMany.Alert.title,
-            message: L10n.Localizable.Call.Video.TooMany.Alert.message
+            message: L10n.Localizable.Call.Video.TooMany.Alert.message,
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         present(alert, animated: true)
     }
@@ -545,7 +551,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         case .acceptCall: acceptCallIfPossible()
         case .acceptDegradedCall: acceptDegradedCall()
         case .terminateCall: voiceChannel.leave(userSession: userSession, completion: nil)
-        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leaveAndDecreaseConversationSecurity(userSession: userSession) }
+        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leave(userSession: userSession, completion: nil) }
         case .toggleMuteState: voiceChannel.toggleMuteState(userSession: userSession)
         case .toggleSpeakerState: AVSMediaManager.sharedInstance().toggleSpeaker()
         case .minimizeOverlay: minimizeOverlay()

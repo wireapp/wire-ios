@@ -93,7 +93,11 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user is under legal hold.
     var isUnderLegalHold: Bool { get }
 
-    var accentColorValue: ZMAccentColor { get }
+    var accentColorValue: ZMAccentColorRawValue { get }
+
+    // Type `AccentColor?` cannot be represented in Objective-C.
+    // While @objc support is required, use `ZMAccentColor?`.
+    var zmAccentColor: ZMAccentColor? { get }
 
     /// Whether the user is a wireless user.
     var isWirelessUser: Bool { get }
@@ -128,7 +132,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether this user is a guest in a conversation
     func isGuest(in conversation: ConversationLike) -> Bool
 
-    /// Fetch a profile image with the given size on the given queue
+    /// Fetch a profile image with the given size
+    func imageData(for size: ProfileImageSize) -> Data?
+
+    /// Fetch a profile image with the given size and call the completion closure on the provided queue.
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void)
 
     /// Request a refresh of the user data from the backend.

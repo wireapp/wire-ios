@@ -17,9 +17,8 @@
 //
 
 import UIKit
-import Foundation
-import XCTest
 @testable import Wire
+import XCTest
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
 

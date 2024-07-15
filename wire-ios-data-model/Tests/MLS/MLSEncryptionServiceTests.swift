@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import XCTest
 import WireCoreCrypto
 @testable import WireDataModel
 @testable import WireDataModelSupport
+import XCTest
 
 final class MLSEncryptionServiceTests: XCTestCase {
 
@@ -85,7 +85,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
         // Mock
         mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
-            throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
+            throw CryptoError.InvalidByteArrayError(message: "invalid byte array error")
         }
 
         // Then

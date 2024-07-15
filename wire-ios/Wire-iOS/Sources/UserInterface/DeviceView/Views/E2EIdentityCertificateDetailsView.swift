@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct E2EIdentityCertificateDetailsView: View {
     @Environment(\.dismiss)
@@ -36,7 +37,7 @@ struct E2EIdentityCertificateDetailsView: View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
-                .font(UIFont.swiftUIFont(for: .headline))
+                .font(.textStyle(.h3))
                 .accessibilityIdentifier("CertificateDetailsTitle")
             Spacer()
         }
@@ -44,14 +45,14 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                SwiftUI.Button(
+                Button(
                     action: {
                         dismiss()
                         didDismiss?()
                     },
                     label: {
                         Image(.close)
-                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     }
                 )
                 .accessibilityIdentifier("CloseButton")
@@ -63,7 +64,7 @@ struct E2EIdentityCertificateDetailsView: View {
     private var certificateView: some View {
         ScrollView {
             Text(certificateDetails)
-                .font(UIFont.swiftUIFont(for: .caption1).monospaced())
+                .font(.textStyle(.subline1).monospaced())
                 .padding()
                 .frame(maxHeight: .infinity)
                 .accessibilityIdentifier("CertificateDetailsView")
@@ -71,38 +72,38 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     private var downloadImageButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 performDownload?()
             },
             label: {
                 Image(.download)
-                    .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
             }
         )
     }
 
     private var downloadButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 performDownload?()
             },
             label: {
                 Text(L10n.Localizable.Content.Message.download)
-                    .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
+                    .font(.textStyle(.body2))
             }
         )
         .accessibilityIdentifier("DownloadButton")
     }
 
     private var moreButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 isMenuPresented.toggle()
             },
             label: {
                 Image(.more)
-                    .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     .padding(.trailing, ViewConstants.Padding.standard)
             }
         )
@@ -110,13 +111,13 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     private var copyToClipboardButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                 performCopy?(certificateDetails)
             },
             label: {
                 Text(L10n.Localizable.Device.Details.CertificateDetails.copyToClipboard)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
             }
         )
     }
@@ -127,14 +128,14 @@ struct E2EIdentityCertificateDetailsView: View {
                 HStack {
                     downloadImageButton.padding()
                     downloadButton
-                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                         .padding()
                     Spacer()
                     moreButton
-                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     .confirmationDialog("...", isPresented: $isMenuPresented) {
                         copyToClipboardButton
-                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     }
                 }
             }
@@ -146,7 +147,7 @@ struct E2EIdentityCertificateDetailsView: View {
             if isDownloadAndCopyEnabled {
                 Rectangle()
                     .frame(height: 1)
-                    .foregroundColor(SemanticColors.View.backgroundSeparatorCell.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.View.backgroundSeparatorCell))
             }
         }
     }
@@ -154,17 +155,17 @@ struct E2EIdentityCertificateDetailsView: View {
     var body: some View {
 
         titleView
-            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+            .background(Color(uiColor: SemanticColors.View.backgroundDefault))
 
         certificateView
-            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
 
         .safeAreaInset(edge: .bottom,
                        spacing: .zero) {
-            bottomBarView.background(SemanticColors.View.backgroundUserCell.swiftUIColor)
+            bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
         }
         .ignoresSafeArea()
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 }
 

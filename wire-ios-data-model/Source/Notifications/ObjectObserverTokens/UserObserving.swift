@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 @objc(ZMUserObserving)
 public protocol UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo)

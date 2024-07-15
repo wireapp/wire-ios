@@ -16,43 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 private var ZM_UNUSED = "UI"
-private var overridenAccentColor: ZMAccentColor = .undefined
+private var overridenAccentColor: AccentColor?
 
 extension UIColor {
 
-    class func indexedAccentColor() -> ZMAccentColor {
+    class func indexedAccentColor() -> ZMAccentColor? {
         // priority 1: overriden color
-        if overridenAccentColor != .undefined {
-            return overridenAccentColor
+        if overridenAccentColor != nil {
+            return overridenAccentColor.map { .from(accentColor: $0) }
         }
 
         guard
             let activeUserSession = SessionManager.shared?.activeUserSession,
-            activeUserSession.providedSelfUser.accentColorValue != .undefined
+            AccentColor.allCases.map(\.rawValue).contains(activeUserSession.providedSelfUser.accentColorValue)
         else {
             // priority 3: default color
-            return .strongBlue
+            return .default
         }
 
         // priority 2: color from self user
-        return activeUserSession.providedSelfUser.accentColorValue
+        return .from(rawValue: activeUserSession.providedSelfUser.accentColorValue)
     }
 
-    /// Set override accent color. Can set to ZMAccentColorUndefined to remove override.
+    /// Set override accent color. Can set to `nil` to remove override.
     ///
     /// - Parameter overrideColor: the override color
-    class func setAccentOverride(_ overrideColor: ZMAccentColor) {
-        if overridenAccentColor == overrideColor {
+    class func setAccentOverride(_ overrideColor: ZMAccentColor?) {
+        if overridenAccentColor == overrideColor?.accentColor {
             return
         }
 
-        overridenAccentColor = overrideColor
+        overridenAccentColor = overrideColor?.accentColor
     }
 
     static var accentDarken: UIColor {
@@ -68,20 +68,17 @@ extension UIColor {
     }
 
     class func accent() -> UIColor {
-        return UIColor(fromZMAccentColor: indexedAccentColor())
+        (indexedAccentColor() ?? .default).accentColor.uiColor
     }
 
     class func lowAccentColor() -> UIColor {
-        let safeAccentColor = AccentColor(ZMAccentColor: indexedAccentColor()) ?? .blue
-        switch safeAccentColor {
+        switch (indexedAccentColor() ?? .default).accentColor {
         case .blue:
             return SemanticColors.View.backgroundBlue
         case .red:
             return SemanticColors.View.backgroundRed
         case .green:
             return SemanticColors.View.backgroundGreen
-        case .yellow:
-            return SemanticColors.View.backgroundAmber
         case .amber:
             return SemanticColors.View.backgroundAmber
         case .turquoise:
@@ -92,16 +89,13 @@ extension UIColor {
     }
 
     class func lowAccentColorForUsernameMention() -> UIColor {
-        let safeAccentColor = AccentColor(ZMAccentColor: indexedAccentColor()) ?? .blue
-        switch safeAccentColor {
+        switch (indexedAccentColor() ?? .default).accentColor {
         case .blue:
             return SemanticColors.View.backgroundBlueUsernameMention
         case .red:
             return SemanticColors.View.backgroundRedUsernameMention
         case .green:
             return SemanticColors.View.backgroundGreenUsernameMention
-        case .yellow:
-            return SemanticColors.View.backgroundAmberUsernameMention
         case .amber:
             return SemanticColors.View.backgroundAmberUsernameMention
         case .turquoise:

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreTelephony
 import Foundation
 import SystemConfiguration
 import WireUtilities
-import CoreTelephony
 
 private let zmLog = ZMSLog(tag: "NetworkStatus")
 
@@ -34,8 +34,16 @@ extension Notification.Name {
     public static let NetworkStatus = Notification.Name("NetworkStatusNotification")
 }
 
+// sourcery: AutoMockable
+/// Abstracts network status observation.
+public protocol NetworkStatusObservable {
+
+    /// Determines if the server is reachable.
+    var reachability: ServerReachability { get }
+}
+
 /// This class monitors the reachability of backend. It emits notifications to its observers if the status changes.
-public final class NetworkStatus {
+public final class NetworkStatus: NetworkStatusObservable {
 
     private let reachabilityRef: SCNetworkReachability
 
@@ -84,7 +92,7 @@ public final class NetworkStatus {
     // MARK: - Public API
 
     /// The shared network status object (status of 0.0.0.0)
-    static public var shared: NetworkStatus = NetworkStatus()
+    public static var shared: NetworkStatus = NetworkStatus()
 
     /// Current state of the network.
     public var reachability: ServerReachability {
@@ -116,7 +124,7 @@ public final class NetworkStatus {
     // MARK: - Utilities
 
     private var reachabilityCallback: SCNetworkReachabilityCallBack = { (_: SCNetworkReachability, _: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) in
-        guard let info = info else {
+        guard let info else {
             assert(false, "info was NULL in ReachabilityCallback")
             return
         }

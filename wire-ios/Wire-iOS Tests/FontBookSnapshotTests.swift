@@ -18,21 +18,40 @@
 
 import SnapshotTesting
 import WireCommonComponents
+import WireDesign
+import WireUITesting
 import XCTest
+
 @testable import Wire
 
 final class FontBookSnapshotTests: XCTestCase {
 
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
     // MARK: Helper Method
 
     func setupLabel(
-        style: UIFont.FontStyle,
+        style: WireTextStyle,
         width: Int = 320,
         height: Int = 200
     ) -> UILabel {
-        let sutLabel = DynamicFontLabel(text: "Welcome to Dub Dub",
-                                        style: style,
-                                        color: SemanticColors.Label.textDefault)
+        let sutLabel = DynamicFontLabel(
+            text: "Welcome to Dub Dub",
+            style: style,
+            color: SemanticColors.Label.textDefault
+        )
         sutLabel.numberOfLines = 0
         sutLabel.frame.size = .init(width: width, height: height)
 
@@ -42,47 +61,47 @@ final class FontBookSnapshotTests: XCTestCase {
     // MARK: Snapshot Tests
 
     func testForTitle3FontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .title3))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .h1))
     }
 
     func testForHeadlineFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .headline))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .h3))
     }
 
     func testBodyFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .body))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .body1))
     }
 
     func testForSubHeadLineFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .subheadline))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .h4))
     }
 
     func testForCaption1FontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .caption1))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .subline1))
     }
 
     func testForTitle3BoldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .title3Bold))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .h2))
     }
 
     func testForCalloutBoldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .calloutBold))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .body3))
     }
 
     func testForFootnoteSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .footnoteSemibold))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .h5))
     }
 
     func testForBodyTwoSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .bodyTwoSemibold))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .body2))
     }
 
     func testForButtonSmallSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .buttonSmallSemibold))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .buttonSmall))
     }
 
     func testForButtonBigSemiboldFontStyle() {
-        verifyForDynamicType(matching: setupLabel(style: .buttonBigSemibold))
+        snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .buttonBig))
     }
 
 }

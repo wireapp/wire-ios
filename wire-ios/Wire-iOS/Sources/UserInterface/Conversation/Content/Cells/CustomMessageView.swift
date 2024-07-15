@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireDesign
 
 final class CustomMessageView: UIView {
-    public var isSelected: Bool = false
+    var isSelected: Bool = false
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    public var messageLabel = WebLinkTextView()
+    var messageLabel = WebLinkTextView()
     var messageText: String? {
         didSet {
             messageLabel.text = messageText?.applying(transform: .upper)
@@ -68,7 +68,7 @@ final class CustomMessageView: UIView {
 // MARK: - UITextViewDelegate
 extension CustomMessageView: UITextViewDelegate {
 
-    public func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         UIApplication.shared.open(url)
         return false
     }

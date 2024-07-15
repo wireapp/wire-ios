@@ -162,13 +162,24 @@
 
 - (void)testThatTheUIIsNotifiedWhenTheSyncIsComplete
 {
-    // given
+    /*💡Insights https://github.com/wireapp/wire-ios/pull/1561
+
+     I found out, that the internal used `userSession.managedObjectContext.notificationContext` was `nil`,
+     because `userSession` was not instantiated and only get instantiated automagically after `[self login]`.
+
+     To solve it I couldn't run `[self login]` first, because as side effect the `userSession.init` triggered the network state changes and add the the observer in the test next line missed the published changes!
+
+     The solution I chose is to skip `NotificationInContext` in the chain with `[stateRecoder observe]` and add the `NotificationCenter` observer with nil value as it has been before implicitly.
+
+     Warning: Just because of Objective-C compiler doing no optional check it was possible that a nil value was passed to not optional Swift code, that passed it to NotificationCenter where the object parameter was optional.. and it worked for a long time.
+     */
+
     NetworkStateRecorder *stateRecoder = [[NetworkStateRecorder alloc] init];
-    id token = [ZMNetworkAvailabilityChangeNotification addNetworkAvailabilityObserver:stateRecoder userSession:self.userSession];
-    
+    [stateRecoder observe];
+
     // when
     XCTAssertTrue([self login]);
-    
+
     // then
     XCTAssertEqual(stateRecoder.stateChanges_objc.count, 2u);
     ZMNetworkState state1 = (ZMNetworkState)[stateRecoder.stateChanges_objc.firstObject intValue];
@@ -177,8 +188,6 @@
     XCTAssertEqual(state1, ZMNetworkStateOnlineSynchronizing);
     XCTAssertEqual(state2, ZMNetworkStateOnline);
     XCTAssertEqual(self.userSession.networkState, ZMNetworkStateOnline);
-    
-    token = nil;
 }
 
 - (void)testThatItHasTheSelfUserEmailAfterTheSlowSync
@@ -212,11 +221,11 @@
                                (user.phoneNumber == values[@"phone"] || [user.phoneNumber isEqualToString:values[@"phone"]]);
     }
     FHAssertEqualObjects(failureRecorder, user.name, values[@"name"]);
-    FHAssertEqual(failureRecorder, user.accentColorValue, (ZMAccentColor) [values[@"accentID"] intValue]);
-    
+    FHAssertEqual(failureRecorder, user.accentColorValue, (ZMAccentColorRawValue) [values[@"accentID"] intValue]);
+
     return ((user.name == values[@"name"] || [user.name isEqualToString:values[@"name"]])
             && emailAndPhoneMatches
-            && (user.accentColorValue == (ZMAccentColor) [values[@"accentID"] intValue]));
+            && (user.accentColorValue == (ZMAccentColorRawValue) [values[@"accentID"] intValue]));
 }
 
 - (ZMConversation *)findConversationWithIdentifier:(NSString *)identifier inMoc:(NSManagedObjectContext *)moc

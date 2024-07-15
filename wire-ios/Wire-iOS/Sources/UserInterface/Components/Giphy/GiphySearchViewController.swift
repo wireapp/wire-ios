@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import Ziphy
 import FLAnimatedImage
+import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
+import Ziphy
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
     func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String)
@@ -75,7 +76,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         let columnCount = AdaptiveColumnCount(compact: 2, regular: 3, large: 4)
         super.init(interItemSpacing: 1, interColumnSpacing: 1, columnCount: columnCount)
 
-        navigationItem.setDynamicFontLabel(title: conversation.displayNameWithFallback)
         performSearch()
     }
 
@@ -105,9 +105,14 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         super.viewDidLoad()
         setupNoResultLabel()
         setupCollectionView()
-        setupNavigationItem()
         createConstraints()
         applyStyle()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(conversation.displayNameWithFallback)
+        setupNavigationItem()
     }
 
     private func setupNoResultLabel() {
@@ -192,7 +197,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
         cell.ziph = ziph
         cell.representation = representation
-        cell.backgroundColor = UIColor(for: AccentColor.random)
+        cell.backgroundColor = AccentColor.random.uiColor
         cell.isAccessibilityElement = true
         cell.accessibilityTraits.insert(.image)
         cell.accessibilityLabel = ziph.title

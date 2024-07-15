@@ -20,7 +20,21 @@ import Foundation
 
 @testable import WireSyncEngine
 
-class SearchResultTests: DatabaseTest {
+final class SearchResultTests: DatabaseTest {
+
+    private var mockCache: SearchUsersCache!
+
+    override func setUp() {
+        super.setUp()
+
+        mockCache = SearchUsersCache()
+    }
+
+    override func tearDown() {
+        mockCache = nil
+
+        super.tearDown()
+    }
 
     func testThatItFiltersConnectedUsers() {
         // given
@@ -37,15 +51,21 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": connectedUser.remoteIdentifier!,
              "name": "Maria",
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": handle]
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .fullTextSearch(""), searchOptions: [.directory], contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.directory.count, 1)
@@ -70,15 +90,20 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": user.remoteIdentifier!,
              "name": "Member A",
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": handle]
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .fullTextSearch(""), searchOptions: [.directory], contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache)
 
         // then
         XCTAssertEqual(result?.directory.count, 1)
@@ -91,15 +116,21 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": UUID.create().uuidString,
              "name": name,
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": "aa\(name.lowercased())"]
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .fullTextSearch(name), searchOptions: [.directory], contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(name),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.directory.count, 2)
@@ -113,15 +144,21 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": UUID.create().uuidString,
              "name": name,
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": "aa\(name.lowercased())"]
         ]]
 
         // when
-        let result = SearchResult(payload: payload, query: .exactHandle(name), searchOptions: [.directory], contextProvider: coreDataStack!)!
+        let result = SearchResult(
+            payload: payload,
+            query: .exactHandle(name),
+            searchOptions: [.directory],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )!
 
         // then
         XCTAssertEqual(result.directory.count, 1)
@@ -145,15 +182,21 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
         // when
-        let result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.teamMembers.count, 1)
@@ -177,15 +220,22 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
         // when
-        let result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers, .excludeNonActiveTeamMembers],
-                                  contextProvider: coreDataStack!)
+        let result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers,
+                .excludeNonActiveTeamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.teamMembers.count, 0)
@@ -208,14 +258,20 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: selfUser.remoteIdentifier, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])
@@ -249,14 +305,20 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: nil, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])
@@ -287,14 +349,20 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: selfUser.remoteIdentifier, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])
@@ -326,14 +394,20 @@ class SearchResultTests: DatabaseTest {
                 "team": team.remoteIdentifier!.transportString(),
                 "handle": "aaa",
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
-        var result = SearchResult(payload: payload,
-                                  query: .fullTextSearch(""),
-                                  searchOptions: [.directory, .teamMembers],
-                                  contextProvider: coreDataStack!)
+        var result = SearchResult(
+            payload: payload,
+            query: .fullTextSearch(""),
+            searchOptions: [
+                .directory,
+                .teamMembers
+            ],
+            contextProvider: coreDataStack!,
+            searchUsersCache: mockCache
+        )
 
         let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: nil, permissions: .partner)
         let membershipListPayload = WireSyncEngine.MembershipListPayload.init(hasMore: false, members: [membership])

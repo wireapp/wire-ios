@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 extension NetworkQuality {
     func attributedString(color: UIColor) -> NSAttributedString? {

@@ -21,7 +21,7 @@ import UIKit
 final class KeyboardHeight: NSObject {
 
     /// The height of the system keyboard with the prediction row
-    public static var current: CGFloat {
+    static var current: CGFloat {
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
             let isPortrait = UIWindow.interfaceOrientation?.isPortrait ?? true

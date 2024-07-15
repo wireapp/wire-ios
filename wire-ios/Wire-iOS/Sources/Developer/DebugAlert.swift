@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
-import WireDataModel
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireDataModel
+import WireSystem
 
 /// Presents debug alerts
 final class DebugAlert {
@@ -80,7 +79,7 @@ final class DebugAlert {
             alert.addAction(alertAction)
         }
 
-        if let cancelText = cancelText {
+        if let cancelText {
             let cancelAction = UIAlertAction(title: cancelText, style: .cancel) { _ in
                 isShown = false
             }
@@ -94,9 +93,12 @@ final class DebugAlert {
                                                   email: String,
                                                   from controller: UIViewController,
                                                   sourceView: UIView? = nil) {
-        let alert = UIAlertController(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
-                                      message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
-                                      alertAction: .cancel())
+        let alert = UIAlertController(
+            title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
+            message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
+            preferredStyle: .alert
+        )
+        alert.addAction(.cancel())
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
@@ -170,9 +172,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         }
     }
 
-    public func mailComposeController(_ controller: MFMailComposeViewController,
-                                      didFinishWith result: MFMailComposeResult,
-                                      error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         self.mailViewController = nil
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil

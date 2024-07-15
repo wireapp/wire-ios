@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
+import WireDesign
 import WireSystem
 
 final class CollectionHeaderView: UICollectionReusableView {

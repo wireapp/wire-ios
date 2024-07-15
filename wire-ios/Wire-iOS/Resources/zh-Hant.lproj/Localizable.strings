@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "檔案";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "從這裡開始對話";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@開始使用新的設備。";
 "call.degraded.alert.message.unknown" = "某人開始使用了新設備。";
 "call.degraded.alert.action.continue" = "仍然要通話";
+"call.degraded.incoming.alert.action.continue" = "仍要加入";
 
 "call.degraded.ended.alert.title" = "通話結束";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "封鎖";
 "profile.create_conversation_button_title" = "建立群組";
 "profile.open_conversation_button_title" = "開啟對話";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "你已啓用讀取回條";
 "profile.read_receipts_disabled_memo.header" = "您已停用讀取回條";
 "profile.read_receipts_memo.body" = "如果雙方都打開讀取回條，則可以查看何時讀取信息。您可以在帳戶設置中更改此選項。";
@@ -1040,16 +1043,11 @@
 "self.add_email_password" = "新增電子郵件信箱和密碼";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "使用條款";
 "about.privacy.title" = "隱私權原則";
-"about.license.title" = "許可證資訊";
 "about.website.title" = "Wire網站";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "詳細資訊";
-"about.license.open_project_button" = "檢視專案頁面";
-"about.license.license_header" = "致謝聲明";
 
 // Self new devices
 "self.new_device_alert.title" = "您的帳號用於：";
@@ -1084,7 +1082,6 @@
 
 "self.settings.account_section.name.title" = "名稱";
 "self.settings.account_section.email.title" = "電子郵件";
-"self.settings.account_section.phone.title" = "手機";
 "self.settings.account_section.handle.title" = "使用者名稱";
 "self.settings.account_section.add_handle.title" = "添加使用者名稱";
 "self.settings.account_section.team.title" = "團隊";
@@ -1117,7 +1114,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1176,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "已重新發送電子郵件";
 "self.settings.account_section.email.change.resend.message" = "確認郵件已經發送至%@。請檢查您的收件箱並按照說明進行操作。";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "手機";
-"self.settings.account_section.phone_number.change.save" = "儲存";
-"self.settings.account_section.phone_number.change.remove" = "刪除電話號碼";
-
-"self.settings.account_section.phone_number.change.remove.action" = "刪除電話號碼";
-
-"self.settings.account_section.phone_number.change.verify.save" = "儲存";
-"self.settings.account_section.phone_number.change.verify.title" = "驗證";
-"self.settings.account_section.phone_number.change.verify.description" = "輸入我們發送到%@的驗證碼";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "輸入驗證碼";
-"self.settings.account_section.phone_number.change.verify.resend" = "重新發送驗證碼";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "沒有收到驗證碼？\n您可以每30秒重新獲取一次。";
-
-"self.settings.account_section.phone_number.change.resend.title" = "驗證碼已重新發送";
-"self.settings.account_section.phone_number.change.resend.message" = "驗證碼已重新發送至%@。";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "通知";
@@ -1313,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "如果您有推送通知的問題，Wire客服可能會請您重設此token。";
 "self.settings.advanced.reset_push_token_alert.title" = "推送token 已被重設";
 "self.settings.advanced.reset_push_token_alert.message" = "通知將會在幾秒鐘內恢復。";
-"self.settings.advanced.version_technical_details.title" = "版本資訊";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "資料使用許可";
@@ -1375,10 +1351,6 @@
 "password.placeholder" = "密碼";
 "password.guidance.toolong" = "字數太多";
 
-"phone.guidance.invalid" = "無效的手機號碼";
-"phone.guidance.tooshort" = "電話號碼太短";
-"phone.guidance.toolong" = "字數太多";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1381,6 @@
 "team.activation_code.subheadline" = "輸入我們發送到%@的驗證碼。";
 "team.activation_code.button.resend" = "重新發送驗證碼";
 "team.activation_code.button.change_email" = "更改電子郵件地址";
-"team.activation_code.button.change_phone" = "更改電話號碼";
 
 "team.full_name.headline" = "您的名字";
 "team.full_name.textfield.placeholder" = "全名";
@@ -1466,19 +1437,9 @@
 
 "registration.title" = "註冊";
 "registration.close_email_invitation_button.email_title" = "請使用另一個電子郵件";
-"registration.close_email_invitation_button.phone_title" = "透過電話註冊";
 "registration.close_phone_invitation_button.email_title" = "通過電子郵件註冊";
-"registration.close_phone_invitation_button.phone_title" = "使用其他電話";
 
-"registration.register_by_phone" = "手機";
 "registration.register_by_email" = "電子郵件";
-
-"registration.enter_phone_number.title" = "編輯電話號碼";
-"registration.enter_phone_number.placeholder" = "電話號碼";
-
-"registration.verify_phone_number.instructions" = "輸入我們發送到 %@的驗證碼";
-"registration.verify_phone_number.resend" = "重新發送";
-"registration.verify_phone_number.resend_placeholder" = "代碼沒有顯示嗎？你可以在 %.0f 秒申請一個新的";
 
 "registration.verify_email.instructions" = "我們發送一封電子郵件至 %@ ，請驗證您的電子郵件位置。";
 "registration.verify_email.resend.instructions" = "沒收到驗證電郵嗎?";
@@ -1490,10 +1451,8 @@
 "registration.no_history.restore_backup" = "從備份回復";
 
 "registration.alert.account_exists.title" = "帳戶已存在";
-"registration.alert.account_exists.message_phone" = "您註冊的電話號碼已連結到帳戶。\n\n請使用其他電話號碼，或者如果您擁有此帳戶，請嘗試登錄。";
 "registration.alert.account_exists.message_email" = "您註冊的電郵地址已連結到帳戶。\n\n請使用其他電郵地址，或者如果您擁有此帳戶，請嘗試登錄。";
 "registration.alert.change_email_action" = "使用另一電郵註冊";
-"registration.alert.change_phone_action" = "使用另一手機號碼註冊";
 "registration.alert.change_signin_action" = "登入";
 
 // Restore History Warning Alert
@@ -1598,7 +1557,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "管理設備";
 "registration.signin.too_many_devices.sign_out_button.title" = "登出";
 
-"registration.signin.too_many_devices.manage_screen.title" = "移除設備";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "需要輸入密碼";
 "registration.signin.alert.password_needed.message" = "請輸入您的密碼以登入。";
@@ -1636,32 +1595,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "以電子郵件登入";
-"signin.use_phone.label" = "使用電話號碼登錄";
 "signin.forgot_password" = "忘記密碼？";
 "signin.use_one_password.label" = "使用1Password 登錄";
 "signin.use_one_password.hint" = "雙擊以使用1Password 填寫密碼";
 "signin.confirm" = "登入";
 "signin.company_idp.button.title" = "供公司使用";
 
-"signin_logout.subheadline" = "您太久沒使用Wire。請重新登入。";
 "signin_logout.email.subheadline" = "您太久沒使用Wire。輸入您的電子郵件地址和密碼以繼續。";
-"signin_logout.phone.subheadline" = "您太久沒使用Wire。輸入您的電話號碼以繼續。";
 "signin_logout.sso.subheadline" = "您太久沒使用Wire。使用您的企業帳戶登錄以繼續。";
 "signin_logout.sso.buton" = "企業登錄";
 
 "signin.email.missing_password.subtitle" = "請輸入您的電郵地址及密碼以繼續。";
-"signin.phone.missing_password.subtitle" = "輸入您的電話號碼以繼續。";
-
-"registration.phone_country" = "國家";
-"registration.phone_code" = "國家/地區代碼";
-"registration.phone_country.hint" = "雙擊可選擇其他國家。";
-"registration.phone_code.hint" = "雙擊可選擇其他國家/地區代碼。";
-"registration.phone.verify.label" = "驗證電話號碼";
-"registration.phone.verify_field.label" = "驗證碼";
-
-"registration.add_phone_number.hero.title" = "新增手機號碼";
-"registration.add_phone_number.hero.paragraph" = "這將幫助我們找到您可能認識的人。我們不會和其他人分享您的手機號碼。";
-"registration.add_phone_number.skip_button.title" = "現在略過";
 
 "registration.add_email_password.hero.title" = "加入您的電子郵件地址及密碼";
 "registration.add_email_password.hero.paragraph" = "這可以讓您在多個設備上使用Wire。";
@@ -1670,12 +1614,7 @@
 "registration.email_invitation.hero.title" = "您好，%@";
 "registration.email_invitation.hero.paragraph" = "選擇一個密碼來建立您的帳號。";
 
-"registration.phone_invitation.title" = "邀請";
-"registration.phone_invitation.hero.title" = "您好，%@";
-"registration.phone_invitation.hero.paragraph" = "再一個步驟就將您的帳號建立完成。";
-
 "registration.confirm" = "註冊";
-"registration.phone.country_code.hint" = "雙擊以使用該國家/地區的電話號碼。";
 
 "error.name_and_email" = "請輸入您的全名和一個有效的電子郵件地址和密碼。";
 "error.full_name" = "請輸入您的全名";
@@ -1683,7 +1622,6 @@
 "error.input.too_long" = "請輸入短一點的使用者名稱";
 "error.input.too_short" = "請輸入長一點的使用者名稱";
 "error.email.invalid" = "請輸入有效的電子郵件信箱";
-"error.phone.invalid" = "請輸入有效的手機號碼";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1640,11 @@
 "error.user.account_pending_activation" = "您的帳號未被啟用，請完成啟動程序。";
 "error.user.network_error" = "您的網路連線似乎有問題，請稍候再試。";
 "error.user.email_is_taken" = "您提供的電子郵件信箱已經註冊過了，請嘗試其他的電子郵件信箱。";
-"error.user.phone_is_taken" = "該手機號碼已被註冊，請返回登入或更正重試。";
-"error.user.phone_code_invalid" = "請輸入一個有效的代碼";
-"error.user.phone_code_too_many" = "我們已透過手機簡訊發送代碼到您的手機。如需新代碼需等候 10 分鐘後再點擊重新發送。";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "出了點問題，請再試一次。";
 "error.user.device_deleted_remotely" = "您的另一部設備已被登出。";
-"error.user.last_identity_cant_be_deleted" = "電子郵件地址或電話號碼是必需的。";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "此帳戶不再被授權登錄";
 "error.user.account_limit_reached" = "您最多可添加三個賬號";
 
@@ -1735,6 +1672,7 @@
 "error.conversation.cannot_remove" = "刪除參與者失敗";
 "error.conversation.too_many_members" = "對話人數已達上限";
 "error.conversation.offline" = "您的網路連線似乎有些問題，請確保網路正常運作。";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "無法傳送訊息";
@@ -1922,8 +1860,16 @@
 "url_action.title" = "確認 URL 動作";
 "url_action.connect_to_bot.message" = "你想要連接到Bot嗎？";
 
-"url_action.switch_backend.title" = "連線到伺服器";
-"url_action.switch_backend.message" = "此配置會將應用程序連接到第三方服務器：\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "無法切換伺服器";
 "url_action.switch_backend.error.logged_in" = "您已經登錄。要切換到該服務器，請登出所有帳戶，然後重試。";
@@ -2146,7 +2092,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

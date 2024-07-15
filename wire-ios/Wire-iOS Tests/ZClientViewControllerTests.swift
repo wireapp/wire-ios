@@ -16,45 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
+
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
-    var sut: ZClientViewController!
-    var userSession: UserSessionMock!
+
+    private var coreDataFixture: CoreDataFixture!
+    private var imageTransformer: MockImageTransformer!
+    private var sut: ZClientViewController!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
+        coreDataFixture = .init()
+        imageTransformer = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        sut = ZClientViewController(account: Account.mockAccount(imageData: mockImageData), userSession: userSession)
+        userSession.contextProvider = coreDataFixture.coreDataStack
+        sut = ZClientViewController(
+            account: Account.mockAccount(imageData: mockImageData),
+            userSession: userSession
+        )
     }
 
     override func tearDown() {
         sut = nil
         userSession = nil
+        coreDataFixture = nil
 
         super.tearDown()
-    }
-
-    func testForShowDataUsagePermissionDialogIfNeeded() {
-        // Alert is not shown before the flags are set
-        var alert = sut.createDataUsagePermissionDialogIfNeeded()
-        XCTAssertNil(alert)
-
-        // GIVEN
-        sut.needToShowDataUsagePermissionDialog = true
-        sut.isComingFromRegistration = true
-
-        alert = sut.createDataUsagePermissionDialogIfNeeded()
-        XCTAssertNotNil(alert)
-
-        // WHEN
-        sut.dataUsagePermissionDialogDisplayed = true
-
-        // Should not show alert for the second time
-        alert = sut.createDataUsagePermissionDialogIfNeeded()
-        XCTAssertNil(alert)
     }
 
     func testThatCustomPasscodeWillBeDeleted_AfterUserNotifiedOfDisabledApplock() {

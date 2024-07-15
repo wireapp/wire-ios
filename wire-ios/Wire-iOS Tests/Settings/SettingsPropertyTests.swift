@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireCommonComponents
 import avs
-@testable import Wire
+import XCTest
 
-final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
+@testable import Wire
+@testable import WireCommonComponents
+
+final class MockZMEditableUser: MockUser, EditableUserType {
+
     var needsRichProfileUpdate: Bool = false
 
     var enableReadReceipts: Bool = false
@@ -34,7 +36,6 @@ final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
     static func validate(name: inout String?) throws -> Bool {
         return false
     }
-
 }
 
 final class ZMMockAVSMediaManager: AVSMediaManagerInterface {

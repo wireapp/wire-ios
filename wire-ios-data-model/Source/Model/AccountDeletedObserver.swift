@@ -40,7 +40,7 @@ public struct AccountDeletedNotification {
 extension AccountDeletedNotification {
     public static func addObserver(observer: AccountDeletedObserver,
                                    context: NSManagedObjectContext? = nil,
-                                   queue: ZMSGroupQueue) -> Any {
+                                   queue: GroupQueue) -> Any {
         return NotificationInContext.addUnboundedObserver(name: AccountDeletedNotification.notificationName,
                                                           context: context?.notificationContext,
                                                           object: nil,
@@ -48,7 +48,7 @@ extension AccountDeletedNotification {
             guard
                 let note = note.userInfo[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification,
                 let context = note.context,
-                let observer = observer
+                let observer
             else {
                 return
             }

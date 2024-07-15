@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireRequestStrategy
 
 @objc
@@ -53,7 +54,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        usecaseFactory: UseCaseFactoryProtocol
+        searchUsersCache: SearchUsersCache?
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -70,7 +71,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: usecaseFactory
+            searchUsersCache: searchUsersCache
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
@@ -109,7 +110,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        usecaseFactory: UseCaseFactoryProtocol
+        searchUsersCache: SearchUsersCache?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -121,16 +122,21 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             context: syncMOC,
             apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
-        let quickSyncObserver = QuickSyncObserver(context: syncMOC,
-                                                  applicationStatus: applicationStatusDirectory,
-                                                  notificationContext: syncMOC.notificationContext)
+        let quickSyncObserver = QuickSyncObserver(
+            context: syncMOC,
+            applicationStatus: applicationStatusDirectory,
+            notificationContext: syncMOC.notificationContext
+        )
         let messageSender = MessageSender(
             apiProvider: apiProvider,
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
             quickSyncObserver: quickSyncObserver,
-            context: syncMOC)
+            context: syncMOC
+        )
+        let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
         let strategies: [Any] = [
 
             UserClientRequestStrategy(
@@ -143,7 +149,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 notificationsTracker: nil,
                 eventProcessor: updateEventProcessor,
-                previouslyReceivedEventIDsCollection: nil,
                 applicationStatus: applicationStatusDirectory,
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,
@@ -219,12 +224,14 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC),
+                managedObjectContext: syncMOC,
+                searchUsersCache: searchUsersCache
+            ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOneOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+                oneOneOneResolver: oneOnOneResolver
             ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -310,14 +317,18 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ConversationStatusStrategy(
                 managedObjectContext: syncMOC),
             UserClientEventConsumer(
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
-                resolveOneOnOneConversations: usecaseFactory.createResolveOneOnOneUseCase()
+                resolveOneOnOneConversations: makeResolveOneOnOneConversationsUseCase(
+                    context: syncMOC,
+                    resolver: oneOnOneResolver
+                )
             ),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
@@ -325,7 +336,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
-                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus),
+                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus
+            ),
             localNotificationDispatcher,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -335,7 +347,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                userRepository: UserRepository(context: syncMOC)
+                selfUserProvider: WireDomain.SelfUserProvider(context: syncMOC)
             ),
             EvaluateOneOnOneConversationsStrategy(
                 withManagedObjectContext: syncMOC,
@@ -347,4 +359,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         return strategies
     }
 
+    // MARK: Use Cases
+
+    private static func makeResolveOneOnOneConversationsUseCase(
+        context: NSManagedObjectContext,
+        resolver: any OneOnOneResolverInterface
+    ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: SupportedProtocolsService(context: context),
+            resolver: resolver
+        )
+    }
 }

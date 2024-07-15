@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
 import UIKit
+import WireDataModel
 import WireSyncEngine
 
 final class DirectorySectionController: SearchSectionController {
@@ -82,25 +81,13 @@ final class DirectorySectionController: SearchSectionController {
 
         if user.isBlocked {
             user.accept { [weak self] error in
-                guard
-                    let strongSelf = self,
-                    let error = error as? LocalizedError
-                else {
-                    return
-                }
-
-                self?.delegate?.searchSectionController(strongSelf, wantsToDisplayError: error)
+                guard let self, let error = error as? LocalizedError else { return }
+                delegate?.searchSectionController(self, wantsToDisplayError: error)
             }
         } else {
             user.connect { [weak self] error in
-                guard
-                    let strongSelf = self,
-                    let error = error as? ConnectToUserError
-                else {
-                    return
-                }
-
-                self?.delegate?.searchSectionController(strongSelf, wantsToDisplayError: error)
+                guard let self, let error = error as? ConnectToUserError else { return }
+                delegate?.searchSectionController(self, wantsToDisplayError: error)
             }
         }
     }

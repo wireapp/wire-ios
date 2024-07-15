@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AppAuth
+import Foundation
+import WireRequestStrategy
 import WireSystem
 import WireUtilities
-import WireRequestStrategy
 
-public protocol OAuthUseCaseInterface {
+protocol OAuthUseCaseInterface {
 
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
 
 }
 
-public class OAuthUseCase: OAuthUseCaseInterface {
+class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
@@ -38,7 +38,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         self.targetViewController = targetViewController
     }
 
-    public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
+    func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
         guard let redirectURI = URL(string: "wire://e2ei/oauth2redirect") else {
@@ -47,7 +47,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
-                if let error = error {
+                if let error {
                     return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration(error))
                 }
 

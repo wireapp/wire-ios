@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "arhiiv";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Vestlused algavat siit";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@ hakkas uut seadet kasutama.";
 "call.degraded.alert.message.unknown" = "Keegi hakkas uut seadet kasutama.";
 "call.degraded.alert.action.continue" = "Helista ikkagi";
+"call.degraded.incoming.alert.action.continue" = "Liitu ikkagi";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "BLOKEERITUD";
 "profile.create_conversation_button_title" = "Loo grupp";
 "profile.open_conversation_button_title" = "Ava vestlus";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "SA LUBASID LUGEMISKINNITUSED";
 "profile.read_receipts_disabled_memo.header" = "SA KEELASID LUGEMISKINNITUSED";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
@@ -1040,16 +1043,11 @@
 "self.add_email_password" = "Lisa meiliaadress ja parool";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Kasutustingimused";
 "about.privacy.title" = "Privaatsuspoliitika";
-"about.license.title" = "Litsentsiteave";
 "about.website.title" = "Wire koduleht";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Üksikasjad";
-"about.license.open_project_button" = "Ava projekti leht";
-"about.license.license_header" = "Tunnustused";
 
 // Self new devices
 "self.new_device_alert.title" = "Sinu kontot kasutati:";
@@ -1084,7 +1082,6 @@
 
 "self.settings.account_section.name.title" = "Nimi";
 "self.settings.account_section.email.title" = "E-post";
-"self.settings.account_section.phone.title" = "Telefon";
 "self.settings.account_section.handle.title" = "Kasutajanimi";
 "self.settings.account_section.add_handle.title" = "Lisa kasutajanimi";
 "self.settings.account_section.team.title" = "Meeskond";
@@ -1117,7 +1114,6 @@
 "self.settings.account_picture_group.color" = "Profile color";
 "self.settings.account_picture_group.accent_color.blue" = "Blue";
 "self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
 "self.settings.account_picture_group.accent_color.red" = "Red";
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
@@ -1180,25 +1176,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "Saadetud korduskiri";
 "self.settings.account_section.email.change.resend.message" = "Korduskiri saadeti aadressil %@. Kontrolli oma postkasti ja järgi juhiseid.";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "Telefon";
-"self.settings.account_section.phone_number.change.save" = "Salvesta";
-"self.settings.account_section.phone_number.change.remove" = "Eemalda telefoninumber";
-
-"self.settings.account_section.phone_number.change.remove.action" = "Eemalda telefoninumber";
-
-"self.settings.account_section.phone_number.change.verify.save" = "Salvesta";
-"self.settings.account_section.phone_number.change.verify.title" = "Kinnita";
-"self.settings.account_section.phone_number.change.verify.description" = "Sisesta kinnituskood, mille saatsime numbrile %@";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "Sisesta kood";
-"self.settings.account_section.phone_number.change.verify.resend" = "Saada kood uuesti";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "Koodi ei tulnud kohale?\nIga 30 sekundi järel saad proovida uue koodi tellida.";
-
-"self.settings.account_section.phone_number.change.resend.title" = "Kood uuesti saadetud";
-"self.settings.account_section.phone_number.change.resend.message" = "Kinnituskood saadeti uuesti numbril %@";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "Teavitused";
@@ -1313,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Kui sul on probleeme teavitustega, Wire kasutajatugi võib paluda sul see võti lähtestada.";
 "self.settings.advanced.reset_push_token_alert.title" = "Võti on lähtestatud";
 "self.settings.advanced.reset_push_token_alert.message" = "Teavitused taastuvad mõne sekundi pärast.";
-"self.settings.advanced.version_technical_details.title" = "Versiooni tehnilised andmed";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Andmekasutuse õigused";
@@ -1375,10 +1351,6 @@
 "password.placeholder" = "Parool";
 "password.guidance.toolong" = "Liiga pikk nimi";
 
-"phone.guidance.invalid" = "Sobimatu telefoninumber";
-"phone.guidance.tooshort" = "Phone number is too short";
-"phone.guidance.toolong" = "Liiga pikk nimi";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1381,6 @@
 "team.activation_code.subheadline" = "Sisesta kinnituskood, mille saatsime aadressile %@";
 "team.activation_code.button.resend" = "Saada kood uuesti";
 "team.activation_code.button.change_email" = "Muuda e-posti aadress";
-"team.activation_code.button.change_phone" = "Numbri muutmine";
 
 "team.full_name.headline" = "Sinu nimi";
 "team.full_name.textfield.placeholder" = "Täisnimi";
@@ -1466,19 +1437,9 @@
 
 "registration.title" = "Registreerimine";
 "registration.close_email_invitation_button.email_title" = "Kasuta teist e-posti aadressi";
-"registration.close_email_invitation_button.phone_title" = "Registreeri telefoninumbriga";
 "registration.close_phone_invitation_button.email_title" = "Registreeri e-postiga";
-"registration.close_phone_invitation_button.phone_title" = "Kasuta teist telefoninumbrit";
 
-"registration.register_by_phone" = "Telefon";
 "registration.register_by_email" = "E-post";
-
-"registration.enter_phone_number.title" = "Muuda telefoninumbrit";
-"registration.enter_phone_number.placeholder" = "Telefoninumber";
-
-"registration.verify_phone_number.instructions" = "Sisesta kinnituskood, mille saatsime numbrile %@";
-"registration.verify_phone_number.resend" = "Saada uuesti";
-"registration.verify_phone_number.resend_placeholder" = "Koodi ei tulnud?\n%.0f sekundi pärast saad uue tellida";
 
 "registration.verify_email.instructions" = "Saatsime aadressil %@ e-kirja.\n Mine kirjas toodud lingile, et oma e-posti aadress kinnitada.";
 "registration.verify_email.resend.instructions" = "Ei saanud kinnituskirja?";
@@ -1490,10 +1451,8 @@
 "registration.no_history.restore_backup" = "Taasta varundusest";
 
 "registration.alert.account_exists.title" = "Account Exists";
-"registration.alert.account_exists.message_phone" = "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
-"registration.alert.change_phone_action" = "Register with Another Number";
 "registration.alert.change_signin_action" = "Logi sisse";
 
 // Restore History Warning Alert
@@ -1598,7 +1557,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Halda seadmeid";
 "registration.signin.too_many_devices.sign_out_button.title" = "Logi välja";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Parool on nõutud";
 "registration.signin.alert.password_needed.message" = "Sisselogimiseks sisesta palun oma parool.";
@@ -1636,32 +1595,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "Logi sisse e-posti aadresiga";
-"signin.use_phone.label" = "Logi sisse telefoniga";
 "signin.forgot_password" = "Unustasid parooli?";
 "signin.use_one_password.label" = "Logi sisse 1Password’ga";
 "signin.use_one_password.hint" = "Topeltklõpsa, et parool 1Password abiga täita.";
 "signin.confirm" = "Logi sisse";
 "signin.company_idp.button.title" = "Ettevõtetele";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
-"signin_logout.phone.subheadline" = "Your session expired. Enter your phone number to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Ettevõtte sisselogimine";
 
 "signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
-"signin.phone.missing_password.subtitle" = "Enter your phone number to continue.";
-
-"registration.phone_country" = "Riik";
-"registration.phone_code" = "Riigi kood";
-"registration.phone_country.hint" = "Topelttoksa, et maavalikut muuta.";
-"registration.phone_code.hint" = "Topelttoksa, et maa suunakoodi muuta.";
-"registration.phone.verify.label" = "Kinnita telefoninumber";
-"registration.phone.verify_field.label" = "Kinnituskood";
-
-"registration.add_phone_number.hero.title" = "Lisa mobiilinumber";
-"registration.add_phone_number.hero.paragraph" = "See aitab meil leida inimesi, keda sa võid tunda. Me ei jaga seda kunagi.";
-"registration.add_phone_number.skip_button.title" = "Mitte praegu";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "Saad kasutada Wire'it mitmes seadmes.";
@@ -1670,12 +1614,7 @@
 "registration.email_invitation.hero.title" = "Tere, %@";
 "registration.email_invitation.hero.paragraph" = "Vali parool.";
 
-"registration.phone_invitation.title" = "Kutse";
-"registration.phone_invitation.hero.title" = "Tere, %@";
-"registration.phone_invitation.hero.paragraph" = "Üks samm veel ja konto loodud.";
-
 "registration.confirm" = "Loo konto";
-"registration.phone.country_code.hint" = "Topelttoksa, et kasutada selle maa telefoninumbrit.";
 
 "error.name_and_email" = "Palun sisesta oma täisnimi ja korrektne e-posti aadress";
 "error.full_name" = "Palun sisesta oma täisnimi";
@@ -1683,7 +1622,6 @@
 "error.input.too_long" = "Please enter a shorter username";
 "error.input.too_short" = "Please enter a longer username";
 "error.email.invalid" = "Palun sisesta korrektne e-posti aadress";
-"error.phone.invalid" = "Sisesta kehtiv telefoninumber";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1640,11 @@
 "error.user.account_pending_activation" = "Konto, mida proovid avada, ootab aktiveerimist. Palun kinnita oma andmed.";
 "error.user.network_error" = "Sinu võrguühendusega tundub olevat probleeme. Palun proovi hiljem uuesti.";
 "error.user.email_is_taken" = "E-posti aadress on juba registreeritud. Palun proovi uuesti.";
-"error.user.phone_is_taken" = "Sisestatud telefoninumber on juba registreeritud. Palun proovige uuesti.";
-"error.user.phone_code_invalid" = "Sisesta kehtiv kood";
-"error.user.phone_code_too_many" = "Saatsime koodi juba SMS-iga. Toksi 10 minuti pärast \"Saada uuesti\", kui kood ei laeku.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Midagi läks valesti. Palun proovi uuesti.";
 "error.user.device_deleted_remotely" = "Sind on teisest seadmest välja logitud.";
-"error.user.last_identity_cant_be_deleted" = "Kas meiliaadress või telefoninumber peab olema täidetud.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "See konto ei ole enam sisse logimiseks autoriseeritud.";
 "error.user.account_limit_reached" = "Sa ei saa lisada rohkem kui 3 kontot.";
 
@@ -1735,6 +1672,7 @@
 "error.conversation.cannot_remove" = "Osaleja eemaldamine ebaõnnestus";
 "error.conversation.too_many_members" = "Vestlus on täis";
 "error.conversation.offline" = "Tundub, et sinu internetiühendusega on probleem. Palun kontrolli ühendust.";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1860,16 @@
 "url_action.title" = "Kinnita see toiming";
 "url_action.connect_to_bot.message" = "Kas soovid teenusega ühenduda?";
 
-"url_action.switch_backend.title" = "Ühendu serveriga";
-"url_action.switch_backend.message" = "This configuration will connect the app to a third-party server:\n%@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "Backend name:";
+"url_action.switch_backend_confirmation.backend_url" = "Backend URL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "Can’t switch servers";
 "url_action.switch_backend.error.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
@@ -2146,7 +2092,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

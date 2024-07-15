@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AVFoundation
+import Foundation
 import WireUtilities
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -69,7 +69,8 @@ extension AVURLAsset {
 
     }
 
-    public static let defaultVideoQuality: String = AVAssetExportPresetHighestQuality
+    public static let defaultVideoQuality = AVAssetExportPresetHighestQuality
+
     /// Convert a Video file URL to a upload format
     ///
     /// - Parameters:
@@ -138,7 +139,7 @@ extension AVURLAsset {
             return completion(nil, nil, ConversionFailure.exportSessionUnavailable)
         }
 
-        if let fileLengthLimit = fileLengthLimit {
+        if let fileLengthLimit {
             exportSession.fileLengthLimit = fileLengthLimit
         }
 
@@ -151,8 +152,11 @@ extension AVURLAsset {
 }
 
 extension AVAssetExportSession {
-    public func exportVideo(exportURL: URL,
-                            completion: @escaping (URL?, Error?) -> Void) {
+
+    func exportVideo(
+        exportURL: URL,
+        completion: @escaping (URL?, Error?) -> Void
+    ) {
         if FileManager.default.fileExists(atPath: exportURL.path) {
             do {
                 try FileManager.default.removeItem(at: exportURL)
@@ -167,7 +171,7 @@ extension AVAssetExportSession {
         metadataItemFilter = AVMetadataItemFilter.forSharing()
         weak var session: AVAssetExportSession? = self
         exportAsynchronously {
-            if let session = session,
+            if let session,
                let error = session.error {
                 zmLog.error("Export session error: status=\(session.status.rawValue) error=\(error) output=\(exportURL)")
             }

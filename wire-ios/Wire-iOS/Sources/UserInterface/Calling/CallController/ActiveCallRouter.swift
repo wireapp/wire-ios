@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 enum AlertChoice {
     case cancel, confirm, alreadyPresented, ok
@@ -49,7 +49,8 @@ typealias PostCallAction = ((@escaping Completion) -> Void)
 
 // MARK: - ActiveCallRouter
 
-final class ActiveCallRouter: NSObject {
+final class ActiveCallRouter<TopOverlayPresenter>
+where TopOverlayPresenter: TopOverlayPresenting {
 
     // MARK: - Public Property
     var isActiveCallShown = false {
@@ -62,8 +63,11 @@ final class ActiveCallRouter: NSObject {
 
     var isPresentingActiveCall = false
 
-    // MARK: - Private Property
-    private let rootViewController: RootViewController
+    // MARK: - Private Properties
+
+    private let userSession: UserSession
+    private let topOverlayPresenter: TopOverlayPresenter
+    private let rootViewController: UIViewController
     private let callController: CallController
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
@@ -73,21 +77,19 @@ final class ActiveCallRouter: NSObject {
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
 
-    private var zClientViewController: ZClientViewController? {
-        return rootViewController.firstChild(ofType: ZClientViewController.self)
-    }
-
-    private let userSession: UserSession
-
-    init(rootviewController: RootViewController, userSession: UserSession) {
+    init(
+        rootviewController: UIViewController,
+        userSession: UserSession,
+        topOverlayPresenter: TopOverlayPresenter
+    ) {
         self.rootViewController = rootviewController
         self.userSession = userSession
+        self.topOverlayPresenter = topOverlayPresenter
+
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
         callQualityController = CallQualityController()
         transitioningDelegate = CallQualityAnimator()
-
-        super.init()
 
         callController.router = self
         callQualityController.router = self
@@ -121,7 +123,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
         let modalVC = ModalPresentationViewController(viewController: activeCallViewController, enableDismissOnPan: !CallingConfiguration.config.paginationEnabled)
 
-        if rootViewController.isPresenting {
+        if rootViewController.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
             presentActiveCall(modalViewController: modalVC, animated: animated)
@@ -133,7 +135,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             completion?()
             return
         }
-        rootViewController.dismiss(animated: animated, completion: { [weak self] in
+        rootViewController.dismiss(animated: animated) { [weak self] in
             self?.isActiveCallShown = false
             if let action = self?.scheduledPostCallAction {
                 action {
@@ -143,11 +145,14 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                 completion?()
             }
             self?.scheduledPostCallAction = nil
-        })
+        }
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
-        guard isActiveCallShown else { completion?(); return }
+        guard isActiveCallShown else {
+            completion?()
+            return
+        }
         dismissActiveCall(animated: animated, completion: completion)
     }
 
@@ -156,12 +161,12 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         guard !isCallTopOverlayShown else { return }
         let callTopOverlayController = CallTopOverlayController(conversation: conversation)
         callTopOverlayController.delegate = self
-        zClientViewController?.setTopOverlay(to: callTopOverlayController)
+        topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
         isCallTopOverlayShown = true
     }
 
     func hideCallTopOverlay() {
-        zClientViewController?.setTopOverlay(to: nil)
+        topOverlayPresenter.dismissTopOverlay(animated: true)
         isCallTopOverlayShown = false
     }
 
@@ -169,7 +174,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason,
                                             completion: @escaping (AlertChoice) -> Void) {
-
         guard self.presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
@@ -179,11 +183,12 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeDegradedProteusCall(degradedUser: user?.value,
-                                                                  callEnded: true,
-                                                                  confirmationBlock: { continueDegradedCall in
-                    completion(continueDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
+                alert = UIAlertController.makeOutgoingDegradedProteusCall(
+                    degradedUser: user?.value,
+                    callEnded: true,
+                    confirmationBlock: { continueDegradedCall in
+                        completion(continueDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
                 })
             case .invalidCertificate:
                 alert = UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
@@ -209,12 +214,13 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeDegradedProteusCall(degradedUser: user?.value,
-                                                                  callEnded: false,
-                                                                  confirmationBlock: { continueDegradedCall in
-                    completion(continueDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
-                })
+                alert = UIAlertController.makeIncomingDegradedProteusCall(
+                    degradedUser: user?.value,
+                    callEnded: false,
+                    confirmationBlock: { continueDegradedCall in
+                        completion(continueDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
+                    })
             case .invalidCertificate:
                 alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)
@@ -324,7 +330,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 // MARK: - CallTopOverlayControllerDelegate
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
-        guard let voiceChannel = voiceChannel else { return }
+        guard let voiceChannel else { return }
         isActiveCallShown = false
         presentActiveCall(for: voiceChannel, animated: true)
     }

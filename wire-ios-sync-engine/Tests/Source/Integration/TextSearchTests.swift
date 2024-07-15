@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireTesting
+import XCTest
 
 private class MockSearchDelegate: TextSearchQueryDelegate {
     var results = [TextQueryResult]()
@@ -186,7 +186,7 @@ class TextSearchTests: ConversationTestsBase {
         // Then
         guard let result = delegate.results.last else { return XCTFail("No search result found", file: file, line: line) }
 
-        if let message = message {
+        if let message {
             XCTAssertEqual(result.matches.count, 1, file: file, line: line)
             guard let match = result.matches.first else { return XCTFail("No match found", file: file, line: line) }
             XCTAssertEqual(match.textMessageData?.messageText, message.textMessageData?.messageText, file: file, line: line)

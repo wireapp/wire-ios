@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Down
 import UIKit
 import WireCommonComponents
-import Down
+import WireDesign
 
 final class MessageSendFailureView: UIView {
 
@@ -34,7 +35,7 @@ final class MessageSendFailureView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
     private let titleLabel = WebLinkTextView()
-    private let retryButton = InviteButton(fontSpec: FontSpec.buttonSmallSemibold,
+    private let retryButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
                                            insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     // MARK: - initialization
@@ -91,7 +92,7 @@ final class MessageSendFailureView: UIView {
 }
 
 // MARK: - DownStyle extension
-    public extension DownStyle {
+    extension DownStyle {
 
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()

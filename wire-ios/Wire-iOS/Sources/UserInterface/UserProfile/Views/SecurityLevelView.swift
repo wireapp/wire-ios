@@ -17,9 +17,10 @@
 //
 
 import SwiftUI
-import WireDataModel
-import WireSyncEngine
 import WireCommonComponents
+import WireDataModel
+import WireDesign
+import WireSyncEngine
 
 final class SecurityLevelView: UIView {
 
@@ -59,8 +60,10 @@ final class SecurityLevelView: UIView {
 
     func configure(with classification: SecurityClassification?) {
         securityLevelLabel.font = FontSpec.smallSemiboldFont.font!
+
         guard let classification, let levelText = classification.levelText else {
-            return isHidden = true
+            isHidden = true
+            return
         }
 
         configureCallingUI(with: classification)
@@ -68,7 +71,10 @@ final class SecurityLevelView: UIView {
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
         let securityLevelText = SecurityLocalization.securityLevel.uppercased()
-        securityLevelLabel.text = [securityLevelText, levelText].joined(separator: " ")
+        securityLevelLabel.text = [
+            securityLevelText,
+            levelText
+        ].joined(separator: " ")
 
         accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
     }
@@ -78,8 +84,10 @@ final class SecurityLevelView: UIView {
         conversationDomain: String?,
         provider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
-
-        guard let classification = provider?.classification(users: otherUsers, conversationDomain: conversationDomain) else {
+        guard let classification = provider?.classification(
+            users: otherUsers,
+            conversationDomain: conversationDomain
+        ) else {
             isHidden = true
             return
         }
@@ -90,14 +98,23 @@ final class SecurityLevelView: UIView {
     private func setupViews() {
         securityLevelLabel.textAlignment = .center
         iconImageView.contentMode = .scaleAspectFit
-        [topBorder, securityLevelLabel, iconImageView, bottomBorder].forEach { addSubview($0) }
+
+        [
+            topBorder,
+            securityLevelLabel,
+            iconImageView,
+            bottomBorder
+        ].forEach { addSubview($0) }
 
         topBorder.addConstraintsForBorder(for: .top, borderWidth: 1.0, to: self)
         bottomBorder.addConstraintsForBorder(for: .bottom, borderWidth: 1.0, to: self)
     }
 
     private func createConstraints() {
-        [securityLevelLabel, iconImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            securityLevelLabel,
+            iconImageView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -111,7 +128,7 @@ final class SecurityLevelView: UIView {
         ])
     }
 
-    private func configureCallingUI(with classification: SecurityClassification?) {
+    private func configureCallingUI(with classification: SecurityClassification) {
         switch classification {
 
         case .classified:
@@ -127,33 +144,6 @@ final class SecurityLevelView: UIView {
             iconImageView.image = .init(resource: .attention)
             iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
             topBorder.backgroundColor = .clear
-
-        case .none:
-            isHidden = true
-            assertionFailure("should not reach this point")
-        }
-    }
-
-    private func configureLegacyCallingUI(with classification: SecurityClassification?) {
-        switch classification {
-
-        case .classified:
-            securityLevelLabel.textColor = LabelColors.textDefault
-            backgroundColor = ViewColors.backgroundSecurityLevel
-            iconImageView.setTemplateIcon(.checkmark, size: .tiny)
-            iconImageView.tintColor = IconColors.backgroundCheckMarkSelected
-            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
-
-        case .notClassified:
-            securityLevelLabel.textColor = LabelColors.textDefault
-            backgroundColor = ViewColors.backgroundSecurityLevel
-            iconImageView.setTemplateIcon(.exclamationMarkCircle, size: .tiny)
-            iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
-            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
-
-        case .none:
-            isHidden = true
-            assertionFailure("should not reach this point")
         }
     }
 }
@@ -205,8 +195,6 @@ private struct SecurityLevelViewRepresentable: UIViewRepresentable {
     @State var classification: SecurityClassification?
 
     func makeUIView(context: Context) -> SecurityLevelView {
-        FontScheme.configure(with: .large)
-
         let view = SecurityLevelView()
         view.configure(with: classification)
         return view

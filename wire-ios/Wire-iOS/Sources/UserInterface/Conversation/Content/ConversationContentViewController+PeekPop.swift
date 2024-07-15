@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SafariServices
 import UIKit
 import WireDataModel
@@ -49,7 +48,12 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             controller = BrowserViewController(url: url)
         } else if message.isImage {
             // Preview an image
-            controller = messagePresenter.viewController(forImageMessagePreview: message, actionResponder: self, userSession: userSession)
+            controller = messagePresenter.viewController(
+                forImageMessagePreview: message,
+                actionResponder: self,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
         } else if message.isLocation {
             // Preview a location
             controller = LocationPreviewController(message: message, actionResponder: self)
@@ -81,5 +85,4 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             self.messagePresenter.modalTargetController?.present(viewControllerToCommit, animated: true, completion: .none)
         }
     }
-
 }

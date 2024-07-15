@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
@@ -66,7 +67,7 @@ final class BackupPasswordViewController: UIViewController {
         passwordView.becomeFirstResponder()
     }
 
-    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 
@@ -114,7 +115,7 @@ final class BackupPasswordViewController: UIViewController {
         navigationController?.navigationBar.barTintColor = textColor
         navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: textColor)
 
-        navigationItem.setupNavigationBarTitle(title: HistoryBackup.Password.title.capitalized)
+        setupNavigationBarTitle(HistoryBackup.Password.title.capitalized)
 
         let cancelButtonItem: UIBarButtonItem = .createNavigationLeftBarButtonItem(
             title: HistoryBackup.Password.cancel.capitalized,

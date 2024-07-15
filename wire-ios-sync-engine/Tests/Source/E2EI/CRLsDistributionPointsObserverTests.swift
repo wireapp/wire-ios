@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
 import Combine
+import Foundation
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+import XCTest
 
 class CRLsDistributionPointsObserverTests: XCTestCase {
 

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireCoreCrypto
-import Combine
 import WireSystem
 
 // sourcery: AutoMockable
@@ -139,13 +139,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         var groupID = groupID
         var debugInfo = "parentID: \(groupID)"
-        if
-            let type = subconversationType,
+        if let type = subconversationType,
             let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
-            )
-        {
+            ) {
             groupID = subconversationGroupID
             debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }

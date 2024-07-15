@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireUtilities
 import UIKit
+import WireUtilities
 
 protocol SimpleTextFieldValidatorDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)

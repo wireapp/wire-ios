@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
 
 public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
@@ -33,10 +33,13 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
         transportSession = TestUnauthenticatedTransportSession()
         mockDelegate = MockUnauthenticatedSessionDelegate()
         reachability = MockReachability()
-        sut = UnauthenticatedSession(transportSession: transportSession,
-                                     reachability: reachability,
-                                     delegate: mockDelegate,
-                                     authenticationStatusDelegate: mockAuthenticationStatusDelegate)
+        sut = .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: mockDelegate,
+            authenticationStatusDelegate: mockAuthenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
         sut.groupQueue.add(dispatchGroup)
         setCurrentAPIVersion(.v0)
     }

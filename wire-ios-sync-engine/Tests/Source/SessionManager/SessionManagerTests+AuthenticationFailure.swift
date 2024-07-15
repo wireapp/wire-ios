@@ -46,6 +46,7 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
 
         // when
         sessionManager?.authenticationInvalidated(NSError(code: .clientDeletedRemotely, userInfo: nil), accountId: account.userIdentifier)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }

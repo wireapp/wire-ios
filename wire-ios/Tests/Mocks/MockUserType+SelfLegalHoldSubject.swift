@@ -35,12 +35,12 @@ extension MockUserType: SelfLegalHoldSubject {
         return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
-    public var fingerprint: String? {
+    var fingerprint: String? {
         guard let preKey = legalHoldDataSource.legalHoldRequest?.lastPrekey,
               let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) else {
                   return nil
               }
-        return String(data: fingerprintData, encoding: .utf8)
+        return String(decoding: fingerprintData, as: UTF8.self)
     }
 
     func legalHoldRequestWasCancelled() {

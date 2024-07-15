@@ -60,9 +60,9 @@ open class AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
-
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -75,20 +75,35 @@ open class AuthenticatedSessionFactory {
             minTLSVersion: minTLSVersion
         )
 
-        let userSession = ZMUserSession(
-            userId: account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
+        var userSessionBuilder = ZMUserSessionBuilder()
+        userSessionBuilder.withAllDependencies(
             analytics: analytics,
-            application: application,
             appVersion: appVersion,
+            application: application,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
-            sharedUserDefaults: sharedUserDefaults
+            contextStorage: LAContextStorage(),
+            earService: nil,
+            flowManager: flowManager,
+            mediaManager: mediaManager,
+            mlsService: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: nil,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            userId: account.userIdentifier
         )
 
+        let userSession = userSessionBuilder.build()
+        userSession.setup(
+            eventProcessor: nil,
+            strategyDirectory: nil,
+            syncStrategy: nil,
+            operationLoop: nil,
+            configuration: configuration,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
+        )
         userSession.startRequestLoopTracker()
 
         return userSession
@@ -116,11 +131,11 @@ open class UnauthenticatedSessionFactory {
     let appVersion: String
 
     init(
-      appVersion: String,
-      environment: BackendEnvironmentProvider,
-      proxyUsername: String?,
-      proxyPassword: String?,
-      reachability: Reachability
+        appVersion: String,
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        reachability: Reachability
     ) {
         self.environment = environment
         self.proxyUsername = proxyUsername
@@ -130,24 +145,25 @@ open class UnauthenticatedSessionFactory {
     }
 
     func session(
-      delegate: UnauthenticatedSessionDelegate,
-      authenticationStatusDelegate: ZMAuthenticationStatusDelegate
+        delegate: UnauthenticatedSessionDelegate,
+        authenticationStatusDelegate: ZMAuthenticationStatusDelegate
     ) -> UnauthenticatedSession {
         let transportSession = UnauthenticatedTransportSession(
-          environment: environment,
-          proxyUsername: proxyUsername,
-          proxyPassword: proxyPassword,
-          reachability: reachability,
-          applicationVersion: appVersion,
-          readyForRequests: readyForRequests
+            environment: environment,
+            proxyUsername: proxyUsername,
+            proxyPassword: proxyPassword,
+            reachability: reachability,
+            applicationVersion: appVersion,
+            readyForRequests: readyForRequests
         )
 
-      return UnauthenticatedSession(
-        transportSession: transportSession,
-        reachability: reachability,
-        delegate: delegate,
-        authenticationStatusDelegate: authenticationStatusDelegate
-      )
+        return UnauthenticatedSession(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: delegate,
+            authenticationStatusDelegate: authenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
     }
 
     public func updateProxy(username: String?, password: String?) {

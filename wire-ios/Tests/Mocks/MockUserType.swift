@@ -18,9 +18,10 @@
 
 import Foundation
 import WireDataModel
+
 @testable import Wire
 
-class MockUserType: NSObject, UserType, Decodable {
+class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - Decodable
 
@@ -35,8 +36,8 @@ class MockUserType: NSObject, UserType, Decodable {
         domain = try? container.decode(String.self, forKey: .domain)
         isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
-           let accentColorValue = ZMAccentColor(rawValue: rawAccentColorValue) {
-            self.accentColorValue = accentColorValue
+           let zmAccentColor = ZMAccentColor.from(rawValue: rawAccentColorValue) {
+            self.zmAccentColor = zmAccentColor
         }
     }
 
@@ -84,7 +85,12 @@ class MockUserType: NSObject, UserType, Decodable {
 
     var phoneNumber: String? = "+123456789"
 
-    var accentColorValue: ZMAccentColor = .strongBlue
+    var accentColorValue: ZMAccentColorRawValue = AccentColor.blue.rawValue
+
+    var zmAccentColor: ZMAccentColor? {
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? 0 }
+    }
 
     var availability: Availability = .none
 
@@ -226,7 +232,7 @@ class MockUserType: NSObject, UserType, Decodable {
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         guard
             let otherUser = user as? MockUserType,
-            let teamIdentifier = teamIdentifier,
+            let teamIdentifier,
             let otherTeamIdentifier = otherUser.teamIdentifier
             else { return false }
 
@@ -279,6 +285,15 @@ class MockUserType: NSObject, UserType, Decodable {
 
     func requestCompleteProfileImage() {
         // No op
+    }
+
+    func imageData(for size: ProfileImageSize) -> Data? {
+        switch size {
+        case .preview:
+            previewImageData
+        case .complete:
+            completeImageData
+        }
     }
 
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {

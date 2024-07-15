@@ -70,13 +70,13 @@ final class ContactsDataSource: NSObject {
     // MARK: - Methods
 
     private func performSearch() {
-        guard let searchDirectory = searchDirectory else { return }
+        guard let searchDirectory else { return }
 
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
         let task = searchDirectory.perform(request)
 
         task.addResultHandler { [weak self] searchResult, _ in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.ungroupedSearchResults = searchResult.addressBook
             self.delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
         }

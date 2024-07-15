@@ -21,8 +21,8 @@
 import avs
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
 import WireCoreCrypto
+import WireSyncEngine
 
 enum ApplicationLaunchType {
     case unknown
@@ -55,7 +55,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
         TrackingOperation(),
-        AppCenterOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
@@ -79,13 +78,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return SessionManager.shared?.unauthenticatedSession
     }
 
-    var appCenterInitCompletion: Completion?
     var launchOptions: LaunchOptions = [:]
 
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
+    // TODO [WPB-9867]: remove this property
     var mediaPlaybackManager: MediaPlaybackManager? {
         return appRootRouter?.rootViewController
             .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
@@ -108,10 +107,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-        WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+        // Set up Datadog as logger
+        WireAnalytics.Datadog.enable()
 
-        DatadogWrapper.shared?.startMonitoring()
-        DatadogWrapper.shared?.log(level: .info, message: "start app")
+        WireLogger.appDelegate.info(
+            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))"
+        )
 
         // Initial log line to indicate the client version and build
         WireLogger.appDelegate.info(
@@ -248,7 +249,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:")
+        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
         appRootRouter?.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
@@ -279,10 +280,10 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
+
         guard let viewController = window?.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
-
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }

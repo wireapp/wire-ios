@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import WireCommonComponents
 import XCTest
-import WireCommonComponents
 
 final class ExtensionSettingsTests: XCTestCase {
 

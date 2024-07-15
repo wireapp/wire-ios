@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 protocol UserSearchResultsViewControllerDelegate: AnyObject {
     func didSelect(user: UserType)
@@ -62,7 +63,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
             return _collectionViewSelectedIndex
         }
         set {
-            if let newValue = newValue {
+            if let newValue {
                 _collectionViewSelectedIndex = min(searchResults.count - 1, max(0, newValue))
             } else {
                 _collectionViewSelectedIndex = newValue
@@ -70,7 +71,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
-    public private(set) var isKeyboardCollapsed: Bool = true {
+    private(set) var isKeyboardCollapsed: Bool = true {
         didSet {
             guard oldValue != isKeyboardCollapsed || isKeyboardCollapsedFirstCalled else { return }
             collectionView.reloadData()
@@ -99,9 +100,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     private func setupKeyboardObserver() {
         keyboardObserver = KeyboardBlockObserver { [weak self] info in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
             if let isKeyboardCollapsed = info.isKeyboardCollapsed {
-                weakSelf.isKeyboardCollapsed = isKeyboardCollapsed
+                self.isKeyboardCollapsed = isKeyboardCollapsed
             }
         }
     }
@@ -202,7 +203,7 @@ extension UserSearchResultsViewController: Dismissable {
 extension UserSearchResultsViewController: UserList {
     var selectedUser: UserType? {
 
-        guard let collectionViewSelectedIndex = collectionViewSelectedIndex else {
+        guard let collectionViewSelectedIndex else {
             return .none
         }
 
@@ -212,7 +213,7 @@ extension UserSearchResultsViewController: UserList {
     }
 
     func selectNextUser() {
-        guard let collectionViewSelectedIndex = collectionViewSelectedIndex else { return }
+        guard let collectionViewSelectedIndex else { return }
 
         self.collectionViewSelectedIndex = collectionViewSelectedIndex + 1
 
@@ -220,7 +221,7 @@ extension UserSearchResultsViewController: UserList {
     }
 
     func selectPreviousUser() {
-        guard let collectionViewSelectedIndex = collectionViewSelectedIndex else { return }
+        guard let collectionViewSelectedIndex else { return }
 
         self.collectionViewSelectedIndex = collectionViewSelectedIndex - 1
 
@@ -230,7 +231,7 @@ extension UserSearchResultsViewController: UserList {
     func updateHighlightedItem() {
         collectionView.reloadData()
 
-        guard let collectionViewSelectedIndex = collectionViewSelectedIndex else { return }
+        guard let collectionViewSelectedIndex else { return }
 
         collectionView.scrollToItem(at: IndexPath(item: collectionViewSelectedIndex, section: 0), at: .centeredVertically, animated: true)
     }

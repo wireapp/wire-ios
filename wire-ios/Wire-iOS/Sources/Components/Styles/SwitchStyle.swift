@@ -17,8 +17,9 @@
 //
 
 import UIKit
+import WireDesign
 
-public struct SwitchStyle {
+struct SwitchStyle {
 
     private(set) var enabledOnStateColor: UIColor
     private(set) var enabledOffStateColor: UIColor
@@ -69,7 +70,7 @@ final class Switch: UISwitch, Stylable {
         applyStyle(switchStyle)
     }
 
-    public func applyStyle(_ style: SwitchStyle) {
+    func applyStyle(_ style: SwitchStyle) {
         backgroundColor = style.enabledOffStateColor
         onTintColor = style.enabledOnStateColor
 

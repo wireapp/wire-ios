@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
+import Foundation
 
 struct AVSActiveSpeakersChange: Codable {
     let activeSpeakers: [ActiveSpeaker]
 
-    struct ActiveSpeaker: Codable, Equatable {
+    struct ActiveSpeaker: Codable, Equatable, Hashable {
         let userId: String
         let clientId: String
 

@@ -22,7 +22,7 @@ final class RegistationCredentialVerificationStrategy: NSObject {
     let registrationStatus: RegistrationStatusProtocol
     var codeSendingSync: ZMSingleRequestSync!
 
-    init(groupQueue: ZMSGroupQueue, status: RegistrationStatusProtocol) {
+    init(groupQueue: GroupQueue, status: RegistrationStatusProtocol) {
         registrationStatus = status
         super.init()
         codeSendingSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
@@ -30,19 +30,20 @@ final class RegistationCredentialVerificationStrategy: NSObject {
 }
 
 extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
+
     func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         let currentStatus = registrationStatus
         var payload: [String: Any]
         var path: String
 
         switch currentStatus.phase {
-        case let .sendActivationCode(credentials):
+        case let .sendActivationCode(unverifiedEmail):
             path = "/activate/send"
-            payload = [credentials.type: credentials.rawValue,
+            payload = ["email": unverifiedEmail,
                        "locale": NSLocale.formattedLocaleIdentifier()!]
-        case let .checkActivationCode(credentials, code):
+        case let .checkActivationCode(unverifiedEmail, code):
             path = "/activate"
-            payload = [credentials.type: credentials.rawValue,
+            payload = ["email": unverifiedEmail,
                        "code": code,
                        "dryrun": true]
         default:
@@ -59,20 +60,12 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
             let error: NSError
 
             switch registrationStatus.phase {
-            case .sendActivationCode(let credentials):
+            case .sendActivationCode:
                 let decodedError: NSError?
-                switch credentials {
-                case .email:
-                    decodedError = NSError.domainBlocked(with: response) ??
-                    NSError.blacklistedEmail(with: response) ??
-                    NSError.emailAddressInUse(with: response) ??
-                    NSError.invalidEmail(with: response)
-
-                case .phone:
-                    decodedError = NSError.phoneNumberIsAlreadyRegisteredError(with: response) ??
-                    NSError.invalidPhoneNumber(withReponse: response)
-                }
-
+                decodedError = NSError.domainBlocked(with: response) ??
+                NSError.blacklistedEmail(with: response) ??
+                NSError.emailAddressInUse(with: response) ??
+                NSError.invalidEmail(with: response)
                 error = decodedError ?? NSError(code: .unknownError, userInfo: [:])
             case .checkActivationCode:
                 error = NSError.invalidActivationCode(with: response) ??
@@ -83,7 +76,6 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
             registrationStatus.handleError(error)
         }
     }
-
 }
 
 extension RegistationCredentialVerificationStrategy: RequestStrategy {

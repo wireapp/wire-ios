@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "アーカイブ";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "ここから会話を始めます";
@@ -764,6 +766,7 @@
 "call.degraded.alert.message.user" = "%@が新しいデバイスを使い始めました。";
 "call.degraded.alert.message.unknown" = "新しいデバイスを使い始めた人がいます";
 "call.degraded.alert.action.continue" = "とにかく電話をする";
+"call.degraded.incoming.alert.action.continue" = "とにかく参加します。";
 
 "call.degraded.ended.alert.title" = "通話終了";
 "call.degraded.ended.alert.message.self" = "新しいデバイスの使用を開始したため、通話が切断されました。";
@@ -941,7 +944,7 @@
 "profile.connection_request_state.blocked" = "ブロックしています";
 "profile.create_conversation_button_title" = "グループを作成します";
 "profile.open_conversation_button_title" = "会話を始めます";
-
+"profile.start_conversation_button_title" = "Start conversation";
 "profile.read_receipts_enabled_memo.header" = "開封通知を有効にします";
 "profile.read_receipts_disabled_memo.header" = "開封通知を無効にします";
 "profile.read_receipts_memo.body" = "両者が開封通知をオンにした場合に、メッセージが開封されたかが分かります。\nあなたの アカウント設定 から、この設定を変更することができます。";
@@ -1040,16 +1043,11 @@
 "self.add_email_password" = "メールアドレスとパスワードを追加";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "利用規約";
 "about.privacy.title" = "プライバシーポリシー";
-"about.license.title" = "ライセンス情報";
 "about.website.title" = "Wire のウェブサイト";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "詳細";
-"about.license.open_project_button" = "プロジェクトページを表示する";
-"about.license.license_header" = "謝辞";
 
 // Self new devices
 "self.new_device_alert.title" = "あなたのアカウントの使用:";
@@ -1084,7 +1082,6 @@
 
 "self.settings.account_section.name.title" = "名前";
 "self.settings.account_section.email.title" = "メール";
-"self.settings.account_section.phone.title" = "携帯電話";
 "self.settings.account_section.handle.title" = "ユーザーネーム";
 "self.settings.account_section.add_handle.title" = "ユーザーネームを追加する";
 "self.settings.account_section.team.title" = "チーム";
@@ -1117,7 +1114,6 @@
 "self.settings.account_picture_group.color" = "プロフィールの色";
 "self.settings.account_picture_group.accent_color.blue" = "青";
 "self.settings.account_picture_group.accent_color.green" = "緑";
-"self.settings.account_picture_group.accent_color.yellow" = "黄";
 "self.settings.account_picture_group.accent_color.red" = "赤";
 "self.settings.account_picture_group.accent_color.amber" = "黄";
 "self.settings.account_picture_group.accent_color.turquoise" = "青緑";
@@ -1180,25 +1176,6 @@
 
 "self.settings.account_section.email.change.resend.title" = "メールを再送信";
 "self.settings.account_section.email.change.resend.message" = "確認メールが%@ に再送されました。メールボックスを確認し、記載されている手続きを行って。";
-
-// Change Phone Number
-
-"self.settings.account_section.phone_number.change.title" = "電話";
-"self.settings.account_section.phone_number.change.save" = "保存";
-"self.settings.account_section.phone_number.change.remove" = "電話番号を削除する";
-
-"self.settings.account_section.phone_number.change.remove.action" = "電話番号を削除する";
-
-"self.settings.account_section.phone_number.change.verify.save" = "保存";
-"self.settings.account_section.phone_number.change.verify.title" = "認証";
-"self.settings.account_section.phone_number.change.verify.description" = "%@ に送信した認証コードを入力してください";
-
-"self.settings.account_section.phone_number.change.verify.code_placeholder" = "コードを入力する";
-"self.settings.account_section.phone_number.change.verify.resend" = "コードを再送信";
-"self.settings.account_section.phone_number.change.verify.resend_description" = "コードが表示されませんか？\n新しいコードを30秒ごとにリクエストすることができます。";
-
-"self.settings.account_section.phone_number.change.resend.title" = "コードの再送";
-"self.settings.account_section.phone_number.change.resend.message" = "%@ に認証コードを再送しました";
 
 // Chat alerts
 "self.settings.notifications.push_notification.title" = "通知センター";
@@ -1313,7 +1290,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "プッシュ通知に関して問題があった場合、Wireサポートチームはあなたにトークンのリセットを求めることがあります。";
 "self.settings.advanced.reset_push_token_alert.title" = "プッシュトークンがリセットされました。";
 "self.settings.advanced.reset_push_token_alert.message" = "通知は数秒で復元されます。";
-"self.settings.advanced.version_technical_details.title" = "バージョンの技術的詳細";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "データ利用許可";
@@ -1375,10 +1351,6 @@
 "password.placeholder" = "パスワード";
 "password.guidance.toolong" = "文字が多すぎます";
 
-"phone.guidance.invalid" = "無効な電話番号";
-"phone.guidance.tooshort" = "電話番号が短すぎます";
-"phone.guidance.toolong" = "文字が多すぎます";
-
 // Landing screen
 
 "landing.header" = "Wire. Log in or create a personal account.";
@@ -1409,7 +1381,6 @@
 "team.activation_code.subheadline" = "%@ に送信した認証コードを入力してください";
 "team.activation_code.button.resend" = "コードを再送する";
 "team.activation_code.button.change_email" = "メールアドレス変更";
-"team.activation_code.button.change_phone" = "電話番号を変更する";
 
 "team.full_name.headline" = "あなたの名前";
 "team.full_name.textfield.placeholder" = "フルネーム";
@@ -1466,19 +1437,9 @@
 
 "registration.title" = "登録";
 "registration.close_email_invitation_button.email_title" = "別のメール アドレスを使う";
-"registration.close_email_invitation_button.phone_title" = "電話番号で登録する";
 "registration.close_phone_invitation_button.email_title" = "メールで登録する";
-"registration.close_phone_invitation_button.phone_title" = "別の携帯電話を使用する";
 
-"registration.register_by_phone" = "電話";
 "registration.register_by_email" = "メール";
-
-"registration.enter_phone_number.title" = "電話番号を編集する";
-"registration.enter_phone_number.placeholder" = "電話番号";
-
-"registration.verify_phone_number.instructions" = "%@に送信された認証コードを入力してください。";
-"registration.verify_phone_number.resend" = "再送する";
-"registration.verify_phone_number.resend_placeholder" = "コードが表示されませんか？\n新しいコードを%.0f秒以内にリクエストすることができます。";
 
 "registration.verify_email.instructions" = "%@にメールを送信しました。\n リンクに従ってあなたのメールアドレスを確認してください。";
 "registration.verify_email.resend.instructions" = "メッセージを取得できませんでしたか?";
@@ -1490,10 +1451,8 @@
 "registration.no_history.restore_backup" = "バックアップからリストアする";
 
 "registration.alert.account_exists.title" = "アカウントが存在します";
-"registration.alert.account_exists.message_phone" = "登録に使用した電話番号は既にアカウントにリンクされています。\n\n別の電話番号を登録するか、このアカウントを持っている場合はログインしてみてください。";
 "registration.alert.account_exists.message_email" = "登録に使用したメールアドレスは既にアカウントにリンクされています。\n\n別のメールアドレスを登録するか、このアカウントを持っている場合はログインしてみてください。";
 "registration.alert.change_email_action" = "別のメールアドレスで登録します。";
-"registration.alert.change_phone_action" = "別の番号で登録します。";
 "registration.alert.change_signin_action" = "ログイン";
 
 // Restore History Warning Alert
@@ -1598,7 +1557,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "デバイスを管理";
 "registration.signin.too_many_devices.sign_out_button.title" = "ログアウト";
 
-"registration.signin.too_many_devices.manage_screen.title" = "デバイスの削除";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "パスワードが必要";
 "registration.signin.alert.password_needed.message" = "ログインするためにパスワードを入力してください。";
@@ -1636,32 +1595,17 @@
 "registration.devices.id" = "ID:";
 
 "signin.use_email.label" = "メールアドレス でログイン";
-"signin.use_phone.label" = "電話番号 でログイン";
 "signin.forgot_password" = "パスワードをお忘れですか？";
 "signin.use_one_password.label" = "1Password でログイン";
 "signin.use_one_password.hint" = "1Password からダブタップでパスワードを入力";
 "signin.confirm" = "ログイン";
 "signin.company_idp.button.title" = "法人向け";
 
-"signin_logout.subheadline" = "セッションが期限切れです。継続のため再度ログインする必要があります。";
 "signin_logout.email.subheadline" = "セッションの期限が切れました。メール アドレスとパスワードを入力して続行してください。";
-"signin_logout.phone.subheadline" = "セッションの期限が切れました。電話番号を入力して続行してください。";
 "signin_logout.sso.subheadline" = "セッションの期限が切れました。あなたの組織アカウントでログインして続行してください。";
 "signin_logout.sso.buton" = "組織アカウントログイン";
 
 "signin.email.missing_password.subtitle" = "続行するにはメールアドレスとパスワードを入力します。";
-"signin.phone.missing_password.subtitle" = "続行するにはあなたの電話番号を入力します。";
-
-"registration.phone_country" = "国";
-"registration.phone_code" = "国コード";
-"registration.phone_country.hint" = "ダブルタップして他の国を選択します。";
-"registration.phone_code.hint" = "ダブルタップして他の国コードを入力します。";
-"registration.phone.verify.label" = "電話番号を確認";
-"registration.phone.verify_field.label" = "認証コード";
-
-"registration.add_phone_number.hero.title" = "電話番号を追加する";
-"registration.add_phone_number.hero.paragraph" = "これはあなたが友人を探すことを容易にします。私たちは決して第三者とシェアいません。";
-"registration.add_phone_number.skip_button.title" = "いまは行わない";
 
 "registration.add_email_password.hero.title" = "メールアドレスとパスワードを追加してください。";
 "registration.add_email_password.hero.paragraph" = "これにより、複数のデバイスで Wire を使用できます。";
@@ -1670,12 +1614,7 @@
 "registration.email_invitation.hero.title" = "こんにちは、%@";
 "registration.email_invitation.hero.paragraph" = "アカウントを作成するためのパスワードを選択してください。";
 
-"registration.phone_invitation.title" = "招待状";
-"registration.phone_invitation.hero.title" = "こんにちは、%@";
-"registration.phone_invitation.hero.paragraph" = "アカウントの作成までもうひと息です。";
-
 "registration.confirm" = "サインアップ";
-"registration.phone.country_code.hint" = "ダブルタップしてこの国から、電話番号を利用します。";
 
 "error.name_and_email" = "名前と有効なメールアドレスを入力してください。";
 "error.full_name" = "氏名を入力してください";
@@ -1683,7 +1622,6 @@
 "error.input.too_long" = "もっと短いユーザー名を入力してください";
 "error.input.too_short" = "もっと長いユーザー名を入力してください";
 "error.email.invalid" = "有効なメール アドレスを入力してください";
-"error.phone.invalid" = "有効な電話番号を入力してください";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Username takeover screen
@@ -1702,12 +1640,11 @@
 "error.user.account_pending_activation" = "アクセスをしようとしているアカウントは、ライセンス認証の保留中です。詳細をご確認ください。";
 "error.user.network_error" = "ネットワークに問題があるようです。後でもう一度お試しください。";
 "error.user.email_is_taken" = "入力したメール アドレスはすでに登録されています。もう一度、やり直して頂けますようお願いします。";
-"error.user.phone_is_taken" = "指定した電話番号はすでに登録されています。もう一度やり直してください。";
-"error.user.phone_code_invalid" = "有効なコードを入力してください。";
-"error.user.phone_code_too_many" = "すでに SMS 経由でコードを送信しました。新しいものを取得するには 10 分後に、再送信をタップします。";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "何か問題が起きたようです。もう一度やり直してください。";
 "error.user.device_deleted_remotely" = "別のデバイスからログアウトしました。";
-"error.user.last_identity_cant_be_deleted" = "メールまたは電話番号のいずれかを削除するためには、それらが登録されている必要があります。";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "このアカウントは、もはやログイン権限はありません";
 "error.user.account_limit_reached" = "３アカウント以上は追加できません。";
 
@@ -1735,6 +1672,7 @@
 "error.conversation.cannot_remove" = "参加者の削除に失敗しました";
 "error.conversation.too_many_members" = "会話数が上限に達しました。";
 "error.conversation.offline" = "インターネット接続に問題があるようです。インターネット接続を確認してください。";
+"error.conversation.oneonone.cannot_start" = "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.";
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
@@ -1922,8 +1860,16 @@
 "url_action.title" = "このURLを確認します";
 "url_action.connect_to_bot.message" = "Bot に接続しますか？";
 
-"url_action.switch_backend.title" = "サーバーに接続";
-"url_action.switch_backend.message" = "この構成でアプリケーションがサードパーティサーバに接続します: %@";
+"url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"url_action.switch_backend_confirmation.backend_name" = "バックエンド名:";
+"url_action.switch_backend_confirmation.backend_url" = "バックエンドURL:";
+"url_action.switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"url_action.switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"url_action.switch_backend_confirmation.teams_url" = "Teams URL:";
+"url_action.switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"url_action.switch_backend_confirmation.website_url" = "Website URL:";
+"url_action.switch_backend_confirmation.proceed" = "Proceed";
 
 "url_action.switch_backend.error.logged_in.title" = "サーバを変更することができません";
 "url_action.switch_backend.error.logged_in" = "あなたはすでにログインしています。サーバを変更するには、すべてのアカウントでログアウトして、もう一度やり直してください";
@@ -2146,7 +2092,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";

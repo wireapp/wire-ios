@@ -64,19 +64,13 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         activityManager = MockBackgroundActivityManager()
         factory = BackgroundActivityFactory.shared
         factory.activityManager = activityManager
-
-        setUpEARServiceWorkaround()
     }
 
     /// This workaround is needed because all tests here are based on assumptions
     /// that the `managedObjectContext` is changed.
-    /// To remove the workaround simply the `mockEARService` should be used instead of
+    /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
-    private func setUpEARServiceWorkaround() {
-        mockEARService = nil
-        sut.tearDown()
-        sut = nil
-
+    override func createSut() -> ZMUserSession {
         let earService = EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
@@ -88,7 +82,8 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        sut = createSut(earService: earService)
+
+        return createSut(earService: earService)
     }
 
     override func tearDown() {
@@ -230,7 +225,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // when
-        let activity = factory.startBackgroundActivity(withName: "Activity 1")!
+        let activity = factory.startBackgroundActivity(name: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
         factory.endBackgroundActivity(activity)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -248,7 +243,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // when
-        let activity = factory.startBackgroundActivity(withName: "Activity 1")!
+        let activity = factory.startBackgroundActivity(name: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -268,7 +263,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         setEncryptionAtRest(enabled: true)
 
         // when
-        _ = factory.startBackgroundActivity(withName: "Activity 1")!
+        _ = factory.startBackgroundActivity(name: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
         XCTAssertNotNil(sut.managedObjectContext.databaseKey)
 

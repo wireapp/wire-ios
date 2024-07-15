@@ -19,8 +19,6 @@
 import Foundation
 import WireCryptobox
 
-private let zmLog = ZMSLog(tag: "event-processing")
-
 @objc public enum ZMConversationLegalHoldStatus: Int16 {
     case disabled = 0
     case pendingApproval = 1
@@ -310,7 +308,7 @@ extension ZMConversation {
             return
         }
 
-        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier })")
+        WireLogger.eventProcessing.debug("Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier.safeForLoggingDescription })")
 
         switch conversationType {
         case .group:
@@ -424,7 +422,9 @@ extension ZMConversation {
         }
     }
 
-    private func discardPendingMessagesAfterPrivacyChanges() {
+    /// Discards all unsent messages since conversation's privacy changed.
+    @objc(discardPendingMessagesAfterPrivacyChanges)
+    public func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
@@ -434,14 +434,10 @@ extension ZMConversation {
     }
 
     /// Accepts the privacy changes (legal hold and/or degradation) and resend the pending messages.
-    @objc(acknowledgePrivacyWarningWithResendIntent:) public func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool) {
+    @objc(acknowledgePrivacyWarningAndResendMessages)
+    public func acknowledgePrivacyWarningAndResendMessages() {
         acknowledgePrivacyChanges()
-
-        if shouldResendMessages {
-            resendPendingMessagesAfterPrivacyChanges()
-        } else {
-            discardPendingMessagesAfterPrivacyChanges()
-        }
+        resendPendingMessagesAfterPrivacyChanges()
     }
 
     /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 
@@ -474,7 +470,7 @@ extension ZMConversation {
     }
 
     fileprivate var undeliveredMessages: [ZMOTRMessage] {
-        guard let managedObjectContext = managedObjectContext else { return [] }
+        guard let managedObjectContext else { return [] }
 
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
@@ -494,7 +490,13 @@ extension ZMConversation {
         undeliveredMessages += managedObjectContext.fetchOrAssert(request: assetFetchRequest) as [ZMOTRMessage]
 
         return undeliveredMessages.filter { message in
-            return message.serverTimestamp > timeoutLimit || message.updatedAt > timeoutLimit
+            if let serverTimestamp = message.serverTimestamp, serverTimestamp > timeoutLimit {
+                return true
+            }
+            if let updatedAt = message.updatedAt, updatedAt > timeoutLimit {
+                return true
+            }
+            return false
         }
     }
 
@@ -584,7 +586,7 @@ extension ZMConversation {
         case .addedClients(let clients, let message):
             affectedUsers = Set(clients.compactMap(\.user))
             addedClients = clients
-            if let message = message, message.conversation == self {
+            if let message, message.conversation == self {
                 timestamp = self.timestamp(before: message)
             } else {
                 timestamp = clients.compactMap(\.discoveryDate).first?.previousNearestTimestamp
@@ -629,10 +631,7 @@ extension ZMConversation {
         domains: [String]? = nil
     ) -> ZMSystemMessage {
         guard let context = managedObjectContext else {
-            let message = "can not append system message without managedObjectContext!"
-            WireLogger.updateEvent.critical(message)
-            zmLog.safePublic(SanitizedString(stringLiteral: message))
-            fatalError("can not append system message without managedObjectContext!")
+            fatal("can not append system message without managedObjectContext!")
         }
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
         systemMessage.systemMessageType = type
@@ -641,11 +640,11 @@ extension ZMConversation {
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
         systemMessage.serverTimestamp = timestamp
-        if let duration = duration {
+        if let duration {
             systemMessage.duration = duration
         }
 
-        if let messageTimer = messageTimer {
+        if let messageTimer {
             systemMessage.messageTimer = NSNumber(value: messageTimer)
         }
 

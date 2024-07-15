@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class ConversationNotificationOptionsViewController: UIViewController {
@@ -39,7 +39,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 
     // MARK: - Initialization
 
-    public init(conversation: ZMConversation, userSession: ZMUserSession) {
+    init(conversation: ZMConversation, userSession: ZMUserSession) {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
@@ -55,16 +55,19 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.NotificationOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.NotificationConversationSettings.CloseButton.description
-
         configureSubviews()
         configureConstraints()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.NotificationOptionsCell.title.capitalized)
+        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.NotificationConversationSettings.CloseButton.description
     }
 
     private func configureSubviews() {

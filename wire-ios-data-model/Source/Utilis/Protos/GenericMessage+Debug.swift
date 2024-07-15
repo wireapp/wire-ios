@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireProtos
 import SwiftProtobuf
+import WireProtos
 
 private let redactedValue = "<redacted>"
 
@@ -66,7 +66,7 @@ extension GenericMessage: CustomStringConvertible {
 
     public var description: String {
         var message = self
-        guard let content = content else {
+        guard let content else {
             return ""
         }
         switch content {
@@ -85,10 +85,16 @@ extension GenericMessage: CustomStringConvertible {
 extension GenericMessage: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        let contentDescription = content?.safeForLoggingDescription ?? "unknown"
-        return "[\(contentDescription) \(messageID.readableHash)]"
+        return "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
     }
 
+    public var safeIdForLoggingDescription: String {
+        UUID(uuidString: messageID)?.safeForLoggingDescription ?? "<nil>"
+    }
+
+    public var safeTypeForLoggingDescription: String {
+        return content?.safeForLoggingDescription ?? "unknown"
+    }
 }
 
 extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {

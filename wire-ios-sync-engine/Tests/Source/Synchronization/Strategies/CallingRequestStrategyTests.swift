@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModelSupport
 import WireRequestStrategy
-import WireSyncEngineSupport
 @testable import WireSyncEngine
+import WireSyncEngineSupport
 
 class CallingRequestStrategyTests: MessagingTest {
 
@@ -652,7 +652,7 @@ class CallingRequestStrategyTests: MessagingTest {
                     "resp": false,
                     "type": "REMOTEMUTE"] as [String: Any]
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let content = String(data: data, encoding: .utf8)!
+        let content = String(decoding: data, as: UTF8.self)
         let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
         let text = try? message.serializedData().base64String()
         let payload = [
@@ -672,7 +672,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // WHEN
         syncMOC.performAndWait {
-            sut.processEventsWhileInBackground([updateEvent])
+            sut.processEvents([updateEvent], liveEvents: false, prefetchResult: nil)
         }
 
         // THEN

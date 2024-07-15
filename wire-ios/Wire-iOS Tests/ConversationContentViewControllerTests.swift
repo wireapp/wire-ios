@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
@@ -42,7 +43,12 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
 
         userSession = UserSessionMock()
 
-        sut = ConversationContentViewController(conversation: mockConversation, mediaPlaybackManager: nil, userSession: userSession)
+        sut = ConversationContentViewController(
+            conversation: mockConversation,
+            mediaPlaybackManager: nil,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
 
         // Call the setup codes in viewDidLoad
         sut.loadViewIfNeeded()

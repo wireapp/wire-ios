@@ -18,51 +18,52 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsButtonsView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
     @Binding var isCertificateViewPresented: Bool
 
     var getCertificateButton: some View {
-        SwiftUI.Button {
+        Button {
             Task {
                 await viewModel.enrollClient()
             }
         } label: {
             Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
-            .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+            .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
             .font(FontSpec.normalRegularFont.swiftUIFont.bold())
         }
     }
 
     var updateCertificateButton: some View {
-        SwiftUI.Button {
+        Button {
             Task {
                 await viewModel.enrollClient()
             }
         } label: {
             VStack(alignment: .leading) {
                 Text(L10n.Localizable.Device.Details.Section.E2ei.updateCertificate)
-                    .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
         }
     }
 
     var showCertificateButton: some View {
-        SwiftUI.Button(
+        Button(
             action: {
                     isCertificateViewPresented = true
             },
             label: {
                 HStack {
                     Text(L10n.Localizable.Device.Details.Section.E2ei.showCertificateDetails)
-                        .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+                        .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
                         .font(FontSpec.normalRegularFont.swiftUIFont.bold())
                     Spacer()
                     Image(.chevronRight)
                         .renderingMode(.template)
-                        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                        .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                 }
             }
         )

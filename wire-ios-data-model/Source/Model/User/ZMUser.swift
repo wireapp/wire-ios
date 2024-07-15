@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import WireSystem
+import WireUtilities
 
 extension ZMUser: UserType {
 
@@ -49,6 +49,16 @@ extension ZMUser: UserType {
         guard let context = managedObjectContext else { return false }
         let featureRepository = FeatureRepository(context: context)
         return featureRepository.fetchDigitalSignature().status == .enabled
+    }
+
+    public var accentColor: AccentColor? {
+        get { .init(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
+    }
+
+    public var zmAccentColor: ZMAccentColor? {
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
     }
 
     public var previewImageData: Data? {
@@ -326,9 +336,9 @@ extension ZMUser {
         managedObjectContext?.zm_userImageCache?.userImage(self, size: size, queue: queue, completion: completion)
     }
 
-    @objc(imageDataforSize:)
+    @objc
     public func imageData(for size: ProfileImageSize) -> Data? {
-        return managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
+        managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
     }
 
     public static var previewImageDownloadFilter: NSPredicate {

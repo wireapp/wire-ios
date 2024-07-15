@@ -17,11 +17,12 @@
 //
 
 @import WireImages;
+@import WireUtilities;
 
-#import "ZMUser.h"
-#import "ZMEditableUser.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMUser+OneOnOne.h"
+#import <WireDataModel/ZMUser.h>
+#import <WireDataModel/ZMEditableUserType.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
+#import <WireDataModel/ZMUser+OneOnOne.h>
 
 @class ZMConnection;
 @class Team;
@@ -56,8 +57,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 + (nonnull NSSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
-+ (ZMAccentColor)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
-
 /// @method Updates the user with a name or handle received through a search
 /// Should be called when creating a @c ZMSearchUser to ensure it's underlying user is updated.
 - (void)updateWithSearchResultName:(nullable NSString *)name handle:(nullable NSString *)handle;
@@ -76,13 +75,13 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 
 
-@interface ZMUser (Editable) <ZMEditableUser>
+@interface ZMUser (Editable) <ZMEditableUserType>
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, copy) NSString *handle;
-@property (nonatomic) ZMAccentColor accentColorValue;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
 
 - (void)setHandle:(NSString * __nullable)handle;
 @property (nonatomic) BOOL needsPropertiesUpdate;

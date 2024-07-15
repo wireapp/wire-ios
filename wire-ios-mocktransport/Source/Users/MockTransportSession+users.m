@@ -337,7 +337,7 @@
             self.selfUser.name = changedFields[key];
         }
         else if([key isEqualToString:@"accent_id"]) {
-            self.selfUser.accentID = (int16_t) [changedFields[key] integerValue];
+            self.selfUser.accentID = (ZMAccentColorRawValue) [changedFields[key] integerValue];
         } else if([key isEqualToString:@"assets"]) {
             for (NSDictionary *data in changedFields[key]) {
                 NSString *assetKey = data[@"key"];

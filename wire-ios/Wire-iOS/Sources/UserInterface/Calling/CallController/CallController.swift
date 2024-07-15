@@ -48,7 +48,7 @@ final class CallController: NSObject {
 
     // MARK: - Public Implementation
     func updateActiveCallPresentationState() {
-        guard let priorityCallConversation = priorityCallConversation else {
+        guard let priorityCallConversation else {
             dismissCall()
             return
         }
@@ -245,7 +245,7 @@ extension CallController: WireCallCenterCallErrorObserver {
 
 extension CallController {
     // NOTA BENE: THIS MUST BE USED JUST FOR TESTING PURPOSE
-    public func testHelper_setMinimizedCall(_ conversation: ZMConversation?) {
+    func testHelper_setMinimizedCall(_ conversation: ZMConversation?) {
         minimizedCall = conversation
     }
 }

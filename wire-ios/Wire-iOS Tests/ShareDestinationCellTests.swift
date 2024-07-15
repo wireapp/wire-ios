@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import XCTest
 @testable import Wire
+import XCTest
 
 // MARK: - MockDestination
 
@@ -51,7 +51,7 @@ final class MockDestination: NSObject, ShareDestination {
 
 // MARK: - ShareDestinationCellTests
 
-final class ShareDestinationCellTests: BaseSnapshotTestCase {
+final class ShareDestinationCellTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -73,7 +73,7 @@ final class ShareDestinationCellTests: BaseSnapshotTestCase {
         // swiftlint:disable todo_requires_jira_link
         // TODO: check what would be the default value after test
         // swiftlint:enable todo_requires_jira_link
-        accentColor = .vividRed
+        accentColor = .red
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
         sut.overrideUserInterfaceStyle = .dark
         sut.backgroundColor = .black

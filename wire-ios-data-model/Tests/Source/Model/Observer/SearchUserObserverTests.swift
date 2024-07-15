@@ -17,12 +17,12 @@
 //
 
 import Foundation
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
-    final class TestSearchUserObserver: UserObserving {
+    private final class TestSearchUserObserver: UserObserving {
 
         var receivedChangeInfo: [UserChangeInfo] = []
 
@@ -31,7 +31,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         }
     }
 
-    var testObserver: TestSearchUserObserver!
+    private var testObserver: TestSearchUserObserver!
 
     override func setUp() {
         super.setUp()
@@ -47,8 +47,8 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfASmallProfilePictureChange() {
 
         // given
-        let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let remoteID = UUID()
+        let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -67,15 +67,15 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
         // given
         let user = ZMUser.insertNewObject(in: self.uiMOC)
-        user.remoteIdentifier = UUID.create()
+        user.remoteIdentifier = UUID()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
+        let searchUser = makeSearchUser(name: "", remoteIdentifier: nil, user: user)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
 
         // when
-        user.previewProfileAssetIdentifier = UUID.create().transportString()
+        user.previewProfileAssetIdentifier = UUID().transportString()
         user.setImage(data: verySmallJPEGData(), size: .preview)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -89,8 +89,8 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
 
         // given
-        let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let remoteID = UUID()
+        let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -106,8 +106,8 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesObserversWhenConnectingToASearchUserThatHasNoLocalUser() {
 
         // given
-        let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let remoteID = UUID()
+        let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
         let actionHandler = MockActionHandler<ConnectToUserAction>(result: .success(()),
                                                                    context: uiMOC.notificationContext)
 
@@ -127,4 +127,21 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         XCTAssertTrue(note.connectionStateChanged)
     }
 
+    // MARK: - Helpers
+
+    private func makeSearchUser(
+        name: String,
+        remoteIdentifier: UUID?,
+        user: ZMUser? = nil
+    ) -> ZMSearchUser {
+        ZMSearchUser(
+            contextProvider: coreDataStack,
+            name: name,
+            handle: name.lowercased(),
+            accentColor: .amber,
+            remoteIdentifier: remoteIdentifier,
+            user: user,
+            searchUsersCache: nil
+        )
+    }
 }

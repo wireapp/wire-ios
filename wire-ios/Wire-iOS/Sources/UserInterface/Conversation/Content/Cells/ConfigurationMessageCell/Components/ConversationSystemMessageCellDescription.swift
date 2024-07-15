@@ -189,7 +189,7 @@ final class ConversationSystemMessageCellDescription {
             return cells
 
         case .failedToAddParticipants:
-            if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction = buttonAction {
+            if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {
 
                 let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(
                     failedUsers: users,

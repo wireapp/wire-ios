@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireDesign
 
 final class ContactsViewController: UIViewController {
 
@@ -68,6 +68,11 @@ final class ContactsViewController: UIViewController {
         setupLayout()
         setupStyle()
         observeKeyboardFrame()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(ContactsUI.title.capitalized)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -133,7 +138,6 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
-        navigationItem.setupNavigationBarTitle(title: ContactsUI.title.capitalized)
 
         view.backgroundColor = .clear
 
@@ -198,10 +202,10 @@ final class ContactsViewController: UIViewController {
         let padding: CGFloat = 12
 
         UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
-            guard let weakSelf = self else { return }
-            weakSelf.bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
-            weakSelf.bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
-            weakSelf.view.layoutIfNeeded()
+            guard let self else { return }
+            bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
+            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
+            view.layoutIfNeeded()
         })
     }
 

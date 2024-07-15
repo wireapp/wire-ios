@@ -62,7 +62,7 @@ extension SessionManager: APIVersionResolverDelegate {
 
     private func migrateSessions(_ sessions: [ZMUserSession], to apiVersion: APIVersion) {
         delegate?.sessionManagerWillMigrateAccount { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             Task {
                 await self.apiMigrationManager.migrateIfNeeded(
                     sessions: sessions,
@@ -88,30 +88,32 @@ extension SessionManager: APIVersionResolverDelegate {
         let dispatchQueue = DispatchQueue(label: "Accounts Migration Queue", qos: .userInitiated)
 
         dispatchQueue.async { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.activeUserSession = nil
             self.accountManager.accounts.forEach { account in
 
                 // 1. Tear down the user sessions
-                DispatchQueue.main.sync {
-                    self.tearDownBackgroundSession(for: account.userIdentifier)
-                }
-
-                // 2. Migrate users and conversations
-                CoreDataStack.migrateLocalStorage(
-                    accountIdentifier: account.userIdentifier,
-                    applicationContainer: self.sharedContainerURL,
-                    dispatchGroup: dispatchGroup,
-                    migration: {
-                        try $0.migrateToFederation()
-                    },
-                    completion: { result in
-                        if case .failure = result {
-                            log.error("Failed to migrate account for federation")
-                        }
+                DispatchQueue.main.async {
+                    dispatchGroup.enter()
+                    self.tearDownBackgroundSession(for: account.userIdentifier) {
+                        // 2. Migrate users and conversations
+                        CoreDataStack.migrateLocalStorage(
+                            accountIdentifier: account.userIdentifier,
+                            applicationContainer: self.sharedContainerURL,
+                            dispatchGroup: dispatchGroup,
+                            migration: {
+                                try $0.migrateToFederation()
+                            },
+                            completion: { result in
+                                if case .failure = result {
+                                    log.error("Failed to migrate account for federation")
+                                }
+                            }
+                        )
+                        dispatchGroup.leave()
                     }
-                )
+                }
             }
 
             // The migration above will call enter() / leave() on the dispatch group

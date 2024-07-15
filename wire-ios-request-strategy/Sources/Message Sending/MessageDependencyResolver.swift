@@ -43,6 +43,10 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 message.conversation?.isDegraded == true
             }
 
+            let shouldIgnoreTheSecurityLevelCheck = await self.context.perform {
+                message.shouldIgnoreTheSecurityLevelCheck
+            }
+
             let legalHoldPendingApproval = await self.context.perform {
                 message.conversation?.legalHoldStatus == .pendingApproval
             }
@@ -51,7 +55,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 throw MessageDependencyResolverError.legalHoldPendingApproval
             }
 
-            if isSecurityLevelDegraded {
+            if isSecurityLevelDegraded && !shouldIgnoreTheSecurityLevelCheck {
                 throw MessageDependencyResolverError.securityLevelDegraded
             }
 
@@ -59,11 +63,13 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 message.dependentObjectNeedingUpdateBeforeProcessing != nil
             }
 
+            let logAttributes = await MessageLogAttributesBuilder(context: context).logAttributes(message)
+
             if !hasDependencies {
-                WireLogger.messaging.debug("Message dependency resolved")
+                WireLogger.messaging.debug("Message dependency resolved", attributes: logAttributes)
                 return true
             } else {
-                WireLogger.messaging.debug("Message has dependency, waiting")
+                WireLogger.messaging.debug("Message has dependency, waiting", attributes: logAttributes)
                 return false
             }
         }

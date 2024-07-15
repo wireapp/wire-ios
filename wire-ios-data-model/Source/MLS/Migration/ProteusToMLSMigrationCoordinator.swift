@@ -17,9 +17,10 @@
 //
 
 import Foundation
-import WireUtilities
 import WireTransport
+import WireUtilities
 
+// sourcery: AutoMockable
 public protocol ProteusToMLSMigrationCoordinating {
     func updateMigrationStatus() async throws
 }

@@ -17,10 +17,12 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
+import WireDataModel
 
 extension ZMUserSession: UserSession {
+
+    // MARK: Properties
 
     public var lock: SessionLock? {
         if isDatabaseLocked {
@@ -78,6 +80,14 @@ extension ZMUserSession: UserSession {
         }
     }
 
+    // MARK: Dependency Injection
+
+    public var searchUsersCache: SearchUsersCache {
+        dependencies.caches.searchUsers
+    }
+
+    // MARK: Methods
+
     public func openAppLock() throws {
         try appLockController.open()
     }
@@ -101,7 +111,7 @@ extension ZMUserSession: UserSession {
     public func unlockDatabase() throws {
         try earService.unlockDatabase()
 
-        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
+        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
 
         processEvents()
     }
@@ -110,12 +120,16 @@ extension ZMUserSession: UserSession {
         try appLockController.deletePasscode()
     }
 
-    public var selfUser: UserType {
-        return ZMUser.selfUser(inUserSession: self)
+    public var selfUser: any UserType {
+        ZMUser.selfUser(inUserSession: self)
     }
 
-    public var selfLegalHoldSubject: UserType & SelfLegalHoldSubject {
-        return ZMUser.selfUser(inUserSession: self)
+    public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
+        ZMUser.selfUser(inUserSession: self)
+    }
+
+    public var editableSelfUser: any EditableUserType & UserType {
+        ZMUser.selfUser(inUserSession: self)
     }
 
     public func addUserObserver(
@@ -178,7 +192,7 @@ extension ZMUserSession: UserSession {
 
     public func addConversationListObserver(
         _ observer: ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol {
         return ConversationListChangeInfo.add(
             observer: observer,
@@ -187,16 +201,16 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public func conversationList() -> ZMConversationList {
-        return .conversations(inUserSession: self)
+    public func conversationList() -> ConversationList {
+        .conversations(inUserSession: self)!
     }
 
-    public func pendingConnectionConversationsInUserSession() -> ZMConversationList {
-        return .pendingConnectionConversations(inUserSession: self)
+    public func pendingConnectionConversationsInUserSession() -> ConversationList {
+        .pendingConnectionConversations(inUserSession: self)!
     }
 
-    public func archivedConversationsInUserSession() -> ZMConversationList {
-        return .archivedConversations(inUserSession: self)
+    public func archivedConversationsInUserSession() -> ConversationList {
+        .archivedConversations(inUserSession: self)!
     }
 
     public var ringingCallConversation: ZMConversation? {
@@ -289,9 +303,24 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        CheckOneOnOneConversationIsReadyUseCase(
+            context: syncContext,
+            coreCryptoProvider: coreCryptoProvider
+        )
+    }
+
     public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let featureRepository = FeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
+    }
+
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        return CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+    }
+
+    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        return SetAllowGuestAndServicesUseCase()
     }
 
     @MainActor

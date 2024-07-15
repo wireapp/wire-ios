@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsE2EIdentityCertificateView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -34,26 +35,26 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 case .notActivated:
                     viewForStatus(
                         statusText: status.title,
-                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        textColor: Color(uiColor: SemanticColors.Label.textCertificateInvalid),
                         image: status.image
                     )
                 case .revoked:
                     viewForStatus(
                         statusText: status.title,
-                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        textColor: Color(uiColor: SemanticColors.Label.textCertificateInvalid),
                         image: status.image
                     )
                 case .expired:
                     viewForStatus(
                         statusText: status.title,
-                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        textColor: Color(uiColor: SemanticColors.Label.textCertificateInvalid),
                         image: status.image
                     )
 
                 case .invalid:
                     viewForStatus(
                         statusText: status.title,
-                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        textColor: Color(uiColor: SemanticColors.Label.textCertificateInvalid),
                         image: status.image
                     )
 
@@ -61,21 +62,21 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                     viewForStatus(
                         titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
                         statusText: status.title,
-                        textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
+                        textColor: Color(uiColor: SemanticColors.Label.textCertificateValid),
                         image: status.image
                     )
                 }
             }
             Spacer()
         }
-        if let serialNumber = viewModel.serialNumber, serialNumber.isNonEmpty {
+        if let serialNumber = viewModel.serialNumber, !serialNumber.isEmpty {
             Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
-                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                 .padding(.top, ViewConstants.Padding.medium)
                 .padding(.bottom, ViewConstants.Padding.small)
             Text(serialNumber)
-            .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
+                .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
         }
     }
 
@@ -89,7 +90,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
         VStack(alignment: .leading) {
             Text(titleText)
                 .font(FontSpec.mediumSemiboldFont.swiftUIFont)
-                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                 .multilineTextAlignment(.leading)
             HStack {
                 Text(statusText)

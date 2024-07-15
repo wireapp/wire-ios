@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
+import CallKit
 import Foundation
 import PushKit
-import CallKit
-import avs
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 
@@ -184,7 +184,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
     ) {
         Self.logger.trace("process voIP push, payload: \(payload)")
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             Self.logger.info("no delegate, ignoring...")
             return
         }
