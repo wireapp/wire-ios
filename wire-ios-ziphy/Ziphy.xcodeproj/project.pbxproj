@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -297,7 +297,6 @@
 				DBF380561B15C0B800369FB7 /* Headers */,
 				DBF380541B15C0B800369FB7 /* Sources */,
 				DBF380551B15C0B800369FB7 /* Frameworks */,
-				E91CAE9F27623A64005B13F0 /* Run SwiftLint */,
 				DBF380571B15C0B800369FB7 /* Resources */,
 			);
 			buildRules = (
@@ -387,29 +386,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		E91CAE9F27623A64005B13F0 /* Run SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run SwiftLint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DBF380541B15C0B800369FB7 /* Sources */ = {

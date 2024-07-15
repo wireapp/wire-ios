@@ -26,7 +26,7 @@ import UniformTypeIdentifiers
 @objc
 public final class UTIHelper: NSObject {
 
-    private class func conformsTo(uti: String, type: UTType) -> Bool {
+    private static func conformsTo(uti: String, type: UTType) -> Bool {
         guard let utType = UTType(uti) else {
             return false
         }
@@ -36,12 +36,12 @@ public final class UTIHelper: NSObject {
 
     // MARK: - UTI conformation
 
-    public class func conformsToGifType(uti: String) -> Bool {
+    public static func conformsToGifType(uti: String) -> Bool {
         return conformsTo(uti: uti, type: .gif)
     }
 
     @objc
-    public class func conformsToImageType(uti: String) -> Bool {
+    public static func conformsToImageType(uti: String) -> Bool {
         guard let utType = UTType(uti) else {
             return false
         }
@@ -50,24 +50,24 @@ public final class UTIHelper: NSObject {
     }
 
     @objc
-    public class func conformsToVectorType(uti: String) -> Bool {
+    public static func conformsToVectorType(uti: String) -> Bool {
         return UTType(uti)?.conforms(to: .svg) ?? false
     }
 
     @objc
-    public class func conformsToJsonType(uti: String) -> Bool {
+    public static func conformsToJsonType(uti: String) -> Bool {
         return UTType(uti)?.conforms(to: .json) ?? false
     }
 
     // MARK: - MIME conformation
 
-    public class func conformsToGifType(mime: String) -> Bool {
+    public static func conformsToGifType(mime: String) -> Bool {
         guard let uti = convertToUti(mime: mime) else { return false }
 
         return conformsToGifType(uti: uti)
     }
 
-    public class func conformsToAudioType(mime: String) -> Bool {
+    public static func conformsToAudioType(mime: String) -> Bool {
         guard let uti = convertToUti(mime: mime) else {
             return false
         }
@@ -77,7 +77,7 @@ public final class UTIHelper: NSObject {
         }
     }
 
-    public class func conformsToMovieType(mime: String) -> Bool {
+    public static func conformsToMovieType(mime: String) -> Bool {
         guard let uti = convertToUti(mime: mime) else {
             return false
         }
@@ -89,7 +89,7 @@ public final class UTIHelper: NSObject {
         }
     }
 
-    public class func conformsToVectorType(mime: String) -> Bool {
+    public static func conformsToVectorType(mime: String) -> Bool {
         guard let uti = convertToUti(mime: mime) else { return false }
 
         return conformsToVectorType(uti: uti)
@@ -97,7 +97,7 @@ public final class UTIHelper: NSObject {
 
     // MARK: - converters
 
-    public class func convertToFileExtension(mime: String) -> String? {
+    public static func convertToFileExtension(mime: String) -> String? {
         var utType: UTType? = UTType(mimeType: mime)
 
         // for uttype not conforming data, e.g pkpass, retry with conformingTo: nil
@@ -109,7 +109,7 @@ public final class UTIHelper: NSObject {
     }
 
     @objc
-    public class func convertToUti(mime: String) -> String? {
+    public static func convertToUti(mime: String) -> String? {
         guard let utType = UTType(mimeType: mime) else {
             return nil
         }
@@ -117,7 +117,7 @@ public final class UTIHelper: NSObject {
         return utType.identifier
     }
 
-    public class func convertToMime(fileExtension: String) -> String? {
+    public static func convertToMime(fileExtension: String) -> String? {
         guard let utType = UTType(tag: fileExtension, tagClass: .filenameExtension, conformingTo: nil) else {
             return nil
         }
@@ -125,12 +125,12 @@ public final class UTIHelper: NSObject {
         return mime(from: utType)
     }
 
-    private class func mime(from utType: UTType) -> String? {
+    private static func mime(from utType: UTType) -> String? {
         return utType.preferredMIMEType
     }
 
     @objc
-    public class func convertToMime(uti: String) -> String? {
+    public static func convertToMime(uti: String) -> String? {
         guard let utType = UTType(uti) else {
             return nil
         }
