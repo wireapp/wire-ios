@@ -31,7 +31,7 @@ public enum BackendInfo {
 
     private static let productionStorage = UserDefaults.standard
 
-    // TODO: add private(set) after test methods?
+    // make scope private(set) after updating all methods
     public static var storage = productionStorage
 
     /// The currently selected API Version.
