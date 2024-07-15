@@ -27,7 +27,8 @@ let package = Package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
         ),
-        .package(path: "../SourceryPlugin")
+        .package(path: "../SourceryPlugin"),
+        .package(path: "../WireMacros")
     ],
     targets: [
         .target(
@@ -47,6 +48,7 @@ let package = Package(
             name: "WireAPITests",
             dependencies: [
                 "WireAPI",
+                "WireMacros",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
