@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "A6812806-2731-4498-8D38-338B8651511D",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireMacrosTests",
+        "name" : "WireMacrosTests"
+      }
+    }
+  ],
+  "version" : 1
+}

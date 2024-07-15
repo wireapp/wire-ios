@@ -1,9 +1,10 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-/// A macro that, when attached to
-/// a protocol declaration, produces a companion "provider" protocol
-/// that can be used inject dependencies.
+import Foundation
+
+/// A macro that, when attached to a protocol declaration, produces a
+/// companion "provider" protocol that can be used inject dependencies.
 ///
 /// For example:
 ///
@@ -46,4 +47,27 @@
 ///     }
 
 @attached(peer, names: suffixed(Provider))
-public macro Provided() = #externalMacro(module: "WireMacrosMacros", type: "ProvidedMacro")
+public macro Provided() = #externalMacro(
+    module: "WireMacrosMacros",
+    type: "ProvidedMacro"
+)
+
+/// A macro that validates UUID strings.
+///
+/// For example:
+///
+///     let validUUID = #UUID("7411ca17-ba08-4905-92d2-0617a8c810ca")
+///
+/// will compile and produce a non-optional `UUID`. On the otherhand:
+///
+///     let invalidUUID = #UUID("foo")
+///
+/// will throw a compile time error.
+
+@freestanding(expression)
+public macro UUID(
+    _ stringLiteral: String
+) -> UUID = #externalMacro(
+    module: "WireMacrosMacros",
+    type: "UUIDMacro"
+)

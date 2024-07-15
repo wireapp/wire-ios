@@ -1,22 +1,42 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-// Macro implementations build for the host, so the corresponding module is not available when cross-compiling. Cross-compiled tests may still make use of the macro itself in end-to-end tests.
+// Macro implementations build for the host, so the corresponding module is not available 
+// when cross-compiling. Cross-compiled tests may still make use of the macro itself in
+// end-to-end tests.
 #if canImport(WireMacrosMacros)
 import WireMacrosMacros
 
-let testMacros: [String: Macro.Type] = [
-    "Provided": ProvidedMacro.self,
+private let testMacros: [String: Macro.Type] = [
+    "Provided": ProvidedMacro.self
 ]
 #endif
 
-final class WireMacrosTests: XCTestCase {
-    
+final class ProvidedMacrosTests: XCTestCase {
+
     func testItCreatesPublicProviderProtocol() throws {
-        #if canImport(ProviderMacroMacros)
+        #if canImport(WireMacrosMacros)
         assertMacroExpansion(
             """
             @Provided
@@ -43,7 +63,7 @@ final class WireMacrosTests: XCTestCase {
     }
 
     func testItCreatesInternalProviderProtocol() throws {
-        #if canImport(ProviderMacroMacros)
+        #if canImport(WireMacrosMacros)
         assertMacroExpansion(
             """
             @Provided
@@ -70,7 +90,7 @@ final class WireMacrosTests: XCTestCase {
     }
 
     func testItDoesNotCreatePrivateProviderProtocol() throws {
-        #if canImport(ProviderMacroMacros)
+        #if canImport(WireMacrosMacros)
         assertMacroExpansion(
             """
             @Provided
@@ -98,7 +118,7 @@ final class WireMacrosTests: XCTestCase {
     }
 
     func testItThrowsErrorIfNotAttachedToProtocol() throws {
-        #if canImport(ProviderMacroMacros)
+        #if canImport(WireMacrosMacros)
         assertMacroExpansion(
             """
             @Provided
@@ -126,3 +146,4 @@ final class WireMacrosTests: XCTestCase {
     }
 
 }
+

@@ -127,4 +127,7 @@
    <FileRef
       location = "group:SourceryPlugin">
    </FileRef>
+   <FileRef
+      location = "group:WireMacros/Tests/WireMacrosTests/WireMacros.xctestplan">
+   </FileRef>
 </Workspace>

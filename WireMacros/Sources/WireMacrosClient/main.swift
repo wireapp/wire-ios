@@ -1,3 +1,4 @@
+import Foundation
 import WireMacros
 
 @Provided
@@ -22,3 +23,6 @@ struct FooUseCaseProvider: FooUseCaseProtocolProvider {
     }
 
 }
+
+let uuid = #UUID("7411ca17-ba08-4905-92d2-0617a8c810ca")
+print(uuid)

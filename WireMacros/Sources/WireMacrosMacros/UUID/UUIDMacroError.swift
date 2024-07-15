@@ -16,13 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftCompilerPlugin
-import SwiftSyntaxMacros
+public enum UUIDMacroError: Error, CustomStringConvertible {
 
-@main
-struct WireMacrosPlugin: CompilerPlugin {
-    let providingMacros: [Macro.Type] = [
-        ProvidedMacro.self,
-        UUIDMacro.self
-    ]
+    case requiresStringLiteralArgument
+    case invalidUUID(String)
+
+    public var description: String {
+        switch self {
+        case .requiresStringLiteralArgument:
+            "#UUID requires a string literal argument."
+        case .invalidUUID(let string):
+            "\(string) is not a valid UUID."
+        }
+    }
+
 }
+

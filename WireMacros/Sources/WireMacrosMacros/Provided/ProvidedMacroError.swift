@@ -16,13 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftCompilerPlugin
-import SwiftSyntaxMacros
+public enum ProvidedMacroError: Error, CustomStringConvertible {
 
-@main
-struct WireMacrosPlugin: CompilerPlugin {
-    let providingMacros: [Macro.Type] = [
-        ProvidedMacro.self,
-        UUIDMacro.self
-    ]
+    case notAttachedToProtocol
+    case privateProtocol
+
+    public var description: String {
+        switch self {
+        case .notAttachedToProtocol:
+            "@Provided can only be attached to a protocol"
+
+        case .privateProtocol:
+            "@Provided can not be attached to a private protocol"
+        }
+    }
+
 }
