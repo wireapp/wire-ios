@@ -41,6 +41,4 @@ extension UIApplication.State: CustomStringConvertible {
             "unknown"
         }
     }
-
-
 }
