@@ -236,7 +236,7 @@ public extension WireLogger {
     static let pushChannel = WireLogger(tag: "push-channel")
     static let eventProcessing = WireLogger(tag: "event-processing")
     static let safeFileContext = WireLogger(tag: "safe-file-context")
-
+    static let messageProcessing = WireLogger(tag: "message-processing")
 }
 
 /// Class to proxy WireLogger methods to Objective-C
