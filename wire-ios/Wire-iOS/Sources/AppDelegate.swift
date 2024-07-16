@@ -72,6 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
+    // TODO: [WPB-8778] make private [not private(set)]
     /*private*/ private(set) var keyWindow: UIWindow!
 
     // Singletons
@@ -81,11 +82,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var launchOptions: LaunchOptions = [:]
 
+    // TODO: [WPB-8778] remove, don't access anything regarding UIApplication, delegate, windows etc., but inject whatever is needed instead
+    @available(*, deprecated, message: "Will be removed")
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
     // TODO [WPB-9867]: remove this property
+    @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
         return appRootRouter?.rootViewController
             .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
@@ -299,10 +303,10 @@ private extension AppDelegate {
             shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        let splitViewController = UISplitViewController(style: .tripleColumn)
-        splitViewController.setViewController(rootViewController, for: .primary)
+        // let splitViewController = UISplitViewController(style: .tripleColumn)
+        // splitViewController.setViewController(rootViewController, for: .secondary)
 
-        keyWindow.rootViewController = splitViewController
+        keyWindow.rootViewController = rootViewController // splitViewController
         keyWindow.makeKeyAndVisible()
     }
 
@@ -315,10 +319,11 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        guard
-            let splitViewController = keyWindow.rootViewController as? UISplitViewController,
-            let viewController = splitViewController.viewController(for: .primary) as? RootViewController
-        else {
+        // guard
+        //     let splitViewController = keyWindow.rootViewController as? UISplitViewController,
+        //     let viewController = splitViewController.viewController(for: .primary) as? RootViewController
+        // else {
+        guard let viewController = keyWindow.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {

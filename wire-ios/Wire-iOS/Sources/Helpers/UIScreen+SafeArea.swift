@@ -18,8 +18,11 @@
 
 import UIKit
 
+// TODO: [WPB-8778] remove the whole file
+
 extension UIScreen {
 
+    @available(*, deprecated, message: "Use `safeAreaInsets` of UIView.")
     static var safeArea: UIEdgeInsets {
         if hasNotch {
             return AppDelegate.shared.keyWindow.safeAreaInsets
@@ -27,6 +30,7 @@ extension UIScreen {
         return UIEdgeInsets(top: 20.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 
+    @available(*, deprecated, message: "Will be removed")
     static var hasBottomInset: Bool {
         guard let window = AppDelegate.shared.keyWindow else { return false }
         let insets = window.safeAreaInsets
@@ -34,6 +38,7 @@ extension UIScreen {
         return insets.bottom > 0
     }
 
+    @available(*, deprecated, message: "Will be removed")
     static var hasNotch: Bool {
         // On iOS12 insets.top == 20 on device without notch.
         // insets.top == 44 on device with notch.
@@ -43,6 +48,7 @@ extension UIScreen {
         return insets.top > 20 || insets.bottom > 0
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var isCompact: Bool {
         return bounds.size.height <= 568
     }
