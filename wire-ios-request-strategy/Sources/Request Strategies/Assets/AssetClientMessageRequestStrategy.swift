@@ -80,7 +80,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
-     
+                
                 await managedObjectContext.perform {
                     object.expire()
                     self.managedObjectContext.enqueueDelayedSave()

@@ -60,11 +60,12 @@ public class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
-        let isSafe = attributes?["public"] as? Bool == true
+        // TODO: [WPB-6432] enable when ZMSLog is cleaned up
+        /*let isSafe = attributes?["public"] as? Bool == true
         guard isDebug || isSafe else {
             // skips logs in production builds with non redacted info
             return
-        }
+        }*/
 
         var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: attributes))"
 
