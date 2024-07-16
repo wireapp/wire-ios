@@ -68,7 +68,7 @@ extension AddressBookAccessor {
     /// - parameter maxNumberOfContacts: do not include more than this number of contacts
     /// - parameter startingContactIndex: include contacts starting from this index in the address book
     func encodeWithCompletionHandler(
-        _ groupQueue: ZMSGroupQueue,
+        _ groupQueue: GroupQueue,
         startingContactIndex: UInt,
         maxNumberOfContacts: UInt,
         completion: @escaping (EncodedAddressBookChunk?) -> Void

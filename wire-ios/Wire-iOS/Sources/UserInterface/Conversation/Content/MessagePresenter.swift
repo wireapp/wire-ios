@@ -149,8 +149,7 @@ final class MessagePresenter: NSObject {
         } else if
             fileMessageData.isVideo,
             let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
-            let mediaPlaybackManager
-        {
+            let mediaPlaybackManager {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()

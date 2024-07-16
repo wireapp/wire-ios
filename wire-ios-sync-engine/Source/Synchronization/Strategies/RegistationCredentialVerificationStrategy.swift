@@ -22,7 +22,7 @@ final class RegistationCredentialVerificationStrategy: NSObject {
     let registrationStatus: RegistrationStatusProtocol
     var codeSendingSync: ZMSingleRequestSync!
 
-    init(groupQueue: ZMSGroupQueue, status: RegistrationStatusProtocol) {
+    init(groupQueue: GroupQueue, status: RegistrationStatusProtocol) {
         registrationStatus = status
         super.init()
         codeSendingSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)

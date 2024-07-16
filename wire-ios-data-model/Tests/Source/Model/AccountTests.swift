@@ -132,7 +132,7 @@ final class AccountTests: XCTestCase {
         let id = UUID()
         let sut = Account(userName: "Alice", userIdentifier: id)
         let item = AppLockController.PasscodeKeychainItem(userId: id)
-        let data = try XCTUnwrap("passscode".data(using: .utf8))
+        let data = try XCTUnwrap(Data("passscode".utf8))
 
         try Keychain.storeItem(item, value: data)
         XCTAssertNoThrow(try Keychain.fetchItem(item))
