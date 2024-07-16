@@ -39,13 +39,16 @@ final class DebugAlert {
     }
 
     /// Presents an alert to send logs, if in developer mode, otherwise do nothing
-    static func showSendLogsMessage(message: String) {
+    static func showSendLogsMessage(
+        message: String,
+        presentingViewController: UIViewController
+    ) {
         let action1 = Action(text: "Send to Devs", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(message: message)
+            DebugLogSender.sendLogsByEmail(message: message, shareWithAVS: false, presentingViewController: presentingViewController)
         }
 
         let action2 = Action(text: "Send to Devs & AVS", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(message: message, shareWithAVS: true)
+            DebugLogSender.sendLogsByEmail(message: message, shareWithAVS: true, presentingViewController: presentingViewController)
         }
 
         self.show(
@@ -62,7 +65,7 @@ final class DebugAlert {
         actions: [Action] = [Action(text: "OK", type: .default, action: nil)],
         title: String = "DEBUG MESSAGE",
         cancelText: String? = "Cancel"
-        ) {
+    ) {
 
         guard Bundle.developerModeEnabled else { return }
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false), !isShown else { return }
@@ -130,8 +133,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     }
 
     /// Sends recorded logs by email
-    static func sendLogsByEmail(message: String, shareWithAVS: Bool = false) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+    static func sendLogsByEmail(
+        message: String,
+        shareWithAVS: Bool,
+        presentingViewController: UIViewController
+    ) {
         guard self.senderInstance == nil else { return }
 
         guard areDebugLogsPresent else {
@@ -147,8 +153,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-
-            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: controller)
+            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: presentingViewController)
             return
         }
 
@@ -170,7 +175,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         Task {
             await mailVC.attachLogs()
             // as UIViewController is marked @MainActor, this will be executed on mainThread automatically
-            await controller.present(mailVC, animated: true, completion: nil)
+            await presentingViewController.present(mailVC, animated: true, completion: nil)
         }
     }
 
