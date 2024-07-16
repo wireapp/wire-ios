@@ -74,6 +74,8 @@
 		EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A292C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift */; };
 		EEAD0A2C2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A2B2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift */; };
 		EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A2D2C46B01900CC8658 /* UserUpdateEventProcessor.swift */; };
+		EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */; };
+		EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +163,8 @@
 		EEAD0A292C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesDeleteEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A2B2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPushRemoveEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A2D2C46B01900CC8658 /* UserUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationConnectionRemovedEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -333,7 +337,7 @@
 			children = (
 				EEAD09F02C46602300CC8658 /* ConversationEventProcessor */,
 				EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */,
-				EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */,
+				EEAD0A2F2C46B97700CC8658 /* FederationEventProcessor */,
 				EEAD0A0F2C46A32A00CC8658 /* TeamEventProcessor */,
 				EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */,
 				EEAD0A162C46A87100CC8658 /* UserEventProcessor */,
@@ -412,6 +416,16 @@
 				EEAD0A2D2C46B01900CC8658 /* UserUpdateEventProcessor.swift */,
 			);
 			path = UserEventProcessor;
+			sourceTree = "<group>";
+		};
+		EEAD0A2F2C46B97700CC8658 /* FederationEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */,
+				EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */,
+				EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */,
+			);
+			path = FederationEventProcessor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -613,6 +627,7 @@
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */,
 				EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */,
+				EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
 				EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */,
 				EEAD0A282C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift in Sources */,
@@ -629,6 +644,7 @@
 				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
+				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
 				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
 				EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
