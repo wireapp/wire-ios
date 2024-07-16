@@ -337,11 +337,11 @@
 		EE368CCD2C2DAA87009DBAB0 /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
+				EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */,
 				EEAD09F02C46602300CC8658 /* ConversationEventProcessor */,
 				EEAD0A342C46BB7500CC8658 /* FeatureConfigEventProcessor */,
 				EEAD0A2F2C46B97700CC8658 /* FederationEventProcessor */,
 				EEAD0A0F2C46A32A00CC8658 /* TeamEventProcessor */,
-				EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */,
 				EEAD0A162C46A87100CC8658 /* UserEventProcessor */,
 			);
 			path = "Event Processing";
