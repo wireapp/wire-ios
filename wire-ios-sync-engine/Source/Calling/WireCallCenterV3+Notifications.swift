@@ -98,13 +98,7 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
      - parameter caller: user which initiated the call
      - parameter timestamp: when the call state change occured
      */
-    func callCenterDidChange(
-        callState: CallState,
-        conversation: ZMConversation,
-        caller: UserType,
-        timestamp: Date?,
-        previousCallState: CallState?
-    )
+    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?)
 }
 
 public struct WireCallCenterCallStateNotification: SelfPostingNotification {
@@ -217,10 +211,8 @@ extension WireCallCenterV3 {
 
     /// Register observer of the call center call state in all user sessions.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addGlobalCallStateObserver(
-        observer: WireCallCenterCallStateObserver
-    ) -> Any {
-        NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] note in
+    class func addGlobalCallStateObserver(observer: WireCallCenterCallStateObserver) -> Any {
+        return NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
                let context = note.context,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
@@ -230,13 +222,7 @@ extension WireCallCenterV3 {
                                                        domain: note.conversationId.domain,
                                                        in: context) {
 
-                observer?.callCenterDidChange(
-                    callState: note.callState,
-                    conversation: conversation,
-                    caller: caller,
-                    timestamp: note.messageTime,
-                    previousCallState: note.previousCallState
-                )
+                observer?.callCenterDidChange(callState: note.callState, conversation: conversation, caller: caller, timestamp: note.messageTime, previousCallState: note.previousCallState)
             }
         }
     }
@@ -259,40 +245,21 @@ extension WireCallCenterV3 {
 
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    public class func addCallStateObserver(
-        observer: WireCallCenterCallStateObserver,
-        for conversation: ZMConversation,
-        userSession: ZMUserSession
-    ) -> Any {
-        addCallStateObserver(
-            observer: observer,
-            for: conversation,
-            context: userSession.managedObjectContext
-        )
+    public class func addCallStateObserver(observer: WireCallCenterCallStateObserver, for conversation: ZMConversation, userSession: ZMUserSession) -> Any {
+        return addCallStateObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    internal class func addCallStateObserver(
-        observer: WireCallCenterCallStateObserver,
-        for conversation: ZMConversation,
-        context: NSManagedObjectContext
-    ) -> Any {
-        NotificationInContext.addObserver(name: WireCallCenterCallStateNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+    internal class func addCallStateObserver(observer: WireCallCenterCallStateObserver, for conversation: ZMConversation, context: NSManagedObjectContext) -> Any {
+        return NotificationInContext.addObserver(name: WireCallCenterCallStateNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
                                          domain: note.callerId.domain,
                                          in: context),
                note.conversationId == conversation.avsIdentifier {
 
-                observer?.callCenterDidChange(
-                    callState: note.callState,
-                    conversation: conversation,
-                    caller: caller,
-                    timestamp: note.messageTime,
-                    previousCallState: note.previousCallState,
-                    alertPresenter: <#UIViewController#>
-                )
+                observer?.callCenterDidChange(callState: note.callState, conversation: conversation, caller: caller, timestamp: note.messageTime, previousCallState: note.previousCallState)
             }
         }
     }

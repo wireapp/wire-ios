@@ -6542,7 +6542,6 @@
 				D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */,
 				E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */,
 				E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */,
-				06717E582865178F00AF442C /* SemanticColors.swift */,
 				E986CAA7287D979300AF39E1 /* UIApplication+wr_keyWindow.swift */,
 				E57917B028999A240063339D /* UIView+Borders.swift */,
 				E9D6C37C289A9DC100861E4C /* StylableButton.swift */,

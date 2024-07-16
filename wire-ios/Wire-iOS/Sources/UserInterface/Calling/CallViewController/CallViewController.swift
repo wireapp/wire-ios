@@ -284,7 +284,7 @@ final class CallViewController: UIViewController {
         userSession.enqueue({
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
         }, completionHandler: {
-            self.conversation?.joinCall(alertPresenter: self)
+            self.conversation?.joinCall()
         })
     }
 
@@ -294,16 +294,15 @@ final class CallViewController: UIViewController {
     }
 
     private func updateConfiguration() {
-        callInfoConfiguration = CallInfoConfiguration(
-            voiceChannel: voiceChannel,
-            preferedVideoPlaceholderState: preferedVideoPlaceholderState,
-            permissions: permissions,
-            cameraType: cameraType,
-            mediaManager: mediaManager,
-            userEnabledCBR: CallViewController.userEnabledCBR,
-            classification: classification,
-            selfUser: userSession.selfUser
-        )
+        callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
+                                                      preferedVideoPlaceholderState: preferedVideoPlaceholderState,
+                                                      permissions: permissions,
+                                                      cameraType: cameraType,
+                                                      mediaManager: mediaManager,
+                                                      userEnabledCBR: CallViewController.userEnabledCBR,
+                                                      classification: classification,
+                                                      selfUser: userSession.selfUser)
+
         callInfoRootViewController.configuration = callInfoConfiguration
         callGridConfiguration = CallGridConfiguration(voiceChannel: voiceChannel)
         callGridViewController.configuration = callGridConfiguration
@@ -382,7 +381,7 @@ final class CallViewController: UIViewController {
 
     func toggleVideoState() {
         if !permissions.canAcceptVideoCalls {
-            permissions.requestOrWarnAboutVideoPermission(alertPresenter: self) { isVideoPermissionGranted in
+            permissions.requestOrWarnAboutVideoPermission { isVideoPermissionGranted in
                 self.disableVideoIfNeeded()
                 self.updateVideoStatusPlaceholder()
                 guard isVideoPermissionGranted else { return }
@@ -482,7 +481,7 @@ extension CallViewController {
             fatalError("Trying to accept a call for a voice channel without conversation.")
         }
 
-        permissions.requestOrWarnAboutAudioPermission(alertPresenter: self) { audioGranted in
+        permissions.requestOrWarnAboutAudioPermission { audioGranted in
             guard audioGranted else {
                 guard let userSession = self.userSession as? ZMUserSession else { return }
                 return self.voiceChannel.leave(userSession: userSession, completion: nil)
@@ -491,7 +490,7 @@ extension CallViewController {
             conversation.confirmJoiningCallIfNeeded(alertPresenter: self, forceAlertModal: true) {
                 self.checkVideoPermissions { videoGranted in
                     let video = videoGranted && self.voiceChannel.videoState.isSending
-                    conversation.joinVoiceChannel(alertPresenter: self, video: video)
+                    conversation.joinVoiceChannel(video: video)
                     self.disableVideoIfNeeded()
                 }
             }
@@ -507,7 +506,7 @@ extension CallViewController {
             return
         }
 
-        permissions.requestVideoPermissionWithoutWarning(alertPresenter: self) { granted in
+        permissions.requestVideoPermissionWithoutWarning { granted in
             resultHandler(granted)
             self.disableVideoIfNeeded()
             self.updateVideoStatusPlaceholder()

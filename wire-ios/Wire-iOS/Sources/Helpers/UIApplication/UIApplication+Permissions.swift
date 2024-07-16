@@ -20,19 +20,16 @@ import Photos
 import UIKit
 import WireCommonComponents
 
-extension UIApplication {
+extension UIApplication: ApplicationProtocol {
 
-    class func wr_requestOrWarnAboutMicrophoneAccess(
-        alertPresenter: UIViewController,
-        _ grantedHandler: @escaping (_ granted: Bool) -> Void
-    ) {
+    class func wr_requestOrWarnAboutMicrophoneAccess(_ grantedHandler: @escaping (_ granted: Bool) -> Void) {
         let audioPermissionsWereNotDetermined = AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined
 
         AVAudioSession.sharedInstance().requestRecordPermission { granted in
 
             DispatchQueue.main.async {
                 if !granted {
-                    self.wr_warnAboutMicrophonePermission(alertPresenter: alertPresenter)
+                    self.wr_warnAboutMicrophonePermission()
                 }
 
                 if audioPermissionsWereNotDetermined && granted {
@@ -43,36 +40,30 @@ extension UIApplication {
         }
     }
 
-    class func wr_requestOrWarnAboutVideoAccess(
-        alertPresenter: UIViewController,
-        _ grantedHandler: @escaping (_ granted: Bool) -> Void
-    ) {
-        UIApplication.wr_requestVideoAccess({ granted in
-            DispatchQueue.main.async(execute: {
+    class func wr_requestOrWarnAboutVideoAccess(_ grantedHandler: @escaping (_ granted: Bool) -> Void) {
+        UIApplication.wr_requestVideoAccess { granted in
+            DispatchQueue.main.async {
                 if !granted {
-                    self.wr_warnAboutCameraPermission(alertPresenter: alertPresenter) { _ in
+                    self.wr_warnAboutCameraPermission { _ in
                         grantedHandler(granted)
                     }
                 } else {
                     grantedHandler(granted)
                 }
-            })
-        })
+            }
+        }
     }
 
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(
-        alertPresenter: UIViewController,
-        _ grantedHandler: @escaping (Bool) -> Void
-    ) {
+    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void) {
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
                 switch status {
                 case .restricted:
-                    self.wr_warnAboutPhotoLibraryRestricted(alertPresenter: alertPresenter)
+                    self.wr_warnAboutPhotoLibraryRestricted()
                     grantedHandler(false)
                 case .denied,
                      .notDetermined:
-                    self.wr_warnAboutPhotoLibaryDenied(alertPresenter: alertPresenter)
+                    self.wr_warnAboutPhotoLibaryDenied()
                     grantedHandler(false)
                 case .authorized:
                     grantedHandler(true)
@@ -86,30 +77,28 @@ extension UIApplication {
     }
 
     class func wr_requestVideoAccess(_ grantedHandler: @escaping (_ granted: Bool) -> Void) {
-        AVCaptureDevice.requestAccess(for: .video, completionHandler: { granted in
-            DispatchQueue.main.async(execute: {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
                 grantedHandler(granted)
-            })
-        })
+            }
+        }
     }
 
-    private class func wr_warnAboutCameraPermission(
-        alertPresenter: UIViewController,
-        completion: @escaping (UIAlertAction) -> Void
-    ) {
-        let currentResponder = UIResponder.currentFirst as? UIView
-        currentResponder?.endEditing(true)
+    private class func wr_warnAboutCameraPermission(withCompletion completion: ((UIAlertAction) -> Void)?) {
+        let currentResponder = UIResponder.currentFirst
+        (currentResponder as? UIView)?.endEditing(true)
 
         let alert = UIAlertController.cameraPermissionAlert(completion: completion)
-        alertPresenter.present(alert, animated: true)
+
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }
 
-    private class func wr_warnAboutMicrophonePermission(alertPresenter: UIViewController) {
+    private class func wr_warnAboutMicrophonePermission() {
         let alert = UIAlertController.microphonePermissionAlert
-        alertPresenter.present(alert, animated: true)
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }
 
-    private class func wr_warnAboutPhotoLibraryRestricted(alertPresenter: UIViewController) {
+    private class func wr_warnAboutPhotoLibraryRestricted() {
         let alert = UIAlertController(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,
             message: L10n.Localizable.Library.Alert.PermissionWarning.Restrictions.explaination,
@@ -119,11 +108,12 @@ extension UIApplication {
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        alertPresenter.present(alert, animated: true)
+
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }
 
-    private class func wr_warnAboutPhotoLibaryDenied(alertPresenter: UIViewController) {
+    private class func wr_warnAboutPhotoLibaryDenied() {
         let alert = UIAlertController.photoLibraryPermissionAlert
-        alertPresenter.present(alert, animated: true)
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }
 }

@@ -24,5 +24,3 @@ protocol ApplicationProtocol {
 
     static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
 }
-
-extension UIApplication: ApplicationProtocol {}
