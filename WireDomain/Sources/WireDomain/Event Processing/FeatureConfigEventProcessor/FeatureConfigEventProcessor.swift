@@ -40,7 +40,7 @@ struct FeatureConfigEventProcessor {
 
     func processEvent(_ event: FeatureConfigEvent) async throws {
         switch event {
-        case .update(let featureConfigUpdateEvent):
+        case .update(let event):
             try await updateEventProcessor.processEvent(event)
         }
     }
