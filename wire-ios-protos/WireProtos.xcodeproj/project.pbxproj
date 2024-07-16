@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		5E13808021A30AB7004A646C /* ProtosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807F21A30AB7004A646C /* ProtosTests.swift */; };
 		5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		638BBCF129150CEF007491FF /* mls.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF029150CEE007491FF /* mls.pb.swift */; };
+		E6A6FE2C2C466432001407E8 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = E6A6FE2B2C466432001407E8 /* SwiftProtobuf */; };
 		EE9AEC902BD1594600F7853F /* WireProtos.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8F2BD1594600F7853F /* WireProtos.docc */; };
 		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -75,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6A6FE2C2C466432001407E8 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +227,9 @@
 			dependencies = (
 			);
 			name = WireProtos;
+			packageProductDependencies = (
+				E6A6FE2B2C466432001407E8 /* SwiftProtobuf */,
+			);
 			productName = Protos;
 			productReference = 090837FE1B872DBF00629095 /* WireProtos.framework */;
 			productType = "com.apple.product-type.framework";
@@ -278,6 +283,9 @@
 				Base,
 			);
 			mainGroup = 090837F41B872DBF00629095;
+			packageReferences = (
+				E6A6FE2A2C466432001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+			);
 			productRefGroup = 090837FF1B872DBF00629095 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -364,7 +372,11 @@
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Protos/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -381,7 +393,11 @@
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Protos/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
@@ -394,7 +410,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = ProtosTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireProtosTests;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -409,7 +429,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = ProtosTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireProtosTests;
 			};
@@ -446,6 +470,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E6A6FE2A2C466432001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.22.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E6A6FE2B2C466432001407E8 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E6A6FE2A2C466432001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 090837F51B872DBF00629095 /* Project object */;
 }

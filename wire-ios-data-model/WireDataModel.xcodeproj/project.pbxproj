@@ -524,6 +524,7 @@
 		E6A5BBA82B0E355A00ACC236 /* CoreDataMessagingMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */; };
 		E6A5BBAA2B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */; };
 		E6A5BBAE2B0E564200ACC236 /* WireDataModelBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */; };
+		E6A6FE2F2C46656D001407E8 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = E6A6FE2E2C46656D001407E8 /* SwiftProtobuf */; };
 		E6BB79592C36EBE0003B821B /* store2-118-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BB79582C36EBE0003B821B /* store2-118-0.wiredatabase */; };
 		E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */; };
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
@@ -1889,6 +1890,7 @@
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
+				E6A6FE2F2C46656D001407E8 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3802,6 +3804,7 @@
 			name = WireDataModel;
 			packageProductDependencies = (
 				E6707E8F2BBD683F00469D57 /* PINCache */,
+				E6A6FE2E2C46656D001407E8 /* SwiftProtobuf */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3887,6 +3890,7 @@
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
 			packageReferences = (
 				E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */,
+				E6A6FE2D2C46656D001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -5156,6 +5160,14 @@
 				version = 3.0.4;
 			};
 		};
+		E6A6FE2D2C46656D001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.22.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5163,6 +5175,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */;
 			productName = PINCache;
+		};
+		E6A6FE2E2C46656D001407E8 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E6A6FE2D2C46656D001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
 		};
 /* End XCSwiftPackageProductDependency section */
 

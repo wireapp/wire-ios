@@ -281,6 +281,7 @@
 		E69A02172B84F02800126FF6 /* SelfSupportedProtocolsRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02162B84F02800126FF6 /* SelfSupportedProtocolsRequestBuilder.swift */; };
 		E69A02222B85096000126FF6 /* ProteusToMLSMigrationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02202B85095F00126FF6 /* ProteusToMLSMigrationState.swift */; };
 		E69A022A2B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69A02292B85EDC400126FF6 /* SelfSupportedProtocolsRequestBuilderTests.swift */; };
+		E6A6FE322C466587001407E8 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = E6A6FE312C466587001407E8 /* SwiftProtobuf */; };
 		E6BBCF112C32C52600BD0259 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF102C32C52600BD0259 /* HttpClient.swift */; };
 		E6BBCF132C32C55700BD0259 /* HttpClientImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF122C32C55700BD0259 /* HttpClientImpl.swift */; };
 		E6BBCF152C32D78F00BD0259 /* UserClient+QualifiedID.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BBCF142C32D78F00BD0259 /* UserClient+QualifiedID.swift */; };
@@ -957,6 +958,7 @@
 			files = (
 				EE13BD862BC93A19006561F8 /* WireAPI in Frameworks */,
 				EE668BB22954A7C700D939E7 /* WireDataModel.framework in Frameworks */,
+				E6A6FE322C466587001407E8 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2191,6 +2193,7 @@
 			name = WireRequestStrategy;
 			packageProductDependencies = (
 				EE13BD852BC93A19006561F8 /* WireAPI */,
+				E6A6FE312C466587001407E8 /* SwiftProtobuf */,
 			);
 			productName = WireRequestStrategy;
 			productReference = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */;
@@ -2314,6 +2317,7 @@
 			mainGroup = 166901601D707509000FE4AF;
 			packageReferences = (
 				EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */,
+				E6A6FE302C466587001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			productRefGroup = 1669016B1D707509000FE4AF /* Products */;
 			projectDirPath = "";
@@ -3193,7 +3197,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E6A6FE302C466587001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.22.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		E6A6FE312C466587001407E8 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E6A6FE302C466587001407E8 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
 		EE13BD852BC93A19006561F8 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
