@@ -19,7 +19,7 @@
 import UIKit
 
 // TODO: [WPB-8778] remove the whole file
-protocol PopoverPresenter: AnyObject {
+protocol PopoverPresenter: UIViewController {
 
     /// The presenting popover. Its frame should be updated when the orientation or screen size changes.
     var presentedPopover: UIPopoverPresentationController? {get set}
@@ -31,7 +31,7 @@ protocol PopoverPresenter: AnyObject {
     func updatePopoverSourceRect()
 }
 
-extension PopoverPresenter where Self: UIViewController {
+extension PopoverPresenter {
     func updatePopoverSourceRect() {
         guard let presentedPopover,
               let popoverPointToView else { return }

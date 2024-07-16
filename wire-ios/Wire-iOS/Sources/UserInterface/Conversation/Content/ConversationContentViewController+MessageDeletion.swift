@@ -97,7 +97,7 @@ final class DeletionDialogPresenter: NSObject {
                 presentationController.sourceView = selectableView.selectionView
                 presentationController.sourceRect = selectableView.selectionRect
             } else {
-                alert.configPopover(pointToView: source, popoverPresenter: sourceViewController as? PopoverPresenterViewController)
+                alert.configPopover(pointToView: source, popoverPresenter: sourceViewController as? PopoverPresenter)
             }
         }
 
