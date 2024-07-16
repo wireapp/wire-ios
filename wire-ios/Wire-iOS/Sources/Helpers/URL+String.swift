@@ -19,7 +19,7 @@ import Foundation
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "URL Helper")
-
+//
 extension URL {
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         let data: Data

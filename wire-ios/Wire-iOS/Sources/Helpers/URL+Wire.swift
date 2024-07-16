@@ -104,9 +104,9 @@ extension URL {
         WireURL.shared.support
     }
 
-    static var wr_usernameLearnMore: URL {
-        BackendEnvironment.websiteLink(path: "support/username")
-    }
+//    static var wr_usernameLearnMore: URL {
+//        BackendEnvironment.websiteLink(path: "support/username")
+//    }
 
     static var wr_fingerprintLearnMore: URL {
         wr_support.appendingPathComponent("hc/articles/207859815-Why-should-I-verify-my-conversations")
@@ -239,4 +239,98 @@ private extension BackendEnvironment {
         return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
     }
 
+}
+
+/*
+wr_wireAppOnItunes
+wr_randomProfilePictureSource
+wr_emailAlreadyInUseLearnMore
+wr_support
+wr_usernameLearnMore
+wr_fingerprintLearnMore
+wr_fingerprintHowToVerify
+wr_privacyPolicy
+wr_legal
+wr_licenseInformation
+wr_website
+wr_passwordReset
+wr_askSupport
+wr_reportAbuse
+wr_cannotDecryptHelp
+wr_cannotDecryptNewRemoteIDHelp
+wr_createTeamFeatures
+wr_emailInUseLearnMore
+wr_searchSupport
+wr_termsOfServicesURL
+wr_legalHoldLearnMore
+wr_wirePricingLearnMore
+wr_wireEnterpriseLearnMore
+wr_guestLinksLearnMore
+wr_unreachableBackendLearnMore
+wr_FederationLearnMore
+wr_mlsLearnMore
+selfUserProfileLink: BackendEnvironment.selfUserProfileLink
+wr_e2eiLearnMore
+websiteLink
+accountsLink
+privacyPolicy
+legal
+
+ 1. appOnItunes
+ 2. randomProfilePictureSource
+ 3. emailAlreadyInUseLearnMore
+ 4. support
+ 5. whyToVerifyFingerprintLearnMore
+ 6. howToVerifyFingerprintLearnMore
+ 7. termsOfUse
+ 8. licenseInformation
+ 9. website
+ 10. passwordReset
+
+ 13. wr_askSupport
+ 14. wr_reportAbuse
+ 15. wr_cannotDecryptHelp
+ 16. wr_cannotDecryptNewRemoteIDHelp
+ 17. wr_createTeamFeatures
+ 18. wr_emailInUseLearnMore
+ 19. wr_searchSupport
+ 20. wr_termsOfServicesURL
+ 21. wr_legalHoldLearnMore
+ 22. pricingLearnMore
+ 23. wr_wireEnterpriseLearnMore
+ 24. guestLinksLearnMore
+ 25. unreachableBackendLearnMore
+ 26. federationLearnMore
+ 27. wr_mlsLearnMore
+ 28. selfUserProfileLink: BackendEnvironment.selfUserProfileLink
+ 29. wr_e2eiLearnMore
+ 30. websiteLink
+ 31. accountsLink
+ 32. termsOfServices
+ 33. privacyPolicy
+ 34. legal
+
+
+ */
+
+struct URLs: Codable {
+    let wireAppOnItunes: URL
+    let support: URL
+    let randomProfilePictureSource: URL
+
+    static var shared: URLs = {
+        URLs(forResource: "url", withExtension: "json")!
+    }()
+
+    private init?(forResource resource: String, withExtension fileExtension: String) {
+        guard let fileURL = Bundle.fileURL(for: resource, with: fileExtension) else {
+            return nil
+        }
+
+        do {
+            self = try fileURL.decode(URLs.self)
+        } catch {
+            return nil
+        }
+    }
 }
