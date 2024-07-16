@@ -31,7 +31,10 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    override init() {
+    private let rootViewController: UIViewController
+
+    init(rootViewController: UIViewController) {
+        self.rootViewController = rootViewController
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -99,7 +102,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure()
+            handleCallFailure(presentingViewController: rootViewController)
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -125,13 +128,13 @@ class CallQualityController: NSObject {
     }
 
     /// Presents the debug log prompt after a call failure.
-    private func handleCallFailure() {
-        router?.presentCallFailureDebugAlert()
+    private func handleCallFailure(presentingViewController: UIViewController) {
+        router?.presentCallFailureDebugAlert(presentingViewController: presentingViewController)
     }
 
     /// Presents the debug log prompt after a user quality rejection.
-    private func handleCallQualityRejection() {
-        router?.presentCallQualityRejection()
+    private func handleCallQualityRejection(presentingViewController: UIViewController) {
+        router?.presentCallQualityRejection(presentingViewController: presentingViewController)
     }
 
 }
@@ -164,8 +167,11 @@ extension CallQualityController: CallQualityViewControllerDelegate {
 
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {
         router?.dismissCallQualitySurvey(completion: { [weak self] in
-            guard self?.callQualityRejectionRange.contains(score) ?? false else { return }
-            self?.handleCallQualityRejection()
+            guard
+                self?.callQualityRejectionRange.contains(score) ?? false,
+                let presentingViewController = self?.rootViewController
+            else { return }
+            self?.handleCallQualityRejection(presentingViewController: presentingViewController)
         })
 
         CallQualityController.updateLastSurveyDate(Date())

@@ -72,17 +72,17 @@ final class DeveloperOptionsController: UIViewController {
 
     /// Creates a cell to forward logs
     func forwardLogCell() -> UITableViewCell {
-        return createCellWithButton(labelText: "Forward log records") {
+        createCellWithButton(labelText: "Forward log records") {
             let alert = UIAlertController(title: "Add explanation", message: "Please explain the problem that made you send the logs", preferredStyle: .alert)
 
             alert.addAction(UIAlertAction(title: "Send to Devs", style: .default, handler: { _ in
                 guard let text = alert.textFields?.first?.text else { return }
-                DebugLogSender.sendLogsByEmail(message: text)
+                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: false, presentingViewController: self)
             }))
 
             alert.addAction(UIAlertAction(title: "Send to Devs & AVS", style: .default, handler: { _ in
                 guard let text = alert.textFields?.first?.text else { return }
-                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: true)
+                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: true, presentingViewController: self)
             }))
 
             alert.addTextField(configurationHandler: {(textField: UITextField!) in

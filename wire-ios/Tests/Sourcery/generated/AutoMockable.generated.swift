@@ -237,6 +237,74 @@ class MockBackupSource: BackupSource {
 
 }
 
+class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - presentCallQualitySurvey
+
+    var presentCallQualitySurveyWith_Invocations: [TimeInterval] = []
+    var presentCallQualitySurveyWith_MockMethod: ((TimeInterval) -> Void)?
+
+    func presentCallQualitySurvey(with callDuration: TimeInterval) {
+        presentCallQualitySurveyWith_Invocations.append(callDuration)
+
+        guard let mock = presentCallQualitySurveyWith_MockMethod else {
+            fatalError("no mock for `presentCallQualitySurveyWith`")
+        }
+
+        mock(callDuration)
+    }
+
+    // MARK: - dismissCallQualitySurvey
+
+    var dismissCallQualitySurveyCompletion_Invocations: [Completion?] = []
+    var dismissCallQualitySurveyCompletion_MockMethod: ((Completion?) -> Void)?
+
+    func dismissCallQualitySurvey(completion: Completion?) {
+        dismissCallQualitySurveyCompletion_Invocations.append(completion)
+
+        guard let mock = dismissCallQualitySurveyCompletion_MockMethod else {
+            fatalError("no mock for `dismissCallQualitySurveyCompletion`")
+        }
+
+        mock(completion)
+    }
+
+    // MARK: - presentCallFailureDebugAlert
+
+    var presentCallFailureDebugAlertPresentingViewController_Invocations: [UIViewController] = []
+    var presentCallFailureDebugAlertPresentingViewController_MockMethod: ((UIViewController) -> Void)?
+
+    func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
+        presentCallFailureDebugAlertPresentingViewController_Invocations.append(presentingViewController)
+
+        guard let mock = presentCallFailureDebugAlertPresentingViewController_MockMethod else {
+            fatalError("no mock for `presentCallFailureDebugAlertPresentingViewController`")
+        }
+
+        mock(presentingViewController)
+    }
+
+    // MARK: - presentCallQualityRejection
+
+    var presentCallQualityRejectionPresentingViewController_Invocations: [UIViewController] = []
+    var presentCallQualityRejectionPresentingViewController_MockMethod: ((UIViewController) -> Void)?
+
+    func presentCallQualityRejection(presentingViewController: UIViewController) {
+        presentCallQualityRejectionPresentingViewController_Invocations.append(presentingViewController)
+
+        guard let mock = presentCallQualityRejectionPresentingViewController_MockMethod else {
+            fatalError("no mock for `presentCallQualityRejectionPresentingViewController`")
+        }
+
+        mock(presentingViewController)
+    }
+
+}
+
 class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsViewModelDelegate {
 
     // MARK: - Life cycle
