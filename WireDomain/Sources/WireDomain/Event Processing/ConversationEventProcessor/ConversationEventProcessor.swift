@@ -38,6 +38,19 @@ struct ConversationEventProcessor {
 
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
     let codeUpdateEventProcessor: any ConversationCodeUpdateEventProcessorProtocol
+    let createEventProcessor: any ConversationCreateEventProcessorProtocol
+    let deleteEventProcessor: any ConversationDeleteEventProcessorProtocol
+    let memberJoinEventProcessor: any ConversationMemberJoinEventProcessorProtocol
+    let memberLeaveEventProcessor: any ConversationMemberLeaveEventProcessorProtocol
+    let memberUpdateEventProcessor: any ConversationMemberUpdateEventProcessorProtocol
+    let messageTimerUpdateEventProcessor: any ConversationMessageTimerUpdateEventProcessorProtocol
+    let mlsMessageAddEventProcessor: any ConversationMLSMessageAddEventProcessorProtocol
+    let mlsWelcomeEventProcessor: any ConversationMLSWelcomeEventProcessorProtocol
+    let proteusMessageAddEventProcessor: any ConversationProteusMessageAddEventProcessorProtocol
+    let protocolUpdateEventProcessor: any ConversationProtocolUpdateEventProcessorProtocol
+    let receiptModeUpdateEventProcessor: any ConversationReceiptModeUpdateEventProcessorProtocol
+    let renameEventProcessor: any ConversationRenameEventProcessorProtocol
+    let typingEventProcessor: any ConversationTypingEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
@@ -47,45 +60,44 @@ struct ConversationEventProcessor {
         case .codeUpdate(let event):
             try await codeUpdateEventProcessor.processEvent(event)
 
-        case .create:
-            assertionFailure("not implemented yet")
+        case .create(let event):
+            try await createEventProcessor.processEvent(event)
 
-        case .delete:
-            assertionFailure("not implemented yet")
+        case .delete(let event):
+            try await deleteEventProcessor.processEvent(event)
 
-        case .memberJoin:
-            assertionFailure("not implemented yet")
+        case .memberJoin(let event):
+            try await memberJoinEventProcessor.processEvent(event)
 
-        case .memberLeave:
-            assertionFailure("not implemented yet")
+        case .memberLeave(let event):
+            try await memberLeaveEventProcessor.processEvent(event)
 
-        case .memberUpdate:
-            assertionFailure("not implemented yet")
+        case .memberUpdate(let event):
+            try await memberUpdateEventProcessor.processEvent(event)
 
-        case .messageTimerUpdate:
-            assertionFailure("not implemented yet")
+        case .messageTimerUpdate(let event):
+            try await messageTimerUpdateEventProcessor.processEvent(event)
 
-        case .mlsMessageAdd:
-            assertionFailure("not implemented yet")
+        case .mlsMessageAdd(let event):
+            try await mlsMessageAddEventProcessor.processEvent(event)
 
-        case .mlsWelcome:
-            assertionFailure("not implemented yet")
+        case .mlsWelcome(let event):
+            try await mlsWelcomeEventProcessor.processEvent(event)
 
-        case .proteusMessageAdd:
-            assertionFailure("not implemented yet")
+        case .proteusMessageAdd(let event):
+            try await proteusMessageAddEventProcessor.processEvent(event)
 
-        case .protocolUpdate:
-            assertionFailure("not implemented yet")
+        case .protocolUpdate(let event):
+            try await protocolUpdateEventProcessor.processEvent(event)
 
-        case .receiptModeUpdate:
-            assertionFailure("not implemented yet")
+        case .receiptModeUpdate(let event):
+            try await receiptModeUpdateEventProcessor.processEvent(event)
 
-        case .rename:
-            assertionFailure("not implemented yet")
+        case .rename(let event):
+            try await renameEventProcessor.processEvent(event)
 
-        case .typing:
-            assertionFailure("not implemented yet")
-
+        case .typing(let event):
+            try await typingEventProcessor.processEvent(event)
         }
     }
 

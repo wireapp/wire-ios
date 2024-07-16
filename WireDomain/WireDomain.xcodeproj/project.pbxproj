@@ -46,6 +46,19 @@
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
 		EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */; };
 		EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */; };
+		EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */; };
+		EEAD09F82C46772C00CC8658 /* ConversationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */; };
+		EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */; };
+		EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09FB2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift */; };
+		EEAD09FE2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09FD2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift */; };
+		EEAD0A002C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */; };
+		EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */; };
+		EEAD0A042C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */; };
+		EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */; };
+		EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */; };
+		EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */; };
+		EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */; };
+		EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +118,19 @@
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
 		EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCodeUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDeleteEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberJoinEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09FB2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberLeaveEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09FD2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageTimerUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMLSMessageAddEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMLSWelcomeEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProteusMessageAddEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenameEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingEventProcessor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -310,6 +336,19 @@
 				EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */,
 				EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */,
 				EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */,
+				EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */,
+				EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */,
+				EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */,
+				EEAD09FB2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift */,
+				EEAD09FD2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift */,
+				EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */,
+				EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */,
+				EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */,
+				EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */,
+				EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */,
+				EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */,
+				EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */,
+				EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */,
 			);
 			path = ConversationEventProcessor;
 			sourceTree = "<group>";
@@ -502,27 +541,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEAD0A042C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift in Sources */,
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
+				EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */,
+				EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
+				EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */,
 				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
+				EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
+				EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */,
+				EEAD0A002C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift in Sources */,
 				EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
+				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
+				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
+				EEAD09F82C46772C00CC8658 /* ConversationDeleteEventProcessor.swift in Sources */,
 				162356582C2C2F6100C6666C /* UserRepository.swift in Sources */,
 				162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */,
+				EEAD09FE2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift in Sources */,
 				EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */,
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
 				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
+				EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */,
 				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
+				EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */,
 				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
 				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
 			);
