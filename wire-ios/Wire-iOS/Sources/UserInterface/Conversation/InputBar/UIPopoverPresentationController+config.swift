@@ -49,14 +49,12 @@ extension UIPopoverPresentationController {
     ///   - pointToView: the view in the presenter the popover's arrow points to
     ///   - sourceView: the view which presents this popover, usually a view of a UIViewController
     @available(*, deprecated, message: "will be removed")
-    func config(from popoverPresenter: PopoverPresenter,
-                pointToView: UIView,
-                sourceView: UIView) {
-
-        fatalError("TODO")
-        if let viewController = popoverPresenter as? UIViewController {
-            sourceRect = pointToView.popoverSourceRect(from: viewController)
-        }
+    func config(
+        from popoverPresenter: PopoverPresenter,
+        pointToView: UIView,
+        sourceView: UIView
+    ) {
+        sourceRect = pointToView.popoverSourceRect(from: popoverPresenter)
 
         popoverPresenter.presentedPopover = self
         popoverPresenter.popoverPointToView = pointToView
