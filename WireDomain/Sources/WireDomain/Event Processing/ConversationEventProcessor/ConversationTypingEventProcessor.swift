@@ -33,7 +33,7 @@ protocol ConversationTypingEventProcessorProtocol {
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationTypingEvent) async throws {
+    func processEvent(_: ConversationTypingEvent) async throws {
         // TODO: [WPB-10178]
         assertionFailure("not implemented yet")
     }

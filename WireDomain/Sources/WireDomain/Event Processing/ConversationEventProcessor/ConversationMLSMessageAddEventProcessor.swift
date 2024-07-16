@@ -33,7 +33,7 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
+    func processEvent(_: ConversationMLSMessageAddEvent) async throws {
         // TODO: [WPB-10172]
         assertionFailure("not implemented yet")
     }

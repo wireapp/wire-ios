@@ -33,7 +33,7 @@ protocol ConversationProteusMessageAddEventProcessorProtocol {
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationProteusMessageAddEvent) async throws {
+    func processEvent(_: ConversationProteusMessageAddEvent) async throws {
         // TODO: [WPB-10174]
         assertionFailure("not implemented yet")
     }

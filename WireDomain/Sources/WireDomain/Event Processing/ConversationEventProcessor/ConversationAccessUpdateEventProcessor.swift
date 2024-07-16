@@ -33,7 +33,7 @@ protocol ConversationAccessUpdateEventProcessorProtocol {
 
 struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationAccessUpdateEvent) async throws {
+    func processEvent(_: ConversationAccessUpdateEvent) async throws {
         // TODO: [WPB-10164]
         assertionFailure("not implemented yet")
     }

@@ -33,7 +33,7 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws {
+    func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {
         // TODO: [WPB-10171]
         assertionFailure("not implemented yet")
     }

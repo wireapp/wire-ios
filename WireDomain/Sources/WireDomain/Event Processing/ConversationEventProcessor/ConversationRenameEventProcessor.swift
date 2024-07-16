@@ -33,7 +33,7 @@ protocol ConversationRenameEventProcessorProtocol {
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationRenameEvent) async throws {
+    func processEvent(_: ConversationRenameEvent) async throws {
         // TODO: [WPB-10177]
         assertionFailure("not implemented yet")
     }

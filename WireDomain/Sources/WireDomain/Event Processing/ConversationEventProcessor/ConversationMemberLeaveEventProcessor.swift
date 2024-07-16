@@ -33,7 +33,7 @@ protocol ConversationMemberLeaveEventProcessorProtocol {
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
 
-    func processEvent(_ event: ConversationMemberLeaveEvent) async throws {
+    func processEvent(_: ConversationMemberLeaveEvent) async throws {
         // TODO: [WPB-10169]
         assertionFailure("not implemented yet")
     }
