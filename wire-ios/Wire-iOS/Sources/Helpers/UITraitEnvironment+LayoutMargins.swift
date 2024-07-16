@@ -44,7 +44,7 @@ extension UITraitEnvironment {
         return conversationHorizontalMargins()
     }
 
-    func conversationHorizontalMargins(windowWidth: CGFloat? = UIApplication.shared.wr_keyWindow?.frame.width) -> HorizontalMargins {
+    func conversationHorizontalMargins(windowWidth: CGFloat? = AppDelegate.shared.keyWindow?.frame.width) -> HorizontalMargins {
 
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 

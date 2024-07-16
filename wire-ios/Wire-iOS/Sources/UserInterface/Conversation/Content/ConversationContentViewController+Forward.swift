@@ -164,7 +164,7 @@ extension ConversationContentViewController {
     }
 
     func updatePopover() {
-        guard let rootViewController = UIApplication.shared.wr_keyWindow?.rootViewController as? PopoverPresenterViewController else { return }
+        guard let rootViewController = AppDelegate.shared.keyWindow?.rootViewController as? PopoverPresenterViewController else { return }
 
         rootViewController.updatePopoverSourceRect()
     }
@@ -192,7 +192,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
         keyboardAvoiding.preferredContentSize = CGSize.IPadPopover.preferredContentSize
         keyboardAvoiding.modalPresentationCapturesStatusBarAppearance = true
 
-        let presenter: PopoverPresenterViewController? = (presentedViewController ?? UIApplication.shared.wr_keyWindow) as? PopoverPresenterViewController
+        let presenter: PopoverPresenterViewController? = (presentedViewController ?? AppDelegate.shared.keyWindow) as? PopoverPresenterViewController
 
         if let presenter,
            let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {

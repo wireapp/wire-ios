@@ -55,7 +55,7 @@ final class CharacterInputFieldTests: XCTestCase {
 
     func testThatItCanBecomeFirstResponder() {
         // when
-        UIApplication.shared.wr_keyWindow?.rootViewController?.view.addSubview(sut)
+        AppDelegate.shared.keyWindow?.rootViewController?.view.addSubview(sut)
         // then
         XCTAssertTrue(sut.canBecomeFocused)
         XCTAssertTrue(sut.becomeFirstResponder())
@@ -223,7 +223,7 @@ final class CharacterInputFieldScreenshotTests: XCTestCase {
 
     func testFocusedState() {
         // given
-        UIApplication.shared.wr_keyWindow?.rootViewController?.view.addSubview(sut)
+        AppDelegate.shared.keyWindow?.rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()
@@ -234,7 +234,7 @@ final class CharacterInputFieldScreenshotTests: XCTestCase {
 
     func testFocusedDeFocusedState() {
         // given
-        UIApplication.shared.wr_keyWindow?.rootViewController?.view.addSubview(sut)
+        AppDelegate.shared.keyWindow?.rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()

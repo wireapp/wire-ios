@@ -29,7 +29,7 @@ extension ConversationInputBarViewController {
                             allowsEditing: Bool,
                             pointToView: UIView?) {
 
-        guard let rootViewController = UIApplication.shared.wr_keyWindow?.rootViewController as? PopoverPresenterViewController else { return }
+        guard let rootViewController = AppDelegate.shared.keyWindow?.rootViewController as? PopoverPresenterViewController else { return }
 
         if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
             if UIDevice.isSimulator {
