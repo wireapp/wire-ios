@@ -37,6 +37,7 @@ protocol ConversationEventProcessorProtocol {
 struct ConversationEventProcessor {
 
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
+    let codeUpdateEventProcessor: any ConversationCodeUpdateEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
@@ -44,7 +45,7 @@ struct ConversationEventProcessor {
             try await accessUpdateEventProcessor.processEvent(event)
 
         case .codeUpdate(let event):
-            assertionFailure("not implemented yet")
+            try await codeUpdateEventProcessor.processEvent(event)
 
         case .create:
             assertionFailure("not implemented yet")

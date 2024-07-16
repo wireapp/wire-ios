@@ -45,6 +45,7 @@
 		EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */; };
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
 		EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */; };
+		EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +104,7 @@
 		EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorError.swift; sourceTree = "<group>"; };
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
 		EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCodeUpdateEventProcessor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -307,6 +309,7 @@
 			children = (
 				EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */,
 				EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */,
+				EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */,
 			);
 			path = ConversationEventProcessor;
 			sourceTree = "<group>";
@@ -514,6 +517,7 @@
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
 				162356582C2C2F6100C6666C /* UserRepository.swift in Sources */,
 				162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */,
+				EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */,
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
 				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
