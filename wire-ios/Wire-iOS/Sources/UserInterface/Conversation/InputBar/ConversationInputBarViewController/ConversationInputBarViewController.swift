@@ -24,6 +24,12 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+<<<<<<< HEAD
+=======
+import avs
+import AVFoundation
+import WireCommonComponents
+>>>>>>> 450e817a9d (feat: Disable location sharing for C1 - WPB-9749 (#1691))
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -256,7 +262,18 @@ final class ConversationInputBarViewController: UIViewController,
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 
+        if shouldExcludeLocationButton {
+            if let index = buttonsArray.firstIndex(of: locationButton) {
+                buttonsArray.remove(at: index)
+            }
+        }
+
         return buttonsArray
+    }
+
+    /// Remove locationButton if security flag does not allow it
+    private var shouldExcludeLocationButton: Bool {
+        !SecurityFlags.locationSharing.isEnabled
     }
 
     var mode: ConversationInputBarViewControllerMode = .textInput {
