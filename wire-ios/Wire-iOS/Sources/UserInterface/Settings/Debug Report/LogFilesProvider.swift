@@ -43,6 +43,19 @@ protocol LogFilesProviding {
 
 }
 
+/// Generates log files archives.
+///
+/// All logs are stored at the `NSTemporaryDirectory` URL (`tmp`) in the folder `/<uuid>/logs/`.
+///
+/// When generating the logs archive, we create a unique directory for the archive in `/<uuid>/logs/<uuid>/logs.zip`.
+///
+/// The logs folder `/<uuid>/logs/` is cleared:
+///  - after `generateLogFilesData()` returns
+///  - when calling `generateLogFilesZip()`, before the archive is created
+///  - when calling `clearLogsDirectory()`
+///
+/// In each logs archive, an extra file `info.txt` is added. It contains general information about the app.
+///
 struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Types
@@ -78,24 +91,11 @@ struct LogFilesProvider: LogFilesProviding {
             if let url = LogFileDestination.main.log {
                 try? FileManager.default.removeItem(at: url)
             }
+            try? clearLogsDirectory()
         }
 
-        // Create a unique directory
-        var url = try createUniqueLogDirectory()
-
-        // Create the info file
-        let infoFileURL = try createInfoFile(at: url)
-
-        // Set the list of files to be zipped
-        var filesToZip = try filesToZipURLs(
-            logFilesURLs: logFilesURLs,
-            infoFileURL: infoFileURL
-        )
-
-        // Create the zip file data
-        guard let data = FileManager.default.zipData(from: filesToZip) else {
-            throw Error.noLogs(description: filesToZip.description)
-        }
+        let logFilesURL = try generateLogFilesZip()
+        let data = try Data(contentsOf: logFilesURL)
 
         return data
     }
@@ -110,7 +110,7 @@ struct LogFilesProvider: LogFilesProviding {
         let infoFileURL = try createInfoFile(at: url)
 
         // Set the list of files to be zipped
-        var filesToZip = try filesToZipURLs(
+        let filesToZip = try filesToZipURLs(
             logFilesURLs: logFilesURLs,
             infoFileURL: infoFileURL
         )
@@ -135,6 +135,7 @@ struct LogFilesProvider: LogFilesProviding {
         guard !logFilesURLs.isEmpty else {
             throw Error.noLogs(description: logFilesURLs.description)
         }
+
         return logFilesURLs + [infoFileURL]
     }
 

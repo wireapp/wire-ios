@@ -24,7 +24,7 @@ class ShareableDebugReportView: UIView {
 
     // MARK: - Constants
 
-    enum LayoutConstants {
+    private enum LayoutConstants {
         static let spacing: CGFloat = 2
         static let padding: CGFloat = 12
         static let iconSize: CGFloat = 28

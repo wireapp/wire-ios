@@ -25,7 +25,7 @@ class SettingsDebugReportViewController: UIViewController {
 
     // MARK: - Constants
 
-    enum LayoutConstants {
+    private enum LayoutConstants {
         static let spacing: CGFloat = 8
         static let padding: CGFloat = 20
         static let safeBottomPadding: CGFloat = 30

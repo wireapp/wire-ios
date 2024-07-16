@@ -20,17 +20,17 @@ import MessageUI
 import UIKit
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
-    func presentMailComposer(withLogs logsIncluded: Bool)
+    func presentMailComposer()
 }
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
     @MainActor
-    func presentMailComposer(withLogs logsIncluded: Bool) {
-        presentMailComposer(withLogs: logsIncluded, sourceView: nil)
+    func presentMailComposer() {
+        presentMailComposer(sourceView: nil)
     }
 
     @MainActor
-    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?) {
+    func presentMailComposer(sourceView: UIView?) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
@@ -45,20 +45,16 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        if logsIncluded {
-            let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-            topMostViewController?.isLoadingViewVisible = true
+        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+        topMostViewController?.isLoadingViewVisible = true
 
-            Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
-                await mailComposeViewController.attachLogs()
+        Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+            await mailComposeViewController.attachLogs()
 
-                await self.present(mailComposeViewController, animated: true, completion: nil)
-                await MainActor.run {
-                    topMostViewController?.isLoadingViewVisible = false
-                }
-            })
-        } else {
-            self.present(mailComposeViewController, animated: true, completion: nil)
-        }
+            await self.present(mailComposeViewController, animated: true, completion: nil)
+            await MainActor.run {
+                topMostViewController?.isLoadingViewVisible = false
+            }
+        })
     }
 }
