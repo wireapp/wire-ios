@@ -1550,7 +1550,7 @@ public final class MLSService: MLSServiceInterface {
     ) async throws {
         do {
             logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
-            try await createGroup(for: id, parentGroupID: parentID)
+            _ = try await createGroup(for: id, parentGroupID: parentID)
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
@@ -1608,8 +1608,7 @@ public final class MLSService: MLSServiceInterface {
             )
         }
 
-        if
-            let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
+        if let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
@@ -1750,7 +1749,7 @@ public final class MLSService: MLSServiceInterface {
                     continue
                 }
 
-                try await createGroup(for: mlsGroupID)
+                _ = try await createGroup(for: mlsGroupID)
 
                 do {
 

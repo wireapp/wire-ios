@@ -79,8 +79,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
                 return
             }
 
-            if
-                let mediumKey,
+            if let mediumKey,
                 let key,
                 let digest,
                 let data = cache.decryptData(
@@ -128,8 +127,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
             return nil
         }
 
-        if
-            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
+        if let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
             let data = cache.decryptedMediumImageData(
                 for: assetClientMessage,
                 encryptionKey: asset.otrKey,

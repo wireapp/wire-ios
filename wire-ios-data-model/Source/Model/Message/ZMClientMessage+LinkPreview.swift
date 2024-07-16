@@ -107,8 +107,7 @@ extension ZMClientMessage {
                 return
             }
 
-            if
-                let mediumKey,
+            if let mediumKey,
                 let encryptionKey,
                 let digest,
                 let data = cache.decryptData(

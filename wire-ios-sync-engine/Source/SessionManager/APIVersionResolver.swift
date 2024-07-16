@@ -29,7 +29,7 @@ final class APIVersionResolver {
     let clientDevVersions: Set<APIVersion>
     let isDeveloperModeEnabled: Bool
 
-    private let queue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
+    private let queue: GroupQueue = DispatchGroupQueue(queue: .main)
     private let transportSession: UnauthenticatedTransportSessionProtocol
 
     // MARK: - Life cycle
@@ -96,8 +96,7 @@ final class APIVersionResolver {
             WireLogger.environment.warn("no common api versions, app will be blacklisted")
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
-        } else if
-            isDeveloperModeEnabled,
+        } else if isDeveloperModeEnabled,
             let preferredAPIVersion = BackendInfo.preferredAPIVersion,
             allBackendVersions.contains(preferredAPIVersion) {
             WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")

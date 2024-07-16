@@ -270,8 +270,7 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if
-            let dateTimeString = message.formattedReceivedDate(),
+        } else if let dateTimeString = message.formattedReceivedDate(),
             let systemMessage = message as? ZMSystemMessage,
             systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)

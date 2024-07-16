@@ -18,13 +18,16 @@
 
 import Foundation
 
-extension Encodable {
-    func jsonString(_ encoder: JSONEncoder = JSONEncoder(), sortedKeys: Bool = false) -> String? {
-        if sortedKeys {
-            encoder.outputFormatting = .sortedKeys
-        }
-        guard let data = try? encoder.encode(self) else { return nil }
+/// Similar to a dispatch queue or NSOperationQueue.
+@objc(ZMSGroupQueue)
+public protocol GroupQueue: NSObjectProtocol {
 
-        return String(decoding: data, as: UTF8.self)
-    }
+    /// The underlying dispatch group that is used for `performGroupedBlock(_:)`.
+    /// It can be used to associate a block with the receiver without running it on the receiver's queue.
+    var dispatchGroup: ZMSDispatchGroup? { get }
+
+    /// Submits a block to the receiver's private queue and associates it with the receiver's group.
+    /// This will use `NSManagedObjectContext.performBlock(_:)` internally and hence encapsulates
+    /// an autorelease pool and a call to `NSManagedObjectContext.processPendingChanges()`.
+    func performGroupedBlock(_ block: @escaping () -> Void)
 }

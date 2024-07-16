@@ -58,8 +58,7 @@ public class V2Asset: NSObject, ZMImageMessageData {
                 return
             }
 
-            if
-                let mediumEncryptedKey,
+            if let mediumEncryptedKey,
                 let key,
                 let digest,
                 let data = cache.decryptData(
