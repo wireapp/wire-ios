@@ -53,7 +53,6 @@ import Foundation
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        WireLogger.assets.debug("objectsDidChange")
         processObjects(object)
     }
 
@@ -63,7 +62,6 @@ import Foundation
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        WireLogger.assets.debug("addTrackedObjects")
         processObjects(objects)
     }
 
@@ -84,10 +82,8 @@ import Foundation
         for asset in message.assets where asset.hasOriginal {
             if asset.needsPreprocessing, let imageOperations = imageAssetPreprocessor?.operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
                 processingGroup.enter()
-                WireLogger.assets.debug("asset image op", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
                 imageProcessingQueue.addOperations(imageOperations, waitUntilFinished: false)
             } else {
-                WireLogger.assets.debug("asset encrypt file", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
                 asset.encrypt()
             }
         }
@@ -100,8 +96,6 @@ import Foundation
         processingGroup.notify(on: .global()) { [weak self] in
             self?.managedObjectContext.performGroupedBlock {
                 self?.objectsBeingProcessed.remove(message)
-                WireLogger.assets.debug("notifyWhenProcessingIsComplete", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
-//                message.updateTransferState(.uploaded, synchronize: true)
                 let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
                 message.setLocallyModifiedKeys(assetClientMessageSet) // TODO jacob hacky
                 message.managedObjectContext?.saveOrRollback()
@@ -125,7 +119,6 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
 
         managedObjectContext.performGroupedBlock {
             assetImageOwnerAdapter.asset.updateWithPreprocessedData(operation.downsampleImageData, imageProperties: operation.properties)
-            WireLogger.assets.debug("asset image encrypt")
             assetImageOwnerAdapter.asset.encrypt()
         }
     }
@@ -140,7 +133,6 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
         return BlockOperation { [weak self] in
-            WireLogger.assets.debug("preprocessingCompleteOperation")
             self?.processingGroup.leave()
         }
     }
