@@ -1,0 +1,91 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireAPI
+
+/// Process conversation update events.
+
+protocol ConversationEventProcessorProtocol {
+
+    /// Process a conversation update event.
+    ///
+    /// Processing an event is the app's only chance to consume
+    /// some remote changes to update its local state.
+    ///
+    /// - Parameter event: A conversation update event.
+
+    func processEvent(_ event: ConversationEvent) async throws
+
+}
+
+struct ConversationEventProcessor {
+
+    let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
+
+    func processEvent(_ event: ConversationEvent) async throws {
+        switch event {
+        case .accessUpdate(let event):
+            try await accessUpdateEventProcessor.processEvent(event)
+
+        case .codeUpdate(let event):
+            assertionFailure("not implemented yet")
+
+        case .create:
+            assertionFailure("not implemented yet")
+
+        case .delete:
+            assertionFailure("not implemented yet")
+
+        case .memberJoin:
+            assertionFailure("not implemented yet")
+
+        case .memberLeave:
+            assertionFailure("not implemented yet")
+
+        case .memberUpdate:
+            assertionFailure("not implemented yet")
+
+        case .messageTimerUpdate:
+            assertionFailure("not implemented yet")
+
+        case .mlsMessageAdd:
+            assertionFailure("not implemented yet")
+
+        case .mlsWelcome:
+            assertionFailure("not implemented yet")
+
+        case .proteusMessageAdd:
+            assertionFailure("not implemented yet")
+
+        case .protocolUpdate:
+            assertionFailure("not implemented yet")
+
+        case .receiptModeUpdate:
+            assertionFailure("not implemented yet")
+
+        case .rename:
+            assertionFailure("not implemented yet")
+
+        case .typing:
+            assertionFailure("not implemented yet")
+
+        }
+    }
+
+}
