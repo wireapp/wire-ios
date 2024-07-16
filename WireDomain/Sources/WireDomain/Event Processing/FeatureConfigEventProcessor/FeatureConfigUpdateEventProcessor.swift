@@ -16,27 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 
 /// Process feature config update events.
 
-protocol FeatureConfigEventProcessorProtocol {
+protocol FeatureConfigUpdateEventProcessorProtocol {
 
     /// Process a feature config update event.
     ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
     /// - Parameter event: A feature config update event.
 
-    func processEvent(_ event: FeatureConfigEvent) async throws
+    func processEvent(_ event: FeatureConfigUpdateEvent) async throws
 
 }
 
-struct FeatureConfigEventProcessor {
+struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
 
-    func processEvent(_: FeatureConfigEvent) async throws {
+    func processEvent(_: FeatureConfigUpdateEvent) async throws {
+        // TODO: [WPB-10183]
         assertionFailure("not implemented yet")
     }
 
