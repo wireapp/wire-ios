@@ -56,27 +56,40 @@ class AnalyticsManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Unit Tests
-
     func testInitialization() {
         XCTAssertEqual(analyticsService.startAppKeyHost_Invocations.count, 1)
+        guard analyticsService.startAppKeyHost_Invocations.count == 1 else {
+            XCTFail("Expected 1 invocation of startAppKeyHost, but got \(analyticsService.startAppKeyHost_Invocations.count)")
+            return
+        }
         XCTAssertEqual(analyticsService.startAppKeyHost_Invocations[0].appKey, "testAppKey")
         XCTAssertEqual(analyticsService.startAppKeyHost_Invocations[0].host, URL(string: "https://test.com")!)
     }
 
     func testSwitchUser() {
+        // GIVEN
         let userProfile = AnalyticsUserProfile(
             analyticsIdentifier: "testUser123",
             teamInfo: .init(id: "team1", role: "admin", size: 10)
         )
 
+        // WHEN
         _ = sut.switchUser(userProfile)
 
+        // THEN
         XCTAssertEqual(analyticsService.endSession_Invocations.count, 1)
         XCTAssertEqual(analyticsService.changeDeviceID_Invocations.count, 1)
+        guard analyticsService.changeDeviceID_Invocations.count == 1 else {
+            XCTFail("Expected 1 invocation of changeDeviceID, but got \(analyticsService.changeDeviceID_Invocations.count)")
+            return
+        }
         XCTAssertEqual(analyticsService.changeDeviceID_Invocations[0], "testUser123")
 
         XCTAssertEqual(analyticsService.setUserValueForKey_Invocations.count, 3)
+        guard analyticsService.setUserValueForKey_Invocations.count == 3 else {
+            XCTFail("Expected 3 invocations of setUserValueForKey, but got \(analyticsService.setUserValueForKey_Invocations.count)")
+            return
+        }
         XCTAssertEqual(analyticsService.setUserValueForKey_Invocations[0].value, "team1")
         XCTAssertEqual(analyticsService.setUserValueForKey_Invocations[0].key, "team_team_id")
         XCTAssertEqual(analyticsService.setUserValueForKey_Invocations[1].value, "admin")
@@ -90,18 +103,29 @@ class AnalyticsManagerTests: XCTestCase {
     }
 
     func testSwitchUserWithNilTeamInfo() {
+        // GIVEN
         let userProfile = AnalyticsUserProfile(
             analyticsIdentifier: "testUser456",
             teamInfo: nil
         )
 
+        // WHEN
         _ = sut.switchUser(userProfile)
 
+        // THEN
         XCTAssertEqual(analyticsService.endSession_Invocations.count, 1)
         XCTAssertEqual(analyticsService.changeDeviceID_Invocations.count, 1)
+        guard analyticsService.changeDeviceID_Invocations.count == 1 else {
+            XCTFail("Expected 1 invocation of changeDeviceID, but got \(analyticsService.changeDeviceID_Invocations.count)")
+            return
+        }
         XCTAssertEqual(analyticsService.changeDeviceID_Invocations[0], "testUser456")
 
         XCTAssertEqual(analyticsService.setUserValueForKey_Invocations.count, 3)
+        guard analyticsService.setUserValueForKey_Invocations.count == 3 else {
+            XCTFail("Expected 3 invocations of setUserValueForKey, but got \(analyticsService.setUserValueForKey_Invocations.count)")
+            return
+        }
         XCTAssertNil(analyticsService.setUserValueForKey_Invocations[0].value)
         XCTAssertEqual(analyticsService.setUserValueForKey_Invocations[0].key, "team_team_id")
         XCTAssertNil(analyticsService.setUserValueForKey_Invocations[1].value)
