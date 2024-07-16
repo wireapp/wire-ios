@@ -32,6 +32,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
     private var mockConversationVerificationStatusUpdater: MockMLSConversationVerificationStatusUpdating!
     private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
     private var mockCRLExpirationDatesRepository: MockCRLExpirationDatesRepositoryProtocol!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var mockCoreDataStack: CoreDataStack!
 
     override func setUp() async throws {
@@ -49,12 +50,17 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         mockConversationVerificationStatusUpdater = MockMLSConversationVerificationStatusUpdating()
         mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         mockCRLExpirationDatesRepository = MockCRLExpirationDatesRepositoryProtocol()
+        mockFeatureRepository = .init()
+        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
 
         sut = CertificateRevocationListsChecker(
             crlAPI: mockCRLAPI,
             crlExpirationDatesRepository: mockCRLExpirationDatesRepository,
             mlsConversationsVerificationUpdater: mockConversationVerificationStatusUpdater,
             selfClientCertificateProvider: mockSelfClientCertificateProvider,
+            fetchE2EIFeatureConfig: { [weak self] in
+                return self?.mockFeatureRepository.fetchE2EI_MockValue?.config
+            },
             coreCryptoProvider: provider,
             context: mockCoreDataStack.syncContext
         )
@@ -67,6 +73,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         mockConversationVerificationStatusUpdater = nil
         mockSelfClientCertificateProvider = nil
         mockCRLExpirationDatesRepository = nil
+        mockFeatureRepository = nil
         mockCoreDataStack = nil
         try coreDataHelper.cleanupDirectory()
         coreDataHelper = nil

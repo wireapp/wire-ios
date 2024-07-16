@@ -117,6 +117,8 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(e2ei.status, .enabled)
             XCTAssertEqual(e2ei.config.acmeDiscoveryUrl, "https://example.com")
             XCTAssertEqual(e2ei.config.verificationExpiration, 70)
+            XCTAssertEqual(e2ei.config.crlProxy, "https://example.com")
+            XCTAssertEqual(e2ei.config.useProxyOnMobile, true)
 
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
@@ -372,7 +374,9 @@ private enum JSONPayload {
         "status": "enabled",
         "config": {
             "acmeDiscoveryUrl": "https://example.com",
-            "verificationExpiration": 70
+            "verificationExpiration": 70,
+            "crlProxy": "https://example.com",
+            "useProxyOnMobile": true
         }
     },
     "conferenceCalling": {
