@@ -567,16 +567,18 @@ public final class FileAssetCache: NSObject {
     ) -> URL? {
         guard let key = Self.cacheKeyForAsset(
             message,
-            identifier: "transport"
+            identifier: "transport" // TODO: check uniqueness of id
         ) else {
             return nil
         }
-
+        
+        WireLogger.assets.debug("store asset: \(key)")
         cache.storeAssetData(
             data,
             key: key,
             createdAt: message.serverTimestamp ?? Date()
         )
+        WireLogger.assets.debug("stored asset: \(key)")
 
         return cache.assetURL(key)
     }
@@ -588,8 +590,9 @@ public final class FileAssetCache: NSObject {
         ) else {
             return
         }
-
+        WireLogger.assets.debug("delete asset: \(key)")
         cache.deleteAssetData(key)
+        WireLogger.assets.debug("deleted asset: \(key)")
     }
 
     // MARK: - Encryption

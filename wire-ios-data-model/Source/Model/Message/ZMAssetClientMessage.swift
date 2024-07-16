@@ -89,7 +89,7 @@ import Foundation
 
     public func updateTransferState(_ transferState: AssetTransferState, synchronize: Bool) {
         self.transferState = transferState
-
+        WireLogger.assets.info("transferState: \(transferState)", attributes: [LogAttributesKey.nonce.rawValue: self.underlyingMessage?.messageID.redactedAndTruncated() ?? "<nil>"])
         if synchronize {
             setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
         }
@@ -175,10 +175,14 @@ import Foundation
 
     public override func expire() {
         super.expire()
+        WireLogger.assets.info("expire asset message", attributes: [LogAttributesKey.nonce.rawValue: self.underlyingMessage?.messageID.redactedAndTruncated() ?? "<nil>"])
 
         if transferState != .uploaded {
             transferState = .uploadingFailed
         }
+
+        WireLogger.assets.info("expire asset message: transferState: \(transferState)", attributes: [LogAttributesKey.nonce.rawValue: self.underlyingMessage?.messageID.redactedAndTruncated() ?? "<nil>"])
+
     }
 
     public override func markAsSent() {

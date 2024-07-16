@@ -59,7 +59,9 @@ extension ZMAssetClientMessage {
     /// - Throws `ProcessingError` if the protobuf data can't be processed.
 
     public func setUnderlyingMessage(_ message: GenericMessage) throws {
+        WireLogger.assets.debug("before underlyingMessage: \(underlyingMessage)", attributes: [LogAttributesKey.nonce.rawValue: message.messageID.redactedAndTruncated()])
         try mergeWithExistingData(message: message)
+        WireLogger.assets.debug("after underlyingMessage: \(underlyingMessage)", attributes: [LogAttributesKey.nonce.rawValue: message.messageID.redactedAndTruncated()])
     }
 
     @discardableResult
