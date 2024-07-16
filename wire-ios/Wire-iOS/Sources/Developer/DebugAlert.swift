@@ -92,27 +92,34 @@ final class DebugAlert {
         controller.present(alert, animated: true, completion: nil)
     }
 
-    static func displayFallbackActivityController(logPaths: [URL],
-                                                  email: String,
-                                                  from controller: UIViewController,
-                                                  sourceView: UIView? = nil) {
+    static func displayFallbackActivityController(
+        logPaths: [URL],
+        email: String,
+        from controller: UIViewController,
+        sourceView: UIView? = nil
+    ) {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
             message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
+
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(
                 pointToView: sourceView ?? controller.view,
                 popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
             )
-            controller.present(activity, animated: true, completion: nil)
-        }))
-        controller.present(alert, animated: true, completion: nil)
-    }
 
+            var presentingViewController = controller
+            while let presentedViewController = presentingViewController.presentedViewController {
+                presentingViewController = presentedViewController
+            }
+            presentingViewController.present(activity, animated: true)
+        })
+        controller.present(alert, animated: true)
+    }
 }
 
 /// Sends debug logs by email
