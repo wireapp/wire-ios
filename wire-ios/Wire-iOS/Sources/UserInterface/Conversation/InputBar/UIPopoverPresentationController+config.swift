@@ -18,6 +18,7 @@
 
 import UIKit
 
+// TODO: [WPB-8778] remove the whole file
 protocol PopoverPresenter: AnyObject {
 
     /// The presenting popover. Its frame should be updated when the orientation or screen size changes.
@@ -47,10 +48,12 @@ extension UIPopoverPresentationController {
     ///   - popoverPresenter: the PopoverPresenter which presents this popover
     ///   - pointToView: the view in the presenter the popover's arrow points to
     ///   - sourceView: the view which presents this popover, usually a view of a UIViewController
+    @available(*, deprecated, message: "will be removed")
     func config(from popoverPresenter: PopoverPresenter,
                 pointToView: UIView,
                 sourceView: UIView) {
 
+        fatalError()
         if let viewController = popoverPresenter as? UIViewController {
             sourceRect = pointToView.popoverSourceRect(from: viewController)
         }
