@@ -33,7 +33,7 @@ extension UIApplication {
                 return false
             }
 
-            if controller is RootViewController {
+            if let splitViewController = controller as? UISplitViewController, splitViewController.viewController(for: .primary) is RootViewController {
                 return true
             }
 

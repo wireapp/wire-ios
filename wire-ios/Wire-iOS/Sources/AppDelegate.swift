@@ -72,7 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    /*private*/ let keyWindow = UIWindow(frame: UIScreen.main.bounds)
+    /*private*/ private(set) var keyWindow: UIWindow!
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -103,6 +103,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+        guard !application.supportsMultipleScenes else {
+            fatalError("Multiple scenes are currently not supported")
+        }
+        guard application.connectedScenes.count == 1, let windowScene = application.connectedScenes.first as? UIWindowScene else {
+            fatalError("Expected a single scene of type `UIWindowScene`")
+        }
+        keyWindow = .init(windowScene: windowScene)
+
         // enable logs
         _ = Settings.shared
         // switch logs
@@ -290,7 +299,10 @@ private extension AppDelegate {
             shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        keyWindow.rootViewController = rootViewController
+        let splitViewController = UISplitViewController(style: .tripleColumn)
+        splitViewController.setViewController(rootViewController, for: .primary)
+
+        keyWindow.rootViewController = splitViewController
         keyWindow.makeKeyAndVisible()
     }
 
@@ -303,7 +315,10 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        guard let viewController = keyWindow.rootViewController as? RootViewController else {
+        guard
+            let splitViewController = keyWindow.rootViewController as? UISplitViewController,
+            let viewController = splitViewController.viewController(for: .primary) as? RootViewController
+        else {
             fatalError("rootViewController is not of type RootViewController")
         }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
