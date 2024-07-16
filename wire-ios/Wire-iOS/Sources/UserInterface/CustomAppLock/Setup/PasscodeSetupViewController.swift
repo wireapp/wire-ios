@@ -128,7 +128,7 @@ final class PasscodeSetupViewController: UIViewController {
         self.context = context
 
         self.useCompactLayout = useCompactLayout ??
-        (AppDelegate.shared.window!.frame.height <= CGFloat.iPhone4Inch.height)
+        (AppDelegate.shared.keyWindow.frame.height <= CGFloat.iPhone4Inch.height)
 
         super.init(nibName: nil, bundle: nil)
 

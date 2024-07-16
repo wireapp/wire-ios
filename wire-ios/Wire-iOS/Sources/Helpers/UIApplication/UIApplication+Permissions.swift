@@ -89,13 +89,12 @@ extension UIApplication: ApplicationProtocol {
         (currentResponder as? UIView)?.endEditing(true)
 
         let alert = UIAlertController.cameraPermissionAlert(completion: completion)
-
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.keyWindow.rootViewController?.present(alert, animated: true)
     }
 
     private class func wr_warnAboutMicrophonePermission() {
         let alert = UIAlertController.microphonePermissionAlert
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.keyWindow.rootViewController?.present(alert, animated: true)
     }
 
     private class func wr_warnAboutPhotoLibraryRestricted() {
@@ -109,11 +108,11 @@ extension UIApplication: ApplicationProtocol {
             style: .cancel
         ))
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.keyWindow.rootViewController?.present(alert, animated: true)
     }
 
     private class func wr_warnAboutPhotoLibaryDenied() {
         let alert = UIAlertController.photoLibraryPermissionAlert
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.keyWindow.rootViewController?.present(alert, animated: true)
     }
 }

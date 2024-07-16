@@ -72,13 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    private let keyWindow = UIWindow(frame: UIScreen.main.bounds)
-
-    @available(*, deprecated, message: "Don't access this property!")
-    var window: UIWindow? {
-        get { keyWindow }
-        set { fatalError() }
-    }
+    /*private*/ let keyWindow = UIWindow(frame: UIScreen.main.bounds)
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -309,7 +303,7 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        guard let viewController = window?.rootViewController as? RootViewController else {
+        guard let viewController = keyWindow.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
