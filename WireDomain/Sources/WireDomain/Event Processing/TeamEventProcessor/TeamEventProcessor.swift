@@ -36,8 +36,21 @@ protocol TeamEventProcessorProtocol {
 
 struct TeamEventProcessor {
 
-    func processEvent(_: TeamEvent) async throws {
-        assertionFailure("not implemented yet")
+    let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
+    let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol
+    let memberUpdateEventProcessor: any TeamMemberUpdateEventProcessorProtocol
+
+    func processEvent(_ event: TeamEvent) async throws {
+        switch event {
+        case .delete:
+            try await deleteEventProcessor.processEvent()
+
+        case .memberLeave(let event):
+            try await memberLeaveEventProcessor.processEvent(event)
+
+        case .memberUpdate(let event):
+            try await memberUpdateEventProcessor.processEvent(event)
+        }
     }
 
 }
