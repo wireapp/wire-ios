@@ -35,10 +35,6 @@ struct ConversationCodeUpdateEventProcessor: ConversationCodeUpdateEventProcesso
 
     func processEvent(_ event: ConversationCodeUpdateEvent) async throws {
         // TODO: [WPB-10165]
-        // There is no existing implmentation. Check
-        // - fetch or create conversation.
-        // - store the event properties on the conversation
-        // - ZMConversation doesn't yet have attributes for these, may need to add them.
         assertionFailure("not implemented yet")
     }
 

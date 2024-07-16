@@ -35,12 +35,6 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
 
     func processEvent(_ event: ConversationAccessUpdateEvent) async throws {
         // TODO: [WPB-10164]
-        // Existing implementation is `WireRequestStrategy.ConversationEventProcessor`:
-        // - fetch or create conversation.
-        // - set the new access modes on the conversation.
-        // - set the new access roles on the conversation.
-        // - perhaps we can remove the legacy role from the payload.
-
         assertionFailure("not implemented yet")
     }
 
