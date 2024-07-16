@@ -16,27 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 
-/// Process team update events.
+/// Process conversation typing events.
 
-protocol TeamEventProcessorProtocol {
+protocol ConversationTypingEventProcessorProtocol {
 
-    /// Process a team update event.
+    /// Process a conversation typing event.
     ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A team update event.
+    /// - Parameter event: A conversation typing event.
 
-    func processEvent(_ event: TeamEvent) async throws
+    func processEvent(_ event: ConversationTypingEvent) async throws
 
 }
 
-struct TeamEventProcessor {
+struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
 
-    func processEvent(_: TeamEvent) async throws {
+    func processEvent(_: ConversationTypingEvent) async throws {
+        // TODO: [WPB-10178]
         assertionFailure("not implemented yet")
     }
 
