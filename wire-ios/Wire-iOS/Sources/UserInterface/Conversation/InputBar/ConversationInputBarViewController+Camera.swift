@@ -91,7 +91,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
             confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
-            endEditing()
+            view.window?.endEditing(true)
             present(confirmVideoViewController, animated: true)
         }
     }
@@ -170,7 +170,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let confirmImageViewController = ConfirmAssetViewController(context: context)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
-        endEditing()
+        view.window?.endEditing(true)
         present(confirmImageViewController, animated: true)
     }
 

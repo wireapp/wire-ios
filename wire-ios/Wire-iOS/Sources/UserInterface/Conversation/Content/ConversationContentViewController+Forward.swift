@@ -176,7 +176,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
         guard let userSession = ZMUserSession.shared(),
               let message else { return }
 
-        endEditing()
+        self.view.window?.endEditing(true)
 
         let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
             .shareableConversations(excluding: message.conversationLike)
