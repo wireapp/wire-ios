@@ -109,8 +109,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 }
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
-                WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
-                
+                WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)                
                 await context.perform {
                     object.expire()
                     self.localNotificationDispatcher.didFailToSend(object)
