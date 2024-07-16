@@ -419,7 +419,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
     [self.remoteMonitoring logWithRequest:URLRequest];
-    ZMLogPublic(@"Request: %@", request.safeForLoggingDescription);
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }

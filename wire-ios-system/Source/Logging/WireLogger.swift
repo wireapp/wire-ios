@@ -223,6 +223,7 @@ public extension WireLogger {
     static let messaging = WireLogger(tag: "messaging")
     static let mls = WireLogger(tag: "mls")
     static let notifications = WireLogger(tag: "notifications")
+    static let network = WireLogger(tag: "network")
     static let performance = WireLogger(tag: "performance")
     static let push = WireLogger(tag: "push")
     static let proteus = WireLogger(tag: "proteus")
