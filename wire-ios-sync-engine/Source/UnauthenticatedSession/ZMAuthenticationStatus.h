@@ -55,10 +55,13 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
 typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
     ZMAuthenticationPhaseUnauthenticated = 0,
-    ZMAuthenticationPhaseLoginWithEmail,
-    ZMAuthenticationPhaseWaitingToImportBackup,
-    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin,
-    ZMAuthenticationPhaseAuthenticated
+    //ZMAuthenticationPhaseLoginWithPhone = 1 __attribute__((deprecated("Use ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin instead"))),
+    ZMAuthenticationPhaseLoginWithEmail = 2,
+    ZMAuthenticationPhaseWaitingToImportBackup = 3,
+    //ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin = 4 __attribute__((deprecated("This phase is deprecated"))),
+    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin = 5,
+    //ZMAuthenticationPhaseVerifyPhone = 6 __attribute__((deprecated("Use ZMAuthenticationPhaseLoginWithPhone instead"))),
+    ZMAuthenticationPhaseAuthenticated = 7
 };
 
 @interface ZMAuthenticationStatus : NSObject
