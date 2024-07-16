@@ -37,7 +37,10 @@ extension ContactsViewController {
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
-        activityController.configPopover(pointToView: sender)
+        activityController.configPopover(
+            pointToView: sender,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
         present(activityController, animated: true)
     }
 

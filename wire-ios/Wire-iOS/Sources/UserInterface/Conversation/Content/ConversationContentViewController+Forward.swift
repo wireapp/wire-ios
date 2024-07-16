@@ -164,8 +164,7 @@ extension ConversationContentViewController {
     }
 
     func updatePopover() {
-        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenter else { return }
-
+        let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as! PopoverPresenter
         rootViewController.updatePopoverSourceRect()
     }
 }

@@ -153,7 +153,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingGuests(completion)
-        alertController.configPopover(pointToView: sourceView ?? view)
+        alertController.configPopover(
+            pointToView: sourceView ?? view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
         present(alertController, animated: true)
 
         return alertController
@@ -169,21 +172,30 @@ final class ConversationGuestOptionsViewController: UIViewController,
         }
         present(alertController, animated: true)
 
-        alertController.configPopover(pointToView: sourceView ?? view)
+        alertController.configPopover(
+            pointToView: sourceView ?? view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
     }
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRevokingLink completion: @escaping (Bool) -> Void) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
         present(alertController, animated: true)
 
-        alertController.configPopover(pointToView: sourceView ?? view)
+        alertController.configPopover(
+            pointToView: sourceView ?? view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
     }
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView? = nil) {
         let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
         present(activityController, animated: true)
 
-        activityController.configPopover(pointToView: sourceView ?? view)
+        activityController.configPopover(
+            pointToView: sourceView ?? view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
     }
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {

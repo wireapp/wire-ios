@@ -169,7 +169,7 @@ final class ConversationActionController {
             prepare(viewController: controller, with: $0)
         }
 
-        controller.configPopover(pointToView: sourceView ?? target.view, popoverPresenter: target as? PopoverPresenter)
+        controller.configPopover(pointToView: sourceView ?? target.view, popoverPresenter: target as! PopoverPresenter)
 
         target.present(controller, animated: true)
     }

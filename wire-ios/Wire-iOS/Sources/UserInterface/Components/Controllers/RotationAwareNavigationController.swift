@@ -18,6 +18,7 @@
 
 import UIKit
 
+// TODO: remove conformance to PopoverPresenter
 final class RotationAwareNavigationController: UINavigationController, PopoverPresenter, SpinnerCapable {
 
     // MARK: SpinnerCapable

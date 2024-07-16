@@ -119,7 +119,10 @@ extension ConversationInputBarViewController {
 
         controller.addAction(.cancel())
 
-        controller.configPopover(pointToView: sender ?? view)
+        controller.configPopover(
+            pointToView: sender ?? view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
         return controller
     }
 

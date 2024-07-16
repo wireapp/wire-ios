@@ -101,8 +101,10 @@ final class DebugAlert {
         alert.addAction(.cancel())
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
-            activity.configPopover(pointToView: sourceView ?? controller.view)
-
+            activity.configPopover(
+                pointToView: sourceView ?? controller.view,
+                popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+            )
             controller.present(activity, animated: true, completion: nil)
         }))
         controller.present(alert, animated: true, completion: nil)

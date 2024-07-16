@@ -490,7 +490,10 @@ extension ConversationCreationController {
             completion(type)
         }
 
-        alertViewController.configPopover(pointToView: view)
+        alertViewController.configPopover(
+            pointToView: view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
         present(alertViewController, animated: true)
     }
 

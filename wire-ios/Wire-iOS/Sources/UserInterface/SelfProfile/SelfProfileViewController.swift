@@ -206,7 +206,10 @@ final class SelfProfileViewController: UIViewController {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let alertViewController = profileImagePicker.selectProfileImage()
-        alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
+        alertViewController.configPopover(
+            pointToView: profileHeaderViewController.imageView,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
 
         present(alertViewController, animated: true)
     }

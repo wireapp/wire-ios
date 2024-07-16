@@ -69,7 +69,10 @@ final class UserStatusViewController: UIViewController {
         }
 
         let alertViewController = UIAlertController.availabilityPicker(availabilityChangedHandler)
-        alertViewController.configPopover(pointToView: view)
+        alertViewController.configPopover(
+            pointToView: view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
         present(alertViewController, animated: true)
     }
 }

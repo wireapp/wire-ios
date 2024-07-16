@@ -25,7 +25,10 @@ extension UIViewController {
 
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
 
-        activityController.configPopover(pointToView: sourceView)
+        activityController.configPopover(
+            pointToView: sourceView,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
 
         present(activityController, animated: true)
     }

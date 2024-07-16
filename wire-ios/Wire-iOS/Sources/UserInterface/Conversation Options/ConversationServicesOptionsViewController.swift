@@ -104,7 +104,10 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     func viewModel(_ viewModel: ConversationServicesOptionsViewModel, sourceView: UIView? = nil, confirmRemovingServices completion: @escaping (Bool) -> Void) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingServices(completion)
-        alertController.configPopover(pointToView: sourceView ?? view)
+        alertController.configPopover(
+            pointToView: sourceView ?? view,
+            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
+        )
         present(alertController, animated: true)
 
         return alertController
