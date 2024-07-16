@@ -60,7 +60,6 @@ open class AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration? = nil,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
@@ -83,7 +82,6 @@ open class AuthenticatedSessionFactory {
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
-            analyticsSessionConfiguration: analyticsSessionConfiguration,
             configuration: configuration,
             contextStorage: LAContextStorage(),
             earService: nil,

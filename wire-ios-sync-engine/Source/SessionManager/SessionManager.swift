@@ -522,7 +522,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if let analyticsSessionConfiguration {
             self.analyticsManager = AnalyticsManager(
-                appKey: analyticsSessionConfiguration.countlyKey, 
+                appKey: analyticsSessionConfiguration.countlyKey,
                 host: analyticsSessionConfiguration.host
             )
         }
@@ -870,9 +870,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
 
-            let analyticsSession = self.analyticsManager?.switchUser(AnalyticsUserProfile(analyticsIdentifier: "foo"))
-            self.activeUserSession?.analyticsSession = analyticsSession
-
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
@@ -885,11 +882,47 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
+                self.switchAnalyticsUser()
+
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
+    }
+
+    private func switchAnalyticsUser() {
+        guard
+            let analyticsManager,
+            let activeUserSession
+        else {
+            return
+        }
+
+        let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
+
+        guard let analyticsID = selfUser.analyticsIdentifier else {
+            // TODO: handle
+            return
+        }
+
+        var teamInfo: TeamInfo?
+        if let team = selfUser.team, let teamID = team.remoteIdentifier {
+            teamInfo = TeamInfo(
+                id: teamID.uuidString,
+                role: selfUser.teamRole.analyticsValue,
+                size: team.members.count
+            )
+        }
+
+        let analyticsSession = analyticsManager.switchUser(
+            AnalyticsUserProfile(
+                analyticsIdentifier: analyticsID,
+                teamInfo: teamInfo
+            )
+        )
+
+        activeUserSession.analyticsSession = analyticsSession
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
@@ -1090,7 +1123,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
-            analyticsSessionConfiguration: analyticsSessionConfiguration,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled
         ) else {

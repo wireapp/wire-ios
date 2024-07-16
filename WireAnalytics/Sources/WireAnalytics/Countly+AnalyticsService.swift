@@ -31,8 +31,12 @@ extension Countly: AnalyticsService {
         changeDeviceID(withMerge: id)
     }
 
-    func setUserValue(_ value: Any?, forKey key: String) {
-        WireCountly.user().setValue(value, forKey: key)
+    func setUserValue(_ value: String?, forKey key: String) {
+        if let value {
+            Countly.user().set(key, value: value)
+        } else {
+            Countly.user().unSet(key)
+        }
     }
 
     public func trackEvent(_ event: AnalyticEvent) {

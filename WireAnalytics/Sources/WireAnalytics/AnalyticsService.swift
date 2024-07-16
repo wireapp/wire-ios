@@ -25,6 +25,6 @@ protocol AnalyticsService: AnalyticsSessionProtocol {
     func beginSession()
     func endSession()
     func changeDeviceID(_ id: String)
-    func setUserValue(_ value: Any?, forKey key: String)
+    func setUserValue(_ value: String?, forKey key: String)
 
 }
