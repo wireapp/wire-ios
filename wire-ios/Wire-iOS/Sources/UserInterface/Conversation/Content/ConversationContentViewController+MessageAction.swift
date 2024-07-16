@@ -65,27 +65,27 @@ extension ConversationContentViewController {
     ) {
         switch actionId {
         case .cancel:
-            userSession.enqueue({
+            userSession.enqueue {
                 WireLogger.messaging.info(
                     "cancel message",
                     attributes: [
-                        LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-                    ].merging(.safePublic, uniquingKeysWith: { new, _ in new })
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ], .safePublic
                 )
 
                 message.fileMessageData?.cancelTransfer()
-            })
+            }
         case .resend:
-            userSession.enqueue({
+            userSession.enqueue {
                 WireLogger.messaging.info(
                     "resend message",
                     attributes: [
-                        LogAttributesKey.conversationId.rawValue: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-                    ].merging(.safePublic, uniquingKeysWith: { new, _ in new })
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ], .safePublic
                 )
 
                 message.resend()
-            })
+            }
         case .delete:
             assert(message.canBeDeleted)
 
