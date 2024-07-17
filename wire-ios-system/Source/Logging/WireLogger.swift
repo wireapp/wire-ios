@@ -146,6 +146,7 @@ public enum LogAttributesKey: String {
     case conversationId = "conversation_id"
     case syncPhase = "sync_phase"
     case eventSource = "event_source"
+    case processId = "process_id"
 }
 
 public extension LogAttributes {

@@ -114,6 +114,7 @@ public final class DatadogWrapper {
             level: defaultLevel,
             message: "Datadog startMonitoring for device: \(datadogUserId)"
         )
+        addTag(.processId, value: "\(ProcessInfo.processInfo.processName) - \(ProcessInfo.processInfo.processIdentifier)")
     }
 
     public func log(
