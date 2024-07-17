@@ -89,7 +89,7 @@ public enum BackendInfo {
 extension BackendInfo {
     @_spi(MockBackendInfo)
     public static func enableMocking() {
-        BackendInfo.mockStorage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.mockStorage = MockUserDefaults(suiteName: UUID().uuidString)!
     }
 
     @_spi(MockBackendInfo)
