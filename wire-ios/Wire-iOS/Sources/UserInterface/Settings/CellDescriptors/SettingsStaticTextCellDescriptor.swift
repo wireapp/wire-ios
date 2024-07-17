@@ -50,7 +50,7 @@ final class SettingsStaticTextCellDescriptor: SettingsCellDescriptorType {
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue?, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         // no-op
     }
 

@@ -73,7 +73,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
 
     // MARK: - SettingsCellDescriptorType
 
-    func select(_ value: SettingsPropertyValue?, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         guard let controllerToShow = generateViewController() else { return }
 
         switch presentationStyle {

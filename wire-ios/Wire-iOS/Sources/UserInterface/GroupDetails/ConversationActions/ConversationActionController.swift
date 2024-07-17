@@ -28,7 +28,7 @@ final class ConversationActionController {
     private unowned let target: UIViewController
     private(set) weak var sourceView: UIView?
     var currentContext: PopoverViewControllerPresentation?
-    private weak var alertController: UIAlertController?
+    private(set) weak var alertController: UIAlertController?
     let userSession: UserSession
 
     init(
