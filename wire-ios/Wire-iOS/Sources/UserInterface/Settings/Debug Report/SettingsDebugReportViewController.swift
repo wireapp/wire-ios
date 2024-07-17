@@ -91,7 +91,7 @@ class SettingsDebugReportViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle()
+        setupNavigationBarTitle(Strings.TechnicalReportSection.title.capitalized)
     }
 
     // MARK: - Setup
@@ -118,28 +118,6 @@ class SettingsDebugReportViewController: UIViewController {
             sendReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
             sendReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight)
         ])
-    }
-
-    private func setupNavigationBarTitle() {
-        // Set the navigation item title
-        navigationItem.title = Strings.TechnicalReportSection.title.capitalized
-
-        // Set the navigation bar title color and font
-        let titleTextAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: SemanticColors.Label.textDefault,
-            .font: UIFont.font(for: .h3)
-        ]
-        navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
-
-        // Ensure title supports LargeContentViewer
-        navigationItem.titleView?.isAccessibilityElement = true
-        navigationItem.titleView?.accessibilityTraits = .header
-        navigationItem.titleView?.accessibilityLabel = navigationItem.title
-
-        if let titleView = navigationItem.titleView {
-            titleView.showsLargeContentViewer = true
-            titleView.largeContentTitle = navigationItem.title
-        }
     }
 
     // MARK: - Actions
