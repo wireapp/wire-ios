@@ -18,13 +18,15 @@
 
 import UIKit
 
+// TODO: can this class be deleted?
+
 class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
 
     // MARK: SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
 
     let viewController: UIViewController
-    var disabledWhenInsidePopover: Bool = false
+    var disabledWhenInsidePopover = false
 
     private var animator: UIViewPropertyAnimator?
     private var bottomEdgeConstraint: NSLayoutConstraint?

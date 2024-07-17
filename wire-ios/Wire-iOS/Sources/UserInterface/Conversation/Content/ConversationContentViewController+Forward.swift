@@ -166,9 +166,8 @@ extension ConversationContentViewController {
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
-    func showForwardFor(message: ZMConversationMessage?, from view: UIView?) {
-        guard let userSession = ZMUserSession.shared(),
-              let message else { return }
+    func showForwardFor(message: ZMConversationMessage?, from view: UIView) {
+        guard let userSession = ZMUserSession.shared(), let message else { return }
 
         self.view.window?.endEditing(true)
 
@@ -186,10 +185,8 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
         keyboardAvoiding.preferredContentSize = CGSize.IPadPopover.preferredContentSize
         keyboardAvoiding.modalPresentationCapturesStatusBarAppearance = true
 
-        let presenter = (presentedViewController ?? UIApplication.shared.firstKeyWindow) as! PopoverPresenter
-
         if let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
-            keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: presenter)
+            keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: self)
         }
 
         if let popoverPresentationController = keyboardAvoiding.popoverPresentationController {
@@ -204,7 +201,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
             presentingViewController?.dismiss(animated: true)
         }
 
-        (presenter ?? self).present(keyboardAvoiding, animated: true)
+        present(keyboardAvoiding, animated: true)
     }
 
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
