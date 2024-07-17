@@ -17,21 +17,18 @@
 //
 
 import UIKit
+import WireSystem
 
 extension UIViewController {
 
-    func presentInviteActivityViewController(with sourceView: UIView) {
+    func presentInviteActivityViewController(popoverViewControllerPresentation: PopoverViewControllerPresentation?) {
 
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
         if let popoverPresentationController = activityController.popoverPresentationController {
-            fatalError("TODO")
+            popoverViewControllerPresentation?.configure(popoverPresentationController: popoverPresentationController)
         }
-        activityController.configPopover(
-            pointToView: sourceView,
-            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-        )
         present(activityController, animated: true)
     }
 }
