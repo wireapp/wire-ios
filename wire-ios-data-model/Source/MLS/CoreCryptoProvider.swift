@@ -40,10 +40,9 @@ public protocol CoreCryptoProviderProtocol {
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints?
 
-    
     /// Move CC files to dedicated folder
     /// - Note: This is a patch from v3.112.2 and below
-    func moveExistingCoreCryptoFilesIfNeeded()
+    func removeExistingCoreCryptoFilesIfNeeded()
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -105,9 +104,9 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    nonisolated public func moveExistingCoreCryptoFilesIfNeeded() {
+    nonisolated public func removeExistingCoreCryptoFilesIfNeeded() {
         let provider = CoreCryptoConfigProvider()
-        provider.moveCoreCryptoFilesIfNeeded(sharedContainerURL: sharedContainerURL,
+        provider.removeOldCoreCryptoFiles(sharedContainerURL: sharedContainerURL,
                                              userID: selfUserID)
     }
 
