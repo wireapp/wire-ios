@@ -143,11 +143,13 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     func createCoreCrypto() async throws -> SafeCoreCrypto {
         let provider = CoreCryptoConfigProvider()
 
-        let configuration = try provider.createInitialConfiguration(
-            sharedContainerURL: sharedContainerURL,
-            userID: selfUserID,
-            createKeyIfNeeded: allowCreation
-        )
+        let configuration = try await MainActor.run {
+            try provider.createInitialConfiguration(
+                sharedContainerURL: sharedContainerURL,
+                userID: selfUserID,
+                createKeyIfNeeded: allowCreation
+            )
+        }
 
         let coreCrypto = try await SafeCoreCrypto(
             path: configuration.path,
