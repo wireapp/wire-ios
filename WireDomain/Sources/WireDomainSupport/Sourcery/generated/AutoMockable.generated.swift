@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import Combine
 import WireAPI
 import WireDataModel
 
@@ -213,6 +214,44 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
         }
 
         try await mock(limit)
+    }
+
+    // MARK: - startBufferingLiveEvents
+
+    var startBufferingLiveEvents_Invocations: [Void] = []
+    var startBufferingLiveEvents_MockError: Error?
+    var startBufferingLiveEvents_MockMethod: (() async throws -> AsyncStream<UpdateEventEnvelope>)?
+    var startBufferingLiveEvents_MockValue: AsyncStream<UpdateEventEnvelope>?
+
+    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope> {
+        startBufferingLiveEvents_Invocations.append(())
+
+        if let error = startBufferingLiveEvents_MockError {
+            throw error
+        }
+
+        if let mock = startBufferingLiveEvents_MockMethod {
+            return try await mock()
+        } else if let mock = startBufferingLiveEvents_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `startBufferingLiveEvents`")
+        }
+    }
+
+    // MARK: - stopReceivingLiveEvents
+
+    var stopReceivingLiveEvents_Invocations: [Void] = []
+    var stopReceivingLiveEvents_MockMethod: (() async -> Void)?
+
+    func stopReceivingLiveEvents() async {
+        stopReceivingLiveEvents_Invocations.append(())
+
+        guard let mock = stopReceivingLiveEvents_MockMethod else {
+            fatalError("no mock for `stopReceivingLiveEvents`")
+        }
+
+        await mock()
     }
 
 }

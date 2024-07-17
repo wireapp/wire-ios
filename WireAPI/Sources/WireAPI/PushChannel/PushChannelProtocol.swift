@@ -27,7 +27,7 @@ public protocol PushChannelProtocol {
     ///
     /// - Returns: A publisher of payloads.
 
-    func open() async throws -> AnyPublisher<UpdateEventEnvelope, Never>
+    func open() async throws -> AsyncStream<UpdateEventEnvelope>
 
     /// Close the push channel and stop receiving update events.
 

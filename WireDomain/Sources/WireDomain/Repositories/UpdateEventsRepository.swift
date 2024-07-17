@@ -51,6 +51,21 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Parameter limit: The maximum number of events to delete.
 
     func deleteNextPendingEvents(limit: UInt) async throws
+    
+    /// Open the push channel and deliver update event envelopes through
+    /// an asynchronous stream.
+    ///
+    /// The envelopes are bufferred until a consumer starts to iterate though
+    /// the stream.
+    ///
+    /// - Returns: An asynchronous stream of `UpdateEventEnvelope`s.
+
+    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope>
+    
+    /// Close the piush channel and stop fnish the asynchronous stream of
+    /// `UpdateEventEnvelope`s returned in `startBufferingLiveEvents`.
+
+    func stopReceivingLiveEvents() async
 
 }
 
@@ -58,6 +73,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     private let selfClientID: String
     private let updateEventsAPI: any UpdateEventsAPI
+    private let pushChannel: any PushChannelProtocol
     private let updateEventDecryptor: any UpdateEventDecryptorProtocol
     private let eventContext: NSManagedObjectContext
     private let lastEventIDRepository: any LastEventIDRepositoryInterface
@@ -65,15 +81,19 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
+    private var controlContinuation: CheckedContinuation<Void, Never>?
+
     init(
         selfClientID: String,
         updateEventsAPI: any UpdateEventsAPI,
+        pushChannel: any PushChannelProtocol,
         updateEventDecryptor: any UpdateEventDecryptorProtocol,
         eventContext: NSManagedObjectContext,
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
         self.selfClientID = selfClientID
         self.updateEventsAPI = updateEventsAPI
+        self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
         self.eventContext = eventContext
         self.lastEventIDRepository = lastEventIDRepository
@@ -190,6 +210,36 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             } catch {
                 throw UpdateEventsRepositoryError.failedToDeleteStoredEvents(error)
             }
+        }
+    }
+
+    // MARK: - Live events
+
+    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope> {
+        try await pushChannel.open().compactMap {
+            do {
+                var envelope = $0
+                envelope.events = try await self.updateEventDecryptor.decryptEvents(in: envelope)
+                return envelope
+            } catch {
+                // TODO: log
+                return nil
+            }
+        }.toStream()
+    }
+
+    func stopReceivingLiveEvents() async {
+        await pushChannel.close()
+    }
+
+}
+
+extension AsyncSequence {
+
+    func toStream() -> AsyncStream<Element> {
+        var iterator = makeAsyncIterator()
+        return AsyncStream {
+            try? await iterator.next()
         }
     }
 

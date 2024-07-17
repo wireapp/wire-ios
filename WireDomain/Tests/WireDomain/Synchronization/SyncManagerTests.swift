@@ -27,50 +27,31 @@ import XCTest
 final class SyncManagerTests: XCTestCase {
 
     private var sut: SyncManager!
-    private var pushChannel: MockPushChannelProtocol!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
-    private var updateEventDecryptor: MockUpdateEventDecryptorProtocol!
     private var updateEventProcessor: MockUpdateEventProcessorProtocol!
-
-    private var pushChannelSubject: PassthroughSubject<UpdateEventEnvelope, Never>!
 
     override func setUp() async throws {
         try await super.setUp()
-        pushChannel = MockPushChannelProtocol()
         updateEventsRepository = MockUpdateEventsRepositoryProtocol()
-        updateEventDecryptor = MockUpdateEventDecryptorProtocol()
         updateEventProcessor = MockUpdateEventProcessorProtocol()
         sut = SyncManager(
-            pushChannel: pushChannel,
             updateEventsRepository: updateEventsRepository,
-            updateEventDecryptor: updateEventDecryptor,
             updateEventProcessor: updateEventProcessor
         )
-        
-        // Send `Data` through the subject to simulate push channel events.
-        pushChannelSubject = PassthroughSubject()
-        pushChannel.open_MockValue = pushChannelSubject.eraseToAnyPublisher()
-        pushChannel.close_MockMethod = { }
 
         // Base mocks.
+        updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncStream { _ in }
+        updateEventsRepository.stopReceivingLiveEvents_MockMethod = { }
         updateEventsRepository.pullPendingEvents_MockMethod = {}
         updateEventsRepository.fetchNextPendingEventsLimit_MockValue = []
         updateEventsRepository.deleteNextPendingEventsLimit_MockMethod = { _ in }
-
-        updateEventDecryptor.decryptEventsIn_MockMethod = { envelope in
-            envelope.events
-        }
-
         updateEventProcessor.processEvent_MockMethod = { _ in }
     }
 
     override func tearDown() async throws {
         sut = nil
-        pushChannel = nil
         updateEventsRepository = nil
-        updateEventDecryptor = nil
         updateEventProcessor = nil
-        pushChannelSubject = nil
         try await super.tearDown()
     }
 
@@ -85,8 +66,8 @@ final class SyncManagerTests: XCTestCase {
             return
         }
 
-        // Then the push channel is closed.
-        XCTAssertTrue(pushChannel.open_Invocations.isEmpty)
+        // Then is has not requested any live events.
+        XCTAssertTrue(updateEventsRepository.startBufferingLiveEvents_Invocations.isEmpty)
     }
 
     // MARK: - Suspension
@@ -102,7 +83,7 @@ final class SyncManagerTests: XCTestCase {
         try await sut.suspend()
 
         // Then it didn't do anything.
-        XCTAssertTrue(pushChannel.close_Invocations.isEmpty)
+        XCTAssertTrue(updateEventsRepository.stopReceivingLiveEvents_Invocations.isEmpty)
     }
 
     func testItSuspendsWhenLive() async throws {
@@ -118,7 +99,7 @@ final class SyncManagerTests: XCTestCase {
         try await sut.suspend()
 
         // Then the push channel was closed.
-        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+        XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 1)
 
         // Then it goes to the suspended state.
         guard case .suspended = sut.syncState else {
@@ -180,8 +161,8 @@ final class SyncManagerTests: XCTestCase {
         }
 
         // Then the push channel was closed.
-        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
-        
+        XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 1)
+
         // Then it goes to the suspended state.
         guard case .suspended = sut.syncState else {
             XCTFail("unexpected sync state: \(sut.syncState)")
@@ -220,6 +201,12 @@ final class SyncManagerTests: XCTestCase {
         // Given no stored events.
         var storedEvents = [UpdateEventEnvelope]()
 
+        // Mock live event stream.
+        var liveEventsContinuation: AsyncStream<UpdateEventEnvelope>.Continuation?
+        updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncStream { continuation in
+            liveEventsContinuation = continuation
+        }
+
         // Mock pull events from remote, store locally.
         updateEventsRepository.pullPendingEvents_MockMethod = {
             storedEvents = [
@@ -240,15 +227,24 @@ final class SyncManagerTests: XCTestCase {
         }
 
         let didProcessEvent = XCTestExpectation()
+        let didProcessEvent5 = XCTestExpectation()
         let didPushLiveEvents = XCTestExpectation()
 
         updateEventProcessor.processEvent_MockMethod = { event in
-            if event == Scaffolding.event2 {
+            switch event {
+            case Scaffolding.event1:
+                didProcessEvent.fulfill()
+
+            case Scaffolding.event2:
                 // Stop processing, wait for live events.
                 await self.fulfillment(of: [didPushLiveEvents])
-            }
 
-            didProcessEvent.fulfill()
+            case Scaffolding.event5:
+                didProcessEvent5.fulfill()
+
+            default:
+                break
+            }
         }
 
         // Run in another task so we can send events through the push channel.
@@ -265,35 +261,26 @@ final class SyncManagerTests: XCTestCase {
 
         // Push 2 live events through push channel
         let liveEnvelope1 = Scaffolding.makeEnvelope(with: Scaffolding.event4)
-        pushChannelSubject.send(liveEnvelope1)
+        liveEventsContinuation?.yield(liveEnvelope1)
 
         let liveEnvelope2 = Scaffolding.makeEnvelope(with: Scaffolding.event5)
-        pushChannelSubject.send(liveEnvelope2)
+        liveEventsContinuation?.yield(liveEnvelope2)
         didPushLiveEvents.fulfill()
 
         // Wait for "when" to finish.
         try await whenTask.value
 
-        // Then the push channel is open.
-        XCTAssertEqual(pushChannel.open_Invocations.count, 1)
-        XCTAssertEqual(pushChannel.close_Invocations.count, 0)
+        // We also need to wait to get the two live events...
+        await fulfillment(of: [didProcessEvent5])
+
+        // Then it requested live events.
+        XCTAssertEqual(updateEventsRepository.startBufferingLiveEvents_Invocations.count, 1)
 
         // Then it pulls pending events.
         XCTAssertEqual(updateEventsRepository.pullPendingEvents_Invocations.count, 1)
 
         // Then it tries to fetch 2 event batches (1st is non-empty, 2nd is empty).
         XCTAssertEqual(updateEventsRepository.fetchNextPendingEventsLimit_Invocations, [500, 500])
-
-        // Then it decrypted the 2 bufferend events.
-        let decryptionInvocations = updateEventDecryptor.decryptEventsIn_Invocations
-
-        guard decryptionInvocations.count == 2 else {
-            XCTFail("expected 2 events to be decrypted, got \(decryptionInvocations.count)")
-            return
-        }
-
-        XCTAssertEqual(decryptionInvocations[0], liveEnvelope1)
-        XCTAssertEqual(decryptionInvocations[1], liveEnvelope2)
 
         // Then it processed 5 events, in the correct order.
         let processEventInvocations = updateEventProcessor.processEvent_Invocations
@@ -316,14 +303,13 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(updateEventsRepository.deleteNextPendingEventsLimit_Invocations, [500])
         XCTAssertTrue(storedEvents.isEmpty)
 
-        // Then there are no buffered envelopes.
-        XCTAssertEqual(sut.bufferedEnvelopes.count, 0)
-
         // Then it is live.
         guard case .live = sut.syncState else {
             XCTFail("unexpected sync state: \(sut.syncState)")
             return
         }
+
+        XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
     }
 
 }

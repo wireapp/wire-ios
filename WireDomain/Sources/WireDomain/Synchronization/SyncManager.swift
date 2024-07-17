@@ -37,23 +37,14 @@ final class SyncManager: SyncManagerProtocol {
     private(set) var syncState: SyncState = .suspended
     private var isSuspending = false
 
-    private let pushChannel: any PushChannelProtocol
-    private var pushChannelToken: AnyCancellable?
-    private(set) var bufferedEnvelopes = [UpdateEventEnvelope]()
-    
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
-    private let updateEventDecryptor: any UpdateEventDecryptorProtocol
     private let updateEventProcessor: any UpdateEventProcessorProtocol
 
     init(
-        pushChannel: any PushChannelProtocol,
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
-        updateEventDecryptor: any UpdateEventDecryptorProtocol,
         updateEventProcessor: any UpdateEventProcessorProtocol
     ) {
-        self.pushChannel = pushChannel
         self.updateEventsRepository = updateEventsRepository
-        self.updateEventDecryptor = updateEventDecryptor
         self.updateEventProcessor = updateEventProcessor
     }
 
@@ -63,23 +54,30 @@ final class SyncManager: SyncManagerProtocol {
             return
         }
 
-        let task = Task {
-            // Divert incoming events from the event queue to the push channel,
-            // they'll be buffered until we finish quick sync.
-            try await openPushChannel()
+        // Opens the push channel, but events are buffered.
+        let liveEventsStream = try await updateEventsRepository.startBufferingLiveEvents()
+
+        let quickSyncTask = Task {
             try await updateEventsRepository.pullPendingEvents()
             try await processStoredEvents()
-            try await processBufferedEvents()
         }
 
         do {
-            syncState = .quickSync(task)
-            try await task.value
-            syncState = .live
+            syncState = .quickSync(quickSyncTask)
+            try await quickSyncTask.value
         } catch {
             try await suspend()
             throw error
         }
+
+        let liveTask = Task {
+            for try await envelope in liveEventsStream {
+                try Task.checkCancellation()
+                try await processLiveEvents(in: envelope)
+            }
+        }
+
+        syncState = .live(liveTask)
     }
 
     // TODO: Make non re-entrant
@@ -108,33 +106,20 @@ final class SyncManager: SyncManagerProtocol {
         }
     }
 
-    // MARK: - Push channel
+    // MARK: - Live events
 
     private func closePushChannel() async {
-        await pushChannel.close()
-        self.pushChannelToken = nil
-    }
-
-    private func openPushChannel() async throws {
-        pushChannelToken = try await pushChannel.open().sink { [weak self] in
-            self?.didReceiveUpdateEventEnvelope($0)
-        }
-    }
-
-    private func didReceiveUpdateEventEnvelope(_ envelope: UpdateEventEnvelope) {
-        guard case .live = syncState else {
-            bufferedEnvelopes.append(envelope)
-            return
-        }
-
-        Task {
-            try await processLiveEvents(in: envelope)
-        }
+        await updateEventsRepository.stopReceivingLiveEvents()
     }
 
     private func processLiveEvents(in envelope: UpdateEventEnvelope) async throws {
-        for event in try await updateEventDecryptor.decryptEvents(in: envelope) {
+        for event in envelope.events {
+            // TODO: In case of failure, should we continue?
             try await updateEventProcessor.processEvent(event)
+        }
+
+        if !envelope.isTransient {
+            // TODO: persist last event id
         }
     }
 
@@ -158,20 +143,6 @@ final class SyncManager: SyncManagerProtocol {
             }
 
             try await updateEventsRepository.deleteNextPendingEvents(limit: batchSize)
-        }
-    }
-
-    private func processBufferedEvents() async throws {
-        // More events may be aded to the buffering while we're processing,
-        // so we process one at a time until the buffer is empty.
-        while !bufferedEnvelopes.isEmpty {
-            try Task.checkCancellation()
-            let envelope = bufferedEnvelopes.removeFirst()
-            try await processLiveEvents(in: envelope)
-
-            if !envelope.isTransient {
-                // TODO: store last event id
-            }
         }
     }
 
