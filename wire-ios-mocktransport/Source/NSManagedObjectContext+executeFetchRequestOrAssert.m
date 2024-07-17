@@ -20,9 +20,9 @@
 
 #import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
-@implementation NSManagedObjectContext (executeFetchRequestOrAssert)
+@implementation NSManagedObjectContext (executeFetchRequestOrAssert_MockTransport)
 
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
+- (NSArray *)executeFetchRequestOrAssert_mt:(NSFetchRequest *)request;
 {
      NSError *error;
      NSArray *result = [self executeFetchRequest:request error:&error];

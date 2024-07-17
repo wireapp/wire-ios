@@ -20,9 +20,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSManagedObjectContext (executeFetchRequestOrAssert)
+@interface NSManagedObjectContext (executeFetchRequestOrAssert_MockTransport)
 
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
+- (NSArray *)executeFetchRequestOrAssert_mt:(NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
 
 @end
 

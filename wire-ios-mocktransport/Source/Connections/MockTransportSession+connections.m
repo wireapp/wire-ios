@@ -118,7 +118,7 @@
     
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     
     if(start != nil) {
         NSUInteger index = [connections indexOfObjectPassingTest:^BOOL(MockConnection *obj, NSUInteger idx, BOOL *stop) {

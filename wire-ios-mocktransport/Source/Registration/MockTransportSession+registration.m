@@ -28,7 +28,7 @@
 - (MockUser *)userWithEmail:(NSString *)email {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     if(users.count > 0u) {
         return users.firstObject;
     }
@@ -38,7 +38,7 @@
 - (MockUser *)userWithPhone:(NSString *)phone {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"phone == %@", phone];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     if(users.count > 0u) {
         return users.firstObject;
     }

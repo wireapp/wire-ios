@@ -28,7 +28,7 @@
     NSString *senderClientId = payload[@"sender"];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     request.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", senderClientId];
-    MockUserClient *client = [self.managedObjectContext executeFetchRequestOrAssert:request].firstObject;
+    MockUserClient *client = [self.managedObjectContext executeFetchRequestOrAssert_mt:request].firstObject;
     return client;
 }
 

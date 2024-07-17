@@ -20,14 +20,14 @@
 
 #import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
-@implementation NSManagedObjectContext (executeFetchRequestOrAssert)
+@implementation NSManagedObjectContext (executeFetchRequestOrAssert_DataModel)
 
 - (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
 {
-     NSError *error;
-     NSArray *result = [self executeFetchRequest:request error:&error];
-     RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
-     return result;
- }
+    NSError *error;
+    NSArray *result = [self executeFetchRequest:request error:&error];
+    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
+    return result;
+}
 
 @end

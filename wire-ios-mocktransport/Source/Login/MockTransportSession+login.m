@@ -69,8 +69,8 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
         }
         
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         if (users.count < 1) {
             return [self errorResponseWithCode:403 reason:@"invalid-credentials" apiVersion:request.apiVersion];
         }
@@ -119,7 +119,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         if (users.count < 1) {
             return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
