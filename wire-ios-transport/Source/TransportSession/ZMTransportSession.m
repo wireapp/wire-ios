@@ -412,7 +412,11 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
+<<<<<<< HEAD
     [WireLoggerObjc logRequest:URLRequest];
+=======
+    [self.remoteMonitoring logWithRequest:URLRequest];
+>>>>>>> ec4d466b52 (fix: diverse logs - WPB-9939 (#1693))
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
@@ -689,7 +693,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)URLSession:(ZMURLSession *)URLSession taskDidComplete:(NSURLSessionTask *)task transportRequest:(ZMTransportRequest *)request responseData:(NSData *)data;
 {
     NSTimeInterval timeDiff = -[request.startOfUploadTimestamp timeIntervalSinceNow];
-    ZMLogDebug(@"(Almost) bare network time for request %p %@ %@: %@s", request, request.methodAsString, request.path, @(timeDiff));
+    ZMLogDebug(@"(Almost) bare network time for request %@: %@s", [request safeForLoggingDescription], @(timeDiff));
     NSError *error = task.error;
     NSHTTPURLResponse *HTTPResponse = (id)task.response;
     [self processCookieResponse:HTTPResponse];
