@@ -86,6 +86,10 @@ public class CoreCryptoConfigProvider {
         let coreCryptoFile = coreCryptoDirectory.appendingPathComponent(sqliteFilename)
 
         try movePreviousCoreCryptoFilesIfNeeded(from: accountDirectory, to: coreCryptoDirectory)
+        
+        FileManager.default.enumerator(atPath: accountDirectory.path)?.forEach({ file in
+            WireLogger.coreCrypto.debug("🕵🏽 file: \(file)")
+        })
 
         do {
             let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
