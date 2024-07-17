@@ -241,6 +241,8 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     DebugLoginFailureTimerOverride = 0;
 }
 
+@end
+
 @implementation LoginFlowTests (EmailLogin)
 
 - (void)testThatItNotifiesIfTheEmailVerificationLoginCodeCanNotBeRequested
@@ -268,6 +270,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
 
 // MARK: - ClientRegistration_Errors
 
+@implementation LoginFlowTests (ClientRegistration_Errors)
 
 - (void)testThatItFetchesSelfUserBeforeRegisteringSelfClient
 {
