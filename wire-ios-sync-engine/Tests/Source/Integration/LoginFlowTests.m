@@ -270,9 +270,9 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     DebugLoginFailureTimerOverride = 0;
 }
 
-@end
 
-@implementation LoginFlowTests (PhoneLogin)
+// MARK: - PhoneLogin
+
 
 - (void)testThatWeCanLogInWithPhoneNumber
 {
@@ -373,10 +373,9 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationDidFail);
 }
 
-@end
 
+// MARK: - ClientRegistration_Errors
 
-@implementation LoginFlowTests (ClientRegistration_Errors)
 
 - (void)testThatItFetchesSelfUserBeforeRegisteringSelfClient
 {
