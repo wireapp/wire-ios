@@ -32,7 +32,7 @@ class ShareableDebugReportView: UIView {
 
     // MARK: - Views
 
-    private lazy var topLabel: DynamicFontLabel = {
+    private var topLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
             style: .body3,
             color: SemanticColors.Label.textDefault
@@ -43,7 +43,7 @@ class ShareableDebugReportView: UIView {
         return label
     }()
 
-    private lazy var bottomLabel: DynamicFontLabel = {
+    private var bottomLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
             style: .body1,
             color: SemanticColors.Label.textCollectionSecondary
@@ -56,7 +56,7 @@ class ShareableDebugReportView: UIView {
 
     private let labelsView = UIView()
 
-    private lazy var documentIconView: UIImageView = {
+    private var documentIconView: UIImageView = {
         let documentIconView = UIImageView(image: .init(resource: .file).withRenderingMode(.alwaysTemplate))
         documentIconView.tintColor = SemanticColors.Icon.backgroundDefault
         documentIconView.contentMode = .scaleAspectFit
