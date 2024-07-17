@@ -37,7 +37,6 @@ final class AnalyticsTests: XCTestCase {
         super.tearDown()
     }
 
-
     func testThatItSetsOptOutAnalyticsToSharedSettings() {
         // GIVEN
         TrackingManager.shared.disableAnalyticsSharing = false

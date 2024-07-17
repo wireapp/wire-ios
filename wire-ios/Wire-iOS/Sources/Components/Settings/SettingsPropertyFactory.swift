@@ -238,7 +238,7 @@ final class SettingsPropertyFactory {
                 }
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-       
+
         case .receiveNewsAndOffers:
 
             let getAction: GetAction = { [unowned self] _ in
