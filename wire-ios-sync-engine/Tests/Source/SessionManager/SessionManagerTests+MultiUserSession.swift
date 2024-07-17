@@ -118,7 +118,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsSessionConfiguration: nil
         )
 
         let environment = MockEnvironment()
