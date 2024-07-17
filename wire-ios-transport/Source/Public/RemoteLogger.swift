@@ -47,7 +47,7 @@ public final class RemoteMonitoring: NSObject {
     public static var remoteLogger: RemoteLogger?
 
     @objc func log(_ message: String, error: Error? = nil) {
-        Self.remoteLogger?.log(message: message, error: nil, attributes: nil, level: level)
+        WireLogger.network.info(message, attributes: .safePublic)
     }
 
     @objc func log(request: NSURLRequest) {
@@ -57,10 +57,10 @@ public final class RemoteMonitoring: NSObject {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "REQUEST: \(jsonString ?? request.description)"
-            Self.remoteLogger?.log(message: message, error: nil, attributes: nil, level: level)
+            WireLogger.network.info(message, attributes: .safePublic)
         } catch {
             let message = "REQUEST: \(request.description)"
-            Self.remoteLogger?.log(message: message, error: error, attributes: nil, level: level)
+            WireLogger.network.info(message, attributes: .safePublic)
         }
     }
 
@@ -71,10 +71,10 @@ public final class RemoteMonitoring: NSObject {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "RESPONSE: \(jsonString ?? response.description)"
-            Self.remoteLogger?.log(message: message, error: nil, attributes: nil, level: level)
+            WireLogger.network.info(message, attributes: .safePublic)
         } catch {
             let message = "RESPONSE: \(response.description)"
-            Self.remoteLogger?.log(message: message, error: error, attributes: nil, level: level)
+            WireLogger.network.info(message, attributes: .safePublic)
         }
     }
 }

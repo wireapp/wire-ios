@@ -173,7 +173,16 @@ extension LoggerProtocol {
         // drop attributes used for visibility and category
         logAttributes?.removeValue(forKey: "public")
         logAttributes?.removeValue(forKey: "tag")
-        return logAttributes?.isEmpty == false ? " - \(logAttributes!.description)" : ""
+        guard let logAttributes, !logAttributes.isEmpty else {
+            return ""
+        }
+        var description = " - ["
+        description += logAttributes.keys.sorted().map { key in
+            "\(key): \(logAttributes[key] ?? "<nil>")"
+        }.joined(separator: ", ")
+        description += "]"
+
+        return description
     }
 
 }
@@ -214,6 +223,7 @@ public extension WireLogger {
     static let messaging = WireLogger(tag: "messaging")
     static let mls = WireLogger(tag: "mls")
     static let notifications = WireLogger(tag: "notifications")
+    static let network = WireLogger(tag: "network")
     static let performance = WireLogger(tag: "performance")
     static let push = WireLogger(tag: "push")
     static let proteus = WireLogger(tag: "proteus")
@@ -226,7 +236,8 @@ public extension WireLogger {
     static let userClient = WireLogger(tag: "user-client")
     static let pushChannel = WireLogger(tag: "push-channel")
     static let eventProcessing = WireLogger(tag: "event-processing")
-
+    static let safeFileContext = WireLogger(tag: "safe-file-context")
+    static let messageProcessing = WireLogger(tag: "message-processing")
 }
 
 /// Class to proxy WireLogger methods to Objective-C
