@@ -67,10 +67,10 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                 NSError.blacklistedEmail(with: response) ??
                 NSError.emailAddressInUse(with: response) ??
                 NSError.invalidEmail(with: response)
-                error = decodedError ?? NSError(code: .unknownError, userInfo: [:])
+                error = decodedError ?? NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             case .checkActivationCode:
                 error = NSError.invalidActivationCode(with: response) ??
-                    NSError(code: .unknownError, userInfo: [:])
+                    NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             default:
                 let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
                 fatal("Error occurs for invalid phase: \(phaseString)")

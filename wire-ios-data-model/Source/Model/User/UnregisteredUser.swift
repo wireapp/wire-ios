@@ -82,4 +82,5 @@ extension UnregisteredUser: Equatable {
             && lhs.marketingConsent == rhs.marketingConsent
             && lhs.password == rhs.password
     }
+
 }
