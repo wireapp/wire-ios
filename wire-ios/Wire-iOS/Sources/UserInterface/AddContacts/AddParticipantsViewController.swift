@@ -514,7 +514,7 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URL.wr_searchSupport.open()
+            URLs.searchSupport.url.open()
         }
     }
 }

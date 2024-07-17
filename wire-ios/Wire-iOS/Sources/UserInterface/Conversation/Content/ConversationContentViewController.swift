@@ -498,8 +498,9 @@ private extension UIAlertController {
                                        message: String) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
+        // appendingLocaleParameter
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URL.wr_legalHoldLearnMore.appendingLocaleParameter)
+            let browserViewController = BrowserViewController(url: URLs.legalHoldInfo.url)
             topmostViewController?.present(browserViewController, animated: true)
         }
 

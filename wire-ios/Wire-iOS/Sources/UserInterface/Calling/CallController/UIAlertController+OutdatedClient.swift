@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 
 extension UIAlertController {
     static var unsupportedVersionAlert: UIAlertController {
@@ -30,7 +31,7 @@ extension UIAlertController {
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.Force.Update.okButton,
             style: .default,
-            handler: { _ in UIApplication.shared.open(URL.wr_wireAppOnItunes) }
+            handler: { _ in UIApplication.shared.open(URLs.appOnItunes.url) }
         ))
 
         alertController.addAction(UIAlertAction(

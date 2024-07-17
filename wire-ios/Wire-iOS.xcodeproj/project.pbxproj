@@ -63,6 +63,7 @@
 		06717E592865179000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
 		06717E5C2865183600AF442C /* Stylable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E5B2865183600AF442C /* Stylable.swift */; };
 		06717E5E2865188000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
+		0679DEDD2C46B83200044FC7 /* Bundle+URLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DED92C46951B00044FC7 /* Bundle+URLs.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
@@ -2104,6 +2105,7 @@
 		0667FE302384237E00F75F93 /* UICollectionView+SetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+SetMessage.swift"; sourceTree = "<group>"; };
 		06717E582865178F00AF442C /* SemanticColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemanticColors.swift; sourceTree = "<group>"; };
 		06717E5B2865183600AF442C /* Stylable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylable.swift; sourceTree = "<group>"; };
+		0679DED92C46951B00044FC7 /* Bundle+URLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+URLs.swift"; sourceTree = "<group>"; };
 		067EF351288FCAB600B2659A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF353288FCABF00B2659A /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF354288FCAC100B2659A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Accessibility.strings"; sourceTree = "<group>"; };
@@ -4226,6 +4228,14 @@
 				0665DF7228F01D3B0094482B /* ProfileImagePickerManager.swift */,
 			);
 			path = Image;
+			sourceTree = "<group>";
+		};
+		0679DEDB2C46954F00044FC7 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				0679DED92C46951B00044FC7 /* Bundle+URLs.swift */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		0685007F26B35DFC00721F80 /* Restrictions */ = {
@@ -6453,6 +6463,7 @@
 		8FC85126199245760008B66B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				0679DEDB2C46954F00044FC7 /* Configuration */,
 				40C69D6E2A8627A700376B1C /* TmpFiles */,
 				06B3091126AEDC830057AF9E /* UIAlertController */,
 				064AD4C225DD313C00143D74 /* UIApplication */,
@@ -10955,6 +10966,7 @@
 				F15650B321DD025A00210504 /* URL+Backup.swift in Sources */,
 				A9BBD8CE26A5D47C00C768B1 /* UIEdgeInsets+directionAware.swift in Sources */,
 				A9CF5F58242B98B300920877 /* NetworkStatus.swift in Sources */,
+				0679DEDD2C46B83200044FC7 /* Bundle+URLs.swift in Sources */,
 				E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */,
 				7C88BB90235F413F0075BCC5 /* Bundle+InfoDict.swift in Sources */,
 				EEF37EDA2BDFD9620055C9E1 /* WireTextStyle.swift in Sources */,

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSyncEngine
+import WireCommonComponents
 
 // sourcery: AutoMockable
 protocol ConversationUserClientDetailsActions {
@@ -40,6 +41,6 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
         guard let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        URL.wr_fingerprintHowToVerify.openInApp(above: topMostViewController)
+        URLs.howToVerifyFingerprintArticle.url.openInApp(above: topMostViewController)
     }
 }
