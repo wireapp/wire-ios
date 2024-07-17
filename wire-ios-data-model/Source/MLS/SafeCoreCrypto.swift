@@ -35,7 +35,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     private let coreCrypto: CoreCryptoProtocol
     private let safeContext: SafeFileContext
-    private let databasePath: String
+    private let databaseFolderPath: String
 
     public convenience init(path: String, key: String) async throws {
         let coreCrypto = try await coreCryptoDeferredInit(
@@ -47,18 +47,18 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
 
-        self.init(coreCrypto: coreCrypto, databasePath: path)
+        self.init(coreCrypto: coreCrypto, databaseFolderPath: path)
     }
 
-    init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
+    init(coreCrypto: CoreCryptoProtocol, databaseFolderPath: String) {
         self.coreCrypto = coreCrypto
-        self.databasePath = databasePath
-        let directoryPathUrl = URL(fileURLWithPath: databasePath).deletingLastPathComponent()
+        self.databaseFolderPath = databaseFolderPath
+        let directoryPathUrl = URL(fileURLWithPath: databaseFolderPath)
         self.safeContext = SafeFileContext(fileURL: directoryPathUrl)
     }
 
     public func tearDown() throws {
-        _ = try FileManager.default.removeItem(atPath: databasePath)
+        _ = try FileManager.default.removeItem(atPath: databaseFolderPath)
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
