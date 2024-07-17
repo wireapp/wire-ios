@@ -154,8 +154,9 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
+
             return DebugAlert.displayFallbackActivityController(
-                logPaths: DebugLogSender.debugLogs,
+                logPaths: DebugLogSender.existingDebugLogs,
                 email: mailRecipient,
                 from: self,
                 popoverPresentation: nil
