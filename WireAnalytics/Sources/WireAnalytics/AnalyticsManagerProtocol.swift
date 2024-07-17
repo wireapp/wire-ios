@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 
 public protocol AnalyticsManagerProtocol {
 
+    /// Switches the current analytics user and starts a new session.
+    /// - Parameter userProfile: The profile of the user to switch to.
+    /// - Returns: A new analytics session for the switched user.
     func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
 }
