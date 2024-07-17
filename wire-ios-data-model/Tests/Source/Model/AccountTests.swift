@@ -26,7 +26,7 @@ final class AccountTests: XCTestCase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "bruno@example.com", hasPassword: true, usesCompanyLogin: false)
 
         let account = Account(
             userName: "Bruno",
@@ -79,7 +79,7 @@ final class AccountTests: XCTestCase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
         let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
-        let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "bruno@example.com", hasPassword: true, usesCompanyLogin: false)
 
         // we create and store an account
         do {
