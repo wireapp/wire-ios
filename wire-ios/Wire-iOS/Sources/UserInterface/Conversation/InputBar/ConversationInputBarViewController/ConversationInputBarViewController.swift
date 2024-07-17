@@ -24,12 +24,6 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
-<<<<<<< HEAD
-=======
-import avs
-import AVFoundation
-import WireCommonComponents
->>>>>>> 450e817a9d (feat: Disable location sharing for C1 - WPB-9749 (#1691))
 
 enum ConversationInputBarViewControllerMode {
     case textInput
