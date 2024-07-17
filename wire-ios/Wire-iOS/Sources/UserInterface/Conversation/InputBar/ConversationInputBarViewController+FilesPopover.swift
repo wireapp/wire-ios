@@ -77,10 +77,12 @@ extension ConversationInputBarViewController {
         }
         #endif
 
-        let uploadVideoHandler: ((UIAlertAction) -> Void) = { _ in
-            self.presentImagePicker(with: .photoLibrary,
-                                    mediaTypes: [UTType.movie.identifier], allowsEditing: true,
-                                    pointToView: self.videoButton.imageView)
+        let uploadVideoHandler: ((UIAlertAction) -> Void) = { [self] _ in
+            presentImagePicker(
+                sourceType: .photoLibrary,
+                mediaTypes: [UTType.movie.identifier], allowsEditing: true,
+                pointToView: videoButton.imageView!
+            )
         }
 
         controller.addAction(UIAlertAction(icon: .movie,
@@ -155,7 +157,12 @@ extension ConversationInputBarViewController {
     private func recordVideo() {
         guard !CameraAccess.displayAlertIfOngoingCall(at: .recordVideo, from: self) else { return }
 
-        presentImagePicker(with: .camera, mediaTypes: [UTType.movie.identifier], allowsEditing: false, pointToView: videoButton.imageView)
+        presentImagePicker(
+            sourceType: .camera,
+            mediaTypes: [UTType.movie.identifier],
+            allowsEditing: false,
+            pointToView: videoButton.imageView!
+        )
     }
 
     #if targetEnvironment(simulator)
