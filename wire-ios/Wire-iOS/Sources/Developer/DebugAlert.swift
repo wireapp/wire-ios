@@ -49,7 +49,7 @@ final class DebugAlert {
                 message: message,
                 shareWithAVS: false,
                 presentingViewController: presentingViewController,
-                popoverPresentation: popoverPresentation
+                fallbackActivityPopoverPresentation: popoverPresentation
             )
         }
 
@@ -58,7 +58,7 @@ final class DebugAlert {
                 message: message,
                 shareWithAVS: true,
                 presentingViewController: presentingViewController,
-                popoverPresentation: popoverPresentation
+                fallbackActivityPopoverPresentation: popoverPresentation
             )
         }
 
