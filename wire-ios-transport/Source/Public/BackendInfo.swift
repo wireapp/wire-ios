@@ -73,6 +73,8 @@ public enum BackendInfo {
     }
 }
 
+#if DEBUG
+
 // MARK: - Mock
 
 extension BackendInfo {
@@ -86,3 +88,5 @@ extension BackendInfo {
         BackendInfo.storage = productionStorage
     }
 }
+
+#endif
