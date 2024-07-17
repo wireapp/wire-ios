@@ -135,7 +135,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         checkThatItCallsTheCompletionHandler(with: .invalidCredentials, for: ZMTransportResponse(payload: ["label": "bad-request"]  as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
     }
 
-    func checkThatItCallsTheCompletionHandler(with errorCode: ZMUserSessionErrorCode, for response: ZMTransportResponse) {
+    func checkThatItCallsTheCompletionHandler(with errorCode: UserSessionErrorCode, for response: ZMTransportResponse) {
         // given
         let credentials = UserEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
