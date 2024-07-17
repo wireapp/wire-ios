@@ -869,8 +869,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
-
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
+            self.switchAnalyticsUser()
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -890,7 +890,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func switchAnalyticsUser() {
+    private func switchAnalyticsUser() {
         guard
             let analyticsManager,
             let activeUserSession
