@@ -94,7 +94,19 @@ extension BackendInfo {
 
     @_spi(MockBackendInfo)
     public static func resetMocking() {
+        if let storage = mockStorage as? MockUserDefaults {
+            storage.removePersistentDomain(forName: storage.suiteName)
+        }
         BackendInfo.mockStorage = nil
+    }
+}
+
+private class MockUserDefaults: UserDefaults {
+    let suiteName: String
+
+    override init?(suiteName suitename: String?) {
+        self.suiteName = suitename ?? ""
+        super.init(suiteName: suitename)
     }
 }
 
