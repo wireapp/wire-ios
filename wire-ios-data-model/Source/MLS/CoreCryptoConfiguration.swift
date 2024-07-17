@@ -33,6 +33,8 @@ public struct CoreCryptoConfiguration {
 }
 
 public class CoreCryptoConfigProvider {
+    private let sqliteDirectory = "cc"
+    private let sqliteFilename = "corecrypto"
 
     // MARK: - Properties
 
@@ -78,19 +80,47 @@ public class CoreCryptoConfigProvider {
             applicationContainer: sharedContainerURL
         )
 
-        try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent(sqliteDirectory)
+        try FileManager.default.createAndProtectDirectory(at: coreCryptoDirectory)
+
+        let coreCryptoFile = coreCryptoDirectory.appendingPathComponent(sqliteFilename)
+
+        try movePreviousCoreCryptoFilesIfNeeded(from: accountDirectory, to: coreCryptoDirectory)
 
         do {
             let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
             return (
-                path: coreCryptoDirectory.path,
+                path: coreCryptoFile.path,
                 key: key.base64EncodedString()
             )
         } catch {
             WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
+    }
+
+    private func movePreviousCoreCryptoFilesIfNeeded(from oldDirURL: URL, to currentDirURL: URL) throws {
+        WireLogger.coreCrypto.debug("🕵🏽 movePreviousCoreCryptoFileIfNeeded start")
+        let walFilename = "\(sqliteFilename)-wal"
+        let shmFilename = "\(sqliteFilename)-shm"
+
+        for file in [walFilename, shmFilename, sqliteFilename] {
+            let oldPath = oldDirURL.appendingPathComponent(file).path
+            let newPath = currentDirURL.appendingPathComponent(file).path
+
+            guard FileManager.default.fileExists(atPath: oldPath) else {
+                continue
+            }
+
+            WireLogger.coreCrypto.debug("moving cc file \(oldPath) to \(newPath)")
+            do {
+                try FileManager.default.moveItem(atPath: oldPath, toPath: currentDirURL.path)
+            } catch {
+                WireLogger.coreCrypto.warn("could not move cc file \(oldPath) to \(newPath)")
+            }
+        }
+
+        WireLogger.coreCrypto.debug("🕵🏽 movePreviousCoreCryptoFileIfNeeded end")
     }
 
     public func clientID(of selfUser: ZMUser) throws -> String {
