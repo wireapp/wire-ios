@@ -57,7 +57,6 @@ class AnalyticsManagerTests: XCTestCase {
     }
 
     func testInitialization() {
-        XCTAssertEqual(analyticsService.startAppKeyHost_Invocations.count, 1)
         guard analyticsService.startAppKeyHost_Invocations.count == 1 else {
             XCTFail("Expected 1 invocation of startAppKeyHost, but got \(analyticsService.startAppKeyHost_Invocations.count)")
             return
@@ -78,14 +77,12 @@ class AnalyticsManagerTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(analyticsService.endSession_Invocations.count, 1)
-        XCTAssertEqual(analyticsService.changeDeviceID_Invocations.count, 1)
         guard analyticsService.changeDeviceID_Invocations.count == 1 else {
             XCTFail("Expected 1 invocation of changeDeviceID, but got \(analyticsService.changeDeviceID_Invocations.count)")
             return
         }
         XCTAssertEqual(analyticsService.changeDeviceID_Invocations[0], "testUser123")
 
-        XCTAssertEqual(analyticsService.setUserValueForKey_Invocations.count, 3)
         guard analyticsService.setUserValueForKey_Invocations.count == 3 else {
             XCTFail("Expected 3 invocations of setUserValueForKey, but got \(analyticsService.setUserValueForKey_Invocations.count)")
             return
@@ -114,14 +111,12 @@ class AnalyticsManagerTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(analyticsService.endSession_Invocations.count, 1)
-        XCTAssertEqual(analyticsService.changeDeviceID_Invocations.count, 1)
         guard analyticsService.changeDeviceID_Invocations.count == 1 else {
             XCTFail("Expected 1 invocation of changeDeviceID, but got \(analyticsService.changeDeviceID_Invocations.count)")
             return
         }
         XCTAssertEqual(analyticsService.changeDeviceID_Invocations[0], "testUser456")
 
-        XCTAssertEqual(analyticsService.setUserValueForKey_Invocations.count, 3)
         guard analyticsService.setUserValueForKey_Invocations.count == 3 else {
             XCTFail("Expected 3 invocations of setUserValueForKey, but got \(analyticsService.setUserValueForKey_Invocations.count)")
             return
