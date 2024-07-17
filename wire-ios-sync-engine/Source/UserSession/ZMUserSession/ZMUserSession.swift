@@ -473,6 +473,10 @@ public final class ZMUserSession: NSObject {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager)
+
+        // should be done only once
+        self.coreCryptoProvider.moveExistingCoreCryptoFilesIfNeeded()
+
         self.lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults

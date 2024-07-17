@@ -75,7 +75,7 @@ public class CoreCryptoConfigProvider {
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
-    
+
     public func moveCoreCryptoFilesIfNeeded(
         sharedContainerURL: URL,
         userID: UUID
@@ -86,7 +86,6 @@ public class CoreCryptoConfigProvider {
         )
 
         let coreCryptoDirectory = accountDirectory.appendingPathComponent(sqliteDirectory)
-        let coreCryptoFile = coreCryptoDirectory.appendingPathComponent(sqliteFilename)
 
         do {
             try FileManager.default.createAndProtectDirectory(at: coreCryptoDirectory)
