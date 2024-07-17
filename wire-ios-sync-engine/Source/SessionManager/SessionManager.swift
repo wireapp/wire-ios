@@ -705,7 +705,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func addAccount(userInfo: [String: Any]? = nil) {
         confirmSwitchingAccount { [weak self] isConfirmed in
             guard isConfirmed else { return }
-            let error = NSError(code: .addAccountRequested, userInfo: userInfo)
+            let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
                 self?.activeUserSession = nil
             })
@@ -741,7 +741,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.tearDownSessionAndDelete(account: account)
         } else {
             // Deleted the last account so we need to return to the logged out area
-            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(code: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
+            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
         }
     }
 
@@ -842,7 +842,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             } else {
                 createUnauthenticatedSession(accountId: account.userIdentifier)
 
-                let error = NSError(code: .accessTokenExpired,
+                let error = NSError(userSessionErrorCode: .accessTokenExpired,
                                     userInfo: account.loginCredentials?.dictionaryRepresentation)
                 delegate?.sessionManagerDidFailToLogin(error: error)
             }
@@ -1211,7 +1211,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func performPostRebootLogout() {
-        let error = NSError(code: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
+        let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
         self.logoutCurrentSession(deleteCookie: true, error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
@@ -1319,7 +1319,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
     public func session(session: UnauthenticatedSession, createdAccount account: Account) {
         guard !(accountManager.accounts.count == maxNumberAccounts && accountManager.account(with: account.userIdentifier) == nil) else {
-            let error = NSError(code: .accountLimitReached, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
             loginDelegate?.authenticationDidFail(error)
             return
         }
