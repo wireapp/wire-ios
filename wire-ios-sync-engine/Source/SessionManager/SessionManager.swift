@@ -901,8 +901,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
 
+        // Set the analytics identifier if it's not present
+        if selfUser.analyticsIdentifier == nil {
+            let idProvider = AnalyticsIdentifierProvider(selfUser: activeUserSession.selfUser)
+            idProvider.setIdentifierIfNeeded()
+        }
+
         guard let analyticsID = selfUser.analyticsIdentifier else {
-            // TODO: handle
             return
         }
 
