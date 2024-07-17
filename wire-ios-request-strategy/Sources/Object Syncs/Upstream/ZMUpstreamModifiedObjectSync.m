@@ -228,7 +228,7 @@ ZM_EMPTY_ASSERTING_INIT();
     }
     
     //if object was not synced 'cause it depends on other object (i.e. asset message depends on missed clients)
-    //it will be read back to updatedObjects set when request finishes
+    //it will be re-added back to updatedObjects set when request finishes
     //so next time we are asked to sync it we need to check it against predicate and filter again
     //because during sync of dependent object this object can also change (i.e. message will be expired if failed to create session with missed client)
     if (![self objectShouldBeSynced:objectWithKeys.object]) {
