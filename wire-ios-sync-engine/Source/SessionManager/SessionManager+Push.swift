@@ -90,6 +90,7 @@ extension PKPushRegistry: PushRegistry {}
             if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
 
                 self.select(account, completion: { _ in
+                    self.switchAnalyticsUser()
                     completion()
                 })
                 foundSession = true

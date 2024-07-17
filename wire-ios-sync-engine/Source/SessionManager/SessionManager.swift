@@ -882,7 +882,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
-                self.switchAnalyticsUser()
 
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
@@ -891,7 +890,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func switchAnalyticsUser() {
+    func switchAnalyticsUser() {
         guard
             let analyticsManager,
             let activeUserSession
