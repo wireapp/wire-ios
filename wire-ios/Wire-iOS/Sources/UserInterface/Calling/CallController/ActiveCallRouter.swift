@@ -302,17 +302,29 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     }
 
     func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
+
+        fatalError("TODO")
         let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
+        let popoverPresentation = PopoverViewControllerPresentation.sourceView(
+            sourceView: presentingViewController.view,
+            sourceRect: .init(origin: presentingViewController.view.center, size: .zero)
+        )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController)
+            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController, popoverPresentation: popoverPresentation)
             completion()
         }
     }
 
     func presentCallQualityRejection(presentingViewController: UIViewController) {
+
+        fatalError("TODO")
         let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
+        let popoverPresentation = PopoverViewControllerPresentation.sourceView(
+            sourceView: presentingViewController.view,
+            sourceRect: .init(origin: presentingViewController.view.center, size: .zero)
+        )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController)
+            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController, popoverPresentation: popoverPresentation)
             completion()
         }
     }

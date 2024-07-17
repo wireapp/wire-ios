@@ -41,14 +41,25 @@ final class DebugAlert {
     /// Presents an alert to send logs, if in developer mode, otherwise do nothing
     static func showSendLogsMessage(
         message: String,
-        presentingViewController: UIViewController
+        presentingViewController: UIViewController,
+        popoverPresentation: PopoverViewControllerPresentation?
     ) {
         let action1 = Action(text: "Send to Devs", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(message: message, shareWithAVS: false, presentingViewController: presentingViewController)
+            DebugLogSender.sendLogsByEmail(
+                message: message,
+                shareWithAVS: false,
+                presentingViewController: presentingViewController,
+                popoverPresentation: popoverPresentation
+            )
         }
 
         let action2 = Action(text: "Send to Devs & AVS", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(message: message, shareWithAVS: true, presentingViewController: presentingViewController)
+            DebugLogSender.sendLogsByEmail(
+                message: message,
+                shareWithAVS: true,
+                presentingViewController: presentingViewController,
+                popoverPresentation: popoverPresentation
+            )
         }
 
         self.show(
@@ -96,7 +107,7 @@ final class DebugAlert {
         logPaths: [URL],
         email: String,
         from controller: UIViewController,
-        sourceView: UIView? = nil
+        popoverPresentation: PopoverViewControllerPresentation?
     ) {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
@@ -108,10 +119,8 @@ final class DebugAlert {
 
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             if let popoverPresentationController = activity.popoverPresentationController {
-                popoverPresentationController.sourceView = sourceView?.superview ?? controller.view
-                popoverPresentationController.sourceRect = sourceView?.frame ?? controller.view.bounds
+                popoverPresentation?.configure(popoverPresentationController: popoverPresentationController)
             }
-
             controller.present(activity, animated: true)
         })
         controller.present(alert, animated: true)
@@ -139,7 +148,8 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     static func sendLogsByEmail(
         message: String,
         shareWithAVS: Bool,
-        presentingViewController: UIViewController
+        presentingViewController: UIViewController,
+        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation?
     ) {
         guard self.senderInstance == nil else { return }
 
@@ -156,8 +166,12 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: presentingViewController)
-            return
+            return DebugAlert.displayFallbackActivityController(
+                logPaths: debugLogs,
+                email: mail,
+                from: presentingViewController,
+                popoverPresentation: fallbackActivityPopoverPresentation
+            )
         }
 
         // compose

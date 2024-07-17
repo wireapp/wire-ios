@@ -68,9 +68,9 @@ final class SettingsTechnicalReportViewController: UITableViewController {
         setupNavigationBarTitle(L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
     }
 
-    func sendReport(sourceView: UIView? = nil) {
-        presentMailComposer(withLogs: includedVoiceLogCell.accessoryType == .checkmark,
-                            sourceView: sourceView)
+    func sendReport(sourceView: UIView? /**/) {
+        fatalError("TODO")
+        presentMailComposer(logs: includedVoiceLogCell.accessoryType == .checkmark)
     }
 
     // MARK: - TableView Delegates
@@ -139,24 +139,27 @@ final class SettingsTechnicalReportViewController: UITableViewController {
 }
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
-    func presentMailComposer(withLogs logsIncluded: Bool)
+    func presentMailComposer(logs logsIncluded: Bool)
 }
 
 extension SettingsTechnicalReportViewController: SendTechnicalReportPresenter {}
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
-    @MainActor
-    func presentMailComposer(withLogs logsIncluded: Bool) {
-        presentMailComposer(withLogs: logsIncluded, sourceView: nil)
-    }
 
     @MainActor
-    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?) {
+    func presentMailComposer(logs logsIncluded: Bool) {
+
+        fatalError("TODO")
+
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: DebugLogSender.debugLogs, email: mailRecipient, from: self, sourceView: sourceView)
-            return
+            return DebugAlert.displayFallbackActivityController(
+                logPaths: DebugLogSender.debugLogs,
+                email: mailRecipient,
+                from: self,
+                popoverPresentation: nil
+            )
         }
 
         let mailComposeViewController = MFMailComposeViewController()
@@ -170,16 +173,16 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
             let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
             topMostViewController?.isLoadingViewVisible = true
 
-            Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+            Task.detached(priority: .userInitiated) { [topMostViewController] in
                 await mailComposeViewController.attachLogs()
 
                 await self.present(mailComposeViewController, animated: true, completion: nil)
                 await MainActor.run {
                     topMostViewController?.isLoadingViewVisible = false
                 }
-            })
+            }
         } else {
-            self.present(mailComposeViewController, animated: true, completion: nil)
+            present(mailComposeViewController, animated: true, completion: nil)
         }
     }
 }

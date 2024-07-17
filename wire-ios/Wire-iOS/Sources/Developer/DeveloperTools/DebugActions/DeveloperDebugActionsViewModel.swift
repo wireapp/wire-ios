@@ -59,7 +59,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         DebugLogSender.sendLogsByEmail(
             message: "Send logs",
             shareWithAVS: false,
-            presentingViewController: presentingViewController
+            presentingViewController: presentingViewController,
+            fallbackActivityPopoverPresentation: .sourceView(
+                sourceView: presentingViewController.view,
+                sourceRect: .init(origin: presentingViewController.view.center, size: .zero)
+            )
         )
     }
 

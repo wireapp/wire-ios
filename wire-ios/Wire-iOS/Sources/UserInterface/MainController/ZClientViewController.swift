@@ -463,7 +463,12 @@ final class ZClientViewController: UIViewController {
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
-        DebugAlert.showSendLogsMessage(message: "A request loop is going on at \(path)", presentingViewController: self)
+        fatalError("TODO")
+        DebugAlert.showSendLogsMessage(
+            message: "A request loop is going on at \(path)",
+            presentingViewController: self,
+            popoverPresentation: nil
+        )
     }
 
     /// Attempt to load the last viewed conversation associated with the current account.

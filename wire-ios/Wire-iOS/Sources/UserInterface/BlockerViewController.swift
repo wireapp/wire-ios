@@ -161,7 +161,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
             style: .default,
             handler: { [weak self] _ in
-                self?.presentMailComposer(withLogs: true)
+                self?.presentMailComposer(logs: true)
             }
         )
 

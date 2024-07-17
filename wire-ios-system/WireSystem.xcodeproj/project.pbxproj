@@ -45,6 +45,7 @@
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
 		59C39F092C21E9480087300D /* TimePointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F082C21E9480087300D /* TimePointTests.swift */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
+		59FDA2572C47B0BF00E14FF7 /* PopoverViewControllerPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FDA2562C47B0BF00E14FF7 /* PopoverViewControllerPresentation.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
@@ -135,6 +136,7 @@
 		59C39F062C21E9390087300D /* DispatchGroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchGroupTests.swift; sourceTree = "<group>"; };
 		59C39F082C21E9480087300D /* TimePointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePointTests.swift; sourceTree = "<group>"; };
 		59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
+		59FDA2562C47B0BF00E14FF7 /* PopoverViewControllerPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverViewControllerPresentation.swift; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				54F249C71BB9242900040600 /* ZMSDispatchGroup.m */,
 				EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */,
 				16AAA6292C21903200080A06 /* ExpiringActivity.swift */,
+				59FDA2562C47B0BF00E14FF7 /* PopoverViewControllerPresentation.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -585,6 +588,7 @@
 				54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */,
 				EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */,
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
+				59FDA2572C47B0BF00E14FF7 /* PopoverViewControllerPresentation.swift in Sources */,
 				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */,
