@@ -1478,8 +1478,6 @@
 		EE67F6D0296F067F001D7C88 /* Countly.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6CE296F067F001D7C88 /* Countly.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6D5296F06A3001D7C88 /* Down.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D4296F06A3001D7C88 /* Down.xcframework */; };
 		EE67F6D6296F06A3001D7C88 /* Down.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D4296F06A3001D7C88 /* Down.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */; };
-		EE67F6D9296F06B3001D7C88 /* FLAnimatedImage.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6DE296F06CE001D7C88 /* libcmark.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */; };
 		EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; };
@@ -2041,7 +2039,6 @@
 				EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */,
 				EEE25B3C29719C370008B894 /* WireLinkPreview.framework in Embed Frameworks */,
 				EEE25B5729719D850008B894 /* HTMLString.xcframework in Embed Frameworks */,
-				EE67F6D9296F06B3001D7C88 /* FLAnimatedImage.xcframework in Embed Frameworks */,
 				EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */,
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
@@ -4038,7 +4035,6 @@
 				595D304B2BF923B30064A018 /* WireAPI in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
-				EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */,
