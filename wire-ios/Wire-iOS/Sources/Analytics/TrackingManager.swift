@@ -34,11 +34,6 @@ final class TrackingManager: NSObject, TrackingInterface {
 
     static let shared = TrackingManager()
 
-    var disableCrashSharing: Bool {
-        get { ExtensionSettings.shared.disableCrashSharing }
-        set { ExtensionSettings.shared.disableCrashSharing = newValue }
-    }
-
     var disableAnalyticsSharing: Bool {
         get { ExtensionSettings.shared.disableAnalyticsSharing }
         set {

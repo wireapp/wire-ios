@@ -37,17 +37,6 @@ final class AnalyticsTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItSetsOptOutCrashReportToSharedSettings() {
-        // GIVEN
-        TrackingManager.shared.disableCrashSharing = false
-        // THEN
-        XCTAssertFalse(ExtensionSettings.shared.disableCrashSharing)
-        // WHEN
-        TrackingManager.shared.disableCrashSharing = true
-        // THEN
-        XCTAssert(ExtensionSettings.shared.disableCrashSharing)
-    }
-
     func testThatItSetsOptOutAnalyticsToSharedSettings() {
         // GIVEN
         TrackingManager.shared.disableAnalyticsSharing = false

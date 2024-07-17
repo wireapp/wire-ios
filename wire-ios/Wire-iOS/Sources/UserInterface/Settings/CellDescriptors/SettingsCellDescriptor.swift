@@ -275,8 +275,6 @@ extension SettingsPropertyName {
             return Settings.PrivacySecurity.DisableLinkPreviews.title
 
             // personal information - Analytics
-        case .disableCrashSharing:
-            return Settings.PrivacyCrash.title
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title
         case .receiveNewsAndOffers:
