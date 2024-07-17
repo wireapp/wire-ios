@@ -18,80 +18,80 @@
 
 @import Foundation;
 
-typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
-    ZMUserSessionNoError = 0,
+typedef NS_CLOSED_ENUM(NSInteger, ZMUserSessionErrorCode) {
+    ZMUserSessionErrorCodeNoError = 0,
     /// ???
-    ZMUserSessionUnknownError,
+    ZMUserSessionErrorCodeUnknownError = 1,
     /// Credentials are needed to authenticate
-    ZMUserSessionNeedsCredentials,
+    ZMUserSessionErrorCodeNeedsCredentials = 2,
     /// The credentials provided are not valid
-    ZMUserSessionInvalidCredentials,
+    ZMUserSessionErrorCodeInvalidCredentials = 3,
     /// The account is still pending validation
-    ZMUserSessionAccountIsPendingActivation,
+    ZMUserSessionErrorCodeAccountIsPendingActivation = 4,
     /// Network error in communicating with the backend
-    ZMUserSessionNetworkError,
+    ZMUserSessionErrorCodeNetworkError = 5,
     /// The email used in the registration is already in use
-    ZMUserSessionEmailIsAlreadyRegistered,
+    ZMUserSessionErrorCodeEmailIsAlreadyRegistered = 6,
     /// The phone number used in the registration is already in use
-    ZMUserSessionPhoneNumberIsAlreadyRegistered,
+    // ZMUserSessionErrorCodePhoneNumberIsAlreadyRegistered __attribute__((deprecated)) = 7,
     /// The phone number used in the registration is not a valid phone number
-    ZMUserSessionInvalidPhoneNumber,
+    // ZMUserSessionErrorCodeInvalidPhoneNumber __attribute__((deprecated)) = 8,
     /// The email used in the registration is not a valid email
-    ZMUserSessionInvalidEmail,
+    ZMUserSessionErrorCodeInvalidEmail = 9,
     /// The phone number verification code inserted is not valid
-    ZMUserSessionInvalidPhoneNumberVerificationCode,
+    // ZMUserSessionErrorCodeInvalidPhoneNumberVerificationCode __attribute__((deprecated)) = 10,
     /// The email verification code inserted is not valid
-    ZMUserSessionInvalidEmailVerificationCode,
+    ZMUserSessionErrorCodeInvalidEmailVerificationCode = 11,
     /// The registration failed, but we don't know why
-    ZMUserSessionRegistrationDidFailWithUnknownError,
+    ZMUserSessionErrorCodeRegistrationDidFailWithUnknownError = 12,
     /// There is already a recent request to get the activation code for registration/login
-    ZMUserSessionCodeRequestIsAlreadyPending,
+    ZMUserSessionErrorCodeRequestIsAlreadyPending = 13,
     /// The user account does not have a password, and a password
     /// is needed to register a new client.
-    ZMUserSessionNeedsPasswordToRegisterClient,
+    ZMUserSessionErrorCodeNeedsPasswordToRegisterClient = 14,
     /// The user account does not have an email, and an email
     /// is needed to register a new client
     /// Not supported by the backend any more. The error is generated locally.
-    ZMUserSessionNeedsToRegisterEmailToRegisterClient,
+    ZMUserSessionErrorCodeNeedsToRegisterEmailToRegisterClient = 15,
     /// The user needs to enroll into end-to-end identity in order to complete the registration
     /// of a new client.
-    ZMUserSessionNeedsToEnrollE2EIToRegisterClient,
+    ZMUserSessionErrorCodeNeedsToEnrollE2EIToRegisterClient = 16,
     /// The user account does not have a handle, and a handle is needed to register a new client.
-    ZMUserSessionNeedsToHandleToRegisterClient,
+    ZMUserSessionErrorCodeNeedsToHandleToRegisterClient = 17,
     /// Too many clients have been registered for this user,
     /// one needs to be deleted before registering a new one
-    ZMUserSessionCanNotRegisterMoreClients,
+    ZMUserSessionErrorCodeCanNotRegisterMoreClients = 18,
     /// The invitation code provided during registration is invalid
-    ZMUserSessionInvalidInvitationCode,
+    ZMUserSessionErrorCodeInvalidInvitationCode = 19,
     /// The Activation code provided during email activation is invalid
-    ZMUserSessionInvalidActivationCode,
+    ZMUserSessionErrorCodeInvalidActivationCode = 20,
     /// The current usert client was deleted remotely
-    ZMUserSessionClientDeletedRemotely,
+    ZMUserSessionErrorCodeClientDeletedRemotely = 21,
     /// The last user identity (email or phone number) cannot be removed.
-    ZMUserSessionLastUserIdentityCantBeDeleted,
+    ZMUserSessionErrorCodeLastUserIdentityCantBeDeleted = 22,
     /// Access token expired and could not be renewed
-    ZMUserSessionAccessTokenExpired,
+    ZMUserSessionErrorCodeAccessTokenExpired = 23,
     /// The user requested to add an additional account
-    ZMUserSessionAddAccountRequested,
+    ZMUserSessionErrorCodeAddAccountRequested = 24,
     /// The user account is suspended and may not be logged in
-    ZMUserSessionAccountSuspended,
+    ZMUserSessionErrorCodeAccountSuspended = 25,
     /// The user account was deleted
-    ZMUserSessionAccountDeleted,
+    ZMUserSessionErrorCodeAccountDeleted = 26,
     /// The account can't be created because the account limit has been reached
-    ZMUserSessionAccountLimitReached,
+    ZMUserSessionErrorCodeAccountLimitReached = 27,
     /// The email used in the registration is blacklisted
-    ZMUserSessionBlacklistedEmail,
+    ZMUserSessionErrorCodeBlacklistedEmail = 28,
     /// Unauthorized e-mail address
-    ZMUserSessionUnauthorizedEmail,
+    ZMUserSessionErrorCodeUnauthorizedEmail = 29,
     /// The email used in the registration is blocked
-    ZMUserSessionDomainBlocked,
+    ZMUserSessionErrorCodeDomainBlocked = 30,
     /// User has rebooted the device
-    ZMUserSessionNeedsAuthenticationAfterReboot,
+    ZMUserSessionErrorCodeNeedsAuthenticationAfterReboot = 31,
     /// User's account pending verification
-    ZMUserSessionAccountIsPendingVerification,
+    ZMUserSessionErrorCodeAccountIsPendingVerification = 32,
     /// Migration has finished and the user should authenticate
-    ZMUserSessionNeedsAuthenticationAfterMigration
-};
+    ZMUserSessionErrorCodeNeedsAuthenticationAfterMigration = 33
+} NS_SWIFT_NAME(UserSessionErrorCode);
 
 FOUNDATION_EXPORT NSString * const ZMClientsKey;
 

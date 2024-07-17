@@ -19,14 +19,16 @@
 import Foundation
 
 extension NSError {
-    @objc public static var ZMUserSessionErrorDomain = "ZMUserSession"
 
-    @objc(initWitUserSessionErrorWithErrorCode:userInfo:)
-    public convenience init(code: ZMUserSessionErrorCode, userInfo: [String: Any]?) {
+    @objc(ZMUserSessionErrorDomain)
+    public static var userSessionErrorDomain = "ZMUserSession"
+
+    @objc
+    public convenience init(userSessionErrorCode: UserSessionErrorCode, userInfo: [String: Any]?) {
         var info = userInfo ?? [:]
-        if let description = code.errorDescription {
+        if let description = userSessionErrorCode.errorDescription {
             info[NSLocalizedDescriptionKey] = description
         }
-        self.init(domain: NSError.ZMUserSessionErrorDomain, code: Int(code.rawValue), userInfo: info)
+        self.init(domain: NSError.userSessionErrorDomain, code: Int(userSessionErrorCode.rawValue), userInfo: info)
     }
 }

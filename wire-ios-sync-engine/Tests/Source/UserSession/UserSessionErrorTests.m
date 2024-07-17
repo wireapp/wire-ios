@@ -32,14 +32,14 @@
 {
     NSError *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:5 userInfo:nil];
     XCTAssertNotNil(error);
-    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionNoError);
+    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionErrorCodeNoError);
 }
 
 - (void)testNeedsCredentials;
 {
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionNeedsCredentials userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeNeedsCredentials userInfo:nil];
     XCTAssertNotNil(error);
-    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionNeedsCredentials);
+    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionErrorCodeNeedsCredentials);
 }
 
 @end

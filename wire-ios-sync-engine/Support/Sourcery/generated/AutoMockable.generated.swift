@@ -938,51 +938,6 @@ public class MockUserProfile: UserProfile {
     public var lastSuggestedHandle: String?
 
 
-    // MARK: - requestPhoneVerificationCode
-
-    public var requestPhoneVerificationCodePhoneNumber_Invocations: [String] = []
-    public var requestPhoneVerificationCodePhoneNumber_MockMethod: ((String) -> Void)?
-
-    public func requestPhoneVerificationCode(phoneNumber: String) {
-        requestPhoneVerificationCodePhoneNumber_Invocations.append(phoneNumber)
-
-        guard let mock = requestPhoneVerificationCodePhoneNumber_MockMethod else {
-            fatalError("no mock for `requestPhoneVerificationCodePhoneNumber`")
-        }
-
-        mock(phoneNumber)
-    }
-
-    // MARK: - requestPhoneNumberChange
-
-    public var requestPhoneNumberChangeCredentials_Invocations: [UserPhoneCredentials] = []
-    public var requestPhoneNumberChangeCredentials_MockMethod: ((UserPhoneCredentials) -> Void)?
-
-    public func requestPhoneNumberChange(credentials: UserPhoneCredentials) {
-        requestPhoneNumberChangeCredentials_Invocations.append(credentials)
-
-        guard let mock = requestPhoneNumberChangeCredentials_MockMethod else {
-            fatalError("no mock for `requestPhoneNumberChangeCredentials`")
-        }
-
-        mock(credentials)
-    }
-
-    // MARK: - requestPhoneNumberRemoval
-
-    public var requestPhoneNumberRemoval_Invocations: [Void] = []
-    public var requestPhoneNumberRemoval_MockMethod: (() -> Void)?
-
-    public func requestPhoneNumberRemoval() {
-        requestPhoneNumberRemoval_Invocations.append(())
-
-        guard let mock = requestPhoneNumberRemoval_MockMethod else {
-            fatalError("no mock for `requestPhoneNumberRemoval`")
-        }
-
-        mock()
-    }
-
     // MARK: - requestEmailChange
 
     public var requestEmailChangeEmail_Invocations: [String] = []

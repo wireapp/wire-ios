@@ -55,23 +55,21 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
 typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
     ZMAuthenticationPhaseUnauthenticated = 0,
-    ZMAuthenticationPhaseLoginWithPhone,
-    ZMAuthenticationPhaseLoginWithEmail,
-    ZMAuthenticationPhaseWaitingToImportBackup,
-    ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin,
-    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin,
-    ZMAuthenticationPhaseVerifyPhone,
-    ZMAuthenticationPhaseAuthenticated
+    //ZMAuthenticationPhaseLoginWithPhone = 1 __attribute__((deprecated("Use ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin instead"))),
+    ZMAuthenticationPhaseLoginWithEmail = 2,
+    ZMAuthenticationPhaseWaitingToImportBackup = 3,
+    //ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin = 4 __attribute__((deprecated("This phase is deprecated"))),
+    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin = 5,
+    //ZMAuthenticationPhaseVerifyPhone = 6 __attribute__((deprecated("Use ZMAuthenticationPhaseLoginWithPhone instead"))),
+    ZMAuthenticationPhaseAuthenticated = 7
 };
 
 @interface ZMAuthenticationStatus : NSObject
 
-@property (nonatomic, readonly, copy) NSString *registrationPhoneNumberThatNeedsAValidationCode;
-@property (nonatomic, readonly, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
+
 @property (nonatomic, readonly) UserCredentials *loginCredentials;
-@property (nonatomic, readonly) UserPhoneCredentials *registrationPhoneValidationCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;
@@ -91,7 +89,6 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)prepareForLoginWithCredentials:(UserCredentials *)credentials;
 - (void)continueAfterBackupImportStep;
-- (void)prepareForRequestingPhoneVerificationCodeForLogin:(NSString *)phone;
 - (void)prepareForRequestingEmailVerificationCodeForLogin:(NSString *)email;
 
 - (void)didCompleteRequestForLoginCodeSuccessfully;
@@ -100,12 +97,9 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)notifyCompanyLoginCodeDidBecomeAvailable:(NSUUID *)uuid;
 
-- (void)didCompletePhoneVerificationSuccessfully;
-
 - (void)startLogin;
 - (void)loginSucceededWithResponse:(ZMTransportResponse *)response;
 - (void)loginSucceededWithUserInfo:(UserInfo *)userInfo;
-- (void)didFailLoginWithPhone:(BOOL)invalidCredentials;
 - (void)didFailLoginWithEmailBecausePendingValidation;
 - (void)didFailLoginWithEmail:(BOOL)invalidCredentials;
 - (void)didFailLoginBecauseAccountSuspended;

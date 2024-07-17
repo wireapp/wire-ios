@@ -32,23 +32,6 @@ import WireUtilities
     /// Invoked when the email was sent to the backend
     @objc optional func didSendVerificationEmail()
 
-    /// Invoked when requesting the phone number verification code failed
-    @objc optional func phoneNumberVerificationCodeRequestDidFail(_ error: Error!)
-
-    /// Invoken when requesting the phone number verification code succeeded
-    @objc optional func phoneNumberVerificationCodeRequestDidSucceed()
-
-    /// Invoked when the phone number could not be removed
-    @objc optional func phoneNumberRemovalDidFail(_ error: Error!)
-
-    /// Invoked when phone number was removed
-    @objc optional func didRemovePhoneNumber()
-
-    /// Invoked when the phone number code verification failed
-    /// The opposite (phone number change success) will be notified
-    /// by a change in the user phone number
-    @objc optional func phoneNumberChangeDidFail(_ error: Error!)
-
     /// Invoked when the availability of a handle was determined
     @objc optional func didCheckAvailiabilityOfHandle(handle: String, available: Bool)
 
@@ -73,11 +56,6 @@ enum UserProfileUpdateNotificationType {
     case passwordUpdateDidFail
     case emailUpdateDidFail(error: Error)
     case emailDidSendVerification
-    case didRemovePhoneNumber
-    case phoneNumberVerificationCodeRequestDidFail(error: Error)
-    case phoneNumberVerificationCodeRequestDidSucceed
-    case phoneNumberChangeDidFail(error: Error)
-    case phoneNumberRemovalDidFail(error: Error)
     case didCheckAvailabilityOfHandle(handle: String, available: Bool)
     case didFailToCheckAvailabilityOfHandle(handle: String)
     case didSetHandle
@@ -114,18 +92,8 @@ extension UserProfileUpdateStatus {
             switch note.type {
             case .emailUpdateDidFail(let error):
                 observer.emailUpdateDidFail?(error)
-            case .phoneNumberRemovalDidFail(let error):
-                observer.phoneNumberRemovalDidFail?(error)
-            case .didRemovePhoneNumber:
-                observer.didRemovePhoneNumber?()
-            case .phoneNumberVerificationCodeRequestDidFail(let error):
-                observer.phoneNumberVerificationCodeRequestDidFail?(error)
-            case .phoneNumberChangeDidFail(let error):
-                observer.phoneNumberChangeDidFail?(error)
             case .passwordUpdateDidFail:
                 observer.passwordUpdateRequestDidFail?()
-            case .phoneNumberVerificationCodeRequestDidSucceed:
-                observer.phoneNumberVerificationCodeRequestDidSucceed?()
             case .emailDidSendVerification:
                 observer.didSendVerificationEmail?()
             case .didCheckAvailabilityOfHandle(let handle, let available):

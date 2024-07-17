@@ -461,7 +461,6 @@
 		7CD279862338E31D00E638CD /* SessionManager+Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD279852338E31D00E638CD /* SessionManager+Authentication.swift */; };
 		7CD279882338E52000E638CD /* ProcessInfo+SystemBootTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD279872338E52000E638CD /* ProcessInfo+SystemBootTime.swift */; };
 		7CE017152317D07E00144905 /* ZMAuthenticationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE017142317D07E00144905 /* ZMAuthenticationStatusTests.swift */; };
-		7CE017172317D72A00144905 /* ZMCredentialsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE017162317D72A00144905 /* ZMCredentialsTests.swift */; };
 		85D8522CF8DE246DDD5BD12C /* MockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D85AAE7FA09852AB9B0D6A /* MockEntity.m */; };
 		85D85EAFA1CB6E457D14E3B7 /* MockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D85C9E7A2AAAE14D4BC2CC /* MockEntity2.m */; };
 		85D85EEDD5DD19FB747ED4A5 /* MockModelObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D852DA0CD2C94CADB3B6FE /* MockModelObjectContextFactory.m */; };
@@ -1224,7 +1223,6 @@
 		7CD279852338E31D00E638CD /* SessionManager+Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+Authentication.swift"; sourceTree = "<group>"; };
 		7CD279872338E52000E638CD /* ProcessInfo+SystemBootTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+SystemBootTime.swift"; sourceTree = "<group>"; };
 		7CE017142317D07E00144905 /* ZMAuthenticationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAuthenticationStatusTests.swift; sourceTree = "<group>"; };
-		7CE017162317D72A00144905 /* ZMCredentialsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMCredentialsTests.swift; sourceTree = "<group>"; };
 		85D8502FFC4412F91D0CC1A4 /* ZMOperationLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMOperationLoop.m; sourceTree = "<group>"; };
 		85D85104C6D06FA902E3253C /* ZMSyncStrategyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSyncStrategyTests.m; sourceTree = "<group>"; };
 		85D85110893896EBA6E879CE /* MockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity2.h; sourceTree = "<group>"; };
@@ -2157,7 +2155,6 @@
 				F9B171F71C0F00E700E6EEC6 /* ClientUpdateStatusTests.swift */,
 				54BFDF691BDA87D20034A3DB /* HistorySynchronizationStatusTests.swift */,
 				09B730941B3045E400A5CCC9 /* ProxiedRequestStatusTests.swift */,
-				7CE017162317D72A00144905 /* ZMCredentialsTests.swift */,
 				542DFEE51DDCA452000F5B95 /* UserProfileUpdateStatusTests.swift */,
 				F19F4F4C1E646C3C00F4D8FF /* UserProfileImageUpdateStatusTests.swift */,
 				3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */,
@@ -3251,6 +3248,7 @@
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
 				EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */,
+				59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -3646,7 +3644,6 @@
 				E9F627B32BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift in Sources */,
 				A901FE9B258B562F003EAF5C /* CallParticipantTests.swift in Sources */,
 				874A174A205812B6001C6760 /* ZMUserSessionTests.swift in Sources */,
-				7CE017172317D72A00144905 /* ZMCredentialsTests.swift in Sources */,
 				546F815C1E685F6E00775059 /* LocalNotificationDispatcherTests.swift in Sources */,
 				F1AE5F6F21F73388009CDBBC /* ZMUserSessionTests+Timers.swift in Sources */,
 				E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */,
@@ -4565,6 +4562,17 @@
 			relativePath = ../WireAPI;
 		};
 /* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/libPhoneNumber-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		EE88B0242BF4D8060013F0BD /* WireAPI */ = {

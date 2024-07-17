@@ -42,10 +42,11 @@ protocol RegistrationStatusStrategyTestHelper {
 }
 
 extension RegistrationStatusStrategyTestHelper {
-    func checkResponseError(with phase: RegistrationPhase, code: ZMUserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
+
+    func checkResponseError(with phase: RegistrationPhase, code: UserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
         registrationStatus.phase = phase
 
-        let expectedError = NSError(code: code, userInfo: [:])
+        let expectedError = NSError(userSessionErrorCode: code, userInfo: [:])
         let payload = [
             "label": errorLabel,
             "message": "some"

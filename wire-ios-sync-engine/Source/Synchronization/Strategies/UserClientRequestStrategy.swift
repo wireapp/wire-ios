@@ -393,7 +393,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             // first we try to register without password (credentials can be there, but they can not contain password)
             // if there is no password in credentials but it's required, we will recieve error from backend and only then will ask for password
             let error = errorFromFailedInsertResponse(response)
-            if error.code == Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue) {
+            if error.code == UserSessionErrorCode.canNotRegisterMoreClients.rawValue {
                 clientUpdateStatus?.needsToFetchClients(andVerifySelfClient: false)
             }
             clientRegistrationStatus?.didFail(toRegisterClient: error)
@@ -443,7 +443,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func errorFromFailedInsertResponse(_ response: ZMTransportResponse!) -> NSError {
-        var errorCode: ZMUserSessionErrorCode = .unknownError
+        var errorCode: UserSessionErrorCode = .unknownError
         if let moc = self.managedObjectContext, let response, response.result == .permanentError {
 
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
@@ -465,7 +465,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 }
             }
         }
-        return NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(errorCode.rawValue), userInfo: nil)
+        return NSError(domain: NSError.userSessionErrorDomain, code: Int(errorCode.rawValue), userInfo: nil)
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

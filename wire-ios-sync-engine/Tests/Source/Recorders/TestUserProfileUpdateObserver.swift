@@ -35,18 +35,6 @@ final class TestUserProfileUpdateObserver: NSObject, UserProfileUpdateObserver {
         invokedCallbacks.append(.emailDidSendVerification)
     }
 
-    func phoneNumberVerificationCodeRequestDidFail(_ error: Error!) {
-        invokedCallbacks.append(.phoneNumberVerificationCodeRequestDidFail(error: error))
-    }
-
-    func phoneNumberVerificationCodeRequestDidSucceed() {
-        invokedCallbacks.append(.phoneNumberVerificationCodeRequestDidSucceed)
-    }
-
-    func phoneNumberChangeDidFail(_ error: Error!) {
-        invokedCallbacks.append(.phoneNumberChangeDidFail(error: error))
-    }
-
     func didCheckAvailiabilityOfHandle(handle: String, available: Bool) {
         invokedCallbacks.append(.didCheckAvailabilityOfHandle(handle: handle, available: available))
     }

@@ -22,12 +22,6 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     let userProfileUpdateStatus: UserProfileUpdateStatus
 
-    fileprivate var phoneCodeRequestSync: ZMSingleRequestSync! = nil
-
-    fileprivate var phoneUpdateSync: ZMSingleRequestSync! = nil
-
-    fileprivate var phoneNumberDeleteSync: ZMSingleRequestSync! = nil
-
     fileprivate var passwordUpdateSync: ZMSingleRequestSync! = nil
 
     fileprivate var emailUpdateSync: ZMSingleRequestSync! = nil
@@ -57,9 +51,6 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             .allowsRequestsWhileWaitingForWebsocket
         ]
 
-        self.phoneCodeRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-        self.phoneUpdateSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-        self.phoneNumberDeleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
         self.passwordUpdateSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
         self.emailUpdateSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
         self.handleCheckSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
@@ -69,25 +60,10 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     @objc public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
-        if self.userProfileUpdateStatus.currentlyRequestingPhoneVerificationCode {
-            self.phoneCodeRequestSync.readyForNextRequestIfNotBusy()
-            return self.phoneCodeRequestSync.nextRequest(for: apiVersion)
-        }
-
-        if self.userProfileUpdateStatus.currentlySettingPhone {
-            self.phoneUpdateSync.readyForNextRequestIfNotBusy()
-            return self.phoneUpdateSync.nextRequest(for: apiVersion)
-        }
-
         if self.userProfileUpdateStatus.currentlySettingEmail ||
             self.userProfileUpdateStatus.currentlyChangingEmail {
             self.emailUpdateSync.readyForNextRequestIfNotBusy()
             return self.emailUpdateSync.nextRequest(for: apiVersion)
-        }
-
-        if self.userProfileUpdateStatus.currentlyRemovingPhoneNumber {
-            self.phoneNumberDeleteSync.readyForNextRequestIfNotBusy()
-            return self.phoneNumberDeleteSync.nextRequest(for: apiVersion)
         }
 
         if self.userProfileUpdateStatus.currentlySettingPassword {
@@ -117,23 +93,6 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch sync {
-
-        case self.phoneCodeRequestSync:
-            let payload: NSDictionary = [
-                "phone": self.userProfileUpdateStatus.phoneNumberForWhichCodeIsRequested!
-            ]
-            return ZMTransportRequest(path: "/self/phone", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
-
-        case self.phoneUpdateSync:
-            let payload: NSDictionary = [
-                "phone": self.userProfileUpdateStatus.phoneNumberToSet!.phoneNumber!,
-                "code": self.userProfileUpdateStatus.phoneNumberToSet!.phoneNumberVerificationCode!,
-                "dryrun": false
-            ]
-            return ZMTransportRequest(path: "/activate", method: .post, payload: payload, apiVersion: apiVersion.rawValue)
-
-        case self.phoneNumberDeleteSync:
-            return ZMTransportRequest(path: "/self/phone", method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
 
         case self.passwordUpdateSync:
             let payload: NSDictionary = [
@@ -172,26 +131,6 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         switch sync {
-
-        case self.phoneCodeRequestSync:
-            if response.result == .success {
-                self.userProfileUpdateStatus.didRequestPhoneVerificationCodeSuccessfully()
-            } else {
-                let error: Error = NSError.phoneNumberIsAlreadyRegisteredError(with: response) ??
-                    NSError.invalidPhoneNumber(withReponse: response) ??
-                    NSError(code: .unknownError, userInfo: nil)
-                self.userProfileUpdateStatus.didFailPhoneVerificationCodeRequest(error: error)
-            }
-
-        case self.phoneUpdateSync:
-            if response.result == .success {
-                self.userProfileUpdateStatus.didChangePhoneSuccesfully()
-            } else {
-                let error: Error = NSError.invalidPhoneVerificationCodeError(with: response) ??
-                    NSError(code: .unknownError, userInfo: nil)
-                self.userProfileUpdateStatus.didFailChangingPhone(error: error)
-            }
-
         case self.passwordUpdateSync:
             if response.result == .success {
                 self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
@@ -211,18 +150,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             } else {
                 let error: Error = NSError.invalidEmail(with: response) ??
                     NSError.keyExistsError(with: response) ??
-                    NSError(code: .unknownError, userInfo: nil)
+                    NSError(userSessionErrorCode: .unknownError, userInfo: nil)
                 self.userProfileUpdateStatus.didFailEmailUpdate(error: error)
-            }
-
-        case self.phoneNumberDeleteSync:
-            if response.result == .success {
-                ZMUser.selfUser(in: managedObjectContext).setValue(nil, forKey: #keyPath(ZMUser.phoneNumber)) // This is a horrible hack for Swift 3.1 not seeing Obj-c private headers
-                self.userProfileUpdateStatus.didRemovePhoneNumberSuccessfully()
-            } else {
-                let error: Error = NSError.lastUserIdentityCantBeRemoved(with: response) ??
-                    NSError(code: .unknownError, userInfo: nil)
-                self.userProfileUpdateStatus.didFailPhoneNumberRemoval(error: error)
             }
 
         case self.handleCheckSync:

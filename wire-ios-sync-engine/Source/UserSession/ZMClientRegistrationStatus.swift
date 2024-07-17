@@ -334,21 +334,21 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         var error: NSError = error
 
         // we should not reset login state for client registration errors
-        if error.code != ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue && error.code != ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue && error.code != ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue {
+        if error.code != UserSessionErrorCode.needsPasswordToRegisterClient.rawValue && error.code != UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue && error.code != UserSessionErrorCode.canNotRegisterMoreClients.rawValue {
             emailCredentials = nil
         }
 
-        if error.code == ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue {
+        if error.code == UserSessionErrorCode.needsPasswordToRegisterClient.rawValue {
             // help the user by providing the email associated with this account
             error = NSError(domain: error.domain, code: error.code, userInfo: ZMUser.selfUser(in: managedObjectContext).loginCredentials.dictionaryRepresentation)
         }
 
-        if error.code == ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue || error.code == ZMUserSessionErrorCode.invalidCredentials.rawValue {
+        if error.code == UserSessionErrorCode.needsPasswordToRegisterClient.rawValue || error.code == UserSessionErrorCode.invalidCredentials.rawValue {
             // set this label to block additional requests while we are waiting for the user to (re-)enter the password
             needsToCheckCredentials = true
         }
 
-        if error.code == ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue {
+        if error.code == UserSessionErrorCode.canNotRegisterMoreClients.rawValue {
             // Wait and fetch the clients before sending the error
             isWaitingForUserClients = true
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -363,7 +363,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         cookieProvider.deleteKeychainItems()
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        let outError = NSError.userSessionErrorWith(ZMUserSessionErrorCode.clientDeletedRemotely, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
+        let outError = NSError.userSessionError(code: .clientDeletedRemotely, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
         registrationStatusDelegate?.didDeleteSelfUserClient(error: outError)
     }
 
@@ -589,8 +589,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     private func notifyEmailIsNecessary() {
         let error = NSError(
-            domain: NSError.ZMUserSessionErrorDomain,
-            code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
+            domain: NSError.userSessionErrorDomain,
+            code: UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue
         )
 
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
@@ -599,16 +599,16 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public func notifyE2EIEnrollmentNecessary() {
         let error = NSError(
-            domain: NSError.ZMUserSessionErrorDomain,
-            code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
+            domain: NSError.userSessionErrorDomain,
+            code: UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue
         )
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
     }
 
     private func notifyHandleIsNecessary() {
         let error = NSError(
-            domain: NSError.ZMUserSessionErrorDomain,
-            code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
+            domain: NSError.userSessionErrorDomain,
+            code: UserSessionErrorCode.needsToHandleToRegisterClient.rawValue
         )
 
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
@@ -616,8 +616,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     private func notifyCanNotRegisterMoreClients(clientIDs: [NSManagedObjectID]) {
         let error = NSError(
-            domain: NSError.ZMUserSessionErrorDomain,
-            code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue),
+            domain: NSError.userSessionErrorDomain,
+            code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue,
             userInfo: [ZMClientsKey: clientIDs]
         )
 

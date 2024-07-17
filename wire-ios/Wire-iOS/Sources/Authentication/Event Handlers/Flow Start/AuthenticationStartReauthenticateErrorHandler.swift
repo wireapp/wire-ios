@@ -41,7 +41,7 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
         }
 
         // Only handle reauthentication errors
-        let supportedErrors: [ZMUserSessionErrorCode] = [
+        let supportedErrors: [UserSessionErrorCode] = [
             .clientDeletedRemotely,
             .accessTokenExpired,
             .needsAuthenticationAfterReboot,
@@ -64,5 +64,4 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
         let nextStep = AuthenticationFlowStep.reauthenticate(credentials: loginCredentials, numberOfAccounts: numberOfAccounts, isSignedOut: true)
         return [.transition(nextStep, mode: .reset)]
     }
-
 }

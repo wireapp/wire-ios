@@ -134,7 +134,7 @@ final class SessionManagerTeamsTests: IntegrationTest {
         }
 
         XCTAssertTrue(delegate.didCallAuthenticationDidFail)
-        XCTAssertEqual(error, NSError(code: .accountLimitReached, userInfo: nil))
+        XCTAssertEqual(error, NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil))
     }
 
     func testThatItChecksAccountsForExistingAccount() {

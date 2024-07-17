@@ -125,12 +125,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     if(self.internalLoginCredentials.credentialWithEmail && self.isWaitingForLogin) {
         return ZMAuthenticationPhaseLoginWithEmail;
     }
-    if(self.internalLoginCredentials.credentialWithPhone && self.isWaitingForLogin) {
-        return ZMAuthenticationPhaseLoginWithPhone;
-    }
-    if(self.loginPhoneNumberThatNeedsAValidationCode != nil) {
-        return ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin;
-    }
 
     if (self.loginEmailThatNeedsAValidationCode != nil) {
         return ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin;
@@ -204,22 +198,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     [self.userInfoParser upgradeToAuthenticatedSessionWithUserInfo:userInfo];
 }
 
-- (void)prepareForRequestingPhoneVerificationCodeForRegistration:(NSString *)phone
-{
-    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self resetLoginAndRegistrationStatus];
-    self.registrationPhoneNumberThatNeedsAValidationCode = [ZMPhoneNumberValidator validatePhoneNumber: phone];
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
-- (void)prepareForRequestingPhoneVerificationCodeForLogin:(NSString *)phone;
-{
-    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self resetLoginAndRegistrationStatus];
-    self.loginPhoneNumberThatNeedsAValidationCode = [ZMPhoneNumberValidator validatePhoneNumber: phone];
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
 - (void)prepareForRequestingEmailVerificationCodeForLogin:(NSString *)email;
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
@@ -231,28 +209,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    if((self.currentPhase == ZMAuthenticationPhaseLoginWithEmail || self.currentPhase == ZMAuthenticationPhaseLoginWithPhone)
-       && self.loginCredentials == credentials)
+    if (self.currentPhase == ZMAuthenticationPhaseLoginWithEmail && self.loginCredentials == credentials)
     {
         self.loginCredentials = nil;
-        [self.delegate authenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionNetworkError userInfo:nil]];
+        [self.delegate authenticationDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeNetworkError userInfo:nil]];
     }
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
-- (void)didCompletePhoneVerificationSuccessfully
-{
-    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self resetLoginAndRegistrationStatus];
-    [ZMUserSessionRegistrationNotification notifyPhoneNumberVerificationDidSucceedInContext:self];
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
-- (void)didFailPhoneVerificationForRegistration:(NSError *)error
-{
-    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self resetLoginAndRegistrationStatus];
-    [ZMUserSessionRegistrationNotification notifyPhoneNumberVerificationDidFail:error context:self];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
@@ -275,21 +236,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
-- (void)didFailLoginWithPhone:(BOOL)invalidCredentials
-{
-    ZMLogDebug(@"%@ invalid credentials: %d", NSStringFromSelector(_cmd), invalidCredentials);
-    [self resetLoginAndRegistrationStatus];
-    
-    NSError *error = [NSError userSessionErrorWithErrorCode:(invalidCredentials ? ZMUserSessionInvalidCredentials : ZMUserSessionUnknownError) userInfo:nil];
-    [self.delegate authenticationDidFail: error];
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
 - (void)didFailLoginWithEmail:(BOOL)invalidCredentials
 {
     ZMLogDebug(@"%@ invalid credentials: %d", NSStringFromSelector(_cmd), invalidCredentials);
     
-    NSError *error = [NSError userSessionErrorWithErrorCode:(invalidCredentials ? ZMUserSessionInvalidCredentials : ZMUserSessionUnknownError) userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:(invalidCredentials ? ZMUserSessionErrorCodeInvalidCredentials : ZMUserSessionErrorCodeUnknownError) userInfo:nil];
     [self.delegate authenticationDidFail: error];
     [self resetLoginAndRegistrationStatus];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
@@ -299,7 +250,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
     self.isWaitingForEmailVerification = YES;
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionAccountIsPendingActivation userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeAccountIsPendingActivation userInfo:nil];
     [self.delegate authenticationDidFail: error];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
@@ -307,7 +258,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsRequired
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionAccountIsPendingVerification userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeAccountIsPendingVerification userInfo:nil];
     [self.delegate authenticationDidFail: error];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
@@ -320,7 +271,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     if (self.isWaitingForLogin) {
         self.isWaitingForLogin = NO;
     }
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmailVerificationCode userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidEmailVerificationCode userInfo:nil];
     [self.delegate authenticationDidFail: error];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
@@ -328,7 +279,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didFailLoginBecauseAccountSuspended
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionAccountSuspended userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeAccountSuspended userInfo:nil];
     [self.delegate authenticationDidFail: error];
     [self resetLoginAndRegistrationStatus];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
@@ -338,14 +289,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
     [self resetLoginAndRegistrationStatus];
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
-- (void)didCompleteRequestForPhoneRegistrationCodeSuccessfully;
-{
-    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    self.registrationPhoneNumberThatNeedsAValidationCode = nil;
-    [ZMUserSessionRegistrationNotification notifyPhoneNumberVerificationCodeRequestDidSucceedInContext:self];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 

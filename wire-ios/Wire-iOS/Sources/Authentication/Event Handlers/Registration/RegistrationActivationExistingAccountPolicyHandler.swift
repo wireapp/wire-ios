@@ -70,7 +70,6 @@ private extension AuthenticationCoordinatorAlertAction {
     static func login(email: String) -> Self {
         let credentials = LoginCredentials(
             emailAddress: email,
-            phoneNumber: .none,
             hasPassword: true,
             usesCompanyLogin: false
         )
