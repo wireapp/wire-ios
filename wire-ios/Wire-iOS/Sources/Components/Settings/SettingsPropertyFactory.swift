@@ -22,7 +22,6 @@ import WireSyncEngine
 import WireUtilities
 
 protocol TrackingInterface {
-    var disableCrashSharing: Bool { get set }
     var disableAnalyticsSharing: Bool { get set }
 }
 
@@ -239,27 +238,7 @@ final class SettingsPropertyFactory {
                 }
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-        case .disableCrashSharing:
-            let getAction: GetAction = { [unowned self] _ in
-                if let tracking = self.tracking {
-                    return SettingsPropertyValue(tracking.disableCrashSharing)
-                } else {
-                    return SettingsPropertyValue(false)
-                }
-            }
-
-            let setAction: SetAction = { [unowned self] _, value in
-                if var tracking = self.tracking {
-                    switch value {
-                    case .number(let number):
-                        tracking.disableCrashSharing = number.boolValue
-                    default:
-                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
-                    }
-                }
-            }
-            return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-
+       
         case .receiveNewsAndOffers:
 
             let getAction: GetAction = { [unowned self] _ in
