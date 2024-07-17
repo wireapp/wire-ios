@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public protocol AnalyticsManagerProtocol {
 
     /// Switches the current analytics user and starts a new session.

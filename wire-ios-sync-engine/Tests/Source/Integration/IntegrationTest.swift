@@ -58,7 +58,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration?,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
@@ -76,7 +75,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
-            analyticsSessionConfiguration: analyticsSessionConfiguration,
             configuration: configuration,
             contextStorage: mockContextStorage,
             earService: nil,

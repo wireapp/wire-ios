@@ -205,7 +205,7 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack, analyticsSessionConfiguration: nil)
+        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
@@ -222,10 +222,9 @@ struct ZMUserSessionBuilder {
 
     // MARK: UserSesssionDependencies
 
-    private func buildUserSessionDependencies(coreDataStack: CoreDataStack, analyticsSessionConfiguration: AnalyticsSessionConfiguration?) -> UserSessionDependencies {
+    private func buildUserSessionDependencies(coreDataStack: CoreDataStack) -> UserSessionDependencies {
         UserSessionDependencies(
-            caches: buildCaches(coreDataStack: coreDataStack),
-            analyticsSessionConfiguration: analyticsSessionConfiguration
+            caches: buildCaches(coreDataStack: coreDataStack)
         )
     }
 
