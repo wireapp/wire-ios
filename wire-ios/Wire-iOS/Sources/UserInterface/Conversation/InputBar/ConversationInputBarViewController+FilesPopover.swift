@@ -103,18 +103,10 @@ extension ConversationInputBarViewController {
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
 
             let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
-            if let popoverPresentationController = documentPickerViewController.popoverPresentationController {
-                popoverPresentationController.sourceView = sender.superview!
-                popoverPresentationController.sourceRect = sender.frame
-                documentPickerViewController.delegate = self
-            } else {
-                documentPickerViewController.modalPresentationStyle = .fullScreen
-            }
-
+            //documentPickerViewController.modalPresentationStyle = .fullScreen
             documentPickerViewController.delegate = self
             documentPickerViewController.allowsMultipleSelection = true
-
-            self.parent?.present(documentPickerViewController, animated: true)
+            self.present(documentPickerViewController, animated: true)
         }
 
         alertController.addAction(UIAlertAction(icon: .ellipsis,
