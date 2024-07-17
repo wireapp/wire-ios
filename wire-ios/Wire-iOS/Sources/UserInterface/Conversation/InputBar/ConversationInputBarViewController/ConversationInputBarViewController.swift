@@ -378,7 +378,7 @@ final class ConversationInputBarViewController: UIViewController,
         photoButton.addTarget(self, action: #selector(cameraButtonPressed(_:)), for: .touchUpInside)
         videoButton.addTarget(self, action: #selector(videoButtonPressed(_:)), for: .touchUpInside)
         sketchButton.addTarget(self, action: #selector(sketchButtonPressed(_:)), for: .touchUpInside)
-        uploadFileButton.addTarget(self, action: #selector(docUploadPressed(_:)), for: .touchUpInside)
+        uploadFileButton.addTarget(self, action: #selector(fileUploadPressed(_:)), for: .touchUpInside)
         pingButton.addTarget(self, action: #selector(pingButtonPressed(_:)), for: .touchUpInside)
         gifButton.addTarget(self, action: #selector(giphyButtonPressed(_:)), for: .touchUpInside)
         locationButton.addTarget(self, action: #selector(locationButtonPressed(_:)), for: .touchUpInside)
