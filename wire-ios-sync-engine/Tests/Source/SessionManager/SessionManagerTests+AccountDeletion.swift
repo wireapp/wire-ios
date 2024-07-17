@@ -165,7 +165,7 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
         let account = sessionManager!.accountManager.selectedAccount!
 
         // when
-        sessionManager?.authenticationInvalidated(NSError(code: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
+        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -194,7 +194,7 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
         XCTAssertNotNil(sessionManager?.backgroundUserSessions[additionalAccount.userIdentifier])
 
         // when
-        sessionManager?.authenticationInvalidated(NSError(code: .accessTokenExpired, userInfo: nil), accountId: additionalAccount.userIdentifier)
+        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: additionalAccount.userIdentifier)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -203,5 +203,4 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }
-
 }

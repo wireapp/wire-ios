@@ -39,7 +39,7 @@ extension SessionManager: UserSessionLogoutDelegate {
 
     public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
         guard
-            let userSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(error.code)),
+            let userSessionErrorCode = UserSessionErrorCode(rawValue: error.code),
             let account = accountManager.account(with: accountId)
         else {
             return

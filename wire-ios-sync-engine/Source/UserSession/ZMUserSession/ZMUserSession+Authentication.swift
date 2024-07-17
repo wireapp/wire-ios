@@ -122,7 +122,7 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: ZMUserSessionErrorCode
+        var errorCode: UserSessionErrorCode
         switch response.result {
         case .permanentError:
                 switch response.payload?.asDictionary()?["label"] as? String {
@@ -146,7 +146,7 @@ extension ZMUserSession {
             userInfo = [NSUnderlyingErrorKey: transportSessionError]
         }
 
-        return NSError(code: errorCode, userInfo: userInfo)
+        return NSError(userSessionErrorCode: errorCode, userInfo: userInfo)
     }
 
 }
