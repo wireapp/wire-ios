@@ -109,6 +109,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set up Datadog as logger
         WireAnalytics.Datadog.enable()
+        // pass tags to DataDog through WireLogger
+        WireLogger.appDelegate.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        WireLogger.appDelegate.addTag(.processName, value: ProcessInfo.processInfo.processName)
+
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
         )
