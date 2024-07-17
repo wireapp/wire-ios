@@ -44,6 +44,39 @@
 		EE57A7052C2997090096F242 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE57A7042C2997090096F242 /* WireAPI */; };
 		EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */; };
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
+		EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */; };
+		EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */; };
+		EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */; };
+		EEAD09F82C46772C00CC8658 /* ConversationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */; };
+		EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */; };
+		EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09FB2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift */; };
+		EEAD09FE2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09FD2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift */; };
+		EEAD0A002C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */; };
+		EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */; };
+		EEAD0A042C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */; };
+		EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */; };
+		EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */; };
+		EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */; };
+		EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */; };
+		EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */; };
+		EEAD0A112C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A102C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift */; };
+		EEAD0A132C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A122C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift */; };
+		EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A142C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift */; };
+		EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */; };
+		EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */; };
+		EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */; };
+		EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */; };
+		EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */; };
+		EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */; };
+		EEAD0A242C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */; };
+		EEAD0A262C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A252C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift */; };
+		EEAD0A282C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A272C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift */; };
+		EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A292C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift */; };
+		EEAD0A2C2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A2B2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift */; };
+		EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A2D2C46B01900CC8658 /* UserUpdateEventProcessor.swift */; };
+		EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */; };
+		EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */; };
+		EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +134,39 @@
 		EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryTests.swift; sourceTree = "<group>"; };
 		EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorError.swift; sourceTree = "<group>"; };
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
+		EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCodeUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDeleteEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberJoinEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09FB2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberLeaveEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09FD2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageTimerUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMLSMessageAddEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMLSWelcomeEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProteusMessageAddEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenameEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A102C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A122C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberLeaveEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A142C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientRemoveEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactJoinEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeleteEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdDisableEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdEnableEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A252C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdRequestEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A272C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesSetEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A292C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesDeleteEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A2B2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPushRemoveEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A2D2C46B01900CC8658 /* UserUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationConnectionRemovedEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigUpdateEventProcessor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,7 +235,6 @@
 				017F679F2C20802300B6E02D /* TeamRepository.swift */,
 				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
 				017F67A12C20802300B6E02D /* SelfUserProvider.swift */,
-				017F67A12C20802300B6E02D /* UserRepository.swift */,
 				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
 				EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */,
 			);
@@ -272,12 +337,12 @@
 		EE368CCD2C2DAA87009DBAB0 /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
-				EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */,
-				EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */,
-				EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */,
-				EE368CCA2C2DAA87009DBAB0 /* TeamEventProcessor.swift */,
 				EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */,
-				EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */,
+				EEAD09F02C46602300CC8658 /* ConversationEventProcessor */,
+				EEAD0A342C46BB7500CC8658 /* FeatureConfigEventProcessor */,
+				EEAD0A2F2C46B97700CC8658 /* FederationEventProcessor */,
+				EEAD0A0F2C46A32A00CC8658 /* TeamEventProcessor */,
+				EEAD0A162C46A87100CC8658 /* UserEventProcessor */,
 			);
 			path = "Event Processing";
 			sourceTree = "<group>";
@@ -299,6 +364,79 @@
 				EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */,
 			);
 			path = "Event Decryption";
+			sourceTree = "<group>";
+		};
+		EEAD09F02C46602300CC8658 /* ConversationEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */,
+				EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */,
+				EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */,
+				EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */,
+				EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */,
+				EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */,
+				EEAD09FB2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift */,
+				EEAD09FD2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift */,
+				EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */,
+				EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */,
+				EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */,
+				EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */,
+				EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */,
+				EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */,
+				EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */,
+				EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */,
+			);
+			path = ConversationEventProcessor;
+			sourceTree = "<group>";
+		};
+		EEAD0A0F2C46A32A00CC8658 /* TeamEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CCA2C2DAA87009DBAB0 /* TeamEventProcessor.swift */,
+				EEAD0A142C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift */,
+				EEAD0A122C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift */,
+				EEAD0A102C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift */,
+			);
+			path = TeamEventProcessor;
+			sourceTree = "<group>";
+		};
+		EEAD0A162C46A87100CC8658 /* UserEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */,
+				EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */,
+				EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */,
+				EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */,
+				EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */,
+				EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */,
+				EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */,
+				EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */,
+				EEAD0A252C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift */,
+				EEAD0A272C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift */,
+				EEAD0A292C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift */,
+				EEAD0A2B2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift */,
+				EEAD0A2D2C46B01900CC8658 /* UserUpdateEventProcessor.swift */,
+			);
+			path = UserEventProcessor;
+			sourceTree = "<group>";
+		};
+		EEAD0A2F2C46B97700CC8658 /* FederationEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */,
+				EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */,
+				EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */,
+			);
+			path = FederationEventProcessor;
+			sourceTree = "<group>";
+		};
+		EEAD0A342C46BB7500CC8658 /* FeatureConfigEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */,
+				EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */,
+			);
+			path = FeatureConfigEventProcessor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -489,25 +627,58 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEAD0A042C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift in Sources */,
+				EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */,
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
+				EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */,
+				EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
+				EEAD0A2C2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
+				EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */,
+				EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */,
+				EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
+				EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */,
+				EEAD0A282C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift in Sources */,
 				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
+				EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
+				EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */,
+				EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */,
+				EEAD0A002C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift in Sources */,
+				EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */,
 				EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */,
 				017F67AC2C20802C00B6E02D /* TeamRepository.swift in Sources */,
+				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
+				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
+				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
+				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
+				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
+				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
+				EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
+				EEAD09F82C46772C00CC8658 /* ConversationDeleteEventProcessor.swift in Sources */,
+				EEAD0A112C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift in Sources */,
+				EEAD0A242C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift in Sources */,
 				162356582C2C2F6100C6666C /* UserRepository.swift in Sources */,
 				162356592C2C2F8100C6666C /* UserRepositoryError.swift in Sources */,
+				EEAD0A132C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift in Sources */,
+				EEAD0A262C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift in Sources */,
+				EEAD09FE2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift in Sources */,
+				EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */,
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
+				EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */,
+				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
+				EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */,
 				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
+				EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */,
 				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
 				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
 			);

@@ -16,27 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 
-/// Process conversation update events.
+/// Process federation delete events.
 
-protocol ConversationEventProcessorProtocol {
+protocol FederationDeleteEventProcessorProtocol {
 
-    /// Process a conversation update event.
+    /// Process a federation delete event.
     ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A conversation update event.
+    /// - Parameter event: A federation delete event.
 
-    func processEvent(_ event: ConversationEvent) async throws
+    func processEvent(_ event: FederationDeleteEvent) async throws
 
 }
 
-struct ConversationEventProcessor {
+struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
 
-    func processEvent(_: ConversationEvent) async throws {
+    func processEvent(_: FederationDeleteEvent) async throws {
+        // TODO: [WPB-10188]
         assertionFailure("not implemented yet")
     }
 
