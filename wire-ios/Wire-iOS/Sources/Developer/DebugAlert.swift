@@ -107,16 +107,12 @@ final class DebugAlert {
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
 
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
-            activity.configPopover(
-                pointToView: sourceView ?? controller.view,
-                popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-            )
-
-            var presentingViewController = controller
-            while let presentedViewController = presentingViewController.presentedViewController {
-                presentingViewController = presentedViewController
+            if let popoverPresentationController = activity.popoverPresentationController {
+                popoverPresentationController.sourceView = sourceView?.superview ?? controller.view
+                popoverPresentationController.sourceRect = sourceView?.frame ?? controller.view.bounds
             }
-            presentingViewController.present(activity, animated: true)
+
+            controller.present(activity, animated: true)
         })
         controller.present(alert, animated: true)
     }
