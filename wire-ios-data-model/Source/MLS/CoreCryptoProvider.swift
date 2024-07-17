@@ -69,6 +69,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.featureRespository = FeatureRepository(context: syncContext)
+        self.moveExistingCoreCryptoFilesIfNeeded()
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
@@ -99,6 +100,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
+    }
+
+    private func moveExistingCoreCryptoFilesIfNeeded() {
+        let provider = CoreCryptoConfigProvider()
+        provider.moveCoreCryptoFilesIfNeeded(sharedContainerURL: sharedContainerURL,
+                                             userID: selfUserID)
     }
 
     // Create an CoreCrypto instance with guranteees that only one task is performing
@@ -143,13 +150,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     func createCoreCrypto() async throws -> SafeCoreCrypto {
         let provider = CoreCryptoConfigProvider()
 
-        let configuration = try await MainActor.run {
-            try provider.createInitialConfiguration(
+        let configuration = try provider.createInitialConfiguration(
                 sharedContainerURL: sharedContainerURL,
                 userID: selfUserID,
                 createKeyIfNeeded: allowCreation
-            )
-        }
+        )
 
         let coreCrypto = try await SafeCoreCrypto(
             path: configuration.path,

@@ -64,8 +64,6 @@ public class CoreCryptoConfigProvider {
 
         let coreCryptoFile = coreCryptoDirectory.appendingPathComponent(sqliteFilename)
 
-        try movePreviousCoreCryptoFilesIfNeeded(from: accountDirectory, to: coreCryptoDirectory)
-
         do {
             let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
             return (
@@ -77,8 +75,29 @@ public class CoreCryptoConfigProvider {
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
+    
+    public func moveCoreCryptoFilesIfNeeded(
+        sharedContainerURL: URL,
+        userID: UUID
+    ) {
+        let accountDirectory = CoreDataStack.accountDataFolder(
+            accountIdentifier: userID,
+            applicationContainer: sharedContainerURL
+        )
 
-    private func movePreviousCoreCryptoFilesIfNeeded(from oldDirURL: URL, to currentDirURL: URL) throws {
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent(sqliteDirectory)
+        let coreCryptoFile = coreCryptoDirectory.appendingPathComponent(sqliteFilename)
+
+        do {
+            try FileManager.default.createAndProtectDirectory(at: coreCryptoDirectory)
+            movePreviousCoreCryptoFilesIfNeeded(from: accountDirectory, to: coreCryptoDirectory)
+        } catch {
+            WireLogger.coreCrypto.error("Failed to moveCoreCryptoFilesIfNeeded \(String(describing: error))")
+        }
+
+    }
+
+    private func movePreviousCoreCryptoFilesIfNeeded(from oldDirURL: URL, to currentDirURL: URL) {
         let walFilename = "\(sqliteFilename)-wal"
         let shmFilename = "\(sqliteFilename)-shm"
 
