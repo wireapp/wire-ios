@@ -286,7 +286,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
             ConversationPreviewViewController(
                 conversation: conversation,
                 presentingViewController: self,
-                sourceView: collectionView.cellForItem(at: indexPath),
+                sourceView: collectionView.cellForItem(at: indexPath)!,
                 userSession: self.userSession,
                 mainCoordinator: self.mainCoordinator
             )
@@ -295,10 +295,12 @@ final class ConversationListContentController: UICollectionViewController, Popov
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
                 UIAction(title: action.title, image: nil) { _ in
-                    let actionController = ConversationActionController(conversation: conversation,
-                                                                        target: self,
-                                                                        sourceView: collectionView.cellForItem(at: indexPath), userSession: self.userSession)
-
+                    let actionController = ConversationActionController(
+                        conversation: conversation,
+                        target: self,
+                        sourceView: collectionView.cellForItem(at: indexPath)!,
+                        userSession: self.userSession
+                    )
                     actionController.handleAction(action)
                 }
             }
@@ -306,9 +308,11 @@ final class ConversationListContentController: UICollectionViewController, Popov
             return UIMenu(title: conversation.displayNameWithFallback, children: actions)
         }
 
-        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
-                                          previewProvider: previewProvider,
-                                          actionProvider: actionProvider)
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSIndexPath,
+            previewProvider: previewProvider,
+            actionProvider: actionProvider
+        )
     }
 
     // MARK: - UICollectionViewDataSource
@@ -469,7 +473,7 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
         return ConversationPreviewViewController(
             conversation: conversation,
             presentingViewController: self,
-            sourceView: collectionView.cellForItem(at: indexPath),
+            sourceView: collectionView.cellForItem(at: indexPath)!,
             userSession: userSession,
             mainCoordinator: mainCoordinator
         )
