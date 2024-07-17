@@ -162,11 +162,6 @@ extension ConversationContentViewController {
 
         updatePopoverSourceRect()
     }
-
-    func updatePopover() {
-        let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as! PopoverPresenter
-        rootViewController.updatePopoverSourceRect()
-    }
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {

@@ -288,7 +288,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         super.viewDidLayoutSubviews()
 
         scrollToFirstUnreadMessageIfNeeded()
-        updatePopover()
+        updatePopoverSourceRect()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
