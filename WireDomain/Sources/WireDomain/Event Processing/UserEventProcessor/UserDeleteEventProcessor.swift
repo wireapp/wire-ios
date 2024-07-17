@@ -16,27 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 
-/// Process team update events.
+/// Process user delete events.
 
-protocol TeamEventProcessorProtocol {
+protocol UserDeleteEventProcessorProtocol {
 
-    /// Process a team update event.
+    /// Process a user delete event.
     ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A team update event.
+    /// - Parameter event: A user delete event.
 
-    func processEvent(_ event: TeamEvent) async throws
+    func processEvent(_ event: UserDeleteEvent) async throws
 
 }
 
-struct TeamEventProcessor {
+struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
 
-    func processEvent(_: TeamEvent) async throws {
+    func processEvent(_: UserDeleteEvent) async throws {
+        // TODO: [WPB-10193]
         assertionFailure("not implemented yet")
     }
 

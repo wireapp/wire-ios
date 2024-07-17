@@ -19,25 +19,38 @@
 import Foundation
 import WireAPI
 
-/// Process federation update events.
+/// Process team update events.
 
-protocol FederationEventProcessorProtocol {
+protocol TeamEventProcessorProtocol {
 
-    /// Process a federation update event.
+    /// Process a team update event.
     ///
     /// Processing an event is the app's only chance to consume
     /// some remote changes to update its local state.
     ///
-    /// - Parameter event: A federation update event.
+    /// - Parameter event: A team update event.
 
-    func processEvent(_ event: FederationEvent) async throws
+    func processEvent(_ event: TeamEvent) async throws
 
 }
 
-struct FederationEventProcessor {
+struct TeamEventProcessor {
 
-    func processEvent(_: FederationEvent) async throws {
-        assertionFailure("not implemented yet")
+    let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
+    let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol
+    let memberUpdateEventProcessor: any TeamMemberUpdateEventProcessorProtocol
+
+    func processEvent(_ event: TeamEvent) async throws {
+        switch event {
+        case .delete:
+            try await deleteEventProcessor.processEvent()
+
+        case .memberLeave(let event):
+            try await memberLeaveEventProcessor.processEvent(event)
+
+        case .memberUpdate(let event):
+            try await memberUpdateEventProcessor.processEvent(event)
+        }
     }
 
 }
