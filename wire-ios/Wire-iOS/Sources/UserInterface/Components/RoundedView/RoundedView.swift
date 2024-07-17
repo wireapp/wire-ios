@@ -20,8 +20,8 @@ import UIKit
 
 class RoundedView: UIView, RoundedViewProtocol {
 
-    final override class var layerClass: AnyClass {
-        return ContinuousMaskLayer.self
+    override static var layerClass: AnyClass {
+        ContinuousMaskLayer.self
     }
 
     func toggleCircle() {

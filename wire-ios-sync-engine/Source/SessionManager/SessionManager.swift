@@ -235,7 +235,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var presentationDelegate: PresentationDelegate?
     public weak var foregroundNotificationResponder: ForegroundNotificationResponder?
     public weak var switchingDelegate: SessionManagerSwitchingDelegate?
-    public let groupQueue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
+    public let groupQueue: GroupQueue = DispatchGroupQueue(queue: .main)
 
     let application: ZMApplication
     var deleteAccountToken: Any?
