@@ -110,11 +110,12 @@ public final class DatadogWrapper {
         Datadog.setUserInfo(id: datadogUserId)
         RemoteMonitoring.remoteLogger = self
 
+        addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        addTag(.processName, value: ProcessInfo.processInfo.processName)
         log(
             level: defaultLevel,
             message: "Datadog startMonitoring for device: \(datadogUserId)"
         )
-        addTag(.processId, value: "\(ProcessInfo.processInfo.processName) - \(ProcessInfo.processInfo.processIdentifier)")
     }
 
     public func log(
