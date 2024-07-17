@@ -19,24 +19,6 @@
 import UIKit
 import WireDataModel
 
-extension UIActivityViewController {
-
-    // TODO: remove
-    convenience init?(message: ZMConversationMessage, from view: UIView) {
-        guard let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() else {
-            return nil
-        }
-
-        self.init(
-            activityItems: [fileURL],
-            applicationActivities: nil
-        )
-
-        let popoverPresenter = UIApplication.shared.firstKeyWindow?.rootViewController as! PopoverPresenter
-        configPopover(pointToView: view, popoverPresenter: popoverPresenter)
-    }
-}
-
 extension UIViewController {
 
     /// On iPad, UIActivityViewController must be presented in a popover and the popover's source view must be set

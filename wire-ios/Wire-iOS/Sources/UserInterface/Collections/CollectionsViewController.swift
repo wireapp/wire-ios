@@ -766,9 +766,14 @@ extension CollectionsViewController: CollectionCellDelegate {
                 let saveableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
                 saveableImage.saveToLibrary()
 
-            } else {
-                guard let saveController = UIActivityViewController(message: message, from: view) else { return }
-                present(saveController, animated: true, completion: nil)
+            } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
+                let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                if let popoverPresentationController = activityViewController.popoverPresentationController {
+                    let sourceView = source?.selectionView ?? view as UIView
+                    popoverPresentationController.sourceView = sourceView.superview
+                    popoverPresentationController.sourceRect = sourceView.frame
+                }
+                present(activityViewController, animated: true)
             }
 
         case .download:
