@@ -47,6 +47,15 @@
         }
       },
       {
+        "package": "libPhoneNumber",
+        "repositoryURL": "https://github.com/wireapp/libPhoneNumber-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "a6f5cb0a2a264e8396da65b0fb27ecf0df8a975e",
+          "version": "1.1.0"
+        }
+      },
+      {
         "package": "opentelemetry-swift",
         "repositoryURL": "https://github.com/open-telemetry/opentelemetry-swift.git",
         "state": {
@@ -156,7 +165,7 @@
       },
       {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
           "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",

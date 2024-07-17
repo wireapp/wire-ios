@@ -62,7 +62,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue?, sender: UIView) {
         var valueToSet = false
 
         if let value = value?.value() {
