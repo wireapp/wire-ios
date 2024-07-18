@@ -764,8 +764,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                 saveableImage.saveToLibrary()
 
             } else {
-                guard let saveController = UIActivityViewController(message: message, from: view) else { return }
-                present(saveController, animated: true, completion: nil)
+//                guard let saveController = UIActivityViewController(message: message, from: view) else { return }
+//                present(saveController, animated: true, completion: nil)
             }
 
         case .download:
