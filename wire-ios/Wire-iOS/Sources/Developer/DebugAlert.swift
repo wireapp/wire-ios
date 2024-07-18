@@ -102,13 +102,19 @@ final class DebugAlert {
         alert.addAction(.cancel())
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let logFilesProvider = LogFilesProvider()
-            let logsFileURL = logFilesProvider.generateLogFilesZip()
+            let logsFileURL: URL
+            do {
+                logsFileURL = try logFilesProvider.generateLogFilesZip()
+            } catch {
+                WireLogger.system.error("Failed to generate log files zip: \(error)")
+                return
+            }
 
             let activity = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
             activity.completionWithItemsHandler = { _, _, _, _ in
                 do {
-                    try logFilesProvider.clearTemporaryDirectory()
+                    try logFilesProvider.clearLogsDirectory()
                 } catch {
                     WireLogger.system.warn("Unable to clear temporary directory: \(error)")
                 }
