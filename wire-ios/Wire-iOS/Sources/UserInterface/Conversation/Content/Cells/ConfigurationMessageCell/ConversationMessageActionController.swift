@@ -102,8 +102,6 @@ final class ConversationMessageActionController {
             return message.canCancelDownload
         case .download:
             return message.canBeDownloaded
-        case .forward:
-            return message.canBeForwarded
         case .resend:
             return message.canBeResent
         case .showInConversation:

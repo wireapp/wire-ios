@@ -21,25 +21,27 @@ import WireCommonComponents
 import WireDataModel
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.visitLink,
-                                            .digitallySign,
-                                            .copy,
-                                            .reply,
-                                            .openDetails,
-                                            .edit,
-                                            .save,
-                                            .cancel,
-                                            .download,
-                                            .forward,
-                                            .resend,
-                                            .showInConversation,
-                                            .sketchDraw,
-                                            .sketchEmoji,
-                                            .present,
-                                            .openQuote,
-                                            .resetSession,
-                                            .delete,
-                                            .react("❤️")]
+
+    static var allCases: [MessageAction] = [
+        .visitLink,
+        .digitallySign,
+        .copy,
+        .reply,
+        .openDetails,
+        .edit,
+        .save,
+        .cancel,
+        .download,
+        .resend,
+        .showInConversation,
+        .sketchDraw,
+        .sketchEmoji,
+        .present,
+        .openQuote,
+        .resetSession,
+        .delete,
+        .react("❤️")
+    ]
 
     case
     digitallySign,
@@ -119,8 +121,6 @@ enum MessageAction: CaseIterable, Equatable {
             return .cross
         case .download:
             return .downArrow
-        case .forward:
-            return .export
         case .resend:
             return .redo
         case .showInConversation:

@@ -89,15 +89,6 @@ extension CellConfiguration {
             action: { _ in }
         )
 
-    static func shareLink(action: @escaping Action) -> CellConfiguration {
-        .iconAction(
-            title: L10n.Localizable.GuestRoom.Actions.shareLink,
-            icon: .export,
-            color: nil,
-            action: action
-        )
-    }
-
     static func revokeLink(action: @escaping Action) -> CellConfiguration {
         .iconAction(
             title: L10n.Localizable.GuestRoom.Actions.revokeLink,
@@ -106,5 +97,4 @@ extension CellConfiguration {
             action: action
         )
     }
-
 }
