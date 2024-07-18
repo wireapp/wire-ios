@@ -35,7 +35,7 @@ public struct ConversationDeleteEvent: Equatable, Codable {
     public let timestamp: Date
 
     /// Create a new `ConversationDeleteEvent`.
-    /// 
+    ///
     /// - Parameters:
     ///   - conversationID: The id of the conversation.
     ///   - senderID: The id of the user who deleted the conversation.

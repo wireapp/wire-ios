@@ -41,7 +41,7 @@ final class SyncManagerTests: XCTestCase {
 
         // Base mocks.
         updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncStream { _ in }
-        updateEventsRepository.stopReceivingLiveEvents_MockMethod = { }
+        updateEventsRepository.stopReceivingLiveEvents_MockMethod = {}
         updateEventsRepository.pullPendingEvents_MockMethod = {}
         updateEventsRepository.fetchNextPendingEventsLimit_MockValue = []
         updateEventsRepository.deleteNextPendingEventsLimit_MockMethod = { _ in }
@@ -112,7 +112,7 @@ final class SyncManagerTests: XCTestCase {
     func testItSuspendsWhenQuickSyncing() async throws {
         let didPullEvents = XCTestExpectation()
         let didSuspend = XCTestExpectation()
-        
+
         updateEventsRepository.pullPendingEvents_MockMethod = {
             didPullEvents.fulfill()
         }
@@ -249,12 +249,12 @@ final class SyncManagerTests: XCTestCase {
 
         // Then it processed 5 events, in the correct order.
         let processEventInvocations = updateEventProcessor.processEvent_Invocations
-        
+
         guard processEventInvocations.count == 5 else {
             XCTFail("expected 5 events to be processed, got \(processEventInvocations.count)")
             return
         }
-        
+
         // These were the stored events.
         XCTAssertEqual(processEventInvocations[0], Scaffolding.event1)
         XCTAssertEqual(processEventInvocations[1], Scaffolding.event2)
@@ -292,7 +292,7 @@ private enum Scaffolding {
     static let conversationID2 = ConversationID(uuid: UUID(), domain: localDomain)
     static let aliceID = UserID(uuid: UUID(), domain: localDomain)
 
-    static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client:UserClient(
+    static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: UserClient(
         id: "userClientID",
         type: .permanent,
         activationDate: .now,

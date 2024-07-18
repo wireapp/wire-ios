@@ -106,9 +106,9 @@ final class SyncManager: SyncManagerProtocol {
         isSuspending = false
     }
 
-    private var ongoingTask: Task<Void, Error>?  {
+    private var ongoingTask: Task<Void, Error>? {
         switch syncState {
-        case let .quickSync(task):
+        case .quickSync(let task):
             task
         default:
             nil

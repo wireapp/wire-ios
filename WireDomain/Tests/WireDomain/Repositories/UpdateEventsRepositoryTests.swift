@@ -316,7 +316,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
         // Given it starts buffering.
         let liveEventStream = try await sut.startBufferingLiveEvents()
-        
+
         // Given live events arrive.
         liveEventsContinuation?.yield(Scaffolding.envelope1)
         liveEventsContinuation?.yield(Scaffolding.envelope2)
