@@ -5647,16 +5647,6 @@ internal enum L10n {
           /// Contacts
           internal static let title = L10n.tr("Localizable", "self.settings.privacy_contacts_section.title", fallback: "Contacts")
         }
-        internal enum PrivacyCrash {
-          /// Send anonymous crash data
-          internal static let title = L10n.tr("Localizable", "self.settings.privacy_crash.title", fallback: "Send anonymous crash data")
-        }
-        internal enum PrivacyCrashMenu {
-          internal enum Description {
-            /// Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.
-            internal static let title = L10n.tr("Localizable", "self.settings.privacy_crash_menu.description.title", fallback: "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.")
-          }
-        }
         internal enum PrivacySectionGroup {
           /// When this is off, you won’t be able to see read receipts from other people.
           /// 

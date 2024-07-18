@@ -73,11 +73,11 @@ extension MockOTREntity: ProteusMessage {
     }
 
     func encryptForTransport() -> EncryptedPayloadGenerator.Payload? {
-        return ("non-qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
+        return (Data("non-qualified".utf8), .doNotIgnoreAnyMissingClient)
     }
 
     func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
-        return ("qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
+        return (Data("qualified".utf8), .doNotIgnoreAnyMissingClient)
     }
 
     func setExpirationDate() {
