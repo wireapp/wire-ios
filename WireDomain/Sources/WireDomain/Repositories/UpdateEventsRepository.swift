@@ -254,14 +254,3 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
 }
-
-extension AsyncSequence {
-
-    func toStream() -> AsyncStream<Element> {
-        var iterator = makeAsyncIterator()
-        return AsyncStream {
-            try? await iterator.next()
-        }
-    }
-
-}
