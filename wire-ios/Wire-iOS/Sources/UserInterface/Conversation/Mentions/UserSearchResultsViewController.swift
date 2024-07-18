@@ -98,6 +98,15 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         setupKeyboardObserver()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if collectionView.frame.size != view.bounds.size {
+            collectionView.frame = view.bounds
+            resizeTable()
+            collectionView.layoutIfNeeded()
+        }
+    }
+
     private func setupKeyboardObserver() {
         keyboardObserver = KeyboardBlockObserver { [weak self] info in
             guard let self else { return }
@@ -159,8 +168,10 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
         let minValue = min(viewHeight, CGFloat(searchResults.count) * rowHeight)
-        collectionViewHeight.constant = minValue
-        collectionView.isScrollEnabled = (minValue == viewHeight)
+        if collectionViewHeight.constant != minValue {
+            collectionViewHeight.constant = minValue
+            collectionView.isScrollEnabled = (minValue == viewHeight)
+        }
     }
 
     private func scrollToLastItem() {
