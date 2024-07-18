@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import Combine
 
 // sourcery: AutoMockable
 /// Make a direct connection to a server to receive update events.
@@ -32,20 +31,5 @@ public protocol PushChannelProtocol {
     /// Close the push channel and stop receiving update events.
 
     func close() async
-
-}
-
-extension AnyPublisher where Output == Data {
-
-    public func decodeUpdateEventEnvelope() -> AnyPublisher<UpdateEventEnvelope, Error> {
-        decode(
-            type: UpdateEventEnvelopeV0.self,
-            decoder: JSONDecoder()
-        )
-        .map {
-            $0.toAPIModel()
-        }
-        .eraseToAnyPublisher()
-    }
 
 }
