@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import CoreData;
+@import WireSystem;
 
-NS_ASSUME_NONNULL_BEGIN
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
-@interface NSManagedObjectContext (executeFetchRequestOrAssert)
+@implementation NSManagedObjectContext (executeFetchRequestOrAssert_DataModel)
 
-/// Executes a fetch request and asserts in case of error
-/// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
+- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
+{
+    NSError *error;
+    NSArray *result = [self executeFetchRequest:request error:&error];
+    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
+    return result;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END
