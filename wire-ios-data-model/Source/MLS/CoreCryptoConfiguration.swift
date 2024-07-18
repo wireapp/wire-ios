@@ -76,46 +76,6 @@ public class CoreCryptoConfigProvider {
         }
     }
 
-    public func removeOldCoreCryptoFiles(
-        sharedContainerURL: URL,
-        userID: UUID
-    ) {
-        let accountDirectory = CoreDataStack.accountDataFolder(
-            accountIdentifier: userID,
-            applicationContainer: sharedContainerURL
-        )
-
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent(sqliteDirectory)
-
-        do {
-            try FileManager.default.createAndProtectDirectory(at: coreCryptoDirectory)
-            removePreviousCoreCryptoFilesIfNeeded(from: accountDirectory)
-        } catch {
-            WireLogger.coreCrypto.error("Failed to moveCoreCryptoFilesIfNeeded \(String(describing: error))")
-        }
-
-    }
-
-    private func removePreviousCoreCryptoFilesIfNeeded(from oldDirURL: URL) {
-        let walFilename = "\(sqliteFilename)-wal"
-        let shmFilename = "\(sqliteFilename)-shm"
-
-        for file in [walFilename, shmFilename, sqliteFilename] {
-            let oldPath = oldDirURL.appendingPathComponent(file).path
-
-            guard FileManager.default.fileExists(atPath: oldPath) else {
-                continue
-            }
-
-            WireLogger.coreCrypto.debug("removing cc file \(oldPath)")
-            do {
-                try FileManager.default.removeItem(atPath: oldPath)
-            } catch {
-                WireLogger.coreCrypto.warn("error removing cc file \(oldPath): \(error)")
-            }
-        }
-    }
-
     public func clientID(of selfUser: ZMUser) throws -> String {
         guard
             let selfClient = selfUser.selfClient(),

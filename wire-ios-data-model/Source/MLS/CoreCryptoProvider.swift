@@ -39,10 +39,6 @@ public protocol CoreCryptoProviderProtocol {
     ///   - enrollment: enrollment instance which was used to establish end to end identity
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints?
-
-    /// Move CC files to dedicated folder
-    /// - Note: This is a patch from v3.112.2 and below
-    func removeExistingCoreCryptoFilesIfNeeded()
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -102,12 +98,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
-    }
-
-    nonisolated public func removeExistingCoreCryptoFilesIfNeeded() {
-        let provider = CoreCryptoConfigProvider()
-        provider.removeOldCoreCryptoFiles(sharedContainerURL: sharedContainerURL,
-                                             userID: selfUserID)
     }
 
     // Create an CoreCrypto instance with guranteees that only one task is performing
