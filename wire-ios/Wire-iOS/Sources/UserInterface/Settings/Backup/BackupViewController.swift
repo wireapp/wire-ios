@@ -19,6 +19,7 @@
 import UIKit
 
 final class BackupViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: (() -> Void)?
 
     private let tableView = UITableView(frame: .zero)
@@ -37,9 +38,13 @@ final class BackupViewController: UIViewController, SpinnerCapable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationTitle()
         setupViews()
         setupLayout()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized)
     }
 
     private func setupViews() {
@@ -69,8 +74,7 @@ final class BackupViewController: UIViewController, SpinnerCapable {
     }
 
     private func setupNavigationTitle() {
-        let title = L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized
-        navigationItem.setupNavigationBarTitle(title: title)
+
     }
 
     var loadingHostController: SpinnerCapableViewController {

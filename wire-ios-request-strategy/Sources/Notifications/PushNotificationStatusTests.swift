@@ -21,7 +21,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 @objc
-class FakeGroupQueue: NSObject, ZMSGroupQueue {
+final class FakeGroupQueue: NSObject, GroupQueue {
 
     var dispatchGroup: ZMSDispatchGroup? {
         nil

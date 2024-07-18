@@ -39,7 +39,6 @@ enum TeamSource: Int {
 struct WireURL: Codable {
     let wireAppOnItunes: URL
     let support: URL
-    let randomProfilePictureSource: URL
 
     static var shared: WireURL! = {
         WireURL(filePath: Bundle.fileURL(for: "url", with: "json")!)
@@ -90,10 +89,6 @@ extension URL {
 
     static var wr_wireAppOnItunes: URL {
         WireURL.shared.wireAppOnItunes
-    }
-
-    static var wr_randomProfilePictureSource: URL {
-        WireURL.shared.randomProfilePictureSource
     }
 
     static var wr_emailAlreadyInUseLearnMore: URL {

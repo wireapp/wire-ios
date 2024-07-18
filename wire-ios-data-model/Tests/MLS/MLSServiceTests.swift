@@ -92,6 +92,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     private func createSut() {
         sut = MLSService(
             context: uiMOC,
+            notificationContext: uiMOC.notificationContext,
             coreCryptoProvider: mockCoreCryptoProvider,
             encryptionService: mockEncryptionService,
             decryptionService: mockDecryptionService,

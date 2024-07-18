@@ -262,10 +262,7 @@
 {
     // given
     XCTAssertTrue([self login]);
-    
-    NSTimeInterval defaultExpirationTime = [ZMMessage defaultExpirationTime];
-    [ZMMessage setDefaultExpirationTime:0.3];
-    
+
     self.mockTransportSession.doNotRespondToRequests = YES;
     
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
@@ -276,16 +273,12 @@
     [self.userSession performChanges:^{
         message = (id)[conversation appendImageFromData:[self verySmallJPEGData] nonce:[NSUUID createUUID]];
     }];
-    
-    [self spinMainQueueWithTimeout:0.5];
-    
-    // then
-    XCTAssertTrue(message.isExpired);
-    XCTAssertEqual(message.deliveryState, ZMDeliveryStateFailedToSend);
-    XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);
 
-    [ZMMessage setDefaultExpirationTime:defaultExpirationTime];
-    
+    // then
+    XCTAssertTrue(message.shouldExpire);
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStatePending);
+    XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorNone);
+
     WaitForAllGroupsToBeEmpty(0.5);
 }
 

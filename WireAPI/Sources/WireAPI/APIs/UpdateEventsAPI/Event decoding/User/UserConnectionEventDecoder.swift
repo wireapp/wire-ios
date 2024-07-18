@@ -36,12 +36,12 @@ struct UserConnectionEventDecoder {
         return UserConnectionEvent(
             userName: user.name,
             connection: Connection(
-                senderId: connection.from,
-                receiverId: connection.to,
-                receiverQualifiedId: connection.qualifiedTo,
-                conversationId: connection.conversationID,
-                qualifiedConversationId: connection.qualifiedConversationID,
-                lastUpdate: connection.lastUpdate,
+                senderID: connection.from,
+                receiverID: connection.to,
+                receiverQualifiedID: connection.qualifiedTo,
+                conversationID: connection.conversationID,
+                qualifiedConversationID: connection.qualifiedConversationID,
+                lastUpdate: connection.lastUpdate.date,
                 status: connection.status
             )
         )
@@ -60,7 +60,7 @@ struct UserConnectionEventDecoder {
         let qualifiedTo: QualifiedID?
         let conversationID: UUID?
         let qualifiedConversationID: QualifiedID?
-        let lastUpdate: Date
+        let lastUpdate: UTCTime
         let status: ConnectionStatus
 
         enum CodingKeys: String, CodingKey {

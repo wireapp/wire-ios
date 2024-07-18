@@ -45,7 +45,7 @@ final class UserSessionMock: UserSession {
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
         mock.invokeUserClient_MockMethod = { _ in
-            return "102030405060708090102030405060708090102030405060708090".data(using: .utf8)
+            return Data("102030405060708090102030405060708090102030405060708090".utf8)
         }
         return mock
     }()
@@ -67,7 +67,7 @@ final class UserSessionMock: UserSession {
 
     var _passcode: String?
 
-    var networkState: ZMNetworkState = .offline
+    var networkState: NetworkState = .offline
 
     var selfUser: any UserType
 
@@ -75,10 +75,9 @@ final class UserSessionMock: UserSession {
 
     var editableSelfUser: any EditableUserType & UserType
 
-    var mockConversationList: ZMConversationList?
+    var mockConversationList: ConversationList?
 
     var searchUsersCache: SearchUsersCache
-    var contextProvider: ContextProvider?
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
@@ -190,22 +189,22 @@ final class UserSessionMock: UserSession {
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol {
         return NSObject()
     }
 
-    func conversationList() -> ZMConversationList {
+    func conversationList() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+    func pendingConnectionConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
 
-    func archivedConversationsInUserSession() -> ZMConversationList {
+    func archivedConversationsInUserSession() -> ConversationList {
         guard let mockConversationList else { fatalError("mockConversationList is not set") }
         return mockConversationList
     }
@@ -350,15 +349,30 @@ final class UserSessionMock: UserSession {
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
     }
+
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
+    }
+
+    // MARK: - Context Provider
+
+    var coreDataStack: CoreDataStack?
+
+    var contextProvider: any ContextProvider {
+        coreDataStack ?? MockContextProvider()
+    }
+
 }
 
 // MARK: - UserSessionMock + ContextProvider
 
 extension UserSessionMock: ContextProvider {
 
-    var account: Account { contextProvider!.account }
-    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
-    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
-    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
-    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
+    var account: Account { contextProvider.account }
+    var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 }

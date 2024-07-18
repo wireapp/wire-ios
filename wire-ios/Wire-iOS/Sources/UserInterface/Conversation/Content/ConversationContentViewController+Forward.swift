@@ -96,7 +96,7 @@ extension ZMMessage: Shareable {
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
+            FileMetaDataGenerator.shared.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
                 ZMUserSession.shared()?.perform {
                     conversations.forEachNonEphemeral {
                         do {
@@ -134,16 +134,6 @@ extension ZMConversationMessage {
     }
 }
 
-extension ZMConversationList {/// TODO mv to DM
-    func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        return map { $0 as! ZMConversation }.filter { (conversation: ZMConversation) -> (Bool) in
-            return (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
-                conversation.isSelfAnActiveMember &&
-                !(conversation === excluding)
-        }
-    }
-}
-
 // MARK: - popover apperance update
 
 extension ConversationContentViewController {
@@ -176,7 +166,8 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
         endEditing()
 
-        let conversations = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession ).shareableConversations(excluding: message.conversationLike)
+        let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
+            .shareableConversations(excluding: message.conversationLike)
 
         let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
             shareable: message as! ZMMessage,

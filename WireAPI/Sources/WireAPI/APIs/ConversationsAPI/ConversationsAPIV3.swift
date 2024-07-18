@@ -31,7 +31,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             method: .post,
             body: body
         )
-        let response = try await self.httpClient.executeRequest(request)
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: QualifiedConversationListV3.self) // Change in v3
@@ -44,9 +44,9 @@ class ConversationsAPIV3: ConversationsAPIV2 {
 
 private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found = "found"
+        case found
         case notFound = "not_found"
-        case failed = "failed"
+        case failed
     }
 
     let found: [ConversationV3]
@@ -91,7 +91,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: Date?
+    var lastEventTime: UTCTimeMillis?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?
@@ -122,7 +122,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: nil, // Removed: `var legacyAccessRole`
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime?.date
         )
     }
 }

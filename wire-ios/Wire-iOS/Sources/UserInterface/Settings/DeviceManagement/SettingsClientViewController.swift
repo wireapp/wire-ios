@@ -83,7 +83,6 @@ final class SettingsClientViewController: UIViewController,
             self?.tableView.reloadData()
         }
 
-        setupNavigationTitle()
         self.credentials = credentials
     }
 
@@ -107,17 +106,16 @@ final class SettingsClientViewController: UIViewController,
 
     func setupFromConversationStyle() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: SemanticColors.Label.textDefault]
     }
 
     private func setupNavigationTitle() {
         guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
-        navigationItem.setupNavigationBarTitle(title: deviceClass.capitalized)
+        setupNavigationBarTitle(deviceClass.capitalized)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupNavigationTitle()
         // presented modally from conversation
         if let navController = self.navigationController,
             navController.viewControllers.count > 0 &&

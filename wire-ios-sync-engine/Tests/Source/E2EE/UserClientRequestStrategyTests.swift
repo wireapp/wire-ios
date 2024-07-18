@@ -336,8 +336,8 @@ extension UserClientRequestStrategyTests {
 
         // then
         XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
-        let expectedError = NSError(domain: NSError.ZMUserSessionErrorDomain,
-                                    code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue),
+        let expectedError = NSError(domain: NSError.userSessionErrorDomain,
+                                    code: UserSessionErrorCode.invalidCredentials.rawValue,
                                     userInfo: nil)
         XCTAssertEqual(self.mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
     }
@@ -369,11 +369,11 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedAndWait {
             // then
-            let expectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue), userInfo: [
+            let expectedError = NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue, userInfo: [
                 ZMEmailCredentialKey: emailAddress,
                 ZMUserHasPasswordKey: true,
                 ZMUserUsesCompanyLoginCredentialKey: false,
-                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, hasPassword: true, usesCompanyLogin: false)
             ])
 
             XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
@@ -402,7 +402,7 @@ extension UserClientRequestStrategyTests {
             let responsePayload = ["code": 403, "message": "Too many clients", "label": "too-many-clients"] as [String: Any]
             let response = ZMTransportResponse(payload: responsePayload as ZMTransportData?, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
-            _ = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue), userInfo: nil)
+            _ = NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue, userInfo: nil)
 
             // when
             self.clientRegistrationStatus.mockPhase = nil
@@ -428,6 +428,7 @@ extension UserClientRequestStrategyTests {
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
             client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
+            client.preKeysRangeMax = 5
             client.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
             self.sut.managedObjectContext!.saveOrRollback()
             self.sut.notifyChangeTrackers(client)
@@ -440,6 +441,7 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(self.clientUpdateStatus.prekeys)
+            XCTAssertEqual(self.clientUpdateStatus.prekeys?.first?.id, 6)
         }
     }
 

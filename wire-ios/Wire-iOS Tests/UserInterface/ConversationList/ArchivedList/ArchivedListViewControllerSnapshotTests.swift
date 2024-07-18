@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -24,28 +25,31 @@ import XCTest
 final class ArchivedListViewControllerSnapshotTests: XCTestCase {
 
     private var userSessionMock: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSessionMock = .init()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         userSessionMock = nil
         super.tearDown()
     }
 
     func testEmpty() {
 
-        userSessionMock.mockConversationList = ZMConversationList(
+        userSessionMock.mockConversationList = ConversationList(
             allConversations: [],
             filteringPredicate: .init(value: true),
-            moc: .init(concurrencyType: .mainQueueConcurrencyType),
+            managedObjectContext: .init(concurrencyType: .mainQueueConcurrencyType),
             description: "all conversations"
         )
 
         let sut = ArchivedListViewController(userSession: userSessionMock)
-        verify(matching: UINavigationController(rootViewController: sut))
+        snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 
     func testNonEmpty() {
@@ -56,14 +60,14 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         let conversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
         conversation.userDefinedName = "Lorem Ipsum"
         conversation.isArchived = true
-        userSessionMock.mockConversationList = ZMConversationList(
+        userSessionMock.mockConversationList = ConversationList(
             allConversations: [conversation],
             filteringPredicate: .init(value: true),
-            moc: .init(concurrencyType: .mainQueueConcurrencyType),
+            managedObjectContext: .init(concurrencyType: .mainQueueConcurrencyType),
             description: "mock conversations"
         )
 
         let sut = ArchivedListViewController(userSession: userSessionMock)
-        verify(matching: UINavigationController(rootViewController: sut))
+        snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 }

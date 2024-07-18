@@ -31,7 +31,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             method: .post,
             body: body
         )
-        let response = try await self.httpClient.executeRequest(request)
+        let response = try await httpClient.executeRequest(request)
 
         // Removed in v5: remove handling of error code 400
         return try ResponseParser()
@@ -44,9 +44,9 @@ class ConversationsAPIV5: ConversationsAPIV4 {
 
 private struct QualifiedConversationListV5: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found = "found"
+        case found
         case notFound = "not_found"
-        case failed = "failed"
+        case failed
     }
 
     let found: [ConversationV5]
@@ -91,10 +91,10 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
     var cipherSuite: MLSCipherSuite? // New field
     var creator: UUID?
     var epoch: UInt?
-    var epochTimestamp: Date? // New field
+    var epochTimestamp: UTCTime? // New field
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: Date?
+    var lastEventTime: UTCTimeMillis?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?
@@ -115,7 +115,7 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
             mlsGroupID: mlsGroupID,
             cipherSuite: cipherSuite,
             epoch: epoch,
-            epochTimestamp: epochTimestamp,
+            epochTimestamp: epochTimestamp?.date,
             creator: creator,
             members: members.map { $0.toAPIModel() },
             name: name,
@@ -125,7 +125,7 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime?.date
         )
     }
 }

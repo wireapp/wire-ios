@@ -74,7 +74,6 @@ final class UsersAPITests: XCTestCase {
         XCTAssertEqual(
             result,
             Scaffolding.user
-
         )
     }
 
@@ -128,7 +127,6 @@ final class UsersAPITests: XCTestCase {
         XCTAssertEqual(
             result,
             Scaffolding.user
-
         )
     }
 
@@ -162,7 +160,7 @@ final class UsersAPITests: XCTestCase {
         )
     }
 
-    struct Scaffolding {
+    enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
         static let userID = UserID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
@@ -181,7 +179,7 @@ final class UsersAPITests: XCTestCase {
             )],
             deleted: true,
             email: "john.doe@example.com",
-            expiresAt: "2021-05-12T10:52:02.671Z",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
             service: Service(
                 id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!

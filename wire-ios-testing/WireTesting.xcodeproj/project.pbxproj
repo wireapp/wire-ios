@@ -30,6 +30,7 @@
 		09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */; };
 		09A218041B78E01A0076547A /* FakeGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A218031B78E01A0076547A /* FakeGroupContext.swift */; };
 		166264A7216BB64100300F45 /* large.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166264A6216BB64000300F45 /* large.jpg */; };
+		16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */; };
 		16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */; };
 		5454E14A1B73A09100F131F8 /* ZMTExpectationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */; };
 		54AFD7E11CB6986A0090E33A /* 1900x1500.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DB1CB698690090E33A /* 1900x1500.jpg */; };
@@ -108,6 +109,7 @@
 		09F1863A1B6903A4007A3DA6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTesting.xcconfig; sourceTree = "<group>"; };
 		166264A6216BB64000300F45 /* large.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = large.jpg; sourceTree = "<group>"; };
+		16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManger+RandomCacheURL.swift"; sourceTree = "<group>"; };
 		16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Helpers.swift"; sourceTree = "<group>"; };
 		5454E1471B73A09100F131F8 /* WireTesting-iosTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireTesting-iosTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTExpectationTests.swift; sourceTree = "<group>"; };
@@ -115,7 +117,6 @@
 		54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54AFD7DB1CB698690090E33A /* 1900x1500.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1900x1500.jpg; sourceTree = "<group>"; };
 		54AFD7DC1CB698690090E33A /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animated.gif; sourceTree = "<group>"; };
@@ -282,6 +283,7 @@
 				634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */,
 				595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */,
 				595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */,
+				16AAA62B2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -303,7 +305,6 @@
 				54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */,
 				54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */,
 				54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */,
-				54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */,
 				54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -353,7 +354,6 @@
 				096AD7B81B68D41D00E007A8 /* Headers */,
 				096AD7B61B68D41D00E007A8 /* Sources */,
 				096AD7B71B68D41D00E007A8 /* Frameworks */,
-				AD4812AB2AB9907100ED208C /* Run Swiftlint */,
 				096AD7B91B68D41D00E007A8 /* Resources */,
 			);
 			buildRules = (
@@ -448,29 +448,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		AD4812AB2AB9907100ED208C /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		096AD7B61B68D41D00E007A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -491,6 +468,7 @@
 				098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */,
 				CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */,
 				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
+				16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */,
 				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
 				595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */,
@@ -544,7 +522,6 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
