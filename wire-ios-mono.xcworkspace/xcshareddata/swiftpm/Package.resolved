@@ -47,12 +47,30 @@
         }
       },
       {
+        "package": "FLAnimatedImage",
+        "repositoryURL": "https://github.com/Flipboard/FLAnimatedImage",
+        "state": {
+          "branch": null,
+          "revision": "d4f07b6f164d53c1212c3e54d6460738b1981e9f",
+          "version": "1.0.17"
+        }
+      },
+      {
         "package": "grpc-swift",
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
           "branch": null,
           "revision": "6a90b7e77e29f9bda6c2b3a4165a40d6c02cfda1",
           "version": "1.23.0"
+        }
+      },
+      {
+        "package": "libPhoneNumber",
+        "repositoryURL": "https://github.com/wireapp/libPhoneNumber-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "a6f5cb0a2a264e8396da65b0fb27ecf0df8a975e",
+          "version": "1.1.0"
         }
       },
       {
