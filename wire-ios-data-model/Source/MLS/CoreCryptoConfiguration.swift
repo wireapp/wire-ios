@@ -76,7 +76,7 @@ public class CoreCryptoConfigProvider {
         }
     }
 
-    public func removeOldCoreCryptoFiles(
+    public func moveCoreCryptoFilesIfNeeded(
         sharedContainerURL: URL,
         userID: UUID
     ) {
@@ -89,29 +89,30 @@ public class CoreCryptoConfigProvider {
 
         do {
             try FileManager.default.createAndProtectDirectory(at: coreCryptoDirectory)
-            removePreviousCoreCryptoFilesIfNeeded(from: accountDirectory)
+            movePreviousCoreCryptoFilesIfNeeded(from: accountDirectory, to: coreCryptoDirectory)
         } catch {
             WireLogger.coreCrypto.error("Failed to moveCoreCryptoFilesIfNeeded \(String(describing: error))")
         }
 
     }
 
-    private func removePreviousCoreCryptoFilesIfNeeded(from oldDirURL: URL) {
+    private func movePreviousCoreCryptoFilesIfNeeded(from oldDirURL: URL, to currentDirURL: URL) {
         let walFilename = "\(sqliteFilename)-wal"
         let shmFilename = "\(sqliteFilename)-shm"
 
         for file in [walFilename, shmFilename, sqliteFilename] {
             let oldPath = oldDirURL.appendingPathComponent(file).path
+            let newPath = currentDirURL.appendingPathComponent(file).path
 
             guard FileManager.default.fileExists(atPath: oldPath) else {
                 continue
             }
 
-            WireLogger.coreCrypto.debug("removing cc file \(oldPath)")
+            WireLogger.coreCrypto.debug("moving cc file \(oldPath) to \(newPath)")
             do {
-                try FileManager.default.removeItem(atPath: oldPath)
+                try FileManager.default.moveItem(atPath: oldPath, toPath: newPath)
             } catch {
-                WireLogger.coreCrypto.warn("error removing cc file \(oldPath): \(error)")
+                WireLogger.coreCrypto.warn("could not move cc file \(oldPath) to \(newPath): error \(error)")
             }
         }
     }

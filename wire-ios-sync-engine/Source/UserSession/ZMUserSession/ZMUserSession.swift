@@ -475,7 +475,7 @@ public final class ZMUserSession: NSObject {
             cryptoboxMigrationManager: cryptoboxMigrationManager)
 
         // should be done only once
-        self.coreCryptoProvider.removeExistingCoreCryptoFilesIfNeeded()
+        self.coreCryptoProvider.moveExistingCoreCryptoFilesIfNeeded()
 
         self.lastEventIDRepository = LastEventIDRepository(
             userID: userId,
