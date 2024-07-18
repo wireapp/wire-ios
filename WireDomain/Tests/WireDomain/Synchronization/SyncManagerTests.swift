@@ -45,6 +45,7 @@ final class SyncManagerTests: XCTestCase {
         updateEventsRepository.pullPendingEvents_MockMethod = {}
         updateEventsRepository.fetchNextPendingEventsLimit_MockValue = []
         updateEventsRepository.deleteNextPendingEventsLimit_MockMethod = { _ in }
+        updateEventsRepository.storeLastEventEnvelopeID_MockMethod = { _ in }
         updateEventProcessor.processEvent_MockMethod = { _ in }
     }
 
@@ -218,10 +219,16 @@ final class SyncManagerTests: XCTestCase {
         await fulfillment(of: [didProcessEvent])
 
         // Push 2 live events through push channel
-        let liveEnvelope1 = Scaffolding.makeEnvelope(with: Scaffolding.event4)
+        let liveEnvelope1 = Scaffolding.makeEnvelope(
+            with: Scaffolding.event4,
+            isTransient: true
+        )
         liveEventsContinuation?.yield(liveEnvelope1)
 
-        let liveEnvelope2 = Scaffolding.makeEnvelope(with: Scaffolding.event5)
+        let liveEnvelope2 = Scaffolding.makeEnvelope(
+            with: Scaffolding.event5,
+            isTransient: false
+        )
         liveEventsContinuation?.yield(liveEnvelope2)
         didPushLiveEvents.fulfill()
 
@@ -260,6 +267,12 @@ final class SyncManagerTests: XCTestCase {
         // Then it deleted 1 batch (i.e all) of the stored events.
         XCTAssertEqual(updateEventsRepository.deleteNextPendingEventsLimit_Invocations, [500])
         XCTAssertTrue(storedEvents.isEmpty)
+
+        // Then it update the last event id for the non-transient live events.
+        XCTAssertEqual(
+            updateEventsRepository.storeLastEventEnvelopeID_Invocations,
+            [liveEnvelope2.id]
+        )
 
         // Then it is live.
         guard case .live = sut.syncState else {
@@ -312,11 +325,14 @@ private enum Scaffolding {
         newName: "Bar"
     )))
 
-    static func makeEnvelope(with event: UpdateEvent) -> UpdateEventEnvelope {
+    static func makeEnvelope(
+        with event: UpdateEvent,
+        isTransient: Bool = false
+    ) -> UpdateEventEnvelope {
         .init(
             id: UUID(),
             events: [event],
-            isTransient: false
+            isTransient: isTransient
         )
     }
 
