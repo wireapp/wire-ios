@@ -11,21 +11,21 @@
         }
       },
       {
-        "package": "Countly",
-        "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
-          "version": "24.4.2"
-        }
-      },
-      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
           "branch": null,
           "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
           "version": "3.8.5"
+        }
+      },
+      {
+        "package": "Countly",
+        "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
+          "version": "24.4.2"
         }
       },
       {
@@ -62,15 +62,6 @@
           "branch": null,
           "revision": "6a90b7e77e29f9bda6c2b3a4165a40d6c02cfda1",
           "version": "1.23.0"
-        }
-      },
-      {
-        "package": "libPhoneNumber",
-        "repositoryURL": "https://github.com/wireapp/libPhoneNumber-iOS.git",
-        "state": {
-          "branch": null,
-          "revision": "a6f5cb0a2a264e8396da65b0fb27ecf0df8a975e",
-          "version": "1.1.0"
         }
       },
       {
@@ -183,7 +174,7 @@
       },
       {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
           "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
