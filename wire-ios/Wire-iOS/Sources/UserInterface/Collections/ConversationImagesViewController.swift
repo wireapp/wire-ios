@@ -33,6 +33,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
                                                                         options: [:])
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
+    var shareButton: IconButton?
     let overlay = FeedbackOverlayView()
     let separator: UIView = {
         let view = UIView()
@@ -238,6 +239,8 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             return #selector(copyCurrent(_:))
         case .save:
             return #selector(saveCurrent(_:))
+        case .forward:
+            return #selector(shareCurrent(_:))
         case .sketchDraw:
             return #selector(sketchCurrent(_:))
         case .sketchEmoji:
@@ -274,15 +277,17 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
             let saveButton = iconButton(messageAction: .save)
 
+            let shareButton = iconButton(messageAction: .forward)
+
             let sketchButton = iconButton(messageAction: .sketchDraw)
 
             let emojiSketchButton = iconButton(messageAction: .sketchEmoji)
 
             let revealButton = iconButton(messageAction: .showInConversation)
             if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canDownloadMedia {
-                buttons = [sketchButton, emojiSketchButton, revealButton]
+                buttons = [shareButton, sketchButton, emojiSketchButton, revealButton]
             } else {
-                buttons = [sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
+                buttons = [shareButton, sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
             }
         }
 
@@ -414,6 +419,11 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             currentController?.performSaveImageAnimation(from: sender)
         }
         perform(action: .save, sender: sender)
+    }
+
+    @objc
+    func shareCurrent(_ sender: AnyObject!) {
+        perform(action: .forward, sender: sender)
     }
 
     @objc

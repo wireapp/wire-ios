@@ -24,7 +24,7 @@ import WireSyncEngine
 protocol SettingsDebugReportViewModelProtocol {
 
     /// Send a debug report via email or shows fallback alert if email is not available
-    func sendReport(sender: UIView)
+    func sendReport()
 
     /// Presents a list of conversation for the user to share the debug report with
     func shareReport()
@@ -59,13 +59,13 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     // MARK: - Interface
 
-    func sendReport(sender: UIView) {
+    func sendReport() {
         if MFMailComposeViewController.canSendMail() {
             Task {
                 await router.presentMailComposer()
             }
         } else {
-            router.presentFallbackAlert(sender: sender)
+            router.presentFallbackAlert()
         }
     }
 

@@ -284,11 +284,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let sectionDescriptor = sections[indexPath.section]
-        let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
-        let cell = tableView.cellForRow(at: indexPath)!
+        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
+        let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
 
-        property.select(SettingsPropertyValue.none, sender: cell)
+        property.select(SettingsPropertyValue.none)
         tableView.deselectRow(at: indexPath, animated: false)
     }
 

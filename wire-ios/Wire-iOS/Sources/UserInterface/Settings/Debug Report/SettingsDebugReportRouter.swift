@@ -28,7 +28,7 @@ protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the fallback alert
 
-    func presentFallbackAlert(sender: UIView)
+    func presentFallbackAlert()
 
     /// Presents the share view controller
     /// 
@@ -93,17 +93,14 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         })
     }
 
-    func presentFallbackAlert(sender: UIView) {
+    func presentFallbackAlert() {
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
             logPaths: DebugLogSender.existingDebugLogs,
             email: mailRecipient,
             from: viewController,
-            popoverPresentation: .sourceView(
-                sender.superview!,
-                sender.frame.insetBy(dx: -4, dy: -4)
-            )
+            sourceView: nil
         )
     }
 

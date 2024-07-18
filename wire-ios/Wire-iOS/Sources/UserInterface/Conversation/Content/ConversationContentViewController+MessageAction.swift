@@ -98,22 +98,24 @@ extension ConversationContentViewController {
         case .present:
             dataSource.selectedMessage = message
             presentDetails(for: message)
-
         case .save:
             if Message.isImage(message) {
                 saveImage(from: message, view: view)
-            } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
+            } else {
                 dataSource.selectedMessage = message
 
-                let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                if let popoverPresentationController = activityViewController.popoverPresentationController {
-                    let sourceView = (view as? SelectableView)?.selectionView ?? view
-                    popoverPresentationController.sourceView = sourceView.superview
-                    popoverPresentationController.sourceRect = sourceView.frame
-                }
-                present(activityViewController, animated: true)
-            }
+                let targetView: UIView
 
+                if let selectableView = view as? SelectableView {
+                    targetView = selectableView.selectionView
+                } else {
+                    targetView = view
+                }
+
+                if let saveController = UIActivityViewController(message: message, from: targetView) {
+                    present(saveController, animated: true)
+                }
+            }
         case .digitallySign:
             dataSource.selectedMessage = message
             if message.isFileDownloaded() {
@@ -129,6 +131,8 @@ extension ConversationContentViewController {
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
 
+        case .forward:
+            showForwardFor(message: message, from: view)
         case .showInConversation:
             scroll(to: message) { _ in
                 self.dataSource.highlight(message: message)

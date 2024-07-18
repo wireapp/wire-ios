@@ -18,13 +18,19 @@
 
 import UIKit
 
-extension UIAlertController {
+extension UIViewController {
 
-    static func confirmRemovingServices(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return confirmController(
-            title: L10n.Localizable.ServicesOptions.RemoveServices.message,
-            confirmTitle: L10n.Localizable.ServicesOptions.RemoveServices.action,
-            completion: completion
-        )
+    // update the popover's frame if this UIViewController is presented from a PopoverPresenter.
+    // This method should be called when PopoverPresenter's frame size changes or its popover related content is updated.
+    func updatePopoverFrame() {
+        if let popoverPresenter = popoverPresentationController?.presentingViewController as? PopoverPresenter {
+            popoverPresenter.updatePopoverSourceRect()
+        }
+
+        popoverPresentationController?.containerView?.setNeedsLayout()
+    }
+
+    func endEditing() {
+        view.window?.endEditing(true)
     }
 }

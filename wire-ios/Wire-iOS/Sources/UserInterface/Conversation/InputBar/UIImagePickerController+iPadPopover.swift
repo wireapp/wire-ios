@@ -18,13 +18,22 @@
 
 import UIKit
 
-extension UIAlertController {
+struct ImagePickerPopoverPresentationContext {
+    let presentViewController: UIViewController
+    let sourceType: UIImagePickerController.SourceType
+}
 
-    static func confirmRemovingServices(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return confirmController(
-            title: L10n.Localizable.ServicesOptions.RemoveServices.message,
-            confirmTitle: L10n.Localizable.ServicesOptions.RemoveServices.action,
-            completion: completion
-        )
+extension UIImagePickerController {
+    class func popoverForIPadRegular(with context: ImagePickerPopoverPresentationContext) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = context.sourceType
+        picker.preferredContentSize = CGSize.IPadPopover.preferredContentSize
+
+        if context.presentViewController.isIPadRegular(device: UIDevice.current) {
+
+            picker.modalPresentationStyle = .popover
+        }
+
+        return picker
     }
 }

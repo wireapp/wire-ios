@@ -32,11 +32,10 @@ extension UIViewController {
     func presentRemoveDialogue(
         for participant: UserType,
         from conversation: ZMConversation,
-        sender: UIView,
         dismisser: ViewControllerDismisser? = nil
-    ) {
+        ) {
 
-        let alertController = UIAlertController.remove(participant) { [weak self] remove in
+        let controller = UIAlertController.remove(participant) { [weak self] remove in
             guard let self, remove else { return }
 
             conversation.removeOrShowError(participant: participant) { result in
@@ -49,12 +48,7 @@ extension UIViewController {
             }
         }
 
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sender.superview
-            popoverPresentationController.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
-        }
-
-        present(alertController, animated: true)
+        present(controller, animated: true)
         AVSMediaManager.sharedInstance().mediaManagerPlayAlert()
     }
 }

@@ -38,13 +38,11 @@ protocol ActiveCallRouterProtocol: AnyObject {
 }
 
 // MARK: - CallQualityRouterProtocol
-
-// sourcery: AutoMockable
 protocol CallQualityRouterProtocol: AnyObject {
     func presentCallQualitySurvey(with callDuration: TimeInterval)
     func dismissCallQualitySurvey(completion: Completion?)
-    func presentCallFailureDebugAlert(presentingViewController: UIViewController)
-    func presentCallQualityRejection(presentingViewController: UIViewController)
+    func presentCallFailureDebugAlert()
+    func presentCallQualityRejection()
 }
 
 typealias PostCallAction = ((@escaping Completion) -> Void)
@@ -90,7 +88,7 @@ where TopOverlayPresenter: TopOverlayPresenting {
 
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
-        callQualityController = CallQualityController(rootViewController: rootViewController)
+        callQualityController = CallQualityController()
         transitioningDelegate = CallQualityAnimator()
 
         callController.router = self
@@ -281,7 +279,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
 // MARK: - CallQualityRouterProtocol
 extension ActiveCallRouter: CallQualityRouterProtocol {
-
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
         let qualityController = buildCallQualitySurvey(with: callDuration)
 
@@ -301,34 +298,18 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
         })
     }
 
-    func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
-
+    func presentCallFailureDebugAlert() {
         let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
-        let popoverPresentation = PopoverViewControllerPresentation.sourceView(
-            sourceView: presentingViewController.view,
-            sourceRect: .init(
-                origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
-                size: .zero
-            )
-        )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController, popoverPresentation: popoverPresentation)
+            DebugAlert.showSendLogsMessage(message: logsMessage)
             completion()
         }
     }
 
-    func presentCallQualityRejection(presentingViewController: UIViewController) {
-
+    func presentCallQualityRejection() {
         let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
-        let popoverPresentation = PopoverViewControllerPresentation.sourceView(
-            sourceView: presentingViewController.view,
-            sourceRect: .init(
-                origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
-                size: .zero
-            )
-        )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController, popoverPresentation: popoverPresentation)
+            DebugAlert.showSendLogsMessage(message: logsMessage)
             completion()
         }
     }

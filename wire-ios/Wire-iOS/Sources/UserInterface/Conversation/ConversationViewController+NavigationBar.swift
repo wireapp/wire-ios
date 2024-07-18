@@ -213,7 +213,7 @@ extension ConversationViewController {
 
     @objc
     func voiceCallItemTapped(_ sender: UIBarButtonItem) {
-        view.window?.endEditing(true)
+        endEditing()
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
         }
@@ -223,7 +223,7 @@ extension ConversationViewController {
 
     @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
-            view.window?.endEditing(true)
+            endEditing()
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
         }
 
@@ -242,10 +242,14 @@ extension ConversationViewController {
 }
 
 extension ConversationViewController: CollectionsViewControllerDelegate {
-
     func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
-
         switch action {
+        case .forward:
+            viewController.dismissIfNeeded(animated: true) {
+                self.contentViewController.scroll(to: message) { cell in
+                    self.contentViewController.showForwardFor(message: message, from: cell)
+                }
+            }
 
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {

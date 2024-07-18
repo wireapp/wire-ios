@@ -93,7 +93,7 @@ final class LocationSelectionViewController: UIViewController {
             mapViewController.mapView.restoreLocation(animated: animated)
         }
         appLocationManager.requestLocationAuthorization()
-        view.window?.endEditing(true)
+        endEditing()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

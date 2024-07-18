@@ -47,8 +47,7 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                        "code": code,
                        "dryrun": true]
         default:
-            let phaseString = currentStatus.phase.map { "\($0)" } ?? "<nil>"
-            fatal("Generating request for invalid phase: \(phaseString)")
+            fatal("Generating request for invalid phase: \(currentStatus.phase)")
         }
 
         return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
@@ -72,8 +71,7 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                 error = NSError.invalidActivationCode(with: response) ??
                     NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             default:
-                let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
-                fatal("Error occurs for invalid phase: \(phaseString)")
+                fatal("Error occurs for invalid phase: \(registrationStatus.phase)")
             }
             registrationStatus.handleError(error)
         }

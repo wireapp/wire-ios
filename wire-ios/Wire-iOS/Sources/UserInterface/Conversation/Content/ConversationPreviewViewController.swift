@@ -28,7 +28,7 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
     init(
         conversation: ZMConversation,
         presentingViewController: UIViewController,
-        sourceView: UIView,
+        sourceView: UIView?,
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) {

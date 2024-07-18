@@ -159,35 +159,33 @@ final class BlockerViewController: LaunchImageViewController {
 
         let reportError = UIAlertAction(
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
-            style: .default
-        ) { [weak self] _ in
-            guard let self else { return }
-            let fallbackActivityPopoverPresentation = PopoverViewControllerPresentation.sourceView(
-                sourceView: view,
-                sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)
-            )
-            presentMailComposer(fallbackActivityPopoverPresentation: fallbackActivityPopoverPresentation)
-        }
+            style: .default,
+            handler: { [weak self] _ in
+                self?.presentMailComposer()
+            }
+        )
 
         databaseFailureAlert.addAction(reportError)
 
         let retryAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
-            style: .default
-        ) { [weak self] _ in
-            self?.sessionManager?.retryStart()
-        }
+            style: .default,
+            handler: { [weak self] _ in
+                self?.sessionManager?.retryStart()
+            }
+        )
 
         databaseFailureAlert.addAction(retryAction)
 
         let deleteDatabaseAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
-            style: .destructive
-        ) { [weak self] _ in
-            self?.dismiss(animated: true) {
-                self?.showConfirmationDatabaseDeletionAlert()
+            style: .destructive,
+            handler: { [weak self] _ in
+                self?.dismiss(animated: true, completion: {
+                    self?.showConfirmationDatabaseDeletionAlert()
+                })
             }
-        }
+        )
 
         databaseFailureAlert.addAction(deleteDatabaseAction)
         present(databaseFailureAlert, animated: true)

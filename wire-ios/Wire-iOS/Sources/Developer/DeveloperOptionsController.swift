@@ -30,7 +30,7 @@ final class DeveloperOptionsController: UIViewController {
     var uiSwitchToAction: [UISwitch: (Bool) -> Void] = [:]
 
     /// Map from UIButton to the action it should perform.
-    var uiButtonToAction: [UIButton: (_ sender: UIButton) -> Void] = [:]
+    var uiButtonToAction: [UIButton: () -> Void] = [:]
 
     var mailViewController: MFMailComposeViewController?
 
@@ -72,31 +72,28 @@ final class DeveloperOptionsController: UIViewController {
 
     /// Creates a cell to forward logs
     func forwardLogCell() -> UITableViewCell {
-        createCellWithButton(labelText: "Forward log records") { sender in
-
+        return createCellWithButton(labelText: "Forward log records") {
             let alert = UIAlertController(title: "Add explanation", message: "Please explain the problem that made you send the logs", preferredStyle: .alert)
-            let fallbackActivityPopoverPresentation = PopoverViewControllerPresentation.sourceView(sourceView: sender.superview!, sourceRect: sender.frame.insetBy(dx: -4, dy: -4))
 
-            alert.addAction(UIAlertAction(title: "Send to Devs", style: .default) { _ in
+            alert.addAction(UIAlertAction(title: "Send to Devs", style: .default, handler: { _ in
                 guard let text = alert.textFields?.first?.text else { return }
-                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: false, presentingViewController: self, fallbackActivityPopoverPresentation: fallbackActivityPopoverPresentation)
-            })
+                DebugLogSender.sendLogsByEmail(message: text)
+            }))
 
-            alert.addAction(UIAlertAction(title: "Send to Devs & AVS", style: .default) { _ in
+            alert.addAction(UIAlertAction(title: "Send to Devs & AVS", style: .default, handler: { _ in
                 guard let text = alert.textFields?.first?.text else { return }
-                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: true, presentingViewController: self, fallbackActivityPopoverPresentation: fallbackActivityPopoverPresentation)
-            })
+                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: true)
+            }))
 
-            alert.addTextField {(textField: UITextField!) in
+            alert.addTextField(configurationHandler: {(textField: UITextField!) in
                 textField.placeholder = "Please explain the problem"
-            }
-
+            })
             self.present(alert, animated: true, completion: nil)
         }
     }
 
     /// Creates a cell to forward logs
-    func createCellWithButton(labelText: String, onTouchDown: @escaping (UIButton) -> Void) -> UITableViewCell {
+    func createCellWithButton(labelText: String, onTouchDown: @escaping () -> Void) -> UITableViewCell {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Go!", for: .normal)
@@ -169,7 +166,7 @@ final class DeveloperOptionsController: UIViewController {
             guard let action = uiButtonToAction[button] else {
                 fatalError("Unknown button?")
             }
-            action(button)
+            action()
         }
     }
 }

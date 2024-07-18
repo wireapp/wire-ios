@@ -132,20 +132,15 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     // MARK: – ConversationOptionsViewModelDelegate
 
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        didUpdateState state: ConversationGuestOptionsViewModel.State
-    ) {
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel,
+                   didUpdateState state: ConversationGuestOptionsViewModel.State) {
         tableView.reloadData()
 
         (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
 
     }
 
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        didReceiveError error: Error
-    ) {
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error) {
         // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that explains why the user cannot use/create links to join the conversation.
 
         if let error = error as? WirelessLinkError,
@@ -156,66 +151,42 @@ final class ConversationGuestOptionsViewController: UIViewController,
         }
     }
 
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView,
-        confirmRemovingGuests completion: @escaping (Bool) -> Void
-    ) -> UIAlertController? {
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingGuests(completion)
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sourceView.superview!
-            popoverPresentationController.sourceRect = sourceView.frame
-        }
+        alertController.configPopover(pointToView: sourceView ?? view)
         present(alertController, animated: true)
+
         return alertController
     }
 
-    func conversationGuestOptionsViewModel(
+    func viewModel(
         _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView,
+        sourceView: UIView? = nil,
         presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
     ) {
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
             completion(guestLinkType)
         }
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sourceView.superview!
-            popoverPresentationController.sourceRect = sourceView.frame
-        }
         present(alertController, animated: true)
+
+        alertController.configPopover(pointToView: sourceView ?? view)
     }
 
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView,
-        confirmRevokingLink completion: @escaping (Bool) -> Void
-    ) {
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRevokingLink completion: @escaping (Bool) -> Void) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sourceView.superview!
-            popoverPresentationController.sourceRect = sourceView.frame
-        }
         present(alertController, animated: true)
+
+        alertController.configPopover(pointToView: sourceView ?? view)
     }
 
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        wantsToShareMessage message: String,
-        sourceView: UIView
-    ) {
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView? = nil) {
         let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
-        if let popoverPresentationController = activityController.popoverPresentationController {
-            popoverPresentationController.sourceView = sourceView.superview!
-            popoverPresentationController.sourceRect = sourceView.frame
-        }
         present(activityController, animated: true)
+
+        activityController.configPopover(pointToView: sourceView ?? view)
     }
 
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        presentCreateSecureGuestLink viewController: UIViewController,
-        animated: Bool
-    ) {
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
         present(viewController, animated: animated)
     }
 
@@ -242,7 +213,8 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)!
+        let cell = tableView.cellForRow(at: indexPath)
         viewModel.state.rows[indexPath.row].action?(cell)
     }
+
 }

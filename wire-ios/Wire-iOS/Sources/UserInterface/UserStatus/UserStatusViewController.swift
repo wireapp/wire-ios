@@ -50,13 +50,13 @@ final class UserStatusViewController: UIViewController {
     override func loadView() {
         let view = UserStatusView(options: options)
         view.userStatus = userStatus
-        view.tapHandler = { [weak self] button in
-            self?.presentAvailabilityPicker(button)
+        view.tapHandler = { [weak self] _ in
+            self?.presentAvailabilityPicker()
         }
         self.view = view
     }
 
-    private func presentAvailabilityPicker(_ sender: UIButton) {
+    func presentAvailabilityPicker() {
         let availabilityChangedHandler = { [weak self] (availability: Availability) in
             guard let self else { return }
 
@@ -69,10 +69,7 @@ final class UserStatusViewController: UIViewController {
         }
 
         let alertViewController = UIAlertController.availabilityPicker(availabilityChangedHandler)
-        if let popoverPresentationController = alertViewController.popoverPresentationController {
-            popoverPresentationController.sourceView = sender.superview
-            popoverPresentationController.sourceRect = sender.frame
-        }
+        alertViewController.configPopover(pointToView: view)
         present(alertViewController, animated: true)
     }
 }

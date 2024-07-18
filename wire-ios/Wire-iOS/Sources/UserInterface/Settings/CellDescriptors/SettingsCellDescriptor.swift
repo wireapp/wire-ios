@@ -43,7 +43,7 @@ protocol SettingsCellDescriptorType: AnyObject {
     var group: SettingsGroupCellDescriptorType? {get}
     var copiableText: String? { get }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView)
+    func select(_: SettingsPropertyValue?)
     func featureCell(_: SettingsCellType)
 }
 
@@ -194,7 +194,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue?) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
             navigationController.pushViewController(controllerToPush, animated: true)
@@ -202,7 +202,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func generateViewController() -> UIViewController? {
-        SettingsTableViewController(group: self)
+        return SettingsTableViewController(group: self)
     }
 }
 

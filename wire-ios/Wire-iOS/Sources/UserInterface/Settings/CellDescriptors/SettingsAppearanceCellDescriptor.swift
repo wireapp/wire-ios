@@ -73,14 +73,15 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
 
     // MARK: - SettingsCellDescriptorType
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
-        guard let controllerToShow = generateViewController() else { return }
+    func select(_ value: SettingsPropertyValue?) {
+        guard let controllerToShow = self.generateViewController() else {
+            return
+        }
 
-        switch presentationStyle {
+        switch self.presentationStyle {
         case .alert:
-            if let popoverPresentationController = controllerToShow.popoverPresentationController {
-                popoverPresentationController.sourceView = sender.superview
-                popoverPresentationController.sourceRect = sender.frame
+            if let viewController {
+                controllerToShow.configPopover(pointToView: viewController.view)
             }
             viewController?.present(controllerToShow, animated: true)
         case .navigation:
@@ -91,6 +92,6 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     }
 
     func generateViewController() -> UIViewController? {
-        presentationAction()
+        return self.presentationAction()
     }
 }

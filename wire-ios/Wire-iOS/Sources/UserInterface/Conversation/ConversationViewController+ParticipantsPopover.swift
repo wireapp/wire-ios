@@ -23,7 +23,7 @@ extension ConversationViewController: UIPopoverPresentationControllerDelegate {
     func createAndPresentParticipantsPopoverController(with rect: CGRect,
                                                        from view: UIView,
                                                        contentViewController controller: UIViewController) {
-        self.view.window?.endEditing(true)
+        endEditing()
 
         controller.presentationController?.delegate = self
         present(controller, animated: true)

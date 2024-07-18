@@ -293,8 +293,8 @@ final class SettingsToggleCell: SettingsTableCell {
     }
 
     @objc
-    func onSwitchChanged(_ sender: UISwitch) {
-        descriptor?.select(SettingsPropertyValue(switchView.isOn), sender: sender)
+    func onSwitchChanged(_ sender: UIResponder) {
+        descriptor?.select(SettingsPropertyValue(switchView.isOn))
     }
 }
 
@@ -400,7 +400,7 @@ final class SettingsTextCell: SettingsTableCell,
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textInput.text {
-            descriptor?.select(SettingsPropertyValue.string(value: text), sender: textField)
+            descriptor?.select(SettingsPropertyValue.string(value: text))
         }
     }
 }

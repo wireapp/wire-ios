@@ -91,7 +91,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
             confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
-            view.window?.endEditing(true)
+            endEditing()
             present(confirmVideoViewController, animated: true)
         }
     }
@@ -119,26 +119,22 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_ controller: CameraKeyboardViewController) {
-        hideCameraKeyboardViewController { [self] in
-            shouldRefocusKeyboardAfterImagePickerDismiss = true
-            presentImagePicker(
-                sourceType: .camera,
-                mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
-                allowsEditing: false,
-                pointToView: photoButton.imageView!
-            )
+        self.hideCameraKeyboardViewController {
+            self.shouldRefocusKeyboardAfterImagePickerDismiss = true
+            self.presentImagePicker(with: .camera,
+                                    mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
+                                    allowsEditing: false,
+                                    pointToView: self.photoButton.imageView)
         }
     }
 
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
-        hideCameraKeyboardViewController { [self] in
-            shouldRefocusKeyboardAfterImagePickerDismiss = true
-            presentImagePicker(
-                sourceType: .photoLibrary,
-                mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
-                allowsEditing: false,
-                pointToView: photoButton.imageView!
-            )
+        self.hideCameraKeyboardViewController {
+            self.shouldRefocusKeyboardAfterImagePickerDismiss = true
+            self.presentImagePicker(with: .photoLibrary,
+                                    mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
+                                    allowsEditing: false,
+                                    pointToView: self.photoButton.imageView)
         }
     }
 
@@ -174,7 +170,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let confirmImageViewController = ConfirmAssetViewController(context: context)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
-        view.window?.endEditing(true)
+        endEditing()
         present(confirmImageViewController, animated: true)
     }
 

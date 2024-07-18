@@ -24,7 +24,7 @@ class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
     let viewController: UIViewController
-    var disabledWhenInsidePopover = false
+    var disabledWhenInsidePopover: Bool = false
 
     private var animator: UIViewPropertyAnimator?
     private var bottomEdgeConstraint: NSLayoutConstraint?

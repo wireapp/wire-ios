@@ -36,46 +36,13 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
 
 // sourcery: AutoMockable
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        didUpdateState state: ConversationGuestOptionsViewModel.State
-    )
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        didReceiveError error: Error
-    )
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView,
-        confirmRemovingGuests completion: @escaping (Bool) -> Void
-    ) -> UIAlertController?
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView,
-        presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
-    )
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView,
-        confirmRevokingLink completion: @escaping (Bool) -> Void
-    )
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        wantsToShareMessage message: String,
-        sourceView: UIView
-    )
-
-    func conversationGuestOptionsViewModel(
-        _ viewModel: ConversationGuestOptionsViewModel,
-        presentCreateSecureGuestLink viewController: UIViewController,
-        animated: Bool
-    )
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController?
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool)
 }
 
 final class ConversationGuestOptionsViewModel {
@@ -110,13 +77,13 @@ final class ConversationGuestOptionsViewModel {
 
     var state = State() {
         didSet {
-            delegate?.conversationGuestOptionsViewModel(self, didUpdateState: state)
+            delegate?.viewModel(self, didUpdateState: state)
         }
     }
 
     weak var delegate: ConversationGuestOptionsViewModelDelegate? {
         didSet {
-            delegate?.conversationGuestOptionsViewModel(self, didUpdateState: state)
+            delegate?.viewModel(self, didUpdateState: state)
         }
     }
 
@@ -175,7 +142,6 @@ final class ConversationGuestOptionsViewModel {
         }
 
         switch configuration.guestLinkFeatureStatus {
-
         case .enabled:
             if securedLink != nil {
                 rows.append(.secureLinkHeader)
@@ -192,26 +158,26 @@ final class ConversationGuestOptionsViewModel {
                 if let link {
                     rows.append(.text(link))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
-                    rows.append(.revokeLink { [weak self] view in self?.revokeLink(view: view) })
+                    rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
+                    rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
                 } else if let securedLink {
                     rows.append(.text(securedLink))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
-                    rows.append(.revokeLink { [weak self] view in self?.revokeLink(view: view) })
+                    rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
+                    rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
                 } else {
                     rows.append(.createLinkButton { [weak self] view in
-                        self?.startGuestLinkCreationFlow(from: view)
-                    })
+                        self?.startGuestLinkCreationFlow(from: view) })
                 }
             }
             return rows
-
         case .disabled:
             rows.append(.linkHeader)
             rows.append(.info(infoText(isSelfTeam: configuration.isConversationFromSelfTeam, isDisabled: false)))
             return rows
-
         case .unknown:
             return rows
+
         }
     }
 
@@ -231,8 +197,8 @@ final class ConversationGuestOptionsViewModel {
     /// revoke a conversation link
     ///
     /// - Parameter view: the source view which triggers revokeLink action
-    private func revokeLink(view: UIView) {
-        delegate?.conversationGuestOptionsViewModel(self, sourceView: view, confirmRevokingLink: { [weak self] revoke in
+    private func revokeLink(view: UIView? = nil) {
+        delegate?.viewModel(self, sourceView: view, confirmRevokingLink: { [weak self] revoke in
             guard let self else { return }
             guard revoke else { return self.updateRows() }
 
@@ -247,13 +213,23 @@ final class ConversationGuestOptionsViewModel {
                     self.securedLink = nil
                     self.updateRows()
                 case .failure(let error):
-                    self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                    self.delegate?.viewModel(self, didReceiveError: error)
                 }
 
                 item.cancel()
                 self.state.isLoading = false
             }
         })
+    }
+
+    /// share a conversation link
+    ///
+    /// - Parameter view: the source view which triggers shareLink action
+    private func shareLink(view: UIView? = nil) {
+        let linkToShare = securedLink ?? link
+        guard let link = linkToShare else { return }
+        let message = L10n.Localizable.GuestRoom.Share.message(link)
+        delegate?.viewModel(self, wantsToShareMessage: message, sourceView: view)
     }
 
     private func copyLink() {
@@ -285,7 +261,7 @@ final class ConversationGuestOptionsViewModel {
                 }
 
             case .failure(let error):
-                self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                self.delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
@@ -304,7 +280,7 @@ final class ConversationGuestOptionsViewModel {
             case .success(let link):
                 self.link = link
             case .failure(let error):
-                self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                self.delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
@@ -315,33 +291,33 @@ final class ConversationGuestOptionsViewModel {
 
     /// Starts the Guest Link Creation Flow
     /// - Parameter view: the source view which triggers create action
-    func startGuestLinkCreationFlow(from view: UIView) {
+    func startGuestLinkCreationFlow(from view: UIView? = nil) {
         if isGuestLinkWithPasswordAvailable {
-            delegate?.conversationGuestOptionsViewModel(
-                self,
-                sourceView: view,
-                presentGuestLinkTypeSelection: { [weak self] guestLinkType in
-                    guard let self else { return }
-                    switch guestLinkType {
-                    case .secure:
-                        let viewController = CreateSecureGuestLinkViewController(
-                            conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
-                            conversation: conversation
-                        )
+            delegate?.viewModel(self,
+                                sourceView: view,
+                                presentGuestLinkTypeSelection: { [weak self] guestLinkType in
+                guard let self else { return }
+                switch guestLinkType {
+                case .secure:
+                    let viewController = CreateSecureGuestLinkViewController(
+                        conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
+                        conversation: conversation
+                    )
 
-                        let navigationController = viewController.wrapInNavigationController()
-                        delegate?.conversationGuestOptionsViewModel(
-                            self,
-                            presentCreateSecureGuestLink: navigationController,
-                            animated: true
-                        )
-                    case .normal:
-                        createLink()
-                    }
-                })
+                    let navigationController = viewController.wrapInNavigationController()
+                    delegate?.viewModel(
+                        self,
+                        presentCreateSecureGuestLink: navigationController,
+                        animated: true
+                    )
+                case .normal:
+                    createLink()
+                }
+            })
         } else {
             createLink()
         }
+
     }
 
     /// set conversation option AllowGuests
@@ -349,7 +325,7 @@ final class ConversationGuestOptionsViewModel {
     ///   - allowGuests: new state AllowGuests
     ///   - view: the source view which triggers setAllowGuests action
     /// - Returns: alert controller
-    @discardableResult func setAllowGuests(_ allowGuests: Bool, view: UIView) -> UIAlertController? {
+    @discardableResult func setAllowGuests(_ allowGuests: Bool, view: UIView? = nil) -> UIAlertController? {
         func _setAllowGuests() {
             let item = CancelableItem(delay: 0.4) { [weak self] in
                 self?.state.isLoading = true
@@ -366,7 +342,7 @@ final class ConversationGuestOptionsViewModel {
                     if (self.link == nil && self.securedLink == nil) && allowGuests {
                         self.fetchLink()
                     }
-                case .failure(let error): self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
                 }
             }
         }
@@ -377,16 +353,13 @@ final class ConversationGuestOptionsViewModel {
         // to confirm this action as all guests will be removed.
         if !allowGuests && configuration.areGuestPresent {
             // Make "remove guests and services" warning only appear if guests or services are present
-            return delegate?.conversationGuestOptionsViewModel(
-                self,
-                sourceView: view,
-                confirmRemovingGuests: { [weak self] remove in
-                    guard let self else { return }
-                    guard remove else { return self.updateRows() }
-                    self.link = nil
-                    self.securedLink = nil
-                    _setAllowGuests()
-                })
+            return delegate?.viewModel(self, sourceView: view, confirmRemovingGuests: { [weak self] remove in
+                guard let self else { return }
+                guard remove else { return self.updateRows() }
+                self.link = nil
+                self.securedLink = nil
+                _setAllowGuests()
+            })
         } else {
             _setAllowGuests()
         }

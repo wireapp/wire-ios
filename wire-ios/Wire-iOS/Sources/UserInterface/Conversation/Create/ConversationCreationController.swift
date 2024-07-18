@@ -114,15 +114,17 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var encryptionProtocolSection = {
+    private lazy var encryptionProtocolSection: ConversationEncryptionProtocolSectionController = {
         let section = ConversationEncryptionProtocolSectionController(values: values)
         section.isHidden = true
-        section.tapAction = { sender in
-            self.presentEncryptionProtocolPicker(sender: sender) { [weak self] encryptionProtocol in
+
+        section.tapAction = {
+            self.presentEncryptionProtocolPicker { [weak self] encryptionProtocol in
                 self?.values.encryptionProtocol = encryptionProtocol
                 self?.updateOptions()
             }
         }
+
         return section
     }()
 
@@ -146,7 +148,7 @@ final class ConversationCreationController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -483,19 +485,13 @@ extension ConversationCreationController {
 
 extension ConversationCreationController {
 
-    func presentEncryptionProtocolPicker(
-        sender: UIView,
-        _ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void
-    ) {
-        let alertController = encryptionProtocolPicker { type in
+    func presentEncryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) {
+        let alertViewController = encryptionProtocolPicker { type in
             completion(type)
         }
 
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sender.superview!
-            popoverPresentationController.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
-        }
-        present(alertController, animated: true)
+        alertViewController.configPopover(pointToView: view)
+        present(alertViewController, animated: true)
     }
 
     func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {

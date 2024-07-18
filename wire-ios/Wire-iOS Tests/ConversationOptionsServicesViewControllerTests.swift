@@ -151,7 +151,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
 
         // Show the alert
-        let sut = viewModel.setAllowServices(false, sender: .init())
+        let sut = viewModel.setAllowServices(false)
 
         // THEN
         XCTAssertNil(sut)
@@ -166,7 +166,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         _ = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // Show the alert
-        let sut = viewModel.setAllowServices(false, sender: .init())!
+        let sut = viewModel.setAllowServices(false)!
 
         // THEN
         try verify(matching: sut)

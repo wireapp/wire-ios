@@ -18,28 +18,28 @@
 
 import MessageUI
 import UIKit
-import WireSystem
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
-    @MainActor
-    func presentMailComposer(fallbackActivityPopoverPresentation: PopoverViewControllerPresentation)
+    func presentMailComposer()
 }
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
+    @MainActor
+    func presentMailComposer() {
+        presentMailComposer(sourceView: nil)
+    }
 
     @MainActor
-    func presentMailComposer(fallbackActivityPopoverPresentation: PopoverViewControllerPresentation) {
+    func presentMailComposer(sourceView: UIView?) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            // we will be stuck on the blocker screen after that
-            // considering this an edge case for now
-            return DebugAlert.displayFallbackActivityController(
+            DebugAlert.displayFallbackActivityController(
                 logPaths: DebugLogSender.existingDebugLogs,
                 email: mailRecipient,
-                from: self,
-                popoverPresentation: fallbackActivityPopoverPresentation
+                from: self, sourceView: sourceView
             )
+            return
         }
 
         let mailComposeViewController = MFMailComposeViewController()
@@ -52,13 +52,13 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
         topMostViewController?.isLoadingViewVisible = true
 
-        Task.detached(priority: .userInitiated) { [topMostViewController] in
+        Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
             await mailComposeViewController.attachLogs()
 
             await self.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
                 topMostViewController?.isLoadingViewVisible = false
             }
-        }
+        })
     }
 }

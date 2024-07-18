@@ -94,10 +94,8 @@ extension ConversationListViewController {
             guard userStatusViewController == nil else { return }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            userStatusViewController.delegate = self
-            navigationController?.addChild(userStatusViewController)
             navigationItem.titleView = userStatusViewController.view
-            userStatusViewController.didMove(toParent: navigationController)
+            userStatusViewController.delegate = self
             self.userStatusViewController = userStatusViewController
 
         } else {

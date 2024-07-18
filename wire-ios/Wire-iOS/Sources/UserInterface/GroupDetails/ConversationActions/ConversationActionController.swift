@@ -20,30 +20,39 @@ import WireSyncEngine
 
 final class ConversationActionController {
 
+    struct PresentationContext {
+        let view: UIView
+        let rect: CGRect
+    }
+
     enum Context {
         case list, details
     }
 
     private let conversation: GroupDetailsConversationType
-    private unowned let target: UIViewController
-    private(set) weak var sourceView: UIView?
-    var currentContext: PopoverViewControllerPresentation?
-    private(set) weak var alertController: UIAlertController?
+    unowned let target: UIViewController
+    weak var sourceView: UIView?
+    var currentContext: PresentationContext?
+    weak var alertController: UIAlertController?
     let userSession: UserSession
 
-    init(
-        conversation: GroupDetailsConversationType,
-        target: UIViewController,
-        sourceView: UIView,
-        userSession: UserSession
-    ) {
+    init(conversation: GroupDetailsConversationType,
+         target: UIViewController,
+         sourceView: UIView?,
+         userSession: UserSession) {
         self.conversation = conversation
         self.target = target
         self.sourceView = sourceView
         self.userSession = userSession
     }
 
-    func presentMenu(from sourceView: UIView, context: Context) {
+    func presentMenu(from sourceView: UIView?, context: Context) {
+        currentContext = sourceView.map {
+            .init(
+                view: target.view,
+                rect: target.view.convert($0.frame, from: $0.superview).insetBy(dx: 8, dy: 8)
+            )
+        }
 
         let actions: [ZMConversation.Action]
         switch context {
@@ -57,14 +66,6 @@ final class ConversationActionController {
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
-
-        if controller.popoverPresentationController != nil {
-            currentContext = .sourceView(
-                sourceView: sourceView.superview!,
-                sourceRect: sourceView.frame
-            )
-        }
-
         present(controller)
 
         alertController = controller
@@ -111,7 +112,7 @@ final class ConversationActionController {
             }
         case .clearContent:
             requestClearContentResult(for: conversation) { result in
-                self.handleClearContentResult(result, for: conversation)
+            self.handleClearContentResult(result, for: conversation)
             }
         case .cancelRequest:
             guard let user = conversation.connectedUser else { return }
@@ -144,15 +145,31 @@ final class ConversationActionController {
         }
     }
 
+    func present(_ controller: UIViewController) {
+        present(controller,
+                currentContext: currentContext,
+                target: target)
+    }
+
     func presentError(_ error: LocalizedError) {
         target.presentLocalizedErrorAlert(error)
     }
 
-    func present(_ controller: UIViewController) {
-
-        currentContext.map {
-            controller.popoverPresentationController.map($0.configure(popoverPresentationController:))
+    private func prepare(viewController: UIViewController, with context: PresentationContext) {
+        viewController.popoverPresentationController.map {
+            $0.sourceView = context.view
+            $0.sourceRect = context.rect
         }
+    }
+
+    private func present(_ controller: UIViewController,
+                         currentContext: PresentationContext?,
+                         target: UIViewController) {
+        currentContext.map {
+            prepare(viewController: controller, with: $0)
+        }
+
+        controller.configPopover(pointToView: sourceView ?? target.view, popoverPresenter: target as? PopoverPresenterViewController)
 
         target.present(controller, animated: true)
     }

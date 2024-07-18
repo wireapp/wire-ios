@@ -78,7 +78,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         snapshotHelper = SnapshotHelper()
         BackendInfo.storage = .temporary()
         mockConversation = MockConversation()
@@ -94,7 +93,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         mockConversation = nil
         mockUserSession = nil
         mockCreateSecuredGuestLinkUseCase = nil
-
         super.tearDown()
     }
 
@@ -389,7 +387,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
         // WHEN
-        viewModel.setAllowGuests(true, view: .init())
+        viewModel.setAllowGuests(true)
         // THEN
         snapshotHelper.verify(matching: navigationController)
     }
@@ -401,7 +399,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
         // WHEN
-        viewModel.setAllowGuests(true, view: .init())
+        viewModel.setAllowGuests(true)
 
         // THEN
         snapshotHelper
@@ -429,7 +427,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         config.areGuestPresent = false
         let viewModel = makeViewModel(config: config)
         // Show the alert
-        let sut = viewModel.setAllowGuests(false, view: .init())
+        let sut = viewModel.setAllowGuests(false)
         // THEN
         XCTAssertNil(sut)
     }
@@ -441,7 +439,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
-        guard let sut = viewModel.setAllowGuests(false, view: .init()) else {
+        guard let sut = viewModel.setAllowGuests(false) else {
             return XCTFail("This sut shouldn't be nil")
         }
         // THEN
@@ -456,18 +454,18 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = makeViewModel(config: config)
         let mock = MockConversationGuestOptionsViewModelDelegate()
-        mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
-        mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }
-        mock.conversationGuestOptionsViewModelDidReceiveError_MockMethod = { _, _ in }
+        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
         // WHEN
-        viewModel.startGuestLinkCreationFlow(from: .init())
+        viewModel.startGuestLinkCreationFlow()
 
         // THEN
-        XCTAssertEqual(mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
+        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
@@ -477,18 +475,20 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let mock = MockConversationGuestOptionsViewModelDelegate()
-        mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
-        mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }
-        mock.conversationGuestOptionsViewModelDidReceiveError_MockMethod = { _, _ in }
+        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
         // WHEN
-        viewModel.startGuestLinkCreationFlow(from: .init())
+        viewModel.startGuestLinkCreationFlow()
 
         // THEN
-        XCTAssertEqual(mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
+        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
+
     }
+
 }

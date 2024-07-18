@@ -49,7 +49,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let isFederationEnabled: Bool
 
-    let quickActionsBar = StartUIInviteActionBar()
+    let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
 
     let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!

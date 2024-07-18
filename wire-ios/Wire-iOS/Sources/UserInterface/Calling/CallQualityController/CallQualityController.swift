@@ -31,10 +31,7 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    private let rootViewController: UIViewController
-
-    init(rootViewController: UIViewController) {
-        self.rootViewController = rootViewController
+    override init() {
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -102,7 +99,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure(presentingViewController: rootViewController)
+            handleCallFailure()
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -128,13 +125,13 @@ class CallQualityController: NSObject {
     }
 
     /// Presents the debug log prompt after a call failure.
-    private func handleCallFailure(presentingViewController: UIViewController) {
-        router?.presentCallFailureDebugAlert(presentingViewController: presentingViewController)
+    private func handleCallFailure() {
+        router?.presentCallFailureDebugAlert()
     }
 
     /// Presents the debug log prompt after a user quality rejection.
-    private func handleCallQualityRejection(presentingViewController: UIViewController) {
-        router?.presentCallQualityRejection(presentingViewController: presentingViewController)
+    private func handleCallQualityRejection() {
+        router?.presentCallQualityRejection()
     }
 
 }
@@ -166,14 +163,10 @@ extension CallQualityController: WireCallCenterCallStateObserver {
 extension CallQualityController: CallQualityViewControllerDelegate {
 
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {
-        router?.dismissCallQualitySurvey { [weak self] in
-            guard
-                self?.callQualityRejectionRange.contains(score) ?? false,
-                let presentingViewController = self?.rootViewController
-            else { return }
-
-            self?.handleCallQualityRejection(presentingViewController: presentingViewController)
-        }
+        router?.dismissCallQualitySurvey(completion: { [weak self] in
+            guard self?.callQualityRejectionRange.contains(score) ?? false else { return }
+            self?.handleCallQualityRejection()
+        })
 
         CallQualityController.updateLastSurveyDate(Date())
         Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))

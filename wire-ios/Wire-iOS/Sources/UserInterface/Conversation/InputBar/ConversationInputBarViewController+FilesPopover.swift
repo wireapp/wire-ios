@@ -29,9 +29,21 @@ extension ConversationInputBarViewController: UIDocumentPickerDelegate {
 
 extension ConversationInputBarViewController {
 
-    func createFileUploadActionSheet(sender: UIButton) -> UIAlertController {
+    func configPopover(docController: UIDocumentPickerViewController,
+                       sourceView: UIView,
+                       delegate: UIPopoverPresentationControllerDelegate,
+                       pointToView: UIView) {
 
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        guard let popover = docController.popoverPresentationController else { return }
+
+        popover.delegate = delegate
+        popover.config(from: self, pointToView: pointToView, sourceView: sourceView)
+
+        popover.permittedArrowDirections = .down
+    }
+
+    func createDocUploadActionSheet(sender: IconButton? = nil) -> UIAlertController {
+        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         // Alert actions  for debugging
         #if targetEnvironment(simulator)
@@ -48,32 +60,30 @@ extension ConversationInputBarViewController {
             })
         }
 
-        alertController.addAction(UIAlertAction(title: "CountryCodes.plist",
+        controller.addAction(UIAlertAction(title: "CountryCodes.plist",
                                            style: .default,
                                            handler: plistHandler))
 
         let size = UInt(ZMUserSession.shared()?.maxUploadFileSize ?? 0) + 1
         let humanReadableSize = size / 1024 / 1024
-        alertController.addAction(uploadTestAlertAction(size: size, title: "Big file (size = \(humanReadableSize) MB)", fileName: "BigFile.bin"))
+        controller.addAction(uploadTestAlertAction(size: size, title: "Big file (size = \(humanReadableSize) MB)", fileName: "BigFile.bin"))
 
-        alertController.addAction(uploadTestAlertAction(size: 20971520, title: "20 MB file", fileName: "20MBFile.bin"))
-        alertController.addAction(uploadTestAlertAction(size: 41943040, title: "40 MB file", fileName: "40MBFile.bin"))
+        controller.addAction(uploadTestAlertAction(size: 20971520, title: "20 MB file", fileName: "20MBFile.bin"))
+        controller.addAction(uploadTestAlertAction(size: 41943040, title: "40 MB file", fileName: "40MBFile.bin"))
 
         if ZMUser.selfUser()?.hasTeam == true {
-            alertController.addAction(uploadTestAlertAction(size: 83886080, title: "80 MB file", fileName: "80MBFile.bin"))
-            alertController.addAction(uploadTestAlertAction(size: 125829120, title: "120 MB file", fileName: "120MBFile.bin"))
+            controller.addAction(uploadTestAlertAction(size: 83886080, title: "80 MB file", fileName: "80MBFile.bin"))
+            controller.addAction(uploadTestAlertAction(size: 125829120, title: "120 MB file", fileName: "120MBFile.bin"))
         }
         #endif
 
-        let uploadVideoHandler: ((UIAlertAction) -> Void) = { [self] _ in
-            presentImagePicker(
-                sourceType: .photoLibrary,
-                mediaTypes: [UTType.movie.identifier], allowsEditing: true,
-                pointToView: videoButton.imageView!
-            )
+        let uploadVideoHandler: ((UIAlertAction) -> Void) = { _ in
+            self.presentImagePicker(with: .photoLibrary,
+                                    mediaTypes: [UTType.movie.identifier], allowsEditing: true,
+                                    pointToView: self.videoButton.imageView)
         }
 
-        alertController.addAction(UIAlertAction(icon: .movie,
+        controller.addAction(UIAlertAction(icon: .movie,
                                            title: L10n.Localizable.Content.File.uploadVideo,
                                            tintColor: view.tintColor,
                                            handler: uploadVideoHandler))
@@ -82,7 +92,7 @@ extension ConversationInputBarViewController {
             self.recordVideo()
         }
 
-        alertController.addAction(UIAlertAction(icon: .cameraShutter,
+        controller.addAction(UIAlertAction(icon: .cameraShutter,
                                            title: L10n.Localizable.Content.File.takeVideo,
                                            tintColor: view.tintColor,
                                            handler: takeVideoHandler))
@@ -90,39 +100,43 @@ extension ConversationInputBarViewController {
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
 
             let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
+            documentPickerViewController.modalPresentationStyle = self.isIPadRegular() ? .popover : .fullScreen
+            if self.isIPadRegular(),
+                let sourceView = self.parent?.view,
+                let pointToView = sender?.imageView {
+                self.configPopover(docController: documentPickerViewController, sourceView: sourceView, delegate: self, pointToView: pointToView)
+            }
+
             documentPickerViewController.delegate = self
             documentPickerViewController.allowsMultipleSelection = true
-            self.present(documentPickerViewController, animated: true)
+
+            self.parent?.present(documentPickerViewController, animated: true)
         }
 
-        alertController.addAction(UIAlertAction(icon: .ellipsis,
-                                                title: L10n.Localizable.Content.File.browse, tintColor: view.tintColor,
-                                                handler: browseHandler))
+        controller.addAction(UIAlertAction(icon: .ellipsis,
+                                           title: L10n.Localizable.Content.File.browse, tintColor: view.tintColor,
+                                           handler: browseHandler))
 
-        alertController.addAction(.cancel())
+        controller.addAction(.cancel())
 
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sender.superview!
-            popoverPresentationController.sourceRect = sender.frame
-        }
-
-        return alertController
+        controller.configPopover(pointToView: sender ?? view)
+        return controller
     }
 
     @objc
-    func fileUploadPressed(_ sender: IconButton) {
+    func docUploadPressed(_ sender: IconButton) {
         let checker = PrivacyWarningChecker(conversation: conversation) {
-            self.showFileUploadActionSheet(sender)
+            self.showDocUploadActionSheet(from: sender)
         }
 
         checker.performAction()
     }
 
-    private func showFileUploadActionSheet(_ sender: IconButton) {
+    private func showDocUploadActionSheet(from sender: IconButton) {
         mode = ConversationInputBarViewControllerMode.textInput
         inputBar.textView.resignFirstResponder()
 
-        let controller = createFileUploadActionSheet(sender: sender)
+        let controller = createDocUploadActionSheet(sender: sender)
 
         present(controller, animated: true)
     }
@@ -138,12 +152,7 @@ extension ConversationInputBarViewController {
     private func recordVideo() {
         guard !CameraAccess.displayAlertIfOngoingCall(at: .recordVideo, from: self) else { return }
 
-        presentImagePicker(
-            sourceType: .camera,
-            mediaTypes: [UTType.movie.identifier],
-            allowsEditing: false,
-            pointToView: videoButton.imageView!
-        )
+        presentImagePicker(with: .camera, mediaTypes: [UTType.movie.identifier], allowsEditing: false, pointToView: videoButton.imageView)
     }
 
     #if targetEnvironment(simulator)

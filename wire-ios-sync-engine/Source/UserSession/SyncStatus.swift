@@ -292,7 +292,7 @@ extension SyncStatus {
         do {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)
-            let message = "SYNC_STATUS: \(jsonString)"
+            let message = "SYNC_STATUS: \(jsonString ?? self.description)"
             WireLogger.sync.info(message, attributes: .safePublic)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"

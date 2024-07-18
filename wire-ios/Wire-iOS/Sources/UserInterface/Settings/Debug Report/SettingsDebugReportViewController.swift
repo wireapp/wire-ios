@@ -54,12 +54,12 @@ class SettingsDebugReportViewController: UIViewController {
         return label
     }()
 
-    private lazy var sendReportButton = createButton(
-        title: Strings.TechnicalReport.sendReport.capitalized,
-        action: UIAction { [weak self] action in
-            self?.didTapSendReport(sender: action.sender as! UIButton)
-        }
-    )
+    private lazy var sendReportButton: UIButton = {
+        return createButton(
+            title: Strings.TechnicalReport.sendReport.capitalized,
+            action: UIAction { [weak self] _ in self?.didTapSendReport() }
+        )
+    }()
 
     private lazy var shareReportButton: UIButton = {
         return createButton(
@@ -122,8 +122,8 @@ class SettingsDebugReportViewController: UIViewController {
 
     // MARK: - Actions
 
-    @objc private func didTapSendReport(sender: UIView) {
-        viewModel.sendReport(sender: sender)
+    @objc private func didTapSendReport() {
+        viewModel.sendReport()
     }
 
     @objc private func didTapShareReport() {
