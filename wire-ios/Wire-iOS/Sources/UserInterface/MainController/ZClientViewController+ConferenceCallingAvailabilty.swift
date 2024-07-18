@@ -29,7 +29,7 @@ extension ZClientViewController {
         let learnMore = ConferenceCallingAlert.Message.learnMore
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-         alert.addAction(UIAlertAction.link(title: learnMore, url: URLs.wireEnterpriseInfo.url, presenter: self))
+         alert.addAction(UIAlertAction.link(title: learnMore, url: URLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] (_) in
             self?.confirmChanges()
         }))
@@ -45,7 +45,7 @@ extension ZClientViewController {
         let upgradeActionTitle = ConferenceCallingAlert.Action.upgrade
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction.link(title: learnMore, url: URLs.pricingInfo.url, presenter: self))
+        alert.addAction(UIAlertAction.link(title: learnMore, url: URLs.shared.pricingInfo, presenter: self))
         alert.addAction(.cancel())
         alert.addAction(UIAlertAction.link(title: upgradeActionTitle, url: URL.manageTeam(source: .settings), presenter: self))
 

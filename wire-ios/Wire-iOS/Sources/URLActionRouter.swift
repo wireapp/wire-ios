@@ -320,7 +320,7 @@ private extension URLActionRouter {
             // appendingLocaleParameter
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: URLs.guestLinksInfo.url)
+                let browserViewController = BrowserViewController(url: URLs.shared.guestLinksInfo)
                 topmostViewController?.present(browserViewController, animated: true)
             }
             alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,

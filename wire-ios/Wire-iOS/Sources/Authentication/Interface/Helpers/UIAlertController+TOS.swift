@@ -30,7 +30,7 @@ extension UIAlertController {
         let viewAction = UIAlertAction(title: L10n.Localizable.Registration.TermsOfUse.Terms.view, style: .default) { [weak controller] _ in
 
             let webViewController: BrowserViewController
-            webViewController = BrowserViewController(url: URLs.legal.url)
+            webViewController = BrowserViewController(url: URLs.shared.legal)
             webViewController.completion = { [weak controller] in
                 if let controller = controller {
                     UIAlertController.requestTOSApproval(over: controller, forTeamAccount: forTeamAccount, completion: completion)

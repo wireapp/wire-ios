@@ -500,7 +500,7 @@ private extension UIAlertController {
 
         // appendingLocaleParameter
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URLs.legalHoldInfo.url)
+            let browserViewController = BrowserViewController(url: URLs.shared.legalHoldInfo)
             topmostViewController?.present(browserViewController, animated: true)
         }
 

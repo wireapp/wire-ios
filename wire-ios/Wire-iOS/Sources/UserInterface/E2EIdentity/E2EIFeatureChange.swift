@@ -44,7 +44,7 @@ extension UIAlertController {
 
             let learnMoreAction = UIAlertAction.link(
                 title: MLSE2EIStrings.Button.learnMore,
-                url: URLs.endToEndIdentityInfo.url,
+                url: URLs.shared.endToEndIdentityInfo,
                 presenter: topViewController) {
                     if !canRemindLater {
                         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)

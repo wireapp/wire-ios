@@ -187,19 +187,19 @@ class SettingsCellDescriptorFactory {
     func helpSection() -> SettingsCellDescriptorType {
         // appendingLocaleParameter
         let supportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.supportWebsite, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.support.url)
+            return BrowserViewController(url: URLs.shared.support)
         }, previewGenerator: .none)
 
         // appendingLocaleParameter
         let contactButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.contactSupport, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.askSupportArticle.url)
+            return BrowserViewController(url: URLs.shared.askSupportArticle)
         }, previewGenerator: .none)
 
         let helpSection = SettingsSectionDescriptor(cellDescriptors: [supportButton, contactButton])
 
         // appendingLocaleParameter
         let reportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.reportAbuse, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.reportAbuse.url)
+            return BrowserViewController(url: URLs.shared.reportAbuse)
         }, previewGenerator: .none)
 
         let reportSection = SettingsSectionDescriptor(cellDescriptors: [reportButton])
@@ -219,7 +219,7 @@ class SettingsCellDescriptorFactory {
                                                                isDestructive: false,
                                                                presentationStyle: .modal,
                                                                presentationAction: {
-            return BrowserViewController(url: URLs.legal.url)
+            return BrowserViewController(url: URLs.shared.legal)
         }, previewGenerator: .none)
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
@@ -240,7 +240,7 @@ class SettingsCellDescriptorFactory {
         )
 // appendingLocaleParameter
         let websiteButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Website.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.website.url)
+            return BrowserViewController(url: URLs.shared.website)
         }, previewGenerator: .none)
 
         let websiteSection = SettingsSectionDescriptor(cellDescriptors: [websiteButton])
@@ -289,7 +289,7 @@ class SettingsCellDescriptorFactory {
                                                     isDestructive: false,
                                                     presentationStyle: .modal,
                                                     presentationAction: {
-            return BrowserViewController(url: URLs.licenseInformation.url)
+            return BrowserViewController(url: URLs.shared.licenseInformation)
         },
                                                     previewGenerator: .none)
     }

@@ -36,7 +36,7 @@ extension UIAlertController {
 
         // appendingLocaleParameter
         let privacyPolicyActionHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URLs.privacyPolicy.url)
+            let browserViewController = BrowserViewController(url: URLs.shared.privacyPolicy)
 
             browserViewController.completion = {
                 UIAlertController.showNewsletterSubscriptionDialog(over: viewController, completionHandler: completionHandler)
@@ -100,7 +100,7 @@ private extension AuthenticationCoordinatorAlertAction {
     // appendingLocaleParameter
     static var privacyPolicy: Self {
         Self.init(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
-                  coordinatorActions: [.showLoadingView, .openURL(URLs.privacyPolicy.url)])
+                  coordinatorActions: [.showLoadingView, .openURL(URLs.shared.privacyPolicy)])
     }
 
     static var decline: Self {

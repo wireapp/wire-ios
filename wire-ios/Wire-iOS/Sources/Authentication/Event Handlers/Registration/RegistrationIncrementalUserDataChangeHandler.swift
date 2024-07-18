@@ -69,7 +69,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
     private func handleMissingMarketingConsent(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
         // Alert Actions
         // appendingLocaleParameter
-        let privacyPolicyAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title, coordinatorActions: [.openURL(URLs.privacyPolicy.url)])
+        let privacyPolicyAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title, coordinatorActions: [.openURL(URLs.shared.privacyPolicy)])
         let declineAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.decline, coordinatorActions: [.setMarketingConsent(false)])
         let acceptAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.accept, coordinatorActions: [.setMarketingConsent(true)])
 

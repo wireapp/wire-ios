@@ -66,7 +66,7 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
 
         let text = NSMutableAttributedString.markdown(
-            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, URLs.appOnItunes.url.absoluteString),
+            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, URLs.shared.appOnItunes.absoluteString),
             style: .systemMessage
         )
 

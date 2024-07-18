@@ -41,6 +41,6 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
         guard let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        URLs.howToVerifyFingerprintArticle.url.openInApp(above: topMostViewController)
+        URLs.shared.howToVerifyFingerprintArticle.openInApp(above: topMostViewController)
     }
 }

@@ -349,7 +349,7 @@ extension SettingsCellDescriptorFactory {
     func resetPasswordElement() -> SettingsCellDescriptorType {
         let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.passwordResetInfo.url)
+            return BrowserViewController(url: URLs.shared.passwordResetInfo)
         }, previewGenerator: .none)
     }
 

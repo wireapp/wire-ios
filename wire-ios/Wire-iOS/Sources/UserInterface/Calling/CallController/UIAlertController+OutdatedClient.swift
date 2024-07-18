@@ -31,7 +31,7 @@ extension UIAlertController {
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.Force.Update.okButton,
             style: .default,
-            handler: { _ in UIApplication.shared.open(URLs.appOnItunes.url) }
+            handler: { _ in UIApplication.shared.open(URLs.shared.appOnItunes) }
         ))
 
         alertController.addAction(UIAlertAction(

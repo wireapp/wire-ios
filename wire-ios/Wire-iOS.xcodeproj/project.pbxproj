@@ -63,7 +63,7 @@
 		06717E592865179000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
 		06717E5C2865183600AF442C /* Stylable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E5B2865183600AF442C /* Stylable.swift */; };
 		06717E5E2865188000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
-		0679DEDD2C46B83200044FC7 /* Bundle+URLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DED92C46951B00044FC7 /* Bundle+URLs.swift */; };
+		0679DEDE2C47C48400044FC7 /* Bundle+URLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DED92C46951B00044FC7 /* Bundle+URLs.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
@@ -10215,6 +10215,7 @@
 				BFCF31DD1DA52ECE0039B3DC /* KeyboardHeight.swift in Sources */,
 				87A752171E002F6C004317DB /* ConversationRootViewController.swift in Sources */,
 				16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */,
+				0679DEDE2C47C48400044FC7 /* Bundle+URLs.swift in Sources */,
 				87CA886E1DDF0075004101B6 /* UserConnectionViewController.swift in Sources */,
 				87D21AD71D8A98620075AB7A /* AccentColorPickerController.swift in Sources */,
 				EF883F2E215144B800B440CC /* Analytics+OptOut.swift in Sources */,
@@ -10966,7 +10967,6 @@
 				F15650B321DD025A00210504 /* URL+Backup.swift in Sources */,
 				A9BBD8CE26A5D47C00C768B1 /* UIEdgeInsets+directionAware.swift in Sources */,
 				A9CF5F58242B98B300920877 /* NetworkStatus.swift in Sources */,
-				0679DEDD2C46B83200044FC7 /* Bundle+URLs.swift in Sources */,
 				E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */,
 				7C88BB90235F413F0075BCC5 /* Bundle+InfoDict.swift in Sources */,
 				EEF37EDA2BDFD9620055C9E1 /* WireTextStyle.swift in Sources */,

@@ -22,7 +22,7 @@ import WireCommonComponents
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let legalHoldURL: URL = URLs.legalHoldInfo.url
+    static let legalHoldURL: URL = URLs.shared.legalHoldInfo
     var conversation: ZMConversation?
 
     struct Configuration {

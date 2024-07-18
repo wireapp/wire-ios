@@ -42,7 +42,7 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     let accessibilityLabel: String?
 
     init() {
-        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URLs.endToEndIdentityInfo.url), style: .systemMessage)
+        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URLs.shared.endToEndIdentityInfo), style: .systemMessage)
 
         configuration = View.Configuration(
             icon: Asset.Images.certificateValid.image,
