@@ -41,6 +41,7 @@ private extension ZMConversationMessage {
 
 }
 
+// TODO: check if needed
 protocol SelectableView {
     var selectionView: UIView! { get }
     var selectionRect: CGRect { get }
@@ -66,7 +67,7 @@ final class DeletionDialogPresenter: NSObject {
 
     func deleteAlert(
         message: ZMConversationMessage,
-        sourceView: UIView?,
+        sourceView: UIView,
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool) -> Void
     ) -> UIAlertController {
@@ -88,20 +89,17 @@ final class DeletionDialogPresenter: NSObject {
             } else {
                 completion(false)
             }
-
-// TODO: fix
-            // alert.dismiss(animated: true, completion: nil)
         }
 
-        if let presentationController = alert.popoverPresentationController,
-            let source = sourceView {
-            if let selectableView = source as? SelectableView,
-                selectableView.selectionView != nil {
-                presentationController.sourceView = selectableView.selectionView
-                presentationController.sourceRect = selectableView.selectionRect
+        if let popoverPresentationController = alert.popoverPresentationController {
+            let sourceView = if let selectableView = sourceView as? SelectableView, let selectionView = selectableView.selectionView {
+                selectionView
             } else {
-                alert.configPopover(pointToView: source, popoverPresenter: sourceViewController as! PopoverPresenter)
+                sourceView
             }
+            popoverPresentationController.sourceView = sourceView.superview
+            popoverPresentationController.sourceRect = sourceView.frame.insetBy(dx: -4, dy: -4)
+            // TODO: since the message is split into different cell views the arrow positions should be refined
         }
 
         return alert
@@ -123,7 +121,7 @@ final class DeletionDialogPresenter: NSObject {
      */
     func presentDeletionAlertController(
         forMessage message: ZMConversationMessage,
-        source: UIView?,
+        source: UIView,
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool) -> Void
     ) {
