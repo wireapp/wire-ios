@@ -131,7 +131,7 @@ final class SyncManager: SyncManagerProtocol {
         }
 
         if !envelope.isTransient {
-            // TODO: persist last event id
+            updateEventsRepository.storeLastEventEnvelopeID(envelope.id)
         }
     }
 

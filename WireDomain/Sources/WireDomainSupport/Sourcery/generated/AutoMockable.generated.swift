@@ -253,6 +253,21 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
         await mock()
     }
 
+    // MARK: - storeLastEventEnvelopeID
+
+    var storeLastEventEnvelopeID_Invocations: [UUID] = []
+    var storeLastEventEnvelopeID_MockMethod: ((UUID) -> Void)?
+
+    func storeLastEventEnvelopeID(_ id: UUID) {
+        storeLastEventEnvelopeID_Invocations.append(id)
+
+        guard let mock = storeLastEventEnvelopeID_MockMethod else {
+            fatalError("no mock for `storeLastEventEnvelopeID`")
+        }
+
+        mock(id)
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {

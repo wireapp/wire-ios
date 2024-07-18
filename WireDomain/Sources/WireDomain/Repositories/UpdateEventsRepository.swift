@@ -66,6 +66,15 @@ protocol UpdateEventsRepositoryProtocol {
     /// `UpdateEventEnvelope`s returned in `startBufferingLiveEvents`.
 
     func stopReceivingLiveEvents() async
+    
+    /// Store the last event envelope id.
+    ///
+    /// Future pulls of pending events will only include event envelopes
+    /// since this id.
+    ///
+    /// - Parameter id: The id to store.
+
+    func storeLastEventEnvelopeID(_ id: UUID)
 
 }
 
@@ -230,6 +239,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     func stopReceivingLiveEvents() async {
         await pushChannel.close()
+    }
+
+    func storeLastEventEnvelopeID(_ id: UUID) {
+        lastEventIDRepository.storeLastEventID(id)
     }
 
 }

@@ -345,7 +345,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(receivedEnvelopes[2], Scaffolding.envelope3)
 
         // Then each envelope was decrypted.
-        var decryptionInvocations = updateEventDecryptor.decryptEventsIn_Invocations
+        let decryptionInvocations = updateEventDecryptor.decryptEventsIn_Invocations
         guard decryptionInvocations.count == 3 else {
             XCTFail("expected 4 decryption invocations, got \(decryptionInvocations.count)")
             return
@@ -354,6 +354,17 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(decryptionInvocations[0], Scaffolding.envelope1)
         XCTAssertEqual(decryptionInvocations[1], Scaffolding.envelope2)
         XCTAssertEqual(decryptionInvocations[2], Scaffolding.envelope3)
+    }
+
+    func testItStoresLastEventEnvelopeID() throws {
+        // Given
+        let id = UUID()
+
+        // When
+        sut.storeLastEventEnvelopeID(id)
+
+        // Then
+        lastEventIDRepository.storeLastEventID_Invocations = [id]
     }
 
 }
