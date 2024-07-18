@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+/// The AnalyticsSessionConfiguration struct is a configuration object used to initialize and configure an analytics session. 
+/// It holds key information required for the analytics system to function, such as the Countly key and the host URL.
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
+public struct AnalyticsSessionConfiguration {
 
+    public let countlyKey: String
+    public let host: URL
+
+    public init(countlyKey: String, host: URL) {
+        self.countlyKey = countlyKey
+        self.host = host
+    }
 }

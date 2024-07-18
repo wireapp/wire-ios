@@ -21,6 +21,7 @@ import CallKit
 import Foundation
 import PushKit
 import UserNotifications
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireTransport
@@ -311,6 +312,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
+    private var analyticsManager: (any AnalyticsManagerProtocol)?
+
     public override init() {
         fatal("init() not implemented")
     }
@@ -335,7 +338,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         isUnauthenticatedTransportSessionReady: Bool = false,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
-        deleteUserLogs: @escaping () -> Void
+        deleteUserLogs: @escaping () -> Void,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration?
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -391,7 +395,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
-            deleteUserLogs: deleteUserLogs
+            deleteUserLogs: deleteUserLogs,
+            analyticsSessionConfiguration: analyticsSessionConfiguration
         )
 
         configureBlacklistDownload()
@@ -452,7 +457,8 @@ public final class SessionManager: NSObject, SessionManagerType {
          isUnauthenticatedTransportSessionReady: Bool = false,
          sharedUserDefaults: UserDefaults,
          minTLSVersion: String? = nil,
-         deleteUserLogs: (() -> Void)? = nil
+         deleteUserLogs: (() -> Void)? = nil,
+         analyticsSessionConfiguration: AnalyticsSessionConfiguration?
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -512,6 +518,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = NotificationsTracker(analytics: analytics)
         } else {
             self.notificationsTracker = nil
+        }
+
+        if let analyticsSessionConfiguration {
+            self.analyticsManager = AnalyticsManager(
+                appKey: analyticsSessionConfiguration.countlyKey,
+                host: analyticsSessionConfiguration.host
+            )
         }
 
         super.init()
@@ -856,8 +869,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
-
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
+            self.switchAnalyticsUser()
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -869,11 +882,51 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
+
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
+    }
+
+    private func switchAnalyticsUser() {
+        guard
+            let analyticsManager,
+            let activeUserSession
+        else {
+            return
+        }
+
+        let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
+
+        // Set the analytics identifier if it's not present
+        if selfUser.analyticsIdentifier == nil {
+            let idProvider = AnalyticsIdentifierProvider(selfUser: activeUserSession.selfUser)
+            idProvider.setIdentifierIfNeeded()
+        }
+
+        guard let analyticsID = selfUser.analyticsIdentifier else {
+            return
+        }
+
+        var teamInfo: TeamInfo?
+        if let team = selfUser.team, let teamID = team.remoteIdentifier {
+            teamInfo = TeamInfo(
+                id: teamID.uuidString,
+                role: selfUser.teamRole.analyticsValue,
+                size: team.members.count
+            )
+        }
+
+        let analyticsSession = analyticsManager.switchUser(
+            AnalyticsUserProfile(
+                analyticsIdentifier: analyticsID,
+                teamInfo: teamInfo
+            )
+        )
+
+        activeUserSession.analyticsSession = analyticsSession
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
@@ -1061,7 +1114,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
-    private func startBackgroundSession(for account: Account, with coreDataStack: CoreDataStack) -> ZMUserSession {
+    private func startBackgroundSession(
+        for account: Account,
+        with coreDataStack: CoreDataStack
+    ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig,
             useLegacyPushNotifications: shouldProcessLegacyPushes
@@ -1228,8 +1284,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func passwordVerificationDidFail(with failCount: Int) {
         guard let count = configuration.failedPasswordThresholdBeforeWipe,
               failCount >= count, let account = accountManager.selectedAccount else {
-                  return
-              }
+            return
+        }
         delete(account: account, reason: .failedPasswordLimitReached)
     }
 }
@@ -1278,8 +1334,8 @@ extension SessionManager: UserObserving {
         if changeInfo.teamsChanged || changeInfo.nameChanged || changeInfo.imageSmallProfileDataChanged {
             guard let user = changeInfo.user as? ZMUser,
                   let managedObjectContext = user.managedObjectContext else {
-                      return
-                  }
+                return
+            }
             updateCurrentAccount(in: managedObjectContext)
         }
     }
@@ -1373,6 +1429,7 @@ extension SessionManager {
             // If the user isn't logged in it's because they still need
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
+                session.trackAppOpenAnalyticEventWhenAppBecomesActive()
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()

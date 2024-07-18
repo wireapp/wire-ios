@@ -16,30 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Countly
-
-public struct AnalyticsSession: AnalyticsSessionProtocol {
-
-    let countly: WireCountly
-
-    public init(appKey: String, host: URL) {
-        let config = CountlyConfig()
-        config.appKey = appKey
-        config.host = host.absoluteString
-
-        countly = .sharedInstance()
-        countly.start(with: config)
-    }
-
-    public func startSession() {
-        countly.beginSession()
-    }
-
-    public func endSession() {
-        countly.endSession()
-    }
-
-    public func trackEvent(_ event: AnalyticEvent) {
-        countly.recordEvent(event.rawValue)
-    }
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script

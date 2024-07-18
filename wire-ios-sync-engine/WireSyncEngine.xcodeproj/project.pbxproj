@@ -560,12 +560,17 @@
 		E6C983EE2B986ABA00D55177 /* ZMUserSession+UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */; };
 		E6D1B1F22B988166001CA68B /* GetMLSFeatureUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D1B1F12B988166001CA68B /* GetMLSFeatureUseCaseTests.swift */; };
 		E6E5579A2BBD4D9C0033E62B /* ZMReachability+ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E557992BBD4D9C0033E62B /* ZMReachability+ServerConnection.swift */; };
+		E934249E2C2D3BBA001A8EBD /* ProcessInfo+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E934249D2C2D3BBA001A8EBD /* ProcessInfo+Tests.swift */; };
 		E6F31B502C19B42E005DFA0C /* ZMUserSession+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F31B4F2C19B42E005DFA0C /* ZMUserSession+Notifications.swift */; };
 		E967757F2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E967757E2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
 		E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = E998FE8D2C184C9800EAA672 /* UserCredentials.swift */; };
 		E9A96E7E2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */; };
+		E9AD0A362C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD0A352C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift */; };
+		E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E9C60E912C259F3C004E5F13 /* WireAnalytics */; };
+		E9E4D4712C2AD61500364352 /* TeamRole+AnalyticsValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */; };
 		E9EAEAA72BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */; };
+		E9EB58202C357FDE00A2325E /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */; };
 		E9F627B32BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F627B22BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift */; };
 		E9F7FE292BE0C61900699356 /* SetAllowGuestsAndServicesUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FE282BE0C61900699356 /* SetAllowGuestsAndServicesUseCaseTests.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
@@ -1379,11 +1384,14 @@
 		E6C983ED2B986ABA00D55177 /* ZMUserSession+UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+UserSession.swift"; sourceTree = "<group>"; };
 		E6D1B1F12B988166001CA68B /* GetMLSFeatureUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMLSFeatureUseCaseTests.swift; sourceTree = "<group>"; };
 		E6E557992BBD4D9C0033E62B /* ZMReachability+ServerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMReachability+ServerConnection.swift"; sourceTree = "<group>"; };
+		E934249D2C2D3BBA001A8EBD /* ProcessInfo+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+Tests.swift"; sourceTree = "<group>"; };
 		E6F31B4F2C19B42E005DFA0C /* ZMUserSession+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+Notifications.swift"; sourceTree = "<group>"; };
 		E967757E2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetAllowGuestAndServicesUseCase.swift; sourceTree = "<group>"; };
 		E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCaseTests.swift; sourceTree = "<group>"; };
 		E998FE8D2C184C9800EAA672 /* UserCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCredentials.swift; sourceTree = "<group>"; };
 		E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCase.swift; sourceTree = "<group>"; };
+		E9AD0A352C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsSessionConfiguration.swift; sourceTree = "<group>"; };
+		E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TeamRole+AnalyticsValue.swift"; sourceTree = "<group>"; };
 		E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCase.swift; sourceTree = "<group>"; };
 		E9F627B22BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCaseTests.swift; sourceTree = "<group>"; };
 		E9F7FE282BE0C61900699356 /* SetAllowGuestsAndServicesUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetAllowGuestsAndServicesUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1619,6 +1627,7 @@
 				5996E8922C19CB28007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				EE88B0292BF4D84F0013F0BD /* WireAPI in Frameworks */,
 				5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */,
+				E9EB58202C357FDE00A2325E /* WireAnalyticsSupport in Frameworks */,
 				0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				54F4DC5A1A4438B300FDB6EA /* WireSyncEngine.framework in Frameworks */,
 				59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */,
@@ -1631,6 +1640,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */,
 				EE88B0252BF4D8060013F0BD /* WireAPI in Frameworks */,
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
@@ -2052,6 +2062,8 @@
 				EEE46E5528C5EF3B005F48D7 /* Use cases */,
 				3E18605B191A4F28000FE027 /* Public */,
 				3E18605C191A4F3B000FE027 /* WireSyncEngine-iOS.pch */,
+				E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */,
+				E934249D2C2D3BBA001A8EBD /* ProcessInfo+Tests.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2311,6 +2323,7 @@
 				549710071F6FF5C100026EDD /* NotificationInContext+UserSession.swift */,
 				E60579D52C1C3E3D003D4A98 /* ZMNetworkAvailabilityChangeNotification.swift */,
 				5458AF831F7021B800E45977 /* PreLoginAuthenticationNotification.swift */,
+				E9AD0A352C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift */,
 			);
 			path = UserSession;
 			sourceTree = "<group>";
@@ -3154,6 +3167,7 @@
 			packageProductDependencies = (
 				EE88B0262BF4D8060013F0BD /* WireAPISupport */,
 				EE88B0282BF4D84F0013F0BD /* WireAPI */,
+				E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */,
 			);
 			productName = "WireSyncEngine-iOS-Tests";
 			productReference = 3E1860C3191A649D000FE027 /* UnitTests.xctest */;
@@ -3175,6 +3189,7 @@
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
 				EE88B0242BF4D8060013F0BD /* WireAPI */,
+				E9C60E912C259F3C004E5F13 /* WireAnalytics */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -3254,7 +3269,7 @@
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
 				EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */,
-				59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */,
+				E9C60E902C259F3C004E5F13 /* XCLocalSwiftPackageReference "../WireAnalytics" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -3817,6 +3832,7 @@
 				7CD279862338E31D00E638CD /* SessionManager+Authentication.swift in Sources */,
 				16FF474C1F0D54B20044C491 /* SessionManager+Logs.swift in Sources */,
 				F19F1D281EFBC34E00275E27 /* ZMUserSessionRegistrationNotification.m in Sources */,
+				E934249E2C2D3BBA001A8EBD /* ProcessInfo+Tests.swift in Sources */,
 				A93B528B250101AC0061255E /* ZMUserSession+Debugging.swift in Sources */,
 				A913C02223A7EDFB0048CE74 /* TeamRolesDownloadRequestStrategy.swift in Sources */,
 				E662328D2BF4BBED002B680A /* ZMUserSession+MLS.swift in Sources */,
@@ -3964,8 +3980,10 @@
 				065FEA122B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift in Sources */,
 				A95D0B1223F6B75A0057014F /* AVSLogObserver.swift in Sources */,
 				EE13BD8B2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift in Sources */,
+				E9E4D4712C2AD61500364352 /* TeamRole+AnalyticsValue.swift in Sources */,
 				5E8BB8A22147F89000EEA64B /* CallCenterSupport.swift in Sources */,
 				1660AA0D1ECDB0250056D403 /* SearchTask.swift in Sources */,
+				E9AD0A362C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift in Sources */,
 				F9245BED1CBF95A8009D1E85 /* ZMHotFixDirectory+Swift.swift in Sources */,
 				E6C983EC2B98627200D55177 /* GetMLSFeatureUseCase.swift in Sources */,
 				54991D5A1DEDD07E007E282F /* ContactAddressBook.swift in Sources */,
@@ -4565,6 +4583,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		E9C60E902C259F3C004E5F13 /* XCLocalSwiftPackageReference "../WireAnalytics" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../WireAnalytics;
+		};
 		EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../WireAPI;
@@ -4583,6 +4605,15 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E9C60E912C259F3C004E5F13 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
+		};
+		E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9C60E902C259F3C004E5F13 /* XCLocalSwiftPackageReference "../WireAnalytics" */;
+			productName = WireAnalyticsSupport;
+		};
 		EE88B0242BF4D8060013F0BD /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;

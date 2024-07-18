@@ -16,14 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+public protocol AnalyticsManagerProtocol {
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
+    /// Switches the current analytics user and starts a new session.
+    /// - Parameter userProfile: The profile of the user to switch to.
+    /// - Returns: A new analytics session for the switched user.
+    func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
 }

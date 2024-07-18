@@ -305,7 +305,8 @@ extension IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            analyticsSessionConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete

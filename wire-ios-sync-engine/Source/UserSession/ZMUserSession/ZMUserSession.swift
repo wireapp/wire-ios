@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireSystem
@@ -77,6 +78,8 @@ public final class ZMUserSession: NSObject {
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
+
+    var analyticsSession: (any AnalyticsSessionProtocol)?
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -387,6 +390,12 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+
+        super.init()
+    }
+
+    func trackAppOpenAnalyticEventWhenAppBecomesActive() {
+        analyticsSession?.trackEvent(.appOpen)
     }
 
     func setup(

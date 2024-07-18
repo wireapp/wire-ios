@@ -16,14 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+import Countly
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
+extension Countly: AnalyticsService {
+
+    func start(appKey: String, host: URL) {
+        let config = CountlyConfig()
+        config.appKey = appKey
+        config.host = host.absoluteString
+        start(with: config)
+    }
+
+    func changeDeviceID(_ id: String) {
+        changeDeviceID(withMerge: id)
+    }
+
+    func setUserValue(_ value: String?, forKey key: String) {
+        if let value {
+            Countly.user().set(key, value: value)
+        } else {
+            Countly.user().unSet(key)
+        }
+    }
+
+    public func trackEvent(_ event: AnalyticEvent) {
+        recordEvent(event.rawValue)
+    }
 
 }

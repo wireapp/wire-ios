@@ -16,14 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+/// A struct representing information about the user's team.
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
+public struct TeamInfo {
 
+    /// The identifier for the team the user belongs to.
+    public let id: String
+
+    /// The role of the user within the team.
+    public let role: String
+
+    /// The size of the team the user belongs to.
+    public let size: Int
+
+    public init(id: String, role: String, size: Int) {
+        self.id = id
+        self.role = role
+        self.size = size
+    }
 }

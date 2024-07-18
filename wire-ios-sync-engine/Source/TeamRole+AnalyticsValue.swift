@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+import WireDataModel
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
+extension TeamRole {
 
+    var analyticsValue: String {
+        switch self {
+        case .partner:
+          return "external"
+        case .member, .admin, .owner:
+          return "member"
+        case .none:
+          return "wireless"
+        }
+      }
 }

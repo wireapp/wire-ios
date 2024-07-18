@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+import Foundation
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
+extension Int {
+    /// Rounds the integer value logarithmically to protect the privacy of BI data.
     ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
-
+    /// The `logRound` method rounds numeric values into buckets of increasing size.
+    /// This logarithmic rounding means that smaller numbers are only slightly rounded,
+    /// whereas larger numbers are rounded more significantly. This approach helps to
+    /// protect privacy by reducing the precision of the values in a controlled manner.
+    ///
+    /// - Returns: A rounded integer value based on the base-2 logarithm of the original value.
+    func logRound() -> Int {
+        Int(log2(Double(self)).rounded())
+    }
 }

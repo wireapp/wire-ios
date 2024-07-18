@@ -125,7 +125,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         WireLogger.push.info(
-"application did register for remote notifications, storing standard token",
+            "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
         pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
@@ -169,7 +169,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch launchType {
         case .url,
-             .push:
+                .push:
             break
         default:
             launchType = .direct
@@ -327,7 +327,8 @@ private extension AppDelegate {
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs
+            deleteUserLogs: LogFileDestination.deleteAllLogs,
+            analyticsSessionConfiguration: AnalyticsSessionConfigurationBuilder().build()
         )
 
         voIPPushManager.delegate = sessionManager
