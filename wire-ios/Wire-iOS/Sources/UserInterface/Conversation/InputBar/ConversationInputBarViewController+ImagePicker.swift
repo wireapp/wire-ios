@@ -17,19 +17,19 @@
 //
 
 import AVFoundation
-import Foundation
+import UIKit
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationInputBarViewController - Image Picker")
 
 extension ConversationInputBarViewController {
 
-    func presentImagePicker(with sourceType: UIImagePickerController.SourceType,
-                            mediaTypes: [String],
-                            allowsEditing: Bool,
-                            pointToView: UIView?) {
-
-        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController else { return }
+    func presentImagePicker(
+        sourceType: UIImagePickerController.SourceType,
+        mediaTypes: [String],
+        allowsEditing: Bool,
+        pointToView: UIView
+    ) {
 
         if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
             if UIDevice.isSimulator {
@@ -42,39 +42,29 @@ extension ConversationInputBarViewController {
             // Don't crash on Simulator
         }
 
-        let presentController = {
+        let presentController = { [self] in
 
-            let context = ImagePickerPopoverPresentationContext(presentViewController: rootViewController,
-                                                                sourceType: sourceType)
-
-            let pickerController = UIImagePickerController.popoverForIPadRegular(with: context)
+            let pickerController = UIImagePickerController()
+            pickerController.sourceType = sourceType
+            pickerController.preferredContentSize = .IPadPopover.preferredContentSize
             pickerController.delegate = self
             pickerController.allowsEditing = allowsEditing
             pickerController.mediaTypes = mediaTypes
-            pickerController.videoMaximumDuration = self.userSession.maxVideoLength
+            pickerController.videoMaximumDuration = userSession.maxVideoLength
             pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
-
-            if let popover = pickerController.popoverPresentationController,
-                let imageView = pointToView {
-                popover.config(from: rootViewController,
-                               pointToView: imageView,
-                               sourceView: rootViewController.view)
-
-                popover.backgroundColor = .white
-                popover.permittedArrowDirections = .down
-            }
-
             if sourceType == .camera {
                 let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
-                switch settingsCamera {
-                case .back?:
-                    pickerController.cameraDevice = .rear
-                case .front?, .none:
-                    pickerController.cameraDevice = .front
-                }
+                pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
             }
 
-            rootViewController.present(pickerController, animated: true)
+            if sourceType != .camera, let popoverPresentationController = pickerController.popoverPresentationController {
+                popoverPresentationController.sourceView = pointToView.superview
+                popoverPresentationController.sourceRect = pointToView.frame
+                popoverPresentationController.backgroundColor = .white
+                popoverPresentationController.permittedArrowDirections = .down
+            }
+
+            present(pickerController, animated: true)
         }
 
         if sourceType == .camera {

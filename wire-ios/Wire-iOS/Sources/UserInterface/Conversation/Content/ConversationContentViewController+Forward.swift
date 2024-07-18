@@ -30,13 +30,12 @@ extension ZMConversation: ShareDestination {
         }
         return selfUser.hasTeam &&
             self.conversationType == .oneOnOne &&
-            self.localParticipants.first {
-                $0.isGuest(in: self) } != nil
+            self.localParticipants.first { $0.isGuest(in: self) } != nil
     }
-
 }
 
 extension ShareDestination where Self: ConversationAvatarViewConversation {
+
     var avatarView: UIView? {
         let avatarView = ConversationAvatarView()
         avatarView.configure(context: .conversation(conversation: self))
@@ -147,62 +146,12 @@ extension ConversationContentViewController {
            let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<ZMConversation, ZMMessage> {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
-
-        updatePopoverSourceRect()
-    }
-
-    func updatePopover() {
-        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController else { return }
-
-        rootViewController.updatePopoverSourceRect()
     }
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
-    func showForwardFor(message: ZMConversationMessage?, from view: UIView?) {
-        guard let userSession = ZMUserSession.shared(),
-              let message else { return }
-
-        endEditing()
-
-        let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
-            .shareableConversations(excluding: message.conversationLike)
-
-        let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
-            shareable: message as! ZMMessage,
-            destinations: conversations,
-            showPreview: traitCollection.horizontalSizeClass != .regular
-        )
-
-        let keyboardAvoiding = KeyboardAvoidingViewController(viewController: shareViewController)
-        keyboardAvoiding.disabledWhenInsidePopover = true
-        keyboardAvoiding.preferredContentSize = CGSize.IPadPopover.preferredContentSize
-        keyboardAvoiding.modalPresentationCapturesStatusBarAppearance = true
-
-        let presenter: PopoverPresenterViewController? = (presentedViewController ?? UIApplication.shared.firstKeyWindow) as? PopoverPresenterViewController
-
-        if let presenter,
-           let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
-            keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: presenter)
-        }
-
-        if let popoverPresentationController = keyboardAvoiding.popoverPresentationController {
-            popoverPresentationController.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        }
-
-        keyboardAvoiding.presentationController?.delegate = self
-
-        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) in
-            weak var presentingViewController = shareController.presentingViewController
-
-            presentingViewController?.dismiss(animated: true)
-        }
-
-        (presenter ?? self).present(keyboardAvoiding, animated: true)
-    }
-
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
+        traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }

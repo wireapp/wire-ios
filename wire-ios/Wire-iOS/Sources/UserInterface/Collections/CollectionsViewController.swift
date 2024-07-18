@@ -638,7 +638,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
         let message = self.message(for: indexPath)
 
-        perform(.present, for: message, source: nil)
+        perform(.present, for: message, source: collectionView.cellForItem(at: indexPath) as! CollectionCell)
     }
 
 }
@@ -696,7 +696,7 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
 extension CollectionsViewController: MessageActionResponder {
 
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
-        perform(action, for: message, source: view as? CollectionCell)
+        perform(action, for: message, source: (view as? CollectionCell)!)
     }
 }
 
@@ -710,14 +710,11 @@ extension CollectionsViewController: CollectionCellDelegate {
         perform(action, for: message, source: cell)
     }
 
-    func perform(_ action: MessageAction, for message: ZMConversationMessage, source: CollectionCell?) {
+    func perform(_ action: MessageAction, for message: ZMConversationMessage, source: CollectionCell) {
         switch action {
         case .copy:
-            if let cell = source {
-                cell.copyDisplayedContent(in: .general)
-            } else {
-                message.copy(in: .general)
-            }
+            let cell = source
+            cell.copyDisplayedContent(in: .general)
 
         case .delete:
             deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: source, userSession: userSession) { [weak self] deleted in
