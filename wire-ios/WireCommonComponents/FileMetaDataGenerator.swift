@@ -23,10 +23,32 @@ import AVFoundation
 
 private let zmLog = ZMSLog(tag: "UI")
 
-public final class FileMetaDataGenerator: NSObject {
+// sourcery: AutoMockable
+public protocol FileMetaDataGenerating {
 
-    static public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { (preview) in
+    func metadataForFileAtURL(
+        _ url: URL,
+        UTI uti: String,
+        name: String,
+        completion: @escaping (ZMFileMetadata) -> Void
+    )
+
+}
+
+public final class FileMetaDataGenerator: FileMetaDataGenerating {
+
+    @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
+    public static var shared = FileMetaDataGenerator()
+
+    public init() {}
+
+    public func metadataForFileAtURL(
+        _ url: URL,
+        UTI uti: String,
+        name: String,
+        completion: @escaping (ZMFileMetadata) -> Void
+    ) {
+        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 
             if AVURLAsset.wr_isAudioVisualUTI(uti) {

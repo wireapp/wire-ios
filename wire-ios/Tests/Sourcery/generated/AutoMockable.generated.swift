@@ -274,6 +274,172 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
 
 }
 
+class MockLogFilesProviding: LogFilesProviding {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - generateLogFilesData
+
+    var generateLogFilesData_Invocations: [Void] = []
+    var generateLogFilesData_MockError: Error?
+    var generateLogFilesData_MockMethod: (() throws -> Data)?
+    var generateLogFilesData_MockValue: Data?
+
+    func generateLogFilesData() throws -> Data {
+        generateLogFilesData_Invocations.append(())
+
+        if let error = generateLogFilesData_MockError {
+            throw error
+        }
+
+        if let mock = generateLogFilesData_MockMethod {
+            return try mock()
+        } else if let mock = generateLogFilesData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generateLogFilesData`")
+        }
+    }
+
+    // MARK: - generateLogFilesZip
+
+    var generateLogFilesZip_Invocations: [Void] = []
+    var generateLogFilesZip_MockError: Error?
+    var generateLogFilesZip_MockMethod: (() throws -> URL)?
+    var generateLogFilesZip_MockValue: URL?
+
+    func generateLogFilesZip() throws -> URL {
+        generateLogFilesZip_Invocations.append(())
+
+        if let error = generateLogFilesZip_MockError {
+            throw error
+        }
+
+        if let mock = generateLogFilesZip_MockMethod {
+            return try mock()
+        } else if let mock = generateLogFilesZip_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generateLogFilesZip`")
+        }
+    }
+
+    // MARK: - clearLogsDirectory
+
+    var clearLogsDirectory_Invocations: [Void] = []
+    var clearLogsDirectory_MockError: Error?
+    var clearLogsDirectory_MockMethod: (() throws -> Void)?
+
+    func clearLogsDirectory() throws {
+        clearLogsDirectory_Invocations.append(())
+
+        if let error = clearLogsDirectory_MockError {
+            throw error
+        }
+
+        guard let mock = clearLogsDirectory_MockMethod else {
+            fatalError("no mock for `clearLogsDirectory`")
+        }
+
+        try mock()
+    }
+
+}
+
+class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - presentMailComposer
+
+    var presentMailComposer_Invocations: [Void] = []
+    var presentMailComposer_MockMethod: (() -> Void)?
+
+    @MainActor
+    func presentMailComposer() {
+        presentMailComposer_Invocations.append(())
+
+        guard let mock = presentMailComposer_MockMethod else {
+            fatalError("no mock for `presentMailComposer`")
+        }
+
+        mock()
+    }
+
+    // MARK: - presentFallbackAlert
+
+    var presentFallbackAlert_Invocations: [Void] = []
+    var presentFallbackAlert_MockMethod: (() -> Void)?
+
+    func presentFallbackAlert() {
+        presentFallbackAlert_Invocations.append(())
+
+        guard let mock = presentFallbackAlert_MockMethod else {
+            fatalError("no mock for `presentFallbackAlert`")
+        }
+
+        mock()
+    }
+
+    // MARK: - presentShareViewController
+
+    var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
+    var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
+
+    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport) {
+        presentShareViewControllerDestinationsDebugReport_Invocations.append((destinations: destinations, debugReport: debugReport))
+
+        guard let mock = presentShareViewControllerDestinationsDebugReport_MockMethod else {
+            fatalError("no mock for `presentShareViewControllerDestinationsDebugReport`")
+        }
+
+        mock(destinations, debugReport)
+    }
+
+}
+
+class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - sendReport
+
+    var sendReport_Invocations: [Void] = []
+    var sendReport_MockMethod: (() -> Void)?
+
+    func sendReport() {
+        sendReport_Invocations.append(())
+
+        guard let mock = sendReport_MockMethod else {
+            fatalError("no mock for `sendReport`")
+        }
+
+        mock()
+    }
+
+    // MARK: - shareReport
+
+    var shareReport_Invocations: [Void] = []
+    var shareReport_MockMethod: (() -> Void)?
+
+    func shareReport() {
+        shareReport_Invocations.append(())
+
+        guard let mock = shareReport_MockMethod else {
+            fatalError("no mock for `shareReport`")
+        }
+
+        mock()
+    }
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

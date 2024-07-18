@@ -106,7 +106,7 @@ class SettingsCellDescriptorFactory {
             ),
             devicesCell(),
             optionsGroup,
-            advancedGroup,
+            advancedGroup(userSession: userSession),
             helpSection(),
             aboutSection()
         ]

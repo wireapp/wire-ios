@@ -86,15 +86,17 @@ extension ConversationInputBarViewController {
             return
         }
 
-        FileMetaDataGenerator.metadataForFileAtURL(url,
-                                                   UTI: url.UTI(),
-                                                   name: url.lastPathComponent) { [weak self] metadata in
-            guard let weakSelf = self else { return }
+        FileMetaDataGenerator.shared.metadataForFileAtURL(
+            url,
+            UTI: url.UTI(),
+            name: url.lastPathComponent
+        ) { [weak self] metadata in
 
-            weakSelf.impactFeedbackGenerator.prepare()
+            guard let `self` else { return }
+            self.impactFeedbackGenerator.prepare()
             ZMUserSession.shared()?.perform({
 
-                weakSelf.impactFeedbackGenerator.impactOccurred()
+                self.impactFeedbackGenerator.impactOccurred()
 
                 var conversationMediaAction: ConversationMediaAction = .fileTransfer
 
