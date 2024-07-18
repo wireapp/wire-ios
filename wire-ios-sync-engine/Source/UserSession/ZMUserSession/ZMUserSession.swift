@@ -859,10 +859,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         recurringActionService.performActionsIfNeeded()
 
         checkExpiredCertificateRevocationLists()
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.checkE2EICertificateExpiryStatus()
-        }
+        checkE2EICertificateExpiryStatus()
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
@@ -988,9 +985,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        guard e2eiFeature.isEnabled else { return }
-
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+            }
+        }
     }
 }
 

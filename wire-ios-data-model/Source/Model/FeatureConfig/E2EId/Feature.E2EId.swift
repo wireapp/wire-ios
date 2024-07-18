@@ -48,12 +48,18 @@ public extension Feature {
 
             public let acmeDiscoveryUrl: String?
             public let verificationExpiration: UInt
+            public let crlProxy: String?
+            public let useProxyOnMobile: Bool?
 
             public init(
                 acmeDiscoveryUrl: String? = nil,
-                verificationExpiration: UInt = 86400) {
+                verificationExpiration: UInt = 86400,
+                crlProxy: String? = nil,
+                useProxyOnMobile: Bool? = nil) {
                     self.acmeDiscoveryUrl = acmeDiscoveryUrl
                     self.verificationExpiration = verificationExpiration
+                    self.crlProxy = crlProxy
+                    self.useProxyOnMobile = useProxyOnMobile
                 }
 
         }

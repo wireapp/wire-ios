@@ -759,7 +759,9 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             let sut = FeatureRepository(context: self.syncMOC)
             let config = Feature.E2EI.Config(
                 acmeDiscoveryUrl: "http://acme",
-                verificationExpiration: 12345)
+                verificationExpiration: 12345,
+                crlProxy: "http://example",
+                useProxyOnMobile: true)
 
             Feature.updateOrCreate(havingName: .e2ei, in: self.syncMOC) { feature in
                 feature.status = .disabled
