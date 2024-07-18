@@ -48,7 +48,6 @@ final class SyncManager: SyncManagerProtocol {
         self.updateEventProcessor = updateEventProcessor
     }
 
-    // TODO: Make non re-entrant
     func performQuickSync() async throws {
         if case .quickSync = syncState {
             return
@@ -89,7 +88,6 @@ final class SyncManager: SyncManagerProtocol {
         syncState = .live(liveTask)
     }
 
-    // TODO: Make non re-entrant
     func suspend() async throws {
         if case .suspended = syncState {
             return
