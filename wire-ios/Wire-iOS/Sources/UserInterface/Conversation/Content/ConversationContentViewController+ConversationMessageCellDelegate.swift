@@ -60,8 +60,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         let actionView = view.targetView(for: message, dataSource: dataSource)
 
         // Do not dismiss Modal for forward since share VC is present in a popover
-        let shouldDismissModal = action != .delete && action != .copy &&
-            !(action == .forward && isIPadRegular())
+        let shouldDismissModal = action != .delete && action != .copy
 
         if messagePresenter.modalTargetController?.presentedViewController != nil &&
             shouldDismissModal {
