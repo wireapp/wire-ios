@@ -183,6 +183,8 @@ final class ConversationListViewController: UIViewController, UITabBarController
         applyColorTheme()
 
         setupSearchController()
+
+        setContentScrollView(listContentController.collectionView)
     }
 
     override func viewWillAppear(_ animated: Bool) {
