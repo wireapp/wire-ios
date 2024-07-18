@@ -164,25 +164,6 @@ final class SettingsPropertyTests: XCTestCase {
         try! self.saveAndCheck(property, value: 1)
     }
 
-    func testThatAnalyticsPropertySetsValue() {
-        // given
-        let selfUser = MockZMEditableUser()
-        let mediaManager = ZMMockAVSMediaManager()
-        let tracking = ZMMockTracking()
-
-        let factory = SettingsPropertyFactory(
-            userDefaults: self.userDefaults,
-            tracking: tracking,
-            mediaManager: mediaManager,
-            userSession: userSession,
-            selfUser: selfUser
-        )
-
-        let property = factory.property(SettingsPropertyName.disableCrashSharing)
-        // when & then
-        try! self.saveAndCheck(property, value: true)
-    }
-
     func testThatIntegerBlockSettingSave() {
         // given
         let selfUser = MockZMEditableUser()

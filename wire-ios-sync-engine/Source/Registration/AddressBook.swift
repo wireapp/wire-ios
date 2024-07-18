@@ -105,7 +105,7 @@ extension AddressBookAccessor {
         self.contacts(range: range).enumerated().forEach {
             let contact = $0.element
             cards[contact.localIdentifier ?? "\($0.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
-                + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
+            + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
         }
         return cards
     }
