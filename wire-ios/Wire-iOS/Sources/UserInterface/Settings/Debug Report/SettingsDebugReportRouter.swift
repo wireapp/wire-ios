@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
 import WireDataModel
 
@@ -36,12 +35,10 @@ protocol SettingsDebugReportRouterProtocol {
     /// - Parameters:
     ///   - destinations: list of conversations to choose from to send the report
     ///   - debugReport: the debug report to share
-    ///   - onDismiss: closure to call when the share view controller is dismissed
 
     func presentShareViewController(
         destinations: [ZMConversation],
-        debugReport: ShareableDebugReport,
-        onDismiss: @escaping () -> Void
+        debugReport: ShareableDebugReport
     )
 
 }
@@ -58,8 +55,7 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
 
     func presentShareViewController(
         destinations: [ZMConversation],
-        debugReport: ShareableDebugReport,
-        onDismiss: @escaping () -> Void
+        debugReport: ShareableDebugReport
     ) {
 
         let shareViewController = ShareViewController<ZMConversation, ShareableDebugReport>(
@@ -69,7 +65,6 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         )
 
         shareViewController.onDismiss = { shareController, _ in
-            onDismiss()
             shareController.dismiss(animated: true)
         }
 
@@ -101,7 +96,12 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
     func presentFallbackAlert() {
         guard let viewController else { return }
 
-        DebugAlert.displayFallbackActivityController(email: mailRecipient, from: viewController)
+        DebugAlert.displayFallbackActivityController(
+            logPaths: DebugLogSender.existingDebugLogs,
+            email: mailRecipient,
+            from: viewController,
+            sourceView: nil
+        )
     }
 
 }

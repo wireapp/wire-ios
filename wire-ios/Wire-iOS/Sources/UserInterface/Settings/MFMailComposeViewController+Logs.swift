@@ -65,7 +65,7 @@ extension MFMailComposeViewController {
             let data = try LogFilesProvider().generateLogFilesData()
             addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
         } catch {
-            WireLogger.system.debug("no logs for WireLogger to send")
+            WireLogger.system.debug("no logs for WireLogger to send: \(String(describing: error))")
         }
     }
 }

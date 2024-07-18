@@ -16,35 +16,50 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireDesign
 
 class ShareableDebugReportView: UIView {
 
+    // MARK: - Constants
+
+    private enum LayoutConstants {
+        static let spacing: CGFloat = 2
+        static let padding: CGFloat = 12
+        static let iconSize: CGFloat = 28
+    }
+
     // MARK: - Views
 
-    private let topLabel: UILabel = {
-        let topLabel = UILabel()
-        topLabel.numberOfLines = 1
-        topLabel.lineBreakMode = .byTruncatingMiddle
-        return topLabel
+    private var topLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            style: .body3,
+            color: SemanticColors.Label.textDefault
+        )
+        label.numberOfLines = 0
+        label.font = label.font.withSize(14)
+
+        return label
     }()
 
-    private let bottomLabel: UILabel = {
-        let bottomLabel = UILabel()
-        bottomLabel.numberOfLines = 1
-        return bottomLabel
+    private var bottomLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            style: .body1,
+            color: SemanticColors.Label.textCollectionSecondary
+        )
+        label.numberOfLines = 0
+        label.font = label.font.withSize(14)
+
+        return label
     }()
 
     private let labelsView = UIView()
 
-    private let documentIconView: UIImageView = {
-        let documentIconView = UIImageView()
+    private var documentIconView: UIImageView = {
+        let documentIconView = UIImageView(image: .init(resource: .file).withRenderingMode(.alwaysTemplate))
         documentIconView.tintColor = SemanticColors.Icon.backgroundDefault
-        documentIconView.contentMode = .center
-        documentIconView.setTemplateIcon(.document, size: .small)
+        documentIconView.contentMode = .scaleAspectFit
         return documentIconView
     }()
 
@@ -86,21 +101,22 @@ class ShareableDebugReportView: UIView {
             topLabel.leftAnchor.constraint(equalTo: labelsView.leftAnchor),
             topLabel.rightAnchor.constraint(equalTo: labelsView.rightAnchor),
 
-            bottomLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 2),
+            bottomLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: LayoutConstants.spacing),
             bottomLabel.leftAnchor.constraint(equalTo: labelsView.leftAnchor),
             bottomLabel.rightAnchor.constraint(equalTo: labelsView.rightAnchor),
             bottomLabel.bottomAnchor.constraint(equalTo: labelsView.bottomAnchor),
 
-            labelsView.leftAnchor.constraint(equalTo: documentIconView.rightAnchor, constant: 12),
-            labelsView.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
+            labelsView.leftAnchor.constraint(equalTo: documentIconView.rightAnchor, constant: LayoutConstants.padding),
+            labelsView.rightAnchor.constraint(equalTo: rightAnchor, constant: -LayoutConstants.padding),
+            labelsView.topAnchor.constraint(equalTo: topAnchor, constant: LayoutConstants.padding),
+            labelsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -LayoutConstants.padding),
             labelsView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            labelsView.heightAnchor.constraint(greaterThanOrEqualTo: documentIconView.heightAnchor),
 
-            documentIconView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            documentIconView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            documentIconView.widthAnchor.constraint(equalToConstant: 32),
-            documentIconView.heightAnchor.constraint(equalToConstant: 32),
+            documentIconView.widthAnchor.constraint(equalToConstant: LayoutConstants.iconSize),
+            documentIconView.heightAnchor.constraint(equalToConstant: LayoutConstants.iconSize),
             documentIconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            documentIconView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12)
+            documentIconView.leftAnchor.constraint(equalTo: leftAnchor, constant: LayoutConstants.padding)
         ])
     }
 
@@ -115,13 +131,10 @@ class ShareableDebugReportView: UIView {
             countStyle: .binary
         )
 
-        let firstLine = fileMetadata.filename.uppercased()
-        let secondLine = "\(fileSize) \(dot) \(ext)".uppercased()
+        topLabel.text = fileMetadata.filename.uppercased()
+        bottomLabel.text = "\(fileSize) \(dot) \(ext)".uppercased()
 
-        topLabel.attributedText = firstLine && UIFont.smallSemiboldFont && SemanticColors.Label.textDefault
-        bottomLabel.attributedText = secondLine && UIFont.smallLightFont && SemanticColors.Label.textCollectionSecondary
-
-        topLabel.accessibilityValue = topLabel.attributedText?.string ?? ""
-        bottomLabel.accessibilityValue = bottomLabel.attributedText?.string ?? ""
+        topLabel.accessibilityValue = topLabel.text ?? ""
+        bottomLabel.accessibilityValue = bottomLabel.text ?? ""
     }
 }

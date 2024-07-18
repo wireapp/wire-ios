@@ -27,6 +27,9 @@ import XCTest
 // + mockProteusService setup
 // as a cleanup we should remove the duplication and refactor this - WPB-5980
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
+    enum FakeCCError: Error {
+        case randomError
+    }
 
     var mockProteusService: MockProteusServiceInterface!
 
@@ -181,7 +184,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             if sessionID.clientID.isOne(of: expectedRecipientClientIDs) {
                 return plaintext
             } else {
-                throw ProteusService.EncryptionError.failedToEncryptData
+                throw ProteusService.EncryptionError.failedToEncryptData(FakeCCError.randomError)
             }
         }
 
@@ -557,7 +560,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     /// Returns a string large enough to have to be encoded in an external message
     fileprivate var stringLargeEnoughToRequireExternal: String {
         var text = "Hello"
-        while text.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
+        while text.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
             text.append(text)
         }
         return text
@@ -577,7 +580,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     /// Returns a string that is big enough to require external message payload
     fileprivate func textMessageRequiringExternalMessage(_ numberOfClients: UInt) -> String {
         var string = "Exponential growth!"
-        while string.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
+        while string.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
             string += string
         }
         return string

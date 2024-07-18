@@ -37,10 +37,12 @@ class ShareFileUseCaseTests: ZMTBaseTest {
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
-        let cacheLocation = FileManager.default.urls(
-            for: .cachesDirectory,
-            in: .userDomainMask
-        ).first!
+        let cacheLocation = try XCTUnwrap(
+            FileManager.default.urls(
+                for: .cachesDirectory,
+                in: .userDomainMask
+            ).first
+        )
 
         await coreDataStack.viewContext.perform {
             self.coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: cacheLocation)

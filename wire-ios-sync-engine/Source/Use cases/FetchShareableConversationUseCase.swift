@@ -35,7 +35,7 @@ public class FetchShareableConversationsUseCase: FetchShareableConversationsUseC
 
     private let contextProvider: ContextProvider
 
-    init(contextProvider: ContextProvider) {
+    public init(contextProvider: ContextProvider) {
         self.contextProvider = contextProvider
     }
 

@@ -30,4 +30,9 @@ public final class WireLoggerObjc: NSObject {
     static func logReceivedUpdateEvent(eventId: String) {
         WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
     }
+
+    @objc(logSaveCoreDataError:)
+    static func logSaveCoreData(error: Error) {
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
+    }
 }

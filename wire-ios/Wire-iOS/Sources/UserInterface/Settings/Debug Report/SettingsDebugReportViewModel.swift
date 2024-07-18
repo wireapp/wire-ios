@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
 import WireCommonComponents
 import WireSyncEngine
@@ -72,29 +71,31 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     func shareReport() {
 
-        let conversations = fetchShareableConversations.invoke()
-        let logsURL = logsProvider.generateLogFilesZip()
+        do {
+            let conversations = fetchShareableConversations.invoke()
+            let logsURL = try logsProvider.generateLogFilesZip()
 
-        fileMetaDataGenerator.metadataForFileAtURL(
-            logsURL,
-            UTI: logsURL.UTI(),
-            name: logsURL.lastPathComponent
-        ) { [weak self] metadata in
+            fileMetaDataGenerator.metadataForFileAtURL(
+                logsURL,
+                UTI: logsURL.UTI(),
+                name: logsURL.lastPathComponent
+            ) { [weak self] metadata in
 
-            guard let `self` else { return }
+                guard let `self` else { return }
 
-            let shareableDebugReport = ShareableDebugReport(
-                logFileMetadata: metadata,
-                shareFile: self.shareFile
-            )
+                let shareableDebugReport = ShareableDebugReport(
+                    logFileMetadata: metadata,
+                    shareFile: self.shareFile
+                )
 
-            self.router.presentShareViewController(
-                destinations: conversations,
-                debugReport: shareableDebugReport,
-                onDismiss: {
-                    try? self.logsProvider.clearTemporaryDirectory()
-                }
-            )
+                self.router.presentShareViewController(
+                    destinations: conversations,
+                    debugReport: shareableDebugReport
+                )
+            }
+        } catch {
+            WireLogger.system.warn("failed to generate log files \(error)")
         }
+
     }
 }

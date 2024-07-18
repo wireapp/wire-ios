@@ -734,7 +734,7 @@ extension AuthenticationCoordinator {
         let result = setCredentialsWithProfile(profile, credentials: credentials) && sessionManager.update(credentials: credentials) == true
 
         if !result {
-            let error = NSError(code: .invalidEmail, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .invalidEmail, userInfo: nil)
             emailUpdateDidFail(error)
         }
     }

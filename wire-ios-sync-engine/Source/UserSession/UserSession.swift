@@ -212,7 +212,7 @@ public protocol UserSession: AnyObject {
 
     func cancelProxiedRequest(_ request: ProxyRequest)
 
-    var networkState: ZMNetworkState { get }
+    var networkState: NetworkState { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -235,6 +235,10 @@ public protocol UserSession: AnyObject {
 
     /// Provides a unique context to bind notifications this user session.
     var notificationContext: any NotificationContext { get }
+
+    // MARK: Context provider
+
+    var contextProvider: any ContextProvider { get }
 
     // MARK: Use Cases
 

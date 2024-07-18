@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireCommonComponents
 import WireSystem
 import ZipArchive
@@ -34,15 +34,28 @@ protocol LogFilesProviding {
     /// 
     /// - Returns: the log files archive URL
 
-    func generateLogFilesZip() -> URL
+    func generateLogFilesZip() throws -> URL
 
-    /// Clears the temporary directory. 
+    /// Clears the logs directory.
     /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
 
-    func clearTemporaryDirectory() throws
+    func clearLogsDirectory() throws
 
 }
 
+/// Generates log files archives.
+///
+/// All logs are stored at the `NSTemporaryDirectory` URL (`tmp`) in the folder `/<uuid>/logs/`.
+///
+/// When generating the logs archive, we create a unique directory for the archive in `/<uuid>/logs/<uuid>/logs.zip`.
+///
+/// The logs folder `/<uuid>/logs/` is cleared:
+///  - after `generateLogFilesData()` returns
+///  - when calling `generateLogFilesZip()`, before the archive is created
+///  - when calling `clearLogsDirectory()`
+///
+/// In each logs archive, an extra file `info.txt` is added. It contains general information about the app.
+///
 struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Types
@@ -53,7 +66,15 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Properties
 
-    private let temporaryDirectory = NSTemporaryDirectory()
+    private var logsDirectory: URL = {
+        let baseURL = URL(
+            fileURLWithPath: NSTemporaryDirectory(),
+            isDirectory: true
+        )
+        return baseURL
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathComponent("logs")
+    }()
 
     private var logFilesURLs: [URL] {
         var urls = WireLogger.logFiles
@@ -70,35 +91,85 @@ struct LogFilesProvider: LogFilesProviding {
             if let url = LogFileDestination.main.log {
                 try? FileManager.default.removeItem(at: url)
             }
+            try? clearLogsDirectory()
         }
 
-        let urls = logFilesURLs
-
-        guard let data = FileManager.default.zipData(from: urls) else {
-            throw Error.noLogs(description: urls.description)
-        }
+        let logFilesURL = try generateLogFilesZip()
+        let data = try Data(contentsOf: logFilesURL)
 
         return data
     }
 
-    func generateLogFilesZip() -> URL {
+    func generateLogFilesZip() throws -> URL {
+        try? clearLogsDirectory()
 
-        var tmpURL = URL(
-            fileURLWithPath: temporaryDirectory,
-            isDirectory: false
+        // Create a unique directory
+        var url = try createUniqueLogDirectory()
+
+        // Create the info file
+        let infoFileURL = try createInfoFile(at: url)
+
+        // Set the list of files to be zipped
+        let filesToZip = try filesToZipURLs(
+            logFilesURLs: logFilesURLs,
+            infoFileURL: infoFileURL
         )
 
-        tmpURL.appendPathComponent("logs.zip")
-
+        // Create the zip file
+        url.appendPathComponent("logs.zip")
         SSZipArchive.createZipFile(
-            atPath: tmpURL.path,
-            withFilesAtPaths: logFilesURLs.map { $0.path }
+            atPath: url.path,
+            withFilesAtPaths: filesToZip.map { $0.path }
         )
 
-        return tmpURL
+        return url
     }
 
-    func clearTemporaryDirectory() throws {
-        try FileManager.default.removeItem(atPath: temporaryDirectory)
+    func clearLogsDirectory() throws {
+        try FileManager.default.removeItem(atPath: logsDirectory.path)
     }
+
+    // MARK: - Helpers
+
+    private func filesToZipURLs(logFilesURLs: [URL], infoFileURL: URL) throws -> [URL] {
+        guard !logFilesURLs.isEmpty else {
+            throw Error.noLogs(description: logFilesURLs.description)
+        }
+
+        return logFilesURLs + [infoFileURL]
+    }
+
+    private func createUniqueLogDirectory() throws -> URL {
+        let url = logsDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
+    }
+
+    private func createInfoFile(at url: URL) throws -> URL {
+        let date = Date()
+
+        var body = """
+        App Version: \(Bundle.main.appInfo.fullVersion)
+        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
+        Device: \(UIDevice.current.zm_model())
+        iOS version: \(UIDevice.current.systemVersion)
+        Date: \(date.transportString())
+        """
+
+        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
+            // display only when enabled
+            body.append("\nDatadog ID: \(datadogUserIdentifier)")
+        }
+
+        let infoFileURL = url.appendingPathComponent("info.txt")
+
+        try body.write(
+            to: infoFileURL,
+            atomically: true,
+            encoding: .utf8
+        )
+
+        return infoFileURL
+    }
+
 }
