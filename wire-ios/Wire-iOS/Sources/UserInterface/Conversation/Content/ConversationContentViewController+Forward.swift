@@ -151,10 +151,6 @@ extension ConversationContentViewController {
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
-    func showForwardFor(message: ZMConversationMessage?, from view: UIView) {
-        // TODO: [WPB-10239] delete sharing messages
-    }
-
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }

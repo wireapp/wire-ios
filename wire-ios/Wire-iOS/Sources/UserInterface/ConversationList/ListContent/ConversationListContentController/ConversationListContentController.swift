@@ -28,8 +28,7 @@ private let CellReuseIdConversation = "CellId"
 final class ConversationListContentController: UICollectionViewController {
 
     private let mainCoordinator: MainCoordinating
-    weak var presentedPopover: UIPopoverPresentationController?
-    weak var popoverPointToView: UIView?
+
     private(set) weak var zClientViewController: ZClientViewController?
 
     weak var contentDelegate: ConversationListContentDelegate?

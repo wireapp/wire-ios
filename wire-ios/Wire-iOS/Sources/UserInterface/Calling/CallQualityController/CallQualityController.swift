@@ -166,13 +166,14 @@ extension CallQualityController: WireCallCenterCallStateObserver {
 extension CallQualityController: CallQualityViewControllerDelegate {
 
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {
-        router?.dismissCallQualitySurvey(completion: { [weak self] in
+        router?.dismissCallQualitySurvey { [weak self] in
             guard
                 self?.callQualityRejectionRange.contains(score) ?? false,
                 let presentingViewController = self?.rootViewController
             else { return }
+
             self?.handleCallQualityRejection(presentingViewController: presentingViewController)
-        })
+        }
 
         CallQualityController.updateLastSurveyDate(Date())
         Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))

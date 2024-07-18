@@ -224,10 +224,6 @@ final class ConversationMessageActionController {
         perform(action: .save)
     }
 
-    @objc func forwardMessage() {
-        perform(action: .forward)
-    }
-
     @objc func deleteMessage() {
         perform(action: .delete)
     }

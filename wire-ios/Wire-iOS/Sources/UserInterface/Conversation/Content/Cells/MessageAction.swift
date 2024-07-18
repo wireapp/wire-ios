@@ -51,7 +51,6 @@ enum MessageAction: CaseIterable, Equatable {
     save,
     cancel,
     download,
-    forward,
     resend,
     showInConversation,
     sketchDraw,
@@ -84,8 +83,6 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.General.cancel
         case .download:
             return MessageActionLocale.download
-        case .forward:
-            return MessageActionLocale.forward
         case .resend:
             return MessageActionLocale.resend
         case .showInConversation:
@@ -166,8 +163,6 @@ enum MessageAction: CaseIterable, Equatable {
             imageName = "xmark"
         case .download:
             imageName = "chevron.down"
-        case .forward:
-            imageName = "square.and.arrow.up"
         case .resend:
             imageName = "arrow.clockwise"
         case .showInConversation:
@@ -208,8 +203,6 @@ enum MessageAction: CaseIterable, Equatable {
             return #selector(ConversationMessageActionController.cancelDownloadingMessage)
         case .download:
             return #selector(ConversationMessageActionController.downloadMessage)
-        case .forward:
-            return #selector(ConversationMessageActionController.forwardMessage)
         case .resend:
             return #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:

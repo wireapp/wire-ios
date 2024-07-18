@@ -129,9 +129,6 @@ extension ConversationContentViewController {
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
 
-        case .forward:
-            showForwardFor(message: message, from: view)
-
         case .showInConversation:
             scroll(to: message) { _ in
                 self.dataSource.highlight(message: message)

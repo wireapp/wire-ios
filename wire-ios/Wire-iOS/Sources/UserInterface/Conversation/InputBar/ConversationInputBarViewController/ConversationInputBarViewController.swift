@@ -37,10 +37,6 @@ final class ConversationInputBarViewController: UIViewController,
 
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
-    // MARK: PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
-
     typealias ButtonColors = SemanticColors.Button
 
     let conversation: InputBarConversationType

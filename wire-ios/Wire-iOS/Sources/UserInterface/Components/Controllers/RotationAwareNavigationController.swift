@@ -18,15 +18,10 @@
 
 import UIKit
 
-// TODO: remove conformance to PopoverPresenter
 final class RotationAwareNavigationController: UINavigationController, SpinnerCapable {
 
     // MARK: SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
-
-    // PopoverPresenter
-    weak var presentedPopover: UIPopoverPresentationController?
-    weak var popoverPointToView: UIView?
 
     override var shouldAutorotate: Bool {
         if let topController = self.viewControllers.last {

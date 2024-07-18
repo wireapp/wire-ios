@@ -18,8 +18,6 @@
 
 import UIKit
 
-// TODO: can this class be deleted?
-
 class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
 
     // MARK: SpinnerCapable
