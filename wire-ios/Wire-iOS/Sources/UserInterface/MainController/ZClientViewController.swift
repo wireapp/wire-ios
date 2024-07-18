@@ -436,9 +436,8 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    // MARK: - Getters/Setters
-
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
+
     private func reloadCurrentConversation() {
         guard let currentConversation else { return }
 
@@ -463,11 +462,12 @@ final class ZClientViewController: UIViewController {
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
+
         fatalError("TODO")
         DebugAlert.showSendLogsMessage(
             message: "A request loop is going on at \(path)",
             presentingViewController: self,
-            popoverPresentation: nil
+            popoverPresentation: .sourceView(.init(), .zero)
         )
     }
 

@@ -253,7 +253,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
     func testUploadFileActionSheet() throws {
         let sut = makeViewController()
 
-        let alert: UIAlertController = sut.createFileUploadActionSheet()
+        let alert: UIAlertController = sut.createFileUploadActionSheet(sender: .init())
 
         try verify(matching: alert)
     }

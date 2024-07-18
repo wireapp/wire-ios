@@ -42,7 +42,7 @@ final class DebugAlert {
     static func showSendLogsMessage(
         message: String,
         presentingViewController: UIViewController,
-        popoverPresentation: PopoverViewControllerPresentation?
+        popoverPresentation: PopoverViewControllerPresentation
     ) {
         let action1 = Action(text: "Send to Devs", type: .destructive) {
             DebugLogSender.sendLogsByEmail(
@@ -107,7 +107,7 @@ final class DebugAlert {
         logPaths: [URL],
         email: String,
         from controller: UIViewController,
-        popoverPresentation: PopoverViewControllerPresentation?
+        popoverPresentation: PopoverViewControllerPresentation
     ) {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
@@ -119,10 +119,11 @@ final class DebugAlert {
 
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             if let popoverPresentationController = activity.popoverPresentationController {
-                popoverPresentation?.configure(popoverPresentationController: popoverPresentationController)
+                popoverPresentation.configure(popoverPresentationController: popoverPresentationController)
             }
             controller.present(activity, animated: true)
         })
+
         controller.present(alert, animated: true)
     }
 }
@@ -146,7 +147,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         message: String,
         shareWithAVS: Bool,
         presentingViewController: UIViewController,
-        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation?
+        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation
     ) {
         guard self.senderInstance == nil else { return }
 

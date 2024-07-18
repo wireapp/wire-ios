@@ -215,6 +215,8 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     private let typeData: Bool
     private let typePass: Bool
 
+    private let fileMetaDataGenerator = FileMetaDataGenerator()
+
     init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
         self.typeURL = attachment.hasItemConformingToTypeIdentifier(UTType.url.identifier)
         self.typeData = attachment.hasItemConformingToTypeIdentifier(UTType.data.identifier)
@@ -283,7 +285,11 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                 }
 
                 // Generate preview
-                FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: name ?? url.lastPathComponent) { [weak self] metadata in
+                self?.fileMetaDataGenerator.metadataForFileAtURL(
+                    url,
+                    UTI: url.UTI(),
+                    name: name ?? url.lastPathComponent
+                ) { [weak self] metadata in
                     self?.metadata = metadata
                     completion()
                 }

@@ -96,7 +96,7 @@ extension ZMMessage: Shareable {
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
+            FileMetaDataGenerator.shared.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
                 ZMUserSession.shared()?.perform {
                     conversations.forEachNonEphemeral {
                         do {
@@ -134,18 +134,6 @@ extension ZMConversationMessage {
     }
 }
 
-// swiftlint:disable:next todo_requires_jira_link
-extension ConversationList { // TODO: mv to DM
-
-    func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        items.filter { conversation in
-            (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
-                conversation.isSelfAnActiveMember &&
-                !(conversation === excluding)
-        }
-    }
-}
-
 // MARK: - popover apperance update
 
 extension ConversationContentViewController {
@@ -167,43 +155,7 @@ extension ConversationContentViewController {
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
     func showForwardFor(message: ZMConversationMessage?, from view: UIView) {
-        guard let userSession = ZMUserSession.shared(), let message else { return }
-
-        fatalError("TODO")
-
-        self.view.window?.endEditing(true)
-
-        let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
-            .shareableConversations(excluding: message.conversationLike)
-
-        let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
-            shareable: message as! ZMMessage,
-            destinations: conversations,
-            showPreview: traitCollection.horizontalSizeClass != .regular
-        )
-
-        let keyboardAvoiding = KeyboardAvoidingViewController(viewController: shareViewController)
-        keyboardAvoiding.disabledWhenInsidePopover = true
-        keyboardAvoiding.preferredContentSize = CGSize.IPadPopover.preferredContentSize
-        keyboardAvoiding.modalPresentationCapturesStatusBarAppearance = true
-
-        if let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
-            keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: self)
-        }
-
-        if let popoverPresentationController = keyboardAvoiding.popoverPresentationController {
-            popoverPresentationController.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        }
-
-        keyboardAvoiding.presentationController?.delegate = self
-
-        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) in
-            weak var presentingViewController = shareController.presentingViewController
-
-            presentingViewController?.dismiss(animated: true)
-        }
-
-        present(keyboardAvoiding, animated: true)
+        // TODO: [WPB-10239] delete everything related forwarading/sharing
     }
 
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
