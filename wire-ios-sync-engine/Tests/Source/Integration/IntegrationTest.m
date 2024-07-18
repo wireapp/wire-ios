@@ -40,7 +40,9 @@
     self.currentUserIdentifier = [NSUUID createUUID];
     
     [self enableBackendInfoMocking];
-    [self setBackendInfoAPIVersion:APIVersionV0];
+    [self setBackendInfoAPIVersion: APIVersionV0];
+    [self setBackendInfoDomain: @"wire.com"];
+    [self setBackendInfoIsFederationEnabled: YES];
 
     self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.currentUserIdentifier
                                                             sharedUserDefaults:self.sharedUserDefaults];

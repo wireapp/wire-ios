@@ -32,6 +32,14 @@ extension IntegrationTest {
         BackendInfo.apiVersion = apiVersion
     }
 
+    func setBackendInfoDomain(_ domain: String?) {
+        BackendInfo.domain = domain
+    }
+
+    func setBackendInfoIsFederationEnabled(_ isEnabled: Bool) {
+        BackendInfo.isFederationEnabled = isEnabled
+    }
+
     func setBackendInfoAPIVersionNil() {
         BackendInfo.apiVersion = nil
     }
