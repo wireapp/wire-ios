@@ -44,6 +44,7 @@
 		EE57A7052C2997090096F242 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE57A7042C2997090096F242 /* WireAPI */; };
 		EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */; };
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
+		EE7AD9052C49359D00CBC969 /* ConversationRenameEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7AD9032C49357300CBC969 /* ConversationRenameEventProcessorTests.swift */; };
 		EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */; };
 		EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */; };
 		EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */; };
@@ -138,6 +139,7 @@
 		EE57A7022C2994420096F242 /* UpdateEventsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryTests.swift; sourceTree = "<group>"; };
 		EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorError.swift; sourceTree = "<group>"; };
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
+		EE7AD9032C49357300CBC969 /* ConversationRenameEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenameEventProcessorTests.swift; sourceTree = "<group>"; };
 		EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCodeUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateEventProcessor.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				EE0E117C2C2C4076004BBD29 /* Helpers */,
 				EECC35AB2C2EE58200679448 /* Synchronization */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
+				EE7AD9012C49354700CBC969 /* Event Processing */,
 				017F67992C20801800B6E02D /* Repositories */,
 			);
 			path = WireDomain;
@@ -375,6 +378,22 @@
 				EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */,
 			);
 			path = "Event Decryption";
+			sourceTree = "<group>";
+		};
+		EE7AD9012C49354700CBC969 /* Event Processing */ = {
+			isa = PBXGroup;
+			children = (
+				EE7AD9022C49355F00CBC969 /* ConversationEventProcessor */,
+			);
+			path = "Event Processing";
+			sourceTree = "<group>";
+		};
+		EE7AD9022C49355F00CBC969 /* ConversationEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EE7AD9032C49357300CBC969 /* ConversationRenameEventProcessorTests.swift */,
+			);
+			path = ConversationEventProcessor;
 			sourceTree = "<group>";
 		};
 		EEAD09F02C46602300CC8658 /* ConversationEventProcessor */ = {
@@ -733,6 +752,7 @@
 				EECC35AE2C2EE5D600679448 /* SyncManagerTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
+				EE7AD9052C49359D00CBC969 /* ConversationRenameEventProcessorTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
