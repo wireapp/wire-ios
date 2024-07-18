@@ -25,7 +25,7 @@ import WireSyncEngine
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
 
-final class ConversationListContentController: UICollectionViewController, PopoverPresenter {
+final class ConversationListContentController: UICollectionViewController {
 
     private let mainCoordinator: MainCoordinating
     weak var presentedPopover: UIPopoverPresentationController?

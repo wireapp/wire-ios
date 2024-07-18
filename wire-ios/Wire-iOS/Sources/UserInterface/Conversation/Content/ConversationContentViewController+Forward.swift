@@ -30,13 +30,12 @@ extension ZMConversation: ShareDestination {
         }
         return selfUser.hasTeam &&
             self.conversationType == .oneOnOne &&
-            self.localParticipants.first {
-                $0.isGuest(in: self) } != nil
+            self.localParticipants.first { $0.isGuest(in: self) } != nil
     }
-
 }
 
 extension ShareDestination where Self: ConversationAvatarViewConversation {
+
     var avatarView: UIView? {
         let avatarView = ConversationAvatarView()
         avatarView.configure(context: .conversation(conversation: self))
@@ -147,18 +146,16 @@ extension ConversationContentViewController {
            let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<ZMConversation, ZMMessage> {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
-
-        updatePopoverSourceRect()
     }
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
     func showForwardFor(message: ZMConversationMessage?, from view: UIView) {
-        // TODO: [WPB-10239] delete everything related forwarading/sharing
+        // TODO: [WPB-10239] delete sharing messages
     }
 
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
+        traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }

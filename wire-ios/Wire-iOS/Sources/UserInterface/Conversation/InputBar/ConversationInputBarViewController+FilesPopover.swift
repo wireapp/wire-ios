@@ -29,19 +29,6 @@ extension ConversationInputBarViewController: UIDocumentPickerDelegate {
 
 extension ConversationInputBarViewController {
 
-    func configPopover(docController: UIDocumentPickerViewController,
-                       sourceView: UIView,
-                       delegate: UIPopoverPresentationControllerDelegate,
-                       pointToView: UIView) {
-
-        guard let popover = docController.popoverPresentationController else { return }
-
-        popover.delegate = delegate
-        popover.config(from: self, pointToView: pointToView, sourceView: sourceView)
-
-        popover.permittedArrowDirections = .down
-    }
-
     func createFileUploadActionSheet(sender: UIButton) -> UIAlertController {
 
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)

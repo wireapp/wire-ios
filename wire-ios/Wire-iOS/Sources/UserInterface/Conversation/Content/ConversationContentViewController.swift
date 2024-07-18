@@ -26,7 +26,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
-final class ConversationContentViewController: UIViewController, PopoverPresenter, SpinnerCapable {
+final class ConversationContentViewController: UIViewController, SpinnerCapable {
 
     // MARK: PopoverPresenter
 
@@ -288,22 +288,10 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         super.viewDidLayoutSubviews()
 
         scrollToFirstUnreadMessageIfNeeded()
-        updatePopoverSourceRect()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
-
-        guard let coordinator else { return }
-
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: nil) { _ in
-            self.updatePopoverSourceRect()
-        }
     }
 
     func setupMentionsResultsView() {

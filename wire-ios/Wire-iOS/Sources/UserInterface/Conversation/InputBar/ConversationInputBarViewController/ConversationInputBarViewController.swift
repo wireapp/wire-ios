@@ -33,8 +33,7 @@ enum ConversationInputBarViewControllerMode {
 }
 
 final class ConversationInputBarViewController: UIViewController,
-                                                UIPopoverPresentationControllerDelegate,
-                                                PopoverPresenter {
+                                                UIPopoverPresentationControllerDelegate {
 
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
@@ -456,7 +455,6 @@ final class ConversationInputBarViewController: UIViewController,
 
         coordinator.animate(alongsideTransition: nil) { _ in
             self.inRotation = false
-            self.updatePopoverSourceRect()
         }
     }
 
@@ -471,8 +469,6 @@ final class ConversationInputBarViewController: UIViewController,
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
         guard !inRotation else { return }
-
-        updatePopoverSourceRect()
     }
 
     // MARK: - setup
