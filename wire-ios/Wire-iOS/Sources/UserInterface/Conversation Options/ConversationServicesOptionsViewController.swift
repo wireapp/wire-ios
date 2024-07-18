@@ -91,23 +91,30 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     // MARK: – ConversationOptionsViewModelDelegate
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel,
-                   didUpdateState state: ConversationServicesOptionsViewModel.State) {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didUpdateState state: ConversationServicesOptionsViewModel.State
+    ) {
         tableView.reloadData()
-
         (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
     }
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, didReceiveError error: Error) {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didReceiveError error: Error
+    ) {
         present(UIAlertController.checkYourConnection(), animated: false)
     }
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, sourceView: UIView? = nil, confirmRemovingServices completion: @escaping (Bool) -> Void) -> UIAlertController? {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation,
+        confirmRemovingServices completion: @escaping (Bool) -> Void
+    ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingServices(completion)
-        alertController.configPopover(
-            pointToView: sourceView ?? view,
-            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-        )
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            fallbackActivityPopoverPresentation.configure(popoverPresentationController: popoverPresentationController)
+        }
         present(alertController, animated: true)
 
         return alertController

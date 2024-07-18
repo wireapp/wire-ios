@@ -46,7 +46,7 @@ enum CellConfiguration {
         color: UIColor?,
         isEnabled: Bool,
         get: () -> Bool,
-        set: (Bool, UIView?) -> Void)
+        set: (Bool, UIView) -> Void)
 
     var cellType: CellConfigurationConfigurable.Type {
         switch self {
@@ -98,5 +98,4 @@ enum CellConfiguration {
             tableView.register($0, forCellReuseIdentifier: $0.reuseIdentifier)
         }
     }
-
 }
