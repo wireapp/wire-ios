@@ -66,7 +66,7 @@ public final class ZMSDispatchGroup: NSObject {
     @discardableResult
     public func wait(forInterval timeout: TimeInterval) -> Int {
         let nanoseconds = Int(timeout * 1_000_000_000)
-        return wait(withTimeout: .now() + .nanoseconds(nanoseconds))
+        return wait(deltaFromNow: nanoseconds)
     }
 
     @objc(asyncOnQueue:block:)
