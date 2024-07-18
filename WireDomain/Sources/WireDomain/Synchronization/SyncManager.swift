@@ -150,6 +150,8 @@ final class SyncManager: SyncManagerProtocol {
                 break
             }
 
+            WireLogger.sync.debug("fetched \(envelopes.count) stored envelopes for processing")
+
             for event in envelopes.flatMap(\.events) {
                 do {
                     try await updateEventProcessor.processEvent(event)

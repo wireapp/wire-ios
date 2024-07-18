@@ -111,6 +111,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Pull pending events
 
     func pullPendingEvents() async throws {
+        WireLogger.sync.debug("pulling pending events")
         // We want all events since this event.
         guard let lastEventID = lastEventIDRepository.fetchLastEventID() else {
             throw UpdateEventsRepositoryError.lastEventIDMissing
@@ -124,13 +125,22 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             selfClientID: selfClientID,
             sinceEventID: lastEventID
         ) {
+            let batchCount = envelopes.count
+            var count = 0
+            WireLogger.sync.debug("received batch of \(batchCount) envelopes")
+
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
 
             for envelope in envelopes {
+                count += 1
+                WireLogger.sync.debug("decrypting envelope (\(count) of \(batchCount)")
+
                 // We can only decrypt once so store the decrypted events for later retrieval.
                 var decryptedEnvelope = envelope
                 decryptedEnvelope.events = try await updateEventDecryptor.decryptEvents(in: envelope)
+
+                WireLogger.sync.debug("persisting envelope (\(count) of \(batchCount)")
 
                 try await persistEventEnvelope(
                     decryptedEnvelope,
@@ -142,7 +152,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 if !envelope.isTransient {
                     // Update the last event id so we don't refetch the same events.
                     // Transient events aren't stored in the backend's event stream.
-                    lastEventIDRepository.storeLastEventID(envelope.id)
+                    storeLastEventEnvelopeID(envelope.id)
                 }
             }
         }
@@ -163,11 +173,6 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     ) async throws {
         try await eventContext.perform { [eventContext, encoder] in
             let data = try encoder.encode(eventEnvelope)
-
-            if let string = String(data: data, encoding: .utf8) {
-                print("persisting event: \(string)")
-            }
-
             let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
             storedEventEnvelope.data = data
             storedEventEnvelope.sortIndex = index
@@ -214,6 +219,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 let storedEventEnvelopes = try eventContext.fetch(request)
+                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
                 storedEventEnvelopes.forEach(eventContext.delete)
                 try eventContext.save()
             } catch {
@@ -227,11 +233,12 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope> {
         try await pushChannel.open().compactMap {
             do {
+                WireLogger.sync.debug("decrypting live event")
                 var envelope = $0
                 envelope.events = try await self.updateEventDecryptor.decryptEvents(in: envelope)
                 return envelope
             } catch {
-                // TODO: log
+                WireLogger.sync.error("failed to decrypt live event, dropping: \(error)")
                 return nil
             }
         }.toStream()
@@ -242,6 +249,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {
+        WireLogger.sync.debug("storing last event id")
         lastEventIDRepository.storeLastEventID(id)
     }
 
