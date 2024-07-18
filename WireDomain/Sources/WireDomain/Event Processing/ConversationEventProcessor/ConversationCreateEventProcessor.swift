@@ -16,18 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
-#import <WireUtilities/WireUtilities-Swift.h>
-#import "NSManagedObjectContext+WireUtilities.h"
+import WireAPI
 
-@implementation NSManagedObjectContext (executeFetchRequestOrAssert)
+/// Process conversation create events.
 
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
-{
-    NSError *error;
-    NSArray *result = [self executeFetchRequest:request error:&error];
-    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
-    return result;
+protocol ConversationCreateEventProcessorProtocol {
+
+    /// Process a conversation create event.
+    ///
+    /// - Parameter event: A conversation create event.
+
+    func processEvent(_ event: ConversationCreateEvent) async throws
+
 }
 
-@end
+struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
+
+    func processEvent(_: ConversationCreateEvent) async throws {
+        // TODO: [WPB-10166]
+        assertionFailure("not implemented yet")
+    }
+
+}

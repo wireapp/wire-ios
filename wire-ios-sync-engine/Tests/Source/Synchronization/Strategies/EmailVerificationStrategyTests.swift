@@ -128,38 +128,38 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
     // MARK: - error tests for verification
 
     func testThatItNotifiesStatusAfterErrorToEmailVerify_BlacklistEmail() {
-        checkSendingCodeResponseError(with: .blacklistedEmail, errorLabel: "blacklisted-email", httpStatus: 403)
+        checkSendingCodeResponseError(code: .blacklistedEmail, errorLabel: "blacklisted-email", httpStatus: 403)
     }
 
     func testThatItNotifiesStatusAfterErrorToEmailVerify_EmailExists() {
-        checkSendingCodeResponseError(with: .emailIsAlreadyRegistered, errorLabel: "key-exists", httpStatus: 409)
+        checkSendingCodeResponseError(code: .emailIsAlreadyRegistered, errorLabel: "key-exists", httpStatus: 409)
     }
 
     func testThatItNotifiesStatusAfterErrorToEmailVerify_InvalidEmail() {
-        checkSendingCodeResponseError(with: .invalidEmail, errorLabel: "invalid-email", httpStatus: 400)
+        checkSendingCodeResponseError(code: .invalidEmail, errorLabel: "invalid-email", httpStatus: 400)
     }
 
     func testThatItNotifiesStatusAfterErrorToEmailVerify_OtherError() {
-        checkSendingCodeResponseError(with: .unknownError, errorLabel: "not-clear-what-happened", httpStatus: 414)
+        checkSendingCodeResponseError(code: .unknownError, errorLabel: "not-clear-what-happened", httpStatus: 414)
     }
 
     func testThatItNotifiesStatusAfterErrorToEmailVerify_DomainBlocked() {
-        checkSendingCodeResponseError(with: .domainBlocked, errorLabel: "domain-blocked-for-registration", httpStatus: 451)
+        checkSendingCodeResponseError(code: .domainBlocked, errorLabel: "domain-blocked-for-registration", httpStatus: 451)
     }
 
     // MARK: - error tests for activation
 
     func testThatItNotifiesStatusAfterErrorToEmailActivate_InvalidCode() {
-        checkActivationResponseError(with: .invalidActivationCode, errorLabel: "invalid-code", httpStatus: 404)
+        checkActivationResponseError(code: .invalidActivationCode, errorLabel: "invalid-code", httpStatus: 404)
     }
 
     func testThatItNotifiesStatusAfterErrorToEmailActivation_OtherError() {
-        checkActivationResponseError(with: .unknownError, errorLabel: "not-clear-what-happened", httpStatus: 414)
+        checkActivationResponseError(code: .unknownError, errorLabel: "not-clear-what-happened", httpStatus: 414)
     }
 
     // MARK: - Helpers
 
-    func checkSendingCodeResponseError(with code: ZMUserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
+    func checkSendingCodeResponseError(code: UserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
         // given
         let email = "john@smith.com"
         let phase: RegistrationPhase = .sendActivationCode(unverifiedEmail: email)
@@ -168,7 +168,7 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
         checkResponseError(with: phase, code: code, errorLabel: errorLabel, httpStatus: httpStatus)
     }
 
-    func checkActivationResponseError(with code: ZMUserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
+    func checkActivationResponseError(code: UserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
         // given
         let email = "john@smith.com"
         let activationCode = "123456"

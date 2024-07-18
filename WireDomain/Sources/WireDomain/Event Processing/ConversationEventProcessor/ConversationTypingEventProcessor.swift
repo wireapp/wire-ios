@@ -16,16 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import CoreData;
+import WireAPI
 
-NS_ASSUME_NONNULL_BEGIN
+/// Process conversation typing events.
 
-@interface NSManagedObjectContext (executeFetchRequestOrAssert)
+protocol ConversationTypingEventProcessorProtocol {
 
-/// Executes a fetch request and asserts in case of error
-/// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
+    /// Process a conversation typing event.
+    ///
+    /// - Parameter event: A conversation typing event.
 
-@end
+    func processEvent(_ event: ConversationTypingEvent) async throws
 
-NS_ASSUME_NONNULL_END
+}
+
+struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
+
+    func processEvent(_: ConversationTypingEvent) async throws {
+        // TODO: [WPB-10178]
+        assertionFailure("not implemented yet")
+    }
+
+}

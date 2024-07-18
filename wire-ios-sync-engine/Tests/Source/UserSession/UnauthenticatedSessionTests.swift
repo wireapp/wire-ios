@@ -162,7 +162,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(code: .needsCredentials, userInfo: nil).localizedDescription)
+        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(userSessionErrorCode: .needsCredentials, userInfo: nil).localizedDescription)
     }
 
     func testThatDuringLoginWithEmailItThrowsErrorWhenOffline() {
@@ -174,18 +174,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription,
-                       NSError(code: .networkError, userInfo: nil).localizedDescription)
-    }
-
-    func testThatDuringLoginWithPhoneNumberItThrowsErrorWhenOffline() {
-        // given
-        reachability.mayBeReachable = false
-        // when
-        sut.login(with: UserPhoneCredentials.credentials(phoneNumber: "1234567890", verificationCode: "123"))
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        // then
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(code: .networkError, userInfo: nil).localizedDescription)
+                       NSError(userSessionErrorCode: .networkError, userInfo: nil).localizedDescription)
     }
 
     func testThatItAsksDelegateIfAccountAlreadyExists() throws {
