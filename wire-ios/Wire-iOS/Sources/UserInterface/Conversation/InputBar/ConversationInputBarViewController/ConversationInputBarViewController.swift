@@ -256,7 +256,18 @@ final class ConversationInputBarViewController: UIViewController,
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 
+        if shouldExcludeLocationButton {
+            if let index = buttonsArray.firstIndex(of: locationButton) {
+                buttonsArray.remove(at: index)
+            }
+        }
+
         return buttonsArray
+    }
+
+    /// Remove locationButton if security flag does not allow it
+    private var shouldExcludeLocationButton: Bool {
+        !SecurityFlags.locationSharing.isEnabled
     }
 
     var mode: ConversationInputBarViewControllerMode = .textInput {

@@ -88,6 +88,8 @@
 	<string>${DEVELOPER_MODE_ENABLED}</string>
 	<key>FileSharingEnabled</key>
 	<string>${FILE_SHARING_ENABLED}</string>
+	<key>LocationSharingEnabled</key>
+	<string>${LOCATION_SHARING_ENABLED}</string>
 	<key>ForceCBREnabled</key>
 	<string>${FORCE_CBR_ENABLED}</string>
 	<key>ForceCallKitDisabled</key>
