@@ -17,16 +17,18 @@
 //
 
 import UIKit
+import WireSystem
 
 extension UIViewController {
-    func presentInviteActivityViewController(with sourceView: UIView) {
+
+    func presentInviteActivityViewController(popoverViewControllerPresentation: PopoverViewControllerPresentation?) {
+
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
-
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
-
-        activityController.configPopover(pointToView: sourceView)
-
+        if let popoverPresentationController = activityController.popoverPresentationController {
+            popoverViewControllerPresentation?.configure(popoverPresentationController: popoverPresentationController)
+        }
         present(activityController, animated: true)
     }
 }

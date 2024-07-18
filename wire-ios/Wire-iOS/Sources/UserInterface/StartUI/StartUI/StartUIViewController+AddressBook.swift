@@ -41,8 +41,20 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
     }
 
     func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {
+        guard let tabBarController = presentingViewController as? UITabBarController else {
+            return assertionFailure("wrong assumption!")
+        }
         dismiss(animated: true) {
-            UIApplication.shared.topmostViewController()?.presentInviteActivityViewController(with: self.quickActionsBar)
+            // point to the contacts tab item
+            var tabItemFrame = tabBarController.tabBar.bounds
+            tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
+            tabItemFrame.origin.x = CGFloat(MainTabBarControllerTab.contacts.rawValue) * tabItemFrame.size.width
+            tabBarController.presentInviteActivityViewController(
+                popoverViewControllerPresentation: .sourceView(
+                    sourceView: tabBarController.tabBar,
+                    sourceRect: tabItemFrame
+                )
+            )
         }
     }
 }
