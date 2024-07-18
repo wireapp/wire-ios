@@ -637,7 +637,6 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         }
 
         let message = self.message(for: indexPath)
-
         perform(.present, for: message, source: collectionView.cellForItem(at: indexPath)!)
     }
 

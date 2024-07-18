@@ -99,7 +99,7 @@ final class DeletionDialogPresenter: NSObject {
             }
             popoverPresentationController.sourceView = sourceView.superview
             popoverPresentationController.sourceRect = sourceView.frame.insetBy(dx: -4, dy: -4)
-            // TODO: since the message is split into different cell views the arrow positions should be refined
+            // TODO: since a message is split into different cell views the arrow positions should be refined
         }
 
         return alert
