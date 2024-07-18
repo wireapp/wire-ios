@@ -64,10 +64,12 @@ final class DeletionDialogPresenter: NSObject {
 
     private weak var sourceViewController: UIViewController?
 
-    func deleteAlert(message: ZMConversationMessage,
-                     sourceView: UIView?,
-                     userSession: UserSession,
-                     completion: ResultHandler? = nil) -> UIAlertController {
+    func deleteAlert(
+        message: ZMConversationMessage,
+        sourceView: UIView?,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool) -> Void
+    ) -> UIAlertController {
         let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, alert in
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
@@ -80,14 +82,15 @@ final class DeletionDialogPresenter: NSObject {
                     case .everywhere:
                         ZMMessage.deleteForEveryone(message)
                     }
-                }, completionHandler: {
-                    completion?(true)
-                })
+                }) {
+                    completion(true)
+                }
             } else {
-                completion?(false)
+                completion(false)
             }
 
-            alert.dismiss(animated: true, completion: nil)
+// TODO: fix
+            // alert.dismiss(animated: true, completion: nil)
         }
 
         if let presentationController = alert.popoverPresentationController,
@@ -118,13 +121,20 @@ final class DeletionDialogPresenter: NSObject {
      - parameter source: The source view used for a potential popover presentation of the dialog.
      - parameter completion: A completion closure which will be invoked with `true` if a deletion occured and `false` otherwise.
      */
-    func presentDeletionAlertController(forMessage message: ZMConversationMessage, source: UIView?, userSession: UserSession, completion: ResultHandler?) {
+    func presentDeletionAlertController(
+        forMessage message: ZMConversationMessage,
+        source: UIView?,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool) -> Void
+    ) {
         guard !message.hasBeenDeleted else { return }
 
-        let alert = deleteAlert(message: message,
-                                sourceView: source,
-                                userSession: userSession,
-                                completion: completion)
+        let alert = deleteAlert(
+            message: message,
+            sourceView: source,
+            userSession: userSession,
+            completion: completion
+        )
         sourceViewController?.present(alert, animated: true)
     }
 }

@@ -169,6 +169,8 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
     func showForwardFor(message: ZMConversationMessage?, from view: UIView) {
         guard let userSession = ZMUserSession.shared(), let message else { return }
 
+        fatalError("TODO")
+
         self.view.window?.endEditing(true)
 
         let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
