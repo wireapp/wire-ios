@@ -200,21 +200,9 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
-
-        // Set the navigation bar title
-        navigationItem.title = CreateGroupName.title.capitalized
-
-        // Set the navigation bar title color and font
-        let titleTextAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: SemanticColors.Label.textDefault,
-            .font: UIFont.font(for: .h3)
-        ]
-        navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
-
-        // Configure navigation bar appearance
-        navigationController?.navigationBar.barTintColor = SemanticColors.View.backgroundDefault
+        setupNavigationBarTitle(CreateGroupName.title.capitalized)
         navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.tintColor = UIColor.accent()
+        self.navigationController?.navigationBar.tintColor = UIColor.accent()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = navigationController?.closeItem()

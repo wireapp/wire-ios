@@ -58,20 +58,19 @@ final class SettingsTechnicalReportViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupNavigationTitle()
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        tableView.backgroundColor = UIColor.clear
         tableView.isScrollEnabled = false
         tableView.separatorColor = UIColor(white: 1, alpha: 0.1)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
     }
 
     func sendReport(sourceView: UIView? = nil) {
         presentMailComposer(withLogs: includedVoiceLogCell.accessoryType == .checkmark,
                             sourceView: sourceView)
-    }
-
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title.capitalized)
     }
 
     // MARK: - TableView Delegates
@@ -156,7 +155,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: DebugLogSender.debugLogs, email: mailRecipient, from: self, sourceView: sourceView)
+            DebugAlert.displayFallbackActivityController(logPaths: DebugLogSender.existingDebugLogs, email: mailRecipient, from: self, sourceView: sourceView)
             return
         }
 

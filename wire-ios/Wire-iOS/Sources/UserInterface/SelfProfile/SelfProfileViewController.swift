@@ -125,11 +125,15 @@ final class SelfProfileViewController: UIViewController {
         settingsController.tableView.isScrollEnabled = false
 
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        configureAccountTitle()
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureAccountTitle()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -148,7 +152,7 @@ final class SelfProfileViewController: UIViewController {
             navigationItem.titleView = accountSelectorView
             self.accountSelectorView = accountSelectorView
         } else {
-            navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.account.capitalized)
+            setupNavigationBarTitle(L10n.Localizable.Self.account.capitalized)
         }
     }
 

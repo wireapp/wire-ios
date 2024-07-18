@@ -68,6 +68,16 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Init
 
+    private var navigationBarTitle: String? {
+        if let title = userSession.selfUser.membership?.team?.name {
+            return title
+        } else if let title = userSession.selfUser.name {
+            return title
+        }
+
+        return nil
+    }
+
     /// init method for injecting mock addressBookHelper
     ///
     /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
@@ -105,8 +115,14 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBar()
+
+        if let title = navigationBarTitle {
+            setupNavigationBarTitle(title)
+        }
+
         setupNavigationBarButtonItems()
+        navigationController?.navigationBar.barTintColor = backgroundColor
+        navigationController?.navigationBar.isTranslucent = false
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -126,12 +142,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.mode = .list
         searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
-
-        if let title = userSession.selfUser.membership?.team?.name {
-            navigationItem.setDynamicFontLabel(title: title)
-        } else if let title = userSession.selfUser.name {
-            navigationItem.setDynamicFontLabel(title: title)
-        }
 
         setupSearchController()
 
