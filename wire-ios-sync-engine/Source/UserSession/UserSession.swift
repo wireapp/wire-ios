@@ -258,10 +258,6 @@ public protocol UserSession: AnyObject {
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 
-    var fetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol { get }
-
-    var shareFileUseCase: ShareFileUseCaseProtocol { get }
-
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol

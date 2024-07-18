@@ -312,14 +312,6 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    var fetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {
-        MockFetchShareableConversationsUseCaseProtocol()
-    }
-
-    var shareFileUseCase: ShareFileUseCaseProtocol {
-        MockShareFileUseCaseProtocol()
-    }
-
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         MockCreateConversationGuestLinkUseCaseProtocol()
     }

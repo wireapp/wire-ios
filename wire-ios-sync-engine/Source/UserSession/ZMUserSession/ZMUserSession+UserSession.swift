@@ -291,14 +291,6 @@ extension ZMUserSession: UserSession {
 
     // MARK: Use Cases
 
-    public var fetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {
-        FetchShareableConversationsUseCase(contextProvider: self)
-    }
-
-    public var shareFileUseCase: ShareFileUseCaseProtocol {
-        ShareFileUseCase(contextProvider: self)
-    }
-
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         IsUserE2EICertifiedUseCase(
             schedule: .immediate,
