@@ -114,7 +114,7 @@
     [super setUp];
 
     if (_dispatchGroup == nil) {
-        _dispatchGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTBaseTest"];
+        _dispatchGroup = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMTBaseTest"];
     }
 
     self.expectations = nil;

@@ -151,7 +151,7 @@
     
     // Add the context group to all operations:
     ZMSDispatchGroup *group = self.managedObjectContext.dispatchGroup;
-    ZMSDispatchGroup *completionGroup = [ZMSDispatchGroup groupWithLabel:@"ZMAssetPreProcessingTracker"];
+    ZMSDispatchGroup *completionGroup = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMAssetPreProcessingTracker"];
     for (NSOperation *op in operations) {
         [group enter];
         [completionGroup enter];

@@ -16,18 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
-#import <WireUtilities/WireUtilities-Swift.h>
-#import "NSManagedObjectContext+WireUtilities.h"
+@import CoreData;
 
-@implementation NSManagedObjectContext (executeFetchRequestOrAssert)
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
-{
-    NSError *error;
-    NSArray *result = [self executeFetchRequest:request error:&error];
-    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
-    return result;
-}
+@interface NSManagedObjectContext (executeFetchRequestOrAssert_DataModel)
+
+- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireMockTransport
 import XCTest
 
-class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
+@testable import WireMockTransport
+
+final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
 
     func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, team: MockTeam, data: [String: String] = [:], file: StaticString = #file, line: UInt = #line) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
@@ -53,10 +53,8 @@ class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
             XCTAssertEqual(dataValue, value, "Event payload data for \"\(key)\" does not match, expected \"\(String(describing: value))\", got \"\(String(describing: dataValue))\"", file: file, line: line)
         }
     }
-}
 
-// MARK: - Team events
-extension MockTransportSessionTeamEventsTests {
+    // MARK: - Team events
 
     func testThatItCreatesEventsForDeletedTeams() {
         // Given
@@ -84,10 +82,7 @@ extension MockTransportSessionTeamEventsTests {
         check(event: events.first, hasType: .teamDelete, teamIdentifier: teamIdentifier)
     }
 
-}
-
-// MARK: - Members events
-extension MockTransportSessionTeamEventsTests {
+    // MARK: - Members events
 
     func testThatItCreatesEventWhenMemberIsRemovedFromTeam() {
         // Given
@@ -146,10 +141,9 @@ extension MockTransportSessionTeamEventsTests {
         ]
         check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
-}
 
-// MARK: - Conversation events
-extension MockTransportSessionTeamEventsTests {
+    // MARK: - Conversation events
+
     func testThatItCreatesEventWhenConversationIsCreatedInTeam() {
         // Given
         var team: MockTeam!
@@ -251,11 +245,8 @@ extension MockTransportSessionTeamEventsTests {
         XCTAssertEqual(events.count, 1)
 
     }
-}
 
-// MARK: - Legal Hold Events
-
-extension MockTransportSessionTeamEventsTests {
+    // MARK: - Legal Hold Events
 
     func testThatItDoesSendEventWhenRequestingLegalHoldOnUser() {
         // GIVEN

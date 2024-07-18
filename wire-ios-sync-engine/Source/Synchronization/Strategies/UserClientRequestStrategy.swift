@@ -324,7 +324,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             } else if clientUpdateStatus?.currentPhase == .waitingForPrekeys {
                 clientUpdateStatus?.willGeneratePrekeys()
                 let nextPrekeyIndex = UInt16(userClient.preKeysRangeMax) + 1
-                let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
+                let groups = managedObjectContext?.enterAllGroupsExceptSecondary() ?? []
                 Task {
                     do {
                         let prekeys = try await prekeyGenerator.generatePrekeys(startIndex: nextPrekeyIndex)
@@ -337,7 +337,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                         // swiftlint:enable todo_requires_jira_link
                         WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
-                    managedObjectContext?.leaveAllGroups(groups!)
+                    managedObjectContext?.leaveAllGroups(groups)
                 }
                 return false
             } else {
@@ -483,37 +483,35 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     private func received(clients: [[String: AnyObject]]) {
-        guard let moc = self.managedObjectContext else { return }
-        func createSelfUserClient(_ clientInfo: [String: AnyObject]) -> UserClient? {
-            let client = UserClient.createOrUpdateSelfUserClient(clientInfo, context: moc)
-            return client
-        }
+        guard let context = managedObjectContext else { return }
 
-        let clients = clients.compactMap(createSelfUserClient)
+        let clients = clients.compactMap { clientInfo in
+            UserClient.createOrUpdateSelfUserClient(clientInfo, context: context)
+        }
 
         // remove all clients that are not there, with the exception of the self client
         // in theory we should also remove the self client and log out, but this will happen
         // next time the user sends a message or when we will receive the "deleted" event
         // for that client
         let foundClientsIdentifier = Set(clients.compactMap { $0.remoteIdentifier })
-        let selfUser = ZMUser.selfUser(in: moc)
+        let selfUser = ZMUser.selfUser(in: context)
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients
         let deletedClients = otherClients.filter {
             return $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
         }
 
-        WaitingGroupTask(context: moc) {
+        WaitingGroupTask(context: context) {
             for deletedClient in deletedClients {
                 await deletedClient.deleteClientAndEndSession()
             }
-            await moc.perform {
-                moc.saveOrRollback()
+            await context.perform {
+                context.saveOrRollback()
                 self.clientUpdateStatus?.didFetchClients(clients)
             }
         }
 
-        moc.saveOrRollback()
+        context.saveOrRollback()
         clientUpdateStatus?.didFetchClients(clients)
     }
 

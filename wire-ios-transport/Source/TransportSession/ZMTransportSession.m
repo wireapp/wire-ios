@@ -117,7 +117,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
+    ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
 
     NSDictionary* proxyDictionary = [environment.proxy socks5SettingsWithProxyUsername:proxyUsername proxyPassword:proxyPassword];
 

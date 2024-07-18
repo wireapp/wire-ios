@@ -17,10 +17,10 @@
 //
 
 @import ObjectiveC;
-@import XCTest;
 @import WireSystem;
 @import WireTesting;
 @import WireUtilities;
+@import XCTest;
 
 @interface NSManagedObjectContext_WireUtilitiesTests : ZMTBaseTest
 
@@ -46,7 +46,7 @@
 - (void)testThatGroupIsProperlyAddedInDispatchGroups;
 {
     // given
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"TestingGroup"];
+    ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:@"TestingGroup"];
     [self.MOC addGroup:group];
     
     // when

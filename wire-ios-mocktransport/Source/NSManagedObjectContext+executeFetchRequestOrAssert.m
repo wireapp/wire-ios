@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+@import WireSystem;
 
-//! Project version number for ZMSystem.
-FOUNDATION_EXPORT double ZMSystemVersionNumber;
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
-//! Project version string for ZMSystem.
-FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
+@implementation NSManagedObjectContext (executeFetchRequestOrAssert_MockTransport)
 
-// In this header, you should import all the public headers of your framework using statements like #import <ZMSystem/PublicHeader.h>
+- (NSArray *)executeFetchRequestOrAssert_mt:(NSFetchRequest *)request;
+{
+     NSError *error;
+     NSArray *result = [self executeFetchRequest:request error:&error];
+     RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
+     return result;
+ }
 
-#import <WireSystem/ZMSAsserts.h>
-#import <WireSystem/ZMSDefines.h>
-#import <WireSystem/ZMSLogging.h>
+@end
