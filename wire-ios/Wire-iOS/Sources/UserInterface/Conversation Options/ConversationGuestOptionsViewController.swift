@@ -132,15 +132,20 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     // MARK: – ConversationOptionsViewModelDelegate
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel,
-                   didUpdateState state: ConversationGuestOptionsViewModel.State) {
+    func conversationGuestOptionsViewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        didUpdateState state: ConversationGuestOptionsViewModel.State
+    ) {
         tableView.reloadData()
 
         (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
 
     }
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error) {
+    func conversationGuestOptionsViewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        didReceiveError error: Error
+    ) {
         // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that explains why the user cannot use/create links to join the conversation.
 
         if let error = error as? WirelessLinkError,
@@ -151,7 +156,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         }
     }
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController? {
+    func conversationGuestOptionsViewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        sourceView: UIView,
+        confirmRemovingGuests completion: @escaping (Bool) -> Void
+    ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingGuests(completion)
         alertController.configPopover(
             pointToView: sourceView ?? view,
@@ -162,9 +171,9 @@ final class ConversationGuestOptionsViewController: UIViewController,
         return alertController
     }
 
-    func viewModel(
+    func conversationGuestOptionsViewModel(
         _ viewModel: ConversationGuestOptionsViewModel,
-        sourceView: UIView? = nil,
+        sourceView: UIView,
         presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
     ) {
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
@@ -178,7 +187,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         )
     }
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRevokingLink completion: @escaping (Bool) -> Void) {
+    func conversationGuestOptionsViewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        sourceView: UIView,
+        confirmRevokingLink completion: @escaping (Bool) -> Void
+    ) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
         present(alertController, animated: true)
 
@@ -188,7 +201,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         )
     }
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView? = nil) {
+    func conversationGuestOptionsViewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        wantsToShareMessage message: String,
+        sourceView: UIView
+    ) {
         let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
         present(activityController, animated: true)
 
@@ -198,7 +215,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         )
     }
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+    func conversationGuestOptionsViewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        presentCreateSecureGuestLink viewController: UIViewController,
+        animated: Bool
+    ) {
         present(viewController, animated: animated)
     }
 
@@ -225,8 +246,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)
+        let cell = tableView.cellForRow(at: indexPath)!
         viewModel.state.rows[indexPath.row].action?(cell)
     }
-
 }

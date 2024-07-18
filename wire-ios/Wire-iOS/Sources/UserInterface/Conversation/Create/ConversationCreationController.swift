@@ -493,7 +493,7 @@ extension ConversationCreationController {
 
         if let popoverPresentationController = alertController.popoverPresentationController {
             popoverPresentationController.sourceView = sender.superview!
-            popoverPresentationController.sourceRect = sender.frame
+            popoverPresentationController.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
         }
         present(alertController, animated: true)
     }

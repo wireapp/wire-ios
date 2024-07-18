@@ -143,8 +143,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)
+        let cell = tableView.cellForRow(at: indexPath)!
         viewModel.state.rows[indexPath.row].action?(cell)
     }
-
 }
