@@ -185,19 +185,16 @@ class SettingsCellDescriptorFactory {
     }
 
     func helpSection() -> SettingsCellDescriptorType {
-        // appendingLocaleParameter
         let supportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.supportWebsite, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URLs.shared.support)
         }, previewGenerator: .none)
 
-        // appendingLocaleParameter
         let contactButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.contactSupport, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URLs.shared.askSupportArticle)
         }, previewGenerator: .none)
 
         let helpSection = SettingsSectionDescriptor(cellDescriptors: [supportButton, contactButton])
 
-        // appendingLocaleParameter
         let reportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.reportAbuse, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URLs.shared.reportAbuse)
         }, previewGenerator: .none)
@@ -214,7 +211,6 @@ class SettingsCellDescriptorFactory {
 
     func aboutSection() -> SettingsCellDescriptorType {
 
-        // appendingLocaleParameter
         let legalButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Legal.title,
                                                                isDestructive: false,
                                                                presentationStyle: .modal,
@@ -238,7 +234,6 @@ class SettingsCellDescriptorFactory {
             header: nil,
             footer: "\n" + version + "\n" + copyrightInfo
         )
-// appendingLocaleParameter
         let websiteButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Website.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URLs.shared.website)
         }, previewGenerator: .none)

@@ -38,7 +38,6 @@ enum TeamSource: Int {
 
 extension URL {
 
-    // do we need this method?
     var appendingLocaleParameter: URL {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             return self
@@ -83,21 +82,6 @@ private extension BackendEnvironment {
     static func websiteLink(path: String) -> URL {
         shared.websiteURL.appendingPathComponent(path)
     }
-
-//    static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
-//        let languageCode = Locale.autoupdatingCurrent.languageCode
-//        let baseURL = shared.websiteURL
-//
-//        switch page {
-//        case .termsOfServices, .privacyPolicy:
-//            let pathComponent = (languageCode == "de") ? "datenschutz" : "legal"
-//            return baseURL.appendingPathComponent(pathComponent)
-//
-//        case .legal:
-//            let pathComponent = (languageCode == "de") ? "de/nutzungsbedingungen" : "legal"
-//            return baseURL.appendingPathComponent(pathComponent)
-//        }
-//    }
 
     static func accountsLink(path: String) -> URL {
         shared.accountsURL.appendingPathComponent(path)

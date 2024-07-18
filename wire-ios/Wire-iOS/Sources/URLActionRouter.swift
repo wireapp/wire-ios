@@ -317,7 +317,6 @@ private extension URLActionRouter {
 
         switch error {
         case URLActionError.conversationLinkIsDisabled:
-            // appendingLocaleParameter
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
                 let browserViewController = BrowserViewController(url: URLs.shared.guestLinksInfo)

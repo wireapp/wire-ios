@@ -26,7 +26,6 @@ extension UIAlertController {
         let alert = UIAlertController(title: L10n.Localizable.Registration.TermsOfUse.Terms.title,
                                       message: L10n.Localizable.Registration.TermsOfUse.Terms.message,
                                       preferredStyle: .alert)
-        // appendingLocaleParameter
         let viewAction = UIAlertAction(title: L10n.Localizable.Registration.TermsOfUse.Terms.view, style: .default) { [weak controller] _ in
 
             let webViewController: BrowserViewController
