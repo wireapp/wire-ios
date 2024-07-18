@@ -90,7 +90,7 @@ final class DeveloperOptionsController: UIViewController {
             alert.addTextField {(textField: UITextField!) in
                 textField.placeholder = "Please explain the problem"
             }
-            fatalError("TODOß")
+
             self.present(alert, animated: true, completion: nil)
         }
     }

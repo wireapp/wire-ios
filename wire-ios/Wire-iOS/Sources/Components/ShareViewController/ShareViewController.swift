@@ -79,10 +79,12 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         self.allowsMultipleSelection = allowsMultipleSelection
         super.init(nibName: nil, bundle: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(notification:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
         createViews()
         createConstraints()
     }
