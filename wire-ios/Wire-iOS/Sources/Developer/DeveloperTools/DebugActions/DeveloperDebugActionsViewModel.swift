@@ -50,7 +50,24 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Send Logs
 
     private func sendDebugLogs() {
-        DebugLogSender.sendLogsByEmail(message: "Send logs")
+
+        var presentingViewController = AppDelegate.shared.window!.rootViewController!
+        while let presentedViewController = presentingViewController.presentedViewController {
+            presentingViewController = presentedViewController
+        }
+
+        DebugLogSender.sendLogsByEmail(
+            message: "Send logs",
+            shareWithAVS: false,
+            presentingViewController: presentingViewController,
+            fallbackActivityPopoverPresentation: .sourceView(
+                sourceView: presentingViewController.view,
+                sourceRect: .init(
+                    origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
+                    size: .zero
+                )
+            )
+        )
     }
 
     // MARK: Quick Sync

@@ -525,33 +525,6 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_export_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
-        //// Share Drawing
-        let sharePath = UIBezierPath()
-        sharePath.move(to: CGPoint(x: 0, y: 56))
-        sharePath.addLine(to: CGPoint(x: 64, y: 56))
-        sharePath.addLine(to: CGPoint(x: 64, y: 64))
-        sharePath.addLine(to: CGPoint(x: 0, y: 64))
-        sharePath.addLine(to: CGPoint(x: 0, y: 56))
-        sharePath.addLine(to: CGPoint(x: 0, y: 56))
-        sharePath.addLine(to: CGPoint(x: 0, y: 56))
-        sharePath.addLine(to: CGPoint(x: 0, y: 56))
-        sharePath.close()
-        sharePath.move(to: CGPoint(x: 28, y: 44))
-        sharePath.addLine(to: CGPoint(x: 36, y: 44))
-        sharePath.addLine(to: CGPoint(x: 36, y: 16))
-        sharePath.addLine(to: CGPoint(x: 52, y: 16))
-        sharePath.addLine(to: CGPoint(x: 32, y: 0))
-        sharePath.addLine(to: CGPoint(x: 12, y: 16))
-        sharePath.addLine(to: CGPoint(x: 28, y: 16))
-        sharePath.addLine(to: CGPoint(x: 28, y: 44))
-        sharePath.close()
-        sharePath.usesEvenOddFillRule = true
-        color.setFill()
-        sharePath.fill()
-    }
-
     @objc dynamic public class func drawIcon_minus_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
 
         //// Remove Drawing

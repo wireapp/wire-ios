@@ -436,9 +436,8 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    // MARK: - Getters/Setters
-
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
+
     private func reloadCurrentConversation() {
         guard let currentConversation else { return }
 
@@ -460,10 +459,26 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Debug logging notifications
+
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
-        guard let path = notification?.userInfo?["path"] as? String else { return }
-        DebugAlert.showSendLogsMessage(message: "A request loop is going on at \(path)")
+        guard
+            let path = notification?.userInfo?["path"] as? String
+        else { return }
+
+        var presentingViewController = self as UIViewController
+        while let presentedViewController = presentingViewController.presentedViewController {
+            presentingViewController = presentedViewController
+        }
+
+        DebugAlert.showSendLogsMessage(
+            message: "A request loop is going on at \(path)",
+            presentingViewController: presentingViewController,
+            popoverPresentation: .sourceView(
+                presentingViewController.view,
+                .init(origin: presentingViewController.view.center, size: .zero)
+            )
+        )
     }
 
     /// Attempt to load the last viewed conversation associated with the current account.
