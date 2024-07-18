@@ -65,19 +65,19 @@ final class DeletionDialogPresenter: NSObject {
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool) -> Void
     ) -> UIAlertController {
-        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, alert in
+        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case .delete(let type) = action {
 
-                userSession.enqueue({
+                userSession.enqueue {
                     switch type {
                     case .local:
                         ZMMessage.hideMessage(message)
                     case .everywhere:
                         ZMMessage.deleteForEveryone(message)
                     }
-                }) {
+                } completionHandler: {
                     completion(true)
                 }
             } else {
@@ -93,7 +93,6 @@ final class DeletionDialogPresenter: NSObject {
             }
             popoverPresentationController.sourceView = sourceView.superview
             popoverPresentationController.sourceRect = sourceView.frame.insetBy(dx: -4, dy: -4)
-            // TODO: since a message is split into different cell views the arrow positions should be refined
         }
 
         return alert
