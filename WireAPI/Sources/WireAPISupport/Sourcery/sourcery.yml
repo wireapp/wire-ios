@@ -5,4 +5,4 @@ templates:
 output:
    ${DERIVED_SOURCES_DIR}
 args:
-   autoMockableImports: ["Combine", "WireAPI"]
+   autoMockableImports: ["WireAPI"]
