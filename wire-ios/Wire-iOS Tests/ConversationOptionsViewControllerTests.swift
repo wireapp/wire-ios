@@ -69,9 +69,9 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var mockConversation: MockConversation!
-    var mockUserSession: UserSessionMock!
-    var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
+    private var mockConversation: MockConversation!
+    private var mockUserSession: UserSessionMock!
+    private var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method

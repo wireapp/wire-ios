@@ -23,7 +23,7 @@ final class RegistrationStrategy: NSObject {
     weak var userInfoParser: UserInfoParser?
     var registrationSync: ZMSingleRequestSync!
 
-    init(groupQueue: ZMSGroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
+    init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
         registrationStatus = status
         self.userInfoParser = userInfoParser
         super.init()
@@ -53,11 +53,9 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
             let error = NSError.blacklistedEmail(with: response) ??
                 NSError.invalidActivationCode(with: response) ??
                 NSError.emailAddressInUse(with: response) ??
-                NSError.phoneNumberIsAlreadyRegisteredError(with: response) ??
                 NSError.invalidEmail(with: response) ??
-                NSError.invalidPhoneNumber(withReponse: response) ??
                 NSError.unauthorizedEmailError(with: response) ??
-                NSError(code: .unknownError, userInfo: [:])
+                NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             registrationStatus.handleError(error)
         }
     }

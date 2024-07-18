@@ -78,7 +78,7 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItStoresTeamImageAsset_OnSuccessfulResponse() {
         // GIVEN
         let team = createTeamWithImage()
-        let imageData = "image".data(using: .utf8)!
+        let imageData = Data("image".utf8)
 
         team.requestImage()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

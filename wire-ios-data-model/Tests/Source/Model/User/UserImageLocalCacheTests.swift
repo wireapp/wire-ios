@@ -67,8 +67,8 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     func testThatPersistedDataCanBeRetrievedAsynchronously() {
         // given
-        let largeData = "LARGE".data(using: .utf8)!
-        let smallData = "SMALL".data(using: .utf8)!
+        let largeData = Data("LARGE".utf8)
+        let smallData = Data("SMALL".utf8)
 
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
@@ -101,8 +101,8 @@ final class UserImageLocalCacheTests: XCTestCase {
     func testThatItSetsSmallAndLargeUserImageForV3() throws {
 
         // given
-        let largeData = try XCTUnwrap("LARGE".data(using: .utf8))
-        let smallData = try XCTUnwrap("SMALL".data(using: .utf8))
+        let largeData = try XCTUnwrap(Data("LARGE".utf8))
+        let smallData = try XCTUnwrap(Data("SMALL".utf8))
 
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
@@ -117,8 +117,8 @@ final class UserImageLocalCacheTests: XCTestCase {
     func testThatItPersistsSmallAndLargeUserImageForV3() throws {
 
         // given
-        let largeData = try XCTUnwrap("LARGE".data(using: .utf8))
-        let smallData = try XCTUnwrap("SMALL".data(using: .utf8))
+        let largeData = try XCTUnwrap(Data("LARGE".utf8))
+        let smallData = try XCTUnwrap(Data("SMALL".utf8))
 
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
@@ -134,8 +134,8 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     func testThatItReturnsV3AssetsWhenPresent() throws {
         // given
-        let largeData = try XCTUnwrap("LARGE".data(using: .utf8))
-        let smallData = try XCTUnwrap("SMALL".data(using: .utf8))
+        let largeData = try XCTUnwrap(Data("LARGE".utf8))
+        let smallData = try XCTUnwrap(Data("SMALL".utf8))
 
         // when
         XCTAssertNil(sut.userImage(testUser, size: .complete))
@@ -154,12 +154,12 @@ final class UserImageLocalCacheTests: XCTestCase {
         // given
         sut.setUserImage(
             testUser,
-            imageData: try XCTUnwrap("baz".data(using: .utf8)),
+            imageData: try XCTUnwrap(Data("baz".utf8)),
             size: .complete
         )
         sut.setUserImage(
             testUser,
-            imageData: try XCTUnwrap("moo".data(using: .utf8)),
+            imageData: try XCTUnwrap(Data("moo".utf8)),
             size: .preview
         )
 

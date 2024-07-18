@@ -42,7 +42,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         proteusService: any ProteusServiceInterface,
         context: NSManagedObjectContext
     ) {
-        self.proteusMessageDecryptor = ProteusMessageDecryptor(
+        proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             managedObjectContext: context
         )
@@ -93,6 +93,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                         attributes: logAttributes
                     )
                 }
+
             default:
                 // No decryption needed.
                 decryptedEvents.append(event)

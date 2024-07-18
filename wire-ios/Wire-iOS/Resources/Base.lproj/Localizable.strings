@@ -1057,14 +1057,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title"="Terms of Use";
 "about.privacy.title"="Privacy Policy";
-"about.license.title" = "License Information";
 "about.website.title"="Wire Website";
 "about.copyright.title"="© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Details";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Your account was used on:";
@@ -1159,9 +1153,6 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Usage and Crash Reports";
 
-// Crash
-"self.settings.privacy_crash.title" = "Send anonymous crash data";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
@@ -1307,7 +1298,6 @@
 "self.settings.advanced.reset_push_token.subtitle" = "If you experience problems with push notifications, Wire Support may ask you to reset this token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push token has been reset";
 "self.settings.advanced.reset_push_token_alert.message" = "Notifications will be restored in a few seconds.";
-"self.settings.advanced.version_technical_details.title" = "Version Technical Details";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";
