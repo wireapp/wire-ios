@@ -142,7 +142,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.mode = .list
         searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
-        
+
         setupSearchController()
 
         if showsGroupSelector {
