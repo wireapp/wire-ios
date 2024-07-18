@@ -90,8 +90,6 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
-    private var controlContinuation: CheckedContinuation<Void, Never>?
-
     init(
         selfClientID: String,
         updateEventsAPI: any UpdateEventsAPI,
