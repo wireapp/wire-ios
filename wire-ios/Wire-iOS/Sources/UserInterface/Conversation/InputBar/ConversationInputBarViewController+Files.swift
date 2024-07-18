@@ -86,7 +86,7 @@ extension ConversationInputBarViewController {
             return
         }
 
-        FileMetaDataGenerator.metadataForFileAtURL(
+        FileMetaDataGenerator.shared.metadataForFileAtURL(
             url,
             UTI: url.UTI(),
             name: url.lastPathComponent
