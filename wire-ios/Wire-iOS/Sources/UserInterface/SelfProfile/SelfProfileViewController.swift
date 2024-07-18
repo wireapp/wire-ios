@@ -237,17 +237,17 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
 
-    private var topViewController: SpinnerCapableViewController? {
-        navigationController?.topViewController as? SpinnerCapableViewController
+    private var topViewController: SpinnerCapableViewController {
+        navigationController!.topViewController as! SpinnerCapableViewController
     }
 
     func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
         // topViewController is SettingsTableViewController
-        topViewController?.isLoadingViewVisible = true
+        topViewController.isLoadingViewVisible = true
     }
 
     func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        topViewController?.isLoadingViewVisible = false
+        topViewController.isLoadingViewVisible = false
     }
 
     /// Create or delete custom passcode when appLock option did change

@@ -114,12 +114,12 @@ final class SpinnerCapableNavigationController: UINavigationController, SpinnerC
 extension UINavigationController {
     var isLoadingViewVisible: Bool? {
         get {
-            return (self as? SpinnerCapableViewController)?.isLoadingViewVisible
+            return (self as! SpinnerCapableViewController).isLoadingViewVisible
         }
 
         set {
             if let newValue {
-                (self as? SpinnerCapableViewController)?.isLoadingViewVisible = newValue
+                (self as! SpinnerCapableViewController).isLoadingViewVisible = newValue
             }
         }
     }

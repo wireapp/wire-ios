@@ -138,7 +138,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     ) {
         tableView.reloadData()
 
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
+        (navigationController as! SpinnerCapableViewController).isLoadingViewVisible = state.isLoading
 
     }
 

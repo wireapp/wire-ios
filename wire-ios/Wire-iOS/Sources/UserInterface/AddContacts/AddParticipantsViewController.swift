@@ -114,8 +114,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private let confirmButtonHeight: CGFloat = 56.0
     private let confirmButton: IconButton
     private let emptyResultView: EmptySearchResultsView
-    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                                                                      constant: -bottomMargin)
+    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor
+        .constraint(equalTo: view.bottomAnchor, constant: -bottomMargin)
     private let backButtonDescriptor = BackButtonDescription()
     private let bottomMargin: CGFloat = 24
 

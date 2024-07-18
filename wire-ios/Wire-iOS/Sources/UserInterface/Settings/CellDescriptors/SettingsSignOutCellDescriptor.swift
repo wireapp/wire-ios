@@ -41,11 +41,11 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         guard let selfUser = ZMUser.selfUser() else { return }
 
         if selfUser.usesCompanyLogin || password != nil {
-            weak var topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-            topMostViewController?.isLoadingViewVisible = true
+            var topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as! SpinnerCapableViewController
+            topMostViewController.isLoadingViewVisible = true
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { result in
+            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { [weak topMostViewController] result in
                 topMostViewController?.isLoadingViewVisible = false
                 TrackingManager.shared.disableAnalyticsSharing = false
                 if case .failure(let error) = result {
@@ -56,7 +56,6 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
             SessionManager.shared?.delete(account: account)
         }
-
     }
 
     override func generateViewController() -> UIViewController? {

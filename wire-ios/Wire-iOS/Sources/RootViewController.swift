@@ -175,5 +175,3 @@ extension RootViewController {
         }
     }
 }
-
-extension RootViewController: SpinnerCapable { }

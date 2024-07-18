@@ -80,15 +80,15 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-        topMostViewController?.isLoadingViewVisible = true
+        let topMostViewController: SpinnerCapableViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as! SpinnerCapableViewController
+        topMostViewController.isLoadingViewVisible = true
 
         Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
             await mailComposeViewController.attachLogs()
 
             await self.viewController?.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
-                topMostViewController?.isLoadingViewVisible = false
+                topMostViewController.isLoadingViewVisible = false
             }
         })
     }
