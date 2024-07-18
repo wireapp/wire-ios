@@ -162,12 +162,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         confirmRemovingGuests completion: @escaping (Bool) -> Void
     ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingGuests(completion)
-        alertController.configPopover(
-            pointToView: sourceView ?? view,
-            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-        )
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView.superview!
+            popoverPresentationController.sourceRect = sourceView.frame
+        }
         present(alertController, animated: true)
-
         return alertController
     }
 
@@ -179,12 +178,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
             completion(guestLinkType)
         }
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView.superview!
+            popoverPresentationController.sourceRect = sourceView.frame
+        }
         present(alertController, animated: true)
-
-        alertController.configPopover(
-            pointToView: sourceView ?? view,
-            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-        )
     }
 
     func conversationGuestOptionsViewModel(
@@ -193,12 +191,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         confirmRevokingLink completion: @escaping (Bool) -> Void
     ) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView.superview!
+            popoverPresentationController.sourceRect = sourceView.frame
+        }
         present(alertController, animated: true)
-
-        alertController.configPopover(
-            pointToView: sourceView ?? view,
-            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-        )
     }
 
     func conversationGuestOptionsViewModel(
@@ -207,12 +204,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
         sourceView: UIView
     ) {
         let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
+        if let popoverPresentationController = activityController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView.superview!
+            popoverPresentationController.sourceRect = sourceView.frame
+        }
         present(activityController, animated: true)
-
-        activityController.configPopover(
-            pointToView: sourceView ?? view,
-            popoverPresenter: UIApplication.shared.firstKeyWindow!.rootViewController! as! PopoverPresenter
-        )
     }
 
     func conversationGuestOptionsViewModel(
