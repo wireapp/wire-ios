@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
 import WireAPI
+import WireSystem
 
 protocol SyncManagerProtocol {
 
@@ -54,6 +54,8 @@ final class SyncManager: SyncManagerProtocol {
             return
         }
 
+        WireLogger.sync.info("performing quick sync")
+
         // Opens the push channel, but events are buffered.
         let liveEventsStream = try await updateEventsRepository.startBufferingLiveEvents()
 
@@ -71,9 +73,16 @@ final class SyncManager: SyncManagerProtocol {
         }
 
         let liveTask = Task {
-            for try await envelope in liveEventsStream {
-                try Task.checkCancellation()
-                try await processLiveEvents(in: envelope)
+            do {
+                for try await envelope in liveEventsStream {
+                    WireLogger.sync.info("received live event")
+                    try Task.checkCancellation()
+                    await processLiveEvents(in: envelope)
+                }
+            } catch is CancellationError {
+                WireLogger.sync.info("live task was cancelled")
+            } catch {
+                WireLogger.sync.error("live task encountered error: \(error)")
             }
         }
 
@@ -89,6 +98,8 @@ final class SyncManager: SyncManagerProtocol {
         guard !isSuspending else {
             return
         }
+
+        WireLogger.sync.info("suspending")
 
         isSuspending = true
         await closePushChannel()
@@ -112,10 +123,13 @@ final class SyncManager: SyncManagerProtocol {
         await updateEventsRepository.stopReceivingLiveEvents()
     }
 
-    private func processLiveEvents(in envelope: UpdateEventEnvelope) async throws {
+    private func processLiveEvents(in envelope: UpdateEventEnvelope) async {
         for event in envelope.events {
-            // TODO: In case of failure, should we continue?
-            try await updateEventProcessor.processEvent(event)
+            do {
+                try await updateEventProcessor.processEvent(event)
+            } catch {
+                WireLogger.sync.error("failed to process live event, dropping: \(error)")
+            }
         }
 
         if !envelope.isTransient {
@@ -139,7 +153,11 @@ final class SyncManager: SyncManagerProtocol {
             }
 
             for event in envelopes.flatMap(\.events) {
-                try await updateEventProcessor.processEvent(event)
+                do {
+                    try await updateEventProcessor.processEvent(event)
+                } catch {
+                    WireLogger.sync.error("failed to process stored event, dropping: \(error)")
+                }
             }
 
             try await updateEventsRepository.deleteNextPendingEvents(limit: batchSize)
