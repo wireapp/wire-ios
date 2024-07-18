@@ -90,7 +90,6 @@ extension ConversationInputBarViewController {
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
 
             let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
-            //documentPickerViewController.modalPresentationStyle = .fullScreen
             documentPickerViewController.delegate = self
             documentPickerViewController.allowsMultipleSelection = true
             self.present(documentPickerViewController, animated: true)

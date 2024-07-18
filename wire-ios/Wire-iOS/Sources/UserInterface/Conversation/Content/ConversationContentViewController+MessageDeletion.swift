@@ -41,7 +41,6 @@ private extension ZMConversationMessage {
 
 }
 
-// TODO: check if needed
 protocol SelectableView {
     var selectionView: UIView! { get }
     var selectionRect: CGRect { get }
@@ -52,13 +51,8 @@ protocol HighlightableView {
 }
 
 extension CollectionCell: SelectableView {
-    var selectionView: UIView! {
-        return self
-    }
-
-    var selectionRect: CGRect {
-        return frame
-    }
+    var selectionView: UIView! { self }
+    var selectionRect: CGRect { frame }
 }
 
 final class DeletionDialogPresenter: NSObject {
@@ -138,6 +132,7 @@ final class DeletionDialogPresenter: NSObject {
 }
 
 private enum AlertAction {
+
     enum DeletionType {
         case local
         case everywhere
@@ -191,5 +186,4 @@ private extension UIAlertController {
 
         return alert
     }
-
 }
