@@ -31,7 +31,6 @@ import UIKit
 import AppKit
 #endif
 
-import Combine
 import WireAPI
 import WireDataModel
 

@@ -108,20 +108,6 @@ final class SyncManagerTests: XCTestCase {
         }
     }
 
-    // This test asserts that if we suspend the SyncManager while there
-    // is an ongoing quick sync, then the quick sync is cancelled and
-    // it transitions to the `suspend` state.
-    //
-    // The sequence of events is:
-    //
-    // 1. Test creates Task to perform quick sync.
-    // 2. Test lets the Task begin, waits for it to pull pending events.
-    // 3. Meanwhile, Task continues to fetch next pending events, waits until
-    //    Test starts suspension.
-    // 4. Test suspends sut, then waits for the Task to throw a CancellationError.
-    // 5. Meanwhile, Task continues after the suspension, then will throw a
-    //    CancellationError when it processes the next batch of events.
-
     func testItSuspendsWhenQuickSyncing() async throws {
         let didPullEvents = XCTestExpectation()
         let didSuspend = XCTestExpectation()
@@ -171,31 +157,6 @@ final class SyncManagerTests: XCTestCase {
     }
 
     // MARK: - Quick sync
-
-    // This test is important because it asserts how we coordinate multiple sources of
-    // events:
-    //
-    // - pending events from the backend (remove event queue), which are stored locally
-    // - live events arriving in an active push channel
-    //
-    // In particular, we want to assert that we process all events in order, even if
-    // we receive live events during the processing of previous stored events.
-    //
-    // In order to simulate this we need to deterministically push mock live events
-    // through the push channel at the right time, which I've arbitrarily chosen to
-    // be after processing event 1 and before processing event 2.
-    //
-    // Key checkpoints in the test are:
-    //
-    // 1. Start performing quick sync (start of "when").
-    // 2. Pull 3 pending events from remote event queue.
-    // 3. Fetch the next batck of stored events (the 3 just pulled).
-    // 4. Process the 1st event.
-    // 5. Push 2 live events through push channel (from outside of "when"), these get bufferend.
-    // 6. Process the 2nd and 3rd events (back inside of "when").
-    // 7. Delete first batch of events.
-    // 8. Fetch next batch of events, get back none (all have been processed).
-    // 9. Decrypt and process buffered events (live events received in step 5.)
 
     func testItQuickSyncs() async throws {
         // Given no stored events.
@@ -252,9 +213,6 @@ final class SyncManagerTests: XCTestCase {
             // When
             try await self.sut.performQuickSync()
         }
-
-        // Let the "when" task begin.
-        await Task.yield()
 
         // Wait for event 1 to be processed.
         await fulfillment(of: [didProcessEvent])
