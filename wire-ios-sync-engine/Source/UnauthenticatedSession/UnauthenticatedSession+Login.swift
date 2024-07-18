@@ -22,9 +22,7 @@ extension UserCredentials {
     var isInvalid: Bool {
         let noEmail = email?.isEmpty ?? true
         let noPassword = password?.isEmpty ?? true
-        let noNumber = phoneNumber?.isEmpty ?? true
-        let noVerificationCode = phoneNumberVerificationCode?.isEmpty ?? true
-        return (noEmail || noPassword) && (noNumber || noVerificationCode)
+        return noEmail || noPassword
     }
 }
 
@@ -43,7 +41,7 @@ extension UnauthenticatedSession {
         guard !updatedCredentialsInUserSession else { return }
 
         if credentials.isInvalid {
-            let error = NSError(code: .needsCredentials, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .needsCredentials, userInfo: nil)
             authenticationStatus.notifyAuthenticationDidFail(error)
         } else {
             authenticationErrorIfNotReachable {
@@ -51,23 +49,6 @@ extension UnauthenticatedSession {
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
             }
         }
-    }
-
-    /// Requires a phone verification code for login. Returns NO if the phone number was invalid
-    @objc(requestPhoneVerificationCodeForLogin:)
-    @discardableResult public func requestPhoneVerificationCodeForLogin(phoneNumber: String) -> Bool {
-        do {
-            var phoneNumber: String? = phoneNumber
-            _ = try userPropertyValidator.validate(phoneNumber: &phoneNumber)
-        } catch {
-            return false
-        }
-
-        authenticationErrorIfNotReachable {
-            self.authenticationStatus.prepareForRequestingPhoneVerificationCode(forLogin: phoneNumber)
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        }
-        return true
     }
 
     /// Triggers a request for an email verification code for login. 
