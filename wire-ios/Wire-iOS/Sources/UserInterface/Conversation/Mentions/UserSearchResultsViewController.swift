@@ -103,7 +103,6 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         if collectionView.frame.size != view.bounds.size {
             collectionView.frame = view.bounds
             resizeTable()
-            collectionView.layoutIfNeeded()
         }
     }
 
