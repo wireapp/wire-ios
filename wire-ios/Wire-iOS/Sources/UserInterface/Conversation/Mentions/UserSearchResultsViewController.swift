@@ -166,10 +166,16 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
-        let minValue = min(viewHeight, CGFloat(searchResults.count) * rowHeight)
-        if collectionViewHeight.constant != minValue {
-            collectionViewHeight.constant = minValue
-            collectionView.isScrollEnabled = (minValue == viewHeight)
+        let contentHeight = CGFloat(searchResults.count) * rowHeight
+        let minValue = min(viewHeight, contentHeight)
+        collectionViewHeight.constant = minValue
+        collectionView.isScrollEnabled = (contentHeight > viewHeight)
+
+        if searchResults.count == 1 {
+            let bottomInset = viewHeight - rowHeight
+            collectionView.contentInset = UIEdgeInsets(top: bottomInset, left: 0, bottom: 0, right: 0)
+        } else {
+            collectionView.contentInset = .zero
         }
     }
 
