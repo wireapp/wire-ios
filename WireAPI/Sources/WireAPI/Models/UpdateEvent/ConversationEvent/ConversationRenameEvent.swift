@@ -37,7 +37,7 @@ public struct ConversationRenameEvent: Equatable, Codable {
     /// The new name of the conversation.
 
     public let newName: String
-    
+
     /// Create a new `ConversationRenameEvent`.
     ///
     /// - Parameters:

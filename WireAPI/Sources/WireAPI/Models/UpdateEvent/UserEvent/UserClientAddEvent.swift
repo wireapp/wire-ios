@@ -25,7 +25,7 @@ public struct UserClientAddEvent: Equatable, Codable {
     /// The new user client.
 
     public let client: UserClient
-    
+
     /// Create a new `UserClientAddEvent`.
     ///
     /// - Parameter client: The new user client.

@@ -34,7 +34,6 @@ public struct ConversationTypingEvent: Equatable, Codable {
 
     public let isTyping: Bool
 
-    
     /// Create a new `ConversationTypingEvent`.
     ///
     /// - Parameters:

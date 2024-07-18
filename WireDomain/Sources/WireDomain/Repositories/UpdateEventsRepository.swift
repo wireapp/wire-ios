@@ -42,7 +42,7 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Returns: Decrypted update event envelopes ready for processing.
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope]
-    
+
     /// Delete the next batch of pending events from the database.
     ///
     /// Use this method to delete stored events that have been processed and
@@ -51,7 +51,7 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Parameter limit: The maximum number of events to delete.
 
     func deleteNextPendingEvents(limit: UInt) async throws
-    
+
     /// Open the push channel and deliver update event envelopes through
     /// an asynchronous stream.
     ///
@@ -61,12 +61,12 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Returns: An asynchronous stream of `UpdateEventEnvelope`s.
 
     func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope>
-    
+
     /// Close the piush channel and stop fnish the asynchronous stream of
     /// `UpdateEventEnvelope`s returned in `startBufferingLiveEvents`.
 
     func stopReceivingLiveEvents() async
-    
+
     /// Store the last event envelope id.
     ///
     /// Future pulls of pending events will only include event envelopes

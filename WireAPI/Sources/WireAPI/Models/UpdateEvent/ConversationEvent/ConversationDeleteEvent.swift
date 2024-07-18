@@ -33,7 +33,7 @@ public struct ConversationDeleteEvent: Equatable, Codable {
     /// When the conversation was deleted.
 
     public let timestamp: Date
-    
+
     /// Create a new `ConversationDeleteEvent`.
     /// 
     /// - Parameters:

@@ -61,7 +61,7 @@ public struct UserClient: Equatable, Identifiable, Codable {
     /// The capabilities of the client.
 
     public let capabilities: [UserClientCapability]
-    
+
     /// Create a new `UserClient`.
     ///
     /// - Parameters:
