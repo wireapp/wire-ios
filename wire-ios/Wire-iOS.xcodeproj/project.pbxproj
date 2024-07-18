@@ -378,6 +378,7 @@
 		59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
+		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
 		59CD83E52C22CE9800186022 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD83E42C22CE9800186022 /* WireDesign */; };
 		59D2D9352BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */; };
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
@@ -4026,6 +4027,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A968680426A5F73400679D95 /* WireCommonComponents.framework in Frameworks */,
+				59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */,
 				5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
