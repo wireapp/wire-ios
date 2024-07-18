@@ -100,7 +100,15 @@ final class DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
+        alert.addAction(makeFallbackAlertAction(from: controller, sourceView: sourceView))
+        controller.present(alert, animated: true, completion: nil)
+    }
+
+    private static func makeFallbackAlertAction(
+        from controller: UIViewController,
+        sourceView: UIView?
+    ) -> UIAlertAction {
+        UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
             let logFilesProvider = LogFilesProvider()
             let logsFileURL: URL
             do {
@@ -121,8 +129,7 @@ final class DebugAlert {
             }
 
             controller.present(activity, animated: true, completion: nil)
-        }))
-        controller.present(alert, animated: true, completion: nil)
+        }
     }
 
 }
