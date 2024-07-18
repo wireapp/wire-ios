@@ -62,7 +62,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             presentingViewController: presentingViewController,
             fallbackActivityPopoverPresentation: .sourceView(
                 sourceView: presentingViewController.view,
-                sourceRect: .init(origin: presentingViewController.view.center, size: .zero)
+                sourceRect: .init(
+                    origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
+                    size: .zero
+                )
             )
         )
     }

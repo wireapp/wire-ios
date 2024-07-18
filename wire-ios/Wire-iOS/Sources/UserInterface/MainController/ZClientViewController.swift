@@ -459,15 +459,25 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Debug logging notifications
+
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
-        guard let path = notification?.userInfo?["path"] as? String else { return }
+        guard
+            let path = notification?.userInfo?["path"] as? String
+        else { return }
 
-        fatalError("TODO")
+        var presentingViewController = self as UIViewController
+        while let presentedViewController = presentingViewController.presentedViewController {
+            presentingViewController = presentedViewController
+        }
+
         DebugAlert.showSendLogsMessage(
             message: "A request loop is going on at \(path)",
-            presentingViewController: self,
-            popoverPresentation: .sourceView(.init(), .zero)
+            presentingViewController: presentingViewController,
+            popoverPresentation: .sourceView(
+                presentingViewController.view,
+                .init(origin: presentingViewController.view.center, size: .zero)
+            )
         )
     }
 
