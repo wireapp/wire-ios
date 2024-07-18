@@ -166,6 +166,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+
+        // TODO: fix
+        // for some reason this is not called anymore
+
         super.viewDidAppear(animated)
 
         if !isIPadRegular() {

@@ -33,7 +33,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
                                                                         options: [:])
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
-    var shareButton: IconButton?
     let overlay = FeedbackOverlayView()
     let separator: UIView = {
         let view = UIView()

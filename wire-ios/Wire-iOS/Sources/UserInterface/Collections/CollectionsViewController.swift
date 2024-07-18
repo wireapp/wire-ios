@@ -637,8 +637,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         }
 
         let message = self.message(for: indexPath)
-
-        perform(.present, for: message, source: collectionView.cellForItem(at: indexPath) as! CollectionCell)
+        perform(.present, for: message, source: collectionView.cellForItem(at: indexPath)!)
     }
 
 }
@@ -696,7 +695,7 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
 extension CollectionsViewController: MessageActionResponder {
 
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
-        perform(action, for: message, source: (view as? CollectionCell)!)
+        perform(action, for: message, source: view)
     }
 }
 
@@ -710,11 +709,14 @@ extension CollectionsViewController: CollectionCellDelegate {
         perform(action, for: message, source: cell)
     }
 
-    func perform(_ action: MessageAction, for message: ZMConversationMessage, source: CollectionCell) {
+    func perform(_ action: MessageAction, for message: ZMConversationMessage, source: UIView) {
         switch action {
         case .copy:
-            let cell = source
-            cell.copyDisplayedContent(in: .general)
+            if let cell = source as? CollectionCell {
+                cell.copyDisplayedContent(in: .general)
+            } else {
+                message.copy(in: .general)
+            }
 
         case .delete:
             deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: source, userSession: userSession) { [weak self] deleted in
@@ -763,9 +765,14 @@ extension CollectionsViewController: CollectionCellDelegate {
                 let saveableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
                 saveableImage.saveToLibrary()
 
-            } else {
-//                guard let saveController = UIActivityViewController(message: message, from: view) else { return }
-//                present(saveController, animated: true, completion: nil)
+            } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
+                let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                if let popoverPresentationController = activityViewController.popoverPresentationController {
+                    let sourceView = (source as? CollectionCell)?.selectionView ?? view as UIView
+                    popoverPresentationController.sourceView = sourceView.superview
+                    popoverPresentationController.sourceRect = sourceView.frame
+                }
+                present(activityViewController, animated: true)
             }
 
         case .download:
@@ -790,5 +797,4 @@ extension CollectionsViewController: CollectionCellDelegate {
             delegate?.collectionsViewController(self, performAction: action, onMessage: message)
         }
     }
-
 }
