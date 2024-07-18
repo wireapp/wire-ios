@@ -1293,59 +1293,6 @@ class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
 
     // MARK: - presentShareViewController
 
-    var presentShareViewControllerDestinationsDebugReportOnDismiss_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport, onDismiss: () -> Void)] = []
-    var presentShareViewControllerDestinationsDebugReportOnDismiss_MockMethod: (([ZMConversation], ShareableDebugReport, @escaping () -> Void) -> Void)?
-
-    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport, onDismiss: @escaping () -> Void) {
-        presentShareViewControllerDestinationsDebugReportOnDismiss_Invocations.append((destinations: destinations, debugReport: debugReport, onDismiss: onDismiss))
-
-        guard let mock = presentShareViewControllerDestinationsDebugReportOnDismiss_MockMethod else {
-            fatalError("no mock for `presentShareViewControllerDestinationsDebugReportOnDismiss`")
-        }
-
-        mock(destinations, debugReport, onDismiss)
-    }
-
-}
-
-class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - sendReport
-
-    var sendReport_Invocations: [Void] = []
-    var sendReport_MockMethod: (() -> Void)?
-
-    func sendReport() {
-        sendReport_Invocations.append(())
-
-        guard let mock = sendReport_MockMethod else {
-            fatalError("no mock for `sendReport`")
-        }
-
-        mock()
-    }
-
-    // MARK: - shareReport
-
-    var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() -> Void)?
-
-    func shareReport() {
-        shareReport_Invocations.append(())
-
-        guard let mock = shareReport_MockMethod else {
-            fatalError("no mock for `shareReport`")
-        }
-
-        mock()
-    }
-
-}
-
     var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
     var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
 
