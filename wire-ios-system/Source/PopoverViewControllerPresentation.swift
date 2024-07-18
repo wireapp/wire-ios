@@ -21,10 +21,10 @@ import UIKit
 public enum PopoverViewControllerPresentation {
 
     case barButtonItem(_ barButtonItem: UIBarButtonItem)
-    case sourceView(_ sourceView: UIView, _ sourceRect: CGRect)
+    case sourceView(sourceView: UIView, sourceRect: CGRect)
 
-    public static func sourceView(sourceView: UIView, sourceRect: CGRect) -> Self {
-        .sourceView(sourceView, sourceRect)
+    public static func sourceView(_ sourceView: UIView, _ sourceRect: CGRect) -> Self {
+        .sourceView(sourceView: sourceView, sourceRect: sourceRect)
     }
 
     public func configure(popoverPresentationController: UIPopoverPresentationController) {

@@ -18,23 +18,27 @@
 
 import MessageUI
 import UIKit
+import WireSystem
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
-    func presentMailComposer(sourceView: UIView)
+    @MainActor
+    func presentMailComposer(fallbackActivityPopoverPresentation: PopoverViewControllerPresentation)
 }
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
 
     @MainActor
-    func presentMailComposer(sourceView: UIView) {
+    func presentMailComposer(fallbackActivityPopoverPresentation: PopoverViewControllerPresentation) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
+            // we will be stuck on the blocker screen after that
+            // considering this an edge case for now
             return DebugAlert.displayFallbackActivityController(
                 logPaths: DebugLogSender.existingDebugLogs,
                 email: mailRecipient,
                 from: self,
-                popoverPresentation: .sourceView(sourceView.superview!, sourceView.frame)
+                popoverPresentation: fallbackActivityPopoverPresentation
             )
         }
 
