@@ -20,6 +20,26 @@ import Foundation
 
 enum CoreDataMigrationActionFactory {
 
+    static func createPreMigrationAction<Version: CoreDataMigrationVersion>(for destinationVersion: Version) -> CoreDataMigrationAction? {
+
+        if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
+            return createPreMigrationAction(for: version)
+        }
+
+        fatalError("unsupported coredata migration version")
+    }
+
+    static func createPostMigrationAction<Version: CoreDataMigrationVersion>(for destinationVersion: Version) -> CoreDataMigrationAction? {
+
+        if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
+            return createPostMigrationAction(for: version)
+        }
+
+        fatalError("unsupported coredata migration version")
+    }
+
+    // MARK: - CoreDataMessagingMigrationVersion
+
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
         case .v111:
