@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// All possible analytic events that can be tracked
-
+/// Protocol defining the structure of an analytics event.
 public protocol AnalyticsEvent {
 
+    /// The name of the event.
     var eventName: String { get }
+
+    /// Additional segmentation data for the event.
     var segmentation: [String: String] { get }
 
 }

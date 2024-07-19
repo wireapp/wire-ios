@@ -18,14 +18,17 @@
 
 import Countly
 
+/// Struct responsible for managing analytics operations.
 public struct AnalyticsManager: AnalyticsManagerProtocol {
-
+    /// The underlying analytics service.
     private let analyticsService: any AnalyticsService
 
-    public init(
-        appKey: String,
-        host: URL
-    ) {
+    /// Initializes a new AnalyticsManager with the given app key and host.
+    ///
+    /// - Parameters:
+    ///   - appKey: The key for the analytics application.
+    ///   - host: The URL of the analytics host.
+    public init(appKey: String, host: URL) {
         self.init(
             appKey: appKey,
             host: host,
@@ -33,15 +36,21 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
         )
     }
 
-    init(
-        appKey: String,
-        host: URL,
-        analyticsService: any AnalyticsService
-    ) {
+    /// Initializes a new AnalyticsManager with the given app key, host, and analytics service.
+    ///
+    /// - Parameters:
+    ///   - appKey: The key for the analytics application.
+    ///   - host: The URL of the analytics host.
+    ///   - analyticsService: The analytics service to use.
+    init(appKey: String, host: URL, analyticsService: any AnalyticsService) {
         self.analyticsService = analyticsService
         self.analyticsService.start(appKey: appKey, host: host)
     }
 
+    /// Switches the current user and begins a new analytics session.
+    ///
+    /// - Parameter userProfile: The profile of the user to switch to.
+    /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
     public func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
         analyticsService.endSession()
         analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
@@ -51,5 +60,4 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
         analyticsService.beginSession()
         return analyticsService
     }
-
 }
