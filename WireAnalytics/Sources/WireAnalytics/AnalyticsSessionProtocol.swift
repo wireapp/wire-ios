@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for managing and tracking analytics events within a session.
 // sourcery: AutoMockable
+/// Protocol for managing and tracking analytics events within a session.
 public protocol AnalyticsSessionProtocol {
 
     /// Tracks a specific analytics event.

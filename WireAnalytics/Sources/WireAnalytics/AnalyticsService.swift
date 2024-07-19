@@ -18,8 +18,8 @@
 
 import Foundation
 
-/// Protocol defining the requirements for an analytics service.
 // sourcery: AutoMockable
+/// Protocol defining the requirements for an analytics service.
 protocol AnalyticsService: AnalyticsSessionProtocol {
     /// Starts the analytics service with the given app key and host.
     ///
