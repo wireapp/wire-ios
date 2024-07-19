@@ -22,7 +22,8 @@ import XCTest
 
 final class BlockingActivityIndicatorTests: XCTestCase {
 
-    private var sut: BlockingActivityIndicator!
+    private typealias SUT = BlockingActivityIndicator
+    private var sut: SUT!
 
     @MainActor
     func testBlockingSubviewIsAddedOnStart() throws {
@@ -44,4 +45,145 @@ final class BlockingActivityIndicatorTests: XCTestCase {
         let activityIndicatorView = try XCTUnwrap(blockingView.subviews.first as? UIActivityIndicatorView, "activity indicator view not found")
         XCTAssertTrue(activityIndicatorView.isAnimating)
     }
+
+    @MainActor
+    func testOnlyOneBlockingSubviewIsAdded() {
+
+        // Given
+        let targetView = UIView()
+        sut = .init(view: targetView)
+        let sut_ = SUT(view: targetView)
+
+        // When
+        sut.start()
+        sut_.start()
+
+        // Then
+        XCTAssertEqual(targetView.subviews.count, 1, "too many views added")
+    }
+
+    @MainActor
+    func testBlockingSubviewIsRemovedOnStop() {
+
+        // Given
+        let targetView = UIView()
+        sut = .init(view: targetView)
+
+        // When
+        sut.start()
+        sut.stop()
+
+        // Then
+        XCTAssertTrue(targetView.subviews.isEmpty, "subviews have not been cleaned up")
+    }
+
+    @MainActor
+    func testSubsequentStopsAreIgnored() {
+
+        // Given
+        let targetView = UIView()
+        sut = .init(view: targetView)
+
+        // When
+        sut.start()
+        sut.stop()
+        sut.stop()
+
+        // Then
+        XCTAssertTrue(targetView.subviews.isEmpty, "subviews have not been cleaned up")
+    }
+
+    @MainActor
+    func testStopWithoutStart() {
+
+        // Given
+        let targetView = UIView()
+        sut = .init(view: targetView)
+
+        // When
+        sut.stop()
+
+        // Then
+        XCTAssertTrue(targetView.subviews.isEmpty, "subviews have not been cleaned up")
+    }
+
+    @MainActor
+    func testTargetViewCanBeDealocated() {
+
+        // Given
+        weak var weakTargetView: UIView?
+        var targetView = UIView()
+        sut = .init(view: targetView)
+        weakTargetView = targetView
+
+        // When
+        targetView = .init()
+
+        // Then
+        XCTAssertNil(weakTargetView)
+
+        // ensure these methods don't crash
+        sut.start()
+        sut.stop()
+    }
+
+    @MainActor
+    func testViewIsNotCleanedUpAfterFirstIndicatorStop() {
+
+        // Given
+        let targetView = UIView()
+        let indicators = [SUT(view: targetView), SUT(view: targetView)]
+        indicators.forEach { sut in sut.start() }
+
+        // When
+        indicators[0].stop()
+
+        // Then
+        XCTAssertFalse(targetView.subviews.isEmpty, "subviews have been cleaned up")
+    }
+
+    @MainActor
+    func testViewIsCleanedUpOnSingleIndicatorDealocation() {
+
+        // Given
+        let targetView = UIView()
+
+        // When
+        SUT(view: targetView).start()
+
+        // Then
+        wait(forConditionToBeTrue: targetView.subviews.isEmpty, timeout: 5)
+    }
+
+    @MainActor
+    func testViewIsNotCleanedUpAfterFirstIndicatorDealocation() {
+
+        // Given
+        let targetView = UIView()
+        var indicators = [SUT(view: targetView), SUT(view: targetView)]
+        indicators.forEach { sut in sut.start() }
+
+        // When
+        indicators.remove(at: 0)
+
+        // Then
+        XCTAssertFalse(targetView.subviews.isEmpty, "subviews have been cleaned up")
+    }
+
+    @MainActor
+    func testViewIsCleanedUpAfterLastIndicatorDealocation() {
+
+        // Given
+        let targetView = UIView()
+        var indicators = [SUT(view: targetView), SUT(view: targetView)]
+        indicators.forEach { sut in sut.start() }
+
+        // When
+        indicators.removeAll()
+
+        // Then
+        wait(forConditionToBeTrue: targetView.subviews.isEmpty, timeout: 5)
+    }
+
+    // TODO: test appearance of indicator
 }
