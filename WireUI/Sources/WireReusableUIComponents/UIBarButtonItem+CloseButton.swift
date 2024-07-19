@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireUI/Sources/WireReusableUIComponents/UIBarButtonItem+CloseButton.swift
 import UIKit
 
 extension UIBarButtonItem {
@@ -31,25 +30,4 @@ extension UIBarButtonItem {
         return closeItem
     }
 
-========
-import WireDataModel
-
-public extension UserClient {
-
-    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are missing.
-    var qualifiedClientID: QualifiedClientID? {
-        guard
-            let clientID = remoteIdentifier,
-            let qualifiedID = user?.qualifiedID
-        else {
-            return nil
-        }
-
-        return QualifiedClientID(
-            userID: qualifiedID.uuid,
-            domain: qualifiedID.domain,
-            clientID: clientID
-        )
-    }
->>>>>>>> develop:wire-ios-request-strategy/Sources/Helpers/UserClient+QualifiedID.swift
 }

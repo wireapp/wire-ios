@@ -16,22 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireUI/Sources/WireReusableUIComponents/UIBarButtonItem+CloseButton.swift
-import UIKit
-
-extension UIBarButtonItem {
-
-    public static func closeButton(action: @escaping (UIAction) -> Void, accessibilityLabel: String) -> UIBarButtonItem {
-        let closeImage = UIImage(named: "Close")
-        let uiAction = UIAction(title: accessibilityLabel, image: closeImage, identifier: nil, handler: action)
-        let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: nil, action: nil)
-        closeItem.primaryAction = uiAction
-        closeItem.accessibilityLabel = accessibilityLabel
-        closeItem.accessibilityIdentifier = "close"
-        return closeItem
-    }
-
-========
 import WireDataModel
 
 public extension UserClient {
@@ -51,5 +35,4 @@ public extension UserClient {
             clientID: clientID
         )
     }
->>>>>>>> develop:wire-ios-request-strategy/Sources/Helpers/UserClient+QualifiedID.swift
 }
