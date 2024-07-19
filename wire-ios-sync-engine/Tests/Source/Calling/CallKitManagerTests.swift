@@ -21,6 +21,8 @@ import Foundation
 import Intents
 import OCMock
 import WireDataModel
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import WireSyncEngine
 
@@ -238,6 +240,8 @@ class CallKitManagerTest: DatabaseTest {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.enableMocking()
+
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.remoteIdentifier = UUID()
 
@@ -270,6 +274,7 @@ class CallKitManagerTest: DatabaseTest {
         self.mockCallKitManagerDelegate = nil
         self.mockTransportSession.cleanUp()
         self.mockTransportSession = nil
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
