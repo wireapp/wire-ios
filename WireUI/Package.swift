@@ -37,7 +37,8 @@ let package = Package(
     targets: [
         .target(
             name: "WireDesign",
-            swiftSettings: swiftSettings),
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "WireDesignTests",
             dependencies: [
@@ -50,11 +51,11 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
 
-        .target(
-            name: "WireReusableUIComponents",
-            dependencies: ["WireDesign"],
-            swiftSettings: swiftSettings
-        ),
+            .target(
+                name: "WireReusableUIComponents",
+                dependencies: ["WireDesign"],
+                swiftSettings: swiftSettings
+            ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
