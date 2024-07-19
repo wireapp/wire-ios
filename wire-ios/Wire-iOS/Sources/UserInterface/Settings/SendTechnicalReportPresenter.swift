@@ -35,7 +35,6 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
 
         guard MFMailComposeViewController.canSendMail() else {
             DebugAlert.displayFallbackActivityController(
-                logPaths: DebugLogSender.existingDebugLogs,
                 email: mailRecipient,
                 from: self, sourceView: sourceView
             )

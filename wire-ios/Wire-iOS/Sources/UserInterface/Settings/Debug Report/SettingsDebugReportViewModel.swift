@@ -94,7 +94,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
                 )
             }
         } catch {
-            WireLogger.system.warn("failed to generate log files \(error)")
+            WireLogger.system.error("failed to generate log files \(error)")
         }
 
     }
