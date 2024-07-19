@@ -18,25 +18,13 @@
 
 import UIKit
 
+// TODO: tests!
+
 /// Wraps the infos about how a popover should be presented.
 public enum PopoverPresentationControllerConfiguration {
 
     case barButtonItem(_ barButtonItem: UIBarButtonItem)
     case sourceView(sourceView: UIView, sourceRect: CGRect)
-
-    @available(*, deprecated)
-    @MainActor
-    public func configure(popoverPresentationController: UIPopoverPresentationController) {
-        switch self {
-
-        case .barButtonItem(let barButtonItem):
-            popoverPresentationController.barButtonItem = barButtonItem
-
-        case .sourceView(let sourceView, let sourceRect):
-            popoverPresentationController.sourceView = sourceView
-            popoverPresentationController.sourceRect = sourceRect
-        }
-    }
 
     // MARK: Static
 

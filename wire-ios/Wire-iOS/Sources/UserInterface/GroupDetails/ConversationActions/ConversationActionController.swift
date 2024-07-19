@@ -151,8 +151,8 @@ final class ConversationActionController {
 
     func present(_ controller: UIViewController) {
 
-        currentContext.map {
-            controller.popoverPresentationController.map($0.configure(popoverPresentationController:))
+        _ = currentContext.map {
+            controller.configurePopoverPresentationController(using: $0)
         }
 
         target.present(controller, animated: true)

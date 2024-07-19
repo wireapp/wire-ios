@@ -114,13 +114,13 @@ final class DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentation: popoverPresentationConfiguration))
+        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentationConfiguration: popoverPresentationConfiguration))
         controller.present(alert, animated: true, completion: nil)
     }
 
     private static func makeFallbackAlertAction(
         from controller: UIViewController,
-        popoverPresentation: PopoverPresentationControllerConfiguration
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
     ) -> UIAlertAction {
         UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
             let logFilesProvider = LogFilesProvider()
@@ -133,9 +133,7 @@ final class DebugAlert {
             }
 
             let activityViewController = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
-            if let popoverPresentationController = activityViewController.popoverPresentationController {
-                popoverPresentation.configure(popoverPresentationController: popoverPresentationController)
-            }
+            activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {
                     try logFilesProvider.clearLogsDirectory()
