@@ -201,4 +201,28 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
             fatalError("no mock for `appendImage`")
         }
     }
+
+    // MARK: - appendLocation
+
+    public var appendLocation_Invocations: [(locationData: LocationData, nonce: UUID)] = []
+    public var appendLocation_MockError: Error?
+    public var appendLocation_MockMethod: ((LocationData, UUID) throws -> any ZMConversationMessage)?
+    public var appendLocation_MockValue: (any WireDataModel.ZMConversationMessage)?
+
+    @discardableResult
+    public func appendLocation(with locationData: LocationData, nonce: UUID) throws -> any ZMConversationMessage {
+        appendLocation_Invocations.append((locationData: locationData, nonce: nonce))
+
+        if let error = appendLocation_MockError {
+            throw error
+        }
+
+        if let mock = appendLocation_MockMethod {
+            return try mock(locationData, nonce)
+        } else if let mock = appendLocation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendLocation`")
+        }
+    }
 }

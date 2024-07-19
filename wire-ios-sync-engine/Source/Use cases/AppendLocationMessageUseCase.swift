@@ -19,12 +19,11 @@
 import WireAnalytics
 import WireDataModel
 
-// sourcery: AutoMockable
 public protocol AppendLocationMessagekUseCaseProtocol {
 
-    func invoke(
+    func invoke<Conversation: MessageAppendableConversation>(
         withLocationData locationData: LocationData,
-        in conversation: ZMConversation
+        in conversation: Conversation
     ) throws
 
 }
@@ -33,12 +32,12 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
 
     let analyticsSession: AnalyticsSessionProtocol?
 
-    public func invoke(
+    public func invoke<Conversation: MessageAppendableConversation>(
         withLocationData locationData: LocationData,
-        in conversation: ZMConversation
+        in conversation: Conversation
     ) throws {
 
-        try conversation.appendLocation(with: locationData)
+        try conversation.appendLocation(with: locationData, nonce: UUID())
 
         analyticsSession?.trackEvent(
             ConversationContributionAnalyticsEvent(

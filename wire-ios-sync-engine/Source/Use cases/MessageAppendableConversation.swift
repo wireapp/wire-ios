@@ -37,6 +37,9 @@ public protocol MessageAppendableConversation {
     @discardableResult
     func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage
 
+    @discardableResult
+    func appendLocation(with locationData: LocationData, nonce: UUID) throws -> ZMConversationMessage
+
 }
 
 extension ZMConversation: MessageAppendableConversation {

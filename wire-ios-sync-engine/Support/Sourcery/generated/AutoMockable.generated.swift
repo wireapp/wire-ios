@@ -54,35 +54,6 @@ import AppKit
 
 
 
-public class MockAppendLocationMessagekUseCaseProtocol: AppendLocationMessagekUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeWithLocationDataIn_Invocations: [(locationData: LocationData, conversation: ZMConversation)] = []
-    public var invokeWithLocationDataIn_MockError: Error?
-    public var invokeWithLocationDataIn_MockMethod: ((LocationData, ZMConversation) throws -> Void)?
-
-    public func invoke(withLocationData locationData: LocationData, in conversation: ZMConversation) throws {
-        invokeWithLocationDataIn_Invocations.append((locationData: locationData, conversation: conversation))
-
-        if let error = invokeWithLocationDataIn_MockError {
-            throw error
-        }
-
-        guard let mock = invokeWithLocationDataIn_MockMethod else {
-            fatalError("no mock for `invokeWithLocationDataIn`")
-        }
-
-        try mock(locationData, conversation)
-    }
-
-}
-
 public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
 
     // MARK: - Life cycle
