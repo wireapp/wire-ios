@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,29 +17,24 @@
 //
 
 import XCTest
-import WireTransport
 import WireCommonComponents
 @testable import Wire
 
-final class URL_WireTests: XCTestCase {
+final class URLsTests: XCTestCase {
 
-    var be: BackendEnvironment!
+    func testUrlFileContainsAllKeys() {
+        guard
+            let filePath = Bundle.fileURL(for: "url", with: "json"),
+            let data = try? Data(contentsOf: filePath),
+            let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String]
+        else {
+            XCTFail("Failed to load url.json file")
+            return
+        }
 
-    override func setUp() {
-        super.setUp()
-        let bundle = Bundle.backendBundle
-        let defaults = UserDefaults(suiteName: "URLWireTests")!
-        EnvironmentType.production.save(in: defaults)
-        be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
+        URLs.CodingKeys.allCases.forEach { urlEnum in
+            XCTAssertNotNil(dictionary[urlEnum.rawValue], "Missing key: \(urlEnum.rawValue)")
+        }
     }
 
-    override func tearDown() {
-        be = nil
-        super.tearDown()
-    }
-
-    func testThatAccountURLsAreLoadedCorrectly() {
-        let accountsURL = URL(string: "https://account.wire.com")!
-        XCTAssertEqual(be.accountsURL, accountsURL)
-    }
 }

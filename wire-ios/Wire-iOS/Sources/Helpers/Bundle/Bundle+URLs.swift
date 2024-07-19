@@ -44,16 +44,22 @@ struct URLs: Codable {
     let endToEndIdentityInfo: URL
 
     static var shared: URLs = {
-        return URLs(forResource: "url", withExtension: "json")!
+        guard let urls = URLs(forResource: "url", withExtension: "json") else {
+            fatalError("can't find or decode url.json")
+        }
+        return urls
     }()
 
     private init?(forResource resource: String, withExtension fileExtension: String) {
         guard let fileURL = Bundle.fileURL(for: resource, with: fileExtension) else {
+            WireLogger.environment.error("no url.json file")
             return nil
         }
         do {
             self = try fileURL.decode(URLs.self)
         } catch {
+            WireLogger.environment.error("can't decode url.json")
+
             return nil
         }
     }
