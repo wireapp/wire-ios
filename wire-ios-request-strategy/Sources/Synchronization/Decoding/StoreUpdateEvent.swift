@@ -112,11 +112,13 @@ public final class StoredUpdateEvent: NSManagedObject {
             return false
         }
 
-        let upateEventHash = EventHasher(eventId: eventId, payload: updateEvent.payload as NSDictionary).hashValue
+        let updateEventHasher = EventHasher(eventId: eventId, payload: updateEvent.payload)
 
         for storedEvent in storedEvents {
-            let storedEventHash = EventHasher(storedEvent: storedEvent)?.hashValue
-            return storedEventHash == upateEventHash
+            let storedEventHasher = EventHasher(storedEvent: storedEvent)
+            if storedEventHasher?.hashValue == updateEventHasher?.hashValue {
+                return true
+            }
         }
 
         return false
