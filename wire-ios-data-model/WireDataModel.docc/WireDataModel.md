@@ -17,6 +17,10 @@ WireDataModel provides the persistence for Wire, powered by Core Data. As such i
 - ``EARServiceDelegate``
 - ``EARKeyGenerator``
 
+### End-to-end identity
+
+- <doc:end-to-end-identity>
+
 ### Entities
 
 These managed object subclasses are frequently used in the business logic and comprise the fundamental building block of Wire's model:
