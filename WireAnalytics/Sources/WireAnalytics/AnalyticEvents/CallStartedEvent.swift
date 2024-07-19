@@ -24,7 +24,7 @@ public struct CallStartedEvent: AnalyticsEvent {
 
     public var segmentation: [String: String] {
         ["group_type": String(describing: conversationType),
-        "is_video_call": String(describing: isVideoCall)]
+         "is_video_call": String(describing: isVideoCall)]
     }
 
     public var isVideoCall: Bool

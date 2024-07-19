@@ -31,9 +31,9 @@ public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
     public var eventName: String {
         switch result {
         case .succeeded:
-            return "restoreBackupSucceeded"
+            "restoreBackupSucceeded"
         case .failed:
-            return "restoreBackupFailed"
+            "restoreBackupFailed"
         }
     }
 
