@@ -46,7 +46,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            coreDataStack: coreDataStack, 
+            coreDataStack: coreDataStack,
             analyticsSessionConfiguration: nil,
             configuration: configuration,
             contextStorage: mockContextStore,

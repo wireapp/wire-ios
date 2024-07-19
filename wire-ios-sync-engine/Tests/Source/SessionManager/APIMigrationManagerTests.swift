@@ -262,7 +262,7 @@ final class APIMigrationManagerTests: MessagingTest {
             appVersion: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            coreDataStack: createCoreDataStack(), 
+            coreDataStack: createCoreDataStack(),
             analyticsSessionConfiguration: nil,
             configuration: configuration,
             contextStorage: mockContextStorable,
