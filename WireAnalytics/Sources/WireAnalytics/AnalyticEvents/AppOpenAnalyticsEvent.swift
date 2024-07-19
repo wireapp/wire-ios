@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Struct representing an analytics event for app opening.
 public struct AppOpenAnalyticsEvent: AnalyticsEvent {
 
     public init() {}
 
+    /// The name of the event.
     public var eventName: String {
         "appOpen"
     }
 
+    /// Additional segmentation data for the event.
     public var segmentation: [String: String] {
         [:]
     }
-
 }

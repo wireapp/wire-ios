@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A structure representing a contributed event for analytics.
+/// A structure representing a conversation contributed event.
 public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
 
     /// The name of the event.

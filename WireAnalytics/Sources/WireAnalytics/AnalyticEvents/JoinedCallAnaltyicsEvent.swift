@@ -16,18 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Struct representing an analytics event for when a user joins a call.
 public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
 
+    /// The name of the event.
     public var eventName: String {
         "callJoined"
     }
 
+    /// Additional segmentation data for the event.
     public var segmentation: [String: String] {
         ["group_type": String(describing: conversationType),
          "is_video_call": String(describing: isVideoCall)]
     }
 
+    /// Indicates whether the call is a video call.
     public var isVideoCall: Bool
-    public var conversationType: ConversationType
 
+    /// The type of conversation for the call.
+    public var conversationType: ConversationType
 }
