@@ -51,11 +51,11 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
 
-            .target(
-                name: "WireReusableUIComponents",
-                dependencies: ["WireDesign"],
-                swiftSettings: swiftSettings
-            ),
+        .target(
+            name: "WireReusableUIComponents",
+            dependencies: ["WireDesign"],
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [

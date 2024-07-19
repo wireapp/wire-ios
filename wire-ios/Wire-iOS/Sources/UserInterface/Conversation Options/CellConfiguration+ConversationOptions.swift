@@ -81,7 +81,7 @@ extension CellConfiguration {
             action: action
         )
     }
-    
+
     static let copiedLink: CellConfiguration = .iconAction(
         title: L10n.Localizable.GuestRoom.Actions.copiedLink,
         icon: .checkmark,
