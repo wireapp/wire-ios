@@ -163,7 +163,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: group.title)
+        setupNavigationBarTitle(group.title)
         setupNavigationBar()
     }
 

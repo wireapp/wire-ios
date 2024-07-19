@@ -87,7 +87,8 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        setupNavigationBarTitle(with: L10n.Localizable.Participants.All.title.capitalized)
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Participants.All.title.capitalized)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
             self?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)

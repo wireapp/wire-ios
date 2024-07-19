@@ -118,7 +118,7 @@ final class ServiceDetailViewController: UIViewController {
         super.viewWillAppear(animated)
 
         if let title = self.service.serviceUser.name {
-            setupNavigationBarTitle(with: title.capitalized)
+            setupNavigationBarTitle(title)
         }
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(icon: .cross,

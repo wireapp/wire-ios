@@ -112,9 +112,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     private func setupNavigationBar() {
         navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
+
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
-        setupNavigationBarTitle(with: L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
             self?.dismiss(animated: true)

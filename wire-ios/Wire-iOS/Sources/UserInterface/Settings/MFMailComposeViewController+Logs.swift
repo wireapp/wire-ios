@@ -60,22 +60,12 @@ extension MFMailComposeViewController {
         return body
     }
 
-    func attachLogs() async {
-        defer {
-            // because we don't rotate file for this one, we clean it once sent
-            // this regenerated from os_log anyway
-            if let url = LogFileDestination.main.log {
-                try? FileManager.default.removeItem(at: url)
-            }
-        }
-
-        var logFiles = WireLogger.logFiles
-        logFiles.append(contentsOf: ZMSLog.pathsForExistingLogs)
-
-        if let data = FileManager.default.zipData(from: logFiles) {
+    func attachLogs() {
+        do {
+            let data = try LogFilesProvider().generateLogFilesData()
             addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
-        } else {
-            WireLogger.system.debug("no logs for WireLogger to send \(logFiles.description)")
+        } catch {
+            WireLogger.system.debug("no logs for WireLogger to send: \(String(describing: error))")
         }
     }
 }

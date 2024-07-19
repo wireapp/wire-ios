@@ -82,7 +82,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = "valid-cookue".data(using: .utf8)
+        validCookie = Data("valid-cookue".utf8)
     }
 
     override func tearDown() {

@@ -54,7 +54,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
 
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) { }
 
-    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
+    func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {
         lastEnqueuedRequest = request
         return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
     }
@@ -88,7 +88,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) { }
 
     var didCallConfigurePushChannel = false
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: ZMSGroupQueue) {
+    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue) {
         didCallConfigurePushChannel = true
     }
 

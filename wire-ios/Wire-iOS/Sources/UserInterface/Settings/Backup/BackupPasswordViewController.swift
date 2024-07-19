@@ -115,7 +115,7 @@ final class BackupPasswordViewController: UIViewController {
         navigationController?.navigationBar.barTintColor = textColor
         navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: textColor)
 
-        setupNavigationBarTitle(with: HistoryBackup.Password.title.capitalized)
+        setupNavigationBarTitle(HistoryBackup.Password.title.capitalized)
 
         let cancelButtonItem: UIBarButtonItem = .createNavigationLeftBarButtonItem(
             title: HistoryBackup.Password.cancel.capitalized,

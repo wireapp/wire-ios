@@ -276,10 +276,22 @@ extension ZMConversation {
         }
     }
 
-    private func append(asset: WireProtos.Asset,
-                        nonce: UUID,
-                        expires: Bool,
-                        prepareMessage: (ZMAssetClientMessage) -> Void) throws -> ZMAssetClientMessage {
+    private func append(
+        asset: WireProtos.Asset,
+        nonce: UUID,
+        expires: Bool,
+        prepareMessage: (ZMAssetClientMessage) -> Void
+    ) throws -> ZMAssetClientMessage {
+
+        let logAttributes: LogAttributes = [
+            LogAttributesKey.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType: "asset"
+        ]
+
+        WireLogger.messaging.debug(
+            "appending message to conversation",
+            attributes: logAttributes, .safePublic
+        )
 
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
@@ -301,10 +313,7 @@ extension ZMConversation {
         }
 
         message.sender = ZMUser.selfUser(in: moc)
-
-        if expires {
-            message.setExpirationDate()
-        }
+        message.shouldExpire = expires
 
         append(message)
         unarchiveIfNeeded()
@@ -384,11 +393,7 @@ extension ZMConversation {
         }
 
         message.sender = ZMUser.selfUser(in: moc)
-
-        if expires {
-            let expirationDate = message.setExpirationDate()
-            WireLogger.messaging.debug("set expiration date \(expirationDate)", attributes: logAttributes)
-        }
+        message.shouldExpire = expires
 
         if hidden {
             message.hiddenInConversation = self
