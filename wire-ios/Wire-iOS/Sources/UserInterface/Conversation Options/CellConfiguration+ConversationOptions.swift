@@ -81,13 +81,22 @@ extension CellConfiguration {
             action: action
         )
     }
-
+    
     static let copiedLink: CellConfiguration = .iconAction(
-            title: L10n.Localizable.GuestRoom.Actions.copiedLink,
-            icon: .checkmark,
+        title: L10n.Localizable.GuestRoom.Actions.copiedLink,
+        icon: .checkmark,
+        color: nil,
+        action: { _ in }
+    )
+
+    static func shareLink(action: @escaping Action) -> CellConfiguration {
+        .iconAction(
+            title: L10n.Localizable.GuestRoom.Actions.shareLink,
+            icon: .export,
             color: nil,
-            action: { _ in }
+            action: action
         )
+    }
 
     static func revokeLink(action: @escaping Action) -> CellConfiguration {
         .iconAction(

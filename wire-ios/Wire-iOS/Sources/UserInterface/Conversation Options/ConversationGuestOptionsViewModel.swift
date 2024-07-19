@@ -192,10 +192,12 @@ final class ConversationGuestOptionsViewModel {
                 if let link {
                     rows.append(.text(link))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
+                    rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] view in self?.revokeLink(view: view) })
                 } else if let securedLink {
                     rows.append(.text(securedLink))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
+                    rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] view in self?.revokeLink(view: view) })
                 } else {
                     rows.append(.createLinkButton { [weak self] view in
@@ -254,6 +256,16 @@ final class ConversationGuestOptionsViewModel {
                 self.state.isLoading = false
             }
         })
+    }
+
+    /// share a conversation link
+    ///
+    /// - Parameter view: the source view which triggers shareLink action
+    private func shareLink(view: UIView) {
+        let linkToShare = securedLink ?? link
+        guard let link = linkToShare else { return }
+        let message = L10n.Localizable.GuestRoom.Share.message(link)
+        delegate?.conversationGuestOptionsViewModel(self, wantsToShareMessage: message, sourceView: view)
     }
 
     private func copyLink() {
