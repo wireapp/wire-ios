@@ -80,14 +80,14 @@ class StoreUpdateEventTests: MessagingTestBase {
         return conversation
     }
 
-    private func createNewConversationEvent(for conversation: ZMConversation) -> ZMUpdateEvent {
+    private func createNewConversationEvent(for conversation: ZMConversation, uuid: UUID = .create()) -> ZMUpdateEvent {
         let payload = payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
+        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)!
         event.appendDebugInformation("Highly informative description")
         return event
     }
 
-    private func createNewCallEvent(for conversation: ZMConversation) throws -> ZMUpdateEvent {
+    private func createNewCallEvent(for conversation: ZMConversation, uuid: UUID = .create()) throws -> ZMUpdateEvent {
         let callEventContent = CallEventContent(
             type: "CONFSTART",
             properties: nil,
@@ -108,7 +108,7 @@ class StoreUpdateEventTests: MessagingTestBase {
 
         let event = ZMUpdateEvent(
             fromEventStreamPayload: payload,
-            uuid: .create()
+            uuid: uuid
         )!
 
         event.appendDebugInformation("Highly informative description")
@@ -272,22 +272,29 @@ class StoreUpdateEventTests: MessagingTestBase {
     }
 
     func test_EncryptAndCreate_DoesNotStoreDuplicateEvents() throws {
-        eventMOC.performAndWait {
+        try eventMOC.performAndWait {
             // Given some events.
             let conversation = self.createConversation(in: self.uiMOC)
             let event1 = self.createNewConversationEvent(for: conversation)
+            let event2 = try createNewCallEvent(for: conversation, uuid: event1.uuid!)
+            let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+                event2,
+                context: self.eventMOC,
+                index: 1,
+                publicKeys: nil
+            )
 
             // When we store the events with public keys.
             guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
                 event1,
                 context: self.eventMOC,
-                index: 1,
+                index: 2,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
             }
 
-            let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+            let duplicateStoredEvent1 = StoredUpdateEvent.encryptAndCreate(
                 event1,
                 context: self.eventMOC,
                 index: 2,
@@ -296,12 +303,12 @@ class StoreUpdateEventTests: MessagingTestBase {
 
             // Then first event is encrypted
             assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
-            XCTAssertEqual(storedEvent1.sortIndex, 1)
+            XCTAssertEqual(storedEvent1.sortIndex, 2)
             XCTAssertNotNil(storedEvent1.payload)
             XCTAssertFalse(storedEvent1.isCallEvent)
             XCTAssertFalse(storedEvent1.isEncrypted)
 
-            XCTAssertNil(storedEvent2)
+            XCTAssertNil(duplicateStoredEvent1)
         }
 
     }
