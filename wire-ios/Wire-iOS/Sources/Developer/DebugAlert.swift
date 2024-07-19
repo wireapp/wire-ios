@@ -104,7 +104,6 @@ final class DebugAlert {
     }
 
     static func displayFallbackActivityController(
-        logPaths: [URL],
         email: String,
         from controller: UIViewController,
         popoverPresentation: PopoverViewControllerPresentation
@@ -115,16 +114,38 @@ final class DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
+        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentation: popoverPresentation))
+        controller.present(alert, animated: true, completion: nil)
+    }
 
-            let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
-            if let popoverPresentationController = activity.popoverPresentationController {
+    private static func makeFallbackAlertAction(
+        from controller: UIViewController,
+        popoverPresentation: PopoverViewControllerPresentation
+    ) -> UIAlertAction {
+        UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
+            let logFilesProvider = LogFilesProvider()
+            let logsFileURL: URL
+            do {
+                logsFileURL = try logFilesProvider.generateLogFilesZip()
+            } catch {
+                WireLogger.system.error("Failed to generate log files zip: \(error)")
+                return
+            }
+
+            let activityViewController = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
+            if let popoverPresentationController = activityViewController.popoverPresentationController {
                 popoverPresentation.configure(popoverPresentationController: popoverPresentationController)
             }
-            controller.present(activity, animated: true)
-        })
+            activityViewController.completionWithItemsHandler = { _, _, _, _ in
+                do {
+                    try logFilesProvider.clearLogsDirectory()
+                } catch {
+                    WireLogger.system.warn("Unable to clear temporary directory: \(error)")
+                }
+            }
 
-        controller.present(alert, animated: true)
+            controller.present(activityViewController, animated: true, completion: nil)
+        }
     }
 }
 
@@ -133,14 +154,6 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
 
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
-
-    static var existingDebugLogs: [URL] {
-        let oslogs = LogFileDestination.allCases.compactMap { $0.log }
-        let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
-        let allLogs = ZMSLog.previousZipLogURLs + oslogs + currentLog
-
-        return allLogs.filter { FileManager.default.fileExists(atPath: $0.path) }
-    }
 
     /// Sends recorded logs by email
     static func sendLogsByEmail(
@@ -151,11 +164,6 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     ) {
         guard self.senderInstance == nil else { return }
 
-        guard !existingDebugLogs.isEmpty else {
-            DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
-            return
-        }
-
         // Prepare subject & body
         let user = SelfUser.provider?.providedSelfUser as? ZMUser
         let userID = user?.remoteIdentifier?.transportString() ?? ""
@@ -164,9 +172,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-
             return DebugAlert.displayFallbackActivityController(
-                logPaths: existingDebugLogs,
                 email: mail,
                 from: presentingViewController,
                 popoverPresentation: fallbackActivityPopoverPresentation

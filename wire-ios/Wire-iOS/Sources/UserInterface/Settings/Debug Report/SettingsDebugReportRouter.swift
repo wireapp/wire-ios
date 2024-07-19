@@ -40,7 +40,6 @@ protocol SettingsDebugReportRouterProtocol {
         destinations: [ZMConversation],
         debugReport: ShareableDebugReport
     )
-
 }
 
 class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
@@ -97,7 +96,6 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
-            logPaths: DebugLogSender.existingDebugLogs,
             email: mailRecipient,
             from: viewController,
             popoverPresentation: .sourceView(

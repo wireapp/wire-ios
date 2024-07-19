@@ -35,7 +35,6 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
             // we will be stuck on the blocker screen after that
             // considering this an edge case for now
             return DebugAlert.displayFallbackActivityController(
-                logPaths: DebugLogSender.existingDebugLogs,
                 email: mailRecipient,
                 from: self,
                 popoverPresentation: fallbackActivityPopoverPresentation
