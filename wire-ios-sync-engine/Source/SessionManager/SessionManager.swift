@@ -21,6 +21,7 @@ import CallKit
 import Foundation
 import PushKit
 import UserNotifications
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireTransport
@@ -235,7 +236,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var presentationDelegate: PresentationDelegate?
     public weak var foregroundNotificationResponder: ForegroundNotificationResponder?
     public weak var switchingDelegate: SessionManagerSwitchingDelegate?
-    public let groupQueue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
+    public let groupQueue: GroupQueue = DispatchGroupQueue(queue: .main)
 
     let application: ZMApplication
     var deleteAccountToken: Any?
@@ -311,6 +312,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private let minTLSVersion: String?
+
+    private var analyticsManager: (any AnalyticsManagerProtocol)?
 
     public override init() {
         fatal("init() not implemented")
@@ -518,7 +521,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = nil
         }
 
-        self.analyticsSessionConfiguration = analyticsSessionConfiguration
+        if let analyticsSessionConfiguration {
+            self.analyticsManager = AnalyticsManager(
+                appKey: analyticsSessionConfiguration.countlyKey,
+                host: analyticsSessionConfiguration.host
+            )
+        }
 
         super.init()
 
@@ -711,7 +719,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func addAccount(userInfo: [String: Any]? = nil) {
         confirmSwitchingAccount { [weak self] isConfirmed in
             guard isConfirmed else { return }
-            let error = NSError(code: .addAccountRequested, userInfo: userInfo)
+            let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
                 self?.activeUserSession = nil
             })
@@ -747,7 +755,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.tearDownSessionAndDelete(account: account)
         } else {
             // Deleted the last account so we need to return to the logged out area
-            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(code: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
+            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
         }
     }
 
@@ -848,7 +856,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             } else {
                 createUnauthenticatedSession(accountId: account.userIdentifier)
 
-                let error = NSError(code: .accessTokenExpired,
+                let error = NSError(userSessionErrorCode: .accessTokenExpired,
                                     userInfo: account.loginCredentials?.dictionaryRepresentation)
                 delegate?.sessionManagerDidFailToLogin(error: error)
             }
@@ -862,8 +870,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
-
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
+            self.switchAnalyticsUser()
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -875,11 +883,51 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
+
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
+    }
+
+    private func switchAnalyticsUser() {
+        guard
+            let analyticsManager,
+            let activeUserSession
+        else {
+            return
+        }
+
+        let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
+
+        // Set the analytics identifier if it's not present
+        if selfUser.analyticsIdentifier == nil {
+            let idProvider = AnalyticsIdentifierProvider(selfUser: activeUserSession.selfUser)
+            idProvider.setIdentifierIfNeeded()
+        }
+
+        guard let analyticsID = selfUser.analyticsIdentifier else {
+            return
+        }
+
+        var teamInfo: TeamInfo?
+        if let team = selfUser.team, let teamID = team.remoteIdentifier {
+            teamInfo = TeamInfo(
+                id: teamID.uuidString,
+                role: selfUser.teamRole.analyticsValue,
+                size: team.members.count
+            )
+        }
+
+        let analyticsSession = analyticsManager.switchUser(
+            AnalyticsUserProfile(
+                analyticsIdentifier: analyticsID,
+                teamInfo: teamInfo
+            )
+        )
+
+        activeUserSession.analyticsSession = analyticsSession
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
@@ -1221,7 +1269,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func performPostRebootLogout() {
-        let error = NSError(code: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
+        let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
         self.logoutCurrentSession(deleteCookie: true, error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
@@ -1329,7 +1377,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
     public func session(session: UnauthenticatedSession, createdAccount account: Account) {
         guard !(accountManager.accounts.count == maxNumberAccounts && accountManager.account(with: account.userIdentifier) == nil) else {
-            let error = NSError(code: .accountLimitReached, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
             loginDelegate?.authenticationDidFail(error)
             return
         }

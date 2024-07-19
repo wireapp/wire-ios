@@ -132,7 +132,7 @@ extension SessionManager {
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
             guard let self else {
-                completion(.failure(NSError(code: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
+                completion(.failure(NSError(userSessionErrorCode: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
                 return
             }
 

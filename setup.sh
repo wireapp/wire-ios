@@ -116,10 +116,6 @@ else
 fi
 echo ""
 
-echo "ℹ️ Install Git hook"
-scripts/githooks-install.sh
-echo ""
-
 (
     cd "$REPO_ROOT/wire-ios"
 

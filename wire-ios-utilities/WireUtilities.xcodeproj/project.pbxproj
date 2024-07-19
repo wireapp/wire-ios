@@ -60,8 +60,6 @@
 		54CA31471B74F36B00B820C0 /* ZMFunctional.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31241B74F36B00B820C0 /* ZMFunctional.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA314D1B74F36B00B820C0 /* ZMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31271B74F36B00B820C0 /* ZMTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA314F1B74F36B00B820C0 /* WireUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31281B74F36B00B820C0 /* WireUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54CA31551B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA31521B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m */; };
 		54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C581BC81976005F0FBB /* android_image.encrypted */; };
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
@@ -72,6 +70,7 @@
 		5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* AccentColor.swift */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
+		596C4DCE2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */; };
 		598E86B62BF4D64100FC5438 /* WireUtilitiesSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86BA2BF4D6A900FC5438 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		598E86C72BF4D77200FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */; };
@@ -293,8 +292,6 @@
 		54CA31241B74F36B00B820C0 /* ZMFunctional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMFunctional.h; sourceTree = "<group>"; };
 		54CA31271B74F36B00B820C0 /* ZMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTimer.h; sourceTree = "<group>"; };
 		54CA31281B74F36B00B820C0 /* WireUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireUtilities.h; sourceTree = "<group>"; };
-		54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+WireUtilities.h"; sourceTree = "<group>"; };
-		54CA31521B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+WireUtilities.m"; sourceTree = "<group>"; };
 		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.encrypted; sourceTree = "<group>"; };
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
@@ -305,6 +302,7 @@
 		5966D83B2BD6BFCF00305BBC /* AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColor.swift; sourceTree = "<group>"; };
 		5966D83D2BD6C20700305BBC /* AccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorTests.swift; sourceTree = "<group>"; };
 		5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
+		596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+GroupQueue.swift"; sourceTree = "<group>"; };
 		598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireUtilitiesSupport.h; sourceTree = "<group>"; };
 		598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -532,7 +530,6 @@
 				871939C421D4D93600738968 /* ZMMobileProvisionParser.m */,
 				54CA31141B74F2C400B820C0 /* Public */,
 				F9C9A79F1CAEACB10039E10C /* Validation */,
-				54CA31521B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m */,
 				1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */,
 				D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */,
 				163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */,
@@ -643,7 +640,7 @@
 				54CA311D1B74F36B00B820C0 /* NSUUID+Data.h */,
 				54CA31241B74F36B00B820C0 /* ZMFunctional.h */,
 				54CA31271B74F36B00B820C0 /* ZMTimer.h */,
-				54CA31511B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h */,
+				596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */,
 				097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */,
 				BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */,
 				54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */,
@@ -864,7 +861,6 @@
 				54CA314D1B74F36B00B820C0 /* ZMTimer.h in Headers */,
 				54CA31371B74F36B00B820C0 /* NSUserDefaults+SharedUserDefaults.h in Headers */,
 				871939C321D4D92900738968 /* ZMMobileProvisionParser.h in Headers */,
-				54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */,
 				54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */,
 				59E3C25E2BD8094900C95BD7 /* ZMAccentColor.h in Headers */,
 				5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */,
@@ -912,7 +908,6 @@
 				3E88BD351B1F3EA300232589 /* Headers */,
 				3E88BD331B1F3EA300232589 /* Sources */,
 				3E88BD341B1F3EA300232589 /* Frameworks */,
-				AD4812AA2AB9905E00ED208C /* Run Swiftlint */,
 				3E88BD361B1F3EA300232589 /* Resources */,
 			);
 			buildRules = (
@@ -1080,26 +1075,6 @@
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-sourcery.sh --config ./Support/Sourcery/config.yml\n";
 		};
-		AD4812AA2AB9905E00ED208C /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1122,7 +1097,6 @@
 				5915B9502BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift in Sources */,
 				3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */,
 				16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */,
-				54CA31551B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m in Sources */,
 				EE162710250BA12900D35062 /* VolatileData.swift in Sources */,
 				7C8BFFE122FC612900B3C8A5 /* ZMPropertyValidator.swift in Sources */,
 				EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */,
@@ -1145,6 +1119,7 @@
 				16B75F66222EDC5000DCAFF2 /* String+Stripping.swift in Sources */,
 				F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */,
 				EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */,
+				596C4DCE2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift in Sources */,
 				54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */,
 				A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */,
 				7C8BFFE522FD611700B3C8A5 /* ZMEmailAddressValidator.swift in Sources */,

@@ -20,16 +20,10 @@
 // sourcery: AutoMockable
 public protocol AnalyticsSessionProtocol {
 
-    /// Starts an analytics session.
-    func startSession()
-
-    /// Ends the current analytics session.
-    func endSession()
-
     /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
+    /// - Parameter event: The `AnalyticsEvent` to be tracked.
     ///
     /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: any AnalyticsEvent)
+    func trackEvent(_ event: AnalyticsEvent)
 
 }

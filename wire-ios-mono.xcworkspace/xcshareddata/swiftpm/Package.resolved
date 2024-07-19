@@ -11,21 +11,21 @@
         }
       },
       {
-        "package": "Countly",
-        "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
-          "version": "24.4.2"
-        }
-      },
-      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
           "branch": null,
           "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
           "version": "3.8.5"
+        }
+      },
+      {
+        "package": "Countly",
+        "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
+          "version": "24.4.2"
         }
       },
       {
@@ -44,6 +44,15 @@
           "branch": null,
           "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
           "version": "1.3.0"
+        }
+      },
+      {
+        "package": "FLAnimatedImage",
+        "repositoryURL": "https://github.com/Flipboard/FLAnimatedImage",
+        "state": {
+          "branch": null,
+          "revision": "d4f07b6f164d53c1212c3e54d6460738b1981e9f",
+          "version": "1.0.17"
         }
       },
       {
@@ -71,6 +80,24 @@
           "branch": null,
           "revision": "18c1a35ca966236cee0c5a714a51a73ff33384c1",
           "version": "0.5.2"
+        }
+      },
+      {
+        "package": "PINCache",
+        "repositoryURL": "https://github.com/pinterest/PINCache",
+        "state": {
+          "branch": null,
+          "revision": "2fb85948463292c2e824148cf17dc62a4c217a94",
+          "version": "3.0.4"
+        }
+      },
+      {
+        "package": "PINOperation",
+        "repositoryURL": "https://github.com/pinterest/PINOperation.git",
+        "state": {
+          "branch": null,
+          "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
+          "version": "1.2.3"
         }
       },
       {
@@ -147,7 +174,7 @@
       },
       {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
           "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",

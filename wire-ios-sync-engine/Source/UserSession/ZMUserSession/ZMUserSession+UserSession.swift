@@ -284,6 +284,12 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    // MARK: Context provider
+
+    public var contextProvider: any ContextProvider {
+        return self
+    }
+
     // MARK: Use Cases
 
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {

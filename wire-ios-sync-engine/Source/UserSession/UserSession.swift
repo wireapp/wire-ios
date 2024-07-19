@@ -236,6 +236,10 @@ public protocol UserSession: AnyObject {
     /// Provides a unique context to bind notifications this user session.
     var notificationContext: any NotificationContext { get }
 
+    // MARK: Context provider
+
+    var contextProvider: any ContextProvider { get }
+
     // MARK: Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }

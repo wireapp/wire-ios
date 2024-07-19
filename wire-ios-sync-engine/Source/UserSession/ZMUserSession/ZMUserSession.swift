@@ -79,7 +79,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public var analyticsSession: AnalyticsSession?
+    var analyticsSession: (any AnalyticsSessionProtocol)?
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -392,35 +392,6 @@ public final class ZMUserSession: NSObject {
         self.dependencies = dependencies
 
         super.init()
-    }
-
-    private func setupAnalyticsSession() {
-        guard let config = dependencies.analyticsSessionConfiguration else {
-            return
-        }
-
-        let teamInfo: TeamInfo? = {
-            guard let team = selfUser.membership?.team,
-                  let teamID = team.remoteIdentifier?.uuidString else {
-                return nil
-            }
-
-            let teamRole = selfUser.teamRole.analyticsValue
-            let teamSize = team.members.count
-
-            return TeamInfo(id: teamID, role: teamRole, size: teamSize)
-        }()
-
-        let analyticsUserProfile = AnalyticsUserProfile(
-            analyticsIdentifier: selfUser.remoteIdentifier.uuidString,
-            teamInfo: teamInfo
-        )
-
-        self.analyticsSession = AnalyticsSession(
-            appKey: config.countlyKey,
-            host: config.host,
-            userProfile: analyticsUserProfile
-        )
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -903,10 +874,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         recurringActionService.performActionsIfNeeded()
 
         checkExpiredCertificateRevocationLists()
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.checkE2EICertificateExpiryStatus()
-        }
+        checkE2EICertificateExpiryStatus()
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
@@ -1032,9 +1000,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        guard e2eiFeature.isEnabled else { return }
-
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+            }
+        }
     }
 }
 
