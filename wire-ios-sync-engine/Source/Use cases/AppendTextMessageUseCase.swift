@@ -60,27 +60,3 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         )
     }
 }
-
-public protocol MessageAppendableConversation {
-
-    var conversationType: ZMConversationType { get }
-    var localParticipants: Set<ZMUser> { get }
-    var draftMessage: DraftMessage? { get nonmutating set }
-
-    @discardableResult
-    func appendText(
-        content: String,
-        mentions: [Mention],
-        replyingTo quotedMessage: (any ZMConversationMessage)?,
-        fetchLinkPreview: Bool,
-        nonce: UUID
-    ) throws -> any ZMConversationMessage
-
-    @discardableResult
-    func appendKnock(nonce: UUID) throws -> any ZMConversationMessage
-
-}
-
-extension ZMConversation: MessageAppendableConversation {
-
-}
