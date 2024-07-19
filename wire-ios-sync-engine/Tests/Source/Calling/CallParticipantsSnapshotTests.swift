@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModel
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import WireSyncEngine
 
@@ -32,7 +34,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
     private var aliceDesktop: AVSClient!
     private var bobIphone: AVSClient!
     private var bobDesktop: AVSClient!
-    private var conversationId = AVSIdentifier.stub
+    private var conversationId: AVSIdentifier!
     private var selfUser: ZMUser!
     private var user2: ZMUser!
     private var selfClient: UserClient!
@@ -55,6 +57,10 @@ final class CallParticipantsSnapshotTests: MessagingTest {
         aliceDesktop = AVSClient(userId: aliceId, clientId: "alice-desktop")
         bobIphone = AVSClient(userId: bobId, clientId: "bob-iphone")
         bobDesktop = AVSClient(userId: bobId, clientId: "bob-desktop")
+
+        BackendInfo.enableMocking()
+        BackendInfo.isFederationEnabled = false
+        conversationId = AVSIdentifier.stub
     }
 
     override func tearDown() {
@@ -65,6 +71,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
         user2 = nil
         client1 = nil
         client2 = nil
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
