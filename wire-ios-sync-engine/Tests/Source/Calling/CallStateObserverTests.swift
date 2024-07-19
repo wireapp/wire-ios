@@ -18,6 +18,8 @@
 
 import Foundation
 import WireUtilitiesSupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import WireSyncEngine
 
@@ -36,6 +38,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
 
         syncMOC.performGroupedAndWait {
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
@@ -76,6 +80,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     override func tearDown() {
+        BackendInfo.resetMocking()
         sut = nil
         sender = nil
         receiver = nil
