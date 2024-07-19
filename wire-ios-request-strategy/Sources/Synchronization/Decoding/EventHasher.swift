@@ -21,26 +21,24 @@ import Foundation
 /// Computes an hash to compare UpdateEvent and StoredUpdateEvent
 struct EventHasher: Hashable {
     var eventId: String
-    var payload: String
+    var payload: Data
 
     init?(eventId: String, payload: [AnyHashable: Any]) {
-        guard let payloadData = try? JSONSerialization.data(withJSONObject: payload as NSDictionary, options: .sortedKeys),
-            let payloadString = String(data: payloadData, encoding: .utf8) else {
+        guard let payloadData = try? NSKeyedArchiver.archivedData(withRootObject: payload as NSDictionary, requiringSecureCoding: true) else {
             return nil
         }
         self.eventId = eventId
-        self.payload = payloadString
+        self.payload = payloadData
     }
 
     init?(storedEvent: StoredUpdateEvent) {
         guard let id = storedEvent.uuidString,
               let payload = storedEvent.payload,
-              let payloadData = try? JSONSerialization.data(withJSONObject: payload, options: .sortedKeys),
-                let payloadString = String(data: payloadData, encoding: .utf8) else {
+              let payloadData = try? NSKeyedArchiver.archivedData(withRootObject: payload as NSDictionary, requiringSecureCoding: true) else {
 
             return nil
         }
         self.eventId = id
-        self.payload = payloadString
+        self.payload = payloadData
     }
 }
