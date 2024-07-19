@@ -20,10 +20,6 @@ import UIKit
 
 final class RootViewController: UIViewController {
 
-    // MARK: - SpinnerCapable
-
-    var dismissSpinner: (() -> Void)?
-
     // MARK: - Private Property
 
     private var childViewController: UIViewController?

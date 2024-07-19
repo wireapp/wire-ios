@@ -30,6 +30,8 @@ final class MockLoadingViewController: SpinnerCapableViewController {
 
 // MARK: - LoadingViewControllerTests
 
+// TODO: check
+
 final class LoadingViewControllerTests: XCTestCase {
 
     // MARK: - Properties
