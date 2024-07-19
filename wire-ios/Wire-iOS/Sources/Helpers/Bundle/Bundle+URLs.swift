@@ -47,12 +47,14 @@ struct URLs: Codable {
         guard let urls = URLs(forResource: "url", withExtension: "json") else {
             fatalError("can't find or decode url.json")
         }
+
         return urls
     }()
 
     private init?(forResource resource: String, withExtension fileExtension: String) {
         guard let fileURL = Bundle.fileURL(for: resource, with: fileExtension) else {
             WireLogger.environment.error("no url.json file")
+
             return nil
         }
         do {
