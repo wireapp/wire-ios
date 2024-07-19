@@ -16,23 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
+@import CoreData;
 
-CLIPBOARD_ENABLED=1
-FORCE_CBR_ENABLED=0
-GENERATE_LINK_PREVIEW_ENABLED=1
-CUSTOM_BACKEND_ENABLED=1
-CAMERA_ROLL_ENABLED=1
-BACKUP_ENABLED=1
-FILE_SHARING_ENABLED=1
-LOCATION_SHARING_ENABLED=1
+NS_ASSUME_NONNULL_BEGIN
 
-/// Whether encryption at rest is enabled and can't be disabled.
+@interface NSManagedObjectContext (executeFetchRequestOrAssert_MockTransport)
 
-FORCE_ENCRYPTION_AT_REST_ENABLED=0
+- (NSArray *)executeFetchRequestOrAssert_mt:(NSFetchRequest *)request NS_SWIFT_UNAVAILABLE("Use `try fetch(request)` instead!");
 
-// The minimum TLS version used by the app.
-// Possible values are [1.2, 1.3].
+@end
 
-MIN_TLS_VERSION=1.2
+NS_ASSUME_NONNULL_END
