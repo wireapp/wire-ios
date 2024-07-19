@@ -110,6 +110,8 @@ extension ConversationContentViewController {
                     using: .superviewAndFrame(of: (view as? SelectableView)?.selectionView ?? view)
                 )
                 present(activityViewController, animated: true)
+            } else {
+                WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
             }
 
         case .digitallySign:
