@@ -32,6 +32,10 @@ public final class StoredUpdateEvent: NSManagedObject {
     // MARK: - Properties
 
     @NSManaged
+    /// hash Value of payload and eventId combined
+    var eventHash: Int64
+
+    @NSManaged
     var uuidString: String?
 
     @NSManaged
@@ -74,7 +78,13 @@ public final class StoredUpdateEvent: NSManagedObject {
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
 
-        guard !storedEventExists(for: event, in: context) else {
+        guard let eventId = event.uuid?.transportString(),
+              let eventHash = EventHasher(eventId: eventId, payload: event.payload)?.hashValue else {
+            assertionFailure("trying to check storedEvent without id")
+            return nil
+        }
+
+        guard !storedEventExists(for: eventHash, in: context) else {
             WireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
             return nil
         }
@@ -88,9 +98,10 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.isTransient = event.isTransient
         storedEvent.source = Int16(event.source.rawValue)
         storedEvent.sortIndex = index
-        storedEvent.uuidString = event.uuid?.transportString()
+        storedEvent.uuidString = eventId
         storedEvent.isCallEvent = event.isCallEvent
         storedEvent.payload = event.payload as NSDictionary
+        storedEvent.eventHash = Int64(eventHash)
         storedEvent.isEncrypted = false
 
         encryptIfNeeded(
@@ -101,32 +112,23 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static private func storedEventExists(for updateEvent: ZMUpdateEvent, in context: NSManagedObjectContext) -> Bool {
-        guard let eventId = updateEvent.uuid?.transportString() else {
-            assertionFailure("trying to check storedEvent without id")
-            return false
-        }
+    static private func storedEventExists(for updateEventHash: Int, in context: NSManagedObjectContext) -> Bool {
 
-        let storedEvents = StoredUpdateEvent.events(eventId: eventId, context: context)
+        let storedEvents = StoredUpdateEvent.events(eventHash: updateEventHash, context: context)
         guard !storedEvents.isEmpty else {
             return false
         }
 
-        let updateEventHasher = EventHasher(eventId: eventId, payload: updateEvent.payload)
-
-        for storedEvent in storedEvents {
-            let storedEventHasher = EventHasher(storedEvent: storedEvent)
-            if storedEventHasher?.hashValue == updateEventHasher?.hashValue {
-                return true
-            }
+        for storedEvent in storedEvents where storedEvent.eventHash == updateEventHash {
+            return true
         }
 
         return false
     }
 
-    static func events(eventId: String, context: NSManagedObjectContext) -> [StoredUpdateEvent] {
+    static func events(eventHash: Int, context: NSManagedObjectContext) -> [StoredUpdateEvent] {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
+        fetchRequest.predicate = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
         let result = context.fetchOrAssert(request: fetchRequest)
         return result
     }

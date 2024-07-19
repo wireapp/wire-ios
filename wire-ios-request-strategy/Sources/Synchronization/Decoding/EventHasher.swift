@@ -30,15 +30,4 @@ struct EventHasher: Hashable {
         self.eventId = eventId
         self.payload = payloadData
     }
-
-    init?(storedEvent: StoredUpdateEvent) {
-        guard let id = storedEvent.uuidString,
-              let payload = storedEvent.payload,
-              let payloadData = try? NSKeyedArchiver.archivedData(withRootObject: payload as NSDictionary, requiringSecureCoding: true) else {
-
-            return nil
-        }
-        self.eventId = id
-        self.payload = payloadData
-    }
 }
