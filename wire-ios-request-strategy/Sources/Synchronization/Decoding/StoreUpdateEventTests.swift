@@ -229,6 +229,41 @@ class StoreUpdateEventTests: MessagingTestBase {
 
     // MARK: - Encrypt and create
 
+    func test_EncryptAndCreate_DoesNotStoreDuplicateEvents() throws {
+        eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+
+            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
+
+            let duplicateStoredEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            )
+
+            // Then first event is encrypted
+            assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+            XCTAssertEqual(storedEvent1.sortIndex, 2)
+            XCTAssertNotNil(storedEvent1.payload)
+            XCTAssertFalse(storedEvent1.isCallEvent)
+            XCTAssertFalse(storedEvent1.isEncrypted)
+
+            XCTAssertNil(duplicateStoredEvent1)
+        }
+
+    }
+
+
     func test_EncryptAndCreate_Unencrypted() throws {
         try eventMOC.performAndWait {
             // Given some events.
@@ -271,7 +306,7 @@ class StoreUpdateEventTests: MessagingTestBase {
         }
     }
 
-    func test_EncryptAndCreate_DoesNotStoreDuplicateEvents() throws {
+    func test_EncryptAndCreate_DoesNotStoreDuplicateEvents_Encrypted() throws {
         eventMOC.performAndWait {
             // Given some events.
             let conversation = self.createConversation(in: self.uiMOC)
@@ -281,7 +316,7 @@ class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
-                publicKeys: nil
+                publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")
             }
@@ -290,7 +325,7 @@ class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
-                publicKeys: nil
+                publicKeys: self.publicKeys
             )
 
             // Then first event is encrypted
@@ -298,7 +333,7 @@ class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertEqual(storedEvent1.sortIndex, 2)
             XCTAssertNotNil(storedEvent1.payload)
             XCTAssertFalse(storedEvent1.isCallEvent)
-            XCTAssertFalse(storedEvent1.isEncrypted)
+            XCTAssertTrue(storedEvent1.isEncrypted)
 
             XCTAssertNil(duplicateStoredEvent1)
         }
