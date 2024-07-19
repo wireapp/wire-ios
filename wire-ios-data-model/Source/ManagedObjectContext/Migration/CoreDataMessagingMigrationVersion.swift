@@ -18,64 +18,6 @@
 
 import Foundation
 
-protocol CoreDataMigrationVersion: CaseIterable, Equatable {
-    var nextVersion: Self? { get }
-    static var current: Self { get }
-
-    func managedObjectModelURL() -> URL?
-
-    var rawValue: String { get }
-}
-
-enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
-
-    private enum Constant {
-        static let dataModelPrefix = "ZMEventModel"
-        static let modelDirectory = "ZMEventModel.momd"
-        static let resourceExtension = "mom"
-    }
-
-
-    // Note: add new versions here in first position!
-    case v05 = "ZMEventModel5.0"
-    case v04 = "ZMEventModel4.0"
-    case v03 = "ZMEventModel3.0"
-    case v02 = "ZMEventModel2.0"
-    case v01 = "ZMEventModel"
-
-
-    var nextVersion: Self? {
-        switch self {
-
-        case .v05:
-            return nil
-        case .v04:
-            return .v05
-        case .v01, .v02, .v03:
-            return .v04
-        }
-    }
-
-    // MARK: Current
-
-    static let current: Self = {
-        guard let current = allCases.first else {
-            fatalError("no model versions found")
-        }
-        return current
-    }()
-
-    // MARK: Store URL
-
-    func managedObjectModelURL() -> URL? {
-        WireDataModelBundle.bundle.url(
-            forResource: rawValue,
-            withExtension: Constant.resourceExtension,
-            subdirectory: Constant.modelDirectory
-        )
-    }
-}
-
 enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     private enum Constant {

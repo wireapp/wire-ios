@@ -11,6 +11,8 @@
 		0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
+		012B55F92C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55F82C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift */; };
+		012B55FB2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55FA2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift */; };
 		013887A22B9A5C6000323DD0 /* CleanupModels107PreAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A12B9A5C6000323DD0 /* CleanupModels107PreAction.swift */; };
 		013887A62B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A32B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift */; };
 		013887A72B9A5C6B00323DD0 /* PrefillPrimaryKeyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A42B9A5C6B00323DD0 /* PrefillPrimaryKeyAction.swift */; };
@@ -916,6 +918,8 @@
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
 		012B55F72C4AEBB200DC12D0 /* ZMEventModel5.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel5.0.xcdatamodel; sourceTree = "<group>"; };
+		012B55F82C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEventsMigrationVersion.swift; sourceTree = "<group>"; };
+		012B55FA2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationVersion.swift; sourceTree = "<group>"; };
 		013887A12B9A5C6000323DD0 /* CleanupModels107PreAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CleanupModels107PreAction.swift; sourceTree = "<group>"; };
 		013887A32B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrimaryKeyGenerator.swift; sourceTree = "<group>"; };
 		013887A42B9A5C6B00323DD0 /* PrefillPrimaryKeyAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefillPrimaryKeyAction.swift; sourceTree = "<group>"; };
@@ -2477,6 +2481,8 @@
 				017962A02B83FF8200D6C7B6 /* 110-111 */,
 				E62EE7F62B3447A3002A54EF /* 106-107 */,
 				E6A5BBA52B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift */,
+				012B55FA2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift */,
+				012B55F82C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift */,
 				E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */,
 				E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */,
 				013887AA2B9A5C8B00323DD0 /* CoreDataMigrationAction.swift */,
@@ -4059,6 +4065,7 @@
 				E6067C002BAD9461005A7474 /* OneOnOneResolverError.swift in Sources */,
 				1670D0172317F92B003A143B /* ZMConversation+Team.swift in Sources */,
 				EED6C7142A30B94100CB8B60 /* MLSUserID.swift in Sources */,
+				012B55FB2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift in Sources */,
 				EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */,
 				63B1336A29A503D100009D84 /* ClaimMLSKeyPackageAction.swift in Sources */,
 				639971AE2B2732E6009DD5CF /* CommitSender.swift in Sources */,
@@ -4408,6 +4415,7 @@
 				EE68EEC9252DC4450013B242 /* ChangeDetector.swift in Sources */,
 				63B1335629A503D100009D84 /* MLSGroup.swift in Sources */,
 				EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */,
+				012B55F92C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift in Sources */,
 				EEC80B5C29B611CA00099727 /* PersistedDataPatch.swift in Sources */,
 				F9AB00271F0CE5520037B437 /* FileManager+FileLocations.swift in Sources */,
 				F9A7067F1CAEE01D00C2F5FE /* ZMImageMessage.m in Sources */,
