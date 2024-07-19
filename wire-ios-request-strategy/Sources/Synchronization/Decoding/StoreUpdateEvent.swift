@@ -73,6 +73,12 @@ public final class StoredUpdateEvent: NSManagedObject {
         index: Int64,
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
+
+        guard !storedEventExists(for: event, in: context) else {
+            WireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
+            return nil
+        }
+
         guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
             WireLogger.updateEvent.error("could not store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
             return nil
@@ -93,6 +99,34 @@ public final class StoredUpdateEvent: NSManagedObject {
         )
 
         return storedEvent
+    }
+
+    static private func storedEventExists(for updateEvent: ZMUpdateEvent, in context: NSManagedObjectContext) -> Bool {
+        guard let eventId = updateEvent.uuid?.transportString() else {
+            assertionFailure("trying to check storedEvent without id")
+            return false
+        }
+
+        let storedEvents = StoredUpdateEvent.events(eventId: eventId, context: context)
+        guard !storedEvents.isEmpty else {
+            return false
+        }
+
+        let upateEventHash = EventHasher(eventId: eventId, payload: updateEvent.payload as NSDictionary).hashValue
+
+        for storedEvent in storedEvents {
+            let storedEventHash = EventHasher(storedEvent: storedEvent)?.hashValue
+            return storedEventHash == upateEventHash
+        }
+
+        return false
+    }
+
+    static func events(eventId: String, context: NSManagedObjectContext) -> [StoredUpdateEvent] {
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
+        let result = context.fetchOrAssert(request: fetchRequest)
+        return result
     }
 
     private static func encryptIfNeeded(
