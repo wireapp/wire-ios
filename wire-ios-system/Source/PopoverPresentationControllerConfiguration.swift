@@ -48,9 +48,12 @@ public enum PopoverPresentationControllerConfiguration {
     }
 
     @MainActor
-    public static func superviewAndFrame(of view: UIView) -> Self! {
+    public static func superviewAndFrame(
+        of view: UIView,
+        insetBy inset: (dx: CGFloat, dy: CGFloat) = (0, 0)
+    ) -> Self! {
         guard let superview = view.superview else { return nil }
-        return .sourceView(sourceView: superview, sourceRect: view.frame)
+        return .sourceView(sourceView: superview, sourceRect: view.frame.insetBy(dx: inset.dx, dy: inset.dy))
     }
 }
 

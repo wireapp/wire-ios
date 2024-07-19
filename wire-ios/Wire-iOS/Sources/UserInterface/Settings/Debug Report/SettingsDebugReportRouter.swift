@@ -92,19 +92,16 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         })
     }
 
+    @MainActor
     func presentFallbackAlert(sender: UIView) {
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
             email: mailRecipient,
             from: viewController,
-            popoverPresentation: .sourceView(
-                sender.superview!,
-                sender.frame.insetBy(dx: -4, dy: -4)
-            )
+            popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
     }
-
 }
 
 extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
@@ -116,5 +113,4 @@ extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
     ) {
         controller.dismiss(animated: true)
     }
-
 }

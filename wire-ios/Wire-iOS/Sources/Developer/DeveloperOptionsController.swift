@@ -74,24 +74,35 @@ final class DeveloperOptionsController: UIViewController {
     func forwardLogCell() -> UITableViewCell {
         createCellWithButton(labelText: "Forward log records") { sender in
 
-            let alert = UIAlertController(title: "Add explanation", message: "Please explain the problem that made you send the logs", preferredStyle: .alert)
-            let fallbackActivityPopoverPresentation = PopoverViewControllerPresentation.sourceView(sourceView: sender.superview!, sourceRect: sender.frame.insetBy(dx: -4, dy: -4))
+            let alertController = UIAlertController(title: "Add explanation", message: "Please explain the problem that made you send the logs", preferredStyle: .alert)
 
-            alert.addAction(UIAlertAction(title: "Send to Devs", style: .default) { _ in
-                guard let text = alert.textFields?.first?.text else { return }
-                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: false, presentingViewController: self, fallbackActivityPopoverPresentation: fallbackActivityPopoverPresentation)
+            let fallbackActivityConfiguration: PopoverPresentationControllerConfiguration = .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
+
+            alertController.addAction(UIAlertAction(title: "Send to Devs", style: .default) { _ in
+                guard let text = alertController.textFields?.first?.text else { return }
+                DebugLogSender.sendLogsByEmail(
+                    message: text,
+                    shareWithAVS: false,
+                    presentingViewController: self,
+                    fallbackActivityPopoverConfiguration: fallbackActivityConfiguration
+                )
             })
 
-            alert.addAction(UIAlertAction(title: "Send to Devs & AVS", style: .default) { _ in
-                guard let text = alert.textFields?.first?.text else { return }
-                DebugLogSender.sendLogsByEmail(message: text, shareWithAVS: true, presentingViewController: self, fallbackActivityPopoverPresentation: fallbackActivityPopoverPresentation)
+            alertController.addAction(UIAlertAction(title: "Send to Devs & AVS", style: .default) { _ in
+                guard let text = alertController.textFields?.first?.text else { return }
+                DebugLogSender.sendLogsByEmail(
+                    message: text,
+                    shareWithAVS: true,
+                    presentingViewController: self,
+                    fallbackActivityPopoverConfiguration: fallbackActivityConfiguration
+                )
             })
 
-            alert.addTextField {(textField: UITextField!) in
+            alertController.addTextField {(textField: UITextField!) in
                 textField.placeholder = "Please explain the problem"
             }
 
-            self.present(alert, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
 
