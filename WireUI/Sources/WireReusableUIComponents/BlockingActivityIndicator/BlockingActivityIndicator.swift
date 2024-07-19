@@ -22,13 +22,11 @@ import UIKit
 @MainActor
 public final class BlockingActivityIndicator {
 
-    private weak var view: UIView?
-    private weak var activityIndicatorView: UIActivityIndicatorView? // TODO: move to extension
+    // MARK: - Properties
 
-    var isAnimating: Bool {
-        get { fatalError() }
-        set { fatalError() }
-    }
+    private weak var view: UIView?
+
+    // MARK: - Life Cycle
 
     public init(view: UIView) {
         self.view = view
@@ -38,47 +36,63 @@ public final class BlockingActivityIndicator {
         let view = view
         Task {
             await MainActor.run { [weak view] in
-                view?.cleanUpBlockingActivityIndicators()
+                view?.unblockAndStopAnimatingIfNeeded(blockingActivityIndicator: nil)
             }
         }
     }
 
-    public func startAnimating() {
-        UIActivityIndicatorView().isAnimating
+    // MARK: - Methods
+
+    public func start() {
+        view?.blockAndStartAnimating(blockingActivityIndicator: self)
     }
 
-    public func stopAnimating() {
-        //
+    public func stop() {
+        view?.unblockAndStopAnimatingIfNeeded(blockingActivityIndicator: self)
     }
+}
+
+// MARK: - BlockingActivityIndicatorState
+
+private struct BlockingActivityIndicatorState {
+    var weakReferences = [WeakReference<BlockingActivityIndicator>]()
+    private(set) var activityIndicatorView = UIActivityIndicatorView()
 }
 
 // MARK: - UIView + BlockingActivityIndicators
 
 extension UIView {
 
+    fileprivate func blockAndStartAnimating(blockingActivityIndicator reference: BlockingActivityIndicator) {
+
+        var state = blockingActivityIndicatorState ?? .init()
+        state.weakReferences = [.init(reference)] + state.weakReferences.filter { $0.reference != nil }
+        blockingActivityIndicatorState = state
+
+        // TODO: add subviews
+    }
+
+    fileprivate func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
+
+        guard var state = blockingActivityIndicatorState else { return }
+
+        state.weakReferences = state.weakReferences.filter { $0.reference != nil && $0.reference !== reference }
+
+        if state.weakReferences.isEmpty {
+            // TODO: remove subviews and state
+            blockingActivityIndicatorState = nil
+        }
+    }
+
     // TODO: consider declaring struct in order to only have one associatedObjectKey
 
-    private var blockingActivityIndicators: [WeakReference<BlockingActivityIndicator>] {
-        get { objc_getAssociatedObject(self, &associatedObjectKey) as? [WeakReference<BlockingActivityIndicator>] ?? [] }
-        set { objc_setAssociatedObject(self, &associatedObjectKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
-
-    // TODO: rename and add subview, set userinteractionenabled etc.
-    fileprivate func addBlockingActivityIndicator(_ blockingActivityIndicator: BlockingActivityIndicator) {
-        blockingActivityIndicators += [.init(reference: blockingActivityIndicator)]
-    }
-
-    // TODO: also remove subviews
-    /// Removes all references to `BlockingActivityIndicator` which have been destroyed.
-    /// - Returns: `true` if no more reference exists, `false` otherwise.
-    fileprivate func cleanUpBlockingActivityIndicators() -> Bool {
-        let blockingActivityIndicators = blockingActivityIndicators.filter { $0.reference != nil }
-        self.blockingActivityIndicators = blockingActivityIndicators
-        return blockingActivityIndicators.isEmpty
+    private var blockingActivityIndicatorState: BlockingActivityIndicatorState? {
+        get { objc_getAssociatedObject(self, &stateKey) as? BlockingActivityIndicatorState }
+        set { objc_setAssociatedObject(self, &stateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 }
 
-private var associatedObjectKey = 0
+private var stateKey = 0
 
 // MARK: - WeakReference
 
@@ -86,6 +100,10 @@ private var associatedObjectKey = 0
 private struct WeakReference<T: AnyObject> {
 
     weak var reference: T?
+
+    init(_ reference: T) {
+        self.init(reference: reference)
+    }
 
     init(reference: T) {
         self.reference = reference
