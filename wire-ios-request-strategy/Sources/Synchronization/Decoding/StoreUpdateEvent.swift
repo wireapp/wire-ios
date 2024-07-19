@@ -118,8 +118,8 @@ public final class StoredUpdateEvent: NSManagedObject {
         guard !storedEvents.isEmpty else {
             return false
         }
-
-        for storedEvent in storedEvents where storedEvent.eventHash == updateEventHash {
+        
+        for storedEvent in storedEvents where storedEvent.eventHash == updateEventHash || storedEvent.eventHash == 0 {
             return true
         }
 
