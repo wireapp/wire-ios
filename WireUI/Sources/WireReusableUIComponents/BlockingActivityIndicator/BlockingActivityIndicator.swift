@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 @MainActor
@@ -65,11 +65,41 @@ extension UIView {
 
     fileprivate func blockAndStartAnimating(blockingActivityIndicator reference: BlockingActivityIndicator) {
 
-        var state = blockingActivityIndicatorState ?? .init()
-        state.weakReferences = [.init(reference)] + state.weakReferences.filter { $0.reference != nil }
-        blockingActivityIndicatorState = state
+        var state: BlockingActivityIndicatorState! = blockingActivityIndicatorState
 
-        // TODO: add subviews
+        // set up subviews
+        if state == nil {
+            state = .init()
+
+            // view with dimmed background which swallows touch events
+            let blockingView = UIView()
+            blockingView.backgroundColor = .black.withAlphaComponent(0.4)
+            blockingView.isUserInteractionEnabled = true
+            blockingView.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(blockingView)
+
+            // activity indicator view
+            state.activityIndicatorView.style = .large
+            state.activityIndicatorView.color = .white
+            state.activityIndicatorView.startAnimating()
+            state.activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+            blockingView.addSubview(state.activityIndicatorView)
+
+            NSLayoutConstraint.activate([
+
+                blockingView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                blockingView.topAnchor.constraint(equalTo: topAnchor),
+                trailingAnchor.constraint(equalTo: blockingView.trailingAnchor),
+                bottomAnchor.constraint(equalTo: blockingView.bottomAnchor),
+
+                state.activityIndicatorView.centerXAnchor.constraint(equalTo: blockingView.centerXAnchor),
+                state.activityIndicatorView.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor)
+            ])
+        }
+
+        // add the reference into the `weakReferences` array
+        state.weakReferences = state.weakReferences.filter { $0.reference != nil } + [.init(reference)]
+        blockingActivityIndicatorState = state
     }
 
     fileprivate func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
@@ -77,14 +107,12 @@ extension UIView {
         guard var state = blockingActivityIndicatorState else { return }
 
         state.weakReferences = state.weakReferences.filter { $0.reference != nil && $0.reference !== reference }
-
         if state.weakReferences.isEmpty {
-            // TODO: remove subviews and state
+
+            state.activityIndicatorView.superview!.removeFromSuperview()
             blockingActivityIndicatorState = nil
         }
     }
-
-    // TODO: consider declaring struct in order to only have one associatedObjectKey
 
     private var blockingActivityIndicatorState: BlockingActivityIndicatorState? {
         get { objc_getAssociatedObject(self, &stateKey) as? BlockingActivityIndicatorState }
@@ -94,18 +122,50 @@ extension UIView {
 
 private var stateKey = 0
 
-// MARK: - WeakReference
+// MARK: - Previews
 
-// TODO: [WPB-8907] use the type `WeakReference` from WireSystem once WireSystem has become a Swift package.
-private struct WeakReference<T: AnyObject> {
+@available(iOS 17, *)
+#Preview {
+    {
+        let contentView = UIView()
 
-    weak var reference: T?
+        let targetView = UIView()
+        targetView.backgroundColor = .systemGray6
+        targetView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(targetView)
+        NSLayoutConstraint.activate([
+            targetView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            targetView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            contentView.trailingAnchor.constraint(equalTo: targetView.trailingAnchor),
+            targetView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 2/3)
+        ])
 
-    init(_ reference: T) {
-        self.init(reference: reference)
-    }
+        let testButtonAction = UIAction(title: "Tap here!") {
+            let button = $0.sender as! UIButton
+            let newTitle = "\((Int(button.title(for: .normal)!) ?? 0) + 1)"
+            button.setTitle(newTitle, for: .normal)
+        }
+        let testButton = UIButton(primaryAction: testButtonAction)
+        testButton.titleLabel?.font = .systemFont(ofSize: 40)
+        testButton.translatesAutoresizingMaskIntoConstraints = false
+        targetView.addSubview(testButton)
+        testButton.centerXAnchor.constraint(equalTo: targetView.centerXAnchor).isActive = true
+        testButton.centerYAnchor.constraint(equalTo: targetView.centerYAnchor, constant: 100).isActive = true
 
-    init(reference: T) {
-        self.reference = reference
-    }
+        let blockingActivityIndicator = BlockingActivityIndicator(view: targetView)
+
+        let controlsView = UIStackView(
+            arrangedSubviews: [
+                UIButton(primaryAction: .init(title: "Start") { _ in blockingActivityIndicator.start() }),
+                UIButton(primaryAction: .init(title: "Stop") { _ in blockingActivityIndicator.stop() })
+            ]
+        )
+        controlsView.spacing = 24
+        controlsView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(controlsView)
+        controlsView.topAnchor.constraint(equalToSystemSpacingBelow: targetView.bottomAnchor, multiplier: 2).isActive = true
+        controlsView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+
+        return contentView
+    }()
 }
