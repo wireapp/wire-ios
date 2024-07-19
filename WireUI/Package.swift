@@ -36,7 +36,9 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireDesign"),
+            name: "WireDesign",
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "WireDesignTests",
             dependencies: [
@@ -83,6 +85,6 @@ let package = Package(
 
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
-    // change to `.enableExperimentalFeature` to `.enableUpcomingFeature` with Swift 6.0
-    .enableExperimentalFeature("StrictConcurrency"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency")
 ]

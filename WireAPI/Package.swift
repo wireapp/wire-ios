@@ -31,11 +31,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireAPI"
+            name: "WireAPI",
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireAPISupport",
             dependencies: ["WireAPI"],
+            swiftSettings: swiftSettings,
             plugins: [
                 .plugin(
                     name: "SourceryPlugin",
@@ -60,7 +62,13 @@ let package = Package(
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),
                 .process("UpdateEvent/Resources")
-            ]
+            ],
+            swiftSettings: swiftSettings
         )
     ]
 )
+
+let swiftSettings: [SwiftSetting] = [
+    .enableExperimentalFeature("StrictConcurrency"),
+    .enableUpcomingFeature("GlobalConcurrency")
+]

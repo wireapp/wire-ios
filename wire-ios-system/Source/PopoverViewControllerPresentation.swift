@@ -18,6 +18,7 @@
 
 import UIKit
 
+/// Wraps the infos about how a popover should be presented.
 public enum PopoverViewControllerPresentation {
 
     case barButtonItem(_ barButtonItem: UIBarButtonItem)
@@ -27,6 +28,7 @@ public enum PopoverViewControllerPresentation {
         .sourceView(sourceView: sourceView, sourceRect: sourceRect)
     }
 
+    @MainActor
     public func configure(popoverPresentationController: UIPopoverPresentationController) {
         switch self {
 
