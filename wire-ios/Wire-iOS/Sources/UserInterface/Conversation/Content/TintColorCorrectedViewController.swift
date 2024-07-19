@@ -32,21 +32,3 @@ final class TintColorOverrider: NSObject {
         UIApplication.shared.delegate?.window??.tintColor = windowTintColor
     }
 }
-
-/// These classes should be subclass from when setting the tint color
-/// of controls doesn't have any effect, see `TintCorrectedActivityViewController` and
-/// https://stackoverflow.com/questions/25795065/ios-8-uiactivityviewcontroller-and-uialertcontroller-button-text-color-uses-wind
-
-class TintColorCorrectedViewController: UIViewController {
-    private var overrider = TintColorOverrider()
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        overrider.override()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        overrider.restore()
-    }
-}
