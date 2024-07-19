@@ -36,7 +36,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireDesign"),
+            name: "WireDesign",
+            swiftSettings: swiftSettings),
         .testTarget(
             name: "WireDesignTests",
             dependencies: [
@@ -45,12 +46,14 @@ let package = Package(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
                 )
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
 
         .target(
             name: "WireReusableUIComponents",
-            dependencies: ["WireDesign"]
+            dependencies: ["WireDesign"],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
@@ -61,7 +64,8 @@ let package = Package(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
                 )
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
 
         // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
@@ -72,7 +76,12 @@ let package = Package(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
                 )
-            ]
+            ],
+            swiftSettings: swiftSettings
         )
     ]
 )
+
+let swiftSettings: [SwiftSetting] = [
+    .enableExperimentalFeature("StrictConcurrency")
+]

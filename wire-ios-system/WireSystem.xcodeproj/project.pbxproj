@@ -657,6 +657,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */;
 			buildSettings = {
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
 		};
@@ -664,6 +665,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D21EFD49B400DDB12A /* project.xcconfig */;
 			buildSettings = {
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Release;
 		};
