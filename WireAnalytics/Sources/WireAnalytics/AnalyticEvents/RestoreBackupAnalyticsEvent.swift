@@ -18,7 +18,7 @@
 
 /// Enum representing the possible outcomes of a backup restoration.
 public enum RestoreBackupResult {
-    
+
     /// Indicates that the backup restoration was successful.
     case succeeded
 
@@ -29,17 +29,17 @@ public enum RestoreBackupResult {
 
 /// Struct representing an analytics event for backup restoration.
 public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
-    
+
     /// The result of the backup restoration.
     public let result: RestoreBackupResult
-    
+
     /// Initializes a new RestoreBackupAnalyticsEvent with the given result.
     ///
     /// - Parameter result: The result of the backup restoration.
     public init(result: RestoreBackupResult) {
         self.result = result
     }
-    
+
     /// The name of the event, which depends on the restoration result.
     public var eventName: String {
         switch result {
@@ -49,7 +49,7 @@ public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
             "restoreBackupFailed"
         }
     }
-    
+
     /// Additional segmentation data for the event.
     public var segmentation: [String: String] {
         [:]
