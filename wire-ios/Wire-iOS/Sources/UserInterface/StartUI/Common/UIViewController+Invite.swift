@@ -21,13 +21,13 @@ import WireSystem
 
 extension UIViewController {
 
-    func presentInviteActivityViewController(popoverViewControllerPresentation: PopoverViewControllerPresentation?) {
+    func presentInviteActivityViewController(popoverPresentationConfiguration: PopoverPresentationControllerConfiguration?) {
 
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
         if let popoverPresentationController = activityController.popoverPresentationController {
-            popoverViewControllerPresentation?.configure(popoverPresentationController: popoverPresentationController)
+            popoverPresentationConfiguration?.configure(popoverPresentationController: popoverPresentationController)
         }
         present(activityController, animated: true)
     }

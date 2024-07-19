@@ -18,9 +18,6 @@
 
 import UIKit
 
-@available(*, deprecated, message: "renamed to `PopoverPresentationControllerConfiguration`")
-public typealias PopoverViewControllerPresentation = PopoverPresentationControllerConfiguration
-
 /// Wraps the infos about how a popover should be presented.
 public enum PopoverPresentationControllerConfiguration {
 

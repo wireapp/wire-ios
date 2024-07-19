@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import UIKit
 import WireSyncEngine
 
@@ -27,7 +28,7 @@ final class ConversationActionController {
     private let conversation: GroupDetailsConversationType
     private unowned let target: UIViewController
     private(set) weak var sourceView: UIView?
-    var currentContext: PopoverViewControllerPresentation?
+    var currentContext: PopoverPresentationControllerConfiguration?
     private(set) weak var alertController: UIAlertController?
     let userSession: UserSession
 

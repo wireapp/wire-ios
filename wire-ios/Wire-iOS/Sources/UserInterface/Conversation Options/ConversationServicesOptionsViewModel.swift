@@ -40,7 +40,7 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
 
     func conversationServicesOptionsViewModel(
         _ viewModel: ConversationServicesOptionsViewModel,
-        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
         confirmRemovingServices completion: @escaping (Bool) -> Void
     ) -> UIAlertController?
 }
@@ -122,7 +122,7 @@ final class ConversationServicesOptionsViewModel {
             // Make "remove services" warning only appear if services are present
             return delegate?.conversationServicesOptionsViewModel(
                 self,
-                fallbackActivityPopoverPresentation: .sourceView(
+                fallbackActivityPopoverConfiguration: .sourceView(
                     sourceView: sender.superview!,
                     sourceRect: sender.frame.insetBy(dx: -4, dy: -4)
                 )
