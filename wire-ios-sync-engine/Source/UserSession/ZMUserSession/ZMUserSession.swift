@@ -461,11 +461,6 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
 
-        if !ProcessInfo.processInfo.isRunningTests {
-            setupAnalyticsSession()
-            self.analyticsSession?.startSession()
-        }
-
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }

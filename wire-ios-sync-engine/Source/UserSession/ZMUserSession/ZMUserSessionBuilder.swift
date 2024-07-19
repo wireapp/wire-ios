@@ -225,8 +225,7 @@ struct ZMUserSessionBuilder {
 
     private func buildUserSessionDependencies(coreDataStack: CoreDataStack, analyticsSessionConfiguration: AnalyticsSessionConfiguration?) -> UserSessionDependencies {
         UserSessionDependencies(
-            caches: buildCaches(coreDataStack: coreDataStack),
-            analyticsSessionConfiguration: analyticsSessionConfiguration
+            caches: buildCaches(coreDataStack: coreDataStack)
         )
     }
 
