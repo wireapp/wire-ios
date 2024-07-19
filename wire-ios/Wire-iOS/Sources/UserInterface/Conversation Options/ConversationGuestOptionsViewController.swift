@@ -180,7 +180,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     }
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView? = nil) {
-        let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
+        let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         present(activityController, animated: true)
 
         activityController.configPopover(pointToView: sourceView ?? view)

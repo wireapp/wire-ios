@@ -1219,7 +1219,6 @@
 		D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525426920936378001C04C1 /* IconButton+Factory.swift */; };
 		D525426D209363AF001C04C1 /* IconLabelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525426C209363AF001C04C1 /* IconLabelButton.swift */; };
 		D525426F209363DC001C04C1 /* CallActionAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525426E209363DC001C04C1 /* CallActionAppearance.swift */; };
-		D53D390C2057F8ED00B87DAD /* TintCorrectedActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D390B2057F8ED00B87DAD /* TintCorrectedActivityController.swift */; };
 		D53D390E20596ED300B87DAD /* ConversationActionController+Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D390D20596ED300B87DAD /* ConversationActionController+Block.swift */; };
 		D53D39102059784900B87DAD /* ConversationActionController+CancelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D390F2059784900B87DAD /* ConversationActionController+CancelRequest.swift */; };
 		D53DB9A5203EE03400655CB4 /* Conversation+OptionsConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A4203EE03400655CB4 /* Conversation+OptionsConfiguration.swift */; };
@@ -3369,7 +3368,6 @@
 		D525426920936378001C04C1 /* IconButton+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IconButton+Factory.swift"; sourceTree = "<group>"; };
 		D525426C209363AF001C04C1 /* IconLabelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconLabelButton.swift; sourceTree = "<group>"; };
 		D525426E209363DC001C04C1 /* CallActionAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallActionAppearance.swift; sourceTree = "<group>"; };
-		D53D390B2057F8ED00B87DAD /* TintCorrectedActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TintCorrectedActivityController.swift; sourceTree = "<group>"; };
 		D53D390D20596ED300B87DAD /* ConversationActionController+Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationActionController+Block.swift"; sourceTree = "<group>"; };
 		D53D390F2059784900B87DAD /* ConversationActionController+CancelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationActionController+CancelRequest.swift"; sourceTree = "<group>"; };
 		D53DB9A4203EE03400655CB4 /* Conversation+OptionsConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+OptionsConfiguration.swift"; sourceTree = "<group>"; };
@@ -7695,7 +7693,6 @@
 				D5189476205045A100C095C1 /* LinkHeaderCell.swift */,
 				D518947A20504C6A00C095C1 /* LoadingIndicatorCell.swift */,
 				D54224C320513A9800526A57 /* TextCell.swift */,
-				D53D390B2057F8ED00B87DAD /* TintCorrectedActivityController.swift */,
 				D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */,
 				D5CA8E562045718900D2F16E /* UINavigationController+CloseButton.swift */,
 				E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */,
@@ -9898,7 +9895,6 @@
 				BFCCA4FE20A0A03D000A4F33 /* CallInfoRootViewController.swift in Sources */,
 				7C52F723200CBE61009F85FB /* CameraKeyboardPermissionsCell.swift in Sources */,
 				A9DC33EA2506865B00AB09DF /* WipeDatabaseInteractor.swift in Sources */,
-				D53D390C2057F8ED00B87DAD /* TintCorrectedActivityController.swift in Sources */,
 				59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */,
 				1607359B1EB2393000528965 /* SettingsShareDatabaseCellDescriptor.swift in Sources */,
 				543DF6AD25309641001F6EA6 /* AppRootRouter.swift in Sources */,
