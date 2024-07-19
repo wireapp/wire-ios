@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct CallStartedEvent: AnalyticsEvent {
+public struct CallStartedAnalyticsEvent: AnalyticsEvent {
 
     public var eventName: String {
         "callStarted"
