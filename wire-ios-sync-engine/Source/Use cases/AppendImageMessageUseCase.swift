@@ -19,12 +19,11 @@
 import WireAnalytics
 import WireDataModel
 
-// sourcery: AutoMockable
 public protocol AppendImageMessageUseCaseProtocol {
 
-    func invoke(
+    func invoke<Conversation: MessageAppendableConversation>(
         withImageData imageData: Data,
-        in conversation: ZMConversation
+        in conversation: Conversation
     ) throws
 }
 
@@ -32,11 +31,11 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
-    public func invoke(
+    public func invoke<Conversation: MessageAppendableConversation>(
         withImageData imageData: Data,
-        in conversation: ZMConversation
+        in conversation: Conversation
     ) throws {
-        try conversation.appendImage(from: imageData)
+        try conversation.appendImage(from: imageData, nonce: UUID())
         analyticsSession?.trackEvent(
             ConversationContributionAnalyticsEvent(
                 contributionType: .imageMessage,

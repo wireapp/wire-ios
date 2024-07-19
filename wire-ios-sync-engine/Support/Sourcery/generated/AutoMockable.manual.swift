@@ -177,4 +177,28 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
             fatalError("no mock for `appendKnock`")
         }
     }
+
+    // MARK: - appendImage
+
+    public var appendImage_Invocations: [(imageData: Data, nonce: UUID)] = []
+    public var appendImage_MockError: Error?
+    public var appendImage_MockMethod: ((Data, UUID) throws -> any ZMConversationMessage)?
+    public var appendImage_MockValue: (any ZMConversationMessage)?
+
+    @discardableResult
+    public func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage {
+        appendImage_Invocations.append((imageData: imageData, nonce: nonce))
+
+        if let error = appendImage_MockError {
+            throw error
+        }
+
+        if let mock = appendImage_MockMethod {
+            return try mock(imageData, nonce)
+        } else if let mock = appendImage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendImage`")
+        }
+    }
 }

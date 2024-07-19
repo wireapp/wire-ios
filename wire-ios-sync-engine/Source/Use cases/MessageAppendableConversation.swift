@@ -34,6 +34,9 @@ public protocol MessageAppendableConversation {
     @discardableResult
     func appendKnock(nonce: UUID) throws -> any ZMConversationMessage
 
+    @discardableResult
+    func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage
+
 }
 
 extension ZMConversation: MessageAppendableConversation {

@@ -54,35 +54,6 @@ import AppKit
 
 
 
-public class MockAppendImageMessageUseCaseProtocol: AppendImageMessageUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeWithImageDataIn_Invocations: [(imageData: Data, conversation: ZMConversation)] = []
-    public var invokeWithImageDataIn_MockError: Error?
-    public var invokeWithImageDataIn_MockMethod: ((Data, ZMConversation) throws -> Void)?
-
-    public func invoke(withImageData imageData: Data, in conversation: ZMConversation) throws {
-        invokeWithImageDataIn_Invocations.append((imageData: imageData, conversation: conversation))
-
-        if let error = invokeWithImageDataIn_MockError {
-            throw error
-        }
-
-        guard let mock = invokeWithImageDataIn_MockMethod else {
-            fatalError("no mock for `invokeWithImageDataIn`")
-        }
-
-        try mock(imageData, conversation)
-    }
-
-}
-
 public class MockAppendLocationMessagekUseCaseProtocol: AppendLocationMessagekUseCaseProtocol {
 
     // MARK: - Life cycle
