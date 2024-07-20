@@ -18,8 +18,6 @@
 
 import UIKit
 
-// TODO: tests!
-
 /// Wraps the infos about how a popover should be presented.
 public enum PopoverPresentationControllerConfiguration {
 
