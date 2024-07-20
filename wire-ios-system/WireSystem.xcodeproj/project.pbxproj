@@ -33,8 +33,10 @@
 		54DB81671DBFB16700AF495D /* CircularArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DB81661DBFB16700AF495D /* CircularArrayTests.swift */; };
 		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
 		59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */; };
+		592CC3F22C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */; };
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
+		595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */; };
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86E02BF4DB9B00FC5438 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
@@ -43,6 +45,7 @@
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
 		59C39F092C21E9480087300D /* TimePointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F082C21E9480087300D /* TimePointTests.swift */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
+		59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
@@ -120,8 +123,10 @@
 		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
 		59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDateProviding.swift; sourceTree = "<group>"; };
+		592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverPresentationControllerConfigurationTests.swift; sourceTree = "<group>"; };
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
+		595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIModalPresentationStyle+CustomDebugStringConvertible.swift"; sourceTree = "<group>"; };
 		598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSystemSupport.h; sourceTree = "<group>"; };
 		598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -131,6 +136,7 @@
 		59C39F062C21E9390087300D /* DispatchGroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchGroupTests.swift; sourceTree = "<group>"; };
 		59C39F082C21E9480087300D /* TimePointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePointTests.swift; sourceTree = "<group>"; };
 		59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
+		59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverPresentationControllerConfiguration.swift; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
@@ -260,6 +266,7 @@
 				D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */,
 				EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */,
 				16AAA6292C21903200080A06 /* ExpiringActivity.swift */,
+				59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -297,6 +304,7 @@
 				59C39F062C21E9390087300D /* DispatchGroupTests.swift */,
 				59C39F082C21E9480087300D /* TimePointTests.swift */,
 				16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */,
+				592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -308,6 +316,14 @@
 				59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */,
 			);
 			path = DateProviding;
+			sourceTree = "<group>";
+		};
+		59237D202C4784C7001FFFA9 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */,
+			);
+			path = UIKit;
 			sourceTree = "<group>";
 		};
 		598E86D92BF4DB3700FC5438 /* Support */ = {
@@ -341,6 +357,7 @@
 			isa = PBXGroup;
 			children = (
 				59D985F02B5FCE25009B99F0 /* Foundation */,
+				59237D202C4784C7001FFFA9 /* UIKit */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -569,6 +586,7 @@
 				16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */,
 				EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */,
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
+				59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */,
 				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */,
@@ -579,6 +597,7 @@
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				E66F22F52C2ADDAB005FD57E /* LogAttributes.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
+				595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
 				16AAA62A2C21903200080A06 /* ExpiringActivity.swift in Sources */,
 				54D5736A1DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift in Sources */,
@@ -601,6 +620,7 @@
 				D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */,
 				59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */,
 				59C39F092C21E9480087300D /* TimePointTests.swift in Sources */,
+				592CC3F22C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift in Sources */,
 				54C0CC431C9C7862000A9286 /* ZMSAssertionTests.m in Sources */,
 				5457426C1BA9C50C0009409B /* ZMDefinesTest.m in Sources */,
 				16AAA62E2C22F7D500080A06 /* ExpiringActivityTests.swift in Sources */,
@@ -641,6 +661,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */;
 			buildSettings = {
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
 		};
@@ -648,6 +669,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D21EFD49B400DDB12A /* project.xcconfig */;
 			buildSettings = {
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Release;
 		};

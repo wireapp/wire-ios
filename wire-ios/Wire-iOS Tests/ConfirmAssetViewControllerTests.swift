@@ -20,6 +20,7 @@ import FLAnimatedImage
 import XCTest
 
 @testable import Wire
+
 final class ConfirmAssetViewControllerTests: XCTestCase {
 
     var sut: ConfirmAssetViewController!
