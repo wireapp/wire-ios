@@ -42,7 +42,7 @@ final class PopoverPresentationControllerConfigurationTests: XCTestCase {
         // Then
         let popoverPresentationController = try XCTUnwrap(alertController.popoverPresentationController)
         XCTAssertNil(popoverPresentationController.sourceView)
-        XCTAssertEqual(popoverPresentationController.sourceRect, CGRectNull)
+        XCTAssertEqual(popoverPresentationController.sourceRect, CGRect.null)
         XCTAssertTrue(popoverPresentationController.barButtonItem === barButtonItem)
     }
 

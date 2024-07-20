@@ -26,7 +26,7 @@ extension UIViewController {
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
-        if let popoverPresentationConfiguration = popoverPresentationConfiguration {
+        if let popoverPresentationConfiguration {
             activityController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
         }
         present(activityController, animated: true)
