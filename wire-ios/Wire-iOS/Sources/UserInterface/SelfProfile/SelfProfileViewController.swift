@@ -205,10 +205,12 @@ final class SelfProfileViewController: UIViewController {
     @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
-        let alertViewController = profileImagePicker.selectProfileImage()
-        alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
-
-        present(alertViewController, animated: true)
+        let alertController = profileImagePicker.selectProfileImage()
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
+            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(dx: -4, dy: -4)
+        }
+        present(alertController, animated: true)
     }
 
     override func accessibilityPerformEscape() -> Bool {

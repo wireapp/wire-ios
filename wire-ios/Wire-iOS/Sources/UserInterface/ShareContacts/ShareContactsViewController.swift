@@ -186,7 +186,7 @@ final class ShareContactsViewController: UIViewController {
     // MARK: - AddressBook Access Denied ViewController
 
     func displayContactsAccessDeniedMessage(animated: Bool) {
-        endEditing()
+        view.window?.endEditing(true)
 
         showingAddressBookAccessDeniedViewController = true
 
