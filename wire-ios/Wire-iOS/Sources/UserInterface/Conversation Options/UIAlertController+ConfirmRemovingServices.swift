@@ -21,7 +21,7 @@ import UIKit
 extension UIAlertController {
 
     static func confirmRemovingServices(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return confirmController(
+        confirmController(
             title: L10n.Localizable.ServicesOptions.RemoveServices.message,
             confirmTitle: L10n.Localizable.ServicesOptions.RemoveServices.action,
             completion: completion

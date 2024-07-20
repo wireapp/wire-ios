@@ -149,21 +149,6 @@ extension ZMConversationMessage {
         }
     }
 
-    /// Whether it should be possible to forward given message to another conversation.
-    var canBeForwarded: Bool {
-        guard !isEphemeral,
-              canBeShared,
-              mediaShareRestrictionManager.canUseClipboard else {
-                  return false
-              }
-
-        if isFile, let fileMessageData = self.fileMessageData {
-            return fileMessageData.hasLocalFileData
-        } else {
-            return (isText || isImage || isLocation || isFile)
-        }
-    }
-
     /// Whether the message sending failed in the past and we can attempt to resend the message.
     var canBeResent: Bool {
         guard let conversation = conversationLike,

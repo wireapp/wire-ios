@@ -51,7 +51,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         do {
             try settingsProperty.set(newValue: self.value)
         } catch {

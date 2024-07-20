@@ -105,7 +105,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.copiableText = copiableText
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         guard let controllerToShow = self.generateViewController() else {
             return
         }

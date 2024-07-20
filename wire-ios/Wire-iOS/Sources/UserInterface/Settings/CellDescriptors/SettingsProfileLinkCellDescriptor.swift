@@ -48,7 +48,7 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         // no-op
     }
 }

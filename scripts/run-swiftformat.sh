@@ -32,4 +32,5 @@ if [[ ! -f "$SWIFTFORMAT" ]]; then
     xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
 fi
 
+echo "$SWIFTFORMAT" --config "$REPO_ROOT/.swiftformat" "$@"
 "$SWIFTFORMAT" --config "$REPO_ROOT/.swiftformat" "$@"

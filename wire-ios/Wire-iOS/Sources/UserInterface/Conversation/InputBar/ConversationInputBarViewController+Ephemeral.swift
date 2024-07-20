@@ -77,15 +77,12 @@ extension ConversationInputBarViewController {
         createEphemeralKeyboardViewController()
         ephemeralKeyboardViewController?.modalPresentationStyle = .popover
         ephemeralKeyboardViewController?.preferredContentSize = CGSize.IPadPopover.pickerSize
-        let pointToView: UIView = ephemeralIndicatorButton.isHidden ? hourglassButton : ephemeralIndicatorButton
+        let pointToView = ephemeralIndicatorButton.isHidden ? hourglassButton : ephemeralIndicatorButton
 
         if let popover = ephemeralKeyboardViewController?.popoverPresentationController,
-            let presentInView = self.parent?.view,
             let backgroundColor = ephemeralKeyboardViewController?.view.backgroundColor {
-                popover.config(from: self,
-                           pointToView: pointToView,
-                           sourceView: presentInView)
-
+            popover.sourceView = pointToView.superview!
+            popover.sourceRect = pointToView.frame.insetBy(dx: -4, dy: -4)
             popover.backgroundColor = backgroundColor
             popover.permittedArrowDirections = .down
         }

@@ -56,8 +56,8 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         textCell.textInput.isAccessibilityElement = true
     }
 
-    func select(_ value: SettingsPropertyValue?) {
-        if let stringValue = value?.value() as? String {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
+        if let stringValue = value.value() as? String {
 
             do {
                 try self.settingsProperty << SettingsPropertyValue.string(value: stringValue)

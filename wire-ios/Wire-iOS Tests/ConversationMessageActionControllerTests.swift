@@ -161,23 +161,6 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         XCTAssertFalse(supportsDownload)
     }
 
-    // MARK: - Forward
-
-    func testThatItDoesNotShowForwardItemForAudioMessage_IfReceivingFilesIsRestricted() {
-        // GIVEN
-        let message = MockMessageFactory.audioMessage()
-        message!.senderUser = MockUserType.createUser(name: "Bob")
-        message!.conversation = otherUserConversation
-        message!.backingIsRestricted = true
-
-        // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message!, context: .content, view: UIView())
-        let supportsForward = actionController.canPerformAction(#selector(ConversationMessageActionController.forwardMessage))
-
-        // THEN
-        XCTAssertFalse(supportsForward)
-    }
-
     func testGivenURLMessageThenSupportsVisitLink() {
         // GIVEN
         let message = MockMessageFactory.linkMessage()

@@ -102,8 +102,6 @@ final class ConversationMessageActionController {
             return message.canCancelDownload
         case .download:
             return message.canBeDownloaded
-        case .forward:
-            return message.canBeForwarded
         case .resend:
             return message.canBeResent
         case .showInConversation:
@@ -222,10 +220,6 @@ final class ConversationMessageActionController {
 
     @objc func saveMessage() {
         perform(action: .save)
-    }
-
-    @objc func forwardMessage() {
-        perform(action: .forward)
     }
 
     @objc func deleteMessage() {

@@ -21,25 +21,27 @@ import WireCommonComponents
 import WireDataModel
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.visitLink,
-                                            .digitallySign,
-                                            .copy,
-                                            .reply,
-                                            .openDetails,
-                                            .edit,
-                                            .save,
-                                            .cancel,
-                                            .download,
-                                            .forward,
-                                            .resend,
-                                            .showInConversation,
-                                            .sketchDraw,
-                                            .sketchEmoji,
-                                            .present,
-                                            .openQuote,
-                                            .resetSession,
-                                            .delete,
-                                            .react("❤️")]
+
+    static var allCases: [MessageAction] = [
+        .visitLink,
+        .digitallySign,
+        .copy,
+        .reply,
+        .openDetails,
+        .edit,
+        .save,
+        .cancel,
+        .download,
+        .resend,
+        .showInConversation,
+        .sketchDraw,
+        .sketchEmoji,
+        .present,
+        .openQuote,
+        .resetSession,
+        .delete,
+        .react("❤️")
+    ]
 
     case
     digitallySign,
@@ -51,7 +53,6 @@ enum MessageAction: CaseIterable, Equatable {
     save,
     cancel,
     download,
-    forward,
     resend,
     showInConversation,
     sketchDraw,
@@ -84,8 +85,6 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.General.cancel
         case .download:
             return MessageActionLocale.download
-        case .forward:
-            return MessageActionLocale.forward
         case .resend:
             return MessageActionLocale.resend
         case .showInConversation:
@@ -122,8 +121,6 @@ enum MessageAction: CaseIterable, Equatable {
             return .cross
         case .download:
             return .downArrow
-        case .forward:
-            return .export
         case .resend:
             return .redo
         case .showInConversation:
@@ -166,8 +163,6 @@ enum MessageAction: CaseIterable, Equatable {
             imageName = "xmark"
         case .download:
             imageName = "chevron.down"
-        case .forward:
-            imageName = "square.and.arrow.up"
         case .resend:
             imageName = "arrow.clockwise"
         case .showInConversation:
@@ -208,8 +203,6 @@ enum MessageAction: CaseIterable, Equatable {
             return #selector(ConversationMessageActionController.cancelDownloadingMessage)
         case .download:
             return #selector(ConversationMessageActionController.downloadMessage)
-        case .forward:
-            return #selector(ConversationMessageActionController.forwardMessage)
         case .resend:
             return #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
