@@ -33,11 +33,15 @@ extension ContactsViewController {
     }
 
     @objc
-    func sendIndirectInvite(_ sender: UIView) {
+    func sendIndirectInvite(_ sender: UIButton) {
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
-        activityController.configPopover(pointToView: sender)
+        if let popoverPresentationController = activityController.popoverPresentationController {
+            let margin = 2 * fmin(sender.frame.origin.x, sender.frame.origin.y)
+            popoverPresentationController.sourceView = sender.superview
+            popoverPresentationController.sourceRect = sender.frame.insetBy(dx: -margin, dy: -margin)
+        }
         present(activityController, animated: true)
     }
 

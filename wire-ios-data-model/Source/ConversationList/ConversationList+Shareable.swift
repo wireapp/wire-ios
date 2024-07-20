@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIViewController {
+extension ConversationList {
 
-    // update the popover's frame if this UIViewController is presented from a PopoverPresenter.
-    // This method should be called when PopoverPresenter's frame size changes or its popover related content is updated.
-    func updatePopoverFrame() {
-        if let popoverPresenter = popoverPresentationController?.presentingViewController as? PopoverPresenter {
-            popoverPresenter.updatePopoverSourceRect()
+    public func shareableConversations(
+        excluding: ConversationLike? = nil
+    ) -> [ZMConversation] {
+        items.filter { conversation in
+            let isOneOnOneOrGroup = conversation.conversationType == .oneOnOne || conversation.conversationType == .group
+            let isSelfAnActiveMember = conversation.isSelfAnActiveMember
+            let isNotExcluded = !(conversation === excluding)
+
+            return isOneOnOneOrGroup &&
+                isSelfAnActiveMember &&
+                isNotExcluded
         }
-
-        popoverPresentationController?.containerView?.setNeedsLayout()
-    }
-
-    func endEditing() {
-        view.window?.endEditing(true)
     }
 }

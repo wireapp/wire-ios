@@ -27,7 +27,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
     private let titleLabel = UILabel()
     private let toggle = Switch(style: .default)
     private let subtitleLabel = UILabel()
-    private var action: ((Bool, UIView?) -> Void)?
+    private var action: ((Bool, UIView) -> Void)?
 
     private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor.constraint(equalToConstant: CGFloat.IconCell.IconWidth)
     private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(equalTo: topContainer.leadingAnchor, constant: CGFloat.IconCell.IconSpacing)
@@ -144,15 +144,17 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
     }
 
     func configure(with configuration: CellConfiguration) {
-        guard case let .iconToggle(title,
-                                   subtitle,
-                                   identifier,
-                                   titleIdentifier,
-                                   icon,
-                                   _,
-                                   isEnabled,
-                                   get,
-                                   set) = configuration else { preconditionFailure() }
+        guard case let .iconToggle(
+            title,
+            subtitle,
+            identifier,
+            titleIdentifier,
+            icon,
+            _,
+            isEnabled,
+            get,
+            set
+        ) = configuration else { preconditionFailure() }
 
         let mainColor = SemanticColors.Label.textDefault
 

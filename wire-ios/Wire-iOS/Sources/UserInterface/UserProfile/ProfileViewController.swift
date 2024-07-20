@@ -103,8 +103,6 @@ final class ProfileViewController: UIViewController {
             mainCoordinator: mainCoordinator
         )
 
-        setupKeyboardFrameNotification()
-
         self.viewControllerDismisser = viewControllerDismisser
     }
 
@@ -194,22 +192,6 @@ final class ProfileViewController: UIViewController {
         setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
-    }
-
-    // MARK: - Keyboard frame observer
-
-    private func setupKeyboardFrameNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardFrameDidChange(notification:)),
-            name: UIResponder.keyboardDidChangeFrameNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    private func keyboardFrameDidChange(notification: Notification) {
-        updatePopoverFrame()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

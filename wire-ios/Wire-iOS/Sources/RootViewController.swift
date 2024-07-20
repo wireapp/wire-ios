@@ -21,13 +21,11 @@ import UIKit
 final class RootViewController: UIViewController {
 
     // MARK: - SpinnerCapable
+
     var dismissSpinner: SpinnerCompletion?
 
-    // MARK: - PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
-
     // MARK: - Private Property
+
     private var childViewController: UIViewController?
 
     // MARK: - Status Bar / Supported Orientations
@@ -170,4 +168,3 @@ extension RootViewController {
 }
 
 extension RootViewController: SpinnerCapable { }
-extension RootViewController: PopoverPresenter { }

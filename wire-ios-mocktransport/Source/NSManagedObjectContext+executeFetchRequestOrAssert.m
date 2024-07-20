@@ -17,17 +17,17 @@
 //
 
 @import WireSystem;
-#import <WireUtilities/WireUtilities-Swift.h>
-#import "NSManagedObjectContext+WireUtilities.h"
 
-@implementation NSManagedObjectContext (executeFetchRequestOrAssert)
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
+@implementation NSManagedObjectContext (executeFetchRequestOrAssert_MockTransport)
+
+- (NSArray *)executeFetchRequestOrAssert_mt:(NSFetchRequest *)request;
 {
-    NSError *error;
-    NSArray *result = [self executeFetchRequest:request error:&error];
-    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
-    return result;
-}
+     NSError *error;
+     NSArray *result = [self executeFetchRequest:request error:&error];
+     RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
+     return result;
+ }
 
 @end

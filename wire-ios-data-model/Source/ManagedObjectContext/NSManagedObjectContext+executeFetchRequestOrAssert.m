@@ -16,24 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+@import WireSystem;
 
-struct ImagePickerPopoverPresentationContext {
-    let presentViewController: UIViewController
-    let sourceType: UIImagePickerController.SourceType
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
+
+@implementation NSManagedObjectContext (executeFetchRequestOrAssert_DataModel)
+
+- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
+{
+    NSError *error;
+    NSArray *result = [self executeFetchRequest:request error:&error];
+    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
+    return result;
 }
 
-extension UIImagePickerController {
-    class func popoverForIPadRegular(with context: ImagePickerPopoverPresentationContext) -> UIImagePickerController {
-        let picker = UIImagePickerController()
-        picker.sourceType = context.sourceType
-        picker.preferredContentSize = CGSize.IPadPopover.preferredContentSize
-
-        if context.presentViewController.isIPadRegular(device: UIDevice.current) {
-
-            picker.modalPresentationStyle = .popover
-        }
-
-        return picker
-    }
-}
+@end
