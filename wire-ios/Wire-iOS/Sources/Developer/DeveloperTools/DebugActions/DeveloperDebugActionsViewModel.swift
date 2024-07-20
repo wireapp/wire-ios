@@ -60,7 +60,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             message: "Send logs",
             shareWithAVS: false,
             presentingViewController: presentingViewController,
-            fallbackActivityPopoverPresentation: .sourceView(
+            fallbackActivityPopoverConfiguration: .sourceView(
                 sourceView: presentingViewController.view,
                 sourceRect: .init(
                     origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,

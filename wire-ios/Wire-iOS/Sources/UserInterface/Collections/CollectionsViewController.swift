@@ -773,6 +773,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     popoverPresentationController.sourceRect = sourceView.frame
                 }
                 present(activityViewController, animated: true)
+            } else {
+                WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
             }
 
         case .download:

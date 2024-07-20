@@ -42,14 +42,14 @@ final class DebugAlert {
     static func showSendLogsMessage(
         message: String,
         presentingViewController: UIViewController,
-        popoverPresentation: PopoverViewControllerPresentation
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
         let action1 = Action(text: "Send to Devs", type: .destructive) {
             DebugLogSender.sendLogsByEmail(
                 message: message,
                 shareWithAVS: false,
                 presentingViewController: presentingViewController,
-                fallbackActivityPopoverPresentation: popoverPresentation
+                fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
             )
         }
 
@@ -58,7 +58,7 @@ final class DebugAlert {
                 message: message,
                 shareWithAVS: true,
                 presentingViewController: presentingViewController,
-                fallbackActivityPopoverPresentation: popoverPresentation
+                fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
             )
         }
 
@@ -106,7 +106,7 @@ final class DebugAlert {
     static func displayFallbackActivityController(
         email: String,
         from controller: UIViewController,
-        popoverPresentation: PopoverViewControllerPresentation
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
     ) {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
@@ -114,13 +114,13 @@ final class DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentation: popoverPresentation))
+        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentationConfiguration: popoverPresentationConfiguration))
         controller.present(alert, animated: true, completion: nil)
     }
 
     private static func makeFallbackAlertAction(
         from controller: UIViewController,
-        popoverPresentation: PopoverViewControllerPresentation
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
     ) -> UIAlertAction {
         UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
             let logFilesProvider = LogFilesProvider()
@@ -133,9 +133,7 @@ final class DebugAlert {
             }
 
             let activityViewController = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
-            if let popoverPresentationController = activityViewController.popoverPresentationController {
-                popoverPresentation.configure(popoverPresentationController: popoverPresentationController)
-            }
+            activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {
                     try logFilesProvider.clearLogsDirectory()
@@ -160,7 +158,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         message: String,
         shareWithAVS: Bool,
         presentingViewController: UIViewController,
-        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
         guard self.senderInstance == nil else { return }
 
@@ -175,12 +173,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
             return DebugAlert.displayFallbackActivityController(
                 email: mail,
                 from: presentingViewController,
-                popoverPresentation: fallbackActivityPopoverPresentation
+                popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )
         }
 
         // compose
-
         let alert = DebugLogSender()
 
         let mailVC = MFMailComposeViewController()

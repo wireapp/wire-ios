@@ -108,13 +108,11 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     func conversationServicesOptionsViewModel(
         _ viewModel: ConversationServicesOptionsViewModel,
-        fallbackActivityPopoverPresentation: PopoverViewControllerPresentation,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
         confirmRemovingServices completion: @escaping (Bool) -> Void
     ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingServices(completion)
-        if let popoverPresentationController = alertController.popoverPresentationController {
-            fallbackActivityPopoverPresentation.configure(popoverPresentationController: popoverPresentationController)
-        }
+        alertController.configurePopoverPresentationController(using: fallbackActivityPopoverConfiguration)
         present(alertController, animated: true)
 
         return alertController

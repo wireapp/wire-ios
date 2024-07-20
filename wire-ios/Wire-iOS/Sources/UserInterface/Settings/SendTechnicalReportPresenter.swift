@@ -22,13 +22,13 @@ import WireSystem
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
     @MainActor
-    func presentMailComposer(fallbackActivityPopoverPresentation: PopoverViewControllerPresentation)
+    func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration)
 }
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
 
     @MainActor
-    func presentMailComposer(fallbackActivityPopoverPresentation: PopoverViewControllerPresentation) {
+    func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration) {
         let mailRecipient = WireEmail.shared.callingSupportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
@@ -37,7 +37,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
             return DebugAlert.displayFallbackActivityController(
                 email: mailRecipient,
                 from: self,
-                popoverPresentation: fallbackActivityPopoverPresentation
+                popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )
         }
 

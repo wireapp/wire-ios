@@ -19,18 +19,42 @@
 import UIKit
 
 /// Wraps the infos about how a popover should be presented.
-public enum PopoverViewControllerPresentation {
+public enum PopoverPresentationControllerConfiguration {
 
     case barButtonItem(_ barButtonItem: UIBarButtonItem)
     case sourceView(sourceView: UIView, sourceRect: CGRect)
+
+    // MARK: Static
 
     public static func sourceView(_ sourceView: UIView, _ sourceRect: CGRect) -> Self {
         .sourceView(sourceView: sourceView, sourceRect: sourceRect)
     }
 
     @MainActor
-    public func configure(popoverPresentationController: UIPopoverPresentationController) {
-        switch self {
+    public static func superviewAndFrame(
+        of view: UIView,
+        insetBy inset: (dx: CGFloat, dy: CGFloat) = (0, 0)
+    ) -> Self! {
+        guard let superview = view.superview else { return nil }
+        return .sourceView(sourceView: superview, sourceRect: view.frame.insetBy(dx: inset.dx, dy: inset.dy))
+    }
+}
+
+// MARK: - UIViewController + configurePopoverPresentationController
+
+extension UIViewController {
+
+    /// Sets the required properties for presenting the popover presentation controller, if it's non-`nil`.
+    /// (`sourceView` and `sourceRect`, or `barButtonItem`)
+    /// - Returns: `true` if the poover controller has been confiugured, `false` if `popoverPresentationController` is `nil`.
+    @discardableResult
+    public func configurePopoverPresentationController(
+        using configuration: PopoverPresentationControllerConfiguration
+    ) -> Bool {
+
+        guard let popoverPresentationController else { return false }
+
+        switch configuration {
 
         case .barButtonItem(let barButtonItem):
             popoverPresentationController.barButtonItem = barButtonItem
@@ -39,5 +63,7 @@ public enum PopoverViewControllerPresentation {
             popoverPresentationController.sourceView = sourceView
             popoverPresentationController.sourceRect = sourceRect
         }
+
+        return true
     }
 }

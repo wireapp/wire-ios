@@ -106,12 +106,12 @@ extension ConversationContentViewController {
                 dataSource.selectedMessage = message
 
                 let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                if let popoverPresentationController = activityViewController.popoverPresentationController {
-                    let sourceView = (view as? SelectableView)?.selectionView ?? view
-                    popoverPresentationController.sourceView = sourceView.superview
-                    popoverPresentationController.sourceRect = sourceView.frame
-                }
+                activityViewController.configurePopoverPresentationController(
+                    using: .superviewAndFrame(of: (view as? SelectableView)?.selectionView ?? view)
+                )
                 present(activityViewController, animated: true)
+            } else {
+                WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
             }
 
         case .digitallySign:

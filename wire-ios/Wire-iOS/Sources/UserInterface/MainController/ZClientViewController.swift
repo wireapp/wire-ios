@@ -462,9 +462,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
-        guard
-            let path = notification?.userInfo?["path"] as? String
-        else { return }
+        guard let path = notification?.userInfo?["path"] as? String else { return }
 
         var presentingViewController = self as UIViewController
         while let presentedViewController = presentingViewController.presentedViewController {
@@ -474,7 +472,7 @@ final class ZClientViewController: UIViewController {
         DebugAlert.showSendLogsMessage(
             message: "A request loop is going on at \(path)",
             presentingViewController: presentingViewController,
-            popoverPresentation: .sourceView(
+            fallbackActivityPopoverConfiguration: .sourceView(
                 presentingViewController.view,
                 .init(origin: presentingViewController.view.center, size: .zero)
             )
@@ -486,8 +484,6 @@ final class ZClientViewController: UIViewController {
     ///
     ///
     /// - Parameters:
-    ///   - focus: <#focus description#>
-    ///   - animated: <#animated description#>
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {

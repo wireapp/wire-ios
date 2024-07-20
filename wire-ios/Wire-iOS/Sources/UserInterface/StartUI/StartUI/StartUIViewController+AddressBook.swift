@@ -50,7 +50,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
             tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
             tabItemFrame.origin.x = CGFloat(MainTabBarControllerTab.contacts.rawValue) * tabItemFrame.size.width
             tabBarController.presentInviteActivityViewController(
-                popoverViewControllerPresentation: .sourceView(
+                popoverPresentationConfiguration: .sourceView(
                     sourceView: tabBarController.tabBar,
                     sourceRect: tabItemFrame
                 )

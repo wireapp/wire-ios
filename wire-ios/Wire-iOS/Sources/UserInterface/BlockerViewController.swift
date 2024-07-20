@@ -162,11 +162,11 @@ final class BlockerViewController: LaunchImageViewController {
             style: .default
         ) { [weak self] _ in
             guard let self else { return }
-            let fallbackActivityPopoverPresentation = PopoverViewControllerPresentation.sourceView(
+            let fallbackActivityPopoverConfiguration = PopoverPresentationControllerConfiguration.sourceView(
                 sourceView: view,
                 sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)
             )
-            presentMailComposer(fallbackActivityPopoverPresentation: fallbackActivityPopoverPresentation)
+            presentMailComposer(fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration)
         }
 
         databaseFailureAlert.addAction(reportError)

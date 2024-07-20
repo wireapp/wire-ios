@@ -304,7 +304,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
 
         let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
-        let popoverPresentation = PopoverViewControllerPresentation.sourceView(
+        let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
             sourceView: presentingViewController.view,
             sourceRect: .init(
                 origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
@@ -312,7 +312,11 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
             )
         )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController, popoverPresentation: popoverPresentation)
+            DebugAlert.showSendLogsMessage(
+                message: logsMessage,
+                presentingViewController: presentingViewController,
+                fallbackActivityPopoverConfiguration: popoverPresentationConfiguration
+            )
             completion()
         }
     }
@@ -320,7 +324,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     func presentCallQualityRejection(presentingViewController: UIViewController) {
 
         let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
-        let popoverPresentation = PopoverViewControllerPresentation.sourceView(
+        let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
             sourceView: presentingViewController.view,
             sourceRect: .init(
                 origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
@@ -328,7 +332,11 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
             )
         )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage, presentingViewController: presentingViewController, popoverPresentation: popoverPresentation)
+            DebugAlert.showSendLogsMessage(
+                message: logsMessage,
+                presentingViewController: presentingViewController,
+                fallbackActivityPopoverConfiguration: popoverPresentationConfiguration
+            )
             completion()
         }
     }
