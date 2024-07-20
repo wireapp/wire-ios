@@ -89,23 +89,47 @@ final class DebugAlert {
         controller.present(alert, animated: true, completion: nil)
     }
 
-    static func displayFallbackActivityController(logPaths: [URL],
-                                                  email: String,
-                                                  from controller: UIViewController,
-                                                  sourceView: UIView? = nil) {
+    static func displayFallbackActivityController(
+        email: String,
+        from controller: UIViewController,
+        sourceView: UIView? = nil
+    ) {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
             message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
-            let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
+        alert.addAction(makeFallbackAlertAction(from: controller, sourceView: sourceView))
+        controller.present(alert, animated: true, completion: nil)
+    }
+
+    private static func makeFallbackAlertAction(
+        from controller: UIViewController,
+        sourceView: UIView?
+    ) -> UIAlertAction {
+        UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
+            let logFilesProvider = LogFilesProvider()
+            let logsFileURL: URL
+            do {
+                logsFileURL = try logFilesProvider.generateLogFilesZip()
+            } catch {
+                WireLogger.system.error("Failed to generate log files zip: \(error)")
+                return
+            }
+
+            let activity = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
+            activity.completionWithItemsHandler = { _, _, _, _ in
+                do {
+                    try logFilesProvider.clearLogsDirectory()
+                } catch {
+                    WireLogger.system.warn("Unable to clear temporary directory: \(error)")
+                }
+            }
 
             controller.present(activity, animated: true, completion: nil)
-        }))
-        controller.present(alert, animated: true, completion: nil)
+        }
     }
 
 }
@@ -116,26 +140,10 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
 
-    static var debugLogs: [URL] {
-        let oslogs = LogFileDestination.allCases.compactMap { $0.log }
-        let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
-
-        return ZMSLog.previousZipLogURLs + oslogs + currentLog
-    }
-
-    static var areDebugLogsPresent: Bool {
-        return !debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isEmpty
-    }
-
     /// Sends recorded logs by email
     static func sendLogsByEmail(message: String, shareWithAVS: Bool = false) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
-
-        guard areDebugLogsPresent else {
-            DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
-            return
-        }
 
         // Prepare subject & body
         let user = SelfUser.provider?.providedSelfUser as? ZMUser
@@ -145,8 +153,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-
-            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: controller)
+            DebugAlert.displayFallbackActivityController(email: mail, from: controller)
             return
         }
 

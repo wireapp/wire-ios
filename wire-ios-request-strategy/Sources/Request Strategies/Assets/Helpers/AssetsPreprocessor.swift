@@ -99,7 +99,7 @@ import Foundation
                 let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
                 message.setLocallyModifiedKeys(assetClientMessageSet) // TODO jacob hacky
                 message.managedObjectContext?.saveOrRollback()
-                self?.managedObjectContext.leaveAllGroups(self?.managedObjectContext.allGroups())
+                self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
         }
     }

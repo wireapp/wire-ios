@@ -38,12 +38,30 @@
         }
       },
       {
+        "package": "FLAnimatedImage",
+        "repositoryURL": "https://github.com/Flipboard/FLAnimatedImage",
+        "state": {
+          "branch": null,
+          "revision": "d4f07b6f164d53c1212c3e54d6460738b1981e9f",
+          "version": "1.0.17"
+        }
+      },
+      {
         "package": "grpc-swift",
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
           "branch": null,
           "revision": "6a90b7e77e29f9bda6c2b3a4165a40d6c02cfda1",
           "version": "1.23.0"
+        }
+      },
+      {
+        "package": "libPhoneNumber",
+        "repositoryURL": "https://github.com/wireapp/libPhoneNumber-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "a6f5cb0a2a264e8396da65b0fb27ecf0df8a975e",
+          "version": "1.1.0"
         }
       },
       {
@@ -62,6 +80,24 @@
           "branch": null,
           "revision": "18c1a35ca966236cee0c5a714a51a73ff33384c1",
           "version": "0.5.2"
+        }
+      },
+      {
+        "package": "PINCache",
+        "repositoryURL": "https://github.com/pinterest/PINCache",
+        "state": {
+          "branch": null,
+          "revision": "2fb85948463292c2e824148cf17dc62a4c217a94",
+          "version": "3.0.4"
+        }
+      },
+      {
+        "package": "PINOperation",
+        "repositoryURL": "https://github.com/pinterest/PINOperation.git",
+        "state": {
+          "branch": null,
+          "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
+          "version": "1.2.3"
         }
       },
       {

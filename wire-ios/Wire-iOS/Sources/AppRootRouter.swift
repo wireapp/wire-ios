@@ -418,7 +418,6 @@ extension AppRootRouter {
             return
         }
 
-        TrackingManager.shared.disableCrashSharing = false
         TrackingManager.shared.disableAnalyticsSharing = false
         Analytics.shared.provider?.selfUser = selfUser
     }

@@ -47,7 +47,7 @@ final class TransferAppLockKeychainTests: DiskDatabaseTest {
         XCTAssertFalse(appLock.isActive)
 
         // When
-        let data = "YES".data(using: .utf8)!
+        let data = Data("YES".utf8)
         ZMKeychain.setData(data, forAccount: "lockApp")
 
         TransferApplockKeychain.migrateIsAppLockActiveState(in: moc)
@@ -71,7 +71,7 @@ final class TransferAppLockKeychainTests: DiskDatabaseTest {
     func testItMigratesPasscodes() throws {
         // Given
         let legacyItem = AppLockController.PasscodeKeychainItem.makeLegacyItem()
-        let passcode = "hello".data(using: .utf8)!
+        let passcode = Data("hello".utf8)
 
         try Keychain.updateItem(legacyItem, value: passcode)
         XCTAssertEqual(try? Keychain.fetchItem(legacyItem), passcode)
