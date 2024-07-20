@@ -68,10 +68,12 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 /// The transport session uses this to determine whether to continue requesting an access token
 - (BOOL)canSendRequests;
 
+- (void)performGroupedBlock:(dispatch_block_t)block;
 
 @property (atomic, readonly) NSInteger concurrentRequestCountLimit;
 @property (nonatomic) ZMTransportRequestSchedulerState schedulerState;
 @property (nonatomic, readonly) id<ReachabilityProvider> reachability;
+@property (nonatomic, readonly) ZMSDispatchGroup *group;
 
 @end
 

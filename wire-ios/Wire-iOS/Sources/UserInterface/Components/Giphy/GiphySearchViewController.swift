@@ -111,7 +111,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: conversation.displayNameWithFallback)
+        setupNavigationBarTitle(conversation.displayNameWithFallback)
         setupNavigationItem()
     }
 

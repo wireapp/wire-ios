@@ -22,8 +22,9 @@ import WireDesign
 
 public extension UIViewController {
 
-    func setupNavigationBarTitle(with title: String) {
-        navigationItem.title = title.capitalized
+    func setupNavigationBarTitle(_ title: String) {
+
+        navigationItem.title = title
 
         let titleTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: SemanticColors.Label.textDefault,
@@ -36,10 +37,8 @@ public extension UIViewController {
         navigationItem.titleView?.accessibilityTraits = .header
         navigationItem.titleView?.accessibilityLabel = navigationItem.title
 
-        if let titleView = navigationItem.titleView {
-            titleView.showsLargeContentViewer = true
-            titleView.largeContentTitle = navigationItem.title
-        }
+        navigationItem.titleView?.showsLargeContentViewer = true
+        navigationItem.titleView?.largeContentTitle = navigationItem.title
     }
 }
 
@@ -49,7 +48,8 @@ struct ViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
         viewController.view.backgroundColor = .white
-        viewController.setupNavigationBarTitle(with: title)
+
+        viewController.setupNavigationBarTitle(title)
 
         let navigationController = UINavigationController(rootViewController: viewController)
         return navigationController

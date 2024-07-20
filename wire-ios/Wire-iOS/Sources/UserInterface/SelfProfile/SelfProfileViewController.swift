@@ -166,7 +166,7 @@ final class SelfProfileViewController: UIViewController {
             navigationItem.titleView = accountSelectorView
             self.accountSelectorView = accountSelectorView
         } else {
-            setupNavigationBarTitle(with: L10n.Localizable.Self.account.capitalized)
+            setupNavigationBarTitle(L10n.Localizable.Self.account)
         }
     }
 

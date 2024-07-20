@@ -26,7 +26,7 @@ final class AccountTests: XCTestCase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "bruno@example.com", hasPassword: true, usesCompanyLogin: false)
 
         let account = Account(
             userName: "Bruno",
@@ -79,7 +79,7 @@ final class AccountTests: XCTestCase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
         let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
-        let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "bruno@example.com", hasPassword: true, usesCompanyLogin: false)
 
         // we create and store an account
         do {
@@ -132,7 +132,7 @@ final class AccountTests: XCTestCase {
         let id = UUID()
         let sut = Account(userName: "Alice", userIdentifier: id)
         let item = AppLockController.PasscodeKeychainItem(userId: id)
-        let data = try XCTUnwrap("passscode".data(using: .utf8))
+        let data = try XCTUnwrap(Data("passscode".utf8))
 
         try Keychain.storeItem(item, value: data)
         XCTAssertNoThrow(try Keychain.fetchItem(item))

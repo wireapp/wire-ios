@@ -47,7 +47,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
@@ -106,7 +106,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
@@ -155,7 +155,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
@@ -206,7 +206,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [

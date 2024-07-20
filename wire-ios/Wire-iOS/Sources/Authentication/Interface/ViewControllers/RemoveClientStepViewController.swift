@@ -56,7 +56,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
     }
 
     private func configureSubviews() {

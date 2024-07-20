@@ -72,7 +72,7 @@ final class ContactsViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(with: ContactsUI.title.capitalized)
+        setupNavigationBarTitle(ContactsUI.title.capitalized)
     }
 
     override func viewDidAppear(_ animated: Bool) {
