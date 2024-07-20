@@ -25,25 +25,71 @@ final class PopoverPresentationControllerConfigurationTests: XCTestCase {
     private typealias SUT = PopoverPresentationControllerConfiguration
 
     @MainActor
-    func testConfiguringBarButtonItem() {
+    func testConfiguringBarButtonItem() throws {
+
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            throw XCTSkip("not relevant")
+        }
 
         // Given
         let barButtonItem = UIBarButtonItem(systemItem: .refresh)
         let configuration = SUT.barButtonItem(barButtonItem)
-        let alertController = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
 
         // When
         alertController.configurePopoverPresentationController(using: configuration)
 
         // Then
-        XCTAssertNotNil(alertController.popoverPresentationController)
-        XCTAssertNil(alertController.popoverPresentationController?.sourceView)
-        XCTAssertNil(alertController.popoverPresentationController?.sourceRect)
-        if #available(iOS 16.0, *) {
-            XCTAssertNil(alertController.popoverPresentationController?.sourceItem)
-        }
-        XCTAssertTrue(alertController.popoverPresentationController?.barButtonItem === barButtonItem)
+        let popoverPresentationController = try XCTUnwrap(alertController.popoverPresentationController)
+        XCTAssertNil(popoverPresentationController.sourceView)
+        XCTAssertEqual(popoverPresentationController.sourceRect, CGRectNull)
+        XCTAssertTrue(popoverPresentationController.barButtonItem === barButtonItem)
     }
 
-    // TODO: test nil controller
+    @MainActor
+    func testConfiguringSourceView() throws {
+
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            throw XCTSkip("not relevant")
+        }
+
+        // Given
+        let sourceView = UIView(frame: .init(x: 0, y: 0, width: 10, height: 10))
+        let sourceRect = CGRect(x: 2, y: 2, width: 6, height: 6)
+        let configuration = SUT.sourceView(sourceView: sourceView, sourceRect: sourceRect)
+        let alertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+
+        // When
+        alertController.configurePopoverPresentationController(using: configuration)
+
+        // Then
+        let popoverPresentationController = try XCTUnwrap(alertController.popoverPresentationController)
+        XCTAssertTrue(popoverPresentationController.sourceView === sourceView)
+        XCTAssertEqual(popoverPresentationController.sourceRect, sourceRect)
+        XCTAssertNil(popoverPresentationController.barButtonItem)
+    }
+
+    @MainActor
+    func testConfiguringSourceViewxx() throws {
+
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            throw XCTSkip("not relevant")
+        }
+
+        // Given
+        let sourceView = UIView(frame: .init(x: 0, y: 0, width: 10, height: 10))
+        let anchorView = UIView(frame: .init(x: 2, y: 2, width: 6, height: 6))
+        sourceView.addSubview(anchorView)
+        let configuration = try XCTUnwrap(SUT.superviewAndFrame(of: anchorView, insetBy: (dx: 1, dy: 1)))
+        let alertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+
+        // When
+        alertController.configurePopoverPresentationController(using: configuration)
+
+        // Then
+        let popoverPresentationController = try XCTUnwrap(alertController.popoverPresentationController)
+        XCTAssertTrue(popoverPresentationController.sourceView === sourceView)
+        XCTAssertEqual(popoverPresentationController.sourceRect, .init(x: 3, y: 3, width: 4, height: 4))
+        XCTAssertNil(popoverPresentationController.barButtonItem)
+    }
 }
