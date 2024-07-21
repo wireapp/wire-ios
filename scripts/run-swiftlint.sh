@@ -31,5 +31,5 @@ if [[ ! -f "$SWIFTLINT" ]]; then
     echo "❌ Executable is missing, please run the setup script!"
 fi
 
-echo "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" --quiet "$@"
-"$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" --quiet "$@"
+echo "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
+"$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"

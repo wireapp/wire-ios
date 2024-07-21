@@ -25,7 +25,8 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies(),
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
@@ -35,7 +36,8 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ]
+            ],
+            swiftSettings: swiftSettings
         )
     ]
 )
@@ -56,3 +58,8 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
         ProcessInfo.processInfo.environment[name] != nil
     }
 }
+
+let swiftSettings: [SwiftSetting] = [
+    .enableExperimentalFeature("StrictConcurrency"),
+    .enableUpcomingFeature("GlobalConcurrency")
+]

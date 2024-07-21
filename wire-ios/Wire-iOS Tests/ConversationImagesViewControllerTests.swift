@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 extension SelfUser {
 
@@ -39,15 +41,15 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     var sut: ConversationImagesViewController! = nil
     var navigatorController: UINavigationController! = nil
     var userSession: UserSessionMock!
+    var snapshotHelper: SnapshotHelper!
 
-    override var needsCaches: Bool {
-        return true
-    }
+    override var needsCaches: Bool { true }
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
@@ -74,25 +76,29 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+
+        snapshotHelper = .init()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationController() {
-        verify(matching: navigatorController.view)
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Normal() {
         sut.setBoundsSizeAsIPhone4_7Inch()
 
-        verify(matching: navigatorController.view)
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Ephemeral() {
@@ -106,7 +112,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // Calls viewWillAppear
         sut.beginAppearanceTransition(true, animated: false)
 
-        verify(matching: navigatorController.view)
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     // MARK: - Unit Tests
@@ -123,7 +129,11 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         sut.viewDidLoad()
 
         // THEN
-        XCTAssertEqual(sut.buttonsBar.buttons.count, 7)
+        XCTAssertEqual(
+            sut.buttonsBar.buttons.map(\.accessibilityLabel),
+            ["Sketch over picture", "Sketch emoji over picture", "Copy picture", "Save picture", "Reveal in conversation", "Delete picture"]
+        )
+        print(sut.buttonsBar.buttons.map { $0.accessibilityLabel })
 
         // WHEN
         message.isEphemeral = true
@@ -131,6 +141,5 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)
-
     }
 }
