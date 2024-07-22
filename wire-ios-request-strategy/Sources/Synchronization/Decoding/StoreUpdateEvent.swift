@@ -79,7 +79,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     ) -> StoredUpdateEvent? {
 
         guard let eventId = event.uuid?.transportString(),
-              let eventHash = EventHasher(eventId: eventId, payload: event.payload)?.hashValue else {
+              let eventHash = EventHasher.hash(eventId: eventId, payload: event.payload) else {
             assertionFailure("trying to check storedEvent without id")
             return nil
         }
