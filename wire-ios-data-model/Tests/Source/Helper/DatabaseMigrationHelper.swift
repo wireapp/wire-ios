@@ -19,6 +19,11 @@
 import XCTest
 @testable import WireDataModel
 
+enum Database {
+    case messaging
+    case event
+}
+
 struct DatabaseMigrationHelper {
 
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
@@ -128,34 +133,49 @@ struct DatabaseMigrationHelper {
         applicationContainer: URL,
         accountIdentifier: UUID,
         versionName: String,
+        database: Database = .messaging,
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        let storeFile = CoreDataStack.accountDataFolder(
+
+        var storeFile = CoreDataStack.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
-        ).appendingPersistentStoreLocation()
+        )
+        switch database {
+        case .messaging:
+            storeFile = storeFile.appendingPersistentStoreLocation()
+        case .event:
+            storeFile = storeFile.appendingEventStoreLocation()
+        }
 
-        try createFixtureDatabase(storeFile: storeFile, versionName: versionName)
+        try createFixtureDatabase(storeFile: storeFile, versionName: versionName, database: database)
     }
 
     func createFixtureDatabase(
         storeFile: URL,
         versionName: String,
+        database: Database = .messaging,
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
         try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
 
         // copy old version database into the expected location
-        guard let source = databaseFixtureURL(version: versionName, file: file, line: line) else {
+        guard let source = databaseFixtureURL(version: versionName, database: database, file: file, line: line) else {
             return
         }
         try FileManager.default.copyItem(at: source, to: storeFile)
     }
 
-    func databaseFixtureURL(version: String, file: StaticString = #file, line: UInt = #line) -> URL? {
-        let name = databaseFixtureFileName(for: version)
+    func databaseFixtureURL(version: String, database: Database = .messaging, file: StaticString = #file, line: UInt = #line) -> URL? {
+        let name = switch database {
+        case .messaging:
+            databaseFixtureFileName(for: version)
+        case .event:
+            "event_\(version)"
+        }
+
         guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: "wiredatabase") else {
             XCTFail("Could not find \(name).wiredatabase in test bundle", file: file, line: line)
             return nil

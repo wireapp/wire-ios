@@ -49,6 +49,30 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         )
     }
 
+    func testEventsDatabase_v04_to_current_PrefillsStoredUpdateEventsWithEventHashs() async throws {
+        // GIVEN
+        let accountIdentifier = UUID()
+
+        // this fixture has already 2 events
+        try helper.createFixtureDatabase(
+            applicationContainer: DatabaseBaseTest.applicationContainer,
+            accountIdentifier: accountIdentifier,
+            versionName: "4.0",
+            database: .event
+        )
+
+        // WHEN / THEN
+        let directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+        await directory.eventContext.perform {
+            let events = directory.eventContext.fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
+            XCTAssertEqual(events.count, 2)
+            for event in events {
+                XCTAssertNotNil(event.value(forKey: "eventHash") as? Int)
+            }
+
+        }
+    }
+
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
         let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
