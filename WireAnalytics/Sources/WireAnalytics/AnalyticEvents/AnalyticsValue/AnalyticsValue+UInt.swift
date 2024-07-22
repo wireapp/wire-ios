@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Enum representing the keys used in the segmentation dictionary for analytics events.
-public enum SegmentationKey: String {
 
-    case groupType = "group_type"
-    case isVideoCall = "is_video_call"
-    case contributionType = "contribution_type"
-    case conversationSize = "conversation_size"
-
+extension UInt: AnalyticsValue {
+    public var analyticsValue: String {
+        return String(self)
+    }
 }
+

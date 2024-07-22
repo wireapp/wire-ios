@@ -26,9 +26,13 @@ public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
 
     /// The segmentation information for the event.
     public var segmentation: [SegmentationKey: AnalyticsValue] {
-        [.groupType: conversationType,
-         .contributionType: contributionType]
+        [
+            .groupType: conversationType,
+            .contributionType: contributionType,
+            .conversationSize: self.conversationSize
+        ]
     }
+
 
     /// The type of contribution.
     public var contributionType: ContributionType
