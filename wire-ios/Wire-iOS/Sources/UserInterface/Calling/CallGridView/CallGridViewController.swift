@@ -21,8 +21,8 @@ import DifferenceKit
 import UIKit
 import WireCommonComponents
 import WireDataModel
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)

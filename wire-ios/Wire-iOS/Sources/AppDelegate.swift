@@ -22,8 +22,8 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 enum ApplicationLaunchType {
     case unknown

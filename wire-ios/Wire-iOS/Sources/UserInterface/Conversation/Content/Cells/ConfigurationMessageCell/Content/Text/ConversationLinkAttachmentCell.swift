@@ -18,8 +18,8 @@
 
 import UIKit
 import WireCommonComponents
-import WireDesign
 import WireDataModel
+import WireDesign
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
 

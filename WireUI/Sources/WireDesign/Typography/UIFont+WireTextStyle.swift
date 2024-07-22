@@ -29,28 +29,39 @@ extension UIFont {
         switch style {
         case .largeTitle:
             return .preferredFont(forTextStyle: .largeTitle)
+
         case .h1:
             return .preferredFont(forTextStyle: .title3)
+
         case .h2:
             return .preferredFont(forTextStyle: .title3).withWeight(.bold)
+
         case .h3:
             return .preferredFont(forTextStyle: .headline)
+
         case .h4:
             return .preferredFont(forTextStyle: .subheadline)
+
         case .h5:
             return .preferredFont(forTextStyle: .footnote).withWeight(.semibold)
+
         case .body1:
             return .preferredFont(forTextStyle: .body)
+
         case .body2:
             let baseFont = UIFont.preferredFont(forTextStyle: .body).withSize(16)
             return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
+
         case .body3:
             return .preferredFont(forTextStyle: .callout).withWeight(.bold)
+
         case .subline1:
             return .preferredFont(forTextStyle: .caption1)
+
         case .buttonSmall:
             let baseFont = UIFont.systemFont(ofSize: 14)
             return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
+
         case .buttonBig:
             return .preferredFont(forTextStyle: .title3).withWeight(.bold)
         }

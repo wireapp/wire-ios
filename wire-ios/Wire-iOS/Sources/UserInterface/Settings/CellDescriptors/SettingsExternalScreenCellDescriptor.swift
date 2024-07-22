@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDesign
 import WireCommonComponents
+import WireDesign
 
 enum PresentationStyle: Int {
     case modal

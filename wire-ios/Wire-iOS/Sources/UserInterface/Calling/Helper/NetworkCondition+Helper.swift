@@ -17,8 +17,8 @@
 //
 
 import WireCommonComponents
-import WireSyncEngine
 import WireDesign
+import WireSyncEngine
 
 extension NetworkQuality {
     func attributedString(color: UIColor) -> NSAttributedString? {

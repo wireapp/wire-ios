@@ -18,7 +18,7 @@
 
 import UIKit
 
-public typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
+public typealias SpinnerCapableViewController = SpinnerCapable & UIViewController
 public typealias SpinnerCompletion = () -> Void
 
 public protocol SpinnerCapable: AnyObject {
@@ -34,7 +34,7 @@ public extension SpinnerCapable where Self: UIViewController {
 
     var isLoadingViewVisible: Bool {
         get {
-            return dismissSpinner != nil
+            dismissSpinner != nil
         }
 
         set {
@@ -60,7 +60,8 @@ public extension SpinnerCapable where Self: UIViewController {
             spinnerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             spinnerView.topAnchor.constraint(equalTo: view.topAnchor),
             spinnerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            spinnerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
+            spinnerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
 
         UIAccessibility.post(notification: .announcement, argument: accessibilityAnnouncement)
         spinnerView.spinnerSubtitleView.spinner.startAnimation()
@@ -84,7 +85,7 @@ public extension SpinnerCapable where Self: UIViewController {
 
 public final class LoadingSpinnerView: UIView {
 
-    let spinnerSubtitleView: SpinnerSubtitleView = SpinnerSubtitleView()
+    let spinnerSubtitleView: SpinnerSubtitleView = .init()
 
     init() {
         super.init(frame: .zero)
@@ -102,11 +103,13 @@ public final class LoadingSpinnerView: UIView {
 
         NSLayoutConstraint.activate([
             spinnerSubtitleView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinnerSubtitleView.centerYAnchor.constraint(equalTo: centerYAnchor)])
+            spinnerSubtitleView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
 }
 
 // MARK: - SpinnerCapableNavigationController
+
 public final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
 
     public static var accessibilityAnnouncement = ""
@@ -114,16 +117,16 @@ public final class SpinnerCapableNavigationController: UINavigationController, S
     public var dismissSpinner: SpinnerCompletion?
     public var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
 
-    public override var childForStatusBarStyle: UIViewController? {
+    override public var childForStatusBarStyle: UIViewController? {
         topViewController
     }
 }
 
-extension UINavigationController {
+public extension UINavigationController {
 
-    public var isLoadingViewVisible: Bool? {
+    var isLoadingViewVisible: Bool? {
         get {
-            return (self as? SpinnerCapableViewController)?.isLoadingViewVisible
+            (self as? SpinnerCapableViewController)?.isLoadingViewVisible
         }
 
         set {

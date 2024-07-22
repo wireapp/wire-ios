@@ -24,9 +24,9 @@ import UniformTypeIdentifiers
 import WireCommonComponents
 import WireCoreCrypto
 import WireDataModel
+import WireDesign
 import WireLinkPreview
 import WireShareEngine
-import WireDesign
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")

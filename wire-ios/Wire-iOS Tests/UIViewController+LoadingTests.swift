@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import WireUITesting
 import WireReusableUIComponents
+import WireUITesting
 import XCTest
 
 @testable import Wire

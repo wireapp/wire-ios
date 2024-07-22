@@ -19,8 +19,8 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: RemoveClientsViewController)
@@ -37,7 +37,7 @@ final class RemoveClientsViewController: UIViewController,
 
     var dismissSpinner: SpinnerCompletion?
     let accessibilityAnnouncement = L10n.Localizable.General.loading
-    
+
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
     private var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {

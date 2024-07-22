@@ -18,8 +18,8 @@
 
 import Foundation
 import WireCommonComponents
-import WireSyncEngine
 import WireDesign
+import WireSyncEngine
 
 enum VideoIconStyle: String, IconImageStyle {
     case video

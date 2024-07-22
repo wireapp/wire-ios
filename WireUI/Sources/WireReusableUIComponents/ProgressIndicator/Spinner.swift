@@ -61,7 +61,7 @@ public final class Spinner: UIView {
         createSpinner()
     }
 
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -81,7 +81,7 @@ public final class Spinner: UIView {
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
-    public override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         spinner.image?.size ?? super.intrinsicContentSize
     }
 

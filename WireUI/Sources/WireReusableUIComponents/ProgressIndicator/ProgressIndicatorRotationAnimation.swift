@@ -22,7 +22,6 @@ public func ProgressIndicatorRotationAnimation(
     rotationSpeed: CFTimeInterval,
     beginTime: CFTimeInterval
 ) -> CABasicAnimation {
-
     let animation = CABasicAnimation(keyPath: "transform.rotation")
 
     animation.fillMode = .forwards

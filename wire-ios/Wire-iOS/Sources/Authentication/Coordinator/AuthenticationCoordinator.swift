@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 /**
  * Provides and asks for context when registering users.

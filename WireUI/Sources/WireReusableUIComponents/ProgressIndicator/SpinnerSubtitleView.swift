@@ -38,6 +38,7 @@ final class SpinnerSubtitleView: UIStackView {
         updateSubtitle(nil)
     }
 
+    @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -54,7 +55,7 @@ final class SpinnerSubtitleView: UIStackView {
 
     private func updateSubtitle(_ text: String?) {
         label.text = text
-        label.isHidden = nil == text || 0 == text!.count
+        label.isHidden = text == nil || text!.count == 0
     }
 
 }

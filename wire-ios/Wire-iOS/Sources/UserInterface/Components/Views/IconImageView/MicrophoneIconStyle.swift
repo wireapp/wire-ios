@@ -18,8 +18,8 @@
 
 import Foundation
 import WireCommonComponents
-import WireSyncEngine
 import WireDesign
+import WireSyncEngine
 
 enum MicrophoneIconStyle: String {
     case muted

@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDataModel
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 typealias ViewControllerPresenter = (UIViewController, Bool, (() -> Void)?) -> Void
 typealias SuggestedStateChangeHandler = (LegalHoldDisclosureController.DisclosureState) -> Void

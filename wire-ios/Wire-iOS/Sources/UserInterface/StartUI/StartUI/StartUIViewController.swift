@@ -19,8 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 

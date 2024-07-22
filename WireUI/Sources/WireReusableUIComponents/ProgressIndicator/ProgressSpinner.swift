@@ -55,10 +55,10 @@ public final class ProgressSpinner: UIView {
         }
     }
 
-    private let spinner: UIImageView = UIImageView()
+    private let spinner: UIImageView = .init()
 
     private var isAnimationRunning: Bool {
-        return spinner.layer.animation(forKey: "rotateAnimation") != nil
+        spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
     public init() {
@@ -86,7 +86,7 @@ public final class ProgressSpinner: UIView {
         }
     }
 
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -94,7 +94,7 @@ public final class ProgressSpinner: UIView {
         spinner.layer.frame = frame
     }
 
-    public override func didMoveToWindow() {
+    override public func didMoveToWindow() {
         if window == nil {
             // CABasicAnimation delegate is strong so we stop all animations when the view is removed.
             stopAnimationInternal()
@@ -111,8 +111,8 @@ public final class ProgressSpinner: UIView {
         updateSpinnerIcon()
     }
 
-    public override var intrinsicContentSize: CGSize {
-        return spinner.image?.size ?? super.intrinsicContentSize
+    override public var intrinsicContentSize: CGSize {
+        spinner.image?.size ?? super.intrinsicContentSize
     }
 
     private func setupConstraints() {
@@ -150,7 +150,7 @@ public final class ProgressSpinner: UIView {
     }
 
     private func applicationDidBecomeActive() {
-        if isAnimating && !isAnimationRunning {
+        if isAnimating, !isAnimationRunning {
             startAnimationInternal()
         }
     }
