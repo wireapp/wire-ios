@@ -46,6 +46,8 @@ final class ConversationInputBarSendController: NSObject {
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
+        }, completionHandler: {
+            completionHandler?()
         })
     }
 
