@@ -19,7 +19,7 @@
 import UIKit
 
 typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
-typealias SpinnerCompletion = Completion
+typealias SpinnerCompletion = () -> Void
 
 protocol SpinnerCapable: AnyObject {
     var dismissSpinner: SpinnerCompletion? { get set }
@@ -48,7 +48,7 @@ extension SpinnerCapable where Self: UIViewController {
         }
     }
 
-    private func presentSpinner(title: String? = nil) -> Completion {
+    private func presentSpinner(title: String? = nil) -> () -> Void {
         // Starts animating when it appears, stops when it disappears
         let spinnerView = createSpinner(title: title)
         spinnerView.translatesAutoresizingMaskIntoConstraints = false

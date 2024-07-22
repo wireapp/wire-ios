@@ -125,7 +125,9 @@ final class ProgressSpinner: UIView {
         isHidden = false
         stopAnimationInternal()
         if window != nil {
-            spinner.layer.add(CABasicAnimation(rotationSpeed: 1.4, beginTime: 0, delegate: self), forKey: "rotateAnimation")
+            let animation = ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0)
+            animation.delegate = self
+            spinner.layer.add(animation, forKey: "rotateAnimation")
         }
     }
 
