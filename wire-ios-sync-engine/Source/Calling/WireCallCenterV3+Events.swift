@@ -75,6 +75,7 @@ extension WireCallCenterV3: ZMConversationObserver {
         handleClientsRequest(conversationId: conversationId, completion: completion)
     }
 
+    // do we need it for 1:1?
     private func informMLSMigrationFinalizedIfNeeded(_ changeInfo: ConversationChangeInfo) {
         let conversation = changeInfo.conversation
 

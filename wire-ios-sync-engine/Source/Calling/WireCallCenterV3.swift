@@ -533,7 +533,7 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
-            guard conversation.avsConversationType == .mlsConference else { return }
+            guard conversation.avsConversationType.isOne(of: .mlsConference, .oneToOne) else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -614,7 +614,7 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             break
         case .mls:
-            guard conversationType == .mlsConference else { return }
+            guard conversationType.isOne(of: .mlsConference, .oneToOne) else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -961,49 +961,49 @@ extension WireCallCenterV3 {
     }
 
     /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
-    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
-        Task {
-            guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
-
-            let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
-                let conversation = ZMConversation.fetch(
-                    with: conversationId.identifier,
-                    domain: conversationId.domain,
-                    in: syncContext
-                )
-                guard let conversation, conversation.avsConversationType == .mlsConference else {
-                    return (nil, nil, nil)
-                }
-                return (syncContext.mlsService,
-                        conversation.qualifiedID,
-                        conversation.mlsGroupID)
-            }
-
-            guard
-                let mlsService = result.0,
-                let parentQualifiedID = result.1,
-                let parentGroupID = result.2
-            else {
-                return
-            }
-
-            do {
-                let subgroupID = try await mlsService.createOrJoinSubgroup(
-                    parentQualifiedID: parentQualifiedID,
-                    parentID: parentGroupID
-                )
-
-                let conferenceInfo = try await mlsService.generateConferenceInfo(
-                    parentGroupID: parentGroupID,
-                    subconversationGroupID: subgroupID
-                )
-
-                self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
-            } catch {
-                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
-            }
-        }
-    }
+//    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
+//        Task {
+//            guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
+//
+//            let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
+//                let conversation = ZMConversation.fetch(
+//                    with: conversationId.identifier,
+//                    domain: conversationId.domain,
+//                    in: syncContext
+//                )
+//                guard let conversation, conversation.avsConversationType == .mlsConference else {
+//                    return (nil, nil, nil)
+//                }
+//                return (syncContext.mlsService,
+//                        conversation.qualifiedID,
+//                        conversation.mlsGroupID)
+//            }
+//
+//            guard
+//                let mlsService = result.0,
+//                let parentQualifiedID = result.1,
+//                let parentGroupID = result.2
+//            else {
+//                return
+//            }
+//
+//            do {
+//                let subgroupID = try await mlsService.createOrJoinSubgroup(
+//                    parentQualifiedID: parentQualifiedID,
+//                    parentID: parentGroupID
+//                )
+//
+//                let conferenceInfo = try await mlsService.generateConferenceInfo(
+//                    parentGroupID: parentGroupID,
+//                    subconversationGroupID: subgroupID
+//                )
+//
+//                self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
+//            } catch {
+//                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
+//            }
+//        }
+//    }
 
     /// Handles a change in calling state.
     ///
@@ -1065,6 +1065,7 @@ private extension ZMConversation {
 
     var avsConversationType: AVSConversationType? {
         switch (conversationType, messageProtocol) {
+            // add mls oneToOne
         case (.oneOnOne, _):
             return .oneToOne
 
