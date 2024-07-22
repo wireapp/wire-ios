@@ -209,7 +209,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             popoverPresentationController.sourceRect = sourceView.frame
         }
 
-      present(activityController, animated: true)
+        present(activityController, animated: true)
     }
 
     func conversationGuestOptionsViewModel(
