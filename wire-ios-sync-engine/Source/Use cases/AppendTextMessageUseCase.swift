@@ -34,6 +34,10 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
+    public init(analyticsSession: AnalyticsSessionProtocol?) {
+        self.analyticsSession = analyticsSession
+    }
+
     public func invoke<Conversation: MessageAppendableConversation>(
         text: String,
         mentions: [Mention],

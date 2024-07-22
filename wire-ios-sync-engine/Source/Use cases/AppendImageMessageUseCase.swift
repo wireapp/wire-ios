@@ -31,6 +31,10 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
+    public init(analyticsSession: AnalyticsSessionProtocol?) {
+        self.analyticsSession = analyticsSession
+    }
+
     public func invoke<Conversation: MessageAppendableConversation>(
         withImageData imageData: Data,
         in conversation: Conversation

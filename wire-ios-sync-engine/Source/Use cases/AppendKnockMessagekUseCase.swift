@@ -28,6 +28,11 @@ public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
+
+    public init(analyticsSession: AnalyticsSessionProtocol?) {
+        self.analyticsSession = analyticsSession
+    }
+
     public func invoke<Conversation: MessageAppendableConversation>(
         in conversation: Conversation
     ) throws {
