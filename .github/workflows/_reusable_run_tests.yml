@@ -139,6 +139,15 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Include PR number in event if needed
+        run: |
+          ruby -e "require 'JSON'; \
+          pull_request_event = JSON.parse(File.read('${GITHUB_EVENT_PATH}')); \
+          puts pull_request_event['number']"
+          #pull_request_event['number'] = 30; \
+          #puts pull_request_event['head_commit']['message'][/\(\#(\d+)\)/, 1]"
+          false
+
       - name: Setup workspace
         run: |
           ./setup.sh
