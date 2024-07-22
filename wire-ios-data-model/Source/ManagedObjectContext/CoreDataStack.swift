@@ -126,8 +126,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
-    private let messagesMigrator: CoreDataMessagingMigrator<CoreDataMessagingMigrationVersion>
-    private let eventsMigrator: CoreDataMessagingMigrator<CoreDataEventsMigrationVersion>
+    private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
+    private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
     public init(account: Account,
@@ -179,8 +179,8 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         self.messagesContainer = messagesContainer
         self.eventsContainer = eventContainer
-        self.messagesMigrator = CoreDataMessagingMigrator(isInMemoryStore: inMemoryStore)
-        self.eventsMigrator = CoreDataMessagingMigrator(isInMemoryStore: inMemoryStore)
+        self.messagesMigrator = CoreDataMigrator(isInMemoryStore: inMemoryStore)
+        self.eventsMigrator = CoreDataMigrator(isInMemoryStore: inMemoryStore)
 
         super.init()
 
@@ -500,7 +500,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             throw CoreDataMigratorError.missingStoreURL
         }
 
-        try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
+        try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
     }
 
 }

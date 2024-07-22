@@ -19,17 +19,10 @@
 import CoreData
 
 protocol CoreDataMigratorProtocol {
-    associatedtype MigrationVersion
+    associatedtype DatabaseVersion
 
-    func requiresMigration(at storeURL: URL, toVersion version: MigrationVersion) -> Bool
-    func migrateStore(at storeURL: URL, toVersion version: MigrationVersion) throws
-}
-
-// sourcery: AutoMockable
-protocol CoreDataMessagingMigratorProtocol {
-
-    func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool
-    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws
+    func requiresMigration(at storeURL: URL, toVersion version: DatabaseVersion) -> Bool
+    func migrateStore(at storeURL: URL, toVersion version: DatabaseVersion) throws
 }
 
 enum CoreDataMigratorError: Error {
@@ -68,9 +61,7 @@ extension CoreDataMigratorError: LocalizedError {
     }
 }
 
-extension CoreDataMessagingMigrator<CoreDataMessagingMigrationVersion>: CoreDataMessagingMigratorProtocol {}
-
-final class CoreDataMessagingMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
+final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
 
     typealias MigrationVersion = Version
     private let isInMemoryStore: Bool
@@ -147,7 +138,7 @@ final class CoreDataMessagingMigrator<Version: CoreDataMigrationVersion>: CoreDa
     private func migrationStepsForStore(
         at storeURL: URL,
         to destinationVersion: Version
-    ) throws -> [CoreDataMessagingMigrationStep<Version>] {
+    ) throws -> [CoreDataMigrationStep<Version>] {
         guard
             let metadata = try? metadataForPersistentStore(at: storeURL),
             let sourceVersion = compatibleVersionForStoreMetadata(metadata)
@@ -161,12 +152,12 @@ final class CoreDataMessagingMigrator<Version: CoreDataMigrationVersion>: CoreDa
     private func migrationSteps(
         fromSourceVersion sourceVersion: Version,
         toDestinationVersion destinationVersion: Version
-    ) throws -> [CoreDataMessagingMigrationStep<Version>] {
+    ) throws -> [CoreDataMigrationStep<Version>] {
         var sourceVersion = sourceVersion
-        var migrationSteps: [CoreDataMessagingMigrationStep<Version>] = []
+        var migrationSteps: [CoreDataMigrationStep<Version>] = []
 
         while sourceVersion != destinationVersion, let nextVersion = sourceVersion.nextVersion {
-            let step = try CoreDataMessagingMigrationStep(sourceVersion: sourceVersion, destinationVersion: nextVersion)
+            let step = try CoreDataMigrationStep(sourceVersion: sourceVersion, destinationVersion: nextVersion)
             migrationSteps.append(step)
 
             sourceVersion = nextVersion
@@ -261,7 +252,7 @@ final class CoreDataMessagingMigrator<Version: CoreDataMigrationVersion>: CoreDa
 
     // MARK: - CoreDataMigration Actions
 
-    func runPreMigrationStep(_ step: CoreDataMessagingMigrationStep<Version>, for storeURL: URL) throws {
+    func runPreMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
         guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else {
             return
         }
@@ -270,7 +261,7 @@ final class CoreDataMessagingMigrator<Version: CoreDataMigrationVersion>: CoreDa
                            with: step.sourceModel)
     }
 
-    func runPostMigrationStep(_ step: CoreDataMessagingMigrationStep<Version>, for storeURL: URL) throws {
+    func runPostMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
 
         guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion) else { return }
 

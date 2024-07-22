@@ -18,7 +18,7 @@
 
 import CoreData
 
-struct CoreDataMessagingMigrationStep<Version: CoreDataMigrationVersion> {
+struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
 
     let sourceVersion: Version
     let destinationVersion: Version
