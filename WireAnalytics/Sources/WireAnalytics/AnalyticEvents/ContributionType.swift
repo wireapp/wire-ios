@@ -17,8 +17,7 @@
 //
 
 /// An enumeration representing the type of contribution.
-public enum ContributionType {
-
+public enum ContributionType: AnalyticsValue {
     case textMessage
     case likeMessage
     case pingMessage
@@ -30,4 +29,19 @@ public enum ContributionType {
     case audioCallMessage
     case videoCallMessage
 
+    /// A string representation of the contribution type suitable for analytics tracking.
+    public var analyticsValue: String {
+        switch self {
+        case .textMessage: return "text_message"
+        case .likeMessage: return "like_message"
+        case .pingMessage: return "ping_message"
+        case .fileMessage: return "file_message"
+        case .imageMessage: return "image_message"
+        case .locationMessage: return "location_message"
+        case .audioMessage: return "audio_message"
+        case .videoMessage: return "video_message"
+        case .audioCallMessage: return "audio_call_message"
+        case .videoCallMessage: return "video_call_message"
+        }
+    }
 }

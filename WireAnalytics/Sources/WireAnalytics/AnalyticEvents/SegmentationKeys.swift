@@ -21,5 +21,6 @@ public enum SegmentationKeys: String {
 
     case groupType = "group_type"
     case isVideoCall = "is_video_call"
+    case contributionType = "contribution_type"
 
 }
