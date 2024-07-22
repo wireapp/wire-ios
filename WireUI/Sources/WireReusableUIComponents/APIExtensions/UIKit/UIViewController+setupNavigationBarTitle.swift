@@ -22,7 +22,6 @@ import WireDesign
 public extension UIViewController {
 
     func setupNavigationBarTitle(_ title: String) {
-
         navigationItem.title = title
 
         let titleTextAttributes: [NSAttributedString.Key: Any] = [
