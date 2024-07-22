@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireUITesting
+import WireReusableUIComponents
 import XCTest
 
 @testable import Wire
@@ -36,53 +36,62 @@ final class LoadingViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: MockLoadingViewController!
+    private var viewController: UIViewController!
+    private var sut: BlockingActivityIndicator!
+    private var tmp_viewController: MockLoadingViewController!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-        sut = MockLoadingViewController()
-        sut.view.backgroundColor = .white
+    override func setUp() async throws {
+        await MainActor.run {
+
+            viewController = UIViewController()
+            viewController.view.backgroundColor = .white
+
+            sut = .init(view: viewController.view)
+            snapshotHelper = SnapshotHelper()
+            tmp_viewController = MockLoadingViewController()
+            tmp_viewController.view.backgroundColor = .white
+        }
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
-        sut = nil
+        tmp_viewController = nil
+
         super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testThatItShowsLoadingIndicator() {
-        // GIVEN && WHEN
-        sut.isLoadingViewVisible = true
 
-        // THEN
-        XCTAssert(sut.isLoadingViewVisible)
-        verifyInAllDeviceSizes(matching: sut)
+        // When
+        sut.start()
+
+        // Then
+        verifyInAllDeviceSizes(matching: viewController)
     }
 
     func testThatItDismissesLoadingIndicator() {
         // GIVEN && WHEN
-        sut.isLoadingViewVisible = true
-        sut.isLoadingViewVisible = false
+        tmp_viewController.isLoadingViewVisible = true
+        tmp_viewController.isLoadingViewVisible = false
 
         // THEN
-        XCTAssertFalse(sut.isLoadingViewVisible)
-        snapshotHelper.verify(matching: sut)
+        XCTAssertFalse(tmp_viewController.isLoadingViewVisible)
+        snapshotHelper.verify(matching: tmp_viewController)
     }
 
     func testThatItShowsLoadingIndicatorWithSubtitle() {
         // GIVEN && WHEN
-        sut.showLoadingView(title: "RESTORING…")
+        tmp_viewController.showLoadingView(title: "RESTORING…")
 
         // THEN
-        verifyInAllDeviceSizes(matching: sut)
+        verifyInAllDeviceSizes(matching: tmp_viewController)
     }
-
 }

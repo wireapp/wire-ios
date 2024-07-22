@@ -56,5 +56,4 @@ final class SpinnerSubtitleView: UIStackView {
         label.text = text
         label.isHidden = nil == text || 0 == text!.count
     }
-
 }

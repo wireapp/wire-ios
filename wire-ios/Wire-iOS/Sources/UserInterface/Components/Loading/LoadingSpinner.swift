@@ -77,7 +77,8 @@ extension SpinnerCapable where Self: UIViewController {
 
 // MARK: - LoadingSpinnerView
 final class LoadingSpinnerView: UIView {
-    let spinnerSubtitleView: SpinnerSubtitleView = SpinnerSubtitleView()
+
+    let spinnerSubtitleView = SpinnerSubtitleView()
 
     init() {
         super.init(frame: .zero)

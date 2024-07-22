@@ -73,7 +73,7 @@ extension UIView {
 
             // view with dimmed background which swallows touch events
             let blockingView = UIView()
-            blockingView.backgroundColor = .black.withAlphaComponent(0.4)
+            blockingView.backgroundColor = .black.withAlphaComponent(0.5)
             blockingView.isUserInteractionEnabled = true
             blockingView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(blockingView)
