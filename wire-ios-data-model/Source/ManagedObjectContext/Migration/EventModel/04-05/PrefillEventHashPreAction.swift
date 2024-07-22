@@ -19,6 +19,9 @@
 import Foundation
 
 class PrefillEvenHashAction: CoreDataMigrationAction {
+    override var dataModelName: String {
+        "ZMEventModel"
+    }
 
     private enum Keys: String {
         case eventHash

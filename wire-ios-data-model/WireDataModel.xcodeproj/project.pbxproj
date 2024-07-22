@@ -34,6 +34,7 @@
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		019E293C2C4EA06E00424F69 /* PrefillEventHashPreAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019E293B2C4EA06E00424F69 /* PrefillEventHashPreAction.swift */; };
+		019E293E2C4EAB1400424F69 /* event_4.0.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 019E293D2C4EAB1400424F69 /* event_4.0.sqlite */; };
 		01AB482D2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AB482C2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift */; };
 		01B6A8A02B16268300E409A0 /* store2-111-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */; };
 		01B7A5752B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */; };
@@ -946,6 +947,7 @@
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
 		019E293B2C4EA06E00424F69 /* PrefillEventHashPreAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefillEventHashPreAction.swift; sourceTree = "<group>"; };
+		019E293D2C4EAB1400424F69 /* event_4.0.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = event_4.0.sqlite; sourceTree = "<group>"; };
 		01AB482C2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigratorProtocol.swift; sourceTree = "<group>"; };
 		01B6A89E2B16252300E409A0 /* zmessaging2.111.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.111.0.xcdatamodel; sourceTree = "<group>"; };
 		01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-111-0.wiredatabase"; sourceTree = "<group>"; };
@@ -3646,6 +3648,7 @@
 			isa = PBXGroup;
 			children = (
 				E6BB79582C36EBE0003B821B /* store2-118-0.wiredatabase */,
+				019E293D2C4EAB1400424F69 /* event_4.0.sqlite */,
 				16058B2D2BDBAF73003C82C2 /* store2-117-0.wiredatabase */,
 				162F85AA2BC58DF8007E2CB6 /* store2-116-0.wiredatabase */,
 				16EFC3AF2BAB8B910046C1D7 /* store2-115-0.wiredatabase */,
@@ -3919,6 +3922,7 @@
 				16EFC3AE2BAB8AF20046C1D7 /* store2-114-0.wiredatabase in Resources */,
 				54AA3C9924ED2CE700FE1F94 /* store2-84-0.wiredatabase in Resources */,
 				5495BC431E019F1B004253ED /* audio.m4a in Resources */,
+				019E293E2C4EAB1400424F69 /* event_4.0.sqlite in Resources */,
 				4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */,
 				54BAB40B24A4FA0800EBC400 /* store2-82-0.wiredatabase in Resources */,
 				EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */,

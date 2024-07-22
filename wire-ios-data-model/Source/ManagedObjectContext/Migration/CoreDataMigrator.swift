@@ -91,7 +91,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
 
-            let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
+            let logMessage = "core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
             WireLogger.localStorage.info(logMessage, attributes: .safePublic)
 
             try self.runPreMigrationStep(migrationStep, for: currentURL)

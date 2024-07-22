@@ -53,7 +53,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         // GIVEN
         let accountIdentifier = UUID()
 
-        // this fixture has already 2 events
+        // this fixture has already 1 event
         try helper.createFixtureDatabase(
             applicationContainer: DatabaseBaseTest.applicationContainer,
             accountIdentifier: accountIdentifier,
@@ -65,11 +65,9 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         await directory.eventContext.perform {
             let events = directory.eventContext.fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
-            XCTAssertEqual(events.count, 2)
-            for event in events {
-                XCTAssertNotNil(event.value(forKey: "eventHash") as? Int)
-            }
-
+            XCTAssertEqual(events.count, 1)
+            let eventHash = events.first?.value(forKey: "eventHash") as? Int
+            XCTAssertNotNil(eventHash)
         }
     }
 
@@ -93,7 +91,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
 
         let modelVersion = CoreDataStack.loadMessagingModel().version
-        let fixtureVersion = String(helper.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
+        let fixtureVersion = String(Database.messaging.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
         let accountIdentifier = UUID()
 
         // Check that we have current version fixture file

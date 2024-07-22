@@ -22,6 +22,27 @@ import XCTest
 enum Database {
     case messaging
     case event
+
+    func databaseFixtureFileName(for version: String) -> String {
+        switch self {
+        case .messaging:
+            // The naming scheme is slightly different for fixture files
+            let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
+            let name = "store" + fixedVersion
+            return name
+        case .event:
+            return "event_\(version)"
+        }
+    }
+
+    var `extension`: String {
+        switch self {
+        case .messaging:
+            "wiredatabase"
+        case .event:
+            "sqlite"
+        }
+    }
 }
 
 struct DatabaseMigrationHelper {
@@ -169,25 +190,14 @@ struct DatabaseMigrationHelper {
     }
 
     func databaseFixtureURL(version: String, database: Database = .messaging, file: StaticString = #file, line: UInt = #line) -> URL? {
-        let name = switch database {
-        case .messaging:
-            databaseFixtureFileName(for: version)
-        case .event:
-            "event_\(version)"
-        }
 
-        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: "wiredatabase") else {
-            XCTFail("Could not find \(name).wiredatabase in test bundle", file: file, line: line)
+        let name = database.databaseFixtureFileName(for: version)
+
+        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension) else {
+            XCTFail("Could not find \(name).\(database.extension) in test bundle", file: file, line: line)
             return nil
         }
         return source
-    }
-
-    // The naming scheme is slightly different for fixture files
-    func databaseFixtureFileName(for version: String) -> String {
-        let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
-        let name = "store" + fixedVersion
-        return name
     }
 
     // MARK: - Migration Helpers
