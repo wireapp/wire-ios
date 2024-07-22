@@ -35,7 +35,7 @@
 @property (nonatomic) NSUUID *lastUUIDOfPreviousPage;
 @property (nonatomic) NSDate *lastResetFetchDate;
 
-@property (nonatomic) BOOL includeClientID;
+@property (nonatomic, copy) NSString *selfClientID;
 
 @property (nonatomic, weak) id<ZMSimpleListRequestPaginatorSync> transcoder;
 
@@ -50,7 +50,7 @@ ZM_EMPTY_ASSERTING_INIT()
                         startKey:(NSString *)startKey
                         pageSize:(NSUInteger)pageSize
             managedObjectContext:(NSManagedObjectContext *)moc
-                 includeClientID:(BOOL)includeClientID
+                    selfClientID:(NSString *)selfClientID
                       transcoder:(id<ZMSimpleListRequestPaginatorSync>)transcoder;
 {
     Require(startKey != nil);
@@ -62,7 +62,7 @@ ZM_EMPTY_ASSERTING_INIT()
         self.startKey = startKey;
         self.pageSize = pageSize;
         self.moc = moc;
-        self.includeClientID = includeClientID;
+        self.selfClientID = selfClientID;
         self.transcoder = transcoder;
         self.singleRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:self.moc];
     }
@@ -93,13 +93,8 @@ ZM_EMPTY_ASSERTING_INIT()
     if (self.lastUUIDOfPreviousPage != nil) {
         [queryItems addObject:[NSURLQueryItem queryItemWithName:self.startKey value:self.lastUUIDOfPreviousPage.transportString]];
     }
-    if (self.includeClientID) {
-        UserClient *selfClient = [ZMUser selfUserInContext:self.moc].selfClient;
-        if (selfClient.remoteIdentifier != nil) {
-            [queryItems addObject:[NSURLQueryItem queryItemWithName:@"client" value:selfClient.remoteIdentifier]];
-        } else {
-            return nil;
-        }
+    if (self.selfClientID) {
+        [queryItems addObject:[NSURLQueryItem queryItemWithName:@"client" value:self.selfClientID]];
     }
 
     NSURLComponents *components = [NSURLComponents componentsWithString:self.basePath];

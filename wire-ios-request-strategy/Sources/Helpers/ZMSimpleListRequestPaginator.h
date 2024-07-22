@@ -40,7 +40,7 @@
                         startKey:(NSString *)startKey
                         pageSize:(NSUInteger)pageSize
             managedObjectContext:(NSManagedObjectContext *)moc
-                 includeClientID:(BOOL)includeClientID
+                    selfClientID:(NSString *)selfClientID
                       transcoder:(id<ZMSimpleListRequestPaginatorSync>)transcoder;
 
 - (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;

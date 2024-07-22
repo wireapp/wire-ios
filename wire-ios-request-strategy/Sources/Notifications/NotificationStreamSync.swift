@@ -40,12 +40,19 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         self.lastEventIDRepository = eventIDRespository
         super.init()
         managedObjectContext = moc
-        listPaginator = ZMSimpleListRequestPaginator.init(basePath: "/notifications",
-                                                          startKey: "since",
-                                                          pageSize: 500,
-                                                          managedObjectContext: moc,
-                                                          includeClientID: true,
-                                                          transcoder: self)
+
+        let selfUser = ZMUser.selfUser(in: moc)
+        let selfClientID = selfUser.selfClient()?.remoteIdentifier
+
+        listPaginator = ZMSimpleListRequestPaginator(
+            basePath: "/notifications",
+            startKey: "since",
+            pageSize: 500,
+            managedObjectContext: moc,
+            selfClientID: selfClientID,
+            transcoder: self
+        )
+
         self.notificationsTracker = notificationsTracker
         notificationStreamSyncDelegate = delegate
     }
