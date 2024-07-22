@@ -84,7 +84,5 @@ let package = Package(
 )
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
+    .enableUpcomingFeature("ExistentialAny")
 ]

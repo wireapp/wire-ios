@@ -60,7 +60,5 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
 }
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
+    .enableUpcomingFeature("ExistentialAny")
 ]
