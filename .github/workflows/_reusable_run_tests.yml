@@ -157,8 +157,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystem -resultBundlePath xcodebuild-wire-ios-system.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-system.log | bundle exec xcpretty
 
       - name: Run Danger for WireSystem
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-system || inputs.all }}
+        if: ${{ inputs.wire-ios-system || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
@@ -189,8 +188,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTesting -resultBundlePath xcodebuild-wire-ios-testing.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-testing.log | bundle exec xcpretty
 
       - name: Run Danger for WireTesting
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-testing || inputs.all }}
+        if: ${{ inputs.wire-ios-testing || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-testing.xcresult
@@ -221,8 +219,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -resultBundlePath xcodebuild-wire-ios-utilities.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-utilities.log | bundle exec xcpretty
 
       - name: Run Danger for WireUtilities
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-utilities || inputs.all }}
+        if: ${{ inputs.wire-ios-utilities || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-utilities.xcresult
@@ -253,8 +250,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -resultBundlePath xcodebuild-wire-ios-cryptobox.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty
 
       - name: Run Danger for WireCryptobox
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-cryptobox || inputs.all }}
+        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-cryptobox.xcresult
@@ -285,8 +281,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTransport -resultBundlePath xcodebuild-wire-ios-transport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-transport.log | bundle exec xcpretty
 
       - name: Run Danger for WireTransport
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-transport || inputs.all }}
+        if: ${{ inputs.wire-ios-transport || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-transport.xcresult
@@ -317,8 +312,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -resultBundlePath xcodebuild-wire-ios-link-preview.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty
 
       - name: Run Danger for WireLinkPreview
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-link-preview || inputs.all }}
+        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-link-preview.xcresult
@@ -349,8 +343,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireImages -resultBundlePath xcodebuild-wire-ios-images.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-images.log | bundle exec xcpretty
 
       - name: Run Danger for WireImages
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-images || inputs.all }}
+        if: ${{ inputs.wire-ios-images || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-images.xcresult
@@ -381,8 +374,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireProtos -resultBundlePath xcodebuild-wire-ios-protos.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-protos.log | bundle exec xcpretty
 
       - name: Run Danger for WireProtos
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-protos || inputs.all }}
+        if: ${{ inputs.wire-ios-protos || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-protos.xcresult
@@ -413,8 +405,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -resultBundlePath xcodebuild-wire-ios-mocktransport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty
 
       - name: Run Danger for WireMockTransport
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-mocktransport || inputs.all }}
+        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-mocktransport.xcresult
@@ -445,8 +436,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -resultBundlePath xcodebuild-wire-ios-data-model.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
 
       - name: Run Danger for WireDataModel
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-data-model || inputs.all }}
+        if: ${{ inputs.wire-ios-data-model || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-data-model.xcresult
@@ -476,8 +466,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAPI -resultBundlePath xcodebuild-wire-api.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
 
       - name: Run Danger for WireAPI
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-api || inputs.all }}
+        if: ${{ inputs.wire-api || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-api.xcresult
@@ -508,8 +497,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomain -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
 
       - name: Run Danger for WireDomain
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-domain || inputs.all }}
+        if: ${{ inputs.wire-domain || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-domain.xcresult
@@ -540,8 +528,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -resultBundlePath xcodebuild-wire-ios-request-strategy.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty
 
       - name: Run Danger for WireRequestStrategy
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-request-strategy || inputs.all }}
+        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-request-strategy.xcresult
@@ -572,8 +559,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -resultBundlePath xcodebuild-wire-ios-share-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty
 
       - name: Run Danger for WireShareEngine
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-share-engine || inputs.all }}
+        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-share-engine.xcresult
@@ -604,8 +590,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -resultBundlePath xcodebuild-wire-ios-sync-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty
 
       - name: Run Danger for WireSyncEngine
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-sync-engine || inputs.all }}
+        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-sync-engine.xcresult
@@ -636,8 +621,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDesign -resultBundlePath xcodebuild-wire-design.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-design.log | bundle exec xcpretty
 
       - name: Run Danger for WireDesign
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-design || inputs.all }}
+        if: ${{ inputs.wire-design || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-design.xcresult
@@ -668,8 +652,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -resultBundlePath xcodebuild-wire-reusable-ui-components.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty
 
       - name: Run Danger for WireReusableUIComponents
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-reusable-ui-components || inputs.all }}
+        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-reusable-ui-components.xcresult
@@ -700,8 +683,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -resultBundlePath xcodebuild-wire-ios.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios.log | bundle exec xcpretty
 
       - name: Run Danger for Wire-iOS
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios || inputs.all }}
+        if: ${{ inputs.wire-ios || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios.xcresult
@@ -749,8 +731,7 @@ jobs:
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -resultBundlePath xcodebuild-wire-ios-notification-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty
 
       - name: Run Danger for WireNotificationEngine
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-notification-engine || inputs.all }}
+        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-notification-engine.xcresult
