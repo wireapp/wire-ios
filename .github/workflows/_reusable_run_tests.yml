@@ -625,7 +625,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: Danger.results
-          key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha ||github.event.pull_request.head.sha }}-Danger.results
+          key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
 
       - name: Upload Test Reports as Artifacts
         uses: actions/upload-artifact@v3
