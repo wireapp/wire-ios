@@ -65,9 +65,11 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         await directory.eventContext.perform {
             let events = directory.eventContext.fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
-            XCTAssertEqual(events.count, 1)
-            let eventHash = events.first?.value(forKey: "eventHash") as? Int
-            XCTAssertNotNil(eventHash)
+            XCTAssertEqual(events.count, 23)
+            for event in events {
+                let eventHash = event.value(forKey: "eventHash") as? Int
+                XCTAssertEqual(eventHash, 0)
+            }
         }
     }
 

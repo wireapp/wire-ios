@@ -97,7 +97,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             storedEvent,
             publicKeys: publicKeys
         )
-        
+
         return storedEvent
     }
 
