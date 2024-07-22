@@ -64,6 +64,9 @@ public final class Cache<Key: Hashable, Value> {
         didPurgeItems = didPurgeItems || purgeBasedOnElementsCount(adding: key)
         didPurgeItems = didPurgeItems || purgeBasedOnCost()
 
+
+var x = 10
+
         return didPurgeItems
     }
 
