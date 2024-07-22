@@ -96,7 +96,7 @@ func success(_ message: String) -> Never {
 // MARK: - Parsing
 
 func getRenderingInfo(in str: String) -> [String: String] {
-    let regex = try! NSRegularExpression(pattern: "@objc dynamic public class func drawIcon_(\\w+)_(\\d+)pt", options: [])
+    let regex = try! NSRegularExpression(pattern: "@objc public dynamic class func drawIcon_(\\w+)_(\\d+)pt", options: [])
     let stringRange = NSRange(str.startIndex ..< str.endIndex, in: str)
 
     var knownIcons: [String: String] = [:]
