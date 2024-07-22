@@ -139,14 +139,6 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Take the PR number from the message and insert it into the event if needed
-        run: |
-          ruby -e "require 'JSON'; \
-          pull_request_event = JSON.parse(File.read('${GITHUB_EVENT_PATH}')); \
-          pull_request_event['number'] = pull_request_event['number'] || pull_request_event['head_commit']['message'][/\(\#(\d+)\)/, 1]; \
-          File.write('${GITHUB_EVENT_PATH}', JSON.generate(pull_request_event))"
-          false
-
       - name: Setup workspace
         run: |
           ./setup.sh
@@ -170,8 +162,12 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
         run: |
-          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose
+          if [[ $GITHUB_EVENT_NAME == 'pull_request' ]]; then
+          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose;
+          else
+          bundle exec danger local --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose;
+          fi
+          false
 
       - name: Test WireSystem
         if: ${{ inputs.wire-ios-system || inputs.all }}
