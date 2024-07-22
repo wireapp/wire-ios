@@ -52,9 +52,11 @@ public extension UIImage {
      * - returns: The image to use in the specified configuration.
      */
 
-    static func imageForIcon(_ icon: StyleKitIcon,
-                             size: CGFloat,
-                             color: UIColor) -> UIImage {
+    static func imageForIcon(
+        _ icon: StyleKitIcon,
+        size: CGFloat,
+        color: UIColor
+    ) -> UIImage {
         icon.makeImage(size: .custom(size), color: color)
     }
 
@@ -106,5 +108,4 @@ public extension UIImageView {
     func setTemplateIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size) {
         image = icon.makeImage(size: size, color: .black).withRenderingMode(.alwaysTemplate)
     }
-
 }
