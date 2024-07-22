@@ -355,15 +355,15 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
+    public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
         return AppendTextMessageUseCase(analyticsSession: analyticsSession)
     }
 
-    public func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
+    public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
         return AppendImageMessageUseCase(analyticsSession: analyticsSession)
     }
 
-    public func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
+    public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
         return AppendKnockMessageUseCase(analyticsSession: analyticsSession)
     }
 

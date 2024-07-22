@@ -264,11 +264,11 @@ public protocol UserSession: AnyObject {
 
     func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
-    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
+    func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol
 
     func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol
 
-    func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
+    func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol
 
     func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol
 
