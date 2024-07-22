@@ -641,5 +641,4 @@ class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertTrue(convertedEvents.eventsToDelete.isEmpty)
         }
     }
-
 }

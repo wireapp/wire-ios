@@ -32,7 +32,6 @@ public extension NSManagedObjectContext {
         }
     }
 
-
     /// Counts a fetch request and asserts in case of error
     func countOrAssert<T>(request: NSFetchRequest<T>) -> Int {
         do {
