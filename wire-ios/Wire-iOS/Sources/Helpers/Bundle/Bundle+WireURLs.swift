@@ -36,10 +36,9 @@ struct WireURLs: Codable {
     let privacyPolicy: URL
     let legal: URL
     let licenseInformation: URL
-    let passwordResetInfo: URL
+    let passwordReset: URL
     let askSupportArticle: URL
     let reportAbuse: URL
-    let pricingInfo: URL
     let wireEnterpriseInfo: URL
     let legalHoldInfo: URL
     let guestLinksInfo: URL
@@ -75,10 +74,9 @@ struct WireURLs: Codable {
         case privacyPolicy
         case legal
         case licenseInformation
-        case passwordResetInfo
+        case passwordReset
         case askSupportArticle
         case reportAbuse
-        case pricingInfo
         case wireEnterpriseInfo
         case legalHoldInfo
         case guestLinksInfo
