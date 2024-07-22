@@ -128,7 +128,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: Danger.results
-          key: ${{ github.event.pull_request.base.ref }}-${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-Danger.results
+          key: ${{ github.event.before || github.event.pull_request.base.sha }}-Danger.results
 
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
@@ -771,10 +771,12 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty --report junit --output build/reports/WireNotificationEngine.junit
           exit ${PIPESTATUS[0]}
 
-      - uses: actions/cache/save@v4
+      - name: Save cache with warning counts
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v4
         with:
           path: Danger.results
-          key: ${{ steps.restore-danger-results.outputs.cache-primary-key }}
+          key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha ||github.event.pull_request.head.sha }}-Danger.results
 
       - name: Upload Test Reports as Artifacts
         uses: actions/upload-artifact@v3
