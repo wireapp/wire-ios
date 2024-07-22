@@ -162,6 +162,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose
 
       - name: Test WireSystem
@@ -186,6 +187,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-testing.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTesting" --verbose
 
       - name: Test WireTesting
@@ -210,6 +212,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-utilities.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireUtilities" --verbose
 
       - name: Test WireUtilities
@@ -234,6 +237,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-cryptobox.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireCryptobox" --verbose
 
       - name: Test WireCryptobox
@@ -258,6 +262,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-transport.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTransport" --verbose
 
       - name: Test WireTransport
@@ -282,6 +287,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-link-preview.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireLinkPreview" --verbose
 
       - name: Test WireLinkPreview
@@ -306,6 +312,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-images.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireImages" --verbose
 
       - name: Test WireImages
@@ -330,6 +337,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-protos.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireProtos" --verbose
 
       - name: Test WireProtos
@@ -354,6 +362,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-mocktransport.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireMockTransport" --verbose
 
       - name: Test WireMockTransport
@@ -378,6 +387,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-data-model.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDataModel" --verbose
 
       - name: Test WireDataModel
@@ -401,6 +411,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-api.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireAPI" --verbose
 
       - name: Test WireAPI
@@ -425,6 +436,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-domain.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDomain" --verbose
 
       - name: Test WireDomain
@@ -449,6 +461,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-request-strategy.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireRequestStrategy" --verbose
 
       - name: Test WireRequestStrategy
@@ -473,6 +486,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-share-engine.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireShareEngine" --verbose
 
       - name: Test WireShareEngine
@@ -497,6 +511,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-sync-engine.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSyncEngine" --verbose
 
       - name: Test WireSyncEngine
@@ -521,6 +536,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-design.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDesign" --verbose
 
       - name: Test WireDesign
@@ -545,6 +561,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-reusable-ui-components.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireReusableUIComponents" --verbose
 
       - name: Test WireReusableUIComponents
@@ -569,6 +586,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for Wire-iOS" --verbose
 
       - name: Test Wire-iOS
@@ -610,6 +628,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           XCRESULT_PATH: xcodebuild-wire-ios-notification-engine.xcresult
         run: |
+          export GITHUB_EVENT_NAME="pull_request" # bypass PR check
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireNotificationEngine" --verbose
 
       - name: Test WireNotificationEngine
