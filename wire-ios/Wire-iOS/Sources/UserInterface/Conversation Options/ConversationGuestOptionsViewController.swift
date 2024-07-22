@@ -205,11 +205,12 @@ final class ConversationGuestOptionsViewController: UIViewController,
         wantsToShareMessage message: String,
         sourceView: UIView
     ) {
-        let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
+        let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         if let popoverPresentationController = activityController.popoverPresentationController {
             popoverPresentationController.sourceView = sourceView.superview!
             popoverPresentationController.sourceRect = sourceView.frame
         }
+
         present(activityController, animated: true)
     }
 
