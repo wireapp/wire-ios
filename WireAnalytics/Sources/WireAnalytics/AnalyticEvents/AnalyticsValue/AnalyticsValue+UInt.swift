@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 extension UInt: AnalyticsValue {
     public var analyticsValue: String {
-        return String(self.logRound())
+        String(logRound())
     }
 }
-

@@ -22,4 +22,3 @@ public protocol AnalyticsValue {
     var analyticsValue: String { get }
 
 }
-

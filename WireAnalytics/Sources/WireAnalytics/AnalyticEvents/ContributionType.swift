@@ -31,6 +31,6 @@ public enum ContributionType: String, AnalyticsValue {
 
     /// A string representation of the contribution type suitable for analytics tracking.
     public var analyticsValue: String {
-        self.rawValue
+        rawValue
     }
 }

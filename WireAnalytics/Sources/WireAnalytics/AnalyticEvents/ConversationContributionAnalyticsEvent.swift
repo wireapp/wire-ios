@@ -29,10 +29,9 @@ public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
         [
             .groupType: conversationType,
             .contributionType: contributionType,
-            .conversationSize: self.conversationSize
+            .conversationSize: conversationSize
         ]
     }
-
 
     /// The type of contribution.
     public var contributionType: ContributionType
