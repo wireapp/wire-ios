@@ -35,7 +35,7 @@ extension UIAlertController {
                                                 preferredStyle: .alert)
 
         let privacyPolicyActionHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URLs.shared.privacyPolicy)
+            let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
 
             browserViewController.completion = {
                 UIAlertController.showNewsletterSubscriptionDialog(over: viewController, completionHandler: completionHandler)
@@ -98,7 +98,7 @@ private extension AuthenticationCoordinatorAlertAction {
 
     static var privacyPolicy: Self {
         Self.init(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
-                  coordinatorActions: [.showLoadingView, .openURL(URLs.shared.privacyPolicy)])
+                  coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])
     }
 
     static var decline: Self {

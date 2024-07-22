@@ -109,7 +109,7 @@ extension NSAttributedString {
 
         return NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
                                   attributes: [.font: UIFont.mediumSemiboldFont,
-                                               .link: URLs.shared.unreachableBackendInfo])
+                                               .link: WireURLs.shared.unreachableBackendInfo])
     }
 
     static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {

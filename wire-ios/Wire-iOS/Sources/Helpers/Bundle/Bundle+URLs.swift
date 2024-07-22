@@ -19,6 +19,11 @@
 import Foundation
 import WireSystem
 
+/// This struct contains various URLs used in the app.
+///
+/// IMPORTANT: If you change or add a new property to this struct, you will also need to update the corresponding
+/// link with the same key in the existing URL configuration files.
+/// Failure to do so may cause the application to crash.
 struct WireURLs: Codable {
 
     let appOnItunes: URL
@@ -43,27 +48,20 @@ struct WireURLs: Codable {
     let mlsInfo: URL
     let endToEndIdentityInfo: URL
 
-    static var shared: URLs = {
-        guard let urls = URLs(forResource: "url", withExtension: "json") else {
-            fatalError("can't find or decode url.json")
+    static var shared: WireURLs = {
+        do {
+            return try WireURLs(forResource: "url", withExtension: "json")
+        } catch {
+            fatalError("\(error)")
         }
-
-        return urls
     }()
 
-    private init?(forResource resource: String, withExtension fileExtension: String) {
+    private init(forResource resource: String, withExtension fileExtension: String) throws {
         guard let fileURL = Bundle.fileURL(for: resource, with: fileExtension) else {
-            WireLogger.environment.error("no url.json file")
-
-            return nil
+            throw WireURLsError.fileNotFound
         }
-        do {
-            self = try fileURL.decode(URLs.self)
-        } catch {
-            WireLogger.environment.error("can't decode url.json")
 
-            return nil
-        }
+        self = try fileURL.decode(WireURLs.self)
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
@@ -88,6 +86,10 @@ struct WireURLs: Codable {
         case federationInfo
         case mlsInfo
         case endToEndIdentityInfo
+    }
+
+    enum WireURLsError: Error {
+        case fileNotFound
     }
 
 }

@@ -87,7 +87,7 @@ final class BlockerViewController: LaunchImageViewController {
 
         presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
                                  message: L10n.Localizable.Force.Update.message) { _ in
-            UIApplication.shared.open(URLs.shared.appOnItunes)
+            UIApplication.shared.open(WireURLs.shared.appOnItunes)
         }
     }
 
@@ -109,7 +109,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
-                UIApplication.shared.open(URLs.shared.endToEndIdentityInfo)
+                UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
             }
         )
 

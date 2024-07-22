@@ -205,7 +205,7 @@ extension StartUIViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URLs.shared.searchSupport.open()
+            WireURLs.shared.searchSupport.open()
         }
     }
 }

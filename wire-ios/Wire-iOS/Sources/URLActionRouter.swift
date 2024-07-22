@@ -319,7 +319,7 @@ private extension URLActionRouter {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: URLs.shared.guestLinksInfo)
+                let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
                 topmostViewController?.present(browserViewController, animated: true)
             }
             alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,

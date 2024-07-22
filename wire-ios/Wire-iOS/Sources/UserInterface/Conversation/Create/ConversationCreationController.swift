@@ -391,7 +391,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         alert.addAction(.link(
             title: Strings.learnMore,
-            url: URLs.shared.federationInfo,
+            url: WireURLs.shared.federationInfo,
             presenter: self
         ))
 

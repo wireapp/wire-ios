@@ -121,7 +121,7 @@ final class MessageToolboxDataSource {
                 detailsString = FailedToSendMessage.generalReason
             case .federationRemoteError:
                 detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                                URLs.shared.unreachableBackendInfo.absoluteString)
+                                                                                WireURLs.shared.unreachableBackendInfo.absoluteString)
             }
 
             content = .sendFailure(detailsString && attributes)

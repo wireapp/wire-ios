@@ -186,17 +186,17 @@ class SettingsCellDescriptorFactory {
 
     func helpSection() -> SettingsCellDescriptorType {
         let supportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.supportWebsite, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.shared.support)
+            return BrowserViewController(url: WireURLs.shared.support)
         }, previewGenerator: .none)
 
         let contactButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.contactSupport, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.shared.askSupportArticle)
+            return BrowserViewController(url: WireURLs.shared.askSupportArticle)
         }, previewGenerator: .none)
 
         let helpSection = SettingsSectionDescriptor(cellDescriptors: [supportButton, contactButton])
 
         let reportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.reportAbuse, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.shared.reportAbuse)
+            return BrowserViewController(url: WireURLs.shared.reportAbuse)
         }, previewGenerator: .none)
 
         let reportSection = SettingsSectionDescriptor(cellDescriptors: [reportButton])
@@ -215,7 +215,7 @@ class SettingsCellDescriptorFactory {
                                                                isDestructive: false,
                                                                presentationStyle: .modal,
                                                                presentationAction: {
-            return BrowserViewController(url: URLs.shared.legal)
+            return BrowserViewController(url: WireURLs.shared.legal)
         }, previewGenerator: .none)
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
@@ -235,7 +235,7 @@ class SettingsCellDescriptorFactory {
             footer: "\n" + version + "\n" + copyrightInfo
         )
         let websiteButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Website.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URLs.shared.website)
+            return BrowserViewController(url: WireURLs.shared.website)
         }, previewGenerator: .none)
 
         let websiteSection = SettingsSectionDescriptor(cellDescriptors: [websiteButton])
@@ -284,7 +284,7 @@ class SettingsCellDescriptorFactory {
                                                     isDestructive: false,
                                                     presentationStyle: .modal,
                                                     presentationAction: {
-            return BrowserViewController(url: URLs.shared.licenseInformation)
+            return BrowserViewController(url: WireURLs.shared.licenseInformation)
         },
                                                     previewGenerator: .none)
     }
