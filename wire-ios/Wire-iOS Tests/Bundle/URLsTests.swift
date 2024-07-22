@@ -22,19 +22,15 @@ import WireCommonComponents
 
 final class URLsTests: XCTestCase {
 
-    func testUrlFileContainsAllKeys() {
-        guard
-            let filePath = Bundle.fileURL(for: "url", with: "json"),
-            let data = try? Data(contentsOf: filePath),
-            let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String]
-        else {
+    func testUrlFileContainsAllKeys() throws {
+        // Given
+        guard let fileURL = Bundle.fileURL(for: "url", with: "json") else {
             XCTFail("Failed to load url.json file")
             return
         }
 
-        URLs.CodingKeys.allCases.forEach { urlEnum in
-            XCTAssertNotNil(dictionary[urlEnum.rawValue], "Missing key: \(urlEnum.rawValue)")
-        }
+        // When / Then
+        XCTAssertNoThrow(try fileURL.decode(WireURLs.self))
     }
 
 }
