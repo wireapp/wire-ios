@@ -19,9 +19,9 @@
 import UIKit
 import WireDesign
 
-extension UIBarButtonItem {
+public extension UIBarButtonItem {
 
-    public static func closeButton(action: @escaping (UIAction) -> Void, accessibilityLabel: String) -> UIBarButtonItem {
+    static func closeButton(action: @escaping (UIAction) -> Void, accessibilityLabel: String) -> UIBarButtonItem {
         let closeImage = UIImage(named: "Close")
         let uiAction = UIAction(title: accessibilityLabel, image: closeImage, identifier: nil, handler: action)
         let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: nil, action: nil)
