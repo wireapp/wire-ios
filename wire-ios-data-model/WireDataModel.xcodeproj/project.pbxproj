@@ -354,6 +354,8 @@
 		639971B02B27346B009DD5CF /* CommitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971AF2B27346B009DD5CF /* CommitError.swift */; };
 		639971B22B2734C0009DD5CF /* ExternalCommitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971B12B2734C0009DD5CF /* ExternalCommitError.swift */; };
 		639971C22B28C5FF009DD5CF /* CommitSenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971C02B28C5FA009DD5CF /* CommitSenderTests.swift */; };
+		63A8C6192C4E4471009B2178 /* CRLDistributionPointsStorageMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8C6182C4E4471009B2178 /* CRLDistributionPointsStorageMigrator.swift */; };
+		63A8C61B2C4E44BA009B2178 /* CRLDistributionPointsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8C61A2C4E44BA009B2178 /* CRLDistributionPointsRepository.swift */; };
 		63AFE2D6244F49A90003F619 /* GenericMessage+MessageCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */; };
 		63B1335429A503D100009D84 /* ProteusServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333729A503D000009D84 /* ProteusServiceInterface.swift */; };
 		63B1335529A503D100009D84 /* ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333829A503D000009D84 /* ProteusService.swift */; };
@@ -1288,6 +1290,8 @@
 		639971AF2B27346B009DD5CF /* CommitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitError.swift; sourceTree = "<group>"; };
 		639971B12B2734C0009DD5CF /* ExternalCommitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalCommitError.swift; sourceTree = "<group>"; };
 		639971C02B28C5FA009DD5CF /* CommitSenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSenderTests.swift; sourceTree = "<group>"; };
+		63A8C6182C4E4471009B2178 /* CRLDistributionPointsStorageMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLDistributionPointsStorageMigrator.swift; sourceTree = "<group>"; };
+		63A8C61A2C4E44BA009B2178 /* CRLDistributionPointsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLDistributionPointsRepository.swift; sourceTree = "<group>"; };
 		63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+MessageCapable.swift"; sourceTree = "<group>"; };
 		63B1333729A503D000009D84 /* ProteusServiceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusServiceInterface.swift; sourceTree = "<group>"; };
 		63B1333829A503D000009D84 /* ProteusService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusService.swift; sourceTree = "<group>"; };
@@ -2223,6 +2227,8 @@
 			children = (
 				6313CF292B69142500B41A33 /* CRLExpirationDatesRepository.swift */,
 				6313CF2E2B6A8CDB00B41A33 /* CRLsDistributionPoints.swift */,
+				63A8C6182C4E4471009B2178 /* CRLDistributionPointsStorageMigrator.swift */,
+				63A8C61A2C4E44BA009B2178 /* CRLDistributionPointsRepository.swift */,
 			);
 			path = CRL;
 			sourceTree = "<group>";
@@ -4362,6 +4368,7 @@
 				F9A706B41CAEE01D00C2F5FE /* ObjectChangeInfo.swift in Sources */,
 				162F85A92BC588A5007E2CB6 /* IsPendingInitialFetchMigrationAction.swift in Sources */,
 				63B1335E29A503D100009D84 /* BackendMLSPublicKeys.swift in Sources */,
+				63A8C6192C4E4471009B2178 /* CRLDistributionPointsStorageMigrator.swift in Sources */,
 				F9A706AA1CAEE01D00C2F5FE /* KeySet.swift in Sources */,
 				16460A44206515370096B616 /* NSManagedObjectContext+BackupImport.swift in Sources */,
 				EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */,
@@ -4480,6 +4487,7 @@
 				16519D36231D1BB200C9D76D /* ZMConversation+Deletion.swift in Sources */,
 				1626344B20D935C0000D4063 /* ZMConversation+Timestamps.swift in Sources */,
 				87C125F71EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift in Sources */,
+				63A8C61B2C4E44BA009B2178 /* CRLDistributionPointsRepository.swift in Sources */,
 				F9A706B21CAEE01D00C2F5FE /* NewUnreadMessageChangeInfos.swift in Sources */,
 				EE8B09AF25B86BB20057E85C /* AppLockPasscodePreference.swift in Sources */,
 				7C8BFFDF22FC5E1600B3C8A5 /* UserPropertyValidator.swift in Sources */,
