@@ -502,7 +502,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         guard let storeURL = eventsContainer.storeURL else {
             return false
         }
-        return messagesMigrator.requiresMigration(at: storeURL, toVersion: .current)
+        return eventsMigrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
     public func migrateEventStore() throws {

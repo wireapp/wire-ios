@@ -63,7 +63,6 @@ extension CoreDataMigratorError: LocalizedError {
 
 final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
 
-    typealias MigrationVersion = Version
     private let isInMemoryStore: Bool
 
     private var persistentStoreType: NSPersistentStore.StoreType {
