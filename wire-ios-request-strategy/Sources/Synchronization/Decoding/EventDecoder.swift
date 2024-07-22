@@ -288,13 +288,12 @@ extension EventDecoder {
                 index: Int64(idx) + startIndex + 1,
                 publicKeys: publicKeys
             )
+        }
 
-            do {
-                // we save for event in case there's a duplicate event's payload, we don't want to store it (db constraint)
-                try self.eventMOC.save()
-            } catch {
-                WireLogger.updateEvent.error("Failed to save stored event: \(error.localizedDescription)", attributes: event.logAttributes)
-            }
+        do {
+            try self.eventMOC.save()
+        } catch {
+            WireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
         }
     }
 
