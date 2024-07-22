@@ -165,7 +165,7 @@ jobs:
           if [[ $GITHUB_EVENT_NAME == 'pull_request' ]]; then
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose;
           else
-          bundle exec danger local --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose;
+          export LOCAL_GIT_PR_ID=1730 && bundle exec danger local --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose;
           fi
           false
 
