@@ -19,7 +19,7 @@
 import Foundation
 import WireSystem
 
-struct URLs: Codable {
+struct WireURLs: Codable {
 
     let appOnItunes: URL
     let support: URL
