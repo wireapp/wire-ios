@@ -18,25 +18,27 @@
 
 import Foundation
 
-@objc(PrefillEvenHashAction)
-class PrefillEvenHashAction: NSEntityMigrationPolicy {
-    private enum Keys: String {
-        case eventHash
+class PrefillEvenHashAction: CoreDataMigrationAction {
+    override var dataModelName: String {
+        "ZMEventModel"
     }
 
-    override func createDestinationInstances(
-        forSource sInstance: NSManagedObject,
-        in mapping: NSEntityMapping,
-        manager: NSMigrationManager
-    ) throws {
-        // create the dInstance
-        try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
-        // mark it needing update
-        let dInstance = manager.destinationInstances(forEntityMappingName: mapping.name, sourceInstances: [sInstance]).first
-        let uniqueKey = Int64.random(in: 0...Int64.max)
-        let id = dInstance?.value(forKey: "eventId") as? String
-        dInstance?.setValue(uniqueKey, forKey: Keys.eventHash.rawValue)
-        WireLogger.localStorage.info("setting value \(uniqueKey) for event id: \(String(describing: id))")
+    private enum Keys: String {
+        case eventHash
+        case entityName = "StoredUpdateEvent"
+    }
 
+    override func execute(in context: NSManagedObjectContext) throws {
+        do {
+            let request = NSFetchRequest<NSManagedObject>(entityName: Keys.entityName.rawValue)
+            let objects = try context.fetch(request)
+
+            objects.forEach { object in
+                let uniqueKey = Int64.random(in: 0...Int64.max)
+                object.setValue(uniqueKey, forKey: Keys.eventHash.rawValue)
+            }
+        } catch {
+            WireLogger.localStorage.error("error fetching data \(Keys.entityName.rawValue) during PrefillPrimaryKeyAction: \(error.localizedDescription)")
+        }
     }
 }
