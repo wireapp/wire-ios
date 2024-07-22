@@ -19,8 +19,6 @@
 /// A protocol that defines a way to represent a value for analytics purposes.
 public protocol AnalyticsValue {
 
-  var analyticsValue: String { get }
+    var analyticsValue: String { get }
 
 }
-
-
