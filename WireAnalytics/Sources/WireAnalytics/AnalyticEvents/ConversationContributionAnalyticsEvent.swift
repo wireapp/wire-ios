@@ -25,9 +25,9 @@ public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
     }
 
     /// The segmentation information for the event.
-    public var segmentation: [String: String] {
-        ["group_type": String(describing: conversationType),
-         "contribution_type": String(describing: contributionType)]
+    public var segmentation: [SegmentationKeys: String] {
+        [.groupType: String(describing: conversationType),
+         .isVideoCall: String(describing: contributionType)]
     }
 
     /// The type of contribution.

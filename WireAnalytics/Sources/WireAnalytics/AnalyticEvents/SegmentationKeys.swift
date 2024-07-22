@@ -16,18 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Struct representing an analytics event for a failed backup export.
-public struct BackupExportFailedAnalyticsEvent: AnalyticsEvent {
+/// Enum representing the keys used in the segmentation dictionary for analytics events.
+public enum SegmentationKeys: String {
 
-    public init() {}
+    case groupType = "group_type"
+    case isVideoCall = "is_video_call"
 
-    /// The name of the event.
-    public var eventName: String {
-        "exportBackupFailed"
-    }
-
-    /// Additional segmentation data for the event.
-    public var segmentation: [SegmentationKeys: String] {
-        [:]
-    }
 }

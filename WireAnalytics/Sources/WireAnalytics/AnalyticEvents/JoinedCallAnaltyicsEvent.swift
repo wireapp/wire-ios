@@ -25,9 +25,9 @@ public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
     }
 
     /// Additional segmentation data for the event.
-    public var segmentation: [String: String] {
-        ["group_type": String(describing: conversationType),
-         "is_video_call": String(describing: isVideoCall)]
+    public var segmentation: [SegmentationKeys: String] {
+        [SegmentationKeys.groupType: String(describing: conversationType),
+         SegmentationKeys.isVideoCall: String(describing: isVideoCall)]
     }
 
     /// Indicates whether the call is a video call.
