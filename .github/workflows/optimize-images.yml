@@ -6,7 +6,7 @@ on:
       - 'WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages/**/*.png'
 jobs:
   build:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
     name: calibreapp/image-actions
     runs-on: ubuntu-latest
     steps:
