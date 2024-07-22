@@ -76,9 +76,9 @@ final class Spinner: UIView {
 
         updateSpinnerIcon()
 
-            spinner.translatesAutoresizingMaskIntoConstraints = false
-            spinner.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
     override var intrinsicContentSize: CGSize {
