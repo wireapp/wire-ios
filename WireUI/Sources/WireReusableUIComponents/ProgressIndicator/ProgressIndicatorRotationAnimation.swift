@@ -20,14 +20,12 @@ import UIKit
 
 func ProgressIndicatorRotationAnimation(
     rotationSpeed: CFTimeInterval,
-    beginTime: CFTimeInterval,
-    delegate: CAAnimationDelegate
+    beginTime: CFTimeInterval
 ) -> CABasicAnimation {
 
     let animation = CABasicAnimation(keyPath: "transform.rotation")
 
     animation.fillMode = .forwards
-    animation.delegate = delegate
 
     animation.toValue = Double.pi
     animation.repeatCount = .greatestFiniteMagnitude
