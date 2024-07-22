@@ -51,7 +51,7 @@ public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
     }
 
     /// Additional segmentation data for the event.
-    public var segmentation: [SegmentationKeys: AnalyticsValue] {
+    public var segmentation: [SegmentationKey: AnalyticsValue] {
         [:]
     }
 }

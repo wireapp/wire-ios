@@ -17,7 +17,7 @@
 //
 
 /// Enum representing the keys used in the segmentation dictionary for analytics events.
-public enum SegmentationKeys: String {
+public enum SegmentationKey: String {
 
     case groupType = "group_type"
     case isVideoCall = "is_video_call"
