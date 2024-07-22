@@ -22,7 +22,7 @@ import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
 
-final class ConversationImagesViewController: TintColorCorrectedViewController {
+final class ConversationImagesViewController: UIViewController {
 
     typealias ButtonColors = SemanticColors.Button
 
