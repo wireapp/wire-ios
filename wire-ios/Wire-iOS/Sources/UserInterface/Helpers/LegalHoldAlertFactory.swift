@@ -149,5 +149,4 @@ extension SelfLegalHoldSubject {
             self.acknowledgeLegalHoldStatus()
         }
     }
-
 }
