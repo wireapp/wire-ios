@@ -1128,7 +1128,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
-            analyticsSessionConfiguration: analyticsSessionConfiguration,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled
         ) else {
