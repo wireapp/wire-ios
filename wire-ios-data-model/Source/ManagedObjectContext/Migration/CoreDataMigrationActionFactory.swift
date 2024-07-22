@@ -43,7 +43,6 @@ enum CoreDataMigrationActionFactory {
             return createPostMigrationAction(for: version)
         }
 
-
         fatalError("unsupported coredata migration version")
     }
 

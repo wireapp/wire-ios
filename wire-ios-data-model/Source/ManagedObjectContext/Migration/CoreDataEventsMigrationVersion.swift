@@ -26,14 +26,12 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
         static let resourceExtension = "mom"
     }
 
-
     // Note: add new versions here in first position!
     case v05 = "ZMEventModel5.0"
     case v04 = "ZMEventModel4.0"
     case v03 = "ZMEventModel3.0"
     case v02 = "ZMEventModel2.0"
     case v01 = "ZMEventModel"
-
 
     var nextVersion: Self? {
         switch self {

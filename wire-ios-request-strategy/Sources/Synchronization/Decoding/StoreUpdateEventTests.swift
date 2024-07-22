@@ -263,7 +263,6 @@ class StoreUpdateEventTests: MessagingTestBase {
 
     }
 
-
     func test_EncryptAndCreate_Unencrypted() throws {
         try eventMOC.performAndWait {
             // Given some events.

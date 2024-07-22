@@ -72,7 +72,6 @@ extension CoreDataMessagingMigrator<CoreDataMessagingMigrationVersion>: CoreData
 
 final class CoreDataMessagingMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
 
-
     typealias MigrationVersion = Version
     private let isInMemoryStore: Bool
 
