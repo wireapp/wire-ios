@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 private enum Item {
     case supportedValue(MessageDestructionTimeoutValue)
@@ -46,6 +47,7 @@ extension ZMConversation {
 
 final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let conversation: ZMConversation
     private var items: [Item] = []

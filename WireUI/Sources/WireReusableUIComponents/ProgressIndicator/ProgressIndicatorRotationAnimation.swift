@@ -18,7 +18,7 @@
 
 import UIKit
 
-func ProgressIndicatorRotationAnimation(
+public func ProgressIndicatorRotationAnimation(
     rotationSpeed: CFTimeInterval,
     beginTime: CFTimeInterval
 ) -> CABasicAnimation {

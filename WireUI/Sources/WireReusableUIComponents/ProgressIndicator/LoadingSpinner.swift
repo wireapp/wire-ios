@@ -18,15 +18,16 @@
 
 import UIKit
 
-typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
-typealias SpinnerCompletion = () -> Void
+public typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
+public typealias SpinnerCompletion = () -> Void
 
-protocol SpinnerCapable: AnyObject {
+public protocol SpinnerCapable: AnyObject {
     var dismissSpinner: SpinnerCompletion? { get set }
     var accessibilityAnnouncement: String { get }
 }
 
-extension SpinnerCapable where Self: UIViewController {
+public extension SpinnerCapable where Self: UIViewController {
+
     func showLoadingView(title: String) {
         dismissSpinner = presentSpinner(title: title)
     }
@@ -80,7 +81,9 @@ extension SpinnerCapable where Self: UIViewController {
 }
 
 // MARK: - LoadingSpinnerView
-final class LoadingSpinnerView: UIView {
+
+public final class LoadingSpinnerView: UIView {
+
     let spinnerSubtitleView: SpinnerSubtitleView = SpinnerSubtitleView()
 
     init() {
@@ -108,8 +111,8 @@ public final class SpinnerCapableNavigationController: UINavigationController, S
 
     public static var accessibilityAnnouncement = ""
 
-    var dismissSpinner: SpinnerCompletion?
-    var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
+    public var dismissSpinner: SpinnerCompletion?
+    public var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
 
     public override var childForStatusBarStyle: UIViewController? {
         topViewController
@@ -117,7 +120,8 @@ public final class SpinnerCapableNavigationController: UINavigationController, S
 }
 
 extension UINavigationController {
-    var isLoadingViewVisible: Bool? {
+
+    public var isLoadingViewVisible: Bool? {
         get {
             return (self as? SpinnerCapableViewController)?.isLoadingViewVisible
         }

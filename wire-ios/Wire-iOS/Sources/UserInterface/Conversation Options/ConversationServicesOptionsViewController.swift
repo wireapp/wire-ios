@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 final class ConversationServicesOptionsViewController: UIViewController,
                                                        UITableViewDelegate,
@@ -31,6 +32,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
     private var viewModel: ConversationServicesOptionsViewModel
 
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations

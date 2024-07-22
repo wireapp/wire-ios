@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -33,6 +34,7 @@ final class ClientListViewController: UIViewController,
     // MARK: SpinnerCapable
 
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     var removalObserver: ClientRemovalObserver?
 

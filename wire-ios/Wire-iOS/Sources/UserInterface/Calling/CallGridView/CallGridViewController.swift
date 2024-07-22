@@ -22,6 +22,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
+import WireReusableUIComponents
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
@@ -95,6 +96,7 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     weak var delegate: CallGridViewControllerDelegate?
 

@@ -19,17 +19,17 @@
 import SwiftUI
 import WireDesign
 
-final class Spinner: UIView {
+public final class Spinner: UIView {
 
-    var color: UIColor = .white {
+    public var color: UIColor = .white {
         didSet { updateSpinnerIcon() }
     }
 
-    var iconSize: CGFloat = 32 {
+    public var iconSize: CGFloat = 32 {
         didSet { updateSpinnerIcon() }
     }
 
-    var isAnimating = false {
+    public var isAnimating = false {
         didSet {
             guard oldValue != isAnimating else { return }
 
@@ -61,7 +61,7 @@ final class Spinner: UIView {
         createSpinner()
     }
 
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -81,7 +81,7 @@ final class Spinner: UIView {
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
-    override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         spinner.image?.size ?? super.intrinsicContentSize
     }
 

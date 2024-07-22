@@ -19,6 +19,7 @@
 import Foundation
 import WireCommonComponents
 import XCTest
+import WireDesign
 
 final class FontSchemeTests: XCTestCase {
 

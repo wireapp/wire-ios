@@ -18,30 +18,30 @@
 
 import UIKit
 
-final class ProgressSpinner: UIView {
+public final class ProgressSpinner: UIView {
 
-    var didBecomeActiveNotificationToken: NSObjectProtocol?
-    var didEnterBackgroundNotificationToken: NSObjectProtocol?
+    public var didBecomeActiveNotificationToken: NSObjectProtocol?
+    public var didEnterBackgroundNotificationToken: NSObjectProtocol?
 
-    var color: UIColor = .white {
+    public var color: UIColor = .white {
         didSet {
             updateSpinnerIcon()
         }
     }
 
-    var iconSize: CGFloat = 32 {
+    public var iconSize: CGFloat = 32 {
         didSet {
             updateSpinnerIcon()
         }
     }
 
-    var hidesWhenStopped: Bool = false {
+    public var hidesWhenStopped: Bool = false {
         didSet {
             isHidden = hidesWhenStopped && !isAnimationRunning
         }
     }
 
-    var isAnimating = false {
+    public var isAnimating = false {
         didSet {
             guard oldValue != isAnimating else {
                 return
@@ -61,7 +61,7 @@ final class ProgressSpinner: UIView {
         return spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
-    init() {
+    public init() {
         super.init(frame: .zero)
         setup()
     }
@@ -86,7 +86,7 @@ final class ProgressSpinner: UIView {
         }
     }
 
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -94,7 +94,7 @@ final class ProgressSpinner: UIView {
         spinner.layer.frame = frame
     }
 
-    override func didMoveToWindow() {
+    public override func didMoveToWindow() {
         if window == nil {
             // CABasicAnimation delegate is strong so we stop all animations when the view is removed.
             stopAnimationInternal()
@@ -111,7 +111,7 @@ final class ProgressSpinner: UIView {
         updateSpinnerIcon()
     }
 
-    override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         return spinner.image?.size ?? super.intrinsicContentSize
     }
 
@@ -140,12 +140,12 @@ final class ProgressSpinner: UIView {
     }
 
     @objc
-    func startAnimation() {
+    public func startAnimation() {
         isAnimating = true
     }
 
     @objc
-    func stopAnimation() {
+    public func stopAnimation() {
         isAnimating = false
     }
 
@@ -163,7 +163,8 @@ final class ProgressSpinner: UIView {
 }
 
 extension ProgressSpinner: CAAnimationDelegate {
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+
+    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if hidesWhenStopped {
             isHidden = true
         }

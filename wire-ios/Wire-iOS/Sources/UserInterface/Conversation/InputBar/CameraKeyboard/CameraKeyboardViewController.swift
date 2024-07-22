@@ -22,6 +22,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -44,6 +45,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
     // MARK: - Properties
 
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private var permissions: PhotoPermissionsController!
     private var lastLayoutSize = CGSize.zero

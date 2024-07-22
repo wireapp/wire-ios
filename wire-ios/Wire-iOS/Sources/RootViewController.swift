@@ -17,12 +17,14 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 final class RootViewController: UIViewController {
 
     // MARK: - SpinnerCapable
 
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     // MARK: - Private Property
 
@@ -167,4 +169,4 @@ extension RootViewController {
     }
 }
 
-extension RootViewController: SpinnerCapable { }
+extension RootViewController: SpinnerCapable {}

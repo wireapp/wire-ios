@@ -18,6 +18,7 @@
 
 import SnapshotTesting
 import WireUITesting
+import WireReusableUIComponents
 import XCTest
 
 @testable import Wire
@@ -26,6 +27,7 @@ import XCTest
 
 final class MockLoadingViewController: SpinnerCapableViewController {
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 }
 
 // MARK: - LoadingViewControllerTests

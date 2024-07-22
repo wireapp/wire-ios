@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireSyncEngine
+import WireReusableUIComponents
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 

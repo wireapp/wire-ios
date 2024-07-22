@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireRequestStrategy
 import WireSyncEngine
+import WireReusableUIComponents
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
@@ -29,6 +30,7 @@ private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 final class ConversationContentViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: SpinnerCompletion?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation
