@@ -451,7 +451,7 @@ final class LandingViewController: AuthenticationStepViewController {
             navigationItem.rightBarButtonItem = nil
         } else {
             navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-                cancelButtonTapped()
+                self?.cancelButtonTapped()
             }, accessibilityLabel: L10n.Localizable.General.cancel)
         }
     }
