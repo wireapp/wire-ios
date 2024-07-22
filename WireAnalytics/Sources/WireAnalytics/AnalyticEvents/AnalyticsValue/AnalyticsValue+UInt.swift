@@ -19,7 +19,7 @@
 
 extension UInt: AnalyticsValue {
     public var analyticsValue: String {
-        return String(self)
+        return String(self.logRound())
     }
 }
 

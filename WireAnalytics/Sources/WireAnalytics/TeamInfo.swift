@@ -27,9 +27,9 @@ public struct TeamInfo {
     public let role: String
 
     /// The size of the team the user belongs to.
-    public let size: Int
+    public let size: UInt
 
-    public init(id: String, role: String, size: Int) {
+    public init(id: String, role: String, size: UInt) {
         self.id = id
         self.role = role
         self.size = size

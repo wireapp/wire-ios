@@ -916,7 +916,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             teamInfo = TeamInfo(
                 id: teamID.uuidString,
                 role: selfUser.teamRole.analyticsValue,
-                size: team.members.count
+                size: UInt(team.members.count)
             )
         }
 
