@@ -264,13 +264,13 @@ public protocol UserSession: AnyObject {
 
     func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
-    func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol
+    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
-    func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol
+    func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol
 
-    func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol
+    func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
 
-    func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
