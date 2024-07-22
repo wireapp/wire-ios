@@ -1,0 +1,20 @@
+name: Optimize Images
+on:
+  pull_request:
+    paths:
+      - 'wire-ios/Wire-iOS\ Tests/ReferenceImages/**/*.png'
+      - 'WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages/**/*.png'
+jobs:
+  build:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    name: calibreapp/image-actions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Optimize Images
+        uses: calibreapp/image-actions@main
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          pngQuality: '100'
