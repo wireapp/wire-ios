@@ -84,11 +84,6 @@ public final class StoredUpdateEvent: NSManagedObject {
             return nil
         }
 
-        guard !storedEventExists(for: eventId, eventHash: eventHash, in: context) else {
-            WireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
-            return nil
-        }
-
         guard let storedEvent = StoredUpdateEvent.create(from: event,
                                                          eventId: eventId,
                                                          eventHash: eventHash,
@@ -102,7 +97,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             storedEvent,
             publicKeys: publicKeys
         )
-
+        
         return storedEvent
     }
 
@@ -126,21 +121,6 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static private func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
-        let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
-       
-        let eventHash = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
-        let defaultEventHash = NSPredicate(format: "%K = 0", #keyPath(StoredUpdateEvent.eventHash))
-
-        let eventHashOrPredicate  = NSCompoundPredicate(orPredicateWithSubpredicates: [eventHash, defaultEventHash])
-
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [eventIdPredicate, eventHashOrPredicate])
-
-        let result = context.countOrAssert(request: fetchRequest)
-        return result > 0
-    }
-    
     private static func encryptIfNeeded(
         _ storedEvent: StoredUpdateEvent,
         publicKeys: EARPublicKeys?
