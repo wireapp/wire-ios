@@ -376,7 +376,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
                                     requestUserInfo: [AnyHashable: Any]? = nil,
                                     response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
-
+        // TODO: [F] check is that deadcode?
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),
             let payload = response.payload

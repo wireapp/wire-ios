@@ -74,7 +74,8 @@ extension ZMConversation {
             switch response.httpStatus {
             case 200:
                 guard let payload = response.payload,
-                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
+                      // TODO: [F] check if adding UUID is ok
+                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()),
                       let conversationString = event.payload["conversation"] as? String else {
                     return completion(.failure(ConversationJoinError.unknown))
                 }

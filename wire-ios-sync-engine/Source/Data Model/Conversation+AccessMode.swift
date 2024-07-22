@@ -123,10 +123,10 @@ extension ZMConversation {
                let payload = response.payload,
                let data = payload.asDictionary()?[ZMConversation.TransportKey.data] as? [String: Any],
                let uri = data[ZMConversation.TransportKey.uri] as? String {
-
+                // TODO: [F] why completion is before processing userSession?
                 completion(.success(uri))
-
-                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+                // TODO: [F] check if adding UUID here is ok
+                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
                     // Process `conversation.code-update` event
                     // swiftlint:disable todo_requires_jira_link
                     // FIXME: [jacob] replace with ConversationEventProcessor
@@ -238,7 +238,8 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if let payload = response.payload,
-               let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+               // TODO: [F] check if addind UUID is ok
+               let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
                 self.allowGuests = allowGuests
                 self.allowServices = allowServices
 

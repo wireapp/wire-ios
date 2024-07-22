@@ -42,7 +42,8 @@ extension ZMTransportResponse {
         guard let payload else {
             return nil
         }
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+        // TODO: [F] check if adding an UUID is ok
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())
     }
 }
 
