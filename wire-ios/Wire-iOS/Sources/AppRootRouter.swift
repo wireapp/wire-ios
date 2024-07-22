@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 import WireDesign
+import WireReusableUIComponents
 
 // MARK: - AppRootRouter
 final class AppRootRouter: NSObject {

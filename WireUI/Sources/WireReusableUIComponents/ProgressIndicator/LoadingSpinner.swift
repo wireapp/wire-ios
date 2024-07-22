@@ -104,14 +104,14 @@ final class LoadingSpinnerView: UIView {
 }
 
 // MARK: - SpinnerCapableNavigationController
-final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
+public final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
 
     public static var accessibilityAnnouncement = ""
 
     var dismissSpinner: SpinnerCompletion?
     var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
 
-    override var childForStatusBarStyle: UIViewController? {
+    public override var childForStatusBarStyle: UIViewController? {
         topViewController
     }
 }
