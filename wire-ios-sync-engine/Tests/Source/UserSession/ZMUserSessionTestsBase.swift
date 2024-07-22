@@ -129,7 +129,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
-            analyticsSessionConfiguration: nil,
             configuration: configuration,
             contextStorage: mockContextStorable,
             earService: earService,
