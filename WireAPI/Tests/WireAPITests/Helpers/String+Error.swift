@@ -18,4 +18,6 @@
 
 import Foundation
 
+// TODO: fix warning:
+// Extension declares a conformance of imported type 'HTTPRequest' to imported protocol 'AnySnapshotStringConvertible'; this will not behave correctly if the owners of 'WireAPI' introduce this conformance in the future
 extension String: Error {}

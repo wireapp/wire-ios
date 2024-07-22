@@ -20,6 +20,8 @@ import Foundation
 import SnapshotTesting
 @testable import WireAPI
 
+// TODO: fix warning:
+// Extension declares a conformance of imported type 'HTTPRequest' to imported protocol 'AnySnapshotStringConvertible'; this will not behave correctly if the owners of 'WireAPI' introduce this conformance in the future
 extension HTTPRequest: AnySnapshotStringConvertible {
 
     public var snapshotDescription: String {
