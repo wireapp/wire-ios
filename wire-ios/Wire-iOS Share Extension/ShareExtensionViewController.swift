@@ -26,6 +26,7 @@ import WireCoreCrypto
 import WireDataModel
 import WireLinkPreview
 import WireShareEngine
+import WireDesign
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
