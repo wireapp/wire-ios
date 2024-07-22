@@ -29,9 +29,12 @@ public final class ZMSDispatchGroup: NSObject {
         self.init(dispatchGroup: .init(), label: label)
     }
 
+
     public init(dispatchGroup group: DispatchGroup, label: String) {
         self.group = group
         self.label = label
+
+        var x = 10
     }
 
     public func enter() {
