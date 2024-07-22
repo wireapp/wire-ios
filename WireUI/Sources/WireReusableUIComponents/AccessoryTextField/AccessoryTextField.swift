@@ -155,9 +155,9 @@ extension AccessoryTextField {
 
 extension AccessoryTextField {
     func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
-        let attribute: [NSAttributedString.Key: Any] = [.foregroundColor: textFieldAttributes.placeholderColor,
-                                                        .font: textFieldAttributes.placeholderFont.font!]
-        return placeholder && attribute
+        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: textFieldAttributes.placeholderColor,
+                                                         .font: textFieldAttributes.placeholderFont.font!]
+        return NSAttributedString(string: placeholder, attributes: attributes)
     }
     public override var placeholder: String? {
         get {
@@ -198,5 +198,41 @@ extension AccessoryTextField {
         return isLeftToRight
         ? .zero
         : rightAccessoryViewRect(forBounds: bounds, isLeftToRight: isLeftToRight)
+    }
+}
+
+// MARK: -
+
+private extension UIView {
+    var isLeftToRight: Bool {
+        return effectiveUserInterfaceLayoutDirection == .leftToRight
+    }
+}
+
+private extension UIEdgeInsets {
+    /// The leading insets, that respect the layout direction.
+    func leading(view: UIView) -> CGFloat {
+        if view.isLeftToRight {
+            return left
+        } else {
+            return right
+        }
+    }
+
+    /// The trailing insets, that respect the layout direction.
+    func trailing(view: UIView) -> CGFloat {
+        if view.isLeftToRight {
+            return right
+        } else {
+            return left
+        }
+    }
+
+    /// Returns a copy of the insets that are adapted for the current layout.
+    func directionAwareInsets(view: UIView) -> UIEdgeInsets {
+        return UIEdgeInsets(top: top,
+                            left: leading(view: view),
+                            bottom: bottom,
+                            right: trailing(view: view))
     }
 }
