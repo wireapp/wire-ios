@@ -170,3 +170,24 @@ extension ProgressSpinner: CAAnimationDelegate {
         }
     }
 }
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    {
+        let container = UIView()
+        container.backgroundColor = .black.withAlphaComponent(0.5)
+
+        let spinnerView = ProgressSpinner()
+        spinnerView.isAnimating = true
+        spinnerView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(spinnerView)
+        NSLayoutConstraint.activate([
+            spinnerView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            spinnerView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+
+        return container
+    }()
+}

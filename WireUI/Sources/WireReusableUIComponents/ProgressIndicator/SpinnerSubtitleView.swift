@@ -57,5 +57,26 @@ final class SpinnerSubtitleView: UIStackView {
         label.text = text
         label.isHidden = text == nil || text!.count == 0
     }
+}
 
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    {
+        let container = UIView()
+        container.backgroundColor = .black.withAlphaComponent(0.5)
+
+        let spinnerView = SpinnerSubtitleView()
+        spinnerView.spinner.isAnimating = true
+        spinnerView.subtitle = "Loading ..."
+        spinnerView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(spinnerView)
+        NSLayoutConstraint.activate([
+            spinnerView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            spinnerView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+
+        return container
+    }()
 }
