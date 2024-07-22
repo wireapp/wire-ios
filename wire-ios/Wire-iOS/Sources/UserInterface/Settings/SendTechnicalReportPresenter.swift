@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireReusableUIComponents
 import WireSystem
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {

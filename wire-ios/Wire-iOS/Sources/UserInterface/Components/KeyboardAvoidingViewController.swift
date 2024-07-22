@@ -17,11 +17,13 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
 
     // MARK: SpinnerCapable
     var dismissSpinner: (() -> Void)?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     let viewController: UIViewController
     var disabledWhenInsidePopover = false

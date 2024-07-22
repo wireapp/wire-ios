@@ -18,10 +18,13 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: (() -> Void)?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()

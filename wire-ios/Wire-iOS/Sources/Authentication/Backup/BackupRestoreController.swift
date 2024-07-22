@@ -19,6 +19,7 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {

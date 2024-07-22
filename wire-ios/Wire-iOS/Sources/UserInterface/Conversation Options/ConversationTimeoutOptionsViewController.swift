@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private enum Item {
@@ -46,6 +47,7 @@ extension ZMConversation {
 
 final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: (() -> Void)?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let conversation: ZMConversation
     private var items: [Item] = []

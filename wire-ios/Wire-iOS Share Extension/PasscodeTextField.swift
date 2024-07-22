@@ -17,7 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
 
 protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)

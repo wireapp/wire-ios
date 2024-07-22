@@ -22,6 +22,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -119,6 +120,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             Bundle.main.appInfo.safeForLoggingDescription,
             attributes: .safePublic
         )
+
+        SpinnerCapableNavigationController.accessibilityAnnouncement = L10n.Localizable.General.loading
 
         return true
     }

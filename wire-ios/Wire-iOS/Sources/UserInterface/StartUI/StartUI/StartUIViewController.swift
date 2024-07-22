@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
@@ -26,6 +27,7 @@ private let zmLog = ZMSLog(tag: "StartUIViewController")
 final class StartUIViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: (() -> Void)?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
 

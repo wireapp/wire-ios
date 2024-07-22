@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
 
 final class SpinnerSubtitleView: UIStackView {
 
@@ -38,6 +38,7 @@ final class SpinnerSubtitleView: UIStackView {
         updateSubtitle(nil)
     }
 
+    @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -54,6 +55,28 @@ final class SpinnerSubtitleView: UIStackView {
 
     private func updateSubtitle(_ text: String?) {
         label.text = text
-        label.isHidden = nil == text || 0 == text!.count
+        label.isHidden = text == nil || text!.count == 0
     }
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    {
+        let container = UIView()
+        container.backgroundColor = .black.withAlphaComponent(0.5)
+
+        let spinnerView = SpinnerSubtitleView()
+        spinnerView.spinner.isAnimating = true
+        spinnerView.subtitle = "Loading ..."
+        spinnerView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(spinnerView)
+        NSLayoutConstraint.activate([
+            spinnerView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            spinnerView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+
+        return container
+    }()
 }

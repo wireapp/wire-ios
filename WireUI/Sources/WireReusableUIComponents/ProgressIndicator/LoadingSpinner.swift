@@ -18,18 +18,20 @@
 
 import UIKit
 
-protocol SpinnerCapable: AnyObject {
+public protocol SpinnerCapable: AnyObject {
     var dismissSpinner: (() -> Void)? { get set }
+    var accessibilityAnnouncement: String { get }
 }
 
-extension SpinnerCapable where Self: UIViewController {
+public extension SpinnerCapable where Self: UIViewController {
+
     func showLoadingView(title: String) {
         dismissSpinner = presentSpinner(title: title)
     }
 
     var isLoadingViewVisible: Bool {
         get {
-            return dismissSpinner != nil
+            dismissSpinner != nil
         }
 
         set {
@@ -45,7 +47,7 @@ extension SpinnerCapable where Self: UIViewController {
         }
     }
 
-    private func presentSpinner(title: String? = nil) -> Completion {
+    private func presentSpinner(title: String? = nil) -> () -> Void {
         // Starts animating when it appears, stops when it disappears
         let spinnerView = createSpinner(title: title)
         spinnerView.translatesAutoresizingMaskIntoConstraints = false
@@ -55,9 +57,10 @@ extension SpinnerCapable where Self: UIViewController {
             spinnerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             spinnerView.topAnchor.constraint(equalTo: view.topAnchor),
             spinnerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            spinnerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
+            spinnerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
 
-        UIAccessibility.post(notification: .announcement, argument: L10n.Localizable.General.loading)
+        UIAccessibility.post(notification: .announcement, argument: accessibilityAnnouncement)
         spinnerView.spinnerSubtitleView.spinner.startAnimation()
 
         return {
@@ -72,11 +75,11 @@ extension SpinnerCapable where Self: UIViewController {
 
         return loadingSpinnerView
     }
-
 }
 
 // MARK: - LoadingSpinnerView
-final class LoadingSpinnerView: UIView {
+
+public final class LoadingSpinnerView: UIView {
 
     let spinnerSubtitleView = SpinnerSubtitleView()
 
@@ -96,21 +99,27 @@ final class LoadingSpinnerView: UIView {
 
         NSLayoutConstraint.activate([
             spinnerSubtitleView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinnerSubtitleView.centerYAnchor.constraint(equalTo: centerYAnchor)])
+            spinnerSubtitleView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
 }
 
 // MARK: - SpinnerCapableNavigationController
-final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
-    var dismissSpinner: (() -> Void)?
 
-    override var childForStatusBarStyle: UIViewController? {
-        return topViewController
+public final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
+
+    public static var accessibilityAnnouncement = ""
+
+    public var dismissSpinner: (() -> Void)?
+    public var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
+
+    override public var childForStatusBarStyle: UIViewController? {
+        topViewController
     }
-
 }
 
-extension UINavigationController {
+public extension UINavigationController {
+
     var isLoadingViewVisible: Bool? {
         get {
             return (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible

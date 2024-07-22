@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 

@@ -17,11 +17,13 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 final class RotationAwareNavigationController: UINavigationController, SpinnerCapable {
 
     // MARK: SpinnerCapable
     var dismissSpinner: (() -> Void)?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     override var shouldAutorotate: Bool {
         if let topController = self.viewControllers.last {

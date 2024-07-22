@@ -18,6 +18,8 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
 
 extension UIColor {
     enum AlarmButton {

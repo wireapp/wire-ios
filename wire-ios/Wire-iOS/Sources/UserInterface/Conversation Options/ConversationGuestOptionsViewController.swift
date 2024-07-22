@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ConversationGuestLink {
@@ -38,6 +39,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private var guestLinkObserver: NSObjectProtocol?
 
     var dismissSpinner: (() -> Void)?
+    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
