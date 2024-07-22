@@ -23,6 +23,7 @@ typealias SpinnerCompletion = () -> Void
 
 protocol SpinnerCapable: AnyObject {
     var dismissSpinner: SpinnerCompletion? { get set }
+    var accessibilityAnnouncement: String { get }
 }
 
 extension SpinnerCapable where Self: UIViewController {
@@ -60,7 +61,7 @@ extension SpinnerCapable where Self: UIViewController {
             spinnerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             spinnerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
 
-        UIAccessibility.post(notification: .announcement, argument: L10n.Localizable.General.loading)
+        UIAccessibility.post(notification: .announcement, argument: accessibilityAnnouncement)
         spinnerView.spinnerSubtitleView.spinner.startAnimation()
 
         return {
@@ -104,12 +105,15 @@ final class LoadingSpinnerView: UIView {
 
 // MARK: - SpinnerCapableNavigationController
 final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
+
+    public static var accessibilityAnnouncement = ""
+
     var dismissSpinner: SpinnerCompletion?
+    var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
 
     override var childForStatusBarStyle: UIViewController? {
-        return topViewController
+        topViewController
     }
-
 }
 
 extension UINavigationController {

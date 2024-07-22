@@ -103,10 +103,10 @@ final class LoadingSpinnerView: UIView {
 }
 
 // MARK: - SpinnerCapableNavigationController
-final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
+public final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
-    override var childForStatusBarStyle: UIViewController? {
+    public override var childForStatusBarStyle: UIViewController? {
         return topViewController
     }
 

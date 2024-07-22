@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 open class AccessoryTextField: UITextField, DynamicTypeCapable {
 
