@@ -17,31 +17,20 @@
 //
 
 /// An enumeration representing the type of contribution.
-public enum ContributionType: AnalyticsValue {
-    case textMessage
-    case likeMessage
-    case pingMessage
-    case fileMessage
-    case imageMessage
-    case locationMessage
-    case audioMessage
-    case videoMessage
-    case audioCallMessage
-    case videoCallMessage
+public enum ContributionType: String, AnalyticsValue {
+    case textMessage = "text_message"
+    case likeMessage = "like_message"
+    case pingMessage = "ping_message"
+    case fileMessage = "file_message"
+    case imageMessage = "image_message"
+    case locationMessage = "location_message"
+    case audioMessage = "audio_message"
+    case videoMessage = "video_message"
+    case audioCallMessage = "audio_call_message"
+    case videoCallMessage = "video_call_message"
 
     /// A string representation of the contribution type suitable for analytics tracking.
     public var analyticsValue: String {
-        switch self {
-        case .textMessage: "text_message"
-        case .likeMessage: "like_message"
-        case .pingMessage: "ping_message"
-        case .fileMessage: "file_message"
-        case .imageMessage: "image_message"
-        case .locationMessage: "location_message"
-        case .audioMessage: "audio_message"
-        case .videoMessage: "video_message"
-        case .audioCallMessage: "audio_call_message"
-        case .videoCallMessage: "video_call_message"
-        }
+        self.rawValue
     }
 }

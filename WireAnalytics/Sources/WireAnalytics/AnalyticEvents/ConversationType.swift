@@ -17,17 +17,13 @@
 //
 
 /// An enumeration representing the type of conversation.
-public enum ConversationType: AnalyticsValue {
+public enum ConversationType: String, AnalyticsValue {
     case group
-    case oneOnOne
+    case oneOnOne = "one_on_one"
     case unknown
 
     /// A string representation of the conversation type suitable for analytics tracking.
     public var analyticsValue: String {
-        switch self {
-        case .group: "group"
-        case .oneOnOne: "one_on_one"
-        case .unknown: "unknown"
-        }
+        self.rawValue
     }
 }
