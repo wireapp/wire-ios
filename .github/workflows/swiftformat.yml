@@ -11,19 +11,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  SwiftFormat:
-      runs-on: ubuntu-latest
-      container:
-        image: ghcr.io/nicklockwood/swiftformat:0.54.0
+  TMP:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare for tricking Danger
+        run: |
+          echo "The GITHUB_REPOSITORY is $GITHUB_REPOSITORY"
+          echo "The GITHUB_EVENT_PATH is $GITHUB_EVENT_PATH"
+          cat "$GITHUB_EVENT_PATH"
 
-      steps:
-        - uses: actions/checkout@v4
-        - name: GitHub Action for SwiftFormat
-          run: >
-            swiftformat --lint
-            ./SourceryPlugin
-            ./WireAPI
-            ./WireAnalytics
-            ./WireDomain
-            ./WireUI
-            --reporter github-actions-log
+  SwiftFormat:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/nicklockwood/swiftformat:0.54.0
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: GitHub Action for SwiftFormat
+        run: >
+          swiftformat --lint
+          ./SourceryPlugin
+          ./WireAPI
+          ./WireAnalytics
+          ./WireDomain
+          ./WireUI
+          --reporter github-actions-log

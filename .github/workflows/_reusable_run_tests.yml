@@ -156,11 +156,6 @@ jobs:
           echo "Building WireSystem..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystem -resultBundlePath xcodebuild-wire-ios-system.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-system.log | bundle exec xcpretty
 
-      - name: Prepare for tricking Danger
-        run: |
-          echo GITHUB_REPOSITORY ${{ env.GITHUB_REPOSITORY }}
-          echo GITHUB_EVENT_PATH ${{ env.GITHUB_EVENT_PATH }}
-
       - name: Run Danger for WireSystem
         if: ${{ inputs.wire-ios-system || inputs.all }}
         env:
