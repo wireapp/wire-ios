@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
-#import "NSManagedObjectContext+WireUtilities.h"
-#import <objc/runtime.h>
+@import ObjectiveC;
 @import WireSystem;
 @import WireTesting;
+@import WireUtilities;
+@import XCTest;
 
 @interface NSManagedObjectContext_WireUtilitiesTests : ZMTBaseTest
 
@@ -46,7 +46,7 @@
 - (void)testThatGroupIsProperlyAddedInDispatchGroups;
 {
     // given
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"TestingGroup"];
+    ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:@"TestingGroup"];
     [self.MOC addGroup:group];
     
     // when

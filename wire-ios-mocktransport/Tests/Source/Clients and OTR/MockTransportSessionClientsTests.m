@@ -18,6 +18,7 @@
 
 #import "MockTransportSessionTests.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @interface MockTransportSessionClientsTests : MockTransportSessionTests
@@ -104,7 +105,7 @@
     
     [self.sut.managedObjectContext performBlockAndWait:^{
         NSFetchRequest *clientsRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
-        NSArray *clients = [self.sut.managedObjectContext executeFetchRequestOrAssert:clientsRequest];
+        NSArray *clients = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:clientsRequest];
         XCTAssertEqual(clients.count, 1u);
         MockUserClient *client = [clients firstObjectMatchingWithBlock:^BOOL(MockUserClient *obj) {
             return [obj.identifier isEqualToString:clientId];
@@ -123,7 +124,7 @@
         
         NSFetchRequest *keysRequest = [NSFetchRequest fetchRequestWithEntityName:@"PreKey"];
         keysRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"identifier" ascending:YES]];
-        NSMutableArray *preKeys = [[self.sut.managedObjectContext executeFetchRequestOrAssert:keysRequest] mutableCopy];
+        NSMutableArray *preKeys = [[self.sut.managedObjectContext executeFetchRequestOrAssert_mt:keysRequest] mutableCopy];
 
         XCTAssertEqual(preKeys.count, clients.count * (keysCount + 1));
         
@@ -178,7 +179,7 @@
     
     [self.sut.managedObjectContext performBlockAndWait:^{
         NSFetchRequest *clientsRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
-        NSArray *clients = [self.sut.managedObjectContext executeFetchRequestOrAssert:clientsRequest];
+        NSArray *clients = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:clientsRequest];
         XCTAssertEqual(clients.count, 2u);
         MockUserClient *client = [[clients filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"label == %@", secondLabel]] firstObject];
         
@@ -189,7 +190,7 @@
         NSFetchRequest *keysRequest = [NSFetchRequest fetchRequestWithEntityName:@"PreKey"];
         keysRequest.predicate = [NSPredicate predicateWithFormat:@"client == %@ || lastPrekeyOfClient == %@", client, client];
         keysRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"identifier" ascending:YES]];
-        NSMutableArray *preKeys = [[self.sut.managedObjectContext executeFetchRequestOrAssert:keysRequest] mutableCopy];
+        NSMutableArray *preKeys = [[self.sut.managedObjectContext executeFetchRequestOrAssert_mt:keysRequest] mutableCopy];
 
         XCTAssertEqual(preKeys.count, keysCount + 1);
 

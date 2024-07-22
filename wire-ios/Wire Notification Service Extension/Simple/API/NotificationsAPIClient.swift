@@ -100,7 +100,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
                 return .failure(.failedToDecodePayload)
             }
 
-            let payloadString = String(data: response.data, encoding: .utf8) ?? "N/A"
+            let payloadString = String(decoding: response.data, as: UTF8.self)
             logger.info("received event response payload: \(payloadString, privacy: .public)")
 
             guard let events = ZMUpdateEvent.eventsArray(

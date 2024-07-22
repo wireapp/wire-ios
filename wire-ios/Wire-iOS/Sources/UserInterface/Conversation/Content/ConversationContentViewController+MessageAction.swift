@@ -65,13 +65,27 @@ extension ConversationContentViewController {
     ) {
         switch actionId {
         case .cancel:
-            userSession.enqueue({
+            userSession.enqueue {
+                WireLogger.messaging.info(
+                    "cancel message",
+                    attributes: [
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ], .safePublic
+                )
+
                 message.fileMessageData?.cancelTransfer()
-            })
+            }
         case .resend:
-            userSession.enqueue({
+            userSession.enqueue {
+                WireLogger.messaging.info(
+                    "resend message",
+                    attributes: [
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ], .safePublic
+                )
+
                 message.resend()
-            })
+            }
         case .delete:
             assert(message.canBeDeleted)
 
@@ -84,24 +98,22 @@ extension ConversationContentViewController {
         case .present:
             dataSource.selectedMessage = message
             presentDetails(for: message)
+
         case .save:
             if Message.isImage(message) {
                 saveImage(from: message, view: view)
-            } else {
+            } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
                 dataSource.selectedMessage = message
 
-                let targetView: UIView
-
-                if let selectableView = view as? SelectableView {
-                    targetView = selectableView.selectionView
-                } else {
-                    targetView = view
-                }
-
-                if let saveController = UIActivityViewController(message: message, from: targetView) {
-                    present(saveController, animated: true)
-                }
+                let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                activityViewController.configurePopoverPresentationController(
+                    using: .superviewAndFrame(of: (view as? SelectableView)?.selectionView ?? view)
+                )
+                present(activityViewController, animated: true)
+            } else {
+                WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
             }
+
         case .digitallySign:
             dataSource.selectedMessage = message
             if message.isFileDownloaded() {
@@ -117,8 +129,6 @@ extension ConversationContentViewController {
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
 
-        case .forward:
-            showForwardFor(message: message, from: view)
         case .showInConversation:
             scroll(to: message) { _ in
                 self.dataSource.highlight(message: message)
