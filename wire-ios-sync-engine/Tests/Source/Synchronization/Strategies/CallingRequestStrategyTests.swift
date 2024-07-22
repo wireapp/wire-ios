@@ -21,6 +21,9 @@ import WireDataModelSupport
 import WireRequestStrategy
 @testable import WireSyncEngine
 import WireSyncEngineSupport
+@_spi(MockBackendInfo)
+import WireTransport
+
 
 class CallingRequestStrategyTests: MessagingTest {
 
@@ -71,7 +74,6 @@ class CallingRequestStrategyTests: MessagingTest {
         mockRegistrationDelegate = nil
         mockApplicationStatus = nil
         mockFetchUserClientsUseCase = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -239,8 +241,9 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = true
+
         let (conversation, payload) = try syncMOC.performAndWait {
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -323,6 +326,8 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {

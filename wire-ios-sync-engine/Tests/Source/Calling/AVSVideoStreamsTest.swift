@@ -19,20 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 import XCTest
-@_spi(MockBackendInfo)
-import WireTransport
 
 class AVSVideoStreamsTest: XCTestCase {
-    override class func setUp() {
-        super.setUp()
-        BackendInfo.enableMocking()
-        BackendInfo.isFederationEnabled = false
-    }
-
-    override func tearDown() {
-        BackendInfo.resetMocking()
-        super.tearDown()
-    }
 
     func testThatJSONStringValue_ConformsToAVSAPI() {
         // given

@@ -46,9 +46,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
             userPropertyValidator: UserPropertyValidator()
         )
         sut.groupQueue.add(dispatchGroup)
-
-        BackendInfo.enableMocking()
-        BackendInfo.apiVersion = .v0
     }
 
     public override func tearDown() {
@@ -57,8 +54,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         transportSession = nil
         mockDelegate = nil
         reachability = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -93,6 +88,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     func testThatItLookupReturnsNoAPiVersionError() {
         // given
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = nil
         let domain = "example com"
 
@@ -112,6 +108,8 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
         XCTAssertTrue(gettingExpectedError)
+
+        BackendInfo.resetMocking()
     }
 
     // MARK: Response handling

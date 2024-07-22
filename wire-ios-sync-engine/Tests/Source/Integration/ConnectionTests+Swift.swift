@@ -28,17 +28,12 @@ class ConnectionTests_Swift: IntegrationTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-        BackendInfo.apiVersion = .v0
-
         createSelfUserAndConversation()
     }
 
     override func tearDown() {
         listObserver = nil
         tokens = .init()
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

@@ -29,14 +29,11 @@ class CallParticipantsKindTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-
         client = AVSClient(userId: AVSIdentifier.stub,
                            clientId: UUID().transportString())
     }
 
     override func tearDown() {
-        BackendInfo.resetMocking()
         client = nil
 
         super.tearDown()

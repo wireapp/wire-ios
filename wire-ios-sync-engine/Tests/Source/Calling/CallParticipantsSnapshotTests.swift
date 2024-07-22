@@ -57,9 +57,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
         aliceDesktop = AVSClient(userId: aliceId, clientId: "alice-desktop")
         bobIphone = AVSClient(userId: bobId, clientId: "bob-iphone")
         bobDesktop = AVSClient(userId: bobId, clientId: "bob-desktop")
-
-        BackendInfo.enableMocking()
-        BackendInfo.isFederationEnabled = false
+        
         conversationId = AVSIdentifier.stub
     }
 
@@ -71,7 +69,6 @@ final class CallParticipantsSnapshotTests: MessagingTest {
         user2 = nil
         client1 = nil
         client2 = nil
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 

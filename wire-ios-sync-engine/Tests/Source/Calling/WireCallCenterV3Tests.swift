@@ -21,6 +21,8 @@ import Combine
 import Foundation
 import WireDataModelSupport
 import XCTest
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import WireSyncEngine
 
@@ -70,7 +72,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.domain = "wire.com"
 
         let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -125,7 +127,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         mockTransport = nil
         mockAVSWrapper = nil
         conferenceCalling = nil
-        BackendInfo.storage = .standard
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }

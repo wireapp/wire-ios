@@ -18,9 +18,6 @@
 
 import XCTest
 
-@_spi(MockBackendInfo)
-import WireTransport
-
 @testable import WireSyncEngine
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {
@@ -32,9 +29,6 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-
-        BackendInfo.enableMocking()
-        BackendInfo.apiVersion = .v0
 
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         mockUpdateEventProcessor = MockUpdateEventProcessor()
@@ -51,8 +45,6 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         presentationDelegate = nil
         mockTransportSession = nil
         mockUpdateEventProcessor = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

@@ -21,8 +21,6 @@ import WireRequestStrategySupport
 @testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
-@_spi(MockBackendInfo)
-import WireTransport
 
 final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 
@@ -52,13 +50,9 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
             migrator: migrator,
             service: service
         )
-
-        BackendInfo.enableMocking()
-        BackendInfo.domain = "wire.com"
     }
 
     override func tearDown() async throws {
-        BackendInfo.resetMocking()
         stack = nil
         protocolSelector = nil
         migrator = nil

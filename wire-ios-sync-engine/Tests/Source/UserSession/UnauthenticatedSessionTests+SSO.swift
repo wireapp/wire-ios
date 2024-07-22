@@ -19,9 +19,6 @@
 import WireTesting
 import XCTest
 
-@_spi(MockBackendInfo)
-import WireTransport
-
 @testable import WireSyncEngine
 
 final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
@@ -34,9 +31,6 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     public override func setUp() {
         super.setUp()
-
-        BackendInfo.enableMocking()
-        BackendInfo.apiVersion = .v0
 
         transportSession = TestUnauthenticatedTransportSession()
         mockDelegate = MockUnauthenticatedSessionDelegate()
@@ -57,8 +51,6 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
         transportSession = nil
         mockDelegate = nil
         reachability = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

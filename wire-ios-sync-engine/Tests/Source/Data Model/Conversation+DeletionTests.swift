@@ -30,17 +30,12 @@ final class Conversation_DeletionTests: DatabaseTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-        BackendInfo.apiVersion = .v0
-
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
     }
 
     override func tearDown() {
         mockTransportSession.cleanUp()
         mockTransportSession = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

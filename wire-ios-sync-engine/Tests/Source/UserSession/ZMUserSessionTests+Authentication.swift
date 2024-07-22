@@ -18,9 +18,6 @@
 
 import XCTest
 
-@_spi(MockBackendInfo)
-import WireTransport
-
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
@@ -28,18 +25,10 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-        BackendInfo.apiVersion = .v0
-
         syncMOC.performGroupedAndWait {
             self.createSelfClient()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    override func tearDown() {
-        BackendInfo.resetMocking()
-        super.tearDown()
     }
 
     func testThatIsLoggedInIsFalseAtStartup() {

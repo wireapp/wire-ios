@@ -793,7 +793,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     private func enableMLS() {
         DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v5
     }
 
