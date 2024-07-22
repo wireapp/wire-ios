@@ -620,7 +620,8 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Save cache with warning counts
-        if: ${{ !cancelled() }}
+        # This step should only run for the test_develop.yml workflow
+        if: ${{ !cancelled() && github.event.action == 'push' }}
         uses: actions/cache/save@v4
         with:
           path: Danger.results
