@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireCommonComponents
 
 enum PresentationStyle: Int {

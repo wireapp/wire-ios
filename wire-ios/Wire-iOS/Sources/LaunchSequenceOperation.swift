@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
+import WireDesign
 
 // MARK: - LaunchSequenceOperation
 protocol LaunchSequenceOperation {

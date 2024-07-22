@@ -29,7 +29,7 @@ final class TokenField: UIView {
     weak var delegate: TokenFieldDelegate?
 
     let textView = SearchTextView(style: .default)
-    let accessoryButton: IconButton = IconButton()
+    let accessoryButton = IconButton()
 
     var hasAccessoryButton = false {
         didSet {

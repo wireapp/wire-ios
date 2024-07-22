@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireUtilities
+import WireDesign
 
 enum CallActionIconType: IconLabelButtonInput {
     case microphone

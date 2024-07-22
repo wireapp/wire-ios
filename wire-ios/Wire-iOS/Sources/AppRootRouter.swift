@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import WireDesign
 
 // MARK: - AppRootRouter
 final class AppRootRouter: NSObject {

@@ -20,6 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
+import WireDesign
 
 /**
  * The actions that can be performed from the profile details or devices.

@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireReusableUIComponents
 import WireDesign
 
 protocol TextFieldValidationDelegate: AnyObject {
