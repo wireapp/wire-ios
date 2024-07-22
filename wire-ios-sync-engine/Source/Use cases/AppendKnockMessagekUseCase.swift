@@ -28,7 +28,6 @@ public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
 
     let analyticsSession: AnalyticsSessionProtocol?
 
-
     public init(analyticsSession: AnalyticsSessionProtocol?) {
         self.analyticsSession = analyticsSession
     }

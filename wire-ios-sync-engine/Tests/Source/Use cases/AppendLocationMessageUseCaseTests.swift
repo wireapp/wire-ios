@@ -22,8 +22,8 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
 
-@testable import WireSyncEngine
 @testable import WireDataModel
+@testable import WireSyncEngine
 
 final class AppendLocationMessageUseCaseTests: XCTestCase {
 
