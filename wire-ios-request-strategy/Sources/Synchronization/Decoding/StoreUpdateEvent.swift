@@ -84,25 +84,19 @@ public final class StoredUpdateEvent: NSManagedObject {
             return nil
         }
 
-        guard !storedEventExists(for: eventHash, in: context) else {
+        guard !storedEventExists(for: eventId, eventHash: eventHash, in: context) else {
             WireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
             return nil
         }
 
-        guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
+        guard let storedEvent = StoredUpdateEvent.create(from: event,
+                                                         eventId: eventId,
+                                                         eventHash: eventHash,
+                                                         index: index,
+                                                         context: context) else {
             WireLogger.updateEvent.error("could not store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
             return nil
         }
-
-        storedEvent.debugInformation = event.debugInformation
-        storedEvent.isTransient = event.isTransient
-        storedEvent.source = Int16(event.source.rawValue)
-        storedEvent.sortIndex = index
-        storedEvent.uuidString = eventId
-        storedEvent.isCallEvent = event.isCallEvent
-        storedEvent.payload = event.payload as NSDictionary
-        storedEvent.eventHash = Int64(eventHash)
-        storedEvent.isEncrypted = false
 
         encryptIfNeeded(
             storedEvent,
@@ -112,23 +106,43 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static private func storedEventExists(for updateEventHash: Int, in context: NSManagedObjectContext) -> Bool {
+    static func create(from event: ZMUpdateEvent,
+                       eventId: String,
+                       eventHash: Int,
+                       index: Int64,
+                       context: NSManagedObjectContext) -> StoredUpdateEvent? {
+        let storedEvent = StoredUpdateEvent.insertNewObject(context)
 
-        let storedEvents = StoredUpdateEvent.events(eventHash: updateEventHash, context: context)
+        storedEvent?.debugInformation = event.debugInformation
+        storedEvent?.isTransient = event.isTransient
+        storedEvent?.source = Int16(event.source.rawValue)
+        storedEvent?.sortIndex = index
+        storedEvent?.uuidString = eventId
+        storedEvent?.isCallEvent = event.isCallEvent
+        storedEvent?.payload = event.payload as NSDictionary
+        storedEvent?.eventHash = Int64(eventHash)
+        storedEvent?.isEncrypted = false
+
+        return storedEvent
+    }
+
+    static private func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
+
+        let storedEvents = StoredUpdateEvent.events(id: eventId, context: context)
         guard !storedEvents.isEmpty else {
             return false
         }
 
-        for storedEvent in storedEvents where storedEvent.eventHash == updateEventHash || storedEvent.eventHash == 0 {
+        for storedEvent in storedEvents where storedEvent.eventHash == eventHash || storedEvent.eventHash == 0 {
             return true
         }
 
         return false
     }
 
-    static func events(eventHash: Int, context: NSManagedObjectContext) -> [StoredUpdateEvent] {
+    static func events(id: String, context: NSManagedObjectContext) -> [StoredUpdateEvent] {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
-        fetchRequest.predicate = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
+        fetchRequest.predicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), id)
         let result = context.fetchOrAssert(request: fetchRequest)
         return result
     }

@@ -262,6 +262,31 @@ class StoreUpdateEventTests: MessagingTestBase {
         }
     }
 
+    func test_EncryptAndCreate_DoesNotStoreEventIfHashDoesNotExistButSameEventId() throws {
+        try eventMOC.performAndWait {
+            // GIVEN
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+
+            let storedEventWithoutHash = StoredUpdateEvent.create(from: event1,
+                                                                  eventId: try XCTUnwrap(event1.uuid?.uuidString.lowercased()),
+                                                                  eventHash: 0,
+                                                                  index: 1,
+                                                                  context: eventMOC)
+            // WHEN
+            let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 1,
+                publicKeys: nil
+            )
+
+            XCTAssertNil(storedEvent1, "it should drop the event")
+        }
+    }
+
+
+
     func test_EncryptAndCreate_StoresDuplicateEventsWithSameEventId() throws {
         try eventMOC.performAndWait {
             // Given some events.
@@ -298,7 +323,6 @@ class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertFalse(storedEvent2.isEncrypted)
 
         }
-
     }
 
     func test_EncryptAndCreate_Unencrypted() throws {
