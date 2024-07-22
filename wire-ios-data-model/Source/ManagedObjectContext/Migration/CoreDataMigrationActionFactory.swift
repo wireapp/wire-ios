@@ -84,11 +84,6 @@ enum CoreDataMigrationActionFactory {
     }
 
     static func createPostMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
-        switch destinationVersion {
-        case .v05:
-            return PrefillEvenHashAction()
-        default:
-            return nil
-        }
+        return nil
     }
 }
