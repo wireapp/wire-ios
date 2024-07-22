@@ -465,7 +465,17 @@ public class CoreDataStack: NSObject, ContextProvider {
         let modelBundle = Bundle(for: ZMManagedObject.self)
 
         guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("zmessaging.momd")) else {
-            fatal("Can't load data model bundle")
+            fatal("Can't load data model for messaging bundle")
+        }
+
+        return result
+    }
+
+    public static func loadEventsModel() -> NSManagedObjectModel {
+        let modelBundle = WireDataModelBundle.bundle
+
+        guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("ZMEventModel.momd")) else {
+            fatal("Can't load data model for events bundle")
         }
 
         return result

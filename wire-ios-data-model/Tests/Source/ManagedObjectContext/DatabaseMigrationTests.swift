@@ -34,6 +34,21 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         "handle"
     ]
 
+    func testEventsLatestModelHasMigrationVersion() throws {
+        // given
+        let latestMigrationVersion = CoreDataEventsMigrationVersion.allCases.first
+        let dataModelVersion = CoreDataStack.loadEventsModel().version
+
+        // when
+        // then
+        XCTAssertEqual(
+            latestMigrationVersion?.dataModelVersion,
+            dataModelVersion,
+            "Current model version '\(dataModelVersion)' does not exist as core data migration version! " +
+            "Please add a new case for the version, so that the migration to that version is ensured!"
+        )
+    }
+
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
         let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first

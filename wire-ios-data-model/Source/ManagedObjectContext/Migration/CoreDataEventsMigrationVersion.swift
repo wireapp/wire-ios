@@ -45,6 +45,11 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
         }
     }
 
+    /// Returns the version used in `.xcdatamodel`, like "2.3" for data model "ZEventModel2.0".
+    var dataModelVersion: String {
+        rawValue.replacingOccurrences(of: Constant.dataModelPrefix, with: "")
+    }
+
     // MARK: Current
 
     static let current: Self = {
