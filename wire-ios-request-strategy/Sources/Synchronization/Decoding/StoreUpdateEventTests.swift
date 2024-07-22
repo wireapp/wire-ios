@@ -268,7 +268,7 @@ class StoreUpdateEventTests: MessagingTestBase {
             let conversation = self.createConversation(in: self.uiMOC)
             let event1 = self.createNewConversationEvent(for: conversation)
 
-            let storedEventWithoutHash = StoredUpdateEvent.create(from: event1,
+            _ = StoredUpdateEvent.create(from: event1,
                                                                   eventId: try XCTUnwrap(event1.uuid?.uuidString.lowercased()),
                                                                   eventHash: 0,
                                                                   index: 1,
@@ -285,15 +285,13 @@ class StoreUpdateEventTests: MessagingTestBase {
         }
     }
 
-
-
     func test_EncryptAndCreate_StoresDuplicateEventsWithSameEventId() throws {
         try eventMOC.performAndWait {
             // Given some events.
             let conversation = self.createConversation(in: self.uiMOC)
             let event1 = self.createNewConversationEvent(for: conversation)
             let event2 = try self.createNewCallEvent(for: conversation, uuid: try XCTUnwrap(event1.uuid))
-           
+
             guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
                 event1,
                 context: self.eventMOC,

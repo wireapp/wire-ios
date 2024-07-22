@@ -66,6 +66,6 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
             forResource: rawValue,
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory
-        )!
+        )
     }
 }

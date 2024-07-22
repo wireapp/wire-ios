@@ -129,18 +129,18 @@ public final class StoredUpdateEvent: NSManagedObject {
     static private func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
         let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
-       
+
         let eventHash = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
         let defaultEventHash = NSPredicate(format: "%K = 0", #keyPath(StoredUpdateEvent.eventHash))
 
-        let eventHashOrPredicate  = NSCompoundPredicate(orPredicateWithSubpredicates: [eventHash, defaultEventHash])
+        let eventHashOrPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [eventHash, defaultEventHash])
 
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [eventIdPredicate, eventHashOrPredicate])
 
         let result = context.countOrAssert(request: fetchRequest)
         return result > 0
     }
-    
+
     private static func encryptIfNeeded(
         _ storedEvent: StoredUpdateEvent,
         publicKeys: EARPublicKeys?
