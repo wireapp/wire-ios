@@ -557,7 +557,7 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
 
         if navigationController?.viewControllers.count == 1 {
             navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-                self?.dismiss(animated: true)
+                self?.presentingViewController?.dismiss(animated: true)
             }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
             navigationItem.leftBarButtonItem = legalHoldItem
         } else {

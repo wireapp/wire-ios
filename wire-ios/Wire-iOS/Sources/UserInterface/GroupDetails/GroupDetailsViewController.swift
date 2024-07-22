@@ -123,7 +123,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
             second: verificationStatus)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
 
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description

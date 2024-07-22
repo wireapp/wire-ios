@@ -145,7 +145,7 @@ final class SelfProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
     }

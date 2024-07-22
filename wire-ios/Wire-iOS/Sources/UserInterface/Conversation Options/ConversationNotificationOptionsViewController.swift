@@ -67,7 +67,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.GroupDetails.NotificationOptionsCell.title.capitalized)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.NotificationConversationSettings.CloseButton.description)
     }
 

@@ -90,7 +90,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Participants.All.title)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
 
         collectionViewController.collectionView?.reloadData()

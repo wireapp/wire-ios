@@ -304,7 +304,7 @@ final class CollectionsViewController: UIViewController {
         navigationItem.titleView = titleViewWrapper
 
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
         if !inOverviewMode,
@@ -735,7 +735,7 @@ extension CollectionsViewController: CollectionCellDelegate {
                 backButton.accessibilityLabel = L10n.Accessibility.ConversationSearch.BackButton.description
 
                 navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-                    self?.dismiss(animated: true)
+                    self?.presentingViewController?.dismiss(animated: true)
                 }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
                 imagesController.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)

@@ -118,7 +118,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
         setupNavigationBarTitle(L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
     }
 
