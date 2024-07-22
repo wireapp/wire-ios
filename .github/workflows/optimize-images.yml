@@ -1,9 +1,16 @@
 name: Optimize Images
+
 on:
   pull_request:
     paths:
       - 'wire-ios/Wire-iOS\ Tests/ReferenceImages/**/*.png'
       - 'WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages/**/*.png'
+
+# This is what will cancel the workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     if: if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
