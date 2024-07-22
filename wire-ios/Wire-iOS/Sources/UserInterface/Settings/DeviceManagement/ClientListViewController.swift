@@ -137,7 +137,7 @@ final class ClientListViewController: UIViewController,
 
         if clientsList == nil {
             if clients.isEmpty {
-                (navigationController as! SpinnerCapableViewController).isLoadingViewVisible = true
+                (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = true
             }
             userSession?.fetchAllClients()
         }
@@ -191,7 +191,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func dismissLoadingView() {
-        (navigationController as! SpinnerCapableViewController).isLoadingViewVisible = false
+        (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = false
         isLoadingViewVisible = false
     }
 

@@ -77,8 +77,8 @@ final class BackupViewController: UIViewController, SpinnerCapable {
 
     }
 
-    var loadingHostController: SpinnerCapableViewController {
-        (navigationController as! SpinnerCapableViewController)
+    var loadingHostController: UIViewController & SpinnerCapable {
+        (navigationController as! (UIViewController & SpinnerCapable))
     }
 }
 

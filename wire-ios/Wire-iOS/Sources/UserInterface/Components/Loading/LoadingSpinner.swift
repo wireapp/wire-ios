@@ -18,8 +18,6 @@
 
 import UIKit
 
-typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
-
 protocol SpinnerCapable: AnyObject {
     var dismissSpinner: (() -> Void)? { get set }
 }
@@ -114,12 +112,12 @@ final class SpinnerCapableNavigationController: UINavigationController, SpinnerC
 extension UINavigationController {
     var isLoadingViewVisible: Bool? {
         get {
-            return (self as! SpinnerCapableViewController).isLoadingViewVisible
+            return (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible
         }
 
         set {
             if let newValue {
-                (self as! SpinnerCapableViewController).isLoadingViewVisible = newValue
+                (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = newValue
             }
         }
     }

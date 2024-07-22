@@ -41,7 +41,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         guard let selfUser = ZMUser.selfUser() else { return }
 
         if selfUser.usesCompanyLogin || password != nil {
-            var topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as! SpinnerCapableViewController
+            var topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as! (UIViewController & SpinnerCapable)
             topMostViewController.isLoadingViewVisible = true
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)

@@ -96,7 +96,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
         didUpdateState state: ConversationServicesOptionsViewModel.State
     ) {
         tableView.reloadData()
-        (navigationController as! SpinnerCapableViewController).isLoadingViewVisible = state.isLoading
+        (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = state.isLoading
     }
 
     func conversationServicesOptionsViewModel(

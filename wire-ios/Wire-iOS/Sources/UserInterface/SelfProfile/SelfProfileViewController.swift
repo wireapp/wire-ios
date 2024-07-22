@@ -237,8 +237,8 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
 
-    private var topViewController: SpinnerCapableViewController {
-        navigationController!.topViewController as! SpinnerCapableViewController
+    private var topViewController: UIViewController & SpinnerCapable {
+        navigationController!.topViewController as! (UIViewController & SpinnerCapable)
     }
 
     func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
