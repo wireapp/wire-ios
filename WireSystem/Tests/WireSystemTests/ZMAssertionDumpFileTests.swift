@@ -45,7 +45,7 @@ final class ZMAssertionDumpFileTests: XCTestCase {
 
         // Then
         let data = try Data(contentsOf: AssertionDumpFile.url)
-        let actual = String(data: data, encoding: .utf8)
+        let actual = String(decoding: data, as: UTF8.self)
         XCTAssertEqual(actual, expected)
     }
 }

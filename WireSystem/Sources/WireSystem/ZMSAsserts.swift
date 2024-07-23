@@ -24,8 +24,18 @@ public func fatal(
     file: StaticString = #file,
     line: UInt = #line
 ) -> Never {
-    // TODO: create ZMAssertionDump_String in Swift
-    // ZMAssertionDump_NSString("Swift assertion", "\(file)", Int32(line), message)
+
+    let output = NSString(format: "ASSERT: [%s:%d] <%s> %s", "\(file)", Int32(line), "Swift assertion", message) as String
+
+    // report error to datadog or other loggers
+    WireLogger.system.critical(output, attributes: .safePublic)
+
+    // prepare and dump to file
+    do {
+        try AssertionDumpFile.write(content: output)
+    } catch {
+        assertionFailure(String(reflecting: error))
+    }
     fatalError(message, file: file, line: line)
 }
 

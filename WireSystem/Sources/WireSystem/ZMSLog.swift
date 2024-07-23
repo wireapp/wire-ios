@@ -86,11 +86,13 @@ public final class ZMSLog: NSObject {
 
 public extension ZMSLog {
 
-    func safePublic(_ message: @autoclosure () -> SanitizedString,
-                    level: ZMLogLevel = .info,
-                    osLogOn: Bool = true,
-                    file: String = #file,
-                    line: UInt = #line) {
+    func safePublic(
+        _ message: @autoclosure () -> SanitizedString,
+        level: ZMLogLevel = .info,
+        osLogOn: Bool = true,
+        file: String = #file,
+        line: UInt = #line
+    ) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
         ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
@@ -167,10 +169,12 @@ public final class LogHookToken: NSObject {
 public extension ZMSLog {
 
     /// Notify all hooks of a new log
-    fileprivate static func notifyHooks(level: ZMLogLevel,
-                                        tag: String?,
-                                        entry: ZMSLogEntry,
-                                        isSafe: Bool) {
+    fileprivate static func notifyHooks(
+        level: ZMLogLevel,
+        tag: String?,
+        entry: ZMSLogEntry,
+        isSafe: Bool
+    ) {
         for (_, hook) in logHooks {
             hook(level, tag, entry, isSafe)
         }
@@ -336,10 +340,8 @@ public extension ZMSLog {
 
     static var pathsForExistingLogs: [URL] {
         var paths: [URL] = []
-        for url in previousZipLogURLs {
-            if FileManager.default.fileExists(atPath: url.path) {
-                paths.append(url)
-            }
+        for url in previousZipLogURLs where FileManager.default.fileExists(atPath: url.path) {
+            paths.append(url)
         }
         let assertionFile: URL?
         do {
