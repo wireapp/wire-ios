@@ -127,9 +127,13 @@ extension ZMConversation {
                 // note the processConversationEvents is within a task so it won't make a difference
 
                 completion(.success(uri))
-                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+                // TODO: [F]  [WPB-10283] uuid is passed here to processUpdateEvents
+                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
                     // Process `conversation.code-update` event
-                    userSession.processConversationEvents([event])
+                    // swiftlint:disable todo_requires_jira_link
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    // swiftlint:enable todo_requires_jira_link
+                    userSession.processUpdateEvents([event])
                 }
             } else if response.httpStatus == 200,
                       let payload = response.payload?.asDictionary(),
