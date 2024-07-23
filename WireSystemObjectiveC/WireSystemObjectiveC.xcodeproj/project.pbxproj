@@ -53,8 +53,8 @@
 		59245F6C2C5051D50022E676 = {
 			isa = PBXGroup;
 			children = (
-				59245F782C5051D50022E676 /* WireSystemObjectiveC */,
-				59245F842C5051D50022E676 /* WireSystemObjectiveCTests */,
+				59245F782C5051D50022E676 /* Sources */,
+				59245F842C5051D50022E676 /* Tests */,
 				59245F772C5051D50022E676 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,21 +68,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		59245F782C5051D50022E676 /* WireSystemObjectiveC */ = {
+		59245F782C5051D50022E676 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				59245F792C5051D50022E676 /* WireSystemObjectiveC.h */,
 				59245F7A2C5051D50022E676 /* WireSystemObjectiveC.docc */,
 			);
-			path = WireSystemObjectiveC;
+			path = Sources;
 			sourceTree = "<group>";
 		};
-		59245F842C5051D50022E676 /* WireSystemObjectiveCTests */ = {
+		59245F842C5051D50022E676 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				59245F852C5051D50022E676 /* WireSystemObjectiveCTests.m */,
 			);
-			path = WireSystemObjectiveCTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
