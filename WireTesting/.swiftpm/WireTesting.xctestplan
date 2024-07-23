@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "69A0629D-0828-46A2-B1D3-5B0EC1869552",
+      "id" : "7BA4429D-8DFB-42A0-A68D-ED26C130D239",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -17,8 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireTestingNewTests",
-        "name" : "WireTestingNewTests"
+        "identifier" : "WireTestingTests",
+        "name" : "WireTestingTests"
       }
     }
   ],

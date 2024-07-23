@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireTestingNew"
-               BuildableName = "WireTestingNew"
-               BlueprintName = "WireTestingNew"
+               BlueprintIdentifier = "WireTestingObjectiveC"
+               BuildableName = "WireTestingObjectiveC"
+               BlueprintName = "WireTestingObjectiveC"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,18 +29,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireTestingNewTests"
-               BuildableName = "WireTestingNewTests"
-               BlueprintName = "WireTestingNewTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -62,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireTestingNew"
-            BuildableName = "WireTestingNew"
-            BlueprintName = "WireTestingNew"
+            BlueprintIdentifier = "WireTestingObjectiveC"
+            BuildableName = "WireTestingObjectiveC"
+            BlueprintName = "WireTestingObjectiveC"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

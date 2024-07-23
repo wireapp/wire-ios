@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "WireTestingNew",
+    name: "WireTesting",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v15),
@@ -13,8 +13,12 @@ let package = Package(
     products: [
         // TODO: [WPB-8907]: Rename this to WireTesting and migrate everything from the WireTesting project
         .library(
-            name: "WireTestingNew",
-            targets: ["WireTestingNew"]
+            name: "WireTesting",
+            targets: ["WireTesting"]
+        ),
+        .library(
+            name: "WireTestingObjectiveC",
+            targets: ["WireTestingObjectiveC"]
         )
     ],
     dependencies: [
@@ -29,19 +33,39 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireTestingNew",
+            name: "WireTesting",
+            dependencies: [
+                "WireTestingObjectiveC",
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "WireTestingTests",
+            dependencies: [
+                "WireTesting",
+                "WireTestingObjectiveC"
+            ]
+        ),
+
+        .target(
+            name: "WireTestingObjectiveC",
             dependencies: [
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
                 )
             ],
-            path: "./Sources",
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "WireTestingNewTests",
-            path: "./Tests"
+            name: "WireTestingObjectiveCTests",
+            dependencies: [
+                "WireTestingObjectiveC"
+            ]
         )
     ]
 )
