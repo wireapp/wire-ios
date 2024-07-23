@@ -30,7 +30,6 @@ private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 final class ConversationContentViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation

@@ -19,7 +19,6 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -34,7 +33,6 @@ final class ClientListViewController: UIViewController,
     // MARK: SpinnerCapable
 
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     var removalObserver: ClientRemovalObserver?
 
@@ -180,7 +178,7 @@ final class ClientListViewController: UIViewController,
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-        setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title)
         updateAllClients()
     }
 

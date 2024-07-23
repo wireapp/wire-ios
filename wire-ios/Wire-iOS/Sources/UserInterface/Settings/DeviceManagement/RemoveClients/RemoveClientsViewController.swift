@@ -19,7 +19,6 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {
@@ -36,7 +35,6 @@ final class RemoveClientsViewController: UIViewController,
     // MARK: - Properties
 
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
     private var leftBarButtonItem: UIBarButtonItem? {

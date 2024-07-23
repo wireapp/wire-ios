@@ -110,7 +110,6 @@ extension PasscodeTextField {
     private func updateButtonIcon() {
         revealButton.setIcon(revealButtonIcon, size: .tiny, for: .normal)
     }
-
 }
 
 // MARK: - Helpers

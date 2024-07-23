@@ -17,12 +17,10 @@
 //
 
 import UIKit
-import WireReusableUIComponents
 
 final class BackupViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []

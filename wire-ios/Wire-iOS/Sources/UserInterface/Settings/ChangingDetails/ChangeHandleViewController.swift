@@ -260,7 +260,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func setupNavigationBar() {
-        setupNavigationBarTitle(HandleChange.title.capitalized)
+        setupNavigationBarTitle(HandleChange.title)
         let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
                                                                                   systemImage: false,
                                                                                   target: self,

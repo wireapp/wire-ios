@@ -19,7 +19,6 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 private enum Item {
@@ -47,7 +46,6 @@ extension ZMConversation {
 
 final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let conversation: ZMConversation
     private var items: [Item] = []
@@ -88,9 +86,9 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

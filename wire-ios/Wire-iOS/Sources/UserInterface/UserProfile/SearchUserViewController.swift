@@ -19,7 +19,6 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 final class SearchUserViewController: UIViewController, SpinnerCapable {
@@ -27,7 +26,6 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     // MARK: - Properties
 
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?

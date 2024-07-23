@@ -20,7 +20,6 @@ import MobileCoreServices
 import Social
 import UIKit
 import UniformTypeIdentifiers
-import WireCommonComponents
 import WireDesign
 
 /**

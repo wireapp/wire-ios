@@ -20,9 +20,8 @@ import SwiftUI
 import WireDesign
 
 public extension UIViewController {
-
     func setupNavigationBarTitle(_ title: String) {
-        navigationItem.title = title.capitalized
+        navigationItem.title = title
 
         let titleTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: SemanticColors.Label.textDefault,
@@ -46,6 +45,7 @@ struct ViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
         viewController.view.backgroundColor = .white
+
         viewController.setupNavigationBarTitle(title)
 
         let navigationController = UINavigationController(rootViewController: viewController)

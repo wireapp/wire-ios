@@ -18,7 +18,6 @@
 
 import UIKit
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -41,7 +40,6 @@ final class SettingsClientViewController: UIViewController,
 
     // MARK: SpinnerCapable
     var dismissSpinner: (() -> Void)?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
