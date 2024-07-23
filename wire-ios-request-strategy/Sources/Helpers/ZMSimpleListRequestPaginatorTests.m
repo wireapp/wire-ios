@@ -58,7 +58,7 @@
     self.transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [self verifyMockLater:self.transcoder];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext selfClientID: nil transcoder:self.transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext transcoder:self.transcoder];
 
     self.singleRequestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     [self verifyMockLater:self.singleRequestSync];
@@ -91,7 +91,7 @@
 - (void)testThatItCreatesASingleRequestSyncByDefault
 {
     // when
-    ZMSimpleListRequestPaginator *sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:@"foo" startKey:@"bar" pageSize:10 managedObjectContext:self.coreDataStack.syncContext selfClientID: nil transcoder:nil];
+    ZMSimpleListRequestPaginator *sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:@"foo" startKey:@"bar" pageSize:10 managedObjectContext:self.coreDataStack.syncContext transcoder:nil];
 
     // then
     XCTAssertNotNil(sut.singleRequestSync);
@@ -218,7 +218,7 @@
     id transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [[[transcoder expect] andReturn:startUUID] startUUID];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:startKey pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext selfClientID: nil transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:startKey pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext transcoder:transcoder];
 
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
@@ -239,8 +239,9 @@
     [self.coreDataStack.syncContext performGroupedBlock:^{
         // given
         NSString *selfClientID = [self createSelfClient].remoteIdentifier;
+        [[[self.transcoder expect] andReturn:selfClientID] selfClientID];
 
-        self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"foo" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext selfClientID:selfClientID transcoder:nil];
+        self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"foo" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext  transcoder:self.transcoder];
 
         [[self.singleRequestSync stub] readyForNextRequest];
         [self.sut resetFetching];
@@ -425,7 +426,7 @@
     id transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [[transcoder reject] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext selfClientID: nil transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext transcoder:transcoder];
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
 
@@ -446,7 +447,7 @@
     id transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [[transcoder expect] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext selfClientID: nil transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext  transcoder:transcoder];
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
 
@@ -521,7 +522,7 @@
     [[[transcoder expect] andReturn:[self returnFullPageWithLastIdentifier:lastIdentifier]] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
     [[[transcoder expect] andReturn:startIdentifier] startUUID];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext selfClientID: nil transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext transcoder:transcoder];
     self.sut.singleRequestSync = self.singleRequestSync;
 
     [self.sut resetFetching];

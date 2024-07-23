@@ -30,6 +30,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     private var managedObjectContext: NSManagedObjectContext!
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     private weak var notificationStreamSyncDelegate: NotificationStreamSyncDelegate?
+    private var clientID: String?
 
     public init(
         moc: NSManagedObjectContext,
@@ -41,10 +42,9 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         super.init()
         managedObjectContext = moc
 
-        var selfClientID: String?
         moc.performAndWait {
             let selfUser = ZMUser.selfUser(in: moc)
-            selfClientID = selfUser.selfClient()?.remoteIdentifier
+            self.clientID = selfUser.selfClient()?.remoteIdentifier
         }
 
         listPaginator = ZMSimpleListRequestPaginator(
@@ -52,7 +52,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             startKey: "since",
             pageSize: 500,
             managedObjectContext: moc,
-            selfClientID: selfClientID,
             transcoder: self
         )
 
@@ -88,8 +87,12 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         lastEventIDRepository.fetchLastEventID()
     }
 
+    public func selfClientID() -> String? {
+        clientID
+    }
+
     @objc(nextUUIDFromResponse:forListPaginator:)
-    public func nextUUID(from response: ZMTransportResponse!, forListPaginator paginator: ZMSimpleListRequestPaginator!) -> UUID! {
+    public func nextUUID(from response: ZMTransportResponse, forListPaginator paginator: ZMSimpleListRequestPaginator) -> UUID? {
         if let timestamp = response.payload?.asDictionary()?["time"] {
             updateServerTimeDeltaWith(timestamp: timestamp as! String)
         }

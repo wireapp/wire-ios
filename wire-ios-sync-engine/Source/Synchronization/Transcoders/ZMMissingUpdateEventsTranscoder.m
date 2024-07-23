@@ -78,14 +78,10 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         self.useLegacyPushNotifications = useLegacyPushNotifications;
         self.lastEventIDRepository = lastEventIDRepository;
 
-        ZMUser* selfUser = [ZMUser selfUserInContext:managedObjectContext];
-        NSString* selfClientID = [[selfUser selfClient] remoteIdentifier];
-
         self.listPaginator = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:NotificationsPath
                                                                            startKey:StartKey
                                                                            pageSize:ZMMissingUpdateEventsTranscoderListPageSize
-                                                                managedObjectContext:self.managedObjectContext
-                                                                       selfClientID:selfClientID
+                                                               managedObjectContext:self.managedObjectContext
                                                                          transcoder:self];
     }
     return self;
@@ -317,6 +313,12 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 
 @implementation ZMMissingUpdateEventsTranscoder (Pagination)
+
+- (NSString *)selfClientID
+{
+    ZMUser* selfUser = [ZMUser selfUserInContext:super.managedObjectContext];
+    return [[selfUser selfClient] remoteIdentifier];
+}
 
 - (NSUUID *)nextUUIDFromResponse:(ZMTransportResponse *)response forListPaginator:(ZMSimpleListRequestPaginator *)paginator
 {
