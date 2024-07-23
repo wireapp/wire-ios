@@ -69,35 +69,4 @@ extension UIBarButtonItem {
 
         }
 
-    static func createNavigationLeftBarButtonItem(
-        title: String? = nil,
-        systemImage: Bool,
-        target buttonTarget: Any?,
-        action buttonAction: Selector?,
-        font buttonFont: UIFont = .preferredFont(forTextStyle: .body)) -> UIBarButtonItem {
-
-            var leftBarButtonItem: UIBarButtonItem
-            if systemImage {
-                leftBarButtonItem = UIBarButtonItem(
-                    barButtonSystemItem: .done,
-                    target: buttonTarget,
-                    action: buttonAction)
-            } else {
-                leftBarButtonItem = UIBarButtonItem(
-                    title: title,
-                    style: .plain,
-                    target: buttonTarget,
-                    action: buttonAction)
-            }
-
-            let buttonStates: [UIControl.State] = [.normal, .highlighted, .disabled, .selected, .focused, .application, .reserved]
-
-            buttonStates.forEach { buttonState in
-                leftBarButtonItem.setTitleTextAttributes(
-                    [NSAttributedString.Key.font: buttonFont],
-                    for: buttonState)
-            }
-            return leftBarButtonItem
-
-        }
 }
