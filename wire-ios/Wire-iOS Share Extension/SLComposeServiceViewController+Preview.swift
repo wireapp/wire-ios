@@ -20,7 +20,7 @@ import MobileCoreServices
 import Social
 import UIKit
 import UniformTypeIdentifiers
-import WireCommonComponents
+import WireDesign
 
 /**
  * The description of the preview that can be displayed for an attachment.

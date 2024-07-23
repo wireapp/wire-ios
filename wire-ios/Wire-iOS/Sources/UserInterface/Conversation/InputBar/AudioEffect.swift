@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireDesign
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")

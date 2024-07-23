@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 /// Replicates the launch screen to prevent the black screen being visible, cause of later UI initialization
 class LaunchImageViewController: UIViewController {

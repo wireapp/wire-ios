@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?

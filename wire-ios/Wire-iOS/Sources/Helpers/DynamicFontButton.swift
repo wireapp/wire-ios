@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 /// A helper class that provides the Button with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable protocol

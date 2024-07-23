@@ -18,14 +18,14 @@
 
 import CoreGraphics
 
-extension StyleKitIcon {
+public extension StyleKitIcon {
 
     /**
      * Represents the target size of an icon. You can either use standard values,
      * or use a raw CGFloat value, without needing to add another case.
      */
 
-    public enum Size: ExpressibleByIntegerLiteral, RawRepresentable {
+    enum Size: ExpressibleByIntegerLiteral, RawRepresentable {
 
         /// 8pt
         case nano
@@ -59,21 +59,21 @@ extension StyleKitIcon {
         /// The value to use to generate the icon.
         public var rawValue: CGFloat {
             switch self {
-            case .nano: return 8
-            case .tiny: return 16
-            case .small: return 20
-            case .medium: return 24
-            case .large: return 48
-            case .custom(let value): return value
+            case .nano: 8
+            case .tiny: 16
+            case .small: 20
+            case .medium: 24
+            case .large: 48
+            case .custom(let value): value
             }
         }
 
     }
 }
 
-extension StyleKitIcon.Size {
+public extension StyleKitIcon.Size {
 
-    public var cgSize: CGSize {
+    var cgSize: CGSize {
         .init(width: rawValue, height: rawValue)
     }
 }

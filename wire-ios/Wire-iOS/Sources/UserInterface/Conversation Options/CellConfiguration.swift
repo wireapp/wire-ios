@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol CellConfigurationConfigurable: Reusable {
     func configure(with configuration: CellConfiguration)

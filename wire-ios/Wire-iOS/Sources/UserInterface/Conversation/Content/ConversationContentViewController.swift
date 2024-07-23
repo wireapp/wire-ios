@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireRequestStrategy
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireUtilities
 
 enum CallActionIconType: IconLabelButtonInput {

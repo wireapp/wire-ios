@@ -24,6 +24,7 @@ import UniformTypeIdentifiers
 import WireCommonComponents
 import WireCoreCrypto
 import WireDataModel
+import WireDesign
 import WireLinkPreview
 import WireShareEngine
 

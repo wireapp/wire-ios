@@ -19,6 +19,7 @@
 import Photos
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class AssetCell: UICollectionViewCell {
 

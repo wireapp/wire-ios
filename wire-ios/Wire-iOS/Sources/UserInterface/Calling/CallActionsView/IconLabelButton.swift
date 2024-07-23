@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol IconLabelButtonInput {
     func icon(forState state: UIControl.State) -> StyleKitIcon

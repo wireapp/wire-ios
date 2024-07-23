@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol EmojiSectionViewControllerDelegate: AnyObject {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool)
