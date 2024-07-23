@@ -24,7 +24,8 @@ jobs:
       wire-design: ${{ steps.filter.outputs.wire-design }}
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
-      wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
+      wire-system: ${{ steps.filter.outputs.wire-system }}
+      wire-system-objc: ${{ steps.filter.outputs.wire-system-objc }}
       wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
       wire-api: ${{ steps.filter.outputs.wire-api }}
       wire-domain: ${{ steps.filter.outputs.wire-domain }}
@@ -86,8 +87,10 @@ jobs:
               - 'wire-ios-testing/**'
             wire-testing:
               - 'wire-testing/**'
-            wire-ios-system:
-              - 'wire-ios-system/**'  
+            wire-system:
+              - 'WireSystem/Sources/WireSystem/**'  
+            wire-system-objc:
+              - 'WireSystem/Sources/WireSystemObjectiveC/**'  
             carthage:
               - 'Cartfile.resolved'
 
@@ -100,7 +103,8 @@ jobs:
       wire-design: ${{ needs.detect-changes.outputs.wire-design == 'true' }}
       wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
       wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
-      wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
+      wire-system: ${{ needs.detect-changes.outputs.wire-system == 'true' }}
+      wire-system-objc: ${{ needs.detect-changes.outputs.wire-system-objc == 'true' }}
       wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
       wire-api: ${{ needs.detect-changes.outputs.wire-api == 'true' }}
       wire-domain: ${{ needs.detect-changes.outputs.wire-domain == 'true' }}
