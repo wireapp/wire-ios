@@ -22,7 +22,7 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 XCODEBUILD="xcrun xcodebuild"
 
-SCHEMES=(WireNotificationEngine Wire-iOS WireSyncEngine WireShareEngine WireRequestStrategy WireDataModel WireMockTransport WireProtos WireImages WireLinkPreview WireTransport WireCryptobox WireUtilities WireTesting WireSystem)
+SCHEMES=(WireNotificationEngine Wire-iOS WireSyncEngine WireShareEngine WireRequestStrategy WireDataModel WireMockTransport WireProtos WireImages WireLinkPreview WireTransport WireCryptobox WireUtilities WireTesting)
 for SCHEME in ${SCHEMES[@]}; do
 (
     cd "$REPO_ROOT"

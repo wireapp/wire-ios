@@ -17,6 +17,6 @@
 //
 
 @objc(ZMLogLevel)
-public enum ZMLogLevel: Int8 { // TODO: consider renaming LogLevel
+public enum ZMLogLevel: Int8 {
     case `public`, error, warn, info, debug
 }
