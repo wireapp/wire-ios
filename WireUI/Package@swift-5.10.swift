@@ -73,6 +73,7 @@ let package = Package(
         .target(
             name: "WireUITesting",
             dependencies: [
+                "WireDesign",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
