@@ -24,7 +24,7 @@ extension SegmentationValue {
     /// - Parameter value: A boolean indicating if the call is a video call.
     /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
     static func isVideoCall(_ value: Bool) -> Self {
-        .init(key: SegmentationKey.isVideoCall.rawValue, value: value.analyticsValue)
+        .init(key: "is_video_call", value: value.analyticsValue)
     }
 
     /// Creates a `SegmentationValue` for the type of group in a conversation.
@@ -32,7 +32,7 @@ extension SegmentationValue {
     /// - Parameter value: The `ConversationType` of the conversation.
     /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
     static func groupType(_ value: ConversationType) -> Self {
-        .init(key: SegmentationKey.groupType.rawValue, value: value.analyticsValue)
+        .init(key: "group_type", value: value.analyticsValue)
     }
 
     /// Creates a `SegmentationValue` for the type of contribution in a conversation.
@@ -40,7 +40,7 @@ extension SegmentationValue {
     /// - Parameter value: The `ContributionType` of the contribution.
     /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
     static func contributionType(_ value: ContributionType) -> Self {
-        .init(key: SegmentationKey.contributionType.rawValue, value: value.analyticsValue)
+        .init(key: "contribution_type", value: value.analyticsValue)
     }
 
     /// Creates a `SegmentationValue` for the size of a conversation.
@@ -48,6 +48,6 @@ extension SegmentationValue {
     /// - Parameter value: The number of participants in the conversation.
     /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
     static func conversationSize(_ value: UInt) -> Self {
-        .init(key: SegmentationKey.conversationSize.rawValue, value: value.analyticsValue)
+        .init(key: "conversation_size", value: value.analyticsValue)
     }
 }
