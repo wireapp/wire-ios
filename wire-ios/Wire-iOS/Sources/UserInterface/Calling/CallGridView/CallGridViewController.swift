@@ -94,7 +94,7 @@ final class CallGridViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     weak var delegate: CallGridViewControllerDelegate?
 

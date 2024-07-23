@@ -56,7 +56,7 @@ public final class BlockingActivityIndicator {
 
 private struct BlockingActivityIndicatorState {
     var weakReferences = [WeakReference<BlockingActivityIndicator>]()
-    private(set) var activityIndicatorView = UIActivityIndicatorView()
+    private(set) var activityIndicatorView = ProgressSpinner()
 }
 
 // MARK: - UIView + BlockingActivityIndicators
@@ -79,9 +79,8 @@ extension UIView {
             addSubview(blockingView)
 
             // activity indicator view
-            state.activityIndicatorView.style = .large
             state.activityIndicatorView.color = .white
-            state.activityIndicatorView.startAnimating()
+            state.activityIndicatorView.isAnimating = true
             state.activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
             blockingView.addSubview(state.activityIndicatorView)
 
