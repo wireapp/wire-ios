@@ -24,7 +24,6 @@ import WireSyncEngineSupport
 @_spi(MockBackendInfo)
 import WireTransport
 
-
 class CallingRequestStrategyTests: MessagingTest {
 
     var sut: CallingRequestStrategy!

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
 import WireTesting
+import WireTransport
 
 final class TestSetup: NSObject, XCTestObservation {
     private let defaults: TestUserDefaults
