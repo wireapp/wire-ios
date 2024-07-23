@@ -47,7 +47,7 @@ struct FeatureConfigsPayloadProcessor {
         if let conferenceCalling = payload.conferenceCalling {
             repository.storeConferenceCalling(
                 Feature.ConferenceCalling(
-                    status: conferenceCalling.status
+                    status: conferenceCalling.status // add config
                 )
             )
         }

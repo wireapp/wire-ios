@@ -24,12 +24,37 @@ public extension Feature {
 
         // MARK: - Properties
 
+        /// If `enabled` then the feature is available to the user.
+
         public let status: Status
+
+        /// The configuration used to control how the feature behaves.
+
+        public let config: Config?
 
         // MARK: - Life cycle
 
-        public init(status: Feature.Status = .enabled) {
+        public init(status: Feature.Status = .enabled, config: Config? = nil) {
             self.status = status
+            self.config = config
+        }
+
+        // MARK: - Types
+
+        // WARNING: This config is encoded and stored in the database, so any changes
+        // to it will require some migration code.
+
+        public struct Config: Codable, Equatable {
+
+            /// If set to `true`, clients will use SFTs for 1:1 calls
+
+            public let useSFTForOneToOneCalls: Bool
+
+            public init(
+                useSFTForOneToOneCalls: Bool = false
+            ) {
+                self.useSFTForOneToOneCalls = useSFTForOneToOneCalls
+            }
         }
 
     }
