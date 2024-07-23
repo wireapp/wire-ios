@@ -1207,7 +1207,6 @@
 		D5189477205045A100C095C1 /* LinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5189476205045A100C095C1 /* LinkHeaderCell.swift */; };
 		D51894792050490E00C095C1 /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51894782050490E00C095C1 /* ActionCell.swift */; };
 		D518947B20504C6A00C095C1 /* LoadingIndicatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518947A20504C6A00C095C1 /* LoadingIndicatorCell.swift */; };
-		D524BE5F207B99B800542A4E /* UIViewController+LoadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D524BE5E207B99B800542A4E /* UIViewController+LoadingTests.swift */; };
 		D525426820934629001C04C1 /* IconLabelButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525426720934629001C04C1 /* IconLabelButtonTests.swift */; };
 		D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525426920936378001C04C1 /* IconButton+Factory.swift */; };
 		D525426D209363AF001C04C1 /* IconLabelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525426C209363AF001C04C1 /* IconLabelButton.swift */; };
@@ -3332,7 +3331,6 @@
 		D5189476205045A100C095C1 /* LinkHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkHeaderCell.swift; sourceTree = "<group>"; };
 		D51894782050490E00C095C1 /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		D518947A20504C6A00C095C1 /* LoadingIndicatorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorCell.swift; sourceTree = "<group>"; };
-		D524BE5E207B99B800542A4E /* UIViewController+LoadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+LoadingTests.swift"; sourceTree = "<group>"; };
 		D524BE62207BA15300542A4E /* SpinnerSubtitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerSubtitleView.swift; sourceTree = "<group>"; };
 		D525426720934629001C04C1 /* IconLabelButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconLabelButtonTests.swift; sourceTree = "<group>"; };
 		D525426920936378001C04C1 /* IconButton+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IconButton+Factory.swift"; sourceTree = "<group>"; };
@@ -7234,7 +7232,6 @@
 				16271BC71DA5213400689486 /* TypingIndicatorViewTests.swift */,
 				EECA835326F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift */,
 				EFDBA24622942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift */,
-				D524BE5E207B99B800542A4E /* UIViewController+LoadingTests.swift */,
 				EF2172E821DF97CC00DA1671 /* URL+EncodeTests.swift */,
 				5E1314B72204A041000FAFC5 /* URLWireLocaleTests.swift */,
 				16D4932B203DD480008DDFFA /* UserCellTests.swift */,
@@ -10453,7 +10450,6 @@
 				A98ECDF3232A9564006A57FD /* MockConversationListContainer.swift in Sources */,
 				6357B41626121D55008F1761 /* MockPanGestureRecognizer.swift in Sources */,
 				D50892FD2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift in Sources */,
-				D524BE5F207B99B800542A4E /* UIViewController+LoadingTests.swift in Sources */,
 				EF29F1BB21271A9A00BE94E6 /* GroupDetailsViewControllerTests.swift in Sources */,
 				EF37C3892256614300EA0C32 /* ConnectRequestsCellSnapshotTests.swift in Sources */,
 				87BEB0E01C734DA60094BFE9 /* MockLoader.m in Sources */,
