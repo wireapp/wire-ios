@@ -24,6 +24,7 @@ import XCTest
 
 // MARK: - MockLoadingViewController
 
+// TODO: remove
 final class MockLoadingViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: (() -> Void)?
 }
@@ -36,7 +37,6 @@ final class LoadingViewControllerTests: XCTestCase {
 
     private var viewController: UIViewController!
     private var sut: BlockingActivityIndicator!
-    private var tmp_viewController: MockLoadingViewController!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
@@ -49,8 +49,6 @@ final class LoadingViewControllerTests: XCTestCase {
 
             sut = .init(view: viewController.view)
             snapshotHelper = SnapshotHelper()
-            tmp_viewController = MockLoadingViewController()
-            tmp_viewController.view.backgroundColor = .white
         }
     }
 
@@ -58,8 +56,6 @@ final class LoadingViewControllerTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
-        tmp_viewController = nil
-
         super.tearDown()
     }
 
@@ -75,21 +71,30 @@ final class LoadingViewControllerTests: XCTestCase {
         verifyInAllDeviceSizes(matching: viewController)
     }
 
+    @MainActor
     func testThatItDismissesLoadingIndicator() {
-        // GIVEN && WHEN
-        tmp_viewController.isLoadingViewVisible = true
-        tmp_viewController.isLoadingViewVisible = false
 
-        // THEN
-        XCTAssertFalse(tmp_viewController.isLoadingViewVisible)
-        snapshotHelper.verify(matching: tmp_viewController)
+        // Given
+        sut.start()
+
+        // When
+        sut.stop()
+
+        // Then
+        verifyInAllDeviceSizes(matching: viewController)
     }
 
+    @MainActor
     func testThatItShowsLoadingIndicatorWithSubtitle() {
-        // GIVEN && WHEN
-        tmp_viewController.showLoadingView(title: "RESTORING…")
 
-        // THEN
-        verifyInAllDeviceSizes(matching: tmp_viewController)
+        // Given
+        let viewController = MockLoadingViewController()
+        viewController.view.backgroundColor = .white
+
+        // When
+        viewController.showLoadingView(title: "RESTORING…")
+
+        // Then
+        verifyInAllDeviceSizes(matching: viewController)
     }
 }
