@@ -36,6 +36,7 @@ enum TeamSource: Int {
     }
 }
 
+<<<<<<< HEAD
 struct WireURL: Codable {
     let wireAppOnItunes: URL
     let support: URL
@@ -53,6 +54,8 @@ struct WireURL: Codable {
     }
 }
 
+=======
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 extension URL {
 
     var appendingLocaleParameter: URL {
@@ -87,6 +90,7 @@ extension URL {
 
 extension URL {
 
+<<<<<<< HEAD
     static var wr_wireAppOnItunes: URL {
         WireURL.shared.wireAppOnItunes
     }
@@ -191,12 +195,10 @@ extension URL {
         wr_support.appendingPathComponent("hc/articles/12434725011485-Messaging-Layer-Security-MLS-")
     }
 
+=======
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
     static var selfUserProfileLink: URL? {
         BackendEnvironment.selfUserProfileLink
-    }
-
-    static var wr_e2eiLearnMore: URL {
-        return wr_support.appendingPathComponent("hc/articles/9211300150685-End-to-end-identity")
     }
 
 }
@@ -206,21 +208,6 @@ extension URL {
 private extension BackendEnvironment {
     static func websiteLink(path: String) -> URL {
         shared.websiteURL.appendingPathComponent(path)
-    }
-
-    static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
-        let languageCode = Locale.autoupdatingCurrent.languageCode
-        let baseURL = shared.websiteURL
-
-        switch page {
-        case .termsOfServices, .privacyPolicy:
-            let pathComponent = (languageCode == "de") ? "datenschutz" : "legal"
-            return baseURL.appendingPathComponent(pathComponent)
-
-        case .legal:
-            let pathComponent = (languageCode == "de") ? "de/nutzungsbedingungen" : "legal"
-            return baseURL.appendingPathComponent(pathComponent)
-        }
     }
 
     static func accountsLink(path: String) -> URL {

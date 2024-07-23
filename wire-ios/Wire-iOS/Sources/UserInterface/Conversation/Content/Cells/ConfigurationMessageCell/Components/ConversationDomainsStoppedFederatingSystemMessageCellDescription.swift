@@ -18,7 +18,11 @@
 
 import UIKit
 import WireDataModel
+<<<<<<< HEAD
 import WireDesign
+=======
+import WireCommonComponents
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
@@ -60,9 +64,9 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
         var text: String
         if domains.hasSelfDomain, let user = SelfUser.provider?.providedSelfUser {
             let withoutSelfDomain = domains.filter { $0 != user.domain }
-            text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", URL.wr_FederationLearnMore.absoluteString)
+            text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", WireURLs.shared.federationInfo.absoluteString)
         } else {
-            text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", URL.wr_FederationLearnMore.absoluteString)
+            text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", WireURLs.shared.federationInfo.absoluteString)
         }
 
         let attributedString = NSAttributedString.markdown(from: text, style: .systemMessage)

@@ -404,7 +404,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         alert.addAction(.link(
             title: Strings.learnMore,
-            url: .wr_FederationLearnMore,
+            url: WireURLs.shared.federationInfo,
             presenter: self
         ))
 

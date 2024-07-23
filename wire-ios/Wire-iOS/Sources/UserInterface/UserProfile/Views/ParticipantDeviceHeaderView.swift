@@ -17,7 +17,11 @@
 //
 
 import UIKit
+<<<<<<< HEAD
 import WireDesign
+=======
+import WireCommonComponents
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 protocol ParticipantDeviceHeaderViewDelegate: AnyObject {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView)
@@ -100,7 +104,7 @@ final class ParticipantDeviceHeaderView: UIView {
         return [
             NSAttributedString.Key.font: font,
             NSAttributedString.Key.foregroundColor: linkAttributeColor,
-            NSAttributedString.Key.link: URL.wr_fingerprintLearnMore,
+            NSAttributedString.Key.link: WireURLs.shared.whyToVerifyFingerprintArticle,
             NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint
         ]
     }

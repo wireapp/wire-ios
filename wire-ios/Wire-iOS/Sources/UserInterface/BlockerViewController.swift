@@ -19,6 +19,11 @@
 import MessageUI
 import UIKit
 import WireSyncEngine
+<<<<<<< HEAD
+=======
+import MessageUI
+import WireCommonComponents
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 enum BlockerViewControllerContext {
     case blacklist
@@ -82,11 +87,18 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     private func showBlacklistMessage() {
+<<<<<<< HEAD
         presentOKAlert(
             title: L10n.Localizable.Force.Update.title,
             message: L10n.Localizable.Force.Update.message
         ) { _ in
             UIApplication.shared.open(URL.wr_wireAppOnItunes)
+=======
+
+        presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
+                                 message: L10n.Localizable.Force.Update.message) { _ in
+            UIApplication.shared.open(WireURLs.shared.appOnItunes)
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
         }
     }
 
@@ -129,7 +141,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
-                UIApplication.shared.open(URL.wr_e2eiLearnMore)
+                UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
             }
         )
 

@@ -18,7 +18,11 @@
 
 import UIKit
 import WireDataModel
+<<<<<<< HEAD
 import WireDesign
+=======
+import WireCommonComponents
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
 
@@ -66,7 +70,7 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
 
         let text = NSMutableAttributedString.markdown(
-            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, URL.wr_wireAppOnItunes.absoluteString),
+            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, WireURLs.shared.appOnItunes.absoluteString),
             style: .systemMessage
         )
 

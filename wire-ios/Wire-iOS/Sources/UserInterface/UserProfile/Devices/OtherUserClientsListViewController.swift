@@ -17,8 +17,12 @@
 //
 
 import SwiftUI
+<<<<<<< HEAD
 import WireDesign
 import WireSyncEngine
+=======
+import WireCommonComponents
+>>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 final class OtherUserClientsListViewController: UIViewController,
                                                 UICollectionViewDelegateFlowLayout,
@@ -231,7 +235,7 @@ extension OtherUserClientsListViewController: UserObserving {
 
 extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegate {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView) {
-        URL.wr_fingerprintLearnMore.openInApp(above: self)
+        WireURLs.shared.whyToVerifyFingerprintArticle.openInApp(above: self)
     }
 }
 
