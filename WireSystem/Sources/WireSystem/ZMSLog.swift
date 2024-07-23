@@ -20,6 +20,9 @@ import Foundation
 import os.log
 import ZipArchive
 
+// TODO: migrate
+func ZMLastAssertionFile() -> URL! { fatalError() }
+
 /// Represents an entry to be logged.
 @objcMembers
 public final class ZMSLogEntry: NSObject {

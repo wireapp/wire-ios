@@ -20,9 +20,16 @@ let package = Package(
             targets: ["WireSystemObjectiveC"]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", .upToNextMajor(from: "3.8.5"))
+    ],
     targets: [
         .target(
             name: "WireSystem",
+            dependencies: [
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                "ZipArchive"
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -42,6 +49,11 @@ let package = Package(
             dependencies: [
                 "WireSystemObjectiveC"
             ]
+        ),
+
+        .binaryTarget(
+            name: "ZipArchive",
+            path: "../Carthage/Build/ZipArchive.xcframework"
         )
     ]
 )

@@ -20,15 +20,6 @@
 
 #import <WireSystemObjectiveC/ZMSAsserts.h>
 
-/// Log levels
-typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel) {
-    ZMLogLevelPublic = 0,
-    ZMLogLevelError,
-    ZMLogLevelWarn,
-    ZMLogLevelInfo,
-    ZMLogLevelDebug,
-};
-
 
 /**
  
