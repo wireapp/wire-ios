@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
@@ -129,7 +128,6 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     deinit {
         userSelection.remove(observer: self)

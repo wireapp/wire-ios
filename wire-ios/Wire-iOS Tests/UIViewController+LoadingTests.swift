@@ -17,7 +17,6 @@
 //
 
 import SnapshotTesting
-import WireReusableUIComponents
 import WireUITesting
 import XCTest
 

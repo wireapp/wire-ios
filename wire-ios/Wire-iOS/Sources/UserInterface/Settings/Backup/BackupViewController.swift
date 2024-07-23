@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireReusableUIComponents
 
 final class BackupViewController: UIViewController, SpinnerCapable {
 

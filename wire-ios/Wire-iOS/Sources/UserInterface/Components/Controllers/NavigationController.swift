@@ -18,13 +18,10 @@
 
 import UIKit
 import WireDesign
-import WireReusableUIComponents
 import WireUtilities
 
 final class NavigationController: UINavigationController, SpinnerCapable {
-
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private lazy var pushTransition = NavigationTransition(operation: .push)
     private lazy var popTransition = NavigationTransition(operation: .pop)

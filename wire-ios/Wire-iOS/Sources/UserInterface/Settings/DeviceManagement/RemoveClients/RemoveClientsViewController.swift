@@ -19,7 +19,6 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
-import WireReusableUIComponents
 import WireSyncEngine
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {

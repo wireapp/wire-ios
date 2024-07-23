@@ -18,7 +18,6 @@
 
 import UIKit
 import WireDataModel
-import WireReusableUIComponents
 import WireSyncEngine
 
 typealias ViewControllerPresenter = (UIViewController, Bool, (() -> Void)?) -> Void

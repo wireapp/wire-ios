@@ -18,7 +18,6 @@
 
 import MessageUI
 import WireDataModel
-import WireReusableUIComponents
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
