@@ -123,15 +123,13 @@ extension ZMConversation {
                let payload = response.payload,
                let data = payload.asDictionary()?[ZMConversation.TransportKey.data] as? [String: Any],
                let uri = data[ZMConversation.TransportKey.uri] as? String {
-                // TODO: [F] why completion is before processing userSession?
+                // TODO: [F] [WPB-10283] why completion is before processing userSession?
+                // note the processConversationEvents is within a task so it won't make a difference
+
                 completion(.success(uri))
-                // TODO: [F] check if adding UUID here is ok
-                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
+                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                     // Process `conversation.code-update` event
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
-                    // swiftlint:enable todo_requires_jira_link
-                    userSession.processUpdateEvents([event])
+                    userSession.processConversationEvents([event])
                 }
             } else if response.httpStatus == 200,
                       let payload = response.payload?.asDictionary(),
@@ -238,13 +236,13 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if let payload = response.payload,
-               // TODO: [F] check if addind UUID is ok
-               let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
+               // no need of eventId since we process the event directly
+                let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                 self.allowGuests = allowGuests
                 self.allowServices = allowServices
 
                 // Process `conversation.access-update` event
-                userSession.processUpdateEvents([event])
+                userSession.processConversationEvents([event])
                 completion(.success(()))
             } else {
                 zmLog.debug("Error setting access role:  \(response)")

@@ -74,15 +74,13 @@ extension ZMConversation {
             switch response.httpStatus {
             case 200:
                 guard let payload = response.payload,
-                      // TODO: [F] check if adding UUID is ok
-                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()),
+                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
                       let conversationString = event.payload["conversation"] as? String else {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
 
                 Task {
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    // FIXME: [WPB-10283] [jacob] replace with ConversationEventProcessor
                     try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),

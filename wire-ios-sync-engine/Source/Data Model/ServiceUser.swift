@@ -317,8 +317,8 @@ public extension ZMConversation {
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),
                   let userAddEventPayload = responseDictionary["event"] as? ZMTransportData,
-                  // TODO: [F] check if adding UUID here is ok
-                  let event = ZMUpdateEvent(fromEventStreamPayload: userAddEventPayload, uuid: UUID()) else {
+                  // TODO: [F] [WPB-10283] check if adding UUID here is ok
+                  let event = ZMUpdateEvent(fromEventStreamPayload: userAddEventPayload, uuid: nil) else {
                       completionHandler(.failure(AddBotError(response: response)))
                       return
                   }
