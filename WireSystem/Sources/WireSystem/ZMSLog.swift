@@ -20,9 +20,6 @@ import Foundation
 import os.log
 import ZipArchive
 
-// TODO: migrate
-func ZMLastAssertionFile() -> URL! { fatalError() }
-
 /// Represents an entry to be logged.
 @objcMembers
 public final class ZMSLogEntry: NSObject {
@@ -337,8 +334,17 @@ extension ZMSLog {
                 paths.append(url)
             }
         }
-        if let assertionFile = ZMLastAssertionFile(), FileManager.default.fileExists(atPath: assertionFile.path) {
+        let assertionFile: URL?
+        do {
+            assertionFile = try AssertionDumpFile.url
+        } catch {
+            WireLogger.system.warn("AssertionDumpFile.url threw error: \(String(reflecting: error))")
+            assertionFile = nil
+        }
+        if let assertionFile, FileManager.default.fileExists(atPath: assertionFile.path) {
             paths.append(assertionFile)
+        } else {
+            assertionFailure("DumpFile.url is nil")
         }
         if let currentPath = currentLogURL, FileManager.default.fileExists(atPath: currentPath.path) {
             paths.append(currentPath)

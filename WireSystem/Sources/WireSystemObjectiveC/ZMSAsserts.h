@@ -123,7 +123,7 @@ do { \
 #pragma mark - Assert reporting
 
 /// URL of the "last assertion" log file
-FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
+FOUNDATION_EXTERN NSURL* ZMLastAssertionFile_(void);
 /// Dump a crash to the crash dump file
 FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
 /// Dump a crash to the crash dump file

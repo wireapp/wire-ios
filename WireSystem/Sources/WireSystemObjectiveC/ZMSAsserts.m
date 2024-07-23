@@ -20,7 +20,6 @@
 @import WireSystem;
 
 #import "ZMSAsserts.h"
-//#import "WireSystem/WireSystem-Swift.h"
 
 void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message) {
     ZMAssertionDump(assertion.UTF8String, filename.UTF8String, linenumber, "%s", message.UTF8String);
@@ -45,23 +44,6 @@ void ZMAssertionDump(const char * const assertion, const char * const filename, 
     // report error to datadog or other loggers
     [WireLoggerObjc assertionDumpLog:output];
 
-    // prepare file and exclude from backup
-    NSURL *dumpFile = ZMLastAssertionFile();
-    [[NSData data] writeToURL:dumpFile atomically:NO];
-    [dumpFile setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
-    
-    // dump to file
-    [[output dataUsingEncoding:NSUTF8StringEncoding] writeToURL:dumpFile atomically:YES];
-}
-
-NSURL* ZMLastAssertionFile(void) {
-    
-    NSURL* appSupportDir = [[NSFileManager defaultManager]
-                            URLForDirectory:NSApplicationSupportDirectory
-                            inDomain:NSUserDomainMask
-                            appropriateForURL:nil
-                            create:YES
-                            error:nil];
-    
-    return [appSupportDir URLByAppendingPathComponent:@"last_assertion.log"];
+    // prepare and dump to file
+    [ZMAssertionDumpFile writeWithContent:output error:nil];
 }
