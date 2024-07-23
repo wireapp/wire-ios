@@ -18,13 +18,13 @@
 
 import UIKit
 import WireDesign
-import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
 
+    typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
-    typealias ViewColors = SemanticColors.View
+
     var onCompletion: ((_ password: String?) -> Void)?
 
     private var password: String?
@@ -32,14 +32,14 @@ final class BackupPasswordViewController: UIViewController {
 
     private let subtitleLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(text: HistoryBackup.Password.description,
-                                     fontSpec: .mediumRegularFont,
+                                     style: .subline1,
                                      color: LabelColors.textSectionHeader)
         label.numberOfLines = 0
         return label
     }()
 
     private let passwordRulesLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
+        let label = DynamicFontLabel(style: .subline1,
                                      color: LabelColors.textSectionHeader)
         label.numberOfLines = 0
         return label
@@ -72,7 +72,7 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     private func setupViews() {
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.backgroundColor = ViewColors.backgroundDefault
         passwordRulesLabel.text = PasswordRuleSet.localizedErrorMessage
 
         [passwordView, subtitleLabel, passwordRulesLabel].forEach {
@@ -89,7 +89,7 @@ final class BackupPasswordViewController: UIViewController {
         passwordView.textColor = LabelColors.textSectionHeader
         passwordView.backgroundColor = ViewColors.backgroundUserCell
         let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-                                                        .font: FontSpec.smallRegularFont.font!]
+                                                         .font: UIFont.font(for: .body1)]
         passwordView.updatePlaceholderAttributedText(attributes: attributes)
     }
 
@@ -125,7 +125,7 @@ final class BackupPasswordViewController: UIViewController {
             systemImage: false,
             target: self,
             action: #selector(completeWithCurrentResult)
-       )
+        )
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
@@ -152,6 +152,7 @@ final class BackupPasswordViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 
 extension BackupPasswordViewController: UITextFieldDelegate {
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 
         if string.containsCharacters(from: .whitespaces) {
