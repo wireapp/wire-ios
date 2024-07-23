@@ -18,4 +18,4 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WireTestingObjectiveC/Placeholder.h>
+#import <WireTestingObjectiveC/ZMTBaseTest.h>

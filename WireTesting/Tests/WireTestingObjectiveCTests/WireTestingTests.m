@@ -16,11 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+@import WireTestingObjectiveC;
 
-@testable import WireTesting
+@interface WireTestingTests : ZMTBaseTest
 
-final class PlaceholderTests: XCTestCase {
+@end
 
-    func testNothing() {}
+@implementation WireTestingTests
+
+- (void)testWaitForAllGroupsToBeEmpty {
+    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:100]);
 }
+
+- (void)testWaitForAllGroupsToBeEmptyFail {
+    [self.dispatchGroup enter];
+    XCTAssertFalse([self waitForAllGroupsToBeEmptyWithTimeout:0.01]);
+    [self.dispatchGroup leave];
+}
+
+@end
