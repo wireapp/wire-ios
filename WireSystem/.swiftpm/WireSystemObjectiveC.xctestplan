@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "956CF61B-622E-485B-A6C4-3668B98683A8",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSystemObjectiveCTests",
+        "name" : "WireSystemObjectiveCTests"
+      }
+    }
+  ],
+  "version" : 1
+}
