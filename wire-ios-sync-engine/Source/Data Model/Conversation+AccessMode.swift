@@ -123,10 +123,12 @@ extension ZMConversation {
                let payload = response.payload,
                let data = payload.asDictionary()?[ZMConversation.TransportKey.data] as? [String: Any],
                let uri = data[ZMConversation.TransportKey.uri] as? String {
+                // TODO: [WPB-10283] [F]  why completion is before processing userSession?
+                // note the processConversationEvents is within a task so it won't make a difference
 
                 completion(.success(uri))
-
-                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+                // TODO: [WPB-10283] [F] uuid is passed here to processUpdateEvents
+                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
                     // Process `conversation.code-update` event
                     // swiftlint:disable todo_requires_jira_link
                     // FIXME: [jacob] replace with ConversationEventProcessor
@@ -238,12 +240,13 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if let payload = response.payload,
-               let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+               // no need of eventId since we process the event directly
+                let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                 self.allowGuests = allowGuests
                 self.allowServices = allowServices
 
                 // Process `conversation.access-update` event
-                userSession.processUpdateEvents([event])
+                userSession.processConversationEvents([event])
                 completion(.success(()))
             } else {
                 zmLog.debug("Error setting access role:  \(response)")

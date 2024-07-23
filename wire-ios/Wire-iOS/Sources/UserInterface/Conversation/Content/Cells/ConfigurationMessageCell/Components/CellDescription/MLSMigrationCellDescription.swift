@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireCommonComponents
 
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
@@ -26,7 +27,7 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
-        .link: URL.wr_mlsLearnMore
+        .link: WireURLs.shared.mlsInfo
     ]
 
     let configuration: View.Configuration
