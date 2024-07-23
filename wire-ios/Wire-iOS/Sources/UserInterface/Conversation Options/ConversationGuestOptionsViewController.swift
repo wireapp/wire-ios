@@ -113,11 +113,13 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private func setupNavigationBar() {
         navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
 
-        setupNavigationBarTitle(L10n.Localizable.GroupDetails.GuestOptionsCell.title)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.GuestOptionsCell.title.capitalized)
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
     }
 
     private func createConstraints() {
@@ -203,11 +205,12 @@ final class ConversationGuestOptionsViewController: UIViewController,
         wantsToShareMessage message: String,
         sourceView: UIView
     ) {
-        let activityController = TintCorrectedActivityViewController(activityItems: [message], applicationActivities: nil)
+        let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         if let popoverPresentationController = activityController.popoverPresentationController {
             popoverPresentationController.sourceView = sourceView.superview!
             popoverPresentationController.sourceRect = sourceView.frame
         }
+
         present(activityController, animated: true)
     }
 

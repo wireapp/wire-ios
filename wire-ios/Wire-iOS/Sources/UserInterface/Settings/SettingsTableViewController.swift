@@ -164,6 +164,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(group.title)
+        setupNavigationBar()
     }
 
     required init(group: SettingsInternalGroupCellDescriptorType) {
@@ -195,9 +196,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupTableView()
-        setupNavigationBar()
     }
 
     private func setupTableView() {
@@ -220,14 +219,13 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
         setupAccessibility()
     }
 
     private func setupAccessibility() {
-        typealias Accessibility = L10n.Accessibility.Settings
-
-        navigationItem.rightBarButtonItem?.accessibilityLabel = Accessibility.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
