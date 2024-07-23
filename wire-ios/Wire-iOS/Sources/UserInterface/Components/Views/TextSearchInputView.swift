@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireReusableUIComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSystem
 
 protocol TextSearchInputViewDelegate: AnyObject {
