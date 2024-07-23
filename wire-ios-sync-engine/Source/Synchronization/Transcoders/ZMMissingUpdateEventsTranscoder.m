@@ -165,6 +165,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     NSMutableArray<ZMUpdateEvent *> *parsedEvents = [NSMutableArray array];
     NSMutableArray<NSUUID *> *eventIds = [NSMutableArray array];
     NSUUID *latestEventId = nil;
+    // TODO: double check this
     ZMUpdateEventSource source = self.isFetchingStreamForAPNS || self.isFetchingStreamInBackground ? ZMUpdateEventSourcePushNotification : ZMUpdateEventSourceDownload;
     for (NSDictionary *eventDictionary in eventsDictionaries) {
         NSArray *events = [ZMUpdateEvent eventsArrayFromTransportData:eventDictionary source:source];

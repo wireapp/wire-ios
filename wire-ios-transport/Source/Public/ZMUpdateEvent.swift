@@ -31,6 +31,19 @@ import WireUtilities
     case download
 }
 
+public extension ZMUpdateEventSource {
+    var name: String {
+        return switch self {
+        case .webSocket:
+            "webSocket"
+        case .pushNotification:
+            "pushNotification"
+        case .download:
+            "download"
+        }
+    }
+}
+
 @objc public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case unknown = 0
     case conversationAssetAdd = 1

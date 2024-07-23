@@ -94,7 +94,7 @@ public final class StoredUpdateEvent: NSManagedObject {
                                                          eventHash: eventHash,
                                                          index: index,
                                                          context: context) else {
-            WireLogger.updateEvent.error("could not store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
+            WireLogger.updateEvent.error("could not store event", attributes: event.logAttributes)
             return nil
         }
 
