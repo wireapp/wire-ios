@@ -22,8 +22,13 @@ extension Countly: AnalyticsService {
 
     func start(appKey: String, host: URL) {
         let config = CountlyConfig()
+        let apmConfig = CountlyAPMConfig()
+
         config.appKey = appKey
         config.host = host.absoluteString
+        apmConfig.enableForegroundBackgroundTracking = true
+        apmConfig.enableAppStartTimeTracking = true
+        config.apm()
         start(with: config)
     }
 
