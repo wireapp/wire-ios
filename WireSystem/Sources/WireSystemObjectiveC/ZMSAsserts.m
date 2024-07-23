@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
 #import "ZMSAsserts.h"
 #import "WireSystem/WireSystem-Swift.h"
 

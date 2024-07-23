@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <WireSystem/ZMSAsserts.h>
+@import Foundation;
+
+#import <WireSystemObjectiveC/ZMSAsserts.h>
 
 /// Log levels
 typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel) {

@@ -1,0 +1,3 @@
+module WireSystemObjectiveC {
+    header "WireSystemObjectiveC.h"
+}
