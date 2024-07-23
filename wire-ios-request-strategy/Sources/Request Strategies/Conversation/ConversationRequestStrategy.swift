@@ -375,6 +375,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         // no op
     }
 
+<<<<<<< HEAD
     public func updateUpdatedObject(
         _ managedObject: ZMManagedObject,
         requestUserInfo: [AnyHashable: Any]? = nil,
@@ -382,13 +383,18 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         keysToParse: Set<String>
     ) -> Bool {
 
+=======
+    public func updateUpdatedObject(_ managedObject: ZMManagedObject,
+                                    requestUserInfo: [AnyHashable: Any]? = nil,
+                                    response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+>>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725))
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),
             let payload = response.payload
         else {
             return false
         }
-
+        // TODO: [WPB-10283] [F] check if we need to wait for the processPayload
         conversationEventProcessor.processPayload(payload)
 
         return false
