@@ -60,8 +60,7 @@ extension SessionManager {
                 case .success:
                     break
                 case .failure:
-                    let exportBackupFailed = BackupExportFailedAnalyticsEvent()
-                    activeUserSession.analyticsSession?.trackEvent(exportBackupFailed)
+                    activeUserSession.analyticsSession?.trackEvent(BackupExportFailedAnalyticsEvent())
                 }
 
                 SessionManager.handle(
