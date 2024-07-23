@@ -28,7 +28,6 @@ typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel) {
     ZMLogLevelDebug,
 };
 
-
 /**
  
  Logging
@@ -57,18 +56,21 @@ typedef NS_CLOSED_ENUM(int8_t, ZMLogLevel) {
 #define ZMLogInfo(format, ...) ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMLogTag, format, ##__VA_ARGS__)
 #define ZMLogDebug(format, ...) ZMLogWithLevelAndTag(ZMLogLevelDebug, ZMLogTag, format, ##__VA_ARGS__)
 
-
 #define ZMLogWithLevelAndTag(level, tag, format, ...) \
     do { \
-        ZMLog(tag, __FILE__, __LINE__, level, format, ##__VA_ARGS__); \
+        NSString *message = [[NSString alloc] initWithFormat:format, ##__VA_ARGS__]; \
+        [ZMSLog logWithLevel:level message:^NSString * _Nonnull { \
+            return message; \
+        } tag:tag file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
     } while (0)
 
 #define ZMLogWithLevel(level, format, ...) \
     do { \
-        ZMLog(0, __FILE__, __LINE__, level, format, ##__VA_ARGS__); \
+        NSString *message = [[NSString alloc] initWithFormat:format, ##__VA_ARGS__]; \
+        [ZMSLog logWithLevel:level message:^NSString * _Nonnull { \
+            return message; \
+        } tag:0 file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
     } while (0)
 
 /// Logs an assert
 FOUNDATION_EXTERN void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
-/// Logs a message
-FOUNDATION_EXTERN void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel logLevel, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);
