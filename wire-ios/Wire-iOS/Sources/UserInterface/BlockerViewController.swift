@@ -20,6 +20,7 @@ import Foundation
 import UIKit
 import WireSyncEngine
 import MessageUI
+import WireCommonComponents
 
 enum BlockerViewControllerContext {
     case blacklist
@@ -86,7 +87,7 @@ final class BlockerViewController: LaunchImageViewController {
 
         presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
                                  message: L10n.Localizable.Force.Update.message) { _ in
-            UIApplication.shared.open(URL.wr_wireAppOnItunes)
+            UIApplication.shared.open(WireURLs.shared.appOnItunes)
         }
     }
 
@@ -108,7 +109,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
-                UIApplication.shared.open(URL.wr_e2eiLearnMore)
+                UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
             }
         )
 

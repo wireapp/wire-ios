@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 
 typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
@@ -40,7 +41,7 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
         )
         secondaryView = nil
         headline = E2ei.title
-        let details = [E2ei.subtitle, E2ei.learnMore(URL.wr_e2eiLearnMore)].joined(separator: "\n")
+        let details = [E2ei.subtitle, E2ei.learnMore(WireURLs.shared.endToEndIdentityInfo)].joined(separator: "\n")
         subtext = .markdown(from: details, style: .login)
     }
 
