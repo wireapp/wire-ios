@@ -111,18 +111,14 @@ final class BackupPasswordViewController: UIViewController {
     private func setupNavigationBar() {
         let textColor = LabelColors.textDefault
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
-        navigationController?.navigationBar.tintColor = textColor
-        navigationController?.navigationBar.barTintColor = textColor
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: textColor)
 
-        setupNavigationBarTitle(HistoryBackup.Password.title.capitalized)
+        setupNavigationBarTitle(HistoryBackup.Password.title)
 
-        let cancelButtonItem: UIBarButtonItem = .createNavigationLeftBarButtonItem(
+        let cancelButtonItem = UIBarButtonItem.createNavigationLeftBarButtonItem(
             title: HistoryBackup.Password.cancel.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(cancel)
-        )
+            action: UIAction { [weak self] _ in
+                self?.onCompletion?(nil)
+            })
 
         let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
             title: HistoryBackup.Password.next.capitalized,
@@ -146,10 +142,6 @@ final class BackupPasswordViewController: UIViewController {
             password = nil
             navigationItem.rightBarButtonItem?.isEnabled = false
         }
-    }
-
-    @objc dynamic private func cancel() {
-        onCompletion?(nil)
     }
 
     @objc dynamic private func completeWithCurrentResult() {
