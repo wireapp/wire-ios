@@ -123,11 +123,11 @@ extension ZMConversation {
                let payload = response.payload,
                let data = payload.asDictionary()?[ZMConversation.TransportKey.data] as? [String: Any],
                let uri = data[ZMConversation.TransportKey.uri] as? String {
-                // TODO: [F] [WPB-10283] why completion is before processing userSession?
+                // TODO: [WPB-10283] [F]  why completion is before processing userSession?
                 // note the processConversationEvents is within a task so it won't make a difference
 
                 completion(.success(uri))
-                // TODO: [F]  [WPB-10283] uuid is passed here to processUpdateEvents
+                // TODO: [WPB-10283] [F] uuid is passed here to processUpdateEvents
                 if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()) {
                     // Process `conversation.code-update` event
                     // swiftlint:disable todo_requires_jira_link

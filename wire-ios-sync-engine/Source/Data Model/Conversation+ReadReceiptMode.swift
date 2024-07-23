@@ -55,7 +55,7 @@ extension ZMConversation {
                     await userSession.conversationEventProcessor.processConversationEvents([event])
                     await userSession.syncContext.perform {
                         // compared to eventProcessor the conversationEventProcessor does not save the context so we do it here
-                       _ =  userSession.syncContext.saveOrRollback()
+                       _ = userSession.syncContext.saveOrRollback()
                     }
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))
