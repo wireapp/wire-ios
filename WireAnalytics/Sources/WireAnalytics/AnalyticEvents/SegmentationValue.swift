@@ -25,7 +25,7 @@
 /// - Note: This struct conforms to `Hashable`, allowing it to be used in sets and as dictionary keys.
 public struct SegmentationValue: Hashable {
 
-  let key: String
-  let value: String
+    let key: String
+    let value: String
 
 }

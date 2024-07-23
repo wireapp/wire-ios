@@ -30,7 +30,6 @@ public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
             .isVideoCall(isVideoCall),
             .groupType(conversationType)
         ]
-
     }
 
     /// Indicates whether the call is a video call.

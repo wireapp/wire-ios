@@ -36,6 +36,6 @@ public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
 
     /// Additional segmentation data for the event.
     public var segmentation: Set<SegmentationValue> {
-        return []
+        []
     }
 }
