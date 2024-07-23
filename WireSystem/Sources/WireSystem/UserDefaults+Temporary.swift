@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension UserDefaults {
+public extension UserDefaults {
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
-    @objc public static func temporary() -> Self {
+    @objc static func temporary() -> Self {
         let suiteName = UUID().uuidString
         let userDefaults = Self(suiteName: suiteName)!
         objc_setAssociatedObject(
@@ -47,7 +47,6 @@ private final class SuiteCleanUp {
     }
 
     deinit {
-
         // remove all values
         UserDefaults.standard.removePersistentDomain(forName: suiteName)
 

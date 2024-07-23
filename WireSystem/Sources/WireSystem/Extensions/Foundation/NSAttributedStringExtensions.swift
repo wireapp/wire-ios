@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension Sequence where Iterator.Element == NSAttributedString {
+public extension Sequence where Iterator.Element == NSAttributedString {
 
-    public func joined(separator: NSAttributedString? = .none) -> NSAttributedString {
+    func joined(separator: NSAttributedString? = .none) -> NSAttributedString {
         let result = Array(self)
         guard result.count > 1 else { return result.first ?? .init() }
 

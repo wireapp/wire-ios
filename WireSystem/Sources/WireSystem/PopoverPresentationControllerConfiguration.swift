@@ -42,20 +42,18 @@ public enum PopoverPresentationControllerConfiguration {
 
 // MARK: - UIViewController + configurePopoverPresentationController
 
-extension UIViewController {
+public extension UIViewController {
 
     /// Sets the required properties for presenting the popover presentation controller, if it's non-`nil`.
     /// (`sourceView` and `sourceRect`, or `barButtonItem`)
     /// - Returns: `true` if the poover controller has been confiugured, `false` if `popoverPresentationController` is `nil`.
     @discardableResult
-    public func configurePopoverPresentationController(
+    func configurePopoverPresentationController(
         using configuration: PopoverPresentationControllerConfiguration
     ) -> Bool {
-
         guard let popoverPresentationController else { return false }
 
         switch configuration {
-
         case .barButtonItem(let barButtonItem):
             popoverPresentationController.barButtonItem = barButtonItem
 

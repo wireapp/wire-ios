@@ -22,13 +22,12 @@ import Foundation
 public final class AssertionDumpFile: NSObject {
 
     @available(*, unavailable)
-    public override init() {
+    override public init() {
         fatalError()
     }
 
     public static var url: URL {
         get throws {
-
             let applicationSupportDirectory = try FileManager.default.url(
                 for: .applicationSupportDirectory,
                 in: .userDomainMask,
@@ -41,7 +40,6 @@ public final class AssertionDumpFile: NSObject {
     }
 
     public static func write(content: String) throws {
-
         var dumpFile = try url
         try Data().write(to: dumpFile)
 

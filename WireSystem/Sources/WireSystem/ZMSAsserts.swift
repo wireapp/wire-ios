@@ -25,7 +25,7 @@ public func fatal(
     line: UInt = #line
 ) -> Never {
     // TODO: create ZMAssertionDump_String in Swift
-    //ZMAssertionDump_NSString("Swift assertion", "\(file)", Int32(line), message)
+    // ZMAssertionDump_NSString("Swift assertion", "\(file)", Int32(line), message)
     fatalError(message, file: file, line: line)
 }
 
@@ -52,9 +52,9 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
     var canFatalError: Bool {
         switch self {
         case .debug, .develop:
-            return true
+            true
         case .appStore, .unknown:
-            return false
+            false
         }
     }
 }

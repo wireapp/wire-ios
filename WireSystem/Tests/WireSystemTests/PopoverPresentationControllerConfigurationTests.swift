@@ -26,7 +26,6 @@ final class PopoverPresentationControllerConfigurationTests: XCTestCase {
 
     @MainActor
     func testConfiguringBarButtonItem() throws {
-
         if UIDevice.current.userInterfaceIdiom == .phone {
             throw XCTSkip("not relevant")
         }
@@ -48,7 +47,6 @@ final class PopoverPresentationControllerConfigurationTests: XCTestCase {
 
     @MainActor
     func testConfiguringSourceView() throws {
-
         if UIDevice.current.userInterfaceIdiom == .phone {
             throw XCTSkip("not relevant")
         }
@@ -71,7 +69,6 @@ final class PopoverPresentationControllerConfigurationTests: XCTestCase {
 
     @MainActor
     func testConfiguringSourceViewxx() throws {
-
         if UIDevice.current.userInterfaceIdiom == .phone {
             throw XCTSkip("not relevant")
         }

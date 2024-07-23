@@ -22,7 +22,7 @@ import Foundation
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
 
-    private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+    private let fileLogger: DDFileLogger = .init() // File Logger
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -61,8 +61,8 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
     private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
         var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
+        for attribute in attributes {
+            mergedAttributes.merge(attribute) { _, new in new }
         }
 
         var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"

@@ -28,7 +28,7 @@ extension SanitizedString: ExpressibleByStringLiteral {
 
 extension SanitizedString: ExpressibleByStringInterpolation {
     public init(stringInterpolation: SanitizedString) {
-        self.value = stringInterpolation.value
+        value = stringInterpolation.value
     }
 }
 
@@ -42,11 +42,11 @@ extension SanitizedString: StringInterpolationProtocol {
         value += literal
     }
 
-    public mutating func appendInterpolation<T: SafeForLoggingStringConvertible>(_ x: T?) {
+    public mutating func appendInterpolation(_ x: (some SafeForLoggingStringConvertible)?) {
         value += x?.safeForLoggingDescription ?? "nil"
     }
 
-    public static func + <T: SafeForLoggingStringConvertible>(lhs: SanitizedString, rhs: T) -> SanitizedString {
+    public static func + (lhs: SanitizedString, rhs: some SafeForLoggingStringConvertible) -> SanitizedString {
         .init(value: lhs.value + rhs.safeForLoggingDescription)
     }
 }

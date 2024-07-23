@@ -23,7 +23,6 @@ import XCTest
 final class ZMAssertionDumpFileTests: XCTestCase {
 
     override func setUpWithError() throws {
-
         let url = try AssertionDumpFile.url
         if FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.removeItem(at: AssertionDumpFile.url)
@@ -31,7 +30,6 @@ final class ZMAssertionDumpFileTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-
         let url = try AssertionDumpFile.url
         if FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.removeItem(at: AssertionDumpFile.url)
@@ -39,7 +37,6 @@ final class ZMAssertionDumpFileTests: XCTestCase {
     }
 
     func testThatItDumpToCrashFile() throws {
-        
         // Given
         let expected = "ASSERT: [printer.c:234] <lp0 != 0> lp0 on fire"
 
@@ -49,6 +46,6 @@ final class ZMAssertionDumpFileTests: XCTestCase {
         // Then
         let data = try Data(contentsOf: AssertionDumpFile.url)
         let actual = String(data: data, encoding: .utf8)
-        XCTAssertEqual(actual, expected);
+        XCTAssertEqual(actual, expected)
     }
 }

@@ -23,16 +23,14 @@ import XCTest
 final class TimePointTests: XCTestCase {
 
     func testThatATimePointDoesNotWarnTooEarly() {
-
         // Given
-        let tp = TimePoint(interval: 1000)
+        let tp = TimePoint(interval: 1_000)
 
         // Then
         XCTAssertFalse(tp.warnIfLongerThanInterval())
     }
 
     func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
-
         // Given
         let tp = TimePoint(interval: 0.01)
 

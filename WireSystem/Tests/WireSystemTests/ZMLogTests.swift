@@ -45,7 +45,6 @@ final class ZMLogTests: XCTestCase {
     }
 
     func testThatTheLoggerRegistersATag() {
-
         // given
         let tag = "Foo"
 
@@ -58,7 +57,6 @@ final class ZMLogTests: XCTestCase {
     }
 
     func testThatTheLoggerRegistersTheRightLevel() {
-
         // given
         let tag = "Test11"
 
@@ -70,7 +68,6 @@ final class ZMLogTests: XCTestCase {
     }
 
     func testThatTheLevelIsDebug() {
-
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
@@ -91,7 +88,6 @@ final class ZMLogTests: XCTestCase {
     }
 
     func testThatTheLevelIsWarn() {
-
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
@@ -112,7 +108,6 @@ final class ZMLogTests: XCTestCase {
     }
 
     func testThatTheLevelIsInfo() {
-
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
@@ -133,7 +128,6 @@ final class ZMLogTests: XCTestCase {
     }
 
     func testThatTheLevelIsError() {
-
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
@@ -155,6 +149,7 @@ final class ZMLogTests: XCTestCase {
 }
 
 // MARK: - Log level management
+
 extension ZMLogTests {
 
     func testThatLogIsNotRegisteredIfNoLogIsCalled() {
@@ -162,7 +157,6 @@ extension ZMLogTests {
     }
 
     func testThatLogIsRegistered() {
-
         // GIVEN
         let tag = "Async"
 
@@ -174,7 +168,6 @@ extension ZMLogTests {
     }
 
     func testThatTheLogTagIsRegisteredAfterInitializingLog() {
-
         // GIVEN
         let tag = "Network"
 
@@ -190,7 +183,6 @@ extension ZMLogTests {
     }
 
     func testThatTheLogLevelCanBeChanged() {
-
         // GIVEN
         let tag = "Draw"
 
@@ -203,16 +195,16 @@ extension ZMLogTests {
 }
 
 // MARK: - Debug hook
+
 extension ZMLogTests {
 
     func testThatLogHookIsCalledWithError() {
-
         // GIVEN
         let tag = "Network"
         let level = ZMLogLevel.error
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -224,14 +216,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
     func testThatLogHookIsNotCalledWithInfo() {
-
         // GIVEN
         let tag = "Network"
         let level = ZMLogLevel.info
@@ -254,13 +245,12 @@ extension ZMLogTests {
     }
 
     func testThatLogHookIsCalledWithWarning() {
-
         // GIVEN
         let tag = "Network"
         let level = ZMLogLevel.warn
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -272,14 +262,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).warn(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
     func testThatLogHookIsNotCalledWithDebug() {
-
         // GIVEN
         let tag = "Network"
         let level = ZMLogLevel.debug
@@ -303,13 +292,12 @@ extension ZMLogTests {
     }
 
     func testThatLogHookIsCalledWithDebugIfEnabled() {
-
         // GIVEN
         let tag = "Network"
         let level = ZMLogLevel.debug
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -322,14 +310,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).debug(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
     func testThatLogHookIsNotCalledWhenRemoved() {
-
         // GIVEN
         let tag = "Network"
         let message = "PANIC!"
@@ -345,7 +332,6 @@ extension ZMLogTests {
     }
 
     func testThatLogHookIsNotCalledWhenRemovedAll() {
-
         // GIVEN
         let tag = "Network"
         let message = "PANIC!"
@@ -361,14 +347,13 @@ extension ZMLogTests {
     }
 
     func testThatCallsMultipleLogHook() {
-
         // GIVEN
         let tag = "Network"
         let level = ZMLogLevel.error
         let message = "PANIC!"
 
-        let expectation1 = self.expectation(description: "Log received")
-        let expectation2 = self.expectation(description: "Log received")
+        let expectation1 = expectation(description: "Log received")
+        let expectation2 = expectation(description: "Log received")
 
         let token1 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
@@ -387,7 +372,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token1)
@@ -416,7 +401,6 @@ extension ZMLogTests {
 extension ZMLogTests {
 
     func testThatRecordedLogsAreNotWritedWhenNotStarted() {
-
         // GIVEN
         let sut = ZMSLog(tag: "foo")
         let currentLog = ZMSLog.currentZipLog
@@ -426,11 +410,9 @@ extension ZMLogTests {
 
         // THEN
         XCTAssertEqual(ZMSLog.currentZipLog, currentLog)
-
     }
 
     func testThatItRecordsLogs() {
-
         // GIVEN
         let sut = ZMSLog(tag: "foo")
         ZMSLog.startRecording()
@@ -453,7 +435,7 @@ extension ZMLogTests {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
-                return "hidden"
+                "hidden"
             }
         }
 
@@ -474,7 +456,7 @@ extension ZMLogTests {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
-                return "hidden"
+                "hidden"
             }
         }
 
@@ -497,7 +479,6 @@ extension ZMLogTests {
     }
 
     func testThatItDiscardsLogsWhenStopped() throws {
-
         // GIVEN
         let sut = ZMSLog(tag: "foo")
         ZMSLog.startRecording()
@@ -517,10 +498,10 @@ extension ZMLogTests {
 }
 
 // MARK: - Save on disk
+
 extension ZMLogTests {
 
     func testThatItSavesLogsOnDisk() {
-
         // given
         let sut = ZMSLog(tag: "foo")
         ZMSLog.startRecording()
@@ -536,7 +517,6 @@ extension ZMLogTests {
     }
 
     func testThatSwitchesCurrentLogToPrevious() throws {
-
         // given
         let sut = ZMSLog(tag: "foo")
         ZMSLog.startRecording()
@@ -557,7 +537,6 @@ extension ZMLogTests {
     }
 
     func testThatSwitchesCurrentLogToPrevious_multipleFiles() throws {
-
         // given
         let sut = ZMSLog(tag: "foo")
         ZMSLog.startRecording()
@@ -610,7 +589,6 @@ extension ZMLogTests {
 extension ZMLogTests {
 
     func testThatItSavesDebugTagsInProduction() throws {
-
         // given
         let tag = "tag"
         let sut = ZMSLog(tag: tag)
@@ -644,7 +622,6 @@ extension ZMLogTests {
     }
 
     func testThatItSavesAllLevelsOnInternals() {
-
         // given
         let tag = "tag"
         let sut = ZMSLog(tag: tag)
@@ -681,7 +658,6 @@ extension ZMLogTests {
     }
 
     func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
-
         guard
             let currentLog = ZMSLog.currentLogURL,
             let data = FileManager.default.contents(atPath: currentLog.path)

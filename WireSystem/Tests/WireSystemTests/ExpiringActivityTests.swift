@@ -25,7 +25,6 @@ final class ExpiringActivityTests: XCTestCase {
     let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])
 
     func testThatTaskIsCancelled_WhenActivityExpires() async throws {
-
         // given
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
@@ -48,11 +47,10 @@ final class ExpiringActivityTests: XCTestCase {
                 }
             }
             XCTFail("Expected a cancellation error to be thrown")
-        } catch { }
+        } catch {}
     }
 
     func testThatTaskIsCancelled_WhenActivityIsNotAllowedToBegin() async throws {
-
         // given
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
@@ -72,11 +70,10 @@ final class ExpiringActivityTests: XCTestCase {
                 }
             }
             XCTFail("Expected an expiring activity not allowed to run error to be thrown")
-        } catch { }
+        } catch {}
     }
 
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {
-
         // given
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)

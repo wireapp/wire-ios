@@ -24,11 +24,11 @@ protocol ExpiringActivityInterface {
 
 }
 
-extension ProcessInfo: ExpiringActivityInterface { }
+extension ProcessInfo: ExpiringActivityInterface {}
 
 /// The expiring activity is not allowed to run possibly because the background execution time has already expired.
 
-public struct ExpiringActivityNotAllowedToRun: Error { }
+public struct ExpiringActivityNotAllowedToRun: Error {}
 
 /// Execute an async function inside an [performExpiringActivity](https://developer.apple.com/documentation/foundation/processinfo/1617030-performexpiringactivity)
 /// which cancels the task when the activity expires. It's up to the async function to handle the cancellation by for example
@@ -71,7 +71,6 @@ actor ExpiringActivityManager {
                             WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
                             continuation.resume(throwing: error)
                         }
-
                     }
                     semaphore.wait()
                 } else {

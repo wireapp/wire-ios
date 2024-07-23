@@ -25,7 +25,7 @@ public protocol LogConvertible {
 extension String: LogConvertible {
 
     public var logDescription: String {
-        return self
+        self
     }
 
 }

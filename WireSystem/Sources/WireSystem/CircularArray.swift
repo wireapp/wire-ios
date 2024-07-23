@@ -36,7 +36,7 @@ public struct CircularArray<Element> {
     private var listEnd = 0
 
     private var isFull: Bool {
-        return self.circularArray.count == size
+        circularArray.count == size
     }
 
     /// Insert an element in the array
@@ -44,7 +44,7 @@ public struct CircularArray<Element> {
     @discardableResult public mutating func add(_ element: Element) -> Element? {
         let discardedElement: Element?
 
-        if !self.isFull {
+        if !isFull {
             circularArray.append(element)
             discardedElement = nil
         } else {
@@ -59,22 +59,22 @@ public struct CircularArray<Element> {
 
     /// Returns the cache content
     public var content: [Element] {
-        if self.isFull {
-            return Array(circularArray[listEnd..<size]) + Array(circularArray[0..<listEnd])
+        if isFull {
+            return Array(circularArray[listEnd ..< size]) + Array(circularArray[0 ..< listEnd])
         }
-        return Array(circularArray[0..<listEnd])
+        return Array(circularArray[0 ..< listEnd])
     }
 
     /// Remove content from cache
     public mutating func clear() {
-        self.listEnd = 0
-        self.circularArray = []
-        self.circularArray.reserveCapacity(size)
+        listEnd = 0
+        circularArray = []
+        circularArray.reserveCapacity(size)
     }
 
     public init(size: Int, initialValue: [Element] = []) {
         self.size = size
-        self.circularArray = initialValue
-        self.circularArray.reserveCapacity(size)
+        circularArray = initialValue
+        circularArray.reserveCapacity(size)
     }
 }
