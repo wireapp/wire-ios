@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
-import WireTransport
 import XCTest
+
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
@@ -43,11 +45,11 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         shouldRenew: Bool
     ) {
         // given
-        let previousApiVersion = BackendInfo.apiVersion
         defer {
-            BackendInfo.apiVersion = previousApiVersion
+            BackendInfo.resetMocking()
             transportSession.renewAccessTokenCalls = []
         }
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = apiVersion
 
         // when
