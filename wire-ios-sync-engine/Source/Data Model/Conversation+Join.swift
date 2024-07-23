@@ -74,14 +74,14 @@ extension ZMConversation {
             switch response.httpStatus {
             case 200:
                 guard let payload = response.payload,
-                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
+                      // uuid set in order to pass the stored events and be processed
+                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()),
                       let conversationString = event.payload["conversation"] as? String else {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
 
                 Task {
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    // FIXME: [WPB-10283] [jacob] replace with ConversationEventProcessor
                     try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),
@@ -97,6 +97,7 @@ extension ZMConversation {
 
             /// The user is already a participant in the conversation
             case 204:
+                // swiftlint:disable todo_requires_jira_link
                 // If we get to this case, then we need to re-sync local conversations
                 // TODO: implement re-syncing conversations
                 // swiftlint:enable todo_requires_jira_link

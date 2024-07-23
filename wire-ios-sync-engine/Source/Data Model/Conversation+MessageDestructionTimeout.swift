@@ -42,7 +42,8 @@ extension ZMTransportResponse {
         guard let payload else {
             return nil
         }
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+        // TODO: [WPB-10283] [F] this method is used to pass events from REST api calls response to processors, not storing the event - to be cleaned
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())
     }
 }
 

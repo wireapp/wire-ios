@@ -37,6 +37,7 @@
     
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
     XCTAssertEqual(selfUser.clients.count, 1u);
+    XCTAssertNotNil(selfUser.selfClient);
 
     __block NSDictionary *conversationTransportData;
     
