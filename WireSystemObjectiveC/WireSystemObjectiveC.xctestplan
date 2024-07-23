@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "B668F064-7C13-47F7-A262-3A10931E7C75",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:WireSystemObjectiveC.xcodeproj",
+        "identifier" : "59245F7F2C5051D50022E676",
+        "name" : "WireSystemObjectiveCTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -11,6 +11,8 @@
 		59245F812C5051D50022E676 /* WireSystemObjectiveC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59245F762C5051D50022E676 /* WireSystemObjectiveC.framework */; };
 		59245F862C5051D50022E676 /* WireSystemObjectiveCTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59245F852C5051D50022E676 /* WireSystemObjectiveCTests.m */; };
 		59245F872C5051D50022E676 /* WireSystemObjectiveC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59245F792C5051D50022E676 /* WireSystemObjectiveC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59245F9E2C5054630022E676 /* ZMSLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 59245F982C5054610022E676 /* ZMSLogging.m */; };
+		59245F9F2C5054630022E676 /* ZMSAsserts.m in Sources */ = {isa = PBXBuildFile; fileRef = 59245F9D2C5054630022E676 /* ZMSAsserts.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,12 @@
 		59245F7A2C5051D50022E676 /* WireSystemObjectiveC.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireSystemObjectiveC.docc; sourceTree = "<group>"; };
 		59245F802C5051D50022E676 /* WireSystemObjectiveCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireSystemObjectiveCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		59245F852C5051D50022E676 /* WireSystemObjectiveCTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireSystemObjectiveCTests.m; sourceTree = "<group>"; };
+		59245F982C5054610022E676 /* ZMSLogging.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSLogging.m; sourceTree = "<group>"; };
+		59245F992C5054620022E676 /* ZMSLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogging.h; sourceTree = "<group>"; };
+		59245F9A2C5054620022E676 /* ZMSDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSDefines.h; sourceTree = "<group>"; };
+		59245F9C2C5054630022E676 /* ZMSAsserts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSAsserts.h; sourceTree = "<group>"; };
+		59245F9D2C5054630022E676 /* ZMSAsserts.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSAsserts.m; sourceTree = "<group>"; };
+		59245FA02C5054D30022E676 /* WireSystemObjectiveC.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireSystemObjectiveC.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +63,7 @@
 			children = (
 				59245F782C5051D50022E676 /* Sources */,
 				59245F842C5051D50022E676 /* Tests */,
+				59245FA02C5054D30022E676 /* WireSystemObjectiveC.xctestplan */,
 				59245F772C5051D50022E676 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -73,6 +82,11 @@
 			children = (
 				59245F792C5051D50022E676 /* WireSystemObjectiveC.h */,
 				59245F7A2C5051D50022E676 /* WireSystemObjectiveC.docc */,
+				59245F9C2C5054630022E676 /* ZMSAsserts.h */,
+				59245F9D2C5054630022E676 /* ZMSAsserts.m */,
+				59245F9A2C5054620022E676 /* ZMSDefines.h */,
+				59245F992C5054620022E676 /* ZMSLogging.h */,
+				59245F982C5054610022E676 /* ZMSLogging.m */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -193,6 +207,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59245F9F2C5054630022E676 /* ZMSAsserts.m in Sources */,
+				59245F9E2C5054630022E676 /* ZMSLogging.m in Sources */,
 				59245F7B2C5051D50022E676 /* WireSystemObjectiveC.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
