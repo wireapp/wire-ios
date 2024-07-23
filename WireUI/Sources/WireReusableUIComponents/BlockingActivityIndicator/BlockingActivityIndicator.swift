@@ -43,8 +43,8 @@ public final class BlockingActivityIndicator {
 
     // MARK: - Methods
 
-    public func start() {
-        view?.blockAndStartAnimating(blockingActivityIndicator: self)
+    public func start(text: String = "") {
+        view?.blockAndStartAnimating(blockingActivityIndicator: self, text: text)
     }
 
     public func stop() {
@@ -63,7 +63,10 @@ private struct BlockingActivityIndicatorState {
 
 extension UIView {
 
-    fileprivate func blockAndStartAnimating(blockingActivityIndicator reference: BlockingActivityIndicator) {
+    fileprivate func blockAndStartAnimating(
+        blockingActivityIndicator reference: BlockingActivityIndicator,
+        text: String
+    ) {
 
         var state: BlockingActivityIndicatorState! = blockingActivityIndicatorState
 
@@ -80,6 +83,7 @@ extension UIView {
 
             // activity indicator view
             state.activityIndicatorView.color = .white
+            state.activityIndicatorView.text = text
             state.activityIndicatorView.isAnimating = true
             state.activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
             blockingView.addSubview(state.activityIndicatorView)

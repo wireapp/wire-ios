@@ -22,13 +22,6 @@ import XCTest
 
 @testable import Wire
 
-// MARK: - MockLoadingViewController
-
-// TODO: remove
-final class MockLoadingViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: (() -> Void)?
-}
-
 // MARK: - LoadingViewControllerTests
 
 final class LoadingViewControllerTests: XCTestCase {
@@ -81,18 +74,14 @@ final class LoadingViewControllerTests: XCTestCase {
         sut.stop()
 
         // Then
-        verifyInAllDeviceSizes(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     @MainActor
     func testThatItShowsLoadingIndicatorWithSubtitle() {
 
-        // Given
-        let viewController = MockLoadingViewController()
-        viewController.view.backgroundColor = .white
-
         // When
-        viewController.showLoadingView(title: "RESTORING…")
+        sut.start(text: "RESTORING…")
 
         // Then
         verifyInAllDeviceSizes(matching: viewController)
