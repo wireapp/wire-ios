@@ -123,7 +123,9 @@ final class FolderCreationController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.closeItem()
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
         let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
@@ -136,7 +138,7 @@ final class FolderCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
-        setupNavigationBarTitle(FolderCreationName.title.capitalized)
+        setupNavigationBarTitle(FolderCreationName.title)
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
