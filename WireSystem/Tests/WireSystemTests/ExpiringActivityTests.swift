@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSystem
 import XCTest
 
-class ExpiringActivityTests: XCTestCase {
+@testable import WireSystem
+
+final class ExpiringActivityTests: XCTestCase {
 
     let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])
 

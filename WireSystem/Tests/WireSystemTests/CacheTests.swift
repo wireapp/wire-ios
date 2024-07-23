@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSystem
 import XCTest
 
-class CacheTests: XCTestCase {
+@testable import WireSystem
+
+final class CacheTests: XCTestCase {
     func testThatItStoresAndReadsValue() {
         // GIVEN
         let cache = Cache<String, String>(maxCost: 1000, maxElementsCount: 10)

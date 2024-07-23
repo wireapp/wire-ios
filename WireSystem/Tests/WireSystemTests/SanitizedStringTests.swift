@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
 @testable import WireSystem
-import XCTest
 
 struct Item {
     var name: String
