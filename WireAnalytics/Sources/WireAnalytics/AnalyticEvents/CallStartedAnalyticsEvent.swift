@@ -25,9 +25,12 @@ public struct CallStartedAnalyticsEvent: AnalyticsEvent {
     }
 
     /// Additional segmentation data for the event.
-    public var segmentation: [SegmentationKey: AnalyticsValue] {
-        [.groupType: conversationType,
-         .isVideoCall: isVideoCall]
+    public var segmentation: Set<SegmentationValue> {
+        [
+            .isVideoCall(isVideoCall),
+            .groupType(conversationType)
+        ]
+
     }
 
     /// Indicates whether the call is a video call.

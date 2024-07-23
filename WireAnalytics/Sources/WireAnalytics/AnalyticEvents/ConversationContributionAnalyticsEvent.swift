@@ -23,15 +23,18 @@ public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
     public var eventName: String {
         "contributed"
     }
-
+    
     /// The segmentation information for the event.
-    public var segmentation: [SegmentationKey: AnalyticsValue] {
+    public var segmentation: Set<SegmentationValue> {
         [
-            .groupType: conversationType,
-            .contributionType: contributionType,
-            .conversationSize: conversationSize
+            .groupType(conversationType),
+            .contributionType(contributionType),
+            .conversationSize(conversationSize)
         ]
     }
+
+
+
 
     /// The type of contribution.
     public var contributionType: ContributionType

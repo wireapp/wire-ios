@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol defining the structure of an analytics event.
-public protocol AnalyticsEvent {
+/// Represents a key-value pair for analytics event segmentation.
+///
+/// This struct is used to provide additional, structured information about an analytics event.
+/// Each `SegmentationValue` consists of a key (identifying the type of information) and a value
+/// (the actual data point).
+///
+/// - Note: This struct conforms to `Hashable`, allowing it to be used in sets and as dictionary keys.
+public struct SegmentationValue: Hashable {
 
-    /// The name of the event.
-    var eventName: String { get }
-
-    /// Additional segmentation data for the event.
-    var segmentation: Set<SegmentationValue> { get }
+  let key: String
+  let value: String
 
 }

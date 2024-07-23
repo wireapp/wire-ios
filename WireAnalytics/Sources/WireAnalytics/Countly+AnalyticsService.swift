@@ -40,7 +40,11 @@ extension Countly: AnalyticsService {
     }
 
     public func trackEvent(_ event: AnalyticsEvent) {
-        recordEvent(event.eventName)
+        let segmentationDict = Dictionary(
+            uniqueKeysWithValues: event.segmentation.map { ($0.key, $0.value) }
+        )
+
+        recordEvent(event.eventName, segmentation: segmentationDict)
     }
 
 }
