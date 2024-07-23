@@ -21,6 +21,7 @@ import WireDesign
 import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: SpinnerCompletion?
 
     var tableView: UITableView

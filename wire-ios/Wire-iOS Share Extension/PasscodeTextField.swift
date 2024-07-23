@@ -17,7 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
 
 protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
@@ -109,7 +110,6 @@ extension PasscodeTextField {
     private func updateButtonIcon() {
         revealButton.setIcon(revealButtonIcon, size: .tiny, for: .normal)
     }
-
 }
 
 // MARK: - Helpers

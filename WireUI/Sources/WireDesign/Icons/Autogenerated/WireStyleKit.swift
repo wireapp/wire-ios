@@ -16,8 +16,8 @@ public class WireStyleKit: NSObject {
 
     //// Cache
 
-    private struct Cache {
-        static let fillColor10: UIColor = UIColor(red: 0.067, green: 0.084, blue: 0.078, alpha: 1.000)
+    private enum Cache {
+        static let fillColor10: UIColor = .init(red: 0.067, green: 0.084, blue: 0.078, alpha: 1.000)
         static var imageOfOngoingcall: UIImage?
         static var ongoingcallTargets: [AnyObject]?
         static var imageOfShieldverified: UIImage?
@@ -30,12 +30,11 @@ public class WireStyleKit: NSObject {
 
     //// Colors
 
-    @objc dynamic public class var fillColor10: UIColor { return Cache.fillColor10 }
+    @objc public dynamic class var fillColor10: UIColor { Cache.fillColor10 }
 
     //// Drawing Methods
 
-    @objc dynamic public class func drawIcon_plus_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_plus_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Add Drawing
         let addPath = UIBezierPath()
         addPath.move(to: CGPoint(x: 0, y: 28))
@@ -57,8 +56,7 @@ public class WireStyleKit: NSObject {
         addPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_checkmark_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_checkmark_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Remove Drawing
         let removePath = UIBezierPath()
         removePath.move(to: CGPoint(x: 22.64, y: 55.86))
@@ -74,8 +72,7 @@ public class WireStyleKit: NSObject {
         removePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_block_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_block_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Block Drawing
         let blockPath = UIBezierPath()
         blockPath.move(to: CGPoint(x: 32, y: 64))
@@ -105,8 +102,7 @@ public class WireStyleKit: NSObject {
         blockPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_flipCamera_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_flipCamera_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Flip Drawing
         let flipPath = UIBezierPath()
         flipPath.move(to: CGPoint(x: 36, y: 16.19))
@@ -131,8 +127,7 @@ public class WireStyleKit: NSObject {
         flipPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_ellipsis_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_ellipsis_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// More Drawing
         let morePath = UIBezierPath()
         morePath.move(to: CGPoint(x: 8, y: 40))
@@ -161,8 +156,7 @@ public class WireStyleKit: NSObject {
         morePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_ping_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_ping_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Ping Drawing
         let pingPath = UIBezierPath()
         pingPath.move(to: CGPoint(x: 23.8, y: 17.09))
@@ -230,8 +224,7 @@ public class WireStyleKit: NSObject {
         pingPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_cameraLens_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_cameraLens_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Camera Drawing
         let cameraPath = UIBezierPath()
         cameraPath.move(to: CGPoint(x: 18.29, y: 8))
@@ -268,8 +261,7 @@ public class WireStyleKit: NSObject {
         cameraPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_cameraShutter_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_cameraShutter_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Shutter Drawing
         let shutterPath = UIBezierPath()
         shutterPath.move(to: CGPoint(x: 32, y: 56))
@@ -298,8 +290,7 @@ public class WireStyleKit: NSObject {
         shutterPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_photo_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_photo_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Picture Drawing
         let picturePath = UIBezierPath()
         picturePath.move(to: CGPoint(x: 0, y: 4))
@@ -330,8 +321,7 @@ public class WireStyleKit: NSObject {
         picturePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_conversation_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_conversation_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Chat Drawing
         let chatPath = UIBezierPath()
         chatPath.move(to: CGPoint(x: 12, y: 0))
@@ -353,8 +343,7 @@ public class WireStyleKit: NSObject {
         chatPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_speaker_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_speaker_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Speaker Drawing
         let speakerPath = UIBezierPath()
         speakerPath.move(to: CGPoint(x: 2.06, y: 48.08))
@@ -381,7 +370,7 @@ public class WireStyleKit: NSObject {
         speakerPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_bellWithStrikethrough_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_bellWithStrikethrough_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -429,8 +418,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_pencil_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_pencil_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Edit Drawing
         let editPath = UIBezierPath()
         editPath.move(to: CGPoint(x: 58.22, y: 19.38))
@@ -461,8 +449,7 @@ public class WireStyleKit: NSObject {
         editPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_save_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_save_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Download Drawing
         let downloadPath = UIBezierPath()
         downloadPath.move(to: CGPoint(x: 0, y: 56))
@@ -487,8 +474,7 @@ public class WireStyleKit: NSObject {
         downloadPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_archive_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_archive_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 4, y: 28))
@@ -525,8 +511,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_export_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_export_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Share Drawing
         let sharePath = UIBezierPath()
         sharePath.move(to: CGPoint(x: 0, y: 56))
@@ -552,16 +537,14 @@ public class WireStyleKit: NSObject {
         sharePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_minus_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_minus_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Remove Drawing
         let removePath = UIBezierPath(rect: CGRect(x: 0, y: 28, width: 64, height: 8))
         color.setFill()
         removePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_addPerson_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_addPerson_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 48, y: 8.15))
@@ -601,8 +584,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_plusCircled_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_plusCircled_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Add Drawing
         let addPath = UIBezierPath()
         addPath.move(to: CGPoint(x: 32, y: 64))
@@ -630,8 +612,7 @@ public class WireStyleKit: NSObject {
         addPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_envelope_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_envelope_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Email Drawing
         let emailPath = UIBezierPath()
         emailPath.move(to: CGPoint(x: 63.98, y: 56))
@@ -652,8 +633,7 @@ public class WireStyleKit: NSObject {
         emailPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_redo_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_redo_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Resend Drawing
         let resendPath = UIBezierPath()
         resendPath.move(to: CGPoint(x: 54.63, y: 9.37))
@@ -678,8 +658,7 @@ public class WireStyleKit: NSObject {
         resendPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_brush_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_brush_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Sketch Drawing
         let sketchPath = UIBezierPath()
         sketchPath.move(to: CGPoint(x: 54.83, y: 39.53))
@@ -736,8 +715,7 @@ public class WireStyleKit: NSObject {
         sketchPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_gif_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_gif_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// GIF Drawing
         let gIFPath = UIBezierPath()
         gIFPath.move(to: CGPoint(x: 48, y: 36))
@@ -785,8 +763,7 @@ public class WireStyleKit: NSObject {
         gIFPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_undo_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_undo_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Undo Drawing
         let undoPath = UIBezierPath()
         undoPath.move(to: CGPoint(x: 9.37, y: 9.37))
@@ -811,8 +788,7 @@ public class WireStyleKit: NSObject {
         undoPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_exclamationMark_16pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_exclamationMark_16pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Path Drawing
         let pathPath = UIBezierPath()
         pathPath.move(to: CGPoint(x: 7, y: 12))
@@ -832,8 +808,7 @@ public class WireStyleKit: NSObject {
         pathPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_spinner_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_spinner_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Spinner Drawing
         let spinnerPath = UIBezierPath()
         spinnerPath.move(to: CGPoint(x: 54.24, y: 22.96))
@@ -857,8 +832,7 @@ public class WireStyleKit: NSObject {
         spinnerPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_clock_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_clock_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Pending Drawing
         let pendingPath = UIBezierPath()
         pendingPath.move(to: CGPoint(x: 32, y: 56))
@@ -893,8 +867,7 @@ public class WireStyleKit: NSObject {
         pendingPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_search_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_search_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Search Drawing
         let searchPath = UIBezierPath()
         searchPath.move(to: CGPoint(x: 55.9, y: 27.97))
@@ -918,8 +891,7 @@ public class WireStyleKit: NSObject {
         searchPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_endCall_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_endCall_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Hangup Drawing
         let hangupPath = UIBezierPath()
         hangupPath.move(to: CGPoint(x: 61.8, y: 27.81))
@@ -951,8 +923,7 @@ public class WireStyleKit: NSObject {
         hangupPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_exclamationMark_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_exclamationMark_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Error Drawing
         let errorPath = UIBezierPath()
         errorPath.move(to: CGPoint(x: 36, y: 4))
@@ -972,8 +943,7 @@ public class WireStyleKit: NSObject {
         errorPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_downArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_downArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Down Drawing
         let downPath = UIBezierPath()
         downPath.move(to: CGPoint(x: 32.16, y: 52.07))
@@ -989,8 +959,7 @@ public class WireStyleKit: NSObject {
         downPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_hamburger_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_hamburger_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// List Drawing
         let listPath = UIBezierPath()
         listPath.move(to: CGPoint(x: 0, y: 28))
@@ -1019,8 +988,7 @@ public class WireStyleKit: NSObject {
         listPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_forwardArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_forwardArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Back Drawing
         let backPath = UIBezierPath()
         backPath.move(to: CGPoint(x: 45.22, y: 36.27))
@@ -1040,8 +1008,7 @@ public class WireStyleKit: NSObject {
         backPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_camera_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_camera_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Video Drawing
         let videoPath = UIBezierPath()
         videoPath.move(to: CGPoint(x: 10.26, y: 8))
@@ -1078,8 +1045,7 @@ public class WireStyleKit: NSObject {
         videoPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_play_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_play_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Play Drawing
         let playPath = UIBezierPath()
         playPath.move(to: CGPoint(x: 16, y: 62.31))
@@ -1092,8 +1058,7 @@ public class WireStyleKit: NSObject {
         playPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_gear_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_gear_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Settings Drawing
         let settingsPath = UIBezierPath()
         settingsPath.move(to: CGPoint(x: 11.32, y: 44.19))
@@ -1143,8 +1108,7 @@ public class WireStyleKit: NSObject {
         settingsPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_pause_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_pause_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Pause Drawing
         let pausePath = UIBezierPath()
         pausePath.move(to: CGPoint(x: 16, y: 0))
@@ -1166,8 +1130,7 @@ public class WireStyleKit: NSObject {
         pausePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_backArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_backArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Back Drawing
         let backPath = UIBezierPath()
         backPath.move(to: CGPoint(x: 19.78, y: 36.27))
@@ -1187,8 +1150,7 @@ public class WireStyleKit: NSObject {
         backPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_cross_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_cross_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Close Drawing
         let closePath = UIBezierPath()
         closePath.move(to: CGPoint(x: 11.52, y: 58))
@@ -1210,8 +1172,7 @@ public class WireStyleKit: NSObject {
         closePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_phone_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_phone_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Call Drawing
         let callPath = UIBezierPath()
         callPath.move(to: CGPoint(x: 50.85, y: 64))
@@ -1246,8 +1207,7 @@ public class WireStyleKit: NSObject {
         callPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_person_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_person_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Contacts Drawing
         let contactsPath = UIBezierPath()
         contactsPath.move(to: CGPoint(x: 46.43, y: 40))
@@ -1275,8 +1235,7 @@ public class WireStyleKit: NSObject {
         contactsPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_document_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_document_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// File Drawing
         let filePath = UIBezierPath()
         filePath.move(to: CGPoint(x: 11.96, y: 0))
@@ -1302,8 +1261,7 @@ public class WireStyleKit: NSObject {
         filePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_eye_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_eye_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// View Drawing
         let viewPath = UIBezierPath()
         viewPath.move(to: CGPoint(x: 64, y: 32))
@@ -1325,8 +1283,7 @@ public class WireStyleKit: NSObject {
         viewPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_movie_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_movie_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Movie Drawing
         let moviePath = UIBezierPath()
         moviePath.move(to: CGPoint(x: 44, y: 64))
@@ -1388,8 +1345,7 @@ public class WireStyleKit: NSObject {
         moviePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_videoMessage_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_videoMessage_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Record Drawing
         let recordPath = UIBezierPath()
         recordPath.move(to: CGPoint(x: 32, y: 64))
@@ -1415,8 +1371,7 @@ public class WireStyleKit: NSObject {
         recordPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_paperclip_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_paperclip_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Attachment Drawing
         let attachmentPath = UIBezierPath()
         attachmentPath.move(to: CGPoint(x: 10.53, y: 30.8))
@@ -1455,8 +1410,7 @@ public class WireStyleKit: NSObject {
         attachmentPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_locationPin_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_locationPin_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Location Drawing
         let locationPath = UIBezierPath()
         locationPath.move(to: CGPoint(x: 56, y: 24))
@@ -1478,16 +1432,14 @@ public class WireStyleKit: NSObject {
         locationPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_recordDot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_recordDot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Record Drawing
         let recordPath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: 64, height: 64))
         color.setFill()
         recordPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_stopRecording_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_stopRecording_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Stop Drawing
         let stopPath = UIBezierPath()
         stopPath.move(to: CGPoint(x: 0, y: 7.98))
@@ -1505,8 +1457,7 @@ public class WireStyleKit: NSObject {
         stopPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_location_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_location_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Locate Drawing
         let locatePath = UIBezierPath()
         locatePath.move(to: CGPoint(x: 0, y: 34))
@@ -1520,8 +1471,7 @@ public class WireStyleKit: NSObject {
         locatePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_effectBalloon_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_effectBalloon_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Helium Drawing
         let heliumPath = UIBezierPath()
         heliumPath.move(to: CGPoint(x: 32, y: 0))
@@ -1542,8 +1492,7 @@ public class WireStyleKit: NSObject {
         heliumPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_effectChurch_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_effectChurch_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Cathedral Drawing
         let cathedralPath = UIBezierPath()
         cathedralPath.move(to: CGPoint(x: 8, y: 28))
@@ -1586,8 +1535,7 @@ public class WireStyleKit: NSObject {
         cathedralPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_robot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_robot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Robot Drawing
         let robotPath = UIBezierPath()
         robotPath.move(to: CGPoint(x: 32, y: 12))
@@ -1649,8 +1597,7 @@ public class WireStyleKit: NSObject {
         robotPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_alien_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_alien_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Alien Drawing
         let alienPath = UIBezierPath()
         alienPath.move(to: CGPoint(x: 32, y: 64))
@@ -1676,8 +1623,7 @@ public class WireStyleKit: NSObject {
         alienPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_effectJellyfish_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_effectJellyfish_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Jellyfish Drawing
         let jellyfishPath = UIBezierPath()
         jellyfishPath.move(to: CGPoint(x: 4.28, y: 32.01))
@@ -1724,8 +1670,7 @@ public class WireStyleKit: NSObject {
         jellyfishPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_effectRollercoaster_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_effectRollercoaster_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 64, y: 44.94))
@@ -1781,8 +1726,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_effectRabbit_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_effectRabbit_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Hare Drawing
         let harePath = UIBezierPath()
         harePath.move(to: CGPoint(x: 4, y: 6.75))
@@ -1827,8 +1771,7 @@ public class WireStyleKit: NSObject {
         harePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_fullScreen_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_fullScreen_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 64, y: 28))
@@ -1858,8 +1801,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_trash_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_trash_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Delete Drawing
         let deletePath = UIBezierPath()
         deletePath.move(to: CGPoint(x: 24, y: 8))
@@ -1888,8 +1830,7 @@ public class WireStyleKit: NSObject {
         deletePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_like_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_like_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Like Drawing
         let likePath = UIBezierPath()
         likePath.move(to: CGPoint(x: 32.84, y: 50.34))
@@ -1920,8 +1861,7 @@ public class WireStyleKit: NSObject {
         likePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_liked_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_liked_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Liked Drawing
         let likedPath = UIBezierPath()
         likedPath.move(to: CGPoint(x: 29.54, y: 9.02))
@@ -1939,8 +1879,7 @@ public class WireStyleKit: NSObject {
         likedPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_devices_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_devices_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Devices Drawing
         let devicesPath = UIBezierPath()
         devicesPath.move(to: CGPoint(x: 44, y: 16))
@@ -2019,8 +1958,7 @@ public class WireStyleKit: NSObject {
         devicesPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_settingsOptions_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_settingsOptions_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Options Drawing
         let optionsPath = UIBezierPath()
         optionsPath.move(to: CGPoint(x: 38.93, y: 60))
@@ -2076,8 +2014,7 @@ public class WireStyleKit: NSObject {
         optionsPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_settingsAdvanced_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_settingsAdvanced_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Advanced Drawing
         let advancedPath = UIBezierPath()
         advancedPath.move(to: CGPoint(x: 26.1, y: 29.58))
@@ -2122,8 +2059,7 @@ public class WireStyleKit: NSObject {
         advancedPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_settingsSupport_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_settingsSupport_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Support Drawing
         let supportPath = UIBezierPath()
         supportPath.move(to: CGPoint(x: 45.32, y: 56.63))
@@ -2185,8 +2121,7 @@ public class WireStyleKit: NSObject {
         supportPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_about_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_about_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Info Drawing
         let infoPath = UIBezierPath()
         infoPath.move(to: CGPoint(x: 32, y: 64))
@@ -2219,8 +2154,7 @@ public class WireStyleKit: NSObject {
         infoPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_send_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_send_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Send Drawing
         let sendPath = UIBezierPath()
         sendPath.move(to: CGPoint(x: 8, y: 54.06))
@@ -2239,8 +2173,7 @@ public class WireStyleKit: NSObject {
         sendPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_emoji_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_emoji_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Emoji Drawing
         let emojiPath = UIBezierPath()
         emojiPath.move(to: CGPoint(x: 32, y: 64))
@@ -2283,8 +2216,7 @@ public class WireStyleKit: NSObject {
         emojiPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_flower_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_flower_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Flower Drawing
         let flowerPath = UIBezierPath()
         flowerPath.move(to: CGPoint(x: 39.73, y: 13.34))
@@ -2320,8 +2252,7 @@ public class WireStyleKit: NSObject {
         flowerPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_cake_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_cake_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Cake Drawing
         let cakePath = UIBezierPath()
         cakePath.move(to: CGPoint(x: 52, y: 28))
@@ -2383,8 +2314,7 @@ public class WireStyleKit: NSObject {
         cakePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_car_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_car_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 64, y: 45.01))
@@ -2430,8 +2360,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_ball_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_ball_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Ball Drawing
         let ballPath = UIBezierPath()
         ballPath.move(to: CGPoint(x: 34.14, y: 29.86))
@@ -2483,8 +2412,7 @@ public class WireStyleKit: NSObject {
         ballPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_crown_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_crown_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Crown Drawing
         let crownPath = UIBezierPath()
         crownPath.move(to: CGPoint(x: 30.21, y: 7.58))
@@ -2540,8 +2468,7 @@ public class WireStyleKit: NSObject {
         crownPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_asterisk_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_asterisk_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Symbol Drawing
         let symbolPath = UIBezierPath()
         symbolPath.move(to: CGPoint(x: 27.55, y: 24.23))
@@ -2570,8 +2497,7 @@ public class WireStyleKit: NSObject {
         symbolPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_flag_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_flag_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Flag Drawing
         let flagPath = UIBezierPath()
         flagPath.move(to: CGPoint(x: 8.23, y: 6.46))
@@ -2593,8 +2519,7 @@ public class WireStyleKit: NSObject {
         flagPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_typingDots_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_typingDots_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// More Drawing
         let morePath = UIBezierPath()
         morePath.move(to: CGPoint(x: 8, y: 64))
@@ -2623,8 +2548,7 @@ public class WireStyleKit: NSObject {
         morePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_hourglass_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_hourglass_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Timed message Drawing
         let timedMessagePath = UIBezierPath()
         timedMessagePath.move(to: CGPoint(x: 35.51, y: 8))
@@ -2667,8 +2591,7 @@ public class WireStyleKit: NSObject {
         timedMessagePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutSecond_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutSecond_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 40.3, y: 16.02))
@@ -2713,8 +2636,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutMinute_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutMinute_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
         bezier2Path.move(to: CGPoint(x: 42.89, y: 27))
@@ -2764,8 +2686,7 @@ public class WireStyleKit: NSObject {
         bezier3Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutHour_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutHour_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 3 Drawing
         let bezier3Path = UIBezierPath()
         bezier3Path.move(to: CGPoint(x: 42, y: 27))
@@ -2806,8 +2727,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutDay_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutDay_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
         bezier2Path.move(to: CGPoint(x: 49.03, y: 27.1))
@@ -2853,8 +2773,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_link_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_link_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 20, y: 13))
@@ -2888,8 +2807,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_library_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_library_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Collection Drawing
         let collectionPath = UIBezierPath()
         collectionPath.move(to: CGPoint(x: 0.02, y: 27.98))
@@ -2921,8 +2839,7 @@ public class WireStyleKit: NSObject {
         collectionPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_copy_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_copy_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Copy Drawing
         let copyPath = UIBezierPath()
         copyPath.move(to: CGPoint(x: 24, y: 40))
@@ -2957,8 +2874,7 @@ public class WireStyleKit: NSObject {
         copyPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_activeSearch_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_activeSearch_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Return-search Drawing
         let returnsearchPath = UIBezierPath()
         returnsearchPath.move(to: CGPoint(x: 55.9, y: 27.97))
@@ -2987,8 +2903,7 @@ public class WireStyleKit: NSObject {
         returnsearchPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_clearInput_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_clearInput_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Dismiss Drawing
         let dismissPath = UIBezierPath()
         dismissPath.move(to: CGPoint(x: 44.97, y: 13.37))
@@ -3017,8 +2932,7 @@ public class WireStyleKit: NSObject {
         dismissPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_backArrowWithDot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_backArrowWithDot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Unread Drawing
         let unreadPath = UIBezierPath()
         unreadPath.move(to: CGPoint(x: 16, y: 8))
@@ -3043,8 +2957,7 @@ public class WireStyleKit: NSObject {
         unreadPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_team_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_team_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Spaces Drawing
         let spacesPath = UIBezierPath()
         spacesPath.move(to: CGPoint(x: 11.63, y: 20.01))
@@ -3073,8 +2986,7 @@ public class WireStyleKit: NSObject {
         spacesPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_personalProfile_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_personalProfile_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Profile Drawing
         let profilePath = UIBezierPath()
         profilePath.move(to: CGPoint(x: 32, y: 64))
@@ -3105,8 +3017,7 @@ public class WireStyleKit: NSObject {
         profilePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownToggle_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownToggle_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 17.42, y: 18.27))
@@ -3171,8 +3082,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownH1_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownH1_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 4, y: 0))
@@ -3203,8 +3113,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownH2_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownH2_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Group 2
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
@@ -3264,8 +3173,7 @@ public class WireStyleKit: NSObject {
         bezier3Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownH3_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownH3_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Group 2
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
@@ -3347,8 +3255,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownBold_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownBold_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 11, y: 64))
@@ -3389,8 +3296,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownItalic_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownItalic_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 32.98, y: 54.15))
@@ -3412,8 +3318,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIconmarkdownUnderline_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIconmarkdownUnderline_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Group 2
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
@@ -3445,8 +3350,7 @@ public class WireStyleKit: NSObject {
         rectanglePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownBulletList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownBulletList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 20, y: 28.18))
@@ -3502,8 +3406,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownNumberList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_markdownNumberList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Group 2
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
@@ -3599,7 +3502,7 @@ public class WireStyleKit: NSObject {
         bezier4Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_markdownCode_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_markdownCode_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -3633,7 +3536,7 @@ public class WireStyleKit: NSObject {
         //// Rectangle Drawing
         context.saveGState()
         context.translateBy(x: 33.04, y: 32)
-        context.rotate(by: 12.1 * CGFloat.pi/180)
+        context.rotate(by: 12.1 * CGFloat.pi / 180)
 
         let rectanglePath = UIBezierPath(rect: CGRect(x: -4.25, y: -30.61, width: 8.5, height: 61.21))
         color.setFill()
@@ -3642,8 +3545,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_statusBusy_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_statusBusy_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 32, y: 64))
@@ -3665,8 +3567,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_statusAway_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_statusAway_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 32, y: 64))
@@ -3686,8 +3587,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_statusAvailable_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_statusAvailable_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 32, y: 64))
@@ -3701,8 +3601,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_exclamationMarkCircle_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_exclamationMarkCircle_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Alert Drawing
         let alertPath = UIBezierPath()
         alertPath.move(to: CGPoint(x: 32, y: 64))
@@ -3730,8 +3629,7 @@ public class WireStyleKit: NSObject {
         alertPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_bot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_bot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Service Drawing
         let servicePath = UIBezierPath()
         servicePath.move(to: CGPoint(x: 20.44, y: 23.59))
@@ -3786,8 +3684,7 @@ public class WireStyleKit: NSObject {
         servicePath.fill()
     }
 
-    @objc dynamic public class func drawIcon_longDownArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_longDownArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// DownArrow Drawing
         let downArrowPath = UIBezierPath()
         downArrowPath.move(to: CGPoint(x: 40.25, y: 52.03))
@@ -3806,8 +3703,7 @@ public class WireStyleKit: NSObject {
         downArrowPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_createConversation_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_createConversation_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Group Drawing
         let groupPath = UIBezierPath()
         groupPath.move(to: CGPoint(x: 40, y: 8))
@@ -3850,8 +3746,7 @@ public class WireStyleKit: NSObject {
         groupPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_disclosureIndicator_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_disclosureIndicator_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Arrow Drawing
         let arrowPath = UIBezierPath()
         arrowPath.move(to: CGPoint(x: 13, y: 8.15))
@@ -3867,8 +3762,7 @@ public class WireStyleKit: NSObject {
         arrowPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_guest_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_guest_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Guest Drawing
         let guestPath = UIBezierPath()
         guestPath.move(to: CGPoint(x: 24, y: 4))
@@ -3911,8 +3805,7 @@ public class WireStyleKit: NSObject {
         guestPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_missedCall_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_missedCall_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// MissedCall Drawing
         let missedCallPath = UIBezierPath()
         missedCallPath.move(to: CGPoint(x: 0, y: 50.85))
@@ -3944,8 +3837,7 @@ public class WireStyleKit: NSObject {
         missedCallPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutWeek_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutWeek_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
         bezier2Path.move(to: CGPoint(x: 56, y: 16))
@@ -3989,8 +3881,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutMonth_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutMonth_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 55, y: 27))
@@ -4034,8 +3925,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_timeoutYear_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_timeoutYear_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
         bezier2Path.move(to: CGPoint(x: 32, y: 14))
@@ -4076,8 +3966,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_browser_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_browser_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Browser Drawing
         let browserPath = UIBezierPath()
         browserPath.move(to: CGPoint(x: 32, y: 0))
@@ -4104,8 +3993,7 @@ public class WireStyleKit: NSObject {
         browserPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_networkCondition_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_networkCondition_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Group 2
 
         //// Network Drawing
@@ -4154,8 +4042,7 @@ public class WireStyleKit: NSObject {
         networkPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_mention_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_mention_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Mention Drawing
         let mentionPath = UIBezierPath()
         mentionPath.move(to: CGPoint(x: 32.19, y: 24.81))
@@ -4206,7 +4093,7 @@ public class WireStyleKit: NSObject {
         mentionPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_alerts_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_alerts_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4244,8 +4131,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_reply_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_reply_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Reply Drawing
         let replyPath = UIBezierPath()
         replyPath.move(to: CGPoint(x: 13.38, y: 18))
@@ -4278,8 +4164,7 @@ public class WireStyleKit: NSObject {
         replyPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_externalLink_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_externalLink_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 64, y: 48.03))
@@ -4298,8 +4183,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_forwardArrowWithDot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_forwardArrowWithDot_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Unread Drawing
         let unreadPath = UIBezierPath()
         unreadPath.move(to: CGPoint(x: 48, y: 8))
@@ -4324,7 +4208,7 @@ public class WireStyleKit: NSObject {
         unreadPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_legalholdpending_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_legalholdpending_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4379,7 +4263,7 @@ public class WireStyleKit: NSObject {
         pendingPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_legalholdactive_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_legalholdactive_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4413,8 +4297,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_folderList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_folderList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 59.72, y: 17.36))
@@ -4444,8 +4327,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_recentList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_recentList_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// recent.svg Group
         //// Group 2
         //// Bezier Drawing
@@ -4490,7 +4372,7 @@ public class WireStyleKit: NSObject {
         bezier3Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_externalPartner_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_externalPartner_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4559,8 +4441,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_groupAdmin_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_groupAdmin_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
         bezier2Path.move(to: CGPoint(x: 38.7, y: 26.65))
@@ -4639,7 +4520,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawIcon_circleCross_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_circleCross_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4697,7 +4578,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_eyeSlash_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_eyeSlash_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4776,8 +4657,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_circleTick_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_circleTick_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 31.5, y: 0))
@@ -4799,7 +4679,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_eyeWithIris_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_eyeWithIris_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4854,8 +4734,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_federated_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_federated_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 52, y: 44))
@@ -4903,8 +4782,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_screenshare_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_screenshare_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// prefix__a Drawing
         let prefix__aPath = UIBezierPath()
         prefix__aPath.move(to: CGPoint(x: 0, y: 4))
@@ -4937,7 +4815,7 @@ public class WireStyleKit: NSObject {
         prefix__aPath.fill()
     }
 
-    @objc dynamic public class func drawIcon_cameraOff_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_cameraOff_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -4993,7 +4871,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_speakerOff_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_speakerOff_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -5030,7 +4908,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_microphoneOff_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_microphoneOff_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -5087,7 +4965,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_microphone_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawIcon_microphone_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -5129,7 +5007,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawMissedcall(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawMissedcall(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Color Declarations
         let accentopacity64 = accent.withAlpha(0.64)
         let accentopacity32 = accent.withAlpha(0.32)
@@ -5153,8 +5031,7 @@ public class WireStyleKit: NSObject {
         oval3Path.stroke()
     }
 
-    @objc dynamic public class func drawYoutube(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawYoutube(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 35.71, y: 12.99))
@@ -5335,7 +5212,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawMissedcalllast(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawMissedcalllast(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Color Declarations
         let accentopacity64 = accent.withAlpha(0.64)
         let accentopacity32 = accent.withAlpha(0.32)
@@ -5403,8 +5280,7 @@ public class WireStyleKit: NSObject {
         textPath.fill()
     }
 
-    @objc dynamic public class func drawVimeo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawVimeo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// logo-vimeo Drawing
         let logovimeoPath = UIBezierPath()
         logovimeoPath.move(to: CGPoint(x: 26.16, y: 0.76))
@@ -5552,7 +5428,7 @@ public class WireStyleKit: NSObject {
         logovimeoPath.fill()
     }
 
-    @objc dynamic public class func drawOngoingcall() {
+    @objc public dynamic class func drawOngoingcall() {
         //// Color Declarations
         let fillColor9 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
         let black16 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.160)
@@ -5582,7 +5458,7 @@ public class WireStyleKit: NSObject {
         oval2Path.fill()
     }
 
-    @objc dynamic public class func drawJoinongoingcall(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawJoinongoingcall(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -5654,8 +5530,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawLogo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawLogo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier 2 Drawing
         let bezier2Path = UIBezierPath()
         bezier2Path.move(to: CGPoint(x: 256.09, y: 140.1))
@@ -5693,8 +5568,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawWire(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawWire(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Logo 2 Drawing
         let logo2Path = UIBezierPath()
         logo2Path.move(to: CGPoint(x: 42.72, y: 41.02))
@@ -5790,7 +5664,7 @@ public class WireStyleKit: NSObject {
         logo2Path.fill()
     }
 
-    @objc dynamic public class func drawShieldverified() {
+    @objc public dynamic class func drawShieldverified() {
         //// Color Declarations
         let e2EE = UIColor(red: 0.000, green: 0.588, blue: 0.941, alpha: 1.000)
         let black24 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.240)
@@ -5822,7 +5696,7 @@ public class WireStyleKit: NSObject {
         shadowPath.fill()
     }
 
-    @objc dynamic public class func drawShieldnotverified() {
+    @objc public dynamic class func drawShieldnotverified() {
         //// Color Declarations
         let e2EE = UIColor(red: 0.000, green: 0.588, blue: 0.941, alpha: 1.000)
 
@@ -5850,7 +5724,7 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawShield(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawShield(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -6469,7 +6343,7 @@ public class WireStyleKit: NSObject {
         //// Fill-54 Drawing
         context.saveGState()
         context.translateBy(x: 171.32, y: 37.11)
-        context.rotate(by: 45 * CGFloat.pi/180)
+        context.rotate(by: 45 * CGFloat.pi / 180)
 
         let fill54Path = UIBezierPath(roundedRect: CGRect(x: -2.94, y: -6.07, width: 5.88, height: 12.13), cornerRadius: 2.94)
         color.setFill()
@@ -6485,7 +6359,7 @@ public class WireStyleKit: NSObject {
         //// Fill-56 Drawing
         context.saveGState()
         context.translateBy(x: 128.68, y: 36.86)
-        context.rotate(by: 45 * CGFloat.pi/180)
+        context.rotate(by: 45 * CGFloat.pi / 180)
 
         let fill56Path = UIBezierPath(roundedRect: CGRect(x: -6.07, y: -2.94, width: 12.13, height: 5.88), cornerRadius: 2.94)
         color.setFill()
@@ -7114,7 +6988,7 @@ public class WireStyleKit: NSObject {
         fill91Path.fill()
     }
 
-    @objc dynamic public class func drawDegradation(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 260, height: 260), resizing: ResizingBehavior = .aspectFit) {
+    @objc public dynamic class func drawDegradation(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 260, height: 260), resizing: ResizingBehavior = .aspectFit) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -7156,7 +7030,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawSpace(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 28, height: 28), resizing: ResizingBehavior = .aspectFit, color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawSpace(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 28, height: 28), resizing: ResizingBehavior = .aspectFit, color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -7193,10 +7067,9 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
 
         context.restoreGState()
-
     }
 
-    @objc dynamic public class func drawSpaceFocus(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 36, height: 36), resizing: ResizingBehavior = .aspectFit, color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawSpaceFocus(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 36, height: 36), resizing: ResizingBehavior = .aspectFit, color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
 
@@ -7244,8 +7117,7 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc dynamic public class func drawIcon_restore_48pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawIcon_restore_48pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 0.08, y: 26))
@@ -7276,10 +7148,10 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc dynamic public class func drawMentions(frame: CGRect = CGRect(x: 10, y: 10, width: 176, height: 57), backgroundColor: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
+    @objc public dynamic class func drawMentions(frame: CGRect = CGRect(x: 10, y: 10, width: 176, height: 57), backgroundColor: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// General Declarations
         // This non-generic function dramatically improves compilation times of complex expressions.
-        func fastFloor(_ x: CGFloat) -> CGFloat { return floor(x) }
+        func fastFloor(_ x: CGFloat) -> CGFloat { floor(x) }
 
         //// Color Declarations
         let black40 = backgroundColor.withAlpha(0.4)
@@ -7320,8 +7192,7 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc dynamic public class func drawTab(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-
+    @objc public dynamic class func drawTab(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Bezier Drawing
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 0, y: 8.5))
@@ -7337,9 +7208,9 @@ public class WireStyleKit: NSObject {
 
     //// Generated Images
 
-    @objc dynamic public class func imageOfMissedcall(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfMissedcall(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 40, height: 40), false, 0)
-            WireStyleKit.drawMissedcall(accent: accent)
+        WireStyleKit.drawMissedcall(accent: accent)
 
         let imageOfMissedcall = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7347,9 +7218,9 @@ public class WireStyleKit: NSObject {
         return imageOfMissedcall
     }
 
-    @objc dynamic public class func imageOfYoutube(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfYoutube(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 72, height: 16), false, 0)
-            WireStyleKit.drawYoutube(color: color)
+        WireStyleKit.drawYoutube(color: color)
 
         let imageOfYoutube = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7357,9 +7228,9 @@ public class WireStyleKit: NSObject {
         return imageOfYoutube
     }
 
-    @objc dynamic public class func imageOfMissedcalllast(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfMissedcalllast(accent: UIColor = UIColor(red: 1.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 40, height: 40), false, 0)
-            WireStyleKit.drawMissedcalllast(accent: accent)
+        WireStyleKit.drawMissedcalllast(accent: accent)
 
         let imageOfMissedcalllast = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7367,9 +7238,9 @@ public class WireStyleKit: NSObject {
         return imageOfMissedcalllast
     }
 
-    @objc dynamic public class func imageOfVimeo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfVimeo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 84, height: 24), false, 0)
-            WireStyleKit.drawVimeo(color: color)
+        WireStyleKit.drawVimeo(color: color)
 
         let imageOfVimeo = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7377,13 +7248,13 @@ public class WireStyleKit: NSObject {
         return imageOfVimeo
     }
 
-    @objc dynamic public class var imageOfOngoingcall: UIImage {
+    @objc public dynamic class var imageOfOngoingcall: UIImage {
         if Cache.imageOfOngoingcall != nil {
             return Cache.imageOfOngoingcall!
         }
 
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 18, height: 18), false, 0)
-            WireStyleKit.drawOngoingcall()
+        WireStyleKit.drawOngoingcall()
 
         Cache.imageOfOngoingcall = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7391,9 +7262,9 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfOngoingcall!
     }
 
-    @objc dynamic public class func imageOfJoinongoingcall(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfJoinongoingcall(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 18, height: 18), false, 0)
-            WireStyleKit.drawJoinongoingcall(color: color)
+        WireStyleKit.drawJoinongoingcall(color: color)
 
         let imageOfJoinongoingcall = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7401,9 +7272,9 @@ public class WireStyleKit: NSObject {
         return imageOfJoinongoingcall
     }
 
-    @objc dynamic public class func imageOfLogo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfLogo(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 272, height: 224), false, 0)
-            WireStyleKit.drawLogo(color: color)
+        WireStyleKit.drawLogo(color: color)
 
         let imageOfLogo = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7411,9 +7282,9 @@ public class WireStyleKit: NSObject {
         return imageOfLogo
     }
 
-    @objc dynamic public class func imageOfWire(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfWire(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 174, height: 50), false, 0)
-            WireStyleKit.drawWire(color: color)
+        WireStyleKit.drawWire(color: color)
 
         let imageOfWire = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7421,13 +7292,13 @@ public class WireStyleKit: NSObject {
         return imageOfWire
     }
 
-    @objc dynamic public class var imageOfShieldverified: UIImage {
+    @objc public dynamic class var imageOfShieldverified: UIImage {
         if Cache.imageOfShieldverified != nil {
             return Cache.imageOfShieldverified!
         }
 
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 16, height: 16), false, 0)
-            WireStyleKit.drawShieldverified()
+        WireStyleKit.drawShieldverified()
 
         Cache.imageOfShieldverified = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7435,13 +7306,13 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfShieldverified!
     }
 
-    @objc dynamic public class var imageOfShieldnotverified: UIImage {
+    @objc public dynamic class var imageOfShieldnotverified: UIImage {
         if Cache.imageOfShieldnotverified != nil {
             return Cache.imageOfShieldnotverified!
         }
 
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 16, height: 16), false, 0)
-            WireStyleKit.drawShieldnotverified()
+        WireStyleKit.drawShieldnotverified()
 
         Cache.imageOfShieldnotverified = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7449,9 +7320,9 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfShieldnotverified!
     }
 
-    @objc dynamic public class func imageOfShield(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfShield(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 300, height: 388), false, 0)
-            WireStyleKit.drawShield(color: color)
+        WireStyleKit.drawShield(color: color)
 
         let imageOfShield = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7459,13 +7330,13 @@ public class WireStyleKit: NSObject {
         return imageOfShield
     }
 
-    @objc dynamic public class var imageOfDegradation: UIImage {
+    @objc public dynamic class var imageOfDegradation: UIImage {
         if Cache.imageOfDegradation != nil {
             return Cache.imageOfDegradation!
         }
 
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 260, height: 260), false, 0)
-            WireStyleKit.drawDegradation()
+        WireStyleKit.drawDegradation()
 
         Cache.imageOfDegradation = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7473,9 +7344,9 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfDegradation!
     }
 
-    @objc dynamic public class func imageOfSpace(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfSpace(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 28, height: 28), false, 0)
-            WireStyleKit.drawSpace(color: color)
+        WireStyleKit.drawSpace(color: color)
 
         let imageOfSpace = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7483,9 +7354,9 @@ public class WireStyleKit: NSObject {
         return imageOfSpace
     }
 
-    @objc dynamic public class func imageOfSpaceFocus(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfSpaceFocus(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 36, height: 36), false, 0)
-            WireStyleKit.drawSpaceFocus(color: color)
+        WireStyleKit.drawSpaceFocus(color: color)
 
         let imageOfSpaceFocus = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7493,9 +7364,9 @@ public class WireStyleKit: NSObject {
         return imageOfSpaceFocus
     }
 
-    @objc dynamic public class func imageOfTab(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
+    @objc public dynamic class func imageOfTab(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 18, height: 9), false, 0)
-            WireStyleKit.drawTab(color: color)
+        WireStyleKit.drawTab(color: color)
 
         let imageOfTab = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
@@ -7506,7 +7377,7 @@ public class WireStyleKit: NSObject {
     //// Customization Infrastructure
 
     @IBOutlet dynamic var ongoingcallTargets: [AnyObject]! {
-        get { return Cache.ongoingcallTargets }
+        get { Cache.ongoingcallTargets }
         set {
             Cache.ongoingcallTargets = newValue
             for target: AnyObject in newValue {
@@ -7516,7 +7387,7 @@ public class WireStyleKit: NSObject {
     }
 
     @IBOutlet dynamic var shieldverifiedTargets: [AnyObject]! {
-        get { return Cache.shieldverifiedTargets }
+        get { Cache.shieldverifiedTargets }
         set {
             Cache.shieldverifiedTargets = newValue
             for target: AnyObject in newValue {
@@ -7526,7 +7397,7 @@ public class WireStyleKit: NSObject {
     }
 
     @IBOutlet dynamic var shieldnotverifiedTargets: [AnyObject]! {
-        get { return Cache.shieldnotverifiedTargets }
+        get { Cache.shieldnotverifiedTargets }
         set {
             Cache.shieldnotverifiedTargets = newValue
             for target: AnyObject in newValue {
@@ -7536,7 +7407,7 @@ public class WireStyleKit: NSObject {
     }
 
     @IBOutlet dynamic var degradationTargets: [AnyObject]! {
-        get { return Cache.degradationTargets }
+        get { Cache.degradationTargets }
         set {
             Cache.degradationTargets = newValue
             for target: AnyObject in newValue {
@@ -7564,11 +7435,14 @@ public class WireStyleKit: NSObject {
             case .aspectFit:
                 scales.width = min(scales.width, scales.height)
                 scales.height = scales.width
+
             case .aspectFill:
                 scales.width = max(scales.width, scales.height)
                 scales.height = scales.width
+
             case .stretch:
                 break
+
             case .center:
                 scales.width = 1
                 scales.height = 1
@@ -7587,32 +7461,37 @@ public class WireStyleKit: NSObject {
 private extension UIColor {
     func withHue(_ newHue: CGFloat) -> UIColor {
         var saturation: CGFloat = 1, brightness: CGFloat = 1, alpha: CGFloat = 1
-        self.getHue(nil, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        getHue(nil, saturation: &saturation, brightness: &brightness, alpha: &alpha)
         return UIColor(hue: newHue, saturation: saturation, brightness: brightness, alpha: alpha)
     }
+
     func withSaturation(_ newSaturation: CGFloat) -> UIColor {
         var hue: CGFloat = 1, brightness: CGFloat = 1, alpha: CGFloat = 1
-        self.getHue(&hue, saturation: nil, brightness: &brightness, alpha: &alpha)
+        getHue(&hue, saturation: nil, brightness: &brightness, alpha: &alpha)
         return UIColor(hue: hue, saturation: newSaturation, brightness: brightness, alpha: alpha)
     }
+
     func withBrightness(_ newBrightness: CGFloat) -> UIColor {
         var hue: CGFloat = 1, saturation: CGFloat = 1, alpha: CGFloat = 1
-        self.getHue(&hue, saturation: &saturation, brightness: nil, alpha: &alpha)
+        getHue(&hue, saturation: &saturation, brightness: nil, alpha: &alpha)
         return UIColor(hue: hue, saturation: saturation, brightness: newBrightness, alpha: alpha)
     }
+
     func withAlpha(_ newAlpha: CGFloat) -> UIColor {
         var hue: CGFloat = 1, saturation: CGFloat = 1, brightness: CGFloat = 1
-        self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: nil)
+        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: nil)
         return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: newAlpha)
     }
+
     func highlight(withLevel highlight: CGFloat) -> UIColor {
         var red: CGFloat = 1, green: CGFloat = 1, blue: CGFloat = 1, alpha: CGFloat = 1
-        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return UIColor(red: red * (1-highlight) + highlight, green: green * (1-highlight) + highlight, blue: blue * (1-highlight) + highlight, alpha: alpha * (1-highlight) + highlight)
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return UIColor(red: red * (1 - highlight) + highlight, green: green * (1 - highlight) + highlight, blue: blue * (1 - highlight) + highlight, alpha: alpha * (1 - highlight) + highlight)
     }
+
     func shadow(withLevel shadow: CGFloat) -> UIColor {
         var red: CGFloat = 1, green: CGFloat = 1, blue: CGFloat = 1, alpha: CGFloat = 1
-        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return UIColor(red: red * (1-shadow), green: green * (1-shadow), blue: blue * (1-shadow), alpha: alpha * (1-shadow) + shadow)
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return UIColor(red: red * (1 - shadow), green: green * (1 - shadow), blue: blue * (1 - shadow), alpha: alpha * (1 - shadow) + shadow)
     }
 }
