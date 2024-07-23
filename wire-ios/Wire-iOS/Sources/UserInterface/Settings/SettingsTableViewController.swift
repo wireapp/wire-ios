@@ -24,7 +24,6 @@ import WireSyncEngine
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()

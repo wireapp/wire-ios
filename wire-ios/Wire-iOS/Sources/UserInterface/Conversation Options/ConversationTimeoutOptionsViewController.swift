@@ -47,7 +47,6 @@ extension ZMConversation {
 
 final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let conversation: ZMConversation
     private var items: [Item] = []

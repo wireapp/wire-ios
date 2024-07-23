@@ -121,8 +121,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             attributes: .safePublic
         )
 
-        SpinnerCapableNavigationController.accessibilityAnnouncement = L10n.Localizable.General.loading
-
         return true
     }
 

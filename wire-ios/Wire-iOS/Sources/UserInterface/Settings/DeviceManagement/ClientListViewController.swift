@@ -34,7 +34,6 @@ final class ClientListViewController: UIViewController,
     // MARK: SpinnerCapable
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     var removalObserver: ClientRemovalObserver?
 

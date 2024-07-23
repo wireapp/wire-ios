@@ -22,7 +22,6 @@ import WireReusableUIComponents
 final class BackupViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []

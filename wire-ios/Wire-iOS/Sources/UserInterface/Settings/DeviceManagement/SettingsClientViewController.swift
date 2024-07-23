@@ -41,7 +41,6 @@ final class SettingsClientViewController: UIViewController,
 
     // MARK: SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"

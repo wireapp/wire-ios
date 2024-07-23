@@ -27,7 +27,6 @@ import XCTest
 
 final class MockLoadingViewController: SpinnerCapableViewController {
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 }
 
 // MARK: - LoadingViewControllerTests

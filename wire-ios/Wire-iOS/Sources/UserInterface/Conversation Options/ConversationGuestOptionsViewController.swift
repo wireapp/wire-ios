@@ -39,7 +39,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private var guestLinkObserver: NSObjectProtocol?
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations

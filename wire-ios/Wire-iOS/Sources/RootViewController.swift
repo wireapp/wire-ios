@@ -24,7 +24,6 @@ final class RootViewController: UIViewController {
     // MARK: - SpinnerCapable
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     // MARK: - Private Property
 

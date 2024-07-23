@@ -32,7 +32,6 @@ final class ConversationServicesOptionsViewController: UIViewController,
     private var viewModel: ConversationServicesOptionsViewModel
 
     var dismissSpinner: SpinnerCompletion?
-    let accessibilityAnnouncement = L10n.Localizable.General.loading
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
