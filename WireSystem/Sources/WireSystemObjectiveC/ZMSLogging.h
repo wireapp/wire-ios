@@ -17,9 +17,9 @@
 //
 
 @import Foundation;
+@import WireSystem;
 
-#import <WireSystemObjectiveC/ZMSAsserts.h>
-
+#import "ZMSAsserts.h"
 
 /**
  

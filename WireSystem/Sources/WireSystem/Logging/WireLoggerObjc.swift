@@ -22,7 +22,7 @@ import Foundation
 @objcMembers
 public final class WireLoggerObjc: NSObject {
 
-    static func assertionDumpLog(_ message: String) {
+    public static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
 

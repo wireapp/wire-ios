@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
-#import <WireSystem/WireSystem.h>
+@import WireSystemObjectiveC;
+@import XCTest;
 
 @interface ZMSAssertionTests : XCTestCase
 

@@ -18,6 +18,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WireSystemObjectiveC/ZMSAsserts.h>
-#import <WireSystemObjectiveC/ZMSDefines.h>
-#import <WireSystemObjectiveC/ZMSLogging.h>
+// TODO: #import <WireSystemObjectiveC/ZMSLogging.h>?
+#import "../ZMSAsserts.h"
+#import "../ZMSDefines.h"
+#import "../ZMSLogging.h"

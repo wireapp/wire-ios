@@ -19,7 +19,7 @@
 @import Foundation;
 
 #import <AssertMacros.h>
-#import <WireSystemObjectiveC/ZMSDefines.h>
+#import "ZMSDefines.h"
 
 /**
  
