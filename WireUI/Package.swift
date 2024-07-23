@@ -62,7 +62,7 @@ let package = Package(
                     package: "swift-snapshot-testing"
                 ),
                 .product(
-                    name: "WireTestingNew",
+                    name: "WireTesting",
                     package: "WireTesting"
                 )
             ],
