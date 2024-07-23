@@ -16,32 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
-import WireTesting
+import Foundation
 
-final class TestSetup: NSObject, XCTestObservation {
-    private let defaults: TestUserDefaults
+public class TestUserDefaults: UserDefaults {
+    private let suiteName: String
 
-    override init() {
-        defaults = TestUserDefaults(suiteName: UUID().uuidString)!
-        super.init()
+    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
 
-        XCTestObservationCenter.shared.addTestObserver(self)
+    public override init?(suiteName suitename: String?) {
+        self.suiteName = suitename ?? ""
+        super.init(suiteName: suitename)
     }
 
-    func testBundleWillStart(_ testBundle: Bundle) {
-        BackendInfo.storage = defaults
-        BackendInfo.apiVersion = .v0
-        BackendInfo.domain = "wire.com"
-        BackendInfo.isFederationEnabled = false
-
-        defaults.shouldSet = { _, _ in
-            XCTFail("BackendInfo was mutated outside of mocking")
-            return false
+    public override func set(_ value: Any?, forKey defaultName: String) {
+        if shouldSet(value, defaultName) {
+            super.set(value, forKey: defaultName)
         }
     }
 
-    func testBundleDidFinish(_ testBundle: Bundle) {
-        defaults.reset()
+    public func reset() {
+        removePersistentDomain(forName: suiteName)
     }
 }

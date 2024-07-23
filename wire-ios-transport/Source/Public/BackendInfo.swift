@@ -41,13 +41,7 @@ public enum BackendInfo {
     /// - Note: By default this is `UserDefaults.standard`. However, this property is currently overwritten by the main
     /// app on startup.
 
-    public static var storage = UserDefaults.standard {
-        didSet {
-            didSetStorage?(storage)
-        }
-    }
-
-    public static var didSetStorage: ((UserDefaults) -> Void)?
+    public static var storage = UserDefaults.standard
 
     /// The currently selected API Version.
 
