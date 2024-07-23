@@ -19,6 +19,27 @@
 #import "ZMSLogging.h"
 #import "WireSystem/WireSystem-swift.h"
 
+// TODO: remove file
+
+void ZMDebugAssertMessage0(NSString *tag, char const * const assertion, char const * const filename, int linenumber)
+{
+    // TODO: move to macro
+    NSString *message = [NSString stringWithFormat:@"Assertion (%s) failed.", assertion];
+    [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull{
+        return message;
+    } tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
+}
+
+void ZMDebugAssertMessage1(NSString *tag, char const * const assertion, char const * const filename, int linenumber, NSString *format, ...)
+{
+    // TODO: move to macro
+    NSString *prefix = [NSString stringWithFormat:@"Assertion (%s) failed. ", assertion];
+    NSString *message = [prefix stringByAppendingFormat:format, ...];
+    [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull{
+        return message;
+    } tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
+}
+
 void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const * const format, ...)
 {
     char * message = NULL;
@@ -28,10 +49,9 @@ void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char cons
         message = NULL;
     }
     va_end(ap);
-    
+
     NSString *output = [NSString stringWithFormat:@"Assertion (%s) failed. %s", assertion, message ?: ""];
     [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull{
         return output;
     } tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
 }
-

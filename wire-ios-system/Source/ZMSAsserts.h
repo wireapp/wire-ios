@@ -60,6 +60,7 @@
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
+            ZMDebugAssertMessage0(@"Verify", #assertion, __FILE__, __LINE__); \
             action; \
         } \
     } while (0)
@@ -77,14 +78,15 @@
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessage1(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
         } \
     } while (0)
-
 
 #define VerifyActionString(assertion, action, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessage1(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
             action; \
         } \
     } while (0)
@@ -93,6 +95,7 @@
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
+            ZMDebugAssertMessage0(@"Verify", #assertion, __FILE__, __LINE__); \
         } \
     } while (0)
 
@@ -100,6 +103,7 @@
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessage1(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
         } \
     } while (0)
 

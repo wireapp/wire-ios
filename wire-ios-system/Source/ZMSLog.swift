@@ -219,6 +219,8 @@ extension ZMSLog {
         file: String = #file,
         line: UInt = #line) {
         logQueue.async {
+            // TODO: remove
+            print(level.rawValue, isSafe, tag, osLogOn, file, line)
             guard let tag, level.rawValue <= ZMSLog.getLevelNoLock(tag: tag).rawValue else {
                 return
             }
