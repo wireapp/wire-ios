@@ -51,4 +51,3 @@ extension SegmentationValue {
         .init(key: SegmentationKey.conversationSize.rawValue, value: value.analyticsValue)
     }
 }
-

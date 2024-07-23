@@ -41,7 +41,3 @@ public protocol MessageAppendableConversation {
     func appendLocation(with locationData: LocationData, nonce: UUID) throws -> ZMConversationMessage
 
 }
-
-extension ZMConversation: MessageAppendableConversation {
-
-}

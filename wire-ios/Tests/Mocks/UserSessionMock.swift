@@ -326,12 +326,10 @@ final class UserSessionMock: UserSession {
 
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
         AppendImageMessageUseCase(analyticsSession: nil)
-
     }
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
         AppendKnockMessageUseCase(analyticsSession: nil)
-
     }
 
     func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
