@@ -19,9 +19,6 @@
 import SnapshotTesting
 import SwiftUI
 import XCTest
-import WireTestingObjectiveC
-
-let xxx = Placeholder()
 
 /// A helper object for verifying image snapshots.
 ///

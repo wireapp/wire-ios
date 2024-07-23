@@ -11,7 +11,6 @@ let package = Package(
         .macOS(.v12)
     ],
     products: [
-        // TODO: [WPB-8907]: Rename this to WireTesting and migrate everything from the WireTesting project
         .library(
             name: "WireTesting",
             targets: ["WireTesting"]
@@ -35,7 +34,6 @@ let package = Package(
         .target(
             name: "WireTesting",
             dependencies: [
-                "WireTestingObjectiveC",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
@@ -46,8 +44,7 @@ let package = Package(
         .testTarget(
             name: "WireTestingTests",
             dependencies: [
-                "WireTesting",
-                "WireTestingObjectiveC"
+                "WireTesting"
             ]
         ),
 

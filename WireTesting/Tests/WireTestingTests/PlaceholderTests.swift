@@ -17,12 +17,10 @@
 //
 
 import XCTest
-import WireTestingObjectiveC
+
+@testable import WireTesting
 
 final class PlaceholderTests: XCTestCase {
 
-    func testNothing() {
-        let xxx = Placeholder()
-        print(xxx)
-    }
+    func testNothing() {}
 }
