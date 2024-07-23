@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "69A0629D-0828-46A2-B1D3-5B0EC1869552",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireTestingNewTests",
+        "name" : "WireTestingNewTests"
+      }
+    }
+  ],
+  "version" : 1
+}

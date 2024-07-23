@@ -19,7 +19,7 @@
 import SnapshotTesting
 import WireCommonComponents
 import WireDesign
-import WireUITesting
+import WireTestingNew
 import XCTest
 
 @testable import Wire
