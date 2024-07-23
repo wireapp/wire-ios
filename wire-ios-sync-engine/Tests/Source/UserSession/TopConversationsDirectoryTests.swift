@@ -18,7 +18,6 @@
 
 import Foundation
 @testable import WireSyncEngine
-import WireTesting
 import XCTest
 
 class TopConversationsDirectoryTests: MessagingTest {

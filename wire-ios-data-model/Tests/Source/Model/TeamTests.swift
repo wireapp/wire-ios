@@ -17,7 +17,6 @@
 //
 
 @testable import WireDataModel
-import WireTesting
 
 final class TeamTests: ZMConversationTestsBase {
 

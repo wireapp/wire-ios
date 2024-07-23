@@ -18,7 +18,6 @@
 
 import WireCryptobox
 import WireDataModel
-import WireTesting
 import XCTest
 
 extension MessagingTestBase {

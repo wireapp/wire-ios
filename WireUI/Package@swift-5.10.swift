@@ -29,7 +29,7 @@ let package = Package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
         ),
-        .package(path: "../WireTesting")
+        //.package(path: "../WireTesting")
     ],
     targets: [
         .target(
@@ -61,10 +61,10 @@ let package = Package(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
                 ),
-                .product(
-                    name: "WireTestingNew",
-                    package: "WireTesting"
-                )
+//                .product(
+//                    name: "WireTesting",
+//                    package: "WireTesting"
+//                )
             ],
             swiftSettings: swiftSettings
         )

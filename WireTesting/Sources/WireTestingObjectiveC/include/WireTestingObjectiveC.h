@@ -18,4 +18,4 @@
 
 #import <Foundation/Foundation.h>
 
-#import "../Placeholder.h"
+#import <WireTestingObjectiveC/Placeholder.h>

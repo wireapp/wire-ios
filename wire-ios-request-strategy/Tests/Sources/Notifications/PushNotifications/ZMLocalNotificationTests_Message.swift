@@ -19,7 +19,6 @@
 import WireDataModel
 import WireDataModelSupport
 @testable import WireRequestStrategy
-import WireTesting
 import XCTest
 
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {

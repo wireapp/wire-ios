@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-import WireTesting
 
 final class DiskDatabaseTest: DatabaseTest {
 

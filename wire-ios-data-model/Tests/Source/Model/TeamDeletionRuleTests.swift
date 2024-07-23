@@ -17,7 +17,6 @@
 //
 
 @testable import WireDataModel
-import WireTesting
 
 class TeamDeletionRuleTests: BaseZMClientMessageTests {
 

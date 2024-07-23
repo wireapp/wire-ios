@@ -19,7 +19,6 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
-import WireTesting
 
 @testable import WireRequestStrategy
 

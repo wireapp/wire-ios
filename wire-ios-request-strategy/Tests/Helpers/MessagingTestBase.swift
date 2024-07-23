@@ -19,7 +19,6 @@
 import WireCryptobox
 import WireDataModel
 @testable import WireRequestStrategy
-import WireTesting
 
 class MessagingTestBase: ZMTBaseTest {
 

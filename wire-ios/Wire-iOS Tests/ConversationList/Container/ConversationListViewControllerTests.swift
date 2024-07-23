@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import WireSyncEngineSupport
-import WireTestingNew
 import XCTest
 
 @testable import Wire

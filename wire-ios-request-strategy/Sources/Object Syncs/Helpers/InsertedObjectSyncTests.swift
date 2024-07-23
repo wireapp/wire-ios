@@ -17,7 +17,6 @@
 //
 
 @testable import WireRequestStrategy
-import WireTesting
 import XCTest
 
 class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {

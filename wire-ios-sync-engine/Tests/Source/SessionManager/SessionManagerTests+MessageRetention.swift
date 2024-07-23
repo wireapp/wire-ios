@@ -17,7 +17,6 @@
 //
 
 @testable import WireSyncEngine
-import WireTesting
 import XCTest
 
 final class SessionManagerMessageRetentionTests: IntegrationTest {

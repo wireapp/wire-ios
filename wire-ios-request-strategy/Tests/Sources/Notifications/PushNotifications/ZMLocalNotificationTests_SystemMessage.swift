@@ -17,7 +17,6 @@
 //
 
 @testable import WireRequestStrategy
-import WireTesting
 
 class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
 

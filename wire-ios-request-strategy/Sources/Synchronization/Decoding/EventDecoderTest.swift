@@ -17,7 +17,6 @@
 //
 
 import WireDataModelSupport
-import WireTesting
 
 @testable import WireRequestStrategy
 

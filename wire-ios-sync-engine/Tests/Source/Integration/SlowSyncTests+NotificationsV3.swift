@@ -17,7 +17,6 @@
 //
 
 import WireMockTransport
-import WireTesting
 import XCTest
 
 @testable import WireSyncEngine

@@ -18,7 +18,6 @@
 
 import SnapshotTesting
 import WireDesign
-import WireTestingNew
 import WireUtilities
 import XCTest
 

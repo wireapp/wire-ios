@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-import WireTesting
 
 class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
 

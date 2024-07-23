@@ -17,7 +17,6 @@
 //
 
 import FLAnimatedImage
-import WireTestingNew
 import XCTest
 
 @testable import Wire
