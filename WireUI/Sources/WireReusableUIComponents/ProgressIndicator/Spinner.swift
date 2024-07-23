@@ -16,27 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
+import WireDesign
 
-final class Spinner: UIView {
+public final class Spinner: UIView {
 
-    var color: UIColor = .white {
-        didSet {
-            updateSpinnerIcon()
-        }
+    public var color: UIColor = .white {
+        didSet { updateSpinnerIcon() }
     }
 
-    var iconSize: CGFloat = 32 {
-        didSet {
-            updateSpinnerIcon()
-        }
+    public var iconSize: CGFloat = 32 {
+        didSet { updateSpinnerIcon() }
     }
 
-    var isAnimating = false {
+    public var isAnimating = false {
         didSet {
-            guard oldValue != isAnimating else {
-                return
-            }
+            guard oldValue != isAnimating else { return }
 
             if isAnimating {
                 startAnimationInternal()
@@ -46,28 +41,27 @@ final class Spinner: UIView {
         }
     }
 
-    private let spinner: UIImageView = UIImageView()
+    private let spinner = UIImageView()
 
     private var isAnimationRunning: Bool {
-        return spinner.layer.animation(forKey: "rotateAnimation") != nil
+        spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func setup() {
         createSpinner()
-        setupConstraints()
     }
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -81,23 +75,21 @@ final class Spinner: UIView {
         addSubview(spinner)
 
         updateSpinnerIcon()
-    }
 
-    override var intrinsicContentSize: CGSize {
-        return spinner.image?.size ?? super.intrinsicContentSize
-    }
-
-    private func setupConstraints() {
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+    }
+
+    override public var intrinsicContentSize: CGSize {
+        spinner.image?.size ?? super.intrinsicContentSize
     }
 
     private func startAnimationInternal() {
         isHidden = false
         stopAnimationInternal()
 
-        spinner.layer.add(CABasicAnimation(rotationSpeed: 1.4, beginTime: 0, delegate: nil), forKey: "rotateAnimation")
+        spinner.layer.add(ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0), forKey: "rotateAnimation")
     }
 
     private func stopAnimationInternal() {
@@ -107,4 +99,22 @@ final class Spinner: UIView {
     func updateSpinnerIcon() {
         spinner.image = UIImage.imageForIcon(.spinner, size: iconSize, color: color)
     }
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    {
+        let container = UIView()
+        container.backgroundColor = .black.withAlphaComponent(0.5)
+
+        let spinner = Spinner()
+        spinner.isAnimating = true
+        spinner.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin]
+        container.addSubview(spinner)
+        spinner.center = container.center
+
+        return container
+    }()
 }
