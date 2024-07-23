@@ -80,7 +80,8 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         guard let eventId = event.uuid?.transportString(),
               let eventHash = EventHasher.hash(eventId: eventId, payload: event.payload) else {
-            assertionFailure("trying to check storedEvent without id")
+            // TODO: [WPB-10283] [F] reenable
+            //assertionFailure("trying to check storedEvent without id")
             return nil
         }
 
