@@ -11,6 +11,8 @@
 		0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
+		012B55F92C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55F82C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift */; };
+		012B55FB2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55FA2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift */; };
 		013887A22B9A5C6000323DD0 /* CleanupModels107PreAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A12B9A5C6000323DD0 /* CleanupModels107PreAction.swift */; };
 		013887A62B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A32B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift */; };
 		013887A72B9A5C6B00323DD0 /* PrefillPrimaryKeyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A42B9A5C6B00323DD0 /* PrefillPrimaryKeyAction.swift */; };
@@ -31,8 +33,10 @@
 		0179BC822BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
+		01AB482D2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AB482C2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift */; };
 		01B6A8A02B16268300E409A0 /* store2-111-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */; };
 		01B7A5752B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */; };
+		01C166B52C4EEA040057B7C6 /* event_4.0.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 01C166B42C4EEA040057B7C6 /* event_4.0.sqlite */; };
 		01E3C8552B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E3C8542B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift */; };
 		06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */; };
 		0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */; };
@@ -524,8 +528,8 @@
 		E6A239902B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A2398F2B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift */; };
 		E6A239932B7F6F82004E48C2 /* MockActorOneOnOneProtocolSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A239922B7F6F82004E48C2 /* MockActorOneOnOneProtocolSelector.swift */; };
 		E6A5BBA62B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA52B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift */; };
-		E6A5BBA82B0E355A00ACC236 /* CoreDataMessagingMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */; };
-		E6A5BBAA2B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */; };
+		E6A5BBA82B0E355A00ACC236 /* CoreDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA72B0E355A00ACC236 /* CoreDataMigrator.swift */; };
+		E6A5BBAA2B0E4DD500ACC236 /* CoreDataMigrationStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA92B0E4DD500ACC236 /* CoreDataMigrationStep.swift */; };
 		E6A5BBAE2B0E564200ACC236 /* WireDataModelBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */; };
 		E6BB79592C36EBE0003B821B /* store2-118-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BB79582C36EBE0003B821B /* store2-118-0.wiredatabase */; };
 		E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */; };
@@ -940,6 +944,9 @@
 		0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
+		012B55F72C4AEBB200DC12D0 /* ZMEventModel5.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel5.0.xcdatamodel; sourceTree = "<group>"; };
+		012B55F82C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEventsMigrationVersion.swift; sourceTree = "<group>"; };
+		012B55FA2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationVersion.swift; sourceTree = "<group>"; };
 		013887A12B9A5C6000323DD0 /* CleanupModels107PreAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CleanupModels107PreAction.swift; sourceTree = "<group>"; };
 		013887A32B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrimaryKeyGenerator.swift; sourceTree = "<group>"; };
 		013887A42B9A5C6B00323DD0 /* PrefillPrimaryKeyAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefillPrimaryKeyAction.swift; sourceTree = "<group>"; };
@@ -964,9 +971,11 @@
 		017F67952C207EDB00B6E02D /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		017F67962C207EDB00B6E02D /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
+		01AB482C2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigratorProtocol.swift; sourceTree = "<group>"; };
 		01B6A89E2B16252300E409A0 /* zmessaging2.111.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.111.0.xcdatamodel; sourceTree = "<group>"; };
 		01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-111-0.wiredatabase"; sourceTree = "<group>"; };
 		01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreDataMessagingMigrationVersionTests.swift; path = Migrations/CoreDataMessagingMigrationVersionTests.swift; sourceTree = "<group>"; };
+		01C166B42C4EEA040057B7C6 /* event_4.0.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = event_4.0.sqlite; sourceTree = "<group>"; };
 		01E3C8542B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ServerTimestamp.swift"; sourceTree = "<group>"; };
 		06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.FileSharing.swift; sourceTree = "<group>"; };
 		0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSystemMessage+ParticipantsRemovedReason.swift"; sourceTree = "<group>"; };
@@ -1462,8 +1471,8 @@
 		E6A2398F2B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActorOneOnOneMigrator.swift; sourceTree = "<group>"; };
 		E6A239922B7F6F82004E48C2 /* MockActorOneOnOneProtocolSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActorOneOnOneProtocolSelector.swift; sourceTree = "<group>"; };
 		E6A5BBA52B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigrationVersion.swift; sourceTree = "<group>"; };
-		E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigrator.swift; sourceTree = "<group>"; };
-		E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigrationStep.swift; sourceTree = "<group>"; };
+		E6A5BBA72B0E355A00ACC236 /* CoreDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrator.swift; sourceTree = "<group>"; };
+		E6A5BBA92B0E4DD500ACC236 /* CoreDataMigrationStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationStep.swift; sourceTree = "<group>"; };
 		E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireDataModelBundle.swift; sourceTree = "<group>"; };
 		E6BB79552C36DDA9003B821B /* zmessaging2.118.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.118.0.xcdatamodel; sourceTree = "<group>"; };
 		E6BB79582C36EBE0003B821B /* store2-118-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-118-0.wiredatabase"; sourceTree = "<group>"; };
@@ -2514,8 +2523,11 @@
 				017962A02B83FF8200D6C7B6 /* 110-111 */,
 				E62EE7F62B3447A3002A54EF /* 106-107 */,
 				E6A5BBA52B0E33DB00ACC236 /* CoreDataMessagingMigrationVersion.swift */,
-				E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */,
-				E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */,
+				012B55F82C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift */,
+				012B55FA2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift */,
+				E6A5BBA72B0E355A00ACC236 /* CoreDataMigrator.swift */,
+				01AB482C2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift */,
+				E6A5BBA92B0E4DD500ACC236 /* CoreDataMigrationStep.swift */,
 				013887AA2B9A5C8B00323DD0 /* CoreDataMigrationAction.swift */,
 				013887A92B9A5C8B00323DD0 /* CoreDataMigrationActionFactory.swift */,
 			);
@@ -3705,6 +3717,7 @@
 				54BAB40A24A4FA0800EBC400 /* store2-82-0.wiredatabase */,
 				0612D240243DC12E008811A7 /* store2-81-0.wiredatabase */,
 				63340BBC241C2BC5004ED87C /* store2-80-0.wiredatabase */,
+				01C166B42C4EEA040057B7C6 /* event_4.0.sqlite */,
 				F91EAAC41D885D720010ACBE /* video.mp4 */,
 				F9A708591CAEEC0700C2F5FE /* Test-Bridging-Header.h */,
 				5495BC421E019F1B004253ED /* audio.m4a */,
@@ -3978,6 +3991,7 @@
 				63340BBD241C2BC5004ED87C /* store2-80-0.wiredatabase in Resources */,
 				017962A82B85071B00D6C7B6 /* store2-112-0.wiredatabase in Resources */,
 				E6BB79592C36EBE0003B821B /* store2-118-0.wiredatabase in Resources */,
+				01C166B52C4EEA040057B7C6 /* event_4.0.sqlite in Resources */,
 				06EE09E32659340F00D6CAC3 /* store2-92-0.wiredatabase in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4090,6 +4104,7 @@
 				E6067C002BAD9461005A7474 /* OneOnOneResolverError.swift in Sources */,
 				1670D0172317F92B003A143B /* ZMConversation+Team.swift in Sources */,
 				EED6C7142A30B94100CB8B60 /* MLSUserID.swift in Sources */,
+				012B55FB2C4B146B00DC12D0 /* CoreDataMigrationVersion.swift in Sources */,
 				EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */,
 				63B1336A29A503D100009D84 /* ClaimMLSKeyPackageAction.swift in Sources */,
 				639971AE2B2732E6009DD5CF /* CommitSender.swift in Sources */,
@@ -4211,15 +4226,19 @@
 				63D9A19E282AA0050074C20C /* NSManagedObjectContext+Federation.swift in Sources */,
 				EEDD426A28633B2800C9EBC4 /* ZMUser+Patches.swift in Sources */,
 				EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */,
+<<<<<<< HEAD
 				E6A5BBA82B0E355A00ACC236 /* CoreDataMessagingMigrator.swift in Sources */,
 				5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */,
+=======
+				E6A5BBA82B0E355A00ACC236 /* CoreDataMigrator.swift in Sources */,
+>>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725))
 				EE7CF5E82B725EA1001DC3F9 /* ConversationPredicateFactory.swift in Sources */,
 				165124D42188B613006A3C75 /* ZMClientMessage+Quotes.swift in Sources */,
 				06B99C79242A293500FEAFDE /* ZMClientMessage+Knock.swift in Sources */,
 				BF1B98071EC31A3C00DE033B /* Member.swift in Sources */,
 				F1FDF2FE21B1572500E037A1 /* ZMGenericMessageData.swift in Sources */,
 				54CD460A1DEDA55C00BA3429 /* AddressBookEntry.swift in Sources */,
-				E6A5BBAA2B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift in Sources */,
+				E6A5BBAA2B0E4DD500ACC236 /* CoreDataMigrationStep.swift in Sources */,
 				BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */,
 				168D7BFD26F365ED00789960 /* EntityAction.swift in Sources */,
 				F1FDF30021B1580400E037A1 /* GenericMessage+Utils.swift in Sources */,
@@ -4443,6 +4462,7 @@
 				EE68EEC9252DC4450013B242 /* ChangeDetector.swift in Sources */,
 				63B1335629A503D100009D84 /* MLSGroup.swift in Sources */,
 				EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */,
+				012B55F92C4B144100DC12D0 /* CoreDataEventsMigrationVersion.swift in Sources */,
 				EEC80B5C29B611CA00099727 /* PersistedDataPatch.swift in Sources */,
 				F9AB00271F0CE5520037B437 /* FileManager+FileLocations.swift in Sources */,
 				F9A7067F1CAEE01D00C2F5FE /* ZMImageMessage.m in Sources */,
@@ -4460,6 +4480,7 @@
 				EE5E2C1526DFC31900C3928A /* MessageDestructionTimeoutType.swift in Sources */,
 				F991CE1B1CB561B0004D8465 /* ZMAddressBookContact.m in Sources */,
 				63B1335C29A503D100009D84 /* MLSService.swift in Sources */,
+				01AB482D2C4E59EB005AD7B3 /* CoreDataMessagingMigratorProtocol.swift in Sources */,
 				2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */,
 				EE19CE1F2AEBE4CB00CB8641 /* SyncMLSOneToOneConversationAction.swift in Sources */,
 				87EFA3AC210F52C6004DFA53 /* ZMConversation+LastMessages.swift in Sources */,
@@ -5182,13 +5203,21 @@
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+<<<<<<< HEAD
 				EE57A7012C2991590096F242 /* ZMEventModel5.0.xcdatamodel */,
+=======
+				012B55F72C4AEBB200DC12D0 /* ZMEventModel5.0.xcdatamodel */,
+>>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725))
 				EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */,
 				167BCC192609E92300E9D7E3 /* ZMEventModel2.0.xcdatamodel */,
 				167BCC1A2609E92300E9D7E3 /* ZMEventModel.xcdatamodel */,
 				167BCC1B2609E92300E9D7E3 /* ZMEventModel3.0.xcdatamodel */,
 			);
+<<<<<<< HEAD
 			currentVersion = EE57A7012C2991590096F242 /* ZMEventModel5.0.xcdatamodel */;
+=======
+			currentVersion = 012B55F72C4AEBB200DC12D0 /* ZMEventModel5.0.xcdatamodel */;
+>>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725))
 			path = ZMEventModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
