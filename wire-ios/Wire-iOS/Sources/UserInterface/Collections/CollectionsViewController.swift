@@ -303,10 +303,9 @@ final class CollectionsViewController: UIViewController {
 
         navigationItem.titleView = titleViewWrapper
 
-        let button = CollectionsView.closeButton()
-        button.accessibilityLabel = L10n.Accessibility.ConversationSearch.CloseButton.description
-        button.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
         if !inOverviewMode,
            let count = navigationController?.viewControllers.count,
@@ -315,11 +314,6 @@ final class CollectionsViewController: UIViewController {
             backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         }
-    }
-
-    @objc
-    private func closeButtonPressed(_ button: UIButton) {
-        onDismiss?(self)
     }
 
     @objc
@@ -740,11 +734,11 @@ extension CollectionsViewController: CollectionCellDelegate {
                 backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
                 backButton.accessibilityLabel = L10n.Accessibility.ConversationSearch.BackButton.description
 
-                let closeButton = CollectionsView.closeButton()
-                closeButton.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
+                navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+                    self?.presentingViewController?.dismiss(animated: true)
+                }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
                 imagesController.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-                imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
                 imagesController.swipeToDismiss = false
                 imagesController.messageActionDelegate = self
                 navigationController?.pushViewController(imagesController, animated: true)
