@@ -41,7 +41,6 @@ let package = Package(
 
         .target(
             name: "WireSystemObjectiveC",
-            dependencies: ["WireSystem"],
             swiftSettings: swiftSettings
         ),
         .testTarget(

@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
-@import WireSystem;
+#import <Foundation/Foundation.h>
 
 #import "ZMSAsserts.h"
 

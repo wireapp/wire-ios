@@ -59,7 +59,7 @@
 #define VerifyAction(assertion, action) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__); \
             action; \
         } \
     } while (0)
@@ -76,15 +76,14 @@
 #define VerifyString(assertion, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessageWithFormat(@"Verify", #assertion, __FILE__, __LINE__, @frmt, ##__VA_ARGS__); \
         } \
     } while (0)
-
 
 #define VerifyActionString(assertion, action, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessageWithFormat(@"Verify", #assertion, __FILE__, __LINE__, @frmt, ##__VA_ARGS__); \
             action; \
         } \
     } while (0)
@@ -92,17 +91,33 @@
 #define Check(assertion) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__); \
         } \
     } while (0)
 
 #define CheckString(assertion, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessageWithFormat(@"Verify", #assertion, __FILE__, __LINE__, @frmt, ##__VA_ARGS__); \
         } \
     } while (0)
 
+#define ZMDebugAssertMessage(tag_, assertion, file_, line_) \
+    do { \
+        NSString *message = [NSString stringWithFormat:@"Assertion (%s) failed.", assertion]; \
+        [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
+            return message; \
+        } tag:tag_ file:[NSString stringWithUTF8String:file_] line:(NSUInteger)line_]; \
+    } while (0)
+
+#define ZMDebugAssertMessageWithFormat(tag_, assertion, file_, line_, format, ...) \
+    do { \
+        NSString *prefix = [NSString stringWithFormat:@"Assertion (%s) failed. ", assertion]; \
+        NSString *message = [prefix stringByAppendingFormat:format, ##__VA_ARGS__]; \
+        [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
+            return message; \
+        } tag:tag_ file:[NSString stringWithUTF8String:file_] line:(NSUInteger)line_]; \
+    } while (0)
 
 #pragma mark -
 
@@ -122,8 +137,8 @@ do { \
 #pragma mark - Assert reporting
 
 /// URL of the "last assertion" log file
-FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
+// FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
 /// Dump a crash to the crash dump file
-FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
+// FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
 /// Dump a crash to the crash dump file
-FOUNDATION_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);
+// FOUNDATION_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMLogLevel)
+@frozen @objc(ZMLogLevel)
 public enum ZMLogLevel: Int8 {
     case `public`, error, warn, info, debug
 }

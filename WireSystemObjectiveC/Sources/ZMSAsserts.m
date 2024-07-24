@@ -20,6 +20,7 @@
 #import "ZMSAsserts.h"
 #import "WireSystem/WireSystem-Swift.h"
 
+/*
 void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message) {
     ZMAssertionDump(assertion.UTF8String, filename.UTF8String, linenumber, "%s", message.UTF8String);
 }
@@ -63,3 +64,4 @@ NSURL* ZMLastAssertionFile(void) {
     
     return [appSupportDir URLByAppendingPathComponent:@"last_assertion.log"];
 }
+*/
