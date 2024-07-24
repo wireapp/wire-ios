@@ -118,9 +118,13 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.onDismissPressed()
-        }, accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.onDismissPressed()
+            },
+            accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description
+        )
+
     }
 
     private func configGroupSelector() {
