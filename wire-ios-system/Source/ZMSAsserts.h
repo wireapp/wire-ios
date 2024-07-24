@@ -59,7 +59,6 @@
 #define VerifyAction(assertion, action) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessageLegacy(@"Verify", #assertion, __FILE__, __LINE__, nil); \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__); \
             action; \
         } \
@@ -77,7 +76,6 @@
 #define VerifyString(assertion, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessageLegacy(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
             ZMDebugAssertMessageWithFormat(@"Verify", #assertion, __FILE__, __LINE__, @frmt, ##__VA_ARGS__); \
         } \
     } while (0)
@@ -85,7 +83,6 @@
 #define VerifyActionString(assertion, action, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessageLegacy(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
             ZMDebugAssertMessageWithFormat(@"Verify", #assertion, __FILE__, __LINE__, @frmt, ##__VA_ARGS__); \
             action; \
         } \
@@ -94,7 +91,6 @@
 #define Check(assertion) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessageLegacy(@"Verify", #assertion, __FILE__, __LINE__, nil); \
             ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__); \
         } \
     } while (0)
@@ -102,7 +98,6 @@
 #define CheckString(assertion, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessageLegacy(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
             ZMDebugAssertMessageWithFormat(@"Verify", #assertion, __FILE__, __LINE__, @frmt, ##__VA_ARGS__); \
         } \
     } while (0)
@@ -142,8 +137,8 @@ do { \
 #pragma mark - Assert reporting
 
 /// URL of the "last assertion" log file
-FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
+// FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
 /// Dump a crash to the crash dump file
-FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
+// FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
 /// Dump a crash to the crash dump file
-FOUNDATION_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);
+// FOUNDATION_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);

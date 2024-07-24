@@ -12,7 +12,6 @@
 		013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */; };
 		01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030C2A0CED010000CFF2 /* WireLogger.swift */; };
 		01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030D2A0CED010000CFF2 /* Flow.swift */; };
-		096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.m */; };
 		16AAA62A2C21903200080A06 /* ExpiringActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA6292C21903200080A06 /* ExpiringActivity.swift */; };
 		16AAA62E2C22F7D500080A06 /* ExpiringActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */; };
 		16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */; };
@@ -95,7 +94,6 @@
 		01CB030D2A0CED010000CFF2 /* Flow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
 		092758691B70E68F00AD5A78 /* WireSystem.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireSystem.xcconfig; sourceTree = "<group>"; };
 		096A3A1C1B67CEF700565001 /* ZMSLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZMSLogging.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		096A3A1D1B67CEF700565001 /* ZMSLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMSLogging.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		096A3A1E1B67CEF700565001 /* ZMSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLog.swift; sourceTree = "<group>"; };
 		09F186211B68FD52007A3DA6 /* WireSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WireSystem-Info.plist"; sourceTree = "<group>"; };
 		16AAA6292C21903200080A06 /* ExpiringActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiringActivity.swift; sourceTree = "<group>"; };
@@ -265,7 +263,6 @@
 				54DB81621DBF66CF00AF495D /* ZMSLog+Levels.swift */,
 				54D573691DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift */,
 				096A3A1C1B67CEF700565001 /* ZMSLogging.h */,
-				096A3A1D1B67CEF700565001 /* ZMSLogging.m */,
 				D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */,
 				EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */,
 				16AAA6292C21903200080A06 /* ExpiringActivity.swift */,
@@ -591,7 +588,6 @@
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
 				59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */,
 				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
-				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */,

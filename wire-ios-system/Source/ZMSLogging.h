@@ -39,6 +39,3 @@
             return message; \
         } tag:0 file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
     } while (0)
-
-// TODO: remove all
-FOUNDATION_EXTERN void ZMDebugAssertMessageLegacy(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
