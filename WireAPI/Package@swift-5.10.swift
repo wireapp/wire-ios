@@ -24,10 +24,7 @@ let package = Package(
             dependencies: ["WireAPI"],
             swiftSettings: swiftSettings,
             plugins: [
-                .plugin(
-                    name: "SourceryPlugin",
-                    package: "SourceryPlugin"
-                )
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
         ),
         .testTarget(

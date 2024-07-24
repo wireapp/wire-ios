@@ -12,15 +12,22 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(
-            name: "WireSystemPackage",
-            swiftSettings: swiftSettings
-        ),
+        .target(name: "WireSystemPackage", swiftSettings: swiftSettings),
         .testTarget(
             name: "WireSystemPackageTests",
             dependencies: ["WireSystemPackage"]
+        ),
+
+        .target(
+            name: "WireSystemPackageSupport",
+            dependencies: ["WireSystemPackage"],
+            swiftSettings: swiftSettings,
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+            ]
         )
     ]
 )
