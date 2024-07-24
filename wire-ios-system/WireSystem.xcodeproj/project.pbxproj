@@ -35,6 +35,7 @@
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
 		595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */; };
+		598368A42C51085500ACF0C3 /* ZMLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A32C51085500ACF0C3 /* ZMLogLevel.swift */; };
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86E02BF4DB9B00FC5438 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
@@ -123,6 +124,7 @@
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
 		595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIModalPresentationStyle+CustomDebugStringConvertible.swift"; sourceTree = "<group>"; };
+		598368A32C51085500ACF0C3 /* ZMLogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLogLevel.swift; sourceTree = "<group>"; };
 		598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSystemSupport.h; sourceTree = "<group>"; };
 		598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */,
 				548662511B344CB400298EFD /* ZMSDefines.h */,
 				594450572BE0F0C8003ACC98 /* GroupQueue.swift */,
+				598368A32C51085500ACF0C3 /* ZMLogLevel.swift */,
 				096A3A1E1B67CEF700565001 /* ZMSLog.swift */,
 				54DB81621DBF66CF00AF495D /* ZMSLog+Levels.swift */,
 				54D573691DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift */,
@@ -599,6 +602,7 @@
 				D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */,
 				59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */,
 				E66F22F12C2ADD33005FD57E /* LoggerProtocol.swift in Sources */,
+				598368A42C51085500ACF0C3 /* ZMLogLevel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
