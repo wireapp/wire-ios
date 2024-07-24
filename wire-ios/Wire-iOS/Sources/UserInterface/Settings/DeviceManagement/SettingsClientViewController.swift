@@ -122,7 +122,7 @@ final class SettingsClientViewController: UIViewController,
             navController.viewControllers[0] == self,
            self.navigationItem.rightBarButtonItem == nil {
 
-            let doneButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+            let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
                     self?.navigationController?.presentingViewController?.dismiss(animated: true)

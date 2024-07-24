@@ -231,7 +231,7 @@ final class ConversationCreationController: UIViewController {
             }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
-        let nextButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: L10n.Localizable.General.next,
             action: UIAction { [weak self] _ in
                 self?.tryToProceed()

@@ -481,14 +481,14 @@ final class ClientListViewController: UIViewController,
 
     func createRightBarButtonItem() {
         if self.editingList {
-            let doneButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+            let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
                     self?.editingList = false
                 })
             self.navigationItem.rightBarButtonItem = doneButtonItem
         } else {
-            let editButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+            let editButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.edit,
                 action: UIAction { [weak self] _ in
                     self?.editingList = true

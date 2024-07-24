@@ -261,7 +261,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     func setupNavigationBar() {
         setupNavigationBarTitle(HandleChange.title)
-        let saveButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+        let saveButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: HandleChange.save,
             action: UIAction { [weak self] _ in
                 self?.saveButtonTapped()

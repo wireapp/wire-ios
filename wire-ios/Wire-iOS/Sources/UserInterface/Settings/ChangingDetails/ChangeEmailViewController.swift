@@ -115,7 +115,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        let saveButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+        let saveButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: EmailAccountSection.Change.save,
             action: UIAction { [weak self] _ in
                 self?.saveButtonTapped()

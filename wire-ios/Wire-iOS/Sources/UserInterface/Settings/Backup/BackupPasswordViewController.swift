@@ -119,7 +119,7 @@ final class BackupPasswordViewController: UIViewController {
                 self?.onCompletion?(nil)
             })
 
-        let nextButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: HistoryBackup.Password.next,
             action: UIAction { [weak self] _ in
                 self?.onCompletion?(self?.password)

@@ -128,7 +128,7 @@ final class FolderCreationController: UIViewController {
             }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
-        let nextButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: FolderCreationName.Button.create,
             action: UIAction { [weak self] _ in
                 self?.tryToProceed()
