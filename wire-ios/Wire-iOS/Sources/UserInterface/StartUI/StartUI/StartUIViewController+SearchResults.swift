@@ -20,6 +20,7 @@ import Foundation
 import WireSyncEngine
 import UIKit
 import WireSystem
+import WireCommonComponents
 
 final class StartUIView: UIView { }
 
@@ -204,7 +205,7 @@ extension StartUIViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URL.wr_searchSupport.open()
+            WireURLs.shared.searchSupport.open()
         }
     }
 }
