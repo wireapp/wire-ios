@@ -23,7 +23,7 @@ public struct BackupExportFailedAnalyticsEvent: AnalyticsEvent {
 
     /// The name of the event.
     public var eventName: String {
-        "exportBackupFailed"
+        "backup.export_failed"
     }
 
     /// Additional segmentation data for the event.

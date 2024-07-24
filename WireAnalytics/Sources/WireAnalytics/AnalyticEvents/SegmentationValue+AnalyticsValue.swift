@@ -47,8 +47,8 @@ extension SegmentationValue {
     ///
     /// - Parameter value: A boolean indicating if the call is a video call.
     /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
-    static func callVideo(_ value: Bool) -> Self {
-        .init(key: "call_video", value: value.analyticsValue)
+    static func isVideoCall(_ value: Bool) -> Self {
+        .init(key: "is_video_call", value: value.analyticsValue)
     }
 
     /// Creates a `SegmentationValue` for the type of group in a conversation.

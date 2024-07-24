@@ -23,7 +23,7 @@ public struct AppOpenAnalyticsEvent: AnalyticsEvent {
 
     /// The name of the event.
     public var eventName: String {
-        "appOpen"
+        "app.open"
     }
 
     /// Additional segmentation data for the event.

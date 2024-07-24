@@ -31,7 +31,7 @@ public struct RestoreBackupAnalyticsEvent: AnalyticsEvent {
 
     /// The name of the event, which depends on the restoration result.
     public var eventName: String {
-        didSucceed ? "restoreBackupSucceeded" : "restoreBackupFailed"
+        didSucceed ? "backup.restore_succeeded" : "backup.restore_failed"
     }
 
     /// Additional segmentation data for the event.
