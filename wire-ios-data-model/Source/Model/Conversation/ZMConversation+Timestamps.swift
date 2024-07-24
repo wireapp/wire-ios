@@ -169,7 +169,7 @@ extension ZMConversation {
 
     /// Update timetamps after an message has been updated or created from an update event
     @objc
-    func updateTimestampsAfterUpdatingMessage(_ message: ZMMessage) {
+    public func updateTimestampsAfterUpdatingMessage(_ message: ZMMessage) {
         guard let timestamp = message.serverTimestamp else { return }
 
         updateServerModified(timestamp)

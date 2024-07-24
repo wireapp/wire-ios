@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process conversation rename events.
 
@@ -32,9 +33,40 @@ protocol ConversationRenameEventProcessorProtocol {
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
 
-    func processEvent(_: ConversationRenameEvent) async throws {
-        // TODO: [WPB-10177]
-        assertionFailure("not implemented yet")
+    let context: NSManagedObjectContext
+
+    func processEvent(_ event: ConversationRenameEvent) async throws {
+        await context.perform {
+            let conversation = ZMConversation.fetchOrCreate(
+                with: event.conversationID.uuid,
+                domain: event.conversationID.domain,
+                in: context
+            )
+
+            let sender = ZMUser.fetchOrCreate(
+                with: event.senderID.uuid,
+                domain: event.senderID.domain,
+                in: context
+            )
+
+            let nameDidChange = conversation.userDefinedName != event.newName
+            conversation.userDefinedName = event.newName
+
+            if nameDidChange {
+                let message = ZMSystemMessage(
+                    nonce: UUID(),
+                    managedObjectContext: context
+                )
+
+                message.systemMessageType = .conversationNameChanged
+                message.visibleInConversation = conversation
+                message.serverTimestamp = event.timestamp
+                message.users = [sender]
+                message.text = event.newName
+
+                conversation.updateTimestampsAfterUpdatingMessage(message)
+            }
+        }
     }
 
 }

@@ -18,20 +18,13 @@
 
 import Foundation
 
-/// An event where a new self user client was added.
+extension AsyncSequence {
 
-public struct UserClientAddEvent: Equatable, Codable {
-
-    /// The new user client.
-
-    public let client: UserClient
-
-    /// Create a new `UserClientAddEvent`.
-    ///
-    /// - Parameter client: The new user client.
-
-    public init(client: UserClient) {
-        self.client = client
+    func toStream() -> AsyncStream<Element> {
+        var iterator = makeAsyncIterator()
+        return AsyncStream {
+            try? await iterator.next()
+        }
     }
 
 }

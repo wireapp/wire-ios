@@ -20,8 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// sourcery: AutoMockable
 /// Access update events.
-
 protocol UpdateEventsRepositoryProtocol {
 
     /// Pull pending events from the server, decrypt if needed, and store locally.
@@ -34,13 +34,47 @@ protocol UpdateEventsRepositoryProtocol {
     /// Fetch the next batch pending events from the database.
     ///
     /// The batch is already sorted, such that the first element is the oldest
-    /// stored event. This method does not delete any events, so invoking this
-    /// method again will return the same batch.
+    /// stored event. This method does not delete any events
+    /// (see `deleteNextPendingEvents(limit:)`), so invoking this method again
+    /// will return the same batch.
     ///
     /// - Parameter limit: The maximum number of events to fetch.
     /// - Returns: Decrypted update event envelopes ready for processing.
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope]
+
+    /// Delete the next batch of pending events from the database.
+    ///
+    /// Use this method to delete stored events that have been processed and
+    /// can now be discarded.
+    ///
+    /// - Parameter limit: The maximum number of events to delete.
+
+    func deleteNextPendingEvents(limit: UInt) async throws
+
+    /// Open the push channel and deliver update event envelopes through
+    /// an asynchronous stream.
+    ///
+    /// The envelopes are bufferred until a consumer starts to iterate though
+    /// the stream.
+    ///
+    /// - Returns: An asynchronous stream of `UpdateEventEnvelope`s.
+
+    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope>
+
+    /// Close the piush channel and stop fnish the asynchronous stream of
+    /// `UpdateEventEnvelope`s returned in `startBufferingLiveEvents`.
+
+    func stopReceivingLiveEvents() async
+
+    /// Store the last event envelope id.
+    ///
+    /// Future pulls of pending events will only include event envelopes
+    /// since this id.
+    ///
+    /// - Parameter id: The id to store.
+
+    func storeLastEventEnvelopeID(_ id: UUID)
 
 }
 
@@ -48,6 +82,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     private let selfClientID: String
     private let updateEventsAPI: any UpdateEventsAPI
+    private let pushChannel: any PushChannelProtocol
     private let updateEventDecryptor: any UpdateEventDecryptorProtocol
     private let eventContext: NSManagedObjectContext
     private let lastEventIDRepository: any LastEventIDRepositoryInterface
@@ -58,12 +93,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     init(
         selfClientID: String,
         updateEventsAPI: any UpdateEventsAPI,
+        pushChannel: any PushChannelProtocol,
         updateEventDecryptor: any UpdateEventDecryptorProtocol,
         eventContext: NSManagedObjectContext,
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
         self.selfClientID = selfClientID
         self.updateEventsAPI = updateEventsAPI
+        self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
         self.eventContext = eventContext
         self.lastEventIDRepository = lastEventIDRepository
@@ -72,6 +109,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Pull pending events
 
     func pullPendingEvents() async throws {
+        WireLogger.sync.debug("pulling pending events")
         // We want all events since this event.
         guard let lastEventID = lastEventIDRepository.fetchLastEventID() else {
             throw UpdateEventsRepositoryError.lastEventIDMissing
@@ -85,10 +123,22 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             selfClientID: selfClientID,
             sinceEventID: lastEventID
         ) {
+            let batchCount = envelopes.count
+            var count = 0
+            WireLogger.sync.debug("received batch of \(batchCount) envelopes")
+
+            // If we need to abort, do it before processing the next page.
+            try Task.checkCancellation()
+
             for envelope in envelopes {
+                count += 1
+                WireLogger.sync.debug("decrypting envelope (\(count) of \(batchCount)")
+
                 // We can only decrypt once so store the decrypted events for later retrieval.
                 var decryptedEnvelope = envelope
                 decryptedEnvelope.events = try await updateEventDecryptor.decryptEvents(in: envelope)
+
+                WireLogger.sync.debug("persisting envelope (\(count) of \(batchCount)")
 
                 try await persistEventEnvelope(
                     decryptedEnvelope,
@@ -100,7 +150,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 if !envelope.isTransient {
                     // Update the last event id so we don't refetch the same events.
                     // Transient events aren't stored in the backend's event stream.
-                    lastEventIDRepository.storeLastEventID(envelope.id)
+                    storeLastEventEnvelopeID(envelope.id)
                 }
             }
         }
@@ -121,10 +171,6 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     ) async throws {
         try await eventContext.perform { [eventContext, encoder] in
             let data = try encoder.encode(eventEnvelope)
-
-            let string = String(decoding: data, as: UTF8.self)
-            print("persisting event: \(string)")
-
             let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
             storedEventEnvelope.data = data
             storedEventEnvelope.sortIndex = index
@@ -161,6 +207,48 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 throw UpdateEventsRepositoryError.failedToDecodeStoredEvent(error)
             }
         }
+    }
+
+    // MARK: - Delete pending events
+
+    func deleteNextPendingEvents(limit: UInt) async throws {
+        try await eventContext.perform { [eventContext] in
+            do {
+                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+                request.fetchLimit = Int(limit)
+                let storedEventEnvelopes = try eventContext.fetch(request)
+                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
+                storedEventEnvelopes.forEach(eventContext.delete)
+                try eventContext.save()
+            } catch {
+                throw UpdateEventsRepositoryError.failedToDeleteStoredEvents(error)
+            }
+        }
+    }
+
+    // MARK: - Live events
+
+    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope> {
+        try await pushChannel.open().compactMap {
+            do {
+                WireLogger.sync.debug("decrypting live event")
+                var envelope = $0
+                envelope.events = try await self.updateEventDecryptor.decryptEvents(in: envelope)
+                return envelope
+            } catch {
+                WireLogger.sync.error("failed to decrypt live event, dropping: \(error)")
+                return nil
+            }
+        }.toStream()
+    }
+
+    func stopReceivingLiveEvents() async {
+        await pushChannel.close()
+    }
+
+    func storeLastEventEnvelopeID(_ id: UUID) {
+        WireLogger.sync.debug("storing last event id")
+        lastEventIDRepository.storeLastEventID(id)
     }
 
 }

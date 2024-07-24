@@ -18,20 +18,20 @@
 
 import Foundation
 
-/// An event where a new self user client was added.
+/// Describes the apps synchronization state.
 
-public struct UserClientAddEvent: Equatable, Codable {
+enum SyncState {
 
-    /// The new user client.
+    /// The app is fetching and processing all pending events.
 
-    public let client: UserClient
+    case quickSync(Task<Void, Error>)
 
-    /// Create a new `UserClientAddEvent`.
-    ///
-    /// - Parameter client: The new user client.
+    /// The app is processing live events via the push channel.
 
-    public init(client: UserClient) {
-        self.client = client
-    }
+    case live(Task<Void, Never>)
+
+    /// The app is neither receiving nor processing any events.
+
+    case suspended
 
 }
