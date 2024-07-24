@@ -20,15 +20,14 @@ import UIKit
 import WireDesign
 
 public extension UIBarButtonItem {
-
     static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
         let closeImage = UIImage(named: "Close")
-        let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: nil, action: nil)
+        let closeItem = UIBarButtonItem(title: accessibilityLabel, primaryAction: action)
+        closeItem.image = closeImage
+        closeItem.style = .plain
         closeItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack
-        closeItem.primaryAction = action
         closeItem.accessibilityLabel = accessibilityLabel
         closeItem.accessibilityIdentifier = "close"
         return closeItem
     }
-
 }
