@@ -21,11 +21,11 @@ on:
         type: boolean
         default: false
         required: false
-      wire-system:
+      wire-ios-system:
         type: boolean
         default: false
         required: false
-      wire-system-objc:
+      wire-system-package:
         type: boolean
         default: false
         required: false
@@ -77,7 +77,15 @@ on:
         type: boolean
         default: false
         required: false
+      wire-utilities-package:
+        type: boolean
+        default: false
+        required: false
       wire-ios-testing:
+        type: boolean
+        default: false
+        required: false
+      wire-testing-package:
         type: boolean
         default: false
         required: false
@@ -151,52 +159,76 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
+      # WireSystemPackage
+
+      - name: Build WireSystemPackage
+        if: ${{ inputs.wire-system-package || inputs.all }}
+        run: |
+          echo "WireSystemPackage has changes"
+          echo "Building WireSystemPackage..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystemPackage -resultBundlePath xcodebuild-wire-system-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-system-package.log | bundle exec xcpretty
+
+      - name: Run Danger for WireSystemPackage
+        if: false # ${{ inputs.wire-system-package || inputs.all }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-system-package.xcresult
+        run: |
+          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystemPackage" --verbose
+
+      - name: Test WireSystemPackage
+        if: ${{ inputs.wire-system-package || inputs.all }}
+        run: |
+          echo "Testing WireSystemPackage..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystemPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-system-package.log | bundle exec xcpretty --report junit --output build/reports/WireSystemPackage.junit
+          exit ${PIPESTATUS[0]}
+
       # WireSystem
 
       - name: Build WireSystem
-        if: ${{ inputs.wire-system || inputs.all }}
+        if: ${{ inputs.wire-ios-system || inputs.all }}
         run: |
           echo "WireSystem has changes"
           echo "Building WireSystem..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystem -resultBundlePath xcodebuild-wire-system.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-system.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystem -resultBundlePath xcodebuild-wire-ios-system.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-system.log | bundle exec xcpretty
 
       - name: Run Danger for WireSystem
-        if: false # ${{ inputs.wire-system || inputs.all }}
+        if: false # ${{ inputs.wire-ios-system || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-system.xcresult
+          XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose
 
       - name: Test WireSystem
-        if: ${{ inputs.wire-system || inputs.all }}
+        if: ${{ inputs.wire-ios-system || inputs.all }}
         run: |
           echo "Testing WireSystem..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
 
-      # WireSystemObjectiveC
+      # WireTestingPackage
 
-      - name: Build WireSystemObjectiveC
-        if: ${{ inputs.wire-system-objc || inputs.all }}
+      - name: Build WireTestingPackage
+        if: ${{ inputs.wire-testing-package || inputs.all }}
         run: |
-          echo "WireSystemObjectiveC has changes"
-          echo "Building WireSystemObjectiveC..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystemObjectiveC -resultBundlePath xcodebuild-wire-system-objc.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-system-objc.log | bundle exec xcpretty
+          echo "WireTestingPackage has changes"
+          echo "Building WireTestingPackage..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTestingPackage -resultBundlePath xcodebuild-wire-testing-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-testing-package.log | bundle exec xcpretty
 
-      - name: Run Danger for WireSystemObjectiveC
-        if: false # ${{ inputs.wire-system-objc || inputs.all }}
+      - name: Run Danger for WireTestingPackage
+        if: false # ${{ inputs.wire-testing-package || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-system-objc.xcresult
+          XCRESULT_PATH: xcodebuild-wire-testing-package.xcresult
         run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystemObjectiveC" --verbose
+          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTestingPackage" --verbose
 
-      - name: Test WireSystemObjectiveC
-        if: ${{ inputs.wire-system-objc || inputs.all }}
+      - name: Test WireTestingPackage
+        if: ${{ inputs.wire-testing-package || inputs.all }}
         run: |
-          echo "Testing WireSystemObjectiveC..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystemObjectiveC -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-system-objc.log | bundle exec xcpretty --report junit --output build/reports/WireSystemObjectiveC.junit
+          echo "Testing WireTestingPackage..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTestingPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-testing-package.log | bundle exec xcpretty --report junit --output build/reports/WireTestingPackage.junit
           exit ${PIPESTATUS[0]}
 
       # WireTesting
@@ -221,6 +253,30 @@ jobs:
         run: |
           echo "Testing WireTesting..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
+          exit ${PIPESTATUS[0]}
+
+      # WireUtilitiesPackage
+
+      - name: Build WireUtilitiesPackage
+        if: ${{ inputs.wire-utilities-package || inputs.all }}
+        run: |
+          echo "WireUtilitiesPackage has changes"
+          echo "Building WireUtilitiesPackage..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -resultBundlePath xcodebuild-wire-utilities-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-utilities-package.log | bundle exec xcpretty
+
+      - name: Run Danger for WireUtilitiesPackage
+        if: false # ${{ inputs.wire-utilities-package || inputs.all }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-utilities-package.xcresult
+        run: |
+          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireUtilitiesPackage" --verbose
+
+      - name: Test WireUtilitiesPackage
+        if: ${{ inputs.wire-utilities-package || inputs.all }}
+        run: |
+          echo "Testing WireUtilitiesPackage..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-utilities-package.log | bundle exec xcpretty --report junit --output build/reports/WireUtilitiesPackage.junit
           exit ${PIPESTATUS[0]}
 
       # WireUtilities
