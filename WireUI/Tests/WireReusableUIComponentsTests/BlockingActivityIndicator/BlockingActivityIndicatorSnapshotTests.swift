@@ -38,7 +38,8 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
             viewController.view.backgroundColor = .white
 
             sut = .init(view: viewController.view)
-            snapshotHelper = SnapshotHelper()
+            snapshotHelper = .init()
+                .withSnapshotDirectory(relativeTo: #file)
         }
     }
 
