@@ -19,10 +19,23 @@
 import Foundation
 
 /// Reports an error and terminates the application
-public func fatal(_ message: String,
-                  file: StaticString = #file,
-                  line: UInt = #line) -> Never {
-    ZMAssertionDump_NSString("Swift assertion", "\(file)", Int32(line), message)
+public func fatal(
+    _ message: String,
+    file: StaticString = #file,
+    line: UInt = #line
+) -> Never {
+
+    let output = NSString(format: "ASSERT: [%s:%d] <%s> %s", "\(file)", Int32(line), "Swift assertion", message) as String
+
+    // report error to datadog or other loggers
+    WireLogger.system.critical(output, attributes: .safePublic)
+
+    // prepare and dump to file
+    do {
+        try AssertionDumpFile.write(content: output)
+    } catch {
+        assertionFailure(String(reflecting: error))
+    }
     fatalError(message, file: file, line: line)
 }
 
@@ -49,9 +62,9 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
     var canFatalError: Bool {
         switch self {
         case .debug, .develop:
-            return true
+            true
         case .appStore, .unknown:
-            return false
+            false
         }
     }
 }
