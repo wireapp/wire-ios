@@ -36,6 +36,8 @@
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
 		595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */; };
 		598368A42C51085500ACF0C3 /* ZMLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A32C51085500ACF0C3 /* ZMLogLevel.swift */; };
+		598368A62C51095300ACF0C3 /* ZMAssertionDumpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A52C51095300ACF0C3 /* ZMAssertionDumpFile.swift */; };
+		598368A82C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A72C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift */; };
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86E02BF4DB9B00FC5438 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
@@ -125,6 +127,8 @@
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
 		595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIModalPresentationStyle+CustomDebugStringConvertible.swift"; sourceTree = "<group>"; };
 		598368A32C51085500ACF0C3 /* ZMLogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLogLevel.swift; sourceTree = "<group>"; };
+		598368A52C51095300ACF0C3 /* ZMAssertionDumpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMAssertionDumpFile.swift; sourceTree = "<group>"; };
+		598368A72C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMAssertionDumpFileTests.swift; sourceTree = "<group>"; };
 		598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSystemSupport.h; sourceTree = "<group>"; };
 		598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -251,6 +255,7 @@
 				F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */,
 				594450552BDFE8BF003ACC98 /* TimePoint.swift */,
 				5473E7C71B31A95A00C6A937 /* WireSystem.h */,
+				598368A52C51095300ACF0C3 /* ZMAssertionDumpFile.swift */,
 				548662451B344AAB00298EFD /* ZMSAsserts.h */,
 				5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */,
 				548662511B344CB400298EFD /* ZMSDefines.h */,
@@ -298,6 +303,7 @@
 				5457426B1BA9C50C0009409B /* ZMDefinesTest.m */,
 				54A3273B1B99C04F0004EB95 /* ZMLogTests.swift */,
 				54C0CC421C9C7862000A9286 /* ZMSAssertionTests.m */,
+				598368A72C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift */,
 				59C39F062C21E9390087300D /* DispatchGroupTests.swift */,
 				59C39F082C21E9480087300D /* TimePointTests.swift */,
 				16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */,
@@ -581,6 +587,7 @@
 				01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */,
 				E66F22ED2C2ADC6B005FD57E /* WireLogger+Instances.swift in Sources */,
 				16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */,
+				598368A62C51095300ACF0C3 /* ZMAssertionDumpFile.swift in Sources */,
 				EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */,
 				59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */,
 				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
@@ -611,6 +618,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8701221920F641BE001E6342 /* CacheTests.swift in Sources */,
+				598368A82C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift in Sources */,
 				F1670FB022A7C7D800BC6811 /* SanitizedStringTests.swift in Sources */,
 				54A3273C1B99C04F0004EB95 /* ZMLogTests.swift in Sources */,
 				D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */,
