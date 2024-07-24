@@ -2,7 +2,6 @@
 
 /.build
 /Packages
-/.swiftpm/xcode/
 
 xcuserdata/
 DerivedData/

@@ -26,7 +26,6 @@ struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
     let floatingStream: Stream?
     let streams: [Stream]
     let videoState: VideoState
-    let networkQuality: NetworkQuality
     let shouldShowActiveSpeakerFrame: Bool
     let presentationMode: VideoGridPresentationMode
     let callHasTwoParticipants: Bool
@@ -39,7 +38,6 @@ struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
         floatingStream = videoStreamArrangment.preview
         streams = videoStreamArrangment.grid
         videoState = voiceChannel.videoState
-        networkQuality = voiceChannel.networkQuality
         shouldShowActiveSpeakerFrame = voiceChannel.shouldShowActiveSpeakerFrame
         presentationMode = voiceChannel.videoGridPresentationMode
         callHasTwoParticipants = voiceChannel.callHasTwoParticipants

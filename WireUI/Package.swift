@@ -32,7 +32,8 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.16.0"
-        )
+        ),
+        .package(name: "WireSystemPackage", path: "../WireSystem")
     ],
     targets: [
         .target(
@@ -77,6 +78,10 @@ let package = Package(
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
+                ),
+                .product(
+                    name: "WireSystemPackage",
+                    package: "WireSystemPackage"
                 )
             ],
             swiftSettings: swiftSettings
