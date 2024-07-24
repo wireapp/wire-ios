@@ -20,9 +20,7 @@ let package = Package(
         ),
         .testTarget(
             name: "WireSystemPackageTests",
-            dependencies: [
-                "WireSystemPackage"
-            ]
+            dependencies: ["WireSystemPackage"]
         )
     ]
 )
