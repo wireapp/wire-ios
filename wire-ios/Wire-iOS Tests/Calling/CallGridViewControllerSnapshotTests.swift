@@ -33,8 +33,6 @@ struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
 
     var videoState: VideoState = .stopped
 
-    var networkQuality: NetworkQuality = .normal
-
     var presentationMode: VideoGridPresentationMode = .allVideoStreams
 
     var callHasTwoParticipants: Bool = false
@@ -45,6 +43,7 @@ struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
 final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     var sut: CallGridViewController!
+    var mockVoiceChannel: MockVoiceChannel!
     var mediaManager: ZMMockAVSMediaManager!
     var configuration: MockCallGridViewControllerInput!
     var selfStream: Wire.Stream!
@@ -61,6 +60,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         mediaManager = ZMMockAVSMediaManager()
         configuration = MockCallGridViewControllerInput()
         mockHintView = MockCallGridHintNotificationLabel()
+        mockVoiceChannel = MockVoiceChannel(conversation: nil)
 
         let mockSelfClient = MockUserClient()
         mockSelfClient.remoteIdentifier = "selfClient123"
@@ -92,8 +92,11 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     func createSut(hideHintView: Bool = true, delegate: MockCallGridViewControllerDelegate? = nil) {
-        sut = CallGridViewController(configuration: configuration,
-                                      mediaManager: mediaManager)
+        sut = CallGridViewController(
+            voiceChannel: mockVoiceChannel,
+            configuration: configuration,
+            mediaManager: mediaManager
+        )
 
         sut.isCovered = false
         sut.view.backgroundColor = .black
@@ -174,7 +177,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     func testForBadNetwork() {
         // given / when
-        configuration.networkQuality = .poor
+        mockVoiceChannel.mockNetworkQuality = .poor
         createSut()
 
         // then
@@ -191,7 +194,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     func testHintViewWithNetworkQualityView() {
         // given / when
-        configuration.networkQuality = .poor
+        mockVoiceChannel.mockNetworkQuality = .poor
         createSut(hideHintView: false)
 
         // then
