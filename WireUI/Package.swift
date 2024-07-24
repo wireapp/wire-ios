@@ -6,10 +6,7 @@ import PackageDescription
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],,
     products: [
         .library(
             name: "WireDesign",
@@ -21,14 +18,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.1.0"
-        ),
-        .package(
-            url: "https://github.com/pointfreeco/swift-snapshot-testing",
-            from: "1.16.0"
-        ),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),,
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),,
         .package(path: "../WireTestingPackage")
     ],
     targets: [
@@ -40,10 +31,7 @@ let package = Package(
             name: "WireDesignTests",
             dependencies: [
                 "WireDesign",
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -57,10 +45,7 @@ let package = Package(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 "WireReusableUIComponents",
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                ),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),,
                 .product(
                     name: "WireTestingPackage",
                     package: "WireTestingPackage"

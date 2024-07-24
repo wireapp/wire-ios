@@ -5,10 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],,
     products: [
         .library(
             name: "WireAnalytics",

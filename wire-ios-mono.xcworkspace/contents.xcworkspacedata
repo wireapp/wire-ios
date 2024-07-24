@@ -116,6 +116,9 @@
       location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireSystemPackage">
+   </FileRef>
+   <FileRef
       location = "group:WireDomain/WireDomain.xcodeproj">
    </FileRef>
    <FileRef

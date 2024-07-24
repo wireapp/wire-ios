@@ -41,7 +41,6 @@
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
 		54AFD7E81CB699710090E33A /* ZMTTestBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */; };
 		592319772C515FAF003B92D4 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 592319762C515FAF003B92D4 /* WireTestingPackage */; };
-		592319782C515FAF003B92D4 /* WireTestingPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 592319762C515FAF003B92D4 /* WireTestingPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		595D4B1B2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */; };
 		595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */; };
 		634CCB112BAC54FF00A11AB3 /* GenericArrayActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */; };
@@ -85,7 +84,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				592319782C515FAF003B92D4 /* WireTestingPackage in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

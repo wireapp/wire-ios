@@ -6,10 +6,7 @@ import PackageDescription
 let package = Package(
     name: "WireSystemPackage",
     defaultLocalization: "en",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],,
     products: [
         .library(
             name: "WireSystemPackage",
@@ -18,10 +15,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.1.0"
-        )
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
     ],
     targets: [
         .target(
