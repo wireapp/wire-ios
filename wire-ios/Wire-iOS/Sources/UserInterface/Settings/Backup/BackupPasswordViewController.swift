@@ -109,7 +109,6 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        let textColor = LabelColors.textDefault
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
 
         setupNavigationBarTitle(HistoryBackup.Password.title)
@@ -120,7 +119,7 @@ final class BackupPasswordViewController: UIViewController {
                 self?.onCompletion?(nil)
             })
 
-        let nextButtonItem = UIBarButtonItem.createNavigationLeftBarButtonItem(
+        let nextButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
             title: HistoryBackup.Password.next,
             action: UIAction { [weak self] _ in
                 self?.onCompletion?(self?.password)
