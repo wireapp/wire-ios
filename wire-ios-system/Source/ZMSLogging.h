@@ -24,12 +24,12 @@
 #define ZMLogInfo(format, ...) ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMLogTag, format, ##__VA_ARGS__)
 #define ZMLogDebug(format, ...) ZMLogWithLevelAndTag(ZMLogLevelDebug, ZMLogTag, format, ##__VA_ARGS__)
 
-#define ZMLogWithLevelAndTag(level, tag, format, ...) \
+#define ZMLogWithLevelAndTag(level, tag_, format, ...) \
     do { \
         NSString *message = [[NSString alloc] initWithFormat:format, ##__VA_ARGS__]; \
         [ZMSLog logWithLevel:level message:^NSString * _Nonnull { \
             return message; \
-        } tag:tag file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
+        } tag:tag_ file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
     } while (0)
 
 #define ZMLogWithLevel(level, format, ...) \
