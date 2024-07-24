@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireAnalytics
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter

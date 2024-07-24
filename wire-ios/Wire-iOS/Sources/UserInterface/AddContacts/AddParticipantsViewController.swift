@@ -364,6 +364,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         }()
 
         guard let title else { return }
+
         setupNavigationBarTitle(title.capitalized)
 
     }
