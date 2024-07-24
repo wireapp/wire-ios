@@ -1,4 +1,4 @@
---exclude Carthage,DerivedData,**/AutoMockable.generated.swift
+--exclude **/.build,Carthage,**/DerivedData,**/AutoMockable.generated.swift
 
 --enable blankLineAfterSwitchCase
 --disable hoistTry
