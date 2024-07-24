@@ -1,3 +1,9 @@
-# ``WireTesting``
+# ``WireTestingPackage``
 
-Contains helpers to be used for testing.
+Make testing easier.
+
+## Overview
+
+WireTesting provides functionility to facilitate testing.
+
+## Topics

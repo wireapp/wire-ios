@@ -1,3 +1,9 @@
-# ``WireSystem``
+# ``WireSystemPackage``
 
-Contains helpers to be used for testing.
+Provide core shared code.
+
+## Overview
+
+WireSystem provides some core shared code.
+
+## Topics

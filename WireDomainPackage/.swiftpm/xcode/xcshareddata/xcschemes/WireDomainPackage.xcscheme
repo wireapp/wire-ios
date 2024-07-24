@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireSystemPackage"
-               BuildableName = "WireSystemPackage"
-               BlueprintName = "WireSystemPackage"
+               BlueprintIdentifier = "WireDomainPackage"
+               BuildableName = "WireDomainPackage"
+               BlueprintName = "WireDomainPackage"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireSystemPackage.xctestplan"
+            reference = "container:.swiftpm/WireDomainPackage.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -39,9 +39,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireSystemPackageTests"
-               BuildableName = "WireSystemPackageTests"
-               BlueprintName = "WireSystemPackageTests"
+               BlueprintIdentifier = "WireDomainPackageTests"
+               BuildableName = "WireDomainPackageTests"
+               BlueprintName = "WireDomainPackageTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -67,9 +67,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireSystemPackage"
-            BuildableName = "WireSystemPackage"
-            BlueprintName = "WireSystemPackage"
+            BlueprintIdentifier = "WireDomainPackage"
+            BuildableName = "WireDomainPackage"
+            BlueprintName = "WireDomainPackage"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
