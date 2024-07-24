@@ -21,12 +21,11 @@ import WireDesign
 
 public extension UIBarButtonItem {
 
-    static func closeButton(action: @escaping (UIAction) -> Void, accessibilityLabel: String) -> UIBarButtonItem {
+    static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
         let closeImage = UIImage(named: "Close")
-        let uiAction = UIAction(title: accessibilityLabel, image: closeImage, identifier: nil, handler: action)
         let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: nil, action: nil)
         closeItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack
-        closeItem.primaryAction = uiAction
+        closeItem.primaryAction = action
         closeItem.accessibilityLabel = accessibilityLabel
         closeItem.accessibilityIdentifier = "close"
         return closeItem
