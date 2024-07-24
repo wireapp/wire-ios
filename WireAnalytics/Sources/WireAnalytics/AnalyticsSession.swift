@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 // sourcery: AutoMockable
 /// Protocol for managing and tracking analytics events within a session.
 public protocol AnalyticsSessionProtocol {
@@ -36,7 +38,8 @@ struct AnalyticsSession: AnalyticsSessionProtocol {
     func trackEvent(_ event: any AnalyticsEvent) {
         var segmentation = event.segmentation
         segmentation.insert(.isSelfTeamMember(isSelfTeamMember))
-        // TODO: add other default segmentation
+        segmentation.insert(.deviceModel(UIDevice.current.model))
+        segmentation.insert(.deviceOS(UIDevice.current.systemVersion))
 
         let rawSegmentation = Dictionary(uniqueKeysWithValues: event.segmentation.map {
             ($0.key, $0.value)

@@ -27,13 +27,13 @@ public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
     /// Additional segmentation data for the event.
     public var segmentation: Set<SegmentationValue> {
         [
-            .isVideoCall(isVideoCall),
+            .callVideo(callVideo),
             .groupType(conversationType)
         ]
     }
 
     /// Indicates whether the call is a video call.
-    public var isVideoCall: Bool
+    public var callVideo: Bool
 
     /// The type of conversation for the call.
     public var conversationType: ConversationType

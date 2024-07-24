@@ -19,17 +19,36 @@
 /// Convenience methods for creating common `SegmentationValue` instances.
 extension SegmentationValue {
 
+    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    ///
+    /// - Parameter value: A string indicating device OS version of the user
+    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    static func deviceOS(_ value: String) -> Self {
+        .init(key: "os_version", value: value)
+    }
+
+    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    ///
+    /// - Parameter value: A string indicating device model of the user
+    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    static func deviceModel(_ value: String) -> Self {
+        .init(key: "device_model", value: value)
+    }
+
+    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    ///
+    /// - Parameter value: A boolean indicating if the self user is a team member.
+    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
     static func isSelfTeamMember(_ value: Bool) -> Self {
-        // TODO: use the right key
-        .init(key: "is_self_team_member", value: value.analyticsValue)
+        .init(key: "is_team_member", value: value.analyticsValue)
     }
 
     /// Creates a `SegmentationValue` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the call is a video call.
     /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
-    static func isVideoCall(_ value: Bool) -> Self {
-        .init(key: "is_video_call", value: value.analyticsValue)
+    static func callVideo(_ value: Bool) -> Self {
+        .init(key: "call_video", value: value.analyticsValue)
     }
 
     /// Creates a `SegmentationValue` for the type of group in a conversation.

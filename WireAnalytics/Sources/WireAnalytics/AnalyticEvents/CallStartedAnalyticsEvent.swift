@@ -17,23 +17,23 @@
 //
 
 /// Struct representing an analytics event for when a call is started.
-public struct CallStartedAnalyticsEvent: AnalyticsEvent {
+public struct CallInitializedAnalyticsEvent: AnalyticsEvent {
 
     /// The name of the event.
     public var eventName: String {
-        "callStarted"
+        "calling.initiated_call"
     }
 
     /// Additional segmentation data for the event.
     public var segmentation: Set<SegmentationValue> {
         [
-            .isVideoCall(isVideoCall),
+            .callVideo(callVideo),
             .groupType(conversationType)
         ]
     }
 
     /// Indicates whether the call is a video call.
-    public var isVideoCall: Bool
+    public var callVideo: Bool
 
     /// The type of conversation for the call.
     public var conversationType: ConversationType
