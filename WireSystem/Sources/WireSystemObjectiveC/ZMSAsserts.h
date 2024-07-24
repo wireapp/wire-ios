@@ -141,11 +141,12 @@ do { \
 
 #define ZMCrashFormat(reason, file, line, format, ...) \
 do { \
-    NSString *output = [NSString stringWithFormat:@"ASSERT: [%s:%d] <%s> %s", \
+    NSString *message = [NSString stringWithFormat: @format, ##__VA_ARGS__]; \
+    NSString *output = [NSString stringWithFormat:@"ASSERT: [%s:%d] <%s> %@", \
                         file ? file : "", \
                         line, \
                         reason ? reason : "", \
-                        format, ##__VA_ARGS__]; \
+                        message]; \
 \
     /* report error to datadog or other loggers */ \
     [WireLoggerObjc assertionDumpLog:output]; \
