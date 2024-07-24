@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 @testable import WireShareEngine
+import WireTesting
 import XCTest
 
 final class OperationLoopTests: ZMTBaseTest {

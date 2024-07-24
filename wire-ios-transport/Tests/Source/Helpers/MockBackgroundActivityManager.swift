@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireTesting
 import WireTransport
 
 /**

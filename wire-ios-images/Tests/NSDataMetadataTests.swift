@@ -19,6 +19,7 @@
 import Foundation
 import ImageIO
 @testable import WireImages
+import WireTesting
 import XCTest
 
 class NSDataMetadataTests: XCTestCase {

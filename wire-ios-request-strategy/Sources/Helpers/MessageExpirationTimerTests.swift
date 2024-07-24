@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireRequestStrategy
+import WireTesting
 import XCTest
 
 final class MessageExpirationTimerTests: MessagingTestBase {

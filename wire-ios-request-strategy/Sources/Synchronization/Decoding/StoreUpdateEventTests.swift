@@ -17,6 +17,7 @@
 //
 
 @testable import WireRequestStrategy
+import WireTesting
 
 final class StoreUpdateEventTests: MessagingTestBase {
 

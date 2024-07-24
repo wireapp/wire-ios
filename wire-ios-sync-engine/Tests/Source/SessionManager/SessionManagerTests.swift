@@ -20,6 +20,7 @@ import LocalAuthentication
 import PushKit
 @testable import WireSyncEngine
 import WireSyncEngineSupport
+import WireTesting
 import XCTest
 
 final class SessionManagerTests: IntegrationTest {

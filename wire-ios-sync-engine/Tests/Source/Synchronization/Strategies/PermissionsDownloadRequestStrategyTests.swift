@@ -17,6 +17,7 @@
 //
 
 @testable import WireSyncEngine
+import WireTesting
 
 final class PermissionsDownloadRequestStrategyTests: MessagingTest {
 

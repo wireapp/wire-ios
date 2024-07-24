@@ -18,6 +18,7 @@
 import WireCryptobox
 import WireDataModel
 import WireMockTransport
+import WireTesting
 import XCTest
 
 extension IntegrationTest {

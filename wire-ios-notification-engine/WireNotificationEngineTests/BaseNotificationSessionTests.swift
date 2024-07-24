@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireMockTransport
 @testable import WireNotificationEngine
 import WireRequestStrategy
+import WireTesting
 import XCTest
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {

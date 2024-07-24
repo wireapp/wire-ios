@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireSyncEngine
+import WireTesting
 import XCTest
 
 public class ZMConversationAccessModeTests: MessagingTest {

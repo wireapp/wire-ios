@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireUITesting
 import XCTest
 
 @testable import Wire

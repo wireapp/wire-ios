@@ -17,6 +17,7 @@
 //
 
 @testable import WireRequestStrategy
+import WireTesting
 import XCTest
 
 class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {

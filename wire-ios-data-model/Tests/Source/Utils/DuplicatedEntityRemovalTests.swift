@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+import WireTesting
 import XCTest
 
 final class DuplicatedEntityRemovalTests: DiskDatabaseTest {

@@ -18,6 +18,7 @@
 
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
+import WireTesting
 import XCTest
 
 class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {

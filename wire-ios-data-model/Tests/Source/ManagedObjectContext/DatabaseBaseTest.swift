@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+import WireTesting
 
 class DatabaseBaseTest: ZMTBaseTest {
 

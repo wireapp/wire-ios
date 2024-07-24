@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTesting
 
 class DatabaseTest: ZMTBaseTest {
 

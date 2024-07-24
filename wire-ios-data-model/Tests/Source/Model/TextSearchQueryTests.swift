@@ -17,6 +17,7 @@
 //
 
 @testable import WireDataModel
+import WireTesting
 
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 

@@ -20,6 +20,7 @@ import XCTest
 
 @testable import Wire
 @testable import WireSyncEngineSupport
+import WireUITesting
 
 final class ProfileViewControllerTests: XCTestCase {
 

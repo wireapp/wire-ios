@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireSyncEngine
+import WireTesting
 
 public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
