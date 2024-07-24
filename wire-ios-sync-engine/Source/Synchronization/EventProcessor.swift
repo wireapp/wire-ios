@@ -69,7 +69,11 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
+        let processEventsId = UUID()
+        let attributes: LogAttributes = [LogAttributesKey.processEventsId.rawValue: processEventsId.uuidString]
+        WireLogger.eventProcessing.info("processEvents", attributes: attributes)
         try await enqueueTask {
+            WireLogger.eventProcessing.info("enqueueTask", attributes: attributes)
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }

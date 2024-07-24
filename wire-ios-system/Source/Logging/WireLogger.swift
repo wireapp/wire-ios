@@ -148,6 +148,7 @@ public enum LogAttributesKey: String {
     case eventSource = "event_source"
     case processId = "process_id"
     case processName = "process_name"
+    case processEventsId = "processEventsId"
 }
 
 public extension LogAttributes {

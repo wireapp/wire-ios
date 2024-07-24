@@ -162,8 +162,10 @@ extension EventDecoder {
                 if DeveloperFlag.decryptAndStoreEventsSleep.isOn {
                     try await Task.sleep(nanoseconds: 1_000_000_000)
                 }
+                WireLogger.eventProcessing.info("decryptAndStoreEvent start", attributes: event.logAttributes)
                 await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
                 index += 1
+                WireLogger.eventProcessing.info("decryptAndStoreEvent end", attributes: event.logAttributes)
             }
         }
 
