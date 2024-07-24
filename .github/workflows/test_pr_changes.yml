@@ -25,6 +25,7 @@ jobs:
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
+      wire-system-package: ${{ steps.filter.outputs.wire-system-package }}
       wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
       wire-api: ${{ steps.filter.outputs.wire-api }}
       wire-domain: ${{ steps.filter.outputs.wire-domain }}
@@ -37,6 +38,7 @@ jobs:
       wire-ios-images: ${{ steps.filter.outputs.wire-ios-images }}
       wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
       wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
+      wire-utilities-packages: ${{ steps.filter.outputs.wire-utilities-packages }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
       wire-testing-package: ${{ steps.filter.outputs.wire-testing-package }}
 
