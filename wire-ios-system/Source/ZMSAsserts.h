@@ -19,7 +19,7 @@
 #import <Foundation/Foundation.h>
 #import <AssertMacros.h>
 
-#import "ZMSDefines.h"
+#import <WireSystem/ZMSDefines.h>
 
 /**
  
@@ -125,9 +125,9 @@
 #define ZMCrash(reason, file, line) \
 do { \
     NSString *output = [NSString stringWithFormat:@"ASSERT: [%s:%d] <%s> %s", \
-                        file ? file : "", \
+                        file != NULL ? file : "", \
                         line, \
-                        reason ? reason : "", \
+                        reason != NULL ? reason : "", \
                         ""]; \
 \
     /* report error to datadog or other loggers */ \
@@ -143,9 +143,9 @@ do { \
 do { \
     NSString *message = [NSString stringWithFormat: @format, ##__VA_ARGS__]; \
     NSString *output = [NSString stringWithFormat:@"ASSERT: [%s:%d] <%s> %@", \
-                        file ? file : "", \
+                        file != NULL ? file : "", \
                         line, \
-                        reason ? reason : "", \
+                        reason != NULL ? reason : "", \
                         message]; \
 \
     /* report error to datadog or other loggers */ \
