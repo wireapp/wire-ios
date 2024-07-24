@@ -128,12 +128,12 @@ final class FolderCreationController: UIViewController {
             }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: FolderCreationName.Button.create.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(tryToProceed)
-        )
+        let nextButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+            title: FolderCreationName.Button.create,
+            action: UIAction { [weak self] _ in
+                self?.tryToProceed()
+            })
+
         nextButtonItem.accessibilityIdentifier = "button.newfolder.create"
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
@@ -157,7 +157,7 @@ final class FolderCreationController: UIViewController {
         }
     }
 
-    @objc fileprivate func tryToProceed() {
+    fileprivate func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
     }
