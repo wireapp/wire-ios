@@ -17,6 +17,7 @@
 //
 
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 extension NetworkQuality {

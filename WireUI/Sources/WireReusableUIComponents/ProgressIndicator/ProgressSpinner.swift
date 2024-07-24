@@ -18,30 +18,30 @@
 
 import UIKit
 
-final class ProgressSpinner: UIView {
+public final class ProgressSpinner: UIView {
 
-    var didBecomeActiveNotificationToken: NSObjectProtocol?
-    var didEnterBackgroundNotificationToken: NSObjectProtocol?
+    public var didBecomeActiveNotificationToken: NSObjectProtocol?
+    public var didEnterBackgroundNotificationToken: NSObjectProtocol?
 
-    var color: UIColor = .white {
+    public var color: UIColor = .white {
         didSet {
             updateSpinnerIcon()
         }
     }
 
-    var iconSize: CGFloat = 32 {
+    public var iconSize: CGFloat = 32 {
         didSet {
             updateSpinnerIcon()
         }
     }
 
-    var hidesWhenStopped: Bool = false {
+    public var hidesWhenStopped: Bool = false {
         didSet {
             isHidden = hidesWhenStopped && !isAnimationRunning
         }
     }
 
-    var isAnimating = false {
+    public var isAnimating = false {
         didSet {
             guard oldValue != isAnimating else {
                 return
@@ -55,13 +55,13 @@ final class ProgressSpinner: UIView {
         }
     }
 
-    private let spinner: UIImageView = UIImageView()
+    private let spinner: UIImageView = .init()
 
     private var isAnimationRunning: Bool {
-        return spinner.layer.animation(forKey: "rotateAnimation") != nil
+        spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
-    init() {
+    public init() {
         super.init(frame: .zero)
         setup()
     }
@@ -86,7 +86,7 @@ final class ProgressSpinner: UIView {
         }
     }
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -94,7 +94,7 @@ final class ProgressSpinner: UIView {
         spinner.layer.frame = frame
     }
 
-    override func didMoveToWindow() {
+    override public func didMoveToWindow() {
         if window == nil {
             // CABasicAnimation delegate is strong so we stop all animations when the view is removed.
             stopAnimationInternal()
@@ -111,8 +111,8 @@ final class ProgressSpinner: UIView {
         updateSpinnerIcon()
     }
 
-    override var intrinsicContentSize: CGSize {
-        return spinner.image?.size ?? super.intrinsicContentSize
+    override public var intrinsicContentSize: CGSize {
+        spinner.image?.size ?? super.intrinsicContentSize
     }
 
     private func setupConstraints() {
@@ -125,7 +125,9 @@ final class ProgressSpinner: UIView {
         isHidden = false
         stopAnimationInternal()
         if window != nil {
-            spinner.layer.add(CABasicAnimation(rotationSpeed: 1.4, beginTime: 0, delegate: self), forKey: "rotateAnimation")
+            let animation = ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0)
+            animation.delegate = self
+            spinner.layer.add(animation, forKey: "rotateAnimation")
         }
     }
 
@@ -138,17 +140,17 @@ final class ProgressSpinner: UIView {
     }
 
     @objc
-    func startAnimation() {
+    public func startAnimation() {
         isAnimating = true
     }
 
     @objc
-    func stopAnimation() {
+    public func stopAnimation() {
         isAnimating = false
     }
 
     private func applicationDidBecomeActive() {
-        if isAnimating && !isAnimationRunning {
+        if isAnimating, !isAnimationRunning {
             startAnimationInternal()
         }
     }
@@ -161,9 +163,31 @@ final class ProgressSpinner: UIView {
 }
 
 extension ProgressSpinner: CAAnimationDelegate {
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+
+    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if hidesWhenStopped {
             isHidden = true
         }
     }
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    {
+        let container = UIView()
+        container.backgroundColor = .black.withAlphaComponent(0.5)
+
+        let spinnerView = ProgressSpinner()
+        spinnerView.isAnimating = true
+        spinnerView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(spinnerView)
+        NSLayoutConstraint.activate([
+            spinnerView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            spinnerView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+
+        return container
+    }()
 }

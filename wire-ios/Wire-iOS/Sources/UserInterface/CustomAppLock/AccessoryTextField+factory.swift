@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension ValidatedTextField {
     static func createPasscodeTextField(kind: ValidatedTextField.Kind,
