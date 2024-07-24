@@ -27,3 +27,25 @@ public protocol AnalyticsSessionProtocol {
     func trackEvent(_ event: AnalyticsEvent)
 
 }
+
+struct AnalyticsSession: AnalyticsSessionProtocol {
+
+    let isSelfTeamMember: Bool
+    let service: any AnalyticsService
+
+    func trackEvent(_ event: any AnalyticsEvent) {
+        var segmentation = event.segmentation
+        segmentation.insert(.isSelfTeamMember(isSelfTeamMember))
+        // TODO: add other default segmentation
+
+        let rawSegmentation = Dictionary(uniqueKeysWithValues: event.segmentation.map {
+            ($0.key, $0.value)
+        })
+
+        service.trackEvent(
+            name: event.eventName,
+            segmentation: rawSegmentation
+        )
+    }
+
+}

@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Protocol defining the requirements for an analytics service.
-protocol AnalyticsService: AnalyticsSessionProtocol {
+protocol AnalyticsService {
     /// Starts the analytics service with the given app key and host.
     ///
     /// - Parameters:
@@ -45,4 +45,6 @@ protocol AnalyticsService: AnalyticsSessionProtocol {
     ///   - value: The value to set.
     ///   - key: The key for the value.
     func setUserValue(_ value: String?, forKey key: String)
+
+    func trackEvent(name: String, segmentation: [String: String])
 }

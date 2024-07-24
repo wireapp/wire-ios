@@ -19,6 +19,11 @@
 /// Convenience methods for creating common `SegmentationValue` instances.
 extension SegmentationValue {
 
+    static func isSelfTeamMember(_ value: Bool) -> Self {
+        // TODO: use the right key
+        .init(key: "is_self_team_member", value: value.analyticsValue)
+    }
+
     /// Creates a `SegmentationValue` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the call is a video call.
