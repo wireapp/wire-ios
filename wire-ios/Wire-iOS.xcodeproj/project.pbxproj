@@ -1551,8 +1551,6 @@
 		EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3D29719C580008B894 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4029719C750008B894 /* WireRequestStrategy.framework */; };
 		EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4029719C750008B894 /* WireRequestStrategy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4329719C950008B894 /* WireSystem.framework */; };
-		EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4329719C950008B894 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4629719CB30008B894 /* WireTransport.framework */; };
 		EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4629719CB30008B894 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4929719CDC0008B894 /* WireUtilities.framework */; };
@@ -2031,7 +2029,6 @@
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
 				EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */,
-				EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */,
 				EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */,
 				A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
 				016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */,
@@ -3599,7 +3596,6 @@
 		EEE25B3A29719C370008B894 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B3D29719C580008B894 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4029719C750008B894 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEE25B4329719C950008B894 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4629719CB30008B894 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4929719CDC0008B894 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
@@ -4016,7 +4012,6 @@
 				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
-				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
 				59CD83E52C22CE9800186022 /* WireDesign in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
@@ -5499,7 +5494,6 @@
 				EE33C48C296485FA00C058D1 /* WireShareEngine.framework */,
 				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
 				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
-				EEE25B4329719C950008B894 /* WireSystem.framework */,
 				598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */,
 				E6C25FC42AFFAAC300406A1C /* WireTesting.framework */,
 				EEE25B4629719CB30008B894 /* WireTransport.framework */,

@@ -13,10 +13,12 @@ let package = Package(
     products: [
         .library(
             name: "WireSystem",
+            type: .dynamic,
             targets: ["WireSystem"]
         ),
         .library(
             name: "WireSystemObjectiveC",
+            type: .dynamic,
             targets: ["WireSystemObjectiveC"]
         )
     ],

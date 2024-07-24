@@ -67,6 +67,8 @@
 		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
 		5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */; };
 		5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */; };
+		592C52302C50FF240098174E /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 592C522F2C50FF240098174E /* WireSystem */; };
+		592C52332C50FF240098174E /* WireSystemObjectiveC in Frameworks */ = {isa = PBXBuildFile; productRef = 592C52322C50FF240098174E /* WireSystemObjectiveC */; };
 		5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* AccentColor.swift */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
@@ -142,7 +144,6 @@
 		EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */; };
 		EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */; };
 		EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */; };
-		EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		EE98A0AE296EFBE60055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		EE98A0AF296EFBE60055E981 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EE9AEC882BD158BC00F7853F /* WireUtilities.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC872BD158BC00F7853F /* WireUtilities.docc */; };
@@ -213,6 +214,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		592C52352C50FF240098174E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F1D567B4207BA4E800CCDD77 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -376,7 +387,6 @@
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
 		EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaults.swift; sourceTree = "<group>"; };
-		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
 		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
@@ -427,7 +437,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */,
+				592C52332C50FF240098174E /* WireSystemObjectiveC in Frameworks */,
+				592C52302C50FF240098174E /* WireSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +601,6 @@
 			isa = PBXGroup;
 			children = (
 				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
-				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -909,12 +919,17 @@
 				3E88BD331B1F3EA300232589 /* Sources */,
 				3E88BD341B1F3EA300232589 /* Frameworks */,
 				3E88BD361B1F3EA300232589 /* Resources */,
+				592C52352C50FF240098174E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = WireUtilities;
+			packageProductDependencies = (
+				592C522F2C50FF240098174E /* WireSystem */,
+				592C52322C50FF240098174E /* WireSystemObjectiveC */,
+			);
 			productName = WireUtilities;
 			productReference = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1596,6 +1611,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		592C522F2C50FF240098174E /* WireSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystem;
+		};
+		592C52322C50FF240098174E /* WireSystemObjectiveC */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemObjectiveC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3E88BD2A1B1F3E8400232589 /* Project object */;
 }

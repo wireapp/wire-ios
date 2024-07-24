@@ -51,7 +51,6 @@
 		CEF709D81C1599D600AF3718 /* ZMMockManagedObjectContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CEB8FD671C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEF709D91C1599E700AF3718 /* ZMMockEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEF709DA1C1599ED00AF3718 /* ZMMockEntity2.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE49A5562954850800406C4F /* WireSystem.framework */; };
 		EE67F6AF296F0510001D7C88 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
 		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
 		F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */; };
@@ -136,7 +135,6 @@
 		CE6B7B2E1C11ED5F00FC4C2E /* ZMMockEntity2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockEntity2.m; sourceTree = "<group>"; };
 		CEB8FD671C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockManagedObjectContextFactory.h; sourceTree = "<group>"; };
 		CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockManagedObjectContextFactory.m; sourceTree = "<group>"; };
-		EE49A5562954850800406C4F /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6AE296F0510001D7C88 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		EE9AEC852BD1589E00F7853F /* WireTesting.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTesting.docc; sourceTree = "<group>"; };
 		F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UUID+WireTesting.swift"; sourceTree = "<group>"; };
@@ -147,7 +145,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */,
 				EE67F6AF296F0510001D7C88 /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,7 +235,6 @@
 			isa = PBXGroup;
 			children = (
 				EE67F6AE296F0510001D7C88 /* OCMock.xcframework */,
-				EE49A5562954850800406C4F /* WireSystem.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
