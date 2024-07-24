@@ -224,8 +224,6 @@ final class ConversationCreationController: UIViewController {
     private func setupNavigationBar() {
 
         setupNavigationBarTitle(CreateGroupName.title)
-        self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
@@ -233,17 +231,16 @@ final class ConversationCreationController: UIViewController {
             }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: L10n.Localizable.General.next.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(tryToProceed)
-        )
+        let nextButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+            title: L10n.Localizable.General.next,
+            action: UIAction { [weak self] _ in
+                self?.tryToProceed()
+            })
+
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
         navigationItem.rightBarButtonItem = nextButtonItem
-
     }
 
     func proceedWith(value: SimpleTextField.Value) {
@@ -270,7 +267,6 @@ final class ConversationCreationController: UIViewController {
         }
     }
 
-    @objc
     private func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
