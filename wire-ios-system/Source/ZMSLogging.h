@@ -17,7 +17,6 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import <WireSystem/ZMSAsserts.h>
 
 #define ZMLogPublic(format, ...) ZMLogWithLevelAndTag(ZMLogLevelPublic, ZMLogTag, format, ##__VA_ARGS__)
 #define ZMLogError(format, ...) ZMLogWithLevel(ZMLogLevelError, format, ##__VA_ARGS__)
@@ -43,5 +42,3 @@
 
 // TODO: remove all
 FOUNDATION_EXTERN void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
-FOUNDATION_EXTERN void ZMDebugAssertMessage0(NSString *tag, char const * const assertion, char const * const filename, int linenumber);
-FOUNDATION_EXTERN void ZMDebugAssertMessage1(NSString *tag, char const * const assertion, char const * const filename, int linenumber, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);

@@ -107,6 +107,22 @@
         } \
     } while (0)
 
+#define ZMDebugAssertMessage(tag, assertion, file, line) \
+    do { \
+        NSString *message = [NSString stringWithFormat:@"Assertion (%s) failed.", assertion]; \
+        [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
+            return message; \
+        } tag:tag file:[NSString stringWithUTF8String:file] line:(NSUInteger)line]; \
+    } while (0)
+
+#define ZMDebugAssertMessageWithFormat(tag, assertion, file, line, format, ...) \
+    do { \
+        NSString *prefix = [NSString stringWithFormat:@"Assertion (%s) failed. ", assertion]; \
+        NSString *message = [prefix stringByAppendingFormat:format, ##__VA_ARGS__]; \
+        [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
+            return message; \
+        } tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber]; \
+    } while (0)
 
 #pragma mark -
 
