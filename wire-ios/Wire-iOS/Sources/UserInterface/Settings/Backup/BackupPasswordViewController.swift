@@ -80,7 +80,7 @@ final class BackupPasswordViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        passwordView.placeholder = HistoryBackup.Password.placeholder.capitalized
+        passwordView.placeholder = HistoryBackup.Password.placeholder
         passwordView.accessibilityIdentifier = "password input"
         passwordView.accessibilityHint = PasswordRuleSet.localizedErrorMessage
         passwordView.returnKeyType = .done

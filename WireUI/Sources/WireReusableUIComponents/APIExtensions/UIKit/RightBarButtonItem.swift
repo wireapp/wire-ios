@@ -20,14 +20,14 @@ import UIKit
 
 public extension UIBarButtonItem {
 
-    static func createNavigationLeftBarButtonItem(
+    static func createNavigationRightBarButtonItem(
         title: String,
         action: UIAction
     ) -> UIBarButtonItem {
-        
+
         let buttonFont = UIFont.systemFont(ofSize: 17, weight: .regular)
 
-        let leftBarButtonItem = UIBarButtonItem(
+        let rightBarButtonItem = UIBarButtonItem(
             title: title,
             primaryAction: action
         )
@@ -43,7 +43,7 @@ public extension UIBarButtonItem {
         ]
 
         buttonStates.forEach { buttonState in
-            leftBarButtonItem.setTitleTextAttributes(
+            rightBarButtonItem.setTitleTextAttributes(
                 [
                     .font: buttonFont,
                 ],
@@ -51,6 +51,6 @@ public extension UIBarButtonItem {
             )
         }
 
-        return leftBarButtonItem
+        return rightBarButtonItem
     }
 }
