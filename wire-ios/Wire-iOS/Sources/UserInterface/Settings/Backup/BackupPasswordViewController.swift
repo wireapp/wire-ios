@@ -120,12 +120,12 @@ final class BackupPasswordViewController: UIViewController {
                 self?.onCompletion?(nil)
             })
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: HistoryBackup.Password.next.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(completeWithCurrentResult)
-        )
+        let nextButtonItem = UIBarButtonItem.createNavigationLeftBarButtonItem(
+            title: HistoryBackup.Password.next,
+            action: UIAction { [weak self] _ in
+                self?.onCompletion?(self?.password)
+            })
+
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
