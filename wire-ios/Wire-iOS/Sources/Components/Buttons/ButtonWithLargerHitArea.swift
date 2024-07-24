@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
 
 class ButtonWithLargerHitArea: DynamicFontButton {
 

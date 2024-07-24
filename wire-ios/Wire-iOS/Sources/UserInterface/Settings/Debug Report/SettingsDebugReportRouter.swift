@@ -28,7 +28,7 @@ protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the fallback alert
 
-    func presentFallbackAlert()
+    func presentFallbackAlert(sender: UIView)
 
     /// Presents the share view controller
     /// 
@@ -40,7 +40,6 @@ protocol SettingsDebugReportRouterProtocol {
         destinations: [ZMConversation],
         debugReport: ShareableDebugReport
     )
-
 }
 
 class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
@@ -80,7 +79,7 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
         topMostViewController?.isLoadingViewVisible = true
 
         Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
@@ -93,17 +92,16 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         })
     }
 
-    func presentFallbackAlert() {
+    @MainActor
+    func presentFallbackAlert(sender: UIView) {
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
-            logPaths: DebugLogSender.existingDebugLogs,
             email: mailRecipient,
             from: viewController,
-            sourceView: nil
+            popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
     }
-
 }
 
 extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
@@ -115,5 +113,4 @@ extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
     ) {
         controller.dismiss(animated: true)
     }
-
 }
