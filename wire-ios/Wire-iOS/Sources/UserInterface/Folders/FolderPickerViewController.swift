@@ -74,9 +74,13 @@ final class FolderPickerViewController: UIViewController {
         newFolderItem.accessibilityIdentifier = "button.newfolder.create"
 
         navigationItem.titleView = navigationTitleLabel
-        navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.close)
+        navigationItem.leftBarButtonItem =  UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Localizable.General.close
+        )
+
         navigationItem.rightBarButtonItem = newFolderItem
     }
 
