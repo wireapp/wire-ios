@@ -114,10 +114,13 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: EmailAccountSection.Change.save.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(saveButtonTapped))
+
+        let saveButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+            title: EmailAccountSection.Change.save,
+            action: UIAction { [weak self] _ in
+                self?.saveButtonTapped()
+            })
+        
         saveButtonItem.tintColor = UIColor.accent()
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
@@ -167,7 +170,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         }
     }
 
-    @objc func saveButtonTapped(sender: UIBarButtonItem) {
+    func saveButtonTapped() {
         if let passwordError = state.passwordValidationError {
             validationCell.updateValidation(.error(passwordError, showVisualFeedback: true))
             return
