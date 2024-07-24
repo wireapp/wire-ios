@@ -137,8 +137,8 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         prepareSut()
         let navWrapperController = sut.wrapInNavigationController()
         navWrapperController.navigationBar.tintColor = UIColor.accent()
-        let editButton = sut.navigationItem.rightBarButtonItem!
-        UIApplication.shared.sendAction(editButton.action!, to: editButton.target, from: nil, for: nil)
+        
+        sut.setEditingState(true)
 
         snapshotHelper.verify(matching: navWrapperController)
     }

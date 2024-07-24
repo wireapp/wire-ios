@@ -573,6 +573,19 @@ final class ClientListViewController: UIViewController,
     }
 }
 
+extension ClientListViewController: EditingStateControllable {
+
+    /// Sets the editing state of the ClientListViewController.
+    /// This method is primarily used for testing purposes to directly
+    /// control the editing state without user interaction.
+    ///
+    /// - Parameter isEditing: A boolean indicating whether to enter (true) or exit (false) editing mode.
+    func setEditingState(_ isEditing: Bool) {
+        editingList = isEditing
+    }
+
+}
+
 // MARK: - ClientRemovalObserverDelegate
 
 extension ClientListViewController: ClientRemovalObserverDelegate {
