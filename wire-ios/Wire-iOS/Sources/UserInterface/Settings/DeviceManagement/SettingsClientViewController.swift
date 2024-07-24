@@ -118,14 +118,16 @@ final class SettingsClientViewController: UIViewController,
         setupNavigationTitle()
         // presented modally from conversation
         if let navController = self.navigationController,
-            navController.viewControllers.count > 0 &&
+           navController.viewControllers.count > 0 &&
             navController.viewControllers[0] == self,
-            self.navigationItem.rightBarButtonItem == nil {
-            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-                title: L10n.Localizable.General.done.capitalized,
-                systemImage: false,
-                target: self,
-                action: #selector(SettingsClientViewController.onDonePressed(_:)))
+           self.navigationItem.rightBarButtonItem == nil {
+
+            let doneButtonItem = UIBarButtonItem.createNavigationBarRightBarButtonItem(
+                title: L10n.Localizable.General.done,
+                action: UIAction { [weak self] _ in
+                    self?.navigationController?.presentingViewController?.dismiss(animated: true)
+                })
+
             self.navigationItem.rightBarButtonItem = doneButtonItem
             if fromConversation {
                 let barColor = SemanticColors.View.backgroundDefault
@@ -186,10 +188,6 @@ final class SettingsClientViewController: UIViewController,
         }, completionHandler: {
             sender.isOn = self.userClient.verified
         })
-    }
-
-    @objc func onDonePressed(_ sender: AnyObject!) {
-        self.navigationController?.presentingViewController?.dismiss(animated: true, completion: .none)
     }
 
     // MARK: - UITableViewDelegate, UITableViewDataSource
