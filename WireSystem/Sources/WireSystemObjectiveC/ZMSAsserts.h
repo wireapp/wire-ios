@@ -124,22 +124,34 @@
 
 #define ZMCrash(reason, file, line) \
 do { \
-    ZMAssertionDump(reason, file, line, nil); \
+    NSString *output = [NSString stringWithFormat:@"ASSERT: [%s:%d] <%s> %s", \
+                        file ? file : "", \
+                        line, \
+                        reason ? reason : "", \
+                        ""]; \
+\
+    /* report error to datadog or other loggers */ \
+    [WireLoggerObjc assertionDumpLog:output]; \
+\
+    /* prepare and dump to file */ \
+    [ZMAssertionDumpFile writeWithContent:output error:nil]; \
+\
     __builtin_trap(); \
 } while(0)
 
 #define ZMCrashFormat(reason, file, line, format, ...) \
 do { \
-    ZMAssertionDump(reason, file, line, format, ##__VA_ARGS__); \
+    NSString *output = [NSString stringWithFormat:@"ASSERT: [%s:%d] <%s> %s", \
+                        file ? file : "", \
+                        line, \
+                        reason ? reason : "", \
+                        format, ##__VA_ARGS__]; \
+\
+    /* report error to datadog or other loggers */ \
+    [WireLoggerObjc assertionDumpLog:output]; \
+\
+    /* prepare and dump to file */ \
+    [ZMAssertionDumpFile writeWithContent:output error:nil]; \
+\
     __builtin_trap(); \
 } while(0)
-
-
-#pragma mark - Assert reporting
-
-/// URL of the "last assertion" log file
-// FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
-/// Dump a crash to the crash dump file
-FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
-/// Dump a crash to the crash dump file
-// FOUNDATION_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);

@@ -46,6 +46,7 @@ let package = Package(
         .testTarget(
             name: "WireSystemObjectiveCTests",
             dependencies: [
+                "WireSystem",
                 "WireSystemObjectiveC"
             ]
         ),

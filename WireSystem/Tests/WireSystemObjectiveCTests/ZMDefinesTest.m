@@ -17,6 +17,7 @@
 //
 
 @import WireSystemObjectiveC;
+@import WireSystem;
 @import XCTest;
 
 @interface ZMDefinesTest : XCTestCase
