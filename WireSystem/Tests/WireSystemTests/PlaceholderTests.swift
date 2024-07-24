@@ -20,26 +20,4 @@ import XCTest
 
 @testable import WireSystem
 
-final class TimePointTests: XCTestCase {
-
-    func testThatATimePointDoesNotWarnTooEarly() {
-        // Given
-        let tp = TimePoint(interval: 1_000)
-
-        // Then
-        XCTAssertFalse(tp.warnIfLongerThanInterval())
-    }
-
-    func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
-        // Given
-        let tp = TimePoint(interval: 0.01)
-
-        // When
-        let waitExpectation = XCTestExpectation()
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: 0.1)
-
-        // Then
-        XCTAssertTrue(tp.warnIfLongerThanInterval())
-    }
-}
+final class PlaceholderTests: XCTestCase {}

@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "WireSystem",
+    name: "WireSystemPackage",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v15),
@@ -14,18 +14,18 @@ let package = Package(
         .library(
             name: "WireSystemPackage",
             type: .dynamic,
-            targets: ["WireSystem"]
+            targets: ["WireSystemPackage"]
         )
     ],
     targets: [
         .target(
-            name: "WireSystem",
+            name: "WireSystemPackage",
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "WireSystemTests",
+            name: "WireSystemPackageTests",
             dependencies: [
-                "WireSystem"
+                "WireSystemPackage"
             ]
         )
     ]
