@@ -18,7 +18,6 @@
 
 import XCTest
 
-// TODO: [WPB-8907] use the type `WeakReference` from WireSystem once WireSystem has become a Swift package.
 extension XCTestCase {
 
     public func wait(
