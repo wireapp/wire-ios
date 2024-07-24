@@ -18,22 +18,21 @@
 
 import UIKit
 
-extension CABasicAnimation {
-    convenience init(rotationSpeed: CFTimeInterval,
-                     beginTime: CFTimeInterval,
-                     delegate: CAAnimationDelegate? = nil) {
-        self.init(keyPath: "transform.rotation")
+public func ProgressIndicatorRotationAnimation(
+    rotationSpeed: CFTimeInterval,
+    beginTime: CFTimeInterval
+) -> CABasicAnimation {
+    let animation = CABasicAnimation(keyPath: "transform.rotation")
 
-        fillMode = .forwards
-        self.delegate = delegate
+    animation.fillMode = .forwards
 
-        // (2PI is a full turn, so pi is a half turn)
-        toValue = Double.pi
-        repeatCount = .greatestFiniteMagnitude
+    animation.toValue = Double.pi
+    animation.repeatCount = .greatestFiniteMagnitude
 
-        duration = rotationSpeed / 2
-        self.beginTime = beginTime
-        isCumulative = true
-        timingFunction = CAMediaTimingFunction(name: .linear)
-    }
+    animation.duration = rotationSpeed / 2
+    animation.beginTime = beginTime
+    animation.isCumulative = true
+    animation.timingFunction = .init(name: .linear)
+
+    return animation
 }
