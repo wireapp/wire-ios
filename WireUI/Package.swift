@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,33 +6,15 @@ import PackageDescription
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(
-            name: "WireDesign",
-            targets: ["WireDesign"]
-        ),
-        .library(
-            name: "WireReusableUIComponents",
-            targets: ["WireReusableUIComponents"]
-        ),
-        .library(
-            name: "WireUITesting",
-            targets: ["WireUITesting"]
-        )
+        .library(name: "WireDesign", targets: ["WireDesign"]),
+        .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"])
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.1.0"
-        ),
-        .package(
-            url: "https://github.com/pointfreeco/swift-snapshot-testing",
-            from: "1.16.0"
-        )
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(path: "../WireTestingPackage")
     ],
     targets: [
         .target(
@@ -43,10 +25,7 @@ let package = Package(
             name: "WireDesignTests",
             dependencies: [
                 "WireDesign",
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -60,22 +39,10 @@ let package = Package(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 "WireReusableUIComponents",
-                "WireUITesting",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
-            ],
-            swiftSettings: swiftSettings
-        ),
-
-        // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
-        .target(
-            name: "WireUITesting",
-            dependencies: [
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
+                    name: "WireTestingPackage",
+                    package: "WireTestingPackage"
                 )
             ],
             swiftSettings: swiftSettings
@@ -84,6 +51,5 @@ let package = Package(
 )
 
 let swiftSettings: [SwiftSetting] = [
-    .enableExperimentalFeature("StrictConcurrency"),
-    .enableUpcomingFeature("GlobalConcurrency")
+    .enableUpcomingFeature("ExistentialAny")
 ]

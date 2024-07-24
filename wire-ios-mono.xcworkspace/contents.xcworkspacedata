@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:WireTemp/WireTemp.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:LICENSE">
    </FileRef>
    <FileRef
@@ -110,10 +107,19 @@
       location = "group:wire-ios-utilities/WireUtilities.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireUtilitiesPackage">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-testing/WireTesting.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireSystem">
+      location = "group:WireTestingPackage">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-system/WireSystem.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireSystemPackage">
    </FileRef>
    <FileRef
       location = "group:WireDomain/WireDomain.xcodeproj">

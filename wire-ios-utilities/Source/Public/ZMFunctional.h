@@ -18,7 +18,6 @@
 
 @import Foundation;
 @import WireSystem;
-//@import WireSystemObjectiveC;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -1,5 +1,5 @@
 {
-  "originHash" : "f2849c3dc8d7dfc7bd40761af08b2727c623351eefd5b0e8ce734b1a01ea731d",
+  "originHash" : "366b0eebeb3fb94bdef91c6c428fe65b304585c111bd8047af560a39d9b2ffb2",
   "pins" : [
     {
       "identity" : "dd-sdk-ios",
@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
-        "revision" : "d57a5aecf24a25b32ec4a74be2f5d0a995a47c4b",
-        "version" : "1.27.0"
+        "revision" : "e17d61f26df0f0e06f58f6977ba05a097a720106",
+        "version" : "1.27.1"
       }
     },
     {
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "6a9e38e7bd22a3b8ba80bddf395623cf68f57807",
-        "version" : "1.3.1"
+        "revision" : "d2ba781702a1d8285419c15ee62fd734a9437ff5",
+        "version" : "1.3.2"
       }
     },
     {
