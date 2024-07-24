@@ -41,6 +41,10 @@ on:
         type: boolean
         default: false
         required: false
+      wire-domain-package:
+        type: boolean
+        default: false
+        required: false
       wire-ios-transport:
         type: boolean
         default: false
@@ -492,6 +496,30 @@ jobs:
         run: |
           echo "Testing WireAPI..."
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
+          exit ${PIPESTATUS[0]}
+
+      # WireDomainPackage
+
+      - name: Build WireDomainPackage
+        if: ${{ inputs.wire-domain-package || inputs.all }}
+        run: |
+          echo "WireDomainPackage has changes"
+          echo "Building WireDomainPackage..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -resultBundlePath xcodebuild-wire-domain-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain-package.log | bundle exec xcpretty
+
+      - name: Run Danger for WireDomainPackage
+        if: false # ${{ inputs.wire-domain-package || inputs.all }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-domain-package.xcresult
+        run: |
+          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDomainPackage" --verbose
+
+      - name: Test WireDomainPackage
+        if: ${{ inputs.wire-domain-package || inputs.all }}
+        run: |
+          echo "Testing WireDomainPackage..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain-package.log | bundle exec xcpretty --report junit --output build/reports/WireDomainPackage.junit
           exit ${PIPESTATUS[0]}
 
       # WireDomain
