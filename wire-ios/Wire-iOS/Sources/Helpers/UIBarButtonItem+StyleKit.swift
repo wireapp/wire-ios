@@ -36,37 +36,4 @@ extension UIBarButtonItem {
             action: action
         )
     }
-
-    static func createNavigationRightBarButtonItem(
-        title: String? = nil,
-        systemImage: Bool,
-        target buttonTarget: Any?,
-        action buttonAction: Selector?,
-        font buttonFont: UIFont = .preferredFont(forTextStyle: .body)) -> UIBarButtonItem {
-
-            var rightBarButtonItem: UIBarButtonItem
-            if systemImage {
-                rightBarButtonItem = UIBarButtonItem(
-                    barButtonSystemItem: .done,
-                    target: buttonTarget,
-                    action: buttonAction)
-            } else {
-                rightBarButtonItem = UIBarButtonItem(
-                    title: title,
-                    style: .plain,
-                    target: buttonTarget,
-                    action: buttonAction)
-            }
-
-            let buttonStates: [UIControl.State] = [.normal, .highlighted, .disabled, .selected, .focused, .application, .reserved]
-
-            buttonStates.forEach { buttonState in
-                rightBarButtonItem.setTitleTextAttributes(
-                    [NSAttributedString.Key.font: buttonFont],
-                    for: buttonState)
-            }
-            return rightBarButtonItem
-
-        }
-
 }
