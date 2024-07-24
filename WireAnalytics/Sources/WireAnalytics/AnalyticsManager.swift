@@ -58,7 +58,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
         analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: "team_user_type")
         analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: "team_team_size")
         analyticsService.beginSession()
-        
+
         return AnalyticsSession(
             isSelfTeamMember: userProfile.teamInfo != nil,
             service: analyticsService

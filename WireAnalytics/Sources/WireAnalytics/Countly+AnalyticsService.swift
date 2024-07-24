@@ -41,7 +41,7 @@ extension Countly: AnalyticsService {
 
     func trackEvent(
         name: String,
-        segmentation: [String : String]
+        segmentation: [String: String]
     ) {
         recordEvent(
             name,
