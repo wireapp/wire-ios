@@ -234,6 +234,30 @@ jobs:
       # WireTesting
 
       - name: Build WireTesting
+        if: ${{ inputs.wire-testing-package || inputs.all }}
+        run: |
+          echo "WireTesting has changes"
+          echo "Building WireTesting..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTestingNew -resultBundlePath xcodebuild-wire-testing-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-testing-package.log | bundle exec xcpretty
+
+      - name: Run Danger for WireTesting
+        if: false # ${{ inputs.wire-testing-package || inputs.all }}
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          XCRESULT_PATH: xcodebuild-wire-testing-package.xcresult
+        run: |
+          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTesting" --verbose
+
+      - name: Test WireTesting
+        if: ${{ inputs.wire-testing-package || inputs.all }}
+        run: |
+          echo "Testing WireTesting..."
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTestingNew -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-testing-package.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
+          exit ${PIPESTATUS[0]}
+
+      # WireTesting
+
+      - name: Build WireTesting
         if: ${{ inputs.wire-ios-testing || inputs.all }}
         run: |
           echo "WireTesting has changes"
