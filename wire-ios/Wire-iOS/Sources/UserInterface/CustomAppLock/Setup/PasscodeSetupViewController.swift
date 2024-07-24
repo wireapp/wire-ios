@@ -251,12 +251,10 @@ final class PasscodeSetupViewController: UIViewController {
 
     lazy var closeItem: UIBarButtonItem = {
 
-        let closeItem = UIBarButtonItem.closeButton(
-            action: UIAction { [weak self] _ in
-                self?.presentingViewController?.dismiss(animated: true)
-                self?.appLockSetupViewControllerDismissed()
-            },
-            accessibilityLabel: L10n.Localizable.General.close)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+            self?.appLockSetupViewControllerDismissed()
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
         return closeItem
     }()
