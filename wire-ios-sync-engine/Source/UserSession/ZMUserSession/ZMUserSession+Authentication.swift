@@ -70,9 +70,6 @@ extension ZMUserSession {
 
     @objc(closeAndDeleteCookie:completion:)
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
-        UserDefaults.standard.synchronize()
-        UserDefaults.shared()?.synchronize()
-
         // Clear all notifications associated with the account from the notification center
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.cancelAllNotifications()
