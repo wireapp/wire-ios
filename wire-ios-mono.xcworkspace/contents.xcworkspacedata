@@ -110,6 +110,9 @@
       location = "group:wire-ios-testing/WireTesting.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireTestingPackage">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
    <FileRef
@@ -120,9 +123,6 @@
    </FileRef>
    <FileRef
       location = "group:WireAPI">
-   </FileRef>
-   <FileRef
-      location = "group:WireTesting">
    </FileRef>
    <FileRef
       location = "group:SourceryPlugin">

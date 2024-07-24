@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireTesting"
-               BuildableName = "WireTesting"
-               BlueprintName = "WireTesting"
+               BlueprintIdentifier = "WireTestingPackage"
+               BuildableName = "WireTestingPackage"
+               BlueprintName = "WireTestingPackage"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireTesting.xctestplan"
+            reference = "container:.swiftpm/WireTestingPackage.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -55,9 +55,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireTesting"
-            BuildableName = "WireTesting"
-            BlueprintName = "WireTesting"
+            BlueprintIdentifier = "WireTestingPackage"
+            BuildableName = "WireTestingPackage"
+            BlueprintName = "WireTestingPackage"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
