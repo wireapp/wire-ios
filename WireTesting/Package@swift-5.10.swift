@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "WireTesting",
+    name: "WireTestingPackage",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v15),
@@ -12,12 +12,9 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "WireTesting",
-            targets: ["WireTesting"]
-        ),
-        .library(
-            name: "WireTestingObjectiveC",
-            targets: ["WireTestingObjectiveC"]
+            name: "WireTestingPackage",
+            type: .dynamic,
+            targets: ["WireTestingPackage"]
         )
     ],
     dependencies: [
@@ -32,7 +29,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireTesting",
+            name: "WireTestingPackage",
             dependencies: [
                 .product(
                     name: "SnapshotTesting",
@@ -42,26 +39,9 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "WireTestingTests",
+            name: "WireTestingPackageTests",
             dependencies: [
-                "WireTesting"
-            ]
-        ),
-
-        .target(
-            name: "WireTestingObjectiveC",
-            dependencies: [
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
-            ],
-            swiftSettings: swiftSettings
-        ),
-        .testTarget(
-            name: "WireTestingObjectiveCTests",
-            dependencies: [
-                "WireTestingObjectiveC"
+                "WireTestingPackage"
             ]
         )
     ]
