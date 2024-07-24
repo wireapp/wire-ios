@@ -19,7 +19,7 @@
 #import "ZMSLogging.h"
 #import "WireSystem/WireSystem-swift.h"
 
-void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const * const format, ...)
+void ZMDebugAssertMessageLegacy(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const * const format, ...)
 {
     char * message = NULL;
     va_list ap;

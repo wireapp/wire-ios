@@ -41,4 +41,4 @@
     } while (0)
 
 // TODO: remove all
-FOUNDATION_EXTERN void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
+FOUNDATION_EXTERN void ZMDebugAssertMessageLegacy(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
