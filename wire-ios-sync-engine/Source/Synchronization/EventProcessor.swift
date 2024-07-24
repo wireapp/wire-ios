@@ -71,9 +71,9 @@ actor EventProcessor: UpdateEventProcessor {
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         let processEventsId = UUID()
         let attributes: LogAttributes = [LogAttributesKey.processEventsId.rawValue: processEventsId.uuidString]
-        WireLogger.eventProcessing.info("processEvents", attributes: attributes)
+        WireLogger.eventProcessing.debug("🕵🏽 processEvents start", attributes: attributes)
         try await enqueueTask {
-            WireLogger.eventProcessing.info("enqueueTask", attributes: attributes)
+            WireLogger.eventProcessing.debug("🕵🏽 enqueueTask start", attributes: attributes)
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
@@ -88,7 +88,10 @@ actor EventProcessor: UpdateEventProcessor {
             await self.requestToCalculateBadgeCount()
 
             NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
+            WireLogger.eventProcessing.debug("🕵🏽 enqueueTask end", attributes: attributes)
         }
+        WireLogger.eventProcessing.debug("🕵🏽 processEvents end", attributes: attributes)
+
     }
 
     func processBufferedEvents() async throws {
