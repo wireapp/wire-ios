@@ -17,6 +17,7 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 
 protocol ParticipantDeviceHeaderViewDelegate: AnyObject {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView)
@@ -99,7 +100,7 @@ final class ParticipantDeviceHeaderView: UIView {
         return [
             NSAttributedString.Key.font: font,
             NSAttributedString.Key.foregroundColor: linkAttributeColor,
-            NSAttributedString.Key.link: URL.wr_fingerprintLearnMore,
+            NSAttributedString.Key.link: WireURLs.shared.whyToVerifyFingerprintArticle,
             NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint
         ]
     }
