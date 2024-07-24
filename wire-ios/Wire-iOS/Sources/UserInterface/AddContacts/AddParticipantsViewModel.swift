@@ -78,7 +78,7 @@ struct AddParticipantsViewModel {
     func rightNavigationItem(action: UIAction) -> UIBarButtonItem {
         switch context {
         case .add:
-            let item = UIBarButtonItem.closeButton(action: { action in }, accessibilityLabel: L10n.Localizable.General.close)
+            let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
             item.tintColor = SemanticColors.Icon.foregroundDefault
             item.accessibilityIdentifier = "close"
             return item
