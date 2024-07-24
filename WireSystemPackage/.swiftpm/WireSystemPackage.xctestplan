@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "8316BEA3-D6FB-4D62-B3BA-D6C10392D26E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSystemPackageTests",
+        "name" : "WireSystemPackageTests"
+      }
+    }
+  ],
+  "version" : 1
+}

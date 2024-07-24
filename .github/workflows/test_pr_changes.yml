@@ -25,9 +25,11 @@ jobs:
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
+      wire-system-package: ${{ steps.filter.outputs.wire-system-package }}
       wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
       wire-api: ${{ steps.filter.outputs.wire-api }}
       wire-domain: ${{ steps.filter.outputs.wire-domain }}
+      wire-domain-package: ${{ steps.filter.outputs.wire-domain-package }}
       wire-ios-transport: ${{ steps.filter.outputs.wire-ios-transport }}
       wire-ios-share-engine: ${{ steps.filter.outputs.wire-ios-share-engine }}
       wire-ios-cryptobox: ${{ steps.filter.outputs.wire-ios-cryptobox }}
@@ -37,7 +39,9 @@ jobs:
       wire-ios-images: ${{ steps.filter.outputs.wire-ios-images }}
       wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
       wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
+      wire-utilities-packages: ${{ steps.filter.outputs.wire-utilities-packages }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
+      wire-testing-package: ${{ steps.filter.outputs.wire-testing-package }}
 
     steps:
       - uses: actions/checkout@v4
@@ -65,6 +69,8 @@ jobs:
               - 'WireAPI/**'
             wire-domain:
               - 'WireDomain/**'
+            wire-domain-package:
+              - 'WireDomainPackage/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:
@@ -81,10 +87,16 @@ jobs:
               - 'wire-ios-link-preview/**'
             wire-ios-utilities:
               - 'wire-ios-utilities/**'
+            wire-utilities-package:
+              - 'WireUtilitiesPackage/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
+            wire-testing-package:
+              - 'WireTestingPackage/**'
             wire-ios-system:
-              - 'wire-ios-system/**'  
+              - 'wire-ios-system/**'
+            wire-system-package:
+              - 'WireSystemPackage/**'
             carthage:
               - 'Cartfile.resolved'
 
@@ -98,9 +110,11 @@ jobs:
       wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
       wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
       wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
+      wire-system-package: ${{ needs.detect-changes.outputs.wire-system-package == 'true' }}
       wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
       wire-api: ${{ needs.detect-changes.outputs.wire-api == 'true' }}
       wire-domain: ${{ needs.detect-changes.outputs.wire-domain == 'true' }}
+      wire-domain-package: ${{ needs.detect-changes.outputs.wire-domain-package == 'true' }}
       wire-ios-transport: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
       wire-ios-share-engine: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
       wire-ios-cryptobox: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
@@ -110,5 +124,7 @@ jobs:
       wire-ios-images: ${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
       wire-ios-link-preview: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
       wire-ios-utilities: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
+      wire-utilities-package: ${{ needs.detect-changes.outputs.wire-utilities-package == 'true' }}
       wire-ios-testing: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
+      wire-testing-package: ${{ needs.detect-changes.outputs.wire-testing-package == 'true' }}
     secrets: inherit

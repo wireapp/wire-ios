@@ -7,4 +7,3 @@ Make testing easier.
 WireTesting provides functionility to facilitate testing.
 
 ## Topics
-

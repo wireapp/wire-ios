@@ -45,6 +45,7 @@
 		59B3866D2C49C64A00541AE0 /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B3866C2C49C64A00541AE0 /* WeakReference.swift */; };
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
 		59C39F092C21E9480087300D /* TimePointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F082C21E9480087300D /* TimePointTests.swift */; };
+		59C3F15A2C51677200D1DFED /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59C3F1592C51677200D1DFED /* WireSystemPackage */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
 		59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
@@ -87,6 +88,19 @@
 			remoteInfo = WireSystemSupport;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		59C3F15C2C51677200D1DFED /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaLumberjackLogger.swift; sourceTree = "<group>"; };
@@ -161,6 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59C3F15A2C51677200D1DFED /* WireSystemPackage in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
 				E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */,
 			);
@@ -415,6 +430,7 @@
 				3ECC35121AD436750089FD4B /* Sources */,
 				3ECC35131AD436750089FD4B /* Frameworks */,
 				3ECC35151AD436750089FD4B /* Resources */,
+				59C3F15C2C51677200D1DFED /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -423,6 +439,7 @@
 			name = WireSystem;
 			packageProductDependencies = (
 				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
+				59C3F1592C51677200D1DFED /* WireSystemPackage */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -954,6 +971,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
+		};
+		59C3F1592C51677200D1DFED /* WireSystemPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
