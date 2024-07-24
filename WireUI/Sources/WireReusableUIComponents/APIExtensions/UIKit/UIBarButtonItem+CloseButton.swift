@@ -20,14 +20,34 @@ import UIKit
 import WireDesign
 
 public extension UIBarButtonItem {
+    /// Creates a customized close button for use in navigation bars.
+    ///
+    /// This method creates a UIBarButtonItem configured as a close button with a custom image,
+    /// tint color, and accessibility features.
+    ///
+    /// - Parameters:
+    ///   - action: A UIAction to be performed when the button is tapped.
+    ///   - accessibilityLabel: A string describing the button's purpose for accessibility.
+    ///
+    /// - Returns: A UIBarButtonItem configured as a close button.
     static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
+        // Load the close button image
         let closeImage = UIImage(named: "Close")
+
+        // Create the bar button item with the provided action and accessibility label
         let closeItem = UIBarButtonItem(title: accessibilityLabel, primaryAction: action)
+
+        // Set the button's image
         closeItem.image = closeImage
+
+        // Configure the button's appearance and behavior
         closeItem.style = .plain
         closeItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack
+
+        // Set accessibility properties
         closeItem.accessibilityLabel = accessibilityLabel
         closeItem.accessibilityIdentifier = "close"
+
         return closeItem
     }
 }
