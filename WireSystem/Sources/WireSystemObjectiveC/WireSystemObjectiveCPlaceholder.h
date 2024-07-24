@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "Dummy.h"
+#import <Foundation/Foundation.h>
 
-@implementation Dummy
+NS_ASSUME_NONNULL_BEGIN
+
+@interface WireSystemObjectiveCPlaceholder : NSObject
 
 @end
+
+NS_ASSUME_NONNULL_END
