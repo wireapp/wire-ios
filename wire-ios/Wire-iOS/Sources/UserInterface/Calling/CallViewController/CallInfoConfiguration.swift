@@ -110,7 +110,6 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
     let disableIdleTimer: Bool
     let cameraType: CaptureDevice
     let mediaManager: AVSMediaManagerInterface
-    let networkQuality: NetworkQuality
     let userEnabledCBR: Bool
     let isForcedCBR: Bool
     let callState: CallStateExtending
@@ -128,29 +127,29 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
         userEnabledCBR: Bool,
         classification: SecurityClassification? = .none,
-        selfUser: UserType) {
-            self.permissions = permissions
-            self.cameraType = cameraType
-            self.mediaManager = mediaManager
-            self.userEnabledCBR = userEnabledCBR
-            self.classification = classification
-            voiceChannelSnapshot = VoiceChannelSnapshot(voiceChannel)
-            degradationState = voiceChannel.degradationState
-            accessoryType = voiceChannel.accessoryType()
-            isMuted = mediaManager.isMicrophoneMuted
-            canToggleMediaType = voiceChannel.canToggleMediaType(with: permissions, selfUser: selfUser)
-            isVideoCall = voiceChannel.internalIsVideoCall
-            isConstantBitRate = voiceChannel.isConstantBitRateAudioActive
-            isForcedCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled
-            title = voiceChannel.conversation?.displayName ?? ""
-            mediaState = voiceChannel.mediaState(with: permissions)
-            videoPlaceholderState = voiceChannel.videoPlaceholderState ?? preferedVideoPlaceholderState
-            disableIdleTimer = voiceChannel.disableIdleTimer
-            networkQuality = voiceChannel.networkQuality
-            callState = voiceChannel.state
-            videoGridPresentationMode = voiceChannel.videoGridPresentationMode
-            allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
-        }
+        selfUser: UserType
+    ) {
+        self.permissions = permissions
+        self.cameraType = cameraType
+        self.mediaManager = mediaManager
+        self.userEnabledCBR = userEnabledCBR
+        self.classification = classification
+        voiceChannelSnapshot = VoiceChannelSnapshot(voiceChannel)
+        degradationState = voiceChannel.degradationState
+        accessoryType = voiceChannel.accessoryType()
+        isMuted = mediaManager.isMicrophoneMuted
+        canToggleMediaType = voiceChannel.canToggleMediaType(with: permissions, selfUser: selfUser)
+        isVideoCall = voiceChannel.internalIsVideoCall
+        isConstantBitRate = voiceChannel.isConstantBitRateAudioActive
+        isForcedCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled
+        title = voiceChannel.conversation?.displayName ?? ""
+        mediaState = voiceChannel.mediaState(with: permissions)
+        videoPlaceholderState = voiceChannel.videoPlaceholderState ?? preferedVideoPlaceholderState
+        disableIdleTimer = voiceChannel.disableIdleTimer
+        callState = voiceChannel.state
+        videoGridPresentationMode = voiceChannel.videoGridPresentationMode
+        allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
+    }
 
     // This property has to be computed in order to return the correct call duration
     var state: CallStatusViewState {

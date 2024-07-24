@@ -37,9 +37,6 @@ public struct AVSCallMember: Hashable {
     /// The state of microphone
     public let microphoneState: MicrophoneState
 
-    /// Netwok quality of this leg
-    public let networkQuality: NetworkQuality
-
     // MARK: - Initialization
 
     /**
@@ -51,16 +48,16 @@ public struct AVSCallMember: Hashable {
      * - parameter networkQuality: The quality of the network connection. Defaults to `.normal`.
      */
 
-    public init(client: AVSClient,
-                audioState: AudioState = .connecting,
-                videoState: VideoState = .stopped,
-                microphoneState: MicrophoneState = .unmuted,
-                networkQuality: NetworkQuality = .normal) {
+    public init(
+        client: AVSClient,
+        audioState: AudioState = .connecting,
+        videoState: VideoState = .stopped,
+        microphoneState: MicrophoneState = .unmuted
+    ) {
         self.client = client
         self.audioState = audioState
         self.videoState = videoState
         self.microphoneState = microphoneState
-        self.networkQuality = networkQuality
     }
 
     // MARK: - Properties
@@ -95,7 +92,6 @@ extension AVSCallMember {
         audioState = member.aestab
         videoState = member.vrecv
         microphoneState = member.muted
-        networkQuality = .normal
     }
 }
 

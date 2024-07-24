@@ -24,7 +24,6 @@ protocol CallGridViewControllerInput {
     var floatingStream: Stream? { get }
     var streams: [Stream] { get }
     var videoState: VideoState { get }
-    var networkQuality: NetworkQuality { get }
     var shouldShowActiveSpeakerFrame: Bool { get }
     var presentationMode: VideoGridPresentationMode { get }
     var callHasTwoParticipants: Bool { get }

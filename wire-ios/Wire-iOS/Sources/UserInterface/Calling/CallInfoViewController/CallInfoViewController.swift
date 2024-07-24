@@ -52,7 +52,6 @@ extension CallInfoViewControllerInput {
             isConstantBitRate == other.isConstantBitRate &&
             title == other.title &&
             cameraType == other.cameraType &&
-            networkQuality == other.networkQuality &&
             userEnabledCBR == other.userEnabledCBR &&
             callState.isEqual(toCallState: other.callState) &&
             videoGridPresentationMode == other.videoGridPresentationMode &&
@@ -172,16 +171,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         statusViewController.configuration = configuration
         accessoryViewController.configuration = configuration
         updateAccessoryView()
-
-        if configuration.networkQuality.isNormal {
-            navigationItem.titleView = nil
-        } else {
-            let label = UILabel()
-            label.translatesAutoresizingMaskIntoConstraints = false
-            label.attributedText = configuration.networkQuality.attributedString(color: SemanticColors.Label.textDefault)
-            label.font = FontSpec(.small, .semibold).font
-            navigationItem.titleView = label
-        }
     }
 
     // MARK: - Actions + Delegates
