@@ -157,7 +157,7 @@ public struct SnapshotHelper {
         line: UInt = #line
     ) {
         let failure = verifySnapshot(
-            of: value,
+            matching: value,
             as: .image(
                 perceptualPrecision: perceptualPrecision,
                 layout: layout,
@@ -195,7 +195,7 @@ public struct SnapshotHelper {
         let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
 
         let failure = verifySnapshot(
-            of: value,
+            matching: value,
             as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
             record: recording,
@@ -225,7 +225,7 @@ public struct SnapshotHelper {
         line: UInt = #line
     ) {
         let failure = verifySnapshot(
-            of: value,
+            matching: value,
             as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
             snapshotDirectory: snapshotDirectory(file: file),
@@ -268,7 +268,7 @@ public struct SnapshotHelper {
             "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
         ].forEach { name, contentSize in
             let failure = verifySnapshot(
-                of: value,
+                matching: value,
                 as: .image(
                     traits: .init(preferredContentSizeCategory: contentSize)
                 ),

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1540"
-   version = "1.7">
+   LastUpgradeVersion = "1240"
+   version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES"
-      buildArchitectures = "Automatic">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -15,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireTestingObjectiveC"
-               BuildableName = "WireTestingObjectiveC"
-               BlueprintName = "WireTestingObjectiveC"
-               ReferencedContainer = "container:">
+               BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+               BuildableName = "WireTesting.framework"
+               BlueprintName = "WireTesting"
+               ReferencedContainer = "container:WireTesting.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,12 +27,27 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <TestPlans>
-         <TestPlanReference
-            reference = "container:.swiftpm/WireTestingObjectiveC.xctestplan"
-            default = "YES">
-         </TestPlanReference>
-      </TestPlans>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+            BuildableName = "WireTesting.framework"
+            BlueprintName = "WireTesting"
+            ReferencedContainer = "container:WireTesting.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "096AD7C51B68D41D00E007A8"
+               BuildableName = "WireTesting-Tests.xctest"
+               BlueprintName = "WireTesting-Tests"
+               ReferencedContainer = "container:WireTesting.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -45,6 +59,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+            BuildableName = "WireTesting.framework"
+            BlueprintName = "WireTesting"
+            ReferencedContainer = "container:WireTesting.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -55,10 +78,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireTestingObjectiveC"
-            BuildableName = "WireTestingObjectiveC"
-            BlueprintName = "WireTestingObjectiveC"
-            ReferencedContainer = "container:">
+            BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+            BuildableName = "WireTesting.framework"
+            BlueprintName = "WireTesting"
+            ReferencedContainer = "container:WireTesting.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

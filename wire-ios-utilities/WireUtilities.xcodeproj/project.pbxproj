@@ -143,6 +143,8 @@
 		EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */; };
 		EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */; };
 		EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
+		EE98A0AE296EFBE60055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
+		EE98A0AF296EFBE60055E981 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EE9AEC882BD158BC00F7853F /* WireUtilities.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC872BD158BC00F7853F /* WireUtilities.docc */; };
 		EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */; };
 		EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */; };
@@ -217,6 +219,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EE98A0AF296EFBE60055E981 /* WireTesting.framework in Embed Frameworks */,
 				F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -374,6 +377,7 @@
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
 		EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaults.swift; sourceTree = "<group>"; };
 		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
 		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
 		EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Base64.swift"; sourceTree = "<group>"; };
@@ -414,6 +418,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE98A0AE296EFBE60055E981 /* WireTesting.framework in Frameworks */,
 				F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -584,6 +589,7 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
 				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
 			);
 			name = Frameworks;

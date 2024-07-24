@@ -18,6 +18,10 @@ let package = Package(
         .library(
             name: "WireReusableUIComponents",
             targets: ["WireReusableUIComponents"]
+        ),
+        .library(
+            name: "WireUITesting",
+            targets: ["WireUITesting"]
         )
     ],
     dependencies: [
@@ -57,14 +61,23 @@ let package = Package(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 "WireReusableUIComponents",
+                "WireUITesting",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
-                ),
-//                .product(
-//                    name: "WireTesting",
-//                    package: "WireTesting"
-//                )
+                )
+            ],
+            swiftSettings: swiftSettings
+        ),
+
+        // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
+        .target(
+            name: "WireUITesting",
+            dependencies: [
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                )
             ],
             swiftSettings: swiftSettings
         )
