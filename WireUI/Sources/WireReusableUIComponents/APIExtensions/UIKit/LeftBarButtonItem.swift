@@ -41,7 +41,6 @@ public extension UIBarButtonItem {
         title: String,
         action: UIAction
     ) -> UIBarButtonItem {
-        
         let buttonFont = UIFont.systemFont(ofSize: 17, weight: .regular)
 
         let leftBarButtonItem = UIBarButtonItem(
@@ -59,10 +58,10 @@ public extension UIBarButtonItem {
             .reserved
         ]
 
-        buttonStates.forEach { buttonState in
+        for buttonState in buttonStates {
             leftBarButtonItem.setTitleTextAttributes(
                 [
-                    .font: buttonFont,
+                    .font: buttonFont
                 ],
                 for: buttonState
             )

@@ -377,7 +377,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     private func rightNavigationItemTapped() -> UIAction {
         return UIAction { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
 
             switch self.viewModel.context {
             case .add:

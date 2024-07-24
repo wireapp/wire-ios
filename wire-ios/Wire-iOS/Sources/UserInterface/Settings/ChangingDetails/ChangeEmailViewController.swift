@@ -120,7 +120,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
             action: UIAction { [weak self] _ in
                 self?.saveButtonTapped()
             })
-        
+
         saveButtonItem.tintColor = UIColor.accent()
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
