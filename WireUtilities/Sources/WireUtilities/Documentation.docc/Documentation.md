@@ -1,4 +1,4 @@
-# ``WireUtilitiesPackage``
+# ``WireUtilities``
 
 Provide various utility helpers.
 

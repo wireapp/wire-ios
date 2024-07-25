@@ -1,4 +1,4 @@
-# ``WireSystemPackage``
+# ``WireSystem``
 
 Provide core shared code.
 

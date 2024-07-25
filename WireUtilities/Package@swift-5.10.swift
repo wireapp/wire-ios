@@ -14,16 +14,16 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
-        .package(path: "../WireSystemPackage")
+        .package(name: "WireSystemPackage", path: "../WireSystem")
     ],
     targets: [
-        .target(name: "WireUtilities", dependencies: ["WireSystemPackage"], path: "./Sources/WireUtilitiesPackage", swiftSettings: swiftSettings),
-        .testTarget(name: "WireUtilitiesTests", dependencies: ["WireUtilities"], path: "./Tests/WireUtilitiesPackageTests", swiftSettings: swiftSettings),
+        .target(name: "WireUtilities", dependencies: ["WireSystemPackage"], path: "./Sources/WireUtilities", swiftSettings: swiftSettings),
+        .testTarget(name: "WireUtilitiesTests", dependencies: ["WireUtilities"], path: "./Tests/WireUtilitiesTests", swiftSettings: swiftSettings),
 
         .target(
             name: "WireUtilitiesSupport",
             dependencies: ["WireUtilities"],
-            path: "./Sources/WireUtilitiesPackageSupport",
+            path: "./Sources/WireUtilitiesSupport",
             swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
