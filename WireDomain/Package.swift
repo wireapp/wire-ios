@@ -18,15 +18,13 @@ let package = Package(
     ],
     targets: [
 
-        .target(name: "WireDomainPackage", swiftSettings: swiftSettings),
-        .testTarget(
-            name: "WireDomainPackageTests",
-            dependencies: ["WireSystemPackage"]
-        ),
+        .target(name: "WireDomainPackage", path: "./Sources/Package", swiftSettings: swiftSettings),
+        .testTarget(name: "WireDomainPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/PackageTests"),
 
         .target(
             name: "WireDomainPackageSupport",
             dependencies: ["WireDomainPackage"],
+            path: "./Sources/PackageSupport",
             swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")

@@ -86,7 +86,7 @@
       location = "group:WireDomain/Project/WireDomain.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireDomainPackage">
+      location = "group:WireDomain">
    </FileRef>
    <FileRef
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
