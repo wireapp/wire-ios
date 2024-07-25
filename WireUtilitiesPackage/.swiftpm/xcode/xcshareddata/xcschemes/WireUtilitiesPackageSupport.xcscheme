@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUtilitiesPackage"
-               BuildableName = "WireUtilitiesPackage"
-               BlueprintName = "WireUtilitiesPackage"
+               BlueprintIdentifier = "WireUtilitiesPackageSupport"
+               BuildableName = "WireUtilitiesPackageSupport"
+               BlueprintName = "WireUtilitiesPackageSupport"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireUtilitiesPackage"
-            BuildableName = "WireUtilitiesPackage"
-            BlueprintName = "WireUtilitiesPackage"
+            BlueprintIdentifier = "WireUtilitiesPackageSupport"
+            BuildableName = "WireUtilitiesPackageSupport"
+            BlueprintName = "WireUtilitiesPackageSupport"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

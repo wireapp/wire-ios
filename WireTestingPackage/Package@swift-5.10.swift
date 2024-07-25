@@ -8,12 +8,11 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireTestingPackage",type: .dynamic, targets: ["WireTestingPackage"])
+        .library(name: "WireTestingPackage", type: .dynamic, targets: ["WireTestingPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
-        // .package(path: "../SourceryPlugin"),
         .package(path: "../WireSystemPackage")
     ],
     targets: [
@@ -23,16 +22,11 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireSystemPackage"
             ],
-            swiftSettings: swiftSettings,
-            plugins: [
-                // .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
-            ]
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "WireTestingPackageTests",
-            dependencies: [
-                "WireTestingPackage"
-            ]
+            dependencies: ["WireTestingPackage"]
         )
     ]
 )
