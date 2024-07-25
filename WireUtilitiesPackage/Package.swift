@@ -8,7 +8,8 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireUtilitiesPackage", type: .dynamic, targets: ["WireUtilitiesPackage"])
+        .library(name: "WireUtilitiesPackage", type: .dynamic, targets: ["WireUtilities"]),
+        .library(name: "WireUtilitiesPackageSupport", type: .dynamic, targets: ["WireUtilitiesSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -16,12 +17,13 @@ let package = Package(
         .package(path: "../WireSystemPackage")
     ],
     targets: [
-        .target(name: "WireUtilitiesPackage", dependencies: ["WireSystemPackage"], swiftSettings: swiftSettings),
-        .testTarget(name: "WireUtilitiesPackageTests", dependencies: ["WireUtilitiesPackage"]),
+        .target(name: "WireUtilities", dependencies: ["WireSystemPackage"], path: "./Sources/WireUtilitiesPackage", swiftSettings: swiftSettings),
+        .testTarget(name: "WireUtilitiesTests", dependencies: ["WireUtilities"], path: "./Tests/WireUtilitiesPackageTests", swiftSettings: swiftSettings),
 
         .target(
-            name: "WireUtilitiesPackageSupport",
-            dependencies: ["WireUtilitiesPackage"],
+            name: "WireUtilitiesSupport",
+            dependencies: ["WireUtilities"],
+            path: "./Sources/WireUtilitiesPackageSupport",
             swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")

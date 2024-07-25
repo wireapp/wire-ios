@@ -8,7 +8,8 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireDomainPackage", type: .dynamic, targets: ["WireDomainPackage"])
+        .library(name: "WireDomainPackage", type: .dynamic, targets: ["WireDomainPackage"]),
+        .library(name: "WireDomainPackageSupport", type: .dynamic, targets: ["WireDomainPackageSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -16,6 +17,7 @@ let package = Package(
         .package(path: "../WireSystemPackage")
     ],
     targets: [
+
         .target(name: "WireDomainPackage", swiftSettings: swiftSettings),
         .testTarget(
             name: "WireDomainPackageTests",
