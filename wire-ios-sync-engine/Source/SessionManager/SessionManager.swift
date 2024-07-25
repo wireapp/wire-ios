@@ -803,10 +803,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
 
-            if deleteCookie {
-                self?.environment.cookieStorage(for: account).deleteKeychainItems()
-            }
-
             if deleteAccount {
                 activeUserSession.lastEventIDRepository.storeLastEventID(nil)
             }
