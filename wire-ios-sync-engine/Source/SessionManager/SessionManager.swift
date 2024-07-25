@@ -814,7 +814,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             activeUserSession.close(deleteCookie: true) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
-                    self?.deleteUserLogs?()
                 }
                 group?.leave()
             }
@@ -973,6 +972,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         account.deleteKeychainItems()
 
         clearCRLExpirationDates(for: account)
+
+        deleteUserLogs?()
 
         // also deletes ZMSLogs from cache
         clearCacheDirectory()
