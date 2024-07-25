@@ -19,15 +19,25 @@
 import Foundation
 import WireSyncEngine
 
+/// Represents the state of the email change process.
 struct ChangeEmailState {
+    /// The user's current email address, if any.
     let currentEmail: String?
+
+    /// The new email address entered by the user, if any.
     var newEmail: String?
+
+    /// Any validation error associated with the new email address.
     var emailValidationError: TextFieldValidator.ValidationError?
 
+    /// The email address to display in the UI.
+    /// Returns the new email if set, otherwise falls back to the current email.
     var visibleEmail: String? {
         return newEmail ?? currentEmail
     }
 
+    /// The validated new email address.
+    /// Returns nil if the new email is not set or if there's a validation error.
     var validatedEmail: String? {
         guard let newEmail = self.newEmail else { return nil }
         guard case .none = emailValidationError else {
@@ -36,10 +46,14 @@ struct ChangeEmailState {
         return newEmail
     }
 
+    /// Indicates whether the state is valid for submission.
+    /// The state is considered valid if there's a validated email address.
     var isValid: Bool {
         return validatedEmail != nil
     }
 
+    /// Initializes a new ChangeEmailState instance.
+    /// - Parameter currentEmail: The user's current email address, if any.
     init(currentEmail: String?) {
         self.currentEmail = currentEmail
         emailValidationError = nil

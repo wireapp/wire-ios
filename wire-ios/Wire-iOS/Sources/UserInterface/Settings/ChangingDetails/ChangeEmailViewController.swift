@@ -20,11 +20,6 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-enum ChangeEmailFlowType {
-    case changeExistingEmail
-    case setInitialEmail
-}
-
 final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
@@ -34,14 +29,12 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     private var observerToken: Any?
 
     let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
-    let emailPasswordCell = EmailPasswordTextFieldCell(style: .default, reuseIdentifier: nil)
-    let validationCell = ValueValidationCell(initialValidation: .info(PasswordRuleSet.localizedErrorMessage))
 
     let userSession: UserSession
 
     init(user: UserType, userSession: UserSession) {
         self.userSession = userSession
-        state = ChangeEmailState(currentEmail: user.emailAddress)
+        self.state = ChangeEmailState(currentEmail: user.emailAddress)
         super.init(style: .grouped)
         setupViews()
     }
@@ -69,7 +62,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         _ = emailCell.textField.becomeFirstResponder()
     }
 
@@ -79,7 +71,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-
         view.backgroundColor = .clear
         tableView.isScrollEnabled = false
 
@@ -90,13 +81,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         emailCell.textField.accessibilityIdentifier = "EmailField"
         emailCell.textField.textFieldValidationDelegate = self
         emailCell.textField.addTarget(self, action: #selector(emailTextFieldEditingChanged), for: .editingChanged)
-
-        emailPasswordCell.textField.emailField.showConfirmButton = false
-        emailPasswordCell.textField.passwordField.showConfirmButton = false
-        emailPasswordCell.textField.delegate = self
-
-        emailPasswordCell.textField.setBackgroundColor(.clear)
-        emailPasswordCell.textField.setTextColor(.white)
 
         updateSaveButtonState()
     }
@@ -110,31 +94,20 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func saveButtonTapped() {
-        if let passwordError = state.passwordValidationError {
-            validationCell.updateValidation(.error(passwordError, showVisualFeedback: true))
-            return
-        }
-
         requestEmailUpdate(showLoadingView: true)
     }
 
     func requestEmailUpdate(showLoadingView: Bool) {
-        let updateBlock: () throws -> Void
-
-        switch state.flowType {
-        case .setInitialEmail:
-            guard let credentials = state.validatedCredentials else { return }
-            updateBlock = { try self.userProfile?.requestSettingEmailAndPassword(credentials: credentials) }
-        case .changeExistingEmail:
-            guard let email = state.validatedEmail else { return }
-            updateBlock = { try self.userProfile?.requestEmailChange(email: email) }
-        }
+        guard let email = state.validatedEmail else { return }
 
         do {
-            try updateBlock()
+            try userProfile?.requestEmailChange(email: email)
             updateSaveButtonState(enabled: false)
             navigationController?.isLoadingViewVisible = showLoadingView
-        } catch { }
+        } catch {
+            // Handle error
+            print("Failed to request email change: \(error)")
+        }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -142,34 +115,16 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch state.flowType {
-        case .changeExistingEmail:
-            return 1
-
-        case .setInitialEmail:
-            return 2
-        }
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch state.flowType {
-        case .changeExistingEmail:
-            emailCell.textField.text = state.visibleEmail
-            return emailCell
-
-        case .setInitialEmail:
-            if indexPath.row == 0 {
-                return emailPasswordCell
-            } else {
-                return validationCell
-            }
-        }
+        emailCell.textField.text = state.visibleEmail
+        return emailCell
     }
-
 }
 
 extension ChangeEmailViewController: UserProfileUpdateObserver {
-
     func emailUpdateDidFail(_ error: Error!) {
         navigationController?.isLoadingViewVisible = false
         updateSaveButtonState()
@@ -197,7 +152,6 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
 }
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
-
     @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
         state.newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
         sender.validateInput()
@@ -207,30 +161,4 @@ extension ChangeEmailViewController: TextFieldValidationDelegate {
         state.emailValidationError = error
         updateSaveButtonState()
     }
-
-}
-
-extension ChangeEmailViewController: EmailPasswordTextFieldDelegate {
-
-    func textField(_ textField: EmailPasswordTextField, didConfirmCredentials credentials: (String, String)) {
-        // no-op: n
-    }
-
-    func textFieldDidUpdateText(_ textField: EmailPasswordTextField) {
-        // Update the state
-        state.newEmail = textField.emailField.input.trimmingCharacters(in: .whitespacesAndNewlines)
-        state.newPassword = textField.passwordField.input
-        state.emailValidationError = textField.emailValidationError
-        state.passwordValidationError = textField.passwordValidationError
-        state.isEmailPasswordInputValid = textField.emailField.isInputValid && !textField.isPasswordEmpty
-
-        // Re-enable the buttons if needed
-        updateSaveButtonState()
-        validationCell.updateValidation(nil)
-    }
-
-    func textFieldDidSubmitWithValidationError(_ textField: EmailPasswordTextField) {
-        // no-op: ever called, we disable the confirm button
-    }
-
 }
