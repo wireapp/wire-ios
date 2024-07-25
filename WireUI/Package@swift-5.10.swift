@@ -25,7 +25,7 @@ let package = Package(
             name: "WireDesignTests",
             dependencies: [
                 "WireDesign",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             swiftSettings: swiftSettings
         ),

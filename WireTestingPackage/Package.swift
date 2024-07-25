@@ -8,7 +8,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireTestingPackage",type: .dynamic, targets: ["WireTestingPackage"])
+        .library(name: "WireTestingPackage", type: .dynamic, targets: ["WireTestingPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
