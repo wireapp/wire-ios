@@ -24,11 +24,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
 
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
+    private weak var userProfile = ZMUserSession.shared()?.userProfile
     var state: ChangeEmailState
     private var observerToken: Any?
 
-    let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
+    private let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
 
     let userSession: UserSession
 
