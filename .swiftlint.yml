@@ -89,7 +89,6 @@ excluded:
   - sourcery
   - vendor
   - wire-ios/Templates
-  - "wire-ios-data-model/Support/Sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-protos/Protos/messages.pb.swift"
   - "wire-ios-protos/Protos/mls.pb.swift"
   - "wire-ios-protos/Protos/otr.pb.swift"
@@ -98,7 +97,6 @@ excluded:
   - "wire-ios/Wire-iOS Share Extension/Generated/Strings+Generated.swift"
   - "wire-ios/Wire-iOS/Generated/Assets+Generated.swift"
   - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
-  - "wire-ios/Wire-iOS/Generated/AutoMockable.generated.swift"
 
 # In order to deal with the huge number of violations, first set
 # very high limits then iteratively reduce the limits and resolve
