@@ -764,8 +764,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public func logoutCurrentSession(deleteCookie: Bool = true) {
-        logoutCurrentSession(deleteCookie: deleteCookie, error: nil)
+    public func logoutCurrentSession() {
+        logoutCurrentSession(deleteCookie: true, error: nil)
     }
 
     fileprivate func deleteTemporaryData() {
