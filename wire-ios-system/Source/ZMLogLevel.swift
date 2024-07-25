@@ -16,24 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import WireDesign
-
-extension UIBarButtonItem {
-
-    typealias IconColors = SemanticColors.Icon
-
-    convenience init(icon: StyleKitIcon,
-                     style: UIBarButtonItem.Style = .plain,
-                     target: Any?,
-                     action: Selector?) {
-        self.init(
-            image: icon.makeImage(size: .tiny,
-                                  color: IconColors.foregroundDefaultBlack),
-            style: style,
-            target: target,
-            action: action
-        )
-    }
+@frozen @objc(ZMLogLevel)
+public enum ZMLogLevel: Int8 {
+    case `public`, error, warn, info, debug
 }
