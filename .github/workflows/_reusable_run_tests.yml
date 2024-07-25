@@ -262,25 +262,25 @@ jobs:
       # WireUtilities
 
       - name: Build WireUtilities
-        if: ${{ inputs.wire-utilities-package || inputs.all }}
+        if: ${{ inputs.wire-utilities || inputs.all }}
         run: |
           echo "WireUtilities has changes"
           echo "Building WireUtilities..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -resultBundlePath xcodebuild-wire-utilities-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-utilities-package.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -resultBundlePath xcodebuild-wire-utilities.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-utilities.log | bundle exec xcpretty
 
       - name: Run Danger for WireUtilities
-        if: false # ${{ inputs.wire-utilities-package || inputs.all }}
+        if: false # ${{ inputs.wire-utilities || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-utilities-package.xcresult
+          XCRESULT_PATH: xcodebuild-wire-utilities.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireUtilities" --verbose
 
       - name: Test WireUtilities
-        if: ${{ inputs.wire-utilities-package || inputs.all }}
+        if: ${{ inputs.wire-utilities || inputs.all }}
         run: |
           echo "Testing WireUtilities..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-utilities-package.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-utilities.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
           exit ${PIPESTATUS[0]}
 
       # WireUtilities Project
@@ -501,25 +501,25 @@ jobs:
       # WireDomain
 
       - name: Build WireDomain
-        if: ${{ inputs.wire-domain-package || inputs.all }}
+        if: ${{ inputs.wire-domain || inputs.all }}
         run: |
           echo "WireDomain has changes"
           echo "Building WireDomain..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -resultBundlePath xcodebuild-wire-domain-package.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain-package.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
 
       - name: Run Danger for WireDomain
-        if: false # ${{ inputs.wire-domain-package || inputs.all }}
+        if: false # ${{ inputs.wire-domain || inputs.all }}
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-domain-package.xcresult
+          XCRESULT_PATH: xcodebuild-wire-domain.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDomain" --verbose
 
       - name: Test WireDomain
-        if: ${{ inputs.wire-domain-package || inputs.all }}
+        if: ${{ inputs.wire-domain || inputs.all }}
         run: |
           echo "Testing WireDomain..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain-package.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
           exit ${PIPESTATUS[0]}
 
       # WireDomain Project
