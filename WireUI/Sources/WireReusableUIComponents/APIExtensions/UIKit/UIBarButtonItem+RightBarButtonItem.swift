@@ -48,24 +48,12 @@ public extension UIBarButtonItem {
             primaryAction: action
         )
 
-        let buttonStates: [UIControl.State] = [
-            .normal,
-            .highlighted,
-            .disabled,
-            .selected,
-            .focused,
-            .application,
-            .reserved
-        ]
-
-        for buttonState in buttonStates {
-            rightBarButtonItem.setTitleTextAttributes(
-                [
-                    .font: buttonFont
-                ],
-                for: buttonState
-            )
-        }
+        rightBarButtonItem.setTitleTextAttributes(
+            [
+                .font: buttonFont
+            ],
+            for: .normal
+        )
 
         return rightBarButtonItem
     }
