@@ -15,6 +15,7 @@ let package = Package(
         .package(path: "../SourceryPlugin")
     ],
     targets: [
+
         .target(name: "WireSystemPackage", swiftSettings: swiftSettings),
         .testTarget(
             name: "WireSystemPackageTests",

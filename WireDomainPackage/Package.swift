@@ -17,20 +17,20 @@ let package = Package(
         .package(path: "../WireSystemPackage")
     ],
     targets: [
+
+        .target(name: "WireDomainPackage", swiftSettings: swiftSettings),
+        .testTarget(
+            name: "WireDomainPackageTests",
+            dependencies: ["WireSystemPackage"]
+        ),
+
         .target(
-            name: "WireDomainPackage",
-            dependencies: [
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                "WireSystemPackage"
-            ],
+            name: "WireDomainPackageSupport",
+            dependencies: ["WireDomainPackage"],
             swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
-        ),
-        .testTarget(
-            name: "WireDomainPackageTests",
-            dependencies: ["WireDomainPackage"]
         )
     ]
 )

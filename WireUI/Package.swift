@@ -14,16 +14,12 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
-        // .package(path: "../SourceryPlugin"),
         .package(path: "../WireTestingPackage")
     ],
     targets: [
         .target(
             name: "WireDesign",
-            swiftSettings: swiftSettings,
-            plugins: [
-                // .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
-            ]
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "WireDesignTests",
@@ -37,10 +33,7 @@ let package = Package(
         .target(
             name: "WireReusableUIComponents",
             dependencies: ["WireDesign"],
-            swiftSettings: swiftSettings,
-            plugins: [
-                // .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
-            ]
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
