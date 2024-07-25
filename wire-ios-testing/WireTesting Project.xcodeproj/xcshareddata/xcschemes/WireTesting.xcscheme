@@ -17,7 +17,7 @@
                BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
                BuildableName = "WireTesting.framework"
                BlueprintName = "WireTesting"
-               ReferencedContainer = "container:WireTesting.xcodeproj">
+               ReferencedContainer = "container:WireTesting Project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,7 +33,7 @@
             BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
             BuildableName = "WireTesting.framework"
             BlueprintName = "WireTesting"
-            ReferencedContainer = "container:WireTesting.xcodeproj">
+            ReferencedContainer = "container:WireTesting Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -44,7 +44,7 @@
                BlueprintIdentifier = "096AD7C51B68D41D00E007A8"
                BuildableName = "WireTesting-Tests.xctest"
                BlueprintName = "WireTesting-Tests"
-               ReferencedContainer = "container:WireTesting.xcodeproj">
+               ReferencedContainer = "container:WireTesting Project.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -65,7 +65,7 @@
             BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
             BuildableName = "WireTesting.framework"
             BlueprintName = "WireTesting"
-            ReferencedContainer = "container:WireTesting.xcodeproj">
+            ReferencedContainer = "container:WireTesting Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </LaunchAction>
@@ -81,7 +81,7 @@
             BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
             BuildableName = "WireTesting.framework"
             BlueprintName = "WireTesting"
-            ReferencedContainer = "container:WireTesting.xcodeproj">
+            ReferencedContainer = "container:WireTesting Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

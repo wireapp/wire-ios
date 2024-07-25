@@ -17,8 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireTestingTests",
-        "name" : "WireTestingTests"
+        "identifier" : "WireTestingPkgTests",
+        "name" : "WireTestingPkgTests"
       }
     }
   ],
