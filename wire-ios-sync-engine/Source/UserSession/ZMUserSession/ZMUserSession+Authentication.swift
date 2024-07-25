@@ -68,7 +68,6 @@ extension ZMUserSession {
     /// - parameter deleteCookie: If set to true the cookies associated with the session will be deleted
     /// - parameter completion: called after the user session has been closed
 
-    @objc(closeAndDeleteCookie:completion:)
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
         // Clear all notifications associated with the account from the notification center
         syncManagedObjectContext.performGroupedBlock {
