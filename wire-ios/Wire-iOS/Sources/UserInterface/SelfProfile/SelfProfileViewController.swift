@@ -135,11 +135,18 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController.tableView.isScrollEnabled = false
 
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        configureAccountTitle()
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
+
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureAccountTitle()
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
@@ -159,7 +166,7 @@ final class SelfProfileViewController: UIViewController {
             navigationItem.titleView = accountSelectorView
             self.accountSelectorView = accountSelectorView
         } else {
-            navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.account.capitalized)
+            setupNavigationBarTitle(L10n.Localizable.Self.account)
         }
     }
 
@@ -201,10 +208,12 @@ final class SelfProfileViewController: UIViewController {
     @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
-        let alertViewController = profileImagePicker.selectProfileImage()
-        alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
-
-        present(alertViewController, animated: true)
+        let alertController = profileImagePicker.selectProfileImage()
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
+            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(dx: -4, dy: -4)
+        }
+        present(alertController, animated: true)
     }
 
     override func accessibilityPerformEscape() -> Bool {

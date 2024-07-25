@@ -25,7 +25,8 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies(),
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
@@ -35,7 +36,8 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ]
+            ],
+            swiftSettings: swiftSettings
         )
     ]
 )
@@ -43,16 +45,21 @@ let package = Package(
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
-        return ["WireDatadog"]
+        ["WireDatadog"]
     } else {
-        return []
+        []
     }
 }
 
 func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
     if let value {
-        return ProcessInfo.processInfo.environment[name] == value
+        ProcessInfo.processInfo.environment[name] == value
     } else {
-        return ProcessInfo.processInfo.environment[name] != nil
+        ProcessInfo.processInfo.environment[name] != nil
     }
 }
+
+let swiftSettings: [SwiftSetting] = [
+    .enableExperimentalFeature("StrictConcurrency"),
+    .enableUpcomingFeature("GlobalConcurrency")
+]

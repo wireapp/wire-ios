@@ -199,7 +199,7 @@ final class DispatchGroupTests: XCTestCase {
         sut.enter()
 
         // When
-        let result = sut.waitWithDelta(fromNow: 200)
+        let result = sut.wait(deltaFromNow: 200)
 
         // Then
         XCTAssertNotEqual(result, 0)

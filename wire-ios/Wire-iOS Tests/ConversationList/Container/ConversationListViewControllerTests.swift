@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -28,6 +29,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
+    private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
     private var tabBarController: UITabBarController!
@@ -40,13 +42,14 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
 
         coreDataFixture = .init()
 
         userSession = .init()
-        userSession.contextProvider = coreDataFixture.coreDataStack
+        userSession.coreDataStack = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
@@ -57,12 +60,15 @@ final class ConversationListViewControllerTests: XCTestCase {
             account: account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
         sut = ConversationListViewController(
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: false,
+            zClientViewController: .init(account: account, userSession: userSession),
+            mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )
         tabBarController = MainTabBarController(
@@ -93,6 +99,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
         coreDataFixture = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }

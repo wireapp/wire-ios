@@ -27,17 +27,32 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
     let userSession: UserSession
+    private let mainCoordinator: MainCoordinating
 
-    convenience init?(user: UserType, userSession: UserSession) {
+    convenience init?(
+        user: UserType,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         guard let conversation = user.oneToOneConversation else { return nil }
-        self.init(conversation: conversation, userSession: userSession)
+        self.init(
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
-    init(conversation: LegalHoldDetailsConversation, userSession: UserSession) {
+    init(
+        conversation: LegalHoldDetailsConversation,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.conversation = conversation
         self.collectionViewController = SectionCollectionViewController()
         self.collectionViewController.collectionView = collectionView
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+
         super.init(nibName: nil, bundle: nil)
 
         setupViews()
@@ -52,30 +67,40 @@ final class LegalHoldDetailsViewController: UIViewController {
     }
 
     @discardableResult
-    static func present(in parentViewController: UIViewController, user: UserType, userSession: UserSession) -> UINavigationController? {
-        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession) else { return nil }
+    static func present(
+        in parentViewController: UIViewController,
+        user: UserType,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) -> UINavigationController? {
+        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession, mainCoordinator: mainCoordinator) else { return nil }
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
 
     @discardableResult
-    static func present(in parentViewController: UIViewController, conversation: ZMConversation, userSession: UserSession) -> UINavigationController {
-        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession)
+    static func present(
+        in parentViewController: UIViewController,
+        conversation: ZMConversation,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) -> UINavigationController {
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession, mainCoordinator: mainCoordinator)
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        title = L10n.Localizable.Legalhold.Header.title.localizedUppercase
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        setupNavigationBarTitle(L10n.Localizable.Legalhold.Header.title)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -124,7 +149,8 @@ extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionController
             user: user,
             viewer: viewer,
             context: .deviceList,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
         show(profileViewController, sender: nil)
     }

@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
+    private var mockMainCoordinator: MockMainCoordinator!
     private var sut: GroupDetailsViewController!
     private var mockConversation: MockGroupDetailsConversation!
     private var mockSelfUser: MockUserType!
@@ -30,6 +33,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockConversation = MockGroupDetailsConversation()
         mockConversation.displayName = "iOS Team"
@@ -57,6 +61,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser = nil
         otherUser = nil
         userSession = nil
+        mockMainCoordinator = nil
+
         super.tearDown()
     }
 
@@ -89,6 +95,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -108,6 +115,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -134,6 +142,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -153,6 +162,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -171,6 +181,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -191,6 +202,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -209,6 +221,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -228,6 +241,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -247,11 +261,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
-
 }

@@ -17,7 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
 
 extension UIColor {
     enum AlarmButton {
@@ -28,7 +29,7 @@ extension UIColor {
 /// A button with spinner at the trailing side. Title text is non truncated.
 final class SpinnerButton: LegacyButton {
 
-    private lazy var spinner: Spinner = {
+    private lazy var spinner = {
         let spinner = Spinner()
 
         // the spinner covers the text with alpha BG

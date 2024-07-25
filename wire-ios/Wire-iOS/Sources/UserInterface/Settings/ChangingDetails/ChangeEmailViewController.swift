@@ -114,6 +114,14 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: EmailAccountSection.Change.save.capitalized,
+                                                                                  systemImage: false,
+                                                                                  target: self,
+                                                                                  action: #selector(saveButtonTapped))
+        saveButtonItem.tintColor = UIColor.accent()
+        navigationItem.rightBarButtonItem = saveButtonItem
+        setupNavigationBarTitle(EmailAccountSection.Change.title)
+
         observerToken = userProfile?.add(observer: self)
     }
 
@@ -129,7 +137,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: EmailAccountSection.Change.title.capitalized)
+
         view.backgroundColor = .clear
         tableView.isScrollEnabled = false
 
@@ -148,12 +156,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         emailPasswordCell.textField.setBackgroundColor(.clear)
         emailPasswordCell.textField.setTextColor(.white)
 
-        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: EmailAccountSection.Change.save.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(saveButtonTapped))
-        saveButtonItem.tintColor = UIColor.accent()
-        navigationItem.rightBarButtonItem = saveButtonItem
         updateSaveButtonState()
     }
 

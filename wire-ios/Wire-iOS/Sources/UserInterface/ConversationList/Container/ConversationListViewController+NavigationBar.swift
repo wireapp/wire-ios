@@ -94,8 +94,10 @@ extension ConversationListViewController {
             guard userStatusViewController == nil else { return }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            navigationItem.titleView = userStatusViewController.view
             userStatusViewController.delegate = self
+            navigationController?.addChild(userStatusViewController)
+            navigationItem.titleView = userStatusViewController.view
+            userStatusViewController.didMove(toParent: navigationController)
             self.userStatusViewController = userStatusViewController
 
         } else {
@@ -190,7 +192,12 @@ extension ConversationListViewController {
             return
         }
 
-        LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: viewModel.userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            user: selfUser,
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     @objc

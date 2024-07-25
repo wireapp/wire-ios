@@ -111,7 +111,7 @@ extension ZMUserSession: UserSession {
     public func unlockDatabase() throws {
         try earService.unlockDatabase()
 
-        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
+        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
 
         processEvents()
     }
@@ -281,6 +281,12 @@ extension ZMUserSession: UserSession {
             in: self,
             completion: completion
         )
+    }
+
+    // MARK: Context provider
+
+    public var contextProvider: any ContextProvider {
+        return self
     }
 
     // MARK: Use Cases

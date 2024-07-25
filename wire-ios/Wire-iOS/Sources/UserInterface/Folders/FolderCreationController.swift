@@ -66,7 +66,6 @@ final class FolderCreationController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        setupNavigationBar()
         setupViews()
 
         // try to overtake the first responder from the other view
@@ -78,6 +77,11 @@ final class FolderCreationController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         nameSection.becomeFirstResponder()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
 
     private func setupViews() {
@@ -119,7 +123,9 @@ final class FolderCreationController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.closeItem()
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
         let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
@@ -132,7 +138,7 @@ final class FolderCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
-        navigationItem.setupNavigationBarTitle(title: FolderCreationName.title.capitalized)
+        setupNavigationBarTitle(FolderCreationName.title)
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 

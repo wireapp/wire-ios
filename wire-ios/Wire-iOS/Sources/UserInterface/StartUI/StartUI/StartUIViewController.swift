@@ -24,6 +24,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
 final class StartUIViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: SpinnerCompletion?
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
@@ -48,17 +49,27 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let isFederationEnabled: Bool
 
-    let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
+    let quickActionsBar = StartUIInviteActionBar()
 
-    let profilePresenter: ProfilePresenter = ProfilePresenter()
+    let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     let backgroundColor = SemanticColors.View.backgroundDefault
+
+    private var navigationBarTitle: String? {
+        if let title = userSession.selfUser.membership?.team?.name {
+            return title
+        } else if let title = userSession.selfUser.name {
+            return title
+        }
+
+        return nil
+    }
 
     /// init method for injecting mock addressBookHelper
     ///
@@ -66,7 +77,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     init(
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
@@ -76,6 +88,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
                                                                        shouldIncludeGuests: true,
                                                                        isFederationEnabled: isFederationEnabled)
         self.userSession = userSession
+        profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -91,18 +104,23 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     // MARK: - Overloaded methods
+
     override func loadView() {
         view = StartUIView(frame: CGRect.zero)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let title = navigationBarTitle {
+            setupNavigationBarTitle(title)
+        }
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.onDismissPressed()
+        }, accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description)
     }
 
     private func configGroupSelector() {
@@ -120,12 +138,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.mode = .list
         searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
-
-        if let title = userSession.selfUser.membership?.team?.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        } else if let title = userSession.selfUser.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        }
 
         searchHeader.delegate = self
         searchHeader.allowsMultipleSelection = false
@@ -161,12 +173,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         updateActionBar()
         searchResults.searchContactList()
 
-        let closeButton = UIBarButtonItem(icon: .cross, style: UIBarButtonItem.Style.plain, target: self, action: #selector(onDismissPressed))
-
-        closeButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
-        closeButton.accessibilityIdentifier = "close"
-
-        navigationItem.rightBarButtonItem = closeButton
         view.accessibilityViewIsModal = true
     }
 
@@ -224,7 +230,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         view.setNeedsLayout()
     }
 
-    @objc
     private func onDismissPressed() {
         _ = searchHeader.tokenField.resignFirstResponder()
         navigationController?.dismiss(animated: true)

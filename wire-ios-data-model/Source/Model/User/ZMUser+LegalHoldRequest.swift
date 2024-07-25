@@ -299,16 +299,12 @@ extension ZMUser: SelfLegalHoldSubject {
 
     public var fingerprint: String? {
         get async {
-            guard
-                let syncContext = managedObjectContext?.zm_sync,
-                let prekey = await managedObjectContext?.perform({
-                    self.legalHoldRequest?.lastPrekey
-                })
-            else {
-                return nil
-            }
+            guard let (syncContext, prekey) = await managedObjectContext?.perform({
+                (self.managedObjectContext?.zm_sync, self.legalHoldRequest?.lastPrekey)
+            }), let syncContext, let prekey else { return nil }
 
-            return await syncContext.proteusProvider.performAsync { proteusService in
+            let proteusProvider = await syncContext.perform({ syncContext.proteusProvider })
+            return await proteusProvider.performAsync { proteusService in
                 await fetchFingerprint(for: prekey, through: proteusService)
             } withKeyStore: { keyStore in
                 fetchFingerprint(for: prekey, through: keyStore)
@@ -327,7 +323,7 @@ extension ZMUser: SelfLegalHoldSubject {
 
     private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through keystore: UserClientKeysStore) -> String? {
         guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
-        return String(data: fingerprintData, encoding: .utf8)
+        return String(decoding: fingerprintData, as: UTF8.self)
     }
 
 }

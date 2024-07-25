@@ -25,14 +25,14 @@ import XCTest
 
 final class UserClientTests: ZMBaseManagedObjectTest {
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
-    override class func tearDown() {
+    override static func tearDown() {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
@@ -438,7 +438,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.numberOfKeysRemaining = 1
 
             // when
-            selfClient.decrementNumberOfRemainingKeys()
+            selfClient.decrementNumberOfRemainingProteusKeys()
 
             // then
             XCTAssertTrue(selfClient.modifiedKeys!.contains(ZMUserClientNumberOfKeysRemainingKey))
@@ -453,7 +453,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.numberOfKeysRemaining = 2
 
             // when
-            selfClient.decrementNumberOfRemainingKeys()
+            selfClient.decrementNumberOfRemainingProteusKeys()
 
             // then
             XCTAssertNil(selfClient.modifiedKeys)

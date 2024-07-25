@@ -36,7 +36,7 @@ final class DeveloperToolsPresenter: NSObject {
                         self?.displayedDeveloperTools = false
                     }
                 ))
-            }
+            }.navigationViewStyle(.stack)
         )
         developerTools.presentationController?.delegate = self
 

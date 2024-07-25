@@ -84,6 +84,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     let userSession: UserSession
+    let mainCoordinator: MainCoordinating
 
     private var messageObserverToken: NSObjectProtocol?
 
@@ -93,9 +94,15 @@ final class FullscreenImageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(message: ZMConversationMessage, userSession: UserSession) {
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.message = message
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+
         super.init(nibName: nil, bundle: nil)
 
         setupScrollView()
@@ -728,17 +735,21 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
 // MARK: - MessageActionResponder
 
 extension FullscreenImageViewController: MessageActionResponder {
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
+
+    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         switch action {
-        case .forward:
-            perform(action: action)
+
         case .showInConversation,
                 .reply:
             dismiss(animated: true) {
                 self.perform(action: action)
             }
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+            let detailsViewController = MessageDetailsViewController(
+                message: message,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
             present(detailsViewController, animated: true)
         default:
             perform(action: action)
@@ -752,9 +763,6 @@ extension FullscreenImageViewController: MessageActionResponder {
         if action == .delete,
            let conversationImagesViewController = delegate as? ConversationImagesViewController {
             sourceView = conversationImagesViewController.deleteButton
-        } else if action == .forward,
-                  let shareButton = (delegate as? ConversationImagesViewController)?.shareButton {
-            sourceView = shareButton
         } else {
             sourceView = scrollView
         }

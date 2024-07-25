@@ -33,7 +33,7 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
 
         // when
         let account = sessionManager!.accountManager.selectedAccount!
-        sessionManager?.authenticationInvalidated(NSError(code: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
+        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
 
         // then
         XCTAssertFalse(sessionManager!.isSelectedAccountAuthenticated)
@@ -45,7 +45,7 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
         let account = sessionManager!.accountManager.selectedAccount!
 
         // when
-        sessionManager?.authenticationInvalidated(NSError(code: .clientDeletedRemotely, userInfo: nil), accountId: account.userIdentifier)
+        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .clientDeletedRemotely, userInfo: nil), accountId: account.userIdentifier)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -62,7 +62,7 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
 
         // when
         let account = sessionManager!.accountManager.selectedAccount!
-        sessionManager?.authenticationInvalidated(NSError(code: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
+        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
 
         // then
         XCTAssertNil(sessionManager?.activeUserSession)
@@ -83,7 +83,7 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
         XCTAssertNotNil(sessionManager?.backgroundUserSessions[additionalAccount.userIdentifier])
 
         // when
-        sessionManager?.authenticationInvalidated(NSError(code: .accessTokenExpired, userInfo: nil), accountId: additionalAccount.userIdentifier)
+        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: additionalAccount.userIdentifier)
 
         // then
         XCTAssertNil(sessionManager?.backgroundUserSessions[additionalAccount.userIdentifier])

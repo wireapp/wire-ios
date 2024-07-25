@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -82,10 +82,10 @@
 		06BD1D362487B01C002F82A6 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		06BD1D382487B01C002F82A6 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		59B170E52BCE70E200575995 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
+		E6A09CD52C2EBA3E0069C15A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSessionTests.swift; sourceTree = "<group>"; };
 		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
 		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
@@ -147,6 +147,7 @@
 		0660428B247FE76A00A5F161 = {
 			isa = PBXGroup;
 			children = (
+				E6A09CD52C2EBA3E0069C15A /* README.md */,
 				EE9AEC972BD159C700F7853F /* WireNotificationEngine.docc */,
 				06BD1D2D2487B01C002F82A6 /* Resources */,
 				06604296247FE76A00A5F161 /* Sources */,
@@ -242,7 +243,6 @@
 				06BD1D392487B01C002F82A6 /* project-debug.xcconfig */,
 				06BD1D362487B01C002F82A6 /* project.xcconfig */,
 				06BD1D382487B01C002F82A6 /* tests.xcconfig */,
-				06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */,
 				06BD1D352487B01C002F82A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -291,7 +291,6 @@
 				067ECB352487A93D00701956 /* Headers */,
 				067ECB362487A93D00701956 /* Sources */,
 				067ECB372487A93D00701956 /* Frameworks */,
-				AD4812A52AB98EEB00ED208C /* Run Swiftlint */,
 				067ECB382487A93D00701956 /* Resources */,
 			);
 			buildRules = (
@@ -409,29 +408,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		AD4812A52AB98EEB00ED208C /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		067ECB362487A93D00701956 /* Sources */ = {

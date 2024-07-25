@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class MessageDetailsViewControllerTests: XCTestCase {
 
@@ -71,7 +73,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -98,7 +100,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -124,7 +126,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -151,7 +153,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -182,7 +184,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         ]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -202,7 +204,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -221,7 +223,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -240,7 +242,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -261,7 +263,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN: creating the controller
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -282,7 +284,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
 
         // THEN
         verify(detailsViewController)
@@ -298,7 +300,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
 
         // THEN
         verify(detailsViewController)
@@ -314,7 +316,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
 
         // THEN
         verify(detailsViewController)
@@ -330,7 +332,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
 
         // THEN
         verify(detailsViewController)
@@ -355,7 +357,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
             // WHEN
-            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
             detailsViewController.container.selectIndex(0, animated: false)
             return detailsViewController
         }

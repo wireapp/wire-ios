@@ -114,17 +114,15 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var encryptionProtocolSection: ConversationEncryptionProtocolSectionController = {
+    private lazy var encryptionProtocolSection = {
         let section = ConversationEncryptionProtocolSectionController(values: values)
         section.isHidden = true
-
-        section.tapAction = {
-            self.presentEncryptionProtocolPicker { [weak self] encryptionProtocol in
+        section.tapAction = { sender in
+            self.presentEncryptionProtocolPicker(sender: sender) { [weak self] encryptionProtocol in
                 self?.values.encryptionProtocol = encryptionProtocol
                 self?.updateOptions()
             }
         }
-
         return section
     }()
 
@@ -148,22 +146,25 @@ final class ConversationCreationController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
-        setupNavigationBar()
         setupViews()
 
         // try to overtake the first responder from the other view
         if UIResponder.currentFirst != nil {
             nameSection.becomeFirstResponder()
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -221,11 +222,15 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
+
+        setupNavigationBarTitle(CreateGroupName.title)
         self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.closeItem()
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
         let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
@@ -481,13 +486,19 @@ extension ConversationCreationController {
 
 extension ConversationCreationController {
 
-    func presentEncryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) {
-        let alertViewController = encryptionProtocolPicker { type in
+    func presentEncryptionProtocolPicker(
+        sender: UIView,
+        _ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void
+    ) {
+        let alertController = encryptionProtocolPicker { type in
             completion(type)
         }
 
-        alertViewController.configPopover(pointToView: view)
-        present(alertViewController, animated: true)
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sender.superview!
+            popoverPresentationController.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
+        }
+        present(alertController, animated: true)
     }
 
     func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {

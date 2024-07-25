@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -56,7 +57,11 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            self.sut = LegalHoldDetailsViewController(
+                conversation: conversation,
+                userSession: self.userSession,
+                mainCoordinator: .mock
+            )
             return self.sut.wrapInNavigationController()
         }
 
@@ -104,7 +109,11 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         conversation.sortedActiveParticipantsUserTypes = [otherUser]
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            self.sut = LegalHoldDetailsViewController(
+                conversation: conversation,
+                userSession: self.userSession,
+                mainCoordinator: .mock
+            )
             return self.sut.wrapInNavigationController()
         }
 

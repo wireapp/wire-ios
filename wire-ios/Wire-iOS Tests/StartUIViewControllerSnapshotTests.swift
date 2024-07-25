@@ -52,6 +52,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
+    private var mockMainCoordinator: MockMainCoordinator!
     private var sut: StartUIViewController!
     private var mockAddressBookHelper: MockAddressBookHelper!
     private var userSession: UserSessionMock!
@@ -60,6 +61,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
@@ -74,6 +76,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         mockAddressBookHelper = nil
         SelfUser.provider = nil
         userSession = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -81,7 +84,11 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     // MARK: - Helper Method
 
     func setupSut() {
-        sut = StartUIViewController(addressBookHelperType: MockAddressBookHelper.self, userSession: userSession)
+        sut = StartUIViewController(
+            addressBookHelperType: MockAddressBookHelper.self,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         // Set the size for the SUT to match iPhone 14 dimensions

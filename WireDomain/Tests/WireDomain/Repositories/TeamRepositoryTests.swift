@@ -20,10 +20,10 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
+@testable import WireDomainSupport
 
 final class TeamRepositoryTests: XCTestCase {
 
@@ -41,6 +41,7 @@ final class TeamRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+
         stack = try await coreDataStackHelper.createStack()
         userRespository = MockUserRepositoryProtocol()
         teamsAPI = MockTeamsAPI()
@@ -52,14 +53,13 @@ final class TeamRepositoryTests: XCTestCase {
         )
 
         let selfUser = await context.perform { [context, modelHelper] in
-            return modelHelper.createSelfUser(
+            modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID,
                 in: context
             )
         }
 
         userRespository.fetchSelfUser_MockValue = selfUser
-
     }
 
     override func tearDown() async throws {
@@ -68,6 +68,7 @@ final class TeamRepositoryTests: XCTestCase {
         teamsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
+
         try await super.tearDown()
     }
 

@@ -76,7 +76,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         let columnCount = AdaptiveColumnCount(compact: 2, regular: 3, large: 4)
         super.init(interItemSpacing: 1, interColumnSpacing: 1, columnCount: columnCount)
 
-        navigationItem.setDynamicFontLabel(title: conversation.displayNameWithFallback)
         performSearch()
     }
 
@@ -106,9 +105,14 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         super.viewDidLoad()
         setupNoResultLabel()
         setupCollectionView()
-        setupNavigationItem()
         createConstraints()
         applyStyle()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(conversation.displayNameWithFallback)
+        setupNavigationItem()
     }
 
     private func setupNoResultLabel() {
@@ -129,9 +133,9 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         searchBar.searchInput.text = searchTerm
         searchBar.placeholderString = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
         searchBar.delegate = self
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: .black)
-        let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(onDismiss))
-        closeItem.accessibilityLabel = L10n.Localizable.General.close
+        let closeItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.navigationController?.dismiss(animated: true, completion: nil)
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
         navigationItem.rightBarButtonItem = closeItem
     }
@@ -171,10 +175,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         let navigationController = self.wrapInNavigationController()
 
         return navigationController
-    }
-
-    @objc func onDismiss() {
-        navigationController?.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Collection View

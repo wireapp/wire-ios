@@ -33,14 +33,9 @@ enum ConversationInputBarViewControllerMode {
 }
 
 final class ConversationInputBarViewController: UIViewController,
-                                                UIPopoverPresentationControllerDelegate,
-                                                PopoverPresenter {
+                                                UIPopoverPresentationControllerDelegate {
 
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
-
-    // MARK: PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
 
     typealias ButtonColors = SemanticColors.Button
 
@@ -256,7 +251,18 @@ final class ConversationInputBarViewController: UIViewController,
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 
+        if shouldExcludeLocationButton {
+            if let index = buttonsArray.firstIndex(of: locationButton) {
+                buttonsArray.remove(at: index)
+            }
+        }
+
         return buttonsArray
+    }
+
+    /// Remove locationButton if security flag does not allow it
+    private var shouldExcludeLocationButton: Bool {
+        !SecurityFlags.locationSharing.isEnabled
     }
 
     var mode: ConversationInputBarViewControllerMode = .textInput {
@@ -378,7 +384,7 @@ final class ConversationInputBarViewController: UIViewController,
         photoButton.addTarget(self, action: #selector(cameraButtonPressed(_:)), for: .touchUpInside)
         videoButton.addTarget(self, action: #selector(videoButtonPressed(_:)), for: .touchUpInside)
         sketchButton.addTarget(self, action: #selector(sketchButtonPressed(_:)), for: .touchUpInside)
-        uploadFileButton.addTarget(self, action: #selector(docUploadPressed(_:)), for: .touchUpInside)
+        uploadFileButton.addTarget(self, action: #selector(fileUploadPressed(_:)), for: .touchUpInside)
         pingButton.addTarget(self, action: #selector(pingButtonPressed(_:)), for: .touchUpInside)
         gifButton.addTarget(self, action: #selector(giphyButtonPressed(_:)), for: .touchUpInside)
         locationButton.addTarget(self, action: #selector(locationButtonPressed(_:)), for: .touchUpInside)
@@ -456,7 +462,6 @@ final class ConversationInputBarViewController: UIViewController,
 
         coordinator.animate(alongsideTransition: nil) { _ in
             self.inRotation = false
-            self.updatePopoverSourceRect()
         }
     }
 
@@ -471,8 +476,6 @@ final class ConversationInputBarViewController: UIViewController,
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
         guard !inRotation else { return }
-
-        updatePopoverSourceRect()
     }
 
     // MARK: - setup
@@ -905,7 +908,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
+        viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
 
         parent?.present(viewController.wrapInNavigationController(), animated: true)
     }

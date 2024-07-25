@@ -19,22 +19,33 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationPreviewViewController: TintColorCorrectedViewController {
+final class ConversationPreviewViewController: UIViewController {
 
     let conversation: ZMConversation
     let actionController: ConversationActionController
     fileprivate var contentViewController: ConversationContentViewController
 
-    init(conversation: ZMConversation,
-         presentingViewController: UIViewController,
-         sourceView: UIView?,
-         userSession: UserSession) {
+    init(
+        conversation: ZMConversation,
+        presentingViewController: UIViewController,
+        sourceView: UIView,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.conversation = conversation
-        actionController = ConversationActionController(conversation: conversation,
-                                                        target: presentingViewController,
-                                                        sourceView: sourceView, userSession: userSession)
+        actionController = ConversationActionController(
+            conversation: conversation,
+            target: presentingViewController,
+            sourceView: sourceView,
+            userSession: userSession
+        )
 
-        contentViewController = ConversationContentViewController(conversation: conversation, mediaPlaybackManager: nil, userSession: userSession)
+        contentViewController = ConversationContentViewController(
+            conversation: conversation,
+            mediaPlaybackManager: nil,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         super.init(nibName: nil, bundle: nil)
     }
 

@@ -19,6 +19,7 @@
 import avs
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter
@@ -418,7 +419,6 @@ extension AppRootRouter {
             return
         }
 
-        TrackingManager.shared.disableCrashSharing = false
         TrackingManager.shared.disableAnalyticsSharing = false
         Analytics.shared.provider?.selfUser = selfUser
     }

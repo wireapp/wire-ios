@@ -21,15 +21,14 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireRequestStrategy
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
-final class ConversationContentViewController: UIViewController, PopoverPresenter, SpinnerCapable {
-    // MARK: PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
+final class ConversationContentViewController: UIViewController, SpinnerCapable {
+
     var dismissSpinner: SpinnerCompletion?
 
     weak var delegate: ConversationContentViewControllerDelegate?
@@ -98,6 +97,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
+    let mainCoordinator: MainCoordinating
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -110,12 +110,16 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private weak var messageVisibleOnLoad: ZMConversationMessage?
     private var token: NSObjectProtocol?
 
-    init(conversation: ZMConversation,
-         message: ZMConversationMessage? = nil,
-         mediaPlaybackManager: MediaPlaybackManager?,
-         userSession: UserSession) {
+    init(
+        conversation: ZMConversation,
+        message: ZMConversationMessage? = nil,
+        mediaPlaybackManager: MediaPlaybackManager?,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         self.conversation = conversation
         messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 
@@ -281,22 +285,10 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         super.viewDidLayoutSubviews()
 
         scrollToFirstUnreadMessageIfNeeded()
-        updatePopover()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
-
-        guard let coordinator else { return }
-
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: nil) { _ in
-            self.updatePopoverSourceRect()
-        }
     }
 
     func setupMentionsResultsView() {

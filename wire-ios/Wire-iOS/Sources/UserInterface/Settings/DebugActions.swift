@@ -77,7 +77,7 @@ enum DebugActions {
         guard let userSession = ZMUserSession.shared() else { return }
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
-        if let convo = (ConversationList.conversations(inUserSession: userSession) as! [ZMConversation])
+        if let convo = ConversationList.conversations(inUserSession: userSession).items
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
@@ -109,9 +109,7 @@ enum DebugActions {
         }
 
         var external = External()
-        if let otr = "broken_key".data(using: .utf8) {
-             external.otrKey = otr
-        }
+        external.otrKey = Data("broken_key".utf8)
         let genericMessage = GenericMessage(content: external)
 
         userSession.enqueue {
@@ -260,7 +258,7 @@ enum DebugActions {
                 let action = UpdateAccessRolesAction(conversation: $0,
                                                      accessMode: ConversationAccessMode.value(forAllowGuests: true),
                                                      accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
-                action.send(in: syncContext.notificationContext)
+                action.send(in: userSession.notificationContext)
             }
         }
     }

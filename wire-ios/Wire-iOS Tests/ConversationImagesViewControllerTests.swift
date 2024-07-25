@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -42,9 +44,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     private var navigatorController: UINavigationController! = nil
     private var userSession: UserSessionMock!
 
-    override var needsCaches: Bool {
-        return true
-    }
+    override var needsCaches: Bool { true }
 
     // MARK: - setUp
 
@@ -72,10 +72,13 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             collection: assetWrapper,
             initialMessage: initialMessage,
             inverse: true,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: .mock
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+
+        snapshotHelper = .init()
     }
 
     // MARK: - tearDown
@@ -83,6 +86,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
@@ -131,7 +135,11 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         sut.viewDidLoad()
 
         // THEN
-        XCTAssertEqual(sut.buttonsBar.buttons.count, 7)
+        XCTAssertEqual(
+            sut.buttonsBar.buttons.map(\.accessibilityLabel),
+            ["Sketch over picture", "Sketch emoji over picture", "Copy picture", "Save picture", "Reveal in conversation", "Delete picture"]
+        )
+        print(sut.buttonsBar.buttons.map { $0.accessibilityLabel })
 
         // WHEN
         message.isEphemeral = true
@@ -139,6 +147,5 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)
-
     }
 }

@@ -18,27 +18,35 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol CellConfigurationConfigurable: Reusable {
     func configure(with configuration: CellConfiguration)
 }
 
 enum CellConfiguration {
-    typealias Action = (UIView?) -> Void
+    typealias Action = (UIView) -> Void
     case linkHeader
     case secureLinkHeader
-    case leadingButton(title: String, identifier: String, action: Action)
+    case leadingButton(
+        title: String,
+        identifier: String,
+        action: Action
+    )
     case loading
     case text(String)
     case info(String)
-    case iconAction(title: String,
-                    icon: StyleKitIcon,
-                    color: UIColor?,
-                    action: Action)
+    case iconAction(
+        title: String,
+        icon: StyleKitIcon,
+        color: UIColor?,
+        action: Action
+    )
     case appearance(title: String)
 
     /// For toggle without icon, leave icon and color nil
-    case iconToggle(title: String,
+    case iconToggle(
+        title: String,
         subtitle: String,
         identifier: String,
         titleIdentifier: String,
@@ -46,7 +54,8 @@ enum CellConfiguration {
         color: UIColor?,
         isEnabled: Bool,
         get: () -> Bool,
-        set: (Bool, UIView?) -> Void)
+        set: (Bool, UIView) -> Void
+    )
 
     var cellType: CellConfigurationConfigurable.Type {
         switch self {
@@ -73,7 +82,6 @@ enum CellConfiguration {
              .appearance: return nil
         case let .leadingButton(_, _, action: action): return action
         case let .iconAction(_, _, _, action: action): return action
-
         }
     }
 
@@ -98,5 +106,4 @@ enum CellConfiguration {
             tableView.register($0, forCellReuseIdentifier: $0.reuseIdentifier)
         }
     }
-
 }

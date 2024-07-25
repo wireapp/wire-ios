@@ -17,7 +17,7 @@
 //
 
 import Foundation
-
+import WireSystem
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {
 
@@ -156,7 +156,7 @@ public class ZMClientMessage: ZMOTRMessage {
         case .edited:
             if let nonce = self.nonce(fromPostPayload: payload),
                 self.nonce != nonce {
-                Logging.messageProcessing.error("sent message response nonce does not match")
+                WireLogger.messaging.error("sent message response nonce does not match \(nonce)", attributes: logInformation)
                 return
             }
 
@@ -166,6 +166,14 @@ public class ZMClientMessage: ZMOTRMessage {
         default:
             super.update(withPostPayload: payload, updatedKeys: nil)
         }
+    }
+
+    private var logInformation: LogAttributes {
+        [
+            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 
     override static public func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {

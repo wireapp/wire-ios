@@ -17,8 +17,10 @@
 //
 
 import UIKit
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 
@@ -50,7 +52,6 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut.prepareForSnapshots())
     }
-
 }
 
 fileprivate extension UIViewController {
@@ -71,5 +72,4 @@ fileprivate extension UIViewController {
         view.layoutIfNeeded()
         return view
     }
-
 }

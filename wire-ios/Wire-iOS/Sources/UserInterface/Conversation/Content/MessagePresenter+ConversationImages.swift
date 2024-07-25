@@ -29,10 +29,13 @@ extension MessagePresenter {
     ///   - actionResponder: a action responder
     ///   - isPreviewing: is peeking with 3D touch?
     /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in navigation controller
-    func imagesViewController(for message: ZMConversationMessage,
-                              actionResponder: MessageActionResponder,
-                              isPreviewing: Bool,
-                              userSession: UserSession) -> UIViewController {
+    func imagesViewController(
+        for message: ZMConversationMessage,
+        actionResponder: MessageActionResponder,
+        isPreviewing: Bool,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) -> UIViewController {
 
         guard let conversation = message.conversation else {
             fatal("Message has no conversation.")
@@ -47,7 +50,13 @@ extension MessagePresenter {
         let collection = AssetCollectionWrapper(conversation: conversation,
                                                 matchingCategories: [imagesCategoryMatch])
 
-        let imagesController = ConversationImagesViewController(collection: collection, initialMessage: message, inverse: true, userSession: userSession)
+        let imagesController = ConversationImagesViewController(
+            collection: collection,
+            initialMessage: message,
+            inverse: true,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         imagesController.isPreviewing = isPreviewing
 
         // preferredContentSize should not excess view's size
@@ -66,10 +75,10 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        let closeButton = CollectionsView.closeButton()
-        closeButton.addTarget(self, action: #selector(MessagePresenter.closeImagesButtonPressed(_:)), for: .touchUpInside)
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            self?.modalTargetController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
         imagesController.messageActionDelegate = actionResponder
         imagesController.swipeToDismiss = true
         imagesController.dismissAction = { [weak self] completion in

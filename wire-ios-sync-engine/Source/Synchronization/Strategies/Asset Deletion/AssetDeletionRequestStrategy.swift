@@ -19,7 +19,7 @@
 import Foundation
 
 fileprivate extension AssetRequestFactory {
-    static func request(for identifier: String, on queue: ZMSGroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
+    static func request(for identifier: String, on queue: GroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
 
         let path: String
 
