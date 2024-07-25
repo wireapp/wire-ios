@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPackage
 import XCTest
+import WireTesting
 
 @testable import WireReusableUIComponents
 
@@ -59,8 +59,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         sut.start()
 
         // Then
-        // TODO: fix
-        //verifyInAllDeviceSizes(matching: viewController)
+        verifyInAllDeviceSizes(matching: viewController)
     }
 
     @MainActor
@@ -83,7 +82,6 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         sut.start(text: "RESTORING…")
 
         // Then
-        // TODO: fix
-        //verifyInAllDeviceSizes(matching: viewController)
+        verifyInAllDeviceSizes(matching: viewController)
     }
 }
