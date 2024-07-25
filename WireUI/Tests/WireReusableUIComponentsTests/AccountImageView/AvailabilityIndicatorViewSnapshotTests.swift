@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPackage
+import WireTestingPkg
 import XCTest
 
 @testable import WireReusableUIComponents
