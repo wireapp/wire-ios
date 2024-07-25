@@ -757,7 +757,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if let session = backgroundUserSessions[account.userIdentifier] {
             if session == activeUserSession {
-                logoutCurrentSession(error: error)
+                logoutCurrentSession(deleteAccount: false, error: error)
             } else {
                 tearDownBackgroundSession(for: account.userIdentifier)
             }
@@ -765,7 +765,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func logoutCurrentSession() {
-        logoutCurrentSession(error: nil)
+        logoutCurrentSession(deleteAccount: false, error: nil)
     }
 
     fileprivate func deleteTemporaryData() {
@@ -781,7 +781,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
     }
 
-    fileprivate func logoutCurrentSession(deleteAccount: Bool = false, error: Error?) {
+    fileprivate func logoutCurrentSession(deleteAccount: Bool, error: Error?) {
         guard let account = accountManager.selectedAccount else {
             return
         }
@@ -1208,7 +1208,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func performPostRebootLogout() {
         let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
-        logoutCurrentSession(error: error)
+        logoutCurrentSession(deleteAccount: false, error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
 
