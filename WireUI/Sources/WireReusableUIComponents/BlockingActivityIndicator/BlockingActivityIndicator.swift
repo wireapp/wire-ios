@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSystemPkg
 import SwiftUI
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.

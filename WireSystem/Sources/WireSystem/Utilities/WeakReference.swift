@@ -15,3 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+/// A wrapper around a `weak` object reference.
+/// An example use case would be to have a non-retaining array of references.
+public struct WeakReference<T: AnyObject> {
+
+    public weak var reference: T?
+
+    public init(reference: T) {
+        self.reference = reference
+    }
+}

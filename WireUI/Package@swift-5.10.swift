@@ -14,6 +14,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(name: "WireSystemPackage", path: "../WireSystem"),
         .package(name: "WireTestingPackage", path: "../WireTesting")
     ],
     targets: [
@@ -32,7 +33,10 @@ let package = Package(
 
         .target(
             name: "WireReusableUIComponents",
-            dependencies: ["WireDesign"],
+            dependencies: [
+                "WireDesign",
+                "WireSystemPackage"
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
