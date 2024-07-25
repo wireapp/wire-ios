@@ -87,7 +87,7 @@ final class ValidatedTextFieldTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    // MARK: 
+    // MARK: - Unit Tests
 
     func test_ItValidatesInput_WhenTextIsSet() {
         // Given
