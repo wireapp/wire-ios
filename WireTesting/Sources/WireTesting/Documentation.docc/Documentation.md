@@ -1,4 +1,4 @@
-# ``WireTestingPackage``
+# ``WireTesting``
 
 Make testing easier.
 
