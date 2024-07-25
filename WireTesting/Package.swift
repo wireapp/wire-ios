@@ -20,7 +20,8 @@ let package = Package(
             name: "WireTestingPkg",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                "WireSystemPackage"
+                "WireSystemPackage",
+                .product(name: "WireSystemPackageSupport", package: "WireSystemPackage")
             ],
             path: "./Sources/WireTesting",
             swiftSettings: swiftSettings
