@@ -26,8 +26,8 @@ jobs:
           ./WireAPI
           ./WireAnalytics
           ./WireDomain
-          ./WireSystemPackage
-          ./WireTestingPackage
+          ./WireSystem
+          ./WireTesting
           ./WireUI
-          ./WireUtilitiesPackage
+          ./WireUtilities
           --reporter github-actions-log
