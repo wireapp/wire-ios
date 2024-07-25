@@ -311,8 +311,10 @@ extension EventDecoder {
     ) async {
         let batchId = UUID()
         let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
-        events.storedEvents.forEach {
-            WireLogger.eventProcessing.debug("event fetched from db for batch: \(batchId)", attributes: [LogAttributesKey.eventId.rawValue: $0.uuidString?.lowercased().redactedAndTruncated()])
+        await eventMOC.perform {
+            events.storedEvents.forEach {
+                WireLogger.eventProcessing.debug("event fetched from db for batch: \(batchId)", attributes: [LogAttributesKey.eventId.rawValue: $0.uuidString?.lowercased().redactedAndTruncated()])
+            }
         }
         guard events.storedEvents.count > 0 else {
             if firstCall {
