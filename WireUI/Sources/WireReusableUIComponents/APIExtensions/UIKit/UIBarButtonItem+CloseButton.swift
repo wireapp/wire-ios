@@ -31,20 +31,15 @@ public extension UIBarButtonItem {
     ///
     /// - Returns: A UIBarButtonItem configured as a close button.
     static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
-        // Load the close button image
         let closeImage = UIImage(named: "Close")
 
-        // Create the bar button item with the provided action and accessibility label
         let closeItem = UIBarButtonItem(title: accessibilityLabel, primaryAction: action)
 
-        // Set the button's image
         closeItem.image = closeImage
 
-        // Configure the button's appearance and behavior
         closeItem.style = .plain
         closeItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 
-        // Set accessibility properties
         closeItem.accessibilityLabel = accessibilityLabel
         closeItem.accessibilityIdentifier = "close"
 
