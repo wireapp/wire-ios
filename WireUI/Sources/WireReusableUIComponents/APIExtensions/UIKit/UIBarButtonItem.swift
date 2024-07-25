@@ -47,10 +47,24 @@ public extension UIBarButtonItem {
             primaryAction: action
         )
 
-        barButtonItem.setTitleTextAttributes(
-            [.font: buttonFont],
-            for: .normal
-        )
+        let buttonStates: [UIControl.State] = [
+            .normal,
+            .highlighted,
+            .disabled,
+            .selected,
+            .focused,
+            .application,
+            .reserved
+        ]
+
+        for buttonState in buttonStates {
+            barButtonItem.setTitleTextAttributes(
+                [
+                    .font: buttonFont
+                ],
+                for: buttonState
+            )
+        }
 
         return barButtonItem
     }
