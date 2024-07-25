@@ -86,7 +86,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description)
     }

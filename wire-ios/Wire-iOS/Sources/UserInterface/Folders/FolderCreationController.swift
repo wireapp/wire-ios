@@ -123,17 +123,17 @@ final class FolderCreationController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: FolderCreationName.Button.create.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(tryToProceed)
-        )
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: FolderCreationName.Button.create,
+            action: UIAction { [weak self] _ in
+                self?.tryToProceed()
+            })
+
         nextButtonItem.accessibilityIdentifier = "button.newfolder.create"
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
@@ -157,7 +157,7 @@ final class FolderCreationController: UIViewController {
         }
     }
 
-    @objc fileprivate func tryToProceed() {
+    fileprivate func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
     }

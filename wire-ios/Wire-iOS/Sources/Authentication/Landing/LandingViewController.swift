@@ -450,7 +450,7 @@ final class LandingViewController: AuthenticationStepViewController {
         if SessionManager.shared?.firstAuthenticatedAccount == nil {
             navigationItem.rightBarButtonItem = nil
         } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                 self?.cancelButtonTapped()
             }, accessibilityLabel: L10n.Localizable.General.cancel)
         }

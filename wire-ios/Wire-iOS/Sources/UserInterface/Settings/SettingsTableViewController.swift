@@ -220,7 +220,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
         setupAccessibility()

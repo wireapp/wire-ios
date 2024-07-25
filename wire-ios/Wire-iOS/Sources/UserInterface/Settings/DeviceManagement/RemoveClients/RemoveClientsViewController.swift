@@ -36,24 +36,7 @@ final class RemoveClientsViewController: UIViewController,
 
     var dismissSpinner: SpinnerCompletion?
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
-    private var leftBarButtonItem: UIBarButtonItem? {
-        if self.isIPadRegular() {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(RemoveClientsViewController.backPressed(_:)))
-        }
 
-        if let rootViewController = self.navigationController?.viewControllers.first,
-            self.isEqual(rootViewController) {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(RemoveClientsViewController.backPressed(_:)))
-        }
-
-        return nil
-    }
     private var requestPasswordController: RequestPasswordController?
 
     weak var delegate: RemoveClientsViewControllerDelegate?
@@ -88,7 +71,6 @@ final class RemoveClientsViewController: UIViewController,
         self.createTableView()
         self.createConstraints()
 
-        self.navigationItem.leftBarButtonItem = leftBarButtonItem
     }
 
     // MARK: - Helpers

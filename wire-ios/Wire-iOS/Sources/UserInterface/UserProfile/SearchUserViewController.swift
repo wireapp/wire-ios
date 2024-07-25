@@ -73,11 +73,6 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let cancelItem = UIBarButtonItem(icon: .cross, target: self, action: #selector(cancelButtonTapped))
-        cancelItem.accessibilityIdentifier = "CancelButton"
-        cancelItem.accessibilityLabel = L10n.Localizable.General.cancel
-        navigationItem.rightBarButtonItem = cancelItem
-
         isLoadingViewVisible = true
 
         if let task = searchDirectory?.lookup(userId: userId) {
@@ -88,7 +83,17 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
             pendingSearchTask = task
         }
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.pendingSearchTask?.cancel()
+            self?.pendingSearchTask = nil
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.cancel)
+
+        navigationItem.rightBarButtonItem = closeItem
     }
 
     // MARK: - Methods
@@ -137,14 +142,5 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
             present(alert, animated: true)
         }
-    }
-
-    // MARK: - Actions
-
-    @objc private func cancelButtonTapped(sender: AnyObject?) {
-        pendingSearchTask?.cancel()
-        pendingSearchTask = nil
-
-        dismiss(animated: true)
     }
 }
