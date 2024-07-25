@@ -401,7 +401,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let navigationController = sut.wrapInNavigationController()
         // WHEN
         viewModel.setAllowGuests(true, view: .init())
-]
+
         // THEN
         snapshotHelper
             .withUserInterfaceStyle(.dark)
