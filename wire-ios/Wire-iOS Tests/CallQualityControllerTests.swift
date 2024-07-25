@@ -29,7 +29,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     private var snapshotHelper: SnapshotHelper!
     private var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
-    private var router: CallQualityRouterProtocolMock!
+    private var router: MockCallQualityRouterProtocol!
     private var conversation: ZMConversation!
     private var callConversationProvider: MockCallConversationProvider!
     private var callQualityViewController: CallQualityViewController!
@@ -39,7 +39,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        router = CallQualityRouterProtocolMock()
+        router = .init()
         coreDataFixture = CoreDataFixture()
         conversation = ZMConversation.createOtherUserConversation(
             moc: coreDataFixture.uiMOC,
