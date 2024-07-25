@@ -137,7 +137,7 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         prepareSut()
         let navWrapperController = sut.wrapInNavigationController()
         navWrapperController.navigationBar.tintColor = UIColor.accent()
-        
+
         sut.setEditingState(true)
 
         snapshotHelper.verify(matching: navWrapperController)
