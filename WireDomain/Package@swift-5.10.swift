@@ -17,7 +17,6 @@ let package = Package(
         .package(name: "WireSystemPackage", path: "../WireSystem")
     ],
     targets: [
-
         .target(name: "WireDomainPackage", path: "./Sources/Package", swiftSettings: swiftSettings),
         .testTarget(name: "WireDomainPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/PackageTests"),
 
