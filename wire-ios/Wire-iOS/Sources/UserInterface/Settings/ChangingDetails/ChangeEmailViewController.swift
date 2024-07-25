@@ -25,67 +25,6 @@ enum ChangeEmailFlowType {
     case setInitialEmail
 }
 
-struct ChangeEmailState {
-    let flowType: ChangeEmailFlowType
-    let currentEmail: String?
-    var newEmail: String?
-    var newPassword: String?
-
-    var emailValidationError: TextFieldValidator.ValidationError?
-    var passwordValidationError: TextFieldValidator.ValidationError?
-    var isEmailPasswordInputValid: Bool
-
-    var visibleEmail: String? {
-        return newEmail ?? currentEmail
-    }
-
-    var validatedEmail: String? {
-        guard let newEmail = self.newEmail else { return nil }
-
-        switch flowType {
-        case .changeExistingEmail:
-            guard case .none = emailValidationError else {
-                return nil
-            }
-
-            return newEmail
-
-        case .setInitialEmail:
-            return isEmailPasswordInputValid ? newEmail : nil
-        }
-    }
-
-    var validatedPassword: String? {
-        guard let newPassword = self.newPassword else { return nil }
-        return isEmailPasswordInputValid ? newPassword : nil
-    }
-
-    var validatedCredentials: UserEmailCredentials? {
-        guard let email = validatedEmail, let password = validatedPassword else {
-            return nil
-        }
-
-        return UserEmailCredentials(email: email, password: password)
-    }
-
-    var isValid: Bool {
-        switch flowType {
-        case .changeExistingEmail:
-            return validatedEmail != nil
-        case .setInitialEmail:
-            return isEmailPasswordInputValid
-        }
-    }
-
-    init(currentEmail: String?) {
-        self.currentEmail = currentEmail
-        flowType = currentEmail != nil ? .changeExistingEmail : .setInitialEmail
-        emailValidationError = currentEmail != nil ? nil : .tooShort(kind: .email)
-        isEmailPasswordInputValid = false
-    }
-
-}
-
 final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email

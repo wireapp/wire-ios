@@ -1428,6 +1428,7 @@
 		E9F2D6462B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */; };
 		E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */; };
 		E9F3183B28D9B03100FDB244 /* UIButton+RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */; };
+		E9F885A02C52A10F00FAD3C4 /* ChangeEmailState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F8859F2C52A10F00FAD3C4 /* ChangeEmailState.swift */; };
 		E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */; };
 		EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08025ADA3D5001DB205 /* AppLockModule.swift */; };
 		EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */; };
@@ -3490,6 +3491,7 @@
 		E9F2D6452B55DECB00133C59 /* ConversationFailedToAddParticipantsSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFailedToAddParticipantsSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D6472B55E03200133C59 /* ConversationSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+RoundedCorners.swift"; sourceTree = "<group>"; };
+		E9F8859F2C52A10F00FAD3C4 /* ChangeEmailState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailState.swift; sourceTree = "<group>"; };
 		EE01D08025ADA3D5001DB205 /* AppLockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.swift; sourceTree = "<group>"; };
 		EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Presenter.swift; sourceTree = "<group>"; };
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
@@ -8470,6 +8472,7 @@
 				F12CDAE21E4386A100CEFCEB /* ChangeHandleViewController.swift */,
 				F12CDADA1E43868200CEFCEB /* ChangeEmailViewController.swift */,
 				F12CDADC1E43868200CEFCEB /* ConfirmEmailViewController.swift */,
+				E9F8859F2C52A10F00FAD3C4 /* ChangeEmailState.swift */,
 			);
 			path = ChangingDetails;
 			sourceTree = "<group>";
@@ -9768,6 +9771,7 @@
 				5E33F0D020AD629D00414EA6 /* CallPermissionsConfiguration.swift in Sources */,
 				EF2388862211A67900331C07 /* UserRight.swift in Sources */,
 				5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */,
+				E9F885A02C52A10F00FAD3C4 /* ChangeEmailState.swift in Sources */,
 				871BC2551D34F8F800DF0793 /* CrossfadeTransition.swift in Sources */,
 				6316C42F2657F0CE00D7E806 /* RoundedBlurView.swift in Sources */,
 				D3C9923B29BF4C9900DD57B9 /* GuestAccountWarningView.swift in Sources */,
