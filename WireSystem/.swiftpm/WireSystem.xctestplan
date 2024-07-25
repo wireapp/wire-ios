@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "8316BEA3-D6FB-4D62-B3BA-D6C10392D26E",
+      "id" : "A32707A7-C104-45A8-B589-1A01369DE203",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -17,8 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireSystemPackageTests",
-        "name" : "WireSystemPackageTests"
+        "identifier" : "WireSystemTests",
+        "name" : "WireSystemTests"
       }
     }
   ],
