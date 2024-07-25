@@ -19,8 +19,7 @@
 import UIKit
 
 public extension UIBarButtonItem {
-
-    /// Creates a left bar button item for a navigation bar with a specified title and action.
+    /// Creates a bar button item for a navigation bar with a specified title and action.
     ///
     /// This method follows Apple's guidelines for bar button items, using a fixed font size.
     ///
@@ -37,25 +36,38 @@ public extension UIBarButtonItem {
     /// - Note: When the font size is large enough due to accessibility settings, the
     ///         LargeContentViewer is applied automatically by the system, enhancing
     ///         readability for users with visual impairments.
-    static func createNavigationLeftBarButtonItem(
+    private static func createNavigationBarButtonItem(
         title: String,
         action: UIAction
     ) -> UIBarButtonItem {
         let buttonFont = UIFont.systemFont(ofSize: 17, weight: .regular)
 
-        let leftBarButtonItem = UIBarButtonItem(
+        let barButtonItem = UIBarButtonItem(
             title: title,
             primaryAction: action
         )
-        
-        leftBarButtonItem.setTitleTextAttributes(
-            [
-                .font: buttonFont
-            ],
+
+        barButtonItem.setTitleTextAttributes(
+            [.font: buttonFont],
             for: .normal
         )
 
-        return leftBarButtonItem
+        return barButtonItem
     }
 
+    /// Creates a right bar button item for a navigation bar.
+    static func createNavigationRightBarButtonItem(
+        title: String,
+        action: UIAction
+    ) -> UIBarButtonItem {
+        createNavigationBarButtonItem(title: title, action: action)
+    }
+
+    /// Creates a left bar button item for a navigation bar.
+    static func createNavigationLeftBarButtonItem(
+        title: String,
+        action: UIAction
+    ) -> UIBarButtonItem {
+        createNavigationBarButtonItem(title: title, action: action)
+    }
 }
