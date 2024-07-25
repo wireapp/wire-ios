@@ -75,18 +75,16 @@ struct AddParticipantsViewModel {
         }
     }
 
-    func rightNavigationItem(target: AnyObject, action: Selector) -> UIBarButtonItem {
+    func rightNavigationItem(action: UIAction) -> UIBarButtonItem {
         switch context {
         case .add:
-            let item = UIBarButtonItem(icon: .cross, target: target, action: action)
+            let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
             item.tintColor = SemanticColors.Icon.foregroundDefault
             item.accessibilityIdentifier = "close"
             return item
         case .create(let values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable.Peoplepicker.Group.done
             let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: key,
-                                                                               systemImage: false,
-                                                                               target: target,
                                                                                action: action)
             newItem.tintColor = UIColor.accent()
             newItem.accessibilityIdentifier = values.participants.isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
