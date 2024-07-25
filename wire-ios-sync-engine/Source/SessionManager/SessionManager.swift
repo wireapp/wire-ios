@@ -741,7 +741,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.tearDownSessionAndDelete(account: account)
         } else {
             // Deleted the last account so we need to return to the logged out area
-            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
+            logoutCurrentSession(deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
         }
     }
 
@@ -757,7 +757,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if let session = backgroundUserSessions[account.userIdentifier] {
             if session == activeUserSession {
-                logoutCurrentSession(deleteCookie: true, error: error)
+                logoutCurrentSession(error: error)
             } else {
                 tearDownBackgroundSession(for: account.userIdentifier)
             }
@@ -765,7 +765,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func logoutCurrentSession() {
-        logoutCurrentSession(deleteCookie: true, error: nil)
+        logoutCurrentSession(error: nil)
     }
 
     fileprivate func deleteTemporaryData() {
@@ -781,7 +781,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
     }
 
-    fileprivate func logoutCurrentSession(deleteCookie: Bool = true, deleteAccount: Bool = false, error: Error?) {
+    fileprivate func logoutCurrentSession(deleteAccount: Bool = false, error: Error?) {
         guard let account = accountManager.selectedAccount else {
             return
         }
@@ -811,7 +811,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             group?.enter()
 
             activeUserSession.e2eiActivationDateRepository.removeE2EIActivationDate()
-            activeUserSession.close(deleteCookie: deleteCookie) {
+            activeUserSession.close(deleteCookie: true) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
                     self?.deleteUserLogs?()
@@ -1208,7 +1208,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func performPostRebootLogout() {
         let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
-        self.logoutCurrentSession(deleteCookie: true, error: error)
+        logoutCurrentSession(error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
 

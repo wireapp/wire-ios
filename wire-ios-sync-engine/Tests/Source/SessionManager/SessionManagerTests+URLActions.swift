@@ -85,7 +85,7 @@ class SessionManagerURLActionsTests: IntegrationTest {
     func testThatItDelaysURLActionProcessing_UntilUserSessionBecomesAvailable() throws {
         // given: user session is not availablle but we are still authenticated
         XCTAssertTrue(login())
-        sessionManager?.logoutCurrentSession(deleteCookie: false)
+        sessionManager?.logoutCurrentSession()
         presentationDelegate?.isPerformingActions = false
 
         // when
