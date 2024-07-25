@@ -83,6 +83,12 @@
       location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireDomain/Project/WireDomain.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireDomainPackage">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
    </FileRef>
    <FileRef
@@ -120,12 +126,6 @@
    </FileRef>
    <FileRef
       location = "group:WireSystemPackage">
-   </FileRef>
-   <FileRef
-      location = "group:WireDomain/WireDomain.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:WireDomainPackage">
    </FileRef>
    <FileRef
       location = "group:WireAnalytics">

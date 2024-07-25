@@ -40,7 +40,6 @@
 		54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DF1CB698690090E33A /* not_animated.gif */; };
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
 		54AFD7E81CB699710090E33A /* ZMTTestBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */; };
-		592319772C515FAF003B92D4 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 592319762C515FAF003B92D4 /* WireTestingPackage */; };
 		595D4B1B2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */; };
 		595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */; };
 		634CCB112BAC54FF00A11AB3 /* GenericArrayActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */; };
@@ -158,7 +157,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				592319772C515FAF003B92D4 /* WireTestingPackage in Frameworks */,
 				EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */,
 				EE67F6AF296F0510001D7C88 /* OCMock.xcframework in Frameworks */,
 			);
@@ -375,7 +373,6 @@
 			);
 			name = WireTesting;
 			packageProductDependencies = (
-				592319762C515FAF003B92D4 /* WireTestingPackage */,
 			);
 			productName = ZMTesting;
 			productReference = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */;
@@ -617,13 +614,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		592319762C515FAF003B92D4 /* WireTestingPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireTestingPackage;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 096AD7B21B68D41D00E007A8 /* Project object */;
 }
