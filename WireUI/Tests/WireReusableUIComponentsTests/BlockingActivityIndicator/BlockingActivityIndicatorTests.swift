@@ -184,6 +184,4 @@ final class BlockingActivityIndicatorTests: XCTestCase {
         // Then
         wait(forConditionToBeTrue: targetView.subviews.isEmpty, timeout: 5)
     }
-
-    // TODO: test appearance of indicator
 }

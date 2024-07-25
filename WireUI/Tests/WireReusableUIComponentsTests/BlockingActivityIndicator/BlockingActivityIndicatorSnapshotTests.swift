@@ -59,6 +59,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         sut.start()
 
         // Then
+        // TODO: fix
         //verifyInAllDeviceSizes(matching: viewController)
     }
 
@@ -82,6 +83,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         sut.start(text: "RESTORING…")
 
         // Then
+        // TODO: fix
         //verifyInAllDeviceSizes(matching: viewController)
     }
 }

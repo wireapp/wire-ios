@@ -104,9 +104,11 @@ final class LoadingSpinnerView: UIView {
 
 final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
 
+    // TODO: remove if possible
     static var accessibilityAnnouncement = ""
 
     var dismissSpinner: (() -> Void)?
+    // TODO: remove if possible
     var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
 
     override var childForStatusBarStyle: UIViewController? {
