@@ -17,12 +17,24 @@
 //
 
 import UIKit
-import WireSystemPkg
 
-@testable import Wire
+/// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
+public struct DeviceWrapper {
 
-// TODO: delete
-final class MockDevice: DeviceAbstraction {
-    var orientation: UIDeviceOrientation = .unknown
-    var userInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
+    var device: UIDevice
+
+    public init(device: UIDevice) {
+        self.device = device
+    }
+}
+
+extension DeviceWrapper: DeviceAbstraction {
+
+    public var userInterfaceIdiom: UIUserInterfaceIdiom {
+        device.userInterfaceIdiom
+    }
+
+    public var orientation: UIDeviceOrientation {
+        device.orientation
+    }
 }

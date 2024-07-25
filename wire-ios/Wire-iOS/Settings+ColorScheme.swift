@@ -19,6 +19,7 @@
 import UIKit
 import WireSystem
 
+// TODO: consider replacing by `UIUserInterfaceStyle`
 enum SettingsColorScheme: Int, CaseIterable {
 
     case light = 0

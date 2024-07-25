@@ -17,17 +17,7 @@
 //
 
 import UIKit
-
-protocol DeviceMockable {
-    var device: DeviceProtocol { get set }
-}
-
-protocol DeviceProtocol {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
-    var orientation: UIDeviceOrientation { get }
-}
-
-extension UIDevice: DeviceProtocol {}
+import WireSystemPkg
 
 extension UIDevice {
     enum `Type` {

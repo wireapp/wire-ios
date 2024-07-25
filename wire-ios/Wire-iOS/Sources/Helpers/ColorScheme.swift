@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireUtilities
 
+// TODO: consider replacing by `UIUserInterfaceStyle`
 @objc
 enum ColorSchemeVariant: UInt {
     case light, dark

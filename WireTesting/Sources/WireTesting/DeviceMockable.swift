@@ -16,13 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSystemPkg
-
-@testable import Wire
-
-// TODO: delete
-final class MockDevice: DeviceAbstraction {
-    var orientation: UIDeviceOrientation = .unknown
-    var userInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
-}
+import Foundation

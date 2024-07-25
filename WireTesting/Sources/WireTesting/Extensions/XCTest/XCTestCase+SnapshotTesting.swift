@@ -18,10 +18,11 @@
 
 import SnapshotTesting
 import UIKit
+import WireSystemPkg
 import XCTest
+import WireSystemSupport
 
 /*
-
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
 private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
@@ -38,26 +39,28 @@ extension ViewImageConfig: Hashable {
         hasher.combine(traits)
     }
 }
+ */
 
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
 
     /// snapshot file name suffixs
-    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [ViewImageConfig: String] {
-        return [
-            .iPhoneSe(orientation): "iPhone-4_0_Inch",
-            .iPhone8(orientation): "iPhone-4_7_Inch",
-            .iPhone8Plus(orientation): "iPhone-5_5_Inch",
-            .iPhoneX(orientation): "iPhone-5_8_Inch",
-            .iPhoneXsMax(orientation): "iPhone-6_5_Inch"
+    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [(ViewImageConfig, String)] {
+        [
+            (.iPhoneSe(orientation), "iPhone-4_0_Inch"),
+            (.iPhone8(orientation), "iPhone-4_7_Inch"),
+            (.iPhone8Plus(orientation), "iPhone-5_5_Inch"),
+            (.iPhoneX(orientation), "iPhone-5_8_Inch"),
+            (.iPhoneXsMax(orientation), "iPhone-6_5_Inch")
         ]
     }
 
-    static let padConfigNames: [SnapshotTesting.ViewImageConfig: String] = [
-        .iPadMini(.landscape): "iPad-landscape",
-        .iPadMini(.portrait): "iPad-portrait"]
-
+    static let padConfigNames: [(ViewImageConfig, String)] = [
+        (.iPadMini(.landscape), "iPad-landscape"),
+        (.iPadMini(.portrait), "iPad-portrait")
+    ]
+/*
     func verifyAllIPhoneSizes(matching value: UIViewController,
                               orientation: ViewImageConfig.Orientation = .portrait,
                               file: StaticString = #file,
@@ -73,17 +76,18 @@ extension XCTestCase {
                    line: line)
         }
     }
+*/
+    func verifyInAllDeviceSizes(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
-    func verifyInAllDeviceSizes(matching value: UIViewController,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-
-        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
-
-        for(config, name) in allDevices {
+        let allDevices = XCTestCase.phoneConfigNames() + XCTestCase.padConfigNames
+        for (config, name) in allDevices {
             if let deviceMockable = value as? DeviceMockable {
-                (deviceMockable.device as? MockDevice)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
+                (deviceMockable.device as? MockDeviceAbstraction)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
             }
 
             verify(matching: value,
@@ -94,7 +98,7 @@ extension XCTestCase {
                    line: line)
         }
     }
-
+/*
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
                         snapshotBackgroundColor: UIColor,
@@ -449,5 +453,11 @@ extension XCTestCase {
                       testName: testName,
                       line: line)
     }
+ */
 }
-*/
+
+// MARK: DeviceMockable
+
+public protocol DeviceMockable {
+    var device: DeviceAbstraction { get set }
+}

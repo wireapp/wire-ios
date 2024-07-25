@@ -17,12 +17,10 @@
 //
 
 import UIKit
-import WireSystemPkg
 
-@testable import Wire
-
-// TODO: delete
-final class MockDevice: DeviceAbstraction {
-    var orientation: UIDeviceOrientation = .unknown
-    var userInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
+// sourcery: AutoMockable
+/// A protocol which allows for abstracting `UIDevice`.
+public protocol DeviceAbstraction {
+    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
+    var orientation: UIDeviceOrientation { get }
 }
