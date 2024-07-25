@@ -8,17 +8,17 @@
       buildArchitectures = "Automatic">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "NO"
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "017F67812C207A3200B6E02D"
-               BuildableName = "WireDomainSupport.framework"
-               BlueprintName = "WireDomainSupport"
-               ReferencedContainer = "container:WireDomain.xcodeproj">
+               BlueprintIdentifier = "01D0DCA52C1C8C870076CB1C"
+               BuildableName = "WireDomain.framework"
+               BlueprintName = "WireDomain"
+               ReferencedContainer = "container:WireDomain Project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,8 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:WireDomain.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -50,10 +55,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "017F67812C207A3200B6E02D"
-            BuildableName = "WireDomainSupport.framework"
-            BlueprintName = "WireDomainSupport"
-            ReferencedContainer = "container:WireDomain.xcodeproj">
+            BlueprintIdentifier = "01D0DCA52C1C8C870076CB1C"
+            BuildableName = "WireDomain.framework"
+            BlueprintName = "WireDomain"
+            ReferencedContainer = "container:WireDomain Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
