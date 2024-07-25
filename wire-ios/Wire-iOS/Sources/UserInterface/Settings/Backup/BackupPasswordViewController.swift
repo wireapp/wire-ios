@@ -88,24 +88,8 @@ final class BackupPasswordViewController: UIViewController {
         passwordView.delegate = self
         passwordView.textColor = LabelColors.textSectionHeader
         passwordView.backgroundColor = ViewColors.backgroundUserCell
-
-        // Set a fixed font size
-        let fixedFont = UIFont.systemFont(ofSize: 17)
-        passwordView.font = fixedFont
-
-        // Enable large content viewer
-        passwordView.showsLargeContentViewer = true
-
-        // Customize large content viewer
-        passwordView.largeContentTitle = HistoryBackup.Password.placeholder.capitalized
-
-        // Ensure the text field doesn't adjust its text size
-        passwordView.adjustsFontForContentSizeCategory = false
-
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-            .font: fixedFont
-        ]
+        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
+                                                         .font: UIFont.font(for: .body1)]
         passwordView.updatePlaceholderAttributedText(attributes: attributes)
     }
 
