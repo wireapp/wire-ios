@@ -184,7 +184,7 @@ jobs:
         if: ${{ inputs.wire-system || inputs.all }}
         run: |
           echo "Testing WireSystem..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystemPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireSystemPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
 
       # WireSystem Project
@@ -232,7 +232,7 @@ jobs:
         if: ${{ inputs.wire-testing || inputs.all }}
         run: |
           echo "Testing WireTesting..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTestingPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireTestingPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
           exit ${PIPESTATUS[0]}
 
       # WireTesting Project
@@ -280,7 +280,7 @@ jobs:
         if: ${{ inputs.wire-utilities-package || inputs.all }}
         run: |
           echo "Testing WireUtilities..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-utilities-package.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUtilitiesPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-utilities-package.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
           exit ${PIPESTATUS[0]}
 
       # WireUtilities Project
@@ -519,7 +519,7 @@ jobs:
         if: ${{ inputs.wire-domain-package || inputs.all }}
         run: |
           echo "Testing WireDomain..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain-package.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain-package.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
           exit ${PIPESTATUS[0]}
 
       # WireDomain Project
@@ -543,7 +543,7 @@ jobs:
         if: ${{ inputs.wire-domain-project || inputs.all }}
         run: |
           echo "Testing WireDomain Project..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain-project.log | bundle exec xcpretty --report junit --output build/reports/WireDomainProject.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain-project.log | bundle exec xcpretty --report junit --output build/reports/WireDomainProject.junit
           exit ${PIPESTATUS[0]}
 
       # WireRequestStrategy

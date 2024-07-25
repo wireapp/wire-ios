@@ -18,7 +18,7 @@
 
 import SnapshotTesting
 import WireDataModel
-import WireTestingPackage
+import WireTestingPkg
 import XCTest
 
 @testable import Wire

@@ -8,7 +8,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireTestingPackage", type: .dynamic, targets: ["WireTesting"])
+        .library(name: "WireTestingPackage", type: .dynamic, targets: ["WireTestingPkg"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -17,17 +17,15 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireTesting",
+            name: "WireTestingPkg",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireSystemPackage"
             ],
+            path: "./Sources/WireTesting",
             swiftSettings: swiftSettings
         ),
-        .testTarget(
-            name: "WireTestingTests",
-            dependencies: ["WireTesting"]
-        )
+        .testTarget(name: "WireTestingPkgTests", dependencies: ["WireTestingPkg"], path: "./Tests/WireTestingTests")
     ]
 )
 

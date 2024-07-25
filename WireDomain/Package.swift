@@ -8,21 +8,21 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireDomainPackage", type: .dynamic, targets: ["WireDomainPackage"]),
-        .library(name: "WireDomainPackageSupport", type: .dynamic, targets: ["WireDomainPackageSupport"])
+        .library(name: "WireDomainPackage", type: .dynamic, targets: ["WireDomainPkg"]),
+        .library(name: "WireDomainPackageSupport", type: .dynamic, targets: ["WireDomainPkgSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
-        .package(name: "WireSystemPackage", path: "../WireSystem")
+        .package(path: "../WireAPI")
     ],
     targets: [
-        .target(name: "WireDomainPackage", path: "./Sources/Package", swiftSettings: swiftSettings),
-        .testTarget(name: "WireDomainPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/PackageTests"),
+        .target(name: "WireDomainPkg", dependencies: ["WireAPI"], path: "./Sources/Package", swiftSettings: swiftSettings),
+        .testTarget(name: "WireDomainPkgTests", dependencies: ["WireDomainPkg"], path: "./Tests/PackageTests"),
 
         .target(
-            name: "WireDomainPackageSupport",
-            dependencies: ["WireDomainPackage"],
+            name: "WireDomainPkgSupport",
+            dependencies: ["WireDomainPkg"],
             path: "./Sources/PackageSupport",
             swiftSettings: swiftSettings,
             plugins: [

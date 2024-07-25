@@ -17,7 +17,7 @@
                BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
                BuildableName = "WireSystem.framework"
                BlueprintName = "WireSystem"
-               ReferencedContainer = "container:WireSystem.xcodeproj">
+               ReferencedContainer = "container:WireSystem Project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "54A3272B1B99A3190004EB95"
                BuildableName = "WireSystem Tests.xctest"
                BlueprintName = "WireSystem Tests"
-               ReferencedContainer = "container:WireSystem.xcodeproj">
+               ReferencedContainer = "container:WireSystem Project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -48,7 +48,7 @@
             BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
             BuildableName = "WireSystem.framework"
             BlueprintName = "WireSystem"
-            ReferencedContainer = "container:WireSystem.xcodeproj">
+            ReferencedContainer = "container:WireSystem Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -59,7 +59,7 @@
                BlueprintIdentifier = "54A3272B1B99A3190004EB95"
                BuildableName = "WireSystem Tests.xctest"
                BlueprintName = "WireSystem Tests"
-               ReferencedContainer = "container:WireSystem.xcodeproj">
+               ReferencedContainer = "container:WireSystem Project.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -80,7 +80,7 @@
             BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
             BuildableName = "WireSystem.framework"
             BlueprintName = "WireSystem"
-            ReferencedContainer = "container:WireSystem.xcodeproj">
+            ReferencedContainer = "container:WireSystem Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </LaunchAction>
@@ -96,7 +96,7 @@
             BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
             BuildableName = "WireSystem.framework"
             BlueprintName = "WireSystem"
-            ReferencedContainer = "container:WireSystem.xcodeproj">
+            ReferencedContainer = "container:WireSystem Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

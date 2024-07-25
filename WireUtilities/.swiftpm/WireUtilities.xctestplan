@@ -14,7 +14,13 @@
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireUtilitiesPkgTests",
+        "name" : "WireUtilitiesPkgTests"
+      }
+    }
   ],
   "version" : 1
 }
