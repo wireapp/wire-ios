@@ -26,7 +26,7 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-    
+
     var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
