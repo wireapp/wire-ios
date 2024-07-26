@@ -26,7 +26,6 @@
 		5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5405B0081BCEBDBF00C0C3BD /* ZMIImageProperties.m */; };
 		54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54A5A6161E92A01100D56F2E /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
-		59F83E652C53F11F00AE09E4 /* WireSystemObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59F83E642C53F11F00AE09E4 /* WireSystemObjC.framework */; };
 		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
 		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
 		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
@@ -138,7 +137,6 @@
 		5471F8211B73E6E000460C35 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5471F8251B73E6E000460C35 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		5471F8271B73E6E000460C35 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		59F83E642C53F11F00AE09E4 /* WireSystemObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		870253E01DAB7A9F0095D272 /* WireImages-iosTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireImages-iosTestHost.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		870253E31DAB7AA00095D272 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		870253E51DAB7AA00095D272 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -197,7 +195,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59F83E652C53F11F00AE09E4 /* WireSystemObjC.framework in Frameworks */,
 				EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,7 +232,6 @@
 		098CB1191B5FA6E100712DF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59F83E642C53F11F00AE09E4 /* WireSystemObjC.framework */,
 				EE98A0B4296EFD3F0055E981 /* WireTesting.framework */,
 				EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */,
 			);
