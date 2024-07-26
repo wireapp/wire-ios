@@ -42,6 +42,7 @@ final class DecodeImageOperationTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         operationQueue = nil
         super.tearDown()
