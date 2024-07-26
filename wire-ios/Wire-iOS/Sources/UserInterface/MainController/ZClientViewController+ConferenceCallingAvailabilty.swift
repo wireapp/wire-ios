@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSyncEngine
+import WireCommonComponents
 
 extension ZClientViewController {
 
@@ -28,7 +29,7 @@ extension ZClientViewController {
         let learnMore = ConferenceCallingAlert.Message.learnMore
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wireEnterpriseLearnMore, presenter: self))
+         alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] (_) in
             self?.confirmChanges()
         }))
@@ -44,7 +45,7 @@ extension ZClientViewController {
         let upgradeActionTitle = ConferenceCallingAlert.Action.upgrade
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wirePricingLearnMore, presenter: self))
+        alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(.cancel())
         alert.addAction(UIAlertAction.link(title: upgradeActionTitle, url: URL.manageTeam(source: .settings), presenter: self))
 
