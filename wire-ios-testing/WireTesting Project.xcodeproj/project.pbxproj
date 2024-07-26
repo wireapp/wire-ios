@@ -77,6 +77,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		592319792C515FAF003B92D4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -355,12 +365,15 @@
 				096AD7B61B68D41D00E007A8 /* Sources */,
 				096AD7B71B68D41D00E007A8 /* Frameworks */,
 				096AD7B91B68D41D00E007A8 /* Resources */,
+				592319792C515FAF003B92D4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = WireTesting;
+			packageProductDependencies = (
+			);
 			productName = ZMTesting;
 			productReference = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */;
 			productType = "com.apple.product-type.framework";
@@ -405,7 +418,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 096AD7B51B68D41D00E007A8 /* Build configuration list for PBXProject "WireTesting" */;
+			buildConfigurationList = 096AD7B51B68D41D00E007A8 /* Build configuration list for PBXProject "WireTesting Project" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -573,7 +586,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		096AD7B51B68D41D00E007A8 /* Build configuration list for PBXProject "WireTesting" */ = {
+		096AD7B51B68D41D00E007A8 /* Build configuration list for PBXProject "WireTesting Project" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				096AD7CF1B68D41D00E007A8 /* Debug */,

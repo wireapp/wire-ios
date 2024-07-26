@@ -45,6 +45,10 @@
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
 		59C39F092C21E9480087300D /* TimePointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F082C21E9480087300D /* TimePointTests.swift */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
+		59ED3AC32C53B12C0043ACC4 /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */; };
+		59ED3AC42C53B12C0043ACC4 /* WireSystemPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		59ED3AC62C53B1360043ACC4 /* WireSystemPackageSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */; };
+		59ED3AC72C53B1360043ACC4 /* WireSystemPackageSupport in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
@@ -86,6 +90,31 @@
 			remoteInfo = WireSystemSupport;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		59C3F15C2C51677200D1DFED /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				59ED3AC42C53B12C0043ACC4 /* WireSystemPackage in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59ED3AC82C53B1360043ACC4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				59ED3AC72C53B1360043ACC4 /* WireSystemPackageSupport in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		013334B72C204A7D002D97DB /* CocoaLumberjackLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaLumberjackLogger.swift; sourceTree = "<group>"; };
@@ -159,6 +188,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59ED3AC32C53B12C0043ACC4 /* WireSystemPackage in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
 				E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */,
 			);
@@ -168,6 +198,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59ED3AC62C53B1360043ACC4 /* WireSystemPackageSupport in Frameworks */,
 				598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */,
 				54A327321B99A3190004EB95 /* WireSystem.framework in Frameworks */,
 			);
@@ -412,6 +443,7 @@
 				3ECC35121AD436750089FD4B /* Sources */,
 				3ECC35131AD436750089FD4B /* Frameworks */,
 				3ECC35151AD436750089FD4B /* Resources */,
+				59C3F15C2C51677200D1DFED /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -420,6 +452,7 @@
 			name = WireSystem;
 			packageProductDependencies = (
 				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
+				59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -432,6 +465,7 @@
 				54A327281B99A3190004EB95 /* Sources */,
 				54A327291B99A3190004EB95 /* Frameworks */,
 				54A3272A1B99A3190004EB95 /* Resources */,
+				59ED3AC82C53B1360043ACC4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -440,6 +474,9 @@
 				598E86F02BF4DD3100FC5438 /* PBXTargetDependency */,
 			);
 			name = "WireSystem Tests";
+			packageProductDependencies = (
+				59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */,
+			);
 			productName = "ZMCSystem-ios Tests";
 			productReference = 54A3272C1B99A3190004EB95 /* WireSystem Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -470,8 +507,9 @@
 		3ECC34C41AD430BB0089FD4B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1340;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					3ECC350F1AD436750089FD4B = {
 						LastSwiftMigration = 1000;
@@ -486,7 +524,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "WireSystem" */;
+			buildConfigurationList = 3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "WireSystem Project" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -661,6 +699,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ENABLE_MODULE_VERIFIER = YES;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
@@ -669,6 +710,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D21EFD49B400DDB12A /* project.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ENABLE_MODULE_VERIFIER = YES;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Release;
@@ -677,6 +721,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
@@ -692,6 +737,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
@@ -755,6 +801,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -844,6 +891,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -896,7 +944,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "WireSystem" */ = {
+		3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "WireSystem Project" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3ECC34C81AD430BB0089FD4B /* Debug */,
@@ -950,6 +998,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
+		};
+		59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemPackage;
+		};
+		59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemPackageSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
