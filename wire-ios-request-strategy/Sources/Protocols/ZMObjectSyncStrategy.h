@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
-@import WireDataModel;
-@import WireSystem;
+#import <Foundation/Foundation.h>
+#import <WireDataModel/WireDataModel.h>
+#import <WireSystem/WireSystem.h>
 
 #import <WireRequestStrategy/ZMRequestGenerator.h>
 #import <WireRequestStrategy/ZMContextChangeTracker.h>
