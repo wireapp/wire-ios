@@ -18,7 +18,7 @@
 
 @import CoreGraphics;
 @import ImageIO;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireSystemObjC;
 @import UniformTypeIdentifiers;
 

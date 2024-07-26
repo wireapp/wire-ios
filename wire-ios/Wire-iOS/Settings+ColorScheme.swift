@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystem
+import WireSystemPackage
 
 enum SettingsColorScheme: Int, CaseIterable {
 

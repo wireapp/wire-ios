@@ -18,7 +18,7 @@
 
 @import WireTransport;
 @import WireUtilities;
-@import WireSystem;
+@import WireSystemPackage;
 #import "MockTransportSession+registration.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "NSManagedObjectContext+executeFetchRequestOrAssert.h"

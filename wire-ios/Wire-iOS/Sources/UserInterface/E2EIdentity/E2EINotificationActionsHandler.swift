@@ -18,7 +18,7 @@
 
 import Foundation
 import WireSyncEngine
-import WireSystem
+import WireSystemPackage
 
 protocol E2EINotificationActions {
 

@@ -17,7 +17,7 @@
 //
 
 @import XCTest;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireSystemObjC;
 
 #import <WireTesting/ZMTFailureRecorder.h>

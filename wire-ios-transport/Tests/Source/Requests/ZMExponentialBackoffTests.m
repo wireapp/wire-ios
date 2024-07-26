@@ -17,7 +17,7 @@
 //
 
 @import XCTest;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireUtilities;
 @import WireTesting;
 

@@ -17,7 +17,7 @@
 //
 
 @import Security;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireSystemObjC;
 @import WireUtilities;
 @import UIKit;

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 

@@ -17,7 +17,7 @@
 //
 
 @import Foundation;
-@import WireSystem;
+@import WireSystemPackage;
 
 NS_ASSUME_NONNULL_BEGIN
 

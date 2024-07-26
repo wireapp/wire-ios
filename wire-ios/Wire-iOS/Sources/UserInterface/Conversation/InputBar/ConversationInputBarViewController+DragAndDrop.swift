@@ -18,7 +18,7 @@
 
 import UIKit
 import WireSyncEngine
-import WireSystem
+import WireSystemPackage
 
 private let zmLog = ZMSLog(tag: "Drag and drop images")
 

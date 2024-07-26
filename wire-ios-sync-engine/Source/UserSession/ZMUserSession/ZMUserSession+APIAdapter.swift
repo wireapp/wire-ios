@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAPI
-import WireSystem
+import WireSystemPackage
 
 // Note: this is just a tempory helper for debugging
 // purposes and should eventually be removed.

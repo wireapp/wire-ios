@@ -17,7 +17,7 @@
 //
 
 @import CommonCrypto;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireSystemObjC;
 
 #import "NSData+ZMAdditions.h"

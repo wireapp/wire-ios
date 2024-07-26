@@ -18,7 +18,7 @@
 
 import SafariServices
 import UIKit
-import WireSystem
+import WireSystemPackage
 
 private let log = ZMSLog(tag: "link opening")
 

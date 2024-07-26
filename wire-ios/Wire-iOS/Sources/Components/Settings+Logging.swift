@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 /// User default key for the array of enabled logs
 private let enabledLogsKey = "WireEnabledZMLogTags"

@@ -19,7 +19,7 @@
 @import XCTest;
 @import WireTesting;
 @import WireTransport;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireUtilities;
 @import UniformTypeIdentifiers;
 

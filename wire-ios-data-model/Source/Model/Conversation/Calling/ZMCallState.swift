@@ -18,7 +18,7 @@
 
 import CoreData
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 private let zmLog = ZMSLog(tag: "CallState")
 
