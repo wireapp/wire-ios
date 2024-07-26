@@ -26,6 +26,8 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+    
+    var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
@@ -113,6 +115,7 @@ final class UserSessionMock: UserSession {
         self.editableSelfUser = editableSelfUser
 
         searchUsersCache = .init()
+        userProfile = MockUserProfile()
     }
 
     var lock: SessionLock? = .screen

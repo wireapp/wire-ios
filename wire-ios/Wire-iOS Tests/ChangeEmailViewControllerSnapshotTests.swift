@@ -20,24 +20,28 @@ import WireUITesting
 import XCTest
 
 @testable import Wire
+import WireSyncEngineSupport
 
 final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     private var userSession: UserSessionMock!
+    private var userProfile: MockUserProfile!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        userProfile = MockUserProfile()
         snapshotHelper = SnapshotHelper()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        userProfile = nil
         snapshotHelper = nil
         userSession = nil
         super.tearDown()
@@ -48,7 +52,10 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")
         userSession = UserSessionMock(mockUser: mockUser)
+        userSession.userProfile = userProfile
         mockUser.emailAddress = emailAddress
+
+        userProfile.addObserver_MockMethod = { _ in }
 
         let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
         let viewController = sut.wrapInNavigationController()

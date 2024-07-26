@@ -28,7 +28,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     // MARK: - Properties
 
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     private let viewModel: ChangeEmailViewModel
     private var observerToken: Any?
 
@@ -42,7 +41,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         self.userSession = userSession
         self.viewModel = ChangeEmailViewModel(
             currentEmail: user.emailAddress,
-            userProfile: userProfile
+            userProfile: userSession.userProfile
         )
         super.init(style: .grouped)
         setupViews()
@@ -68,7 +67,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
 
-        observerToken = userProfile?.add(observer: self)
+        observerToken = userSession.userProfile.add(observer: self)
     }
 
     override func viewDidAppear(_ animated: Bool) {
