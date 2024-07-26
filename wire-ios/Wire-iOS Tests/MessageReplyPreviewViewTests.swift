@@ -18,7 +18,7 @@
 
 import WireDesign
 import WireLinkPreview
-import WireTesting
+import WireTestingPkg
 import XCTest
 
 @testable import Wire

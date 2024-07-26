@@ -18,6 +18,7 @@
 
 @import WireTransport;
 @import WireDataModel;
+@import WireSystemObjC;
 
 #import "ZMUpstreamModifiedObjectSync+Testing.h"
 #import "ZMSyncOperationSet.h"
@@ -26,7 +27,6 @@
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamRequest.h"
-
 
 @interface ZMUpstreamModifiedObjectSync ()
 
@@ -40,8 +40,6 @@
 @property (nonatomic) NSPredicate *filter;
 
 @end
-
-
 
 @implementation ZMUpstreamModifiedObjectSync
 

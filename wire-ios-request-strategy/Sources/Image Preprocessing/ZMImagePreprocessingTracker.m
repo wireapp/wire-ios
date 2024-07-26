@@ -18,6 +18,7 @@
 
 @import WireImages;
 @import WireDataModel;
+@import WireSystemObjC;
 
 #import "ZMImagePreprocessingTracker+Testing.h"
 

@@ -67,6 +67,7 @@
 		5996E8C32C19FFDB007A52F0 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */; };
 		59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59EC73FA2C20B82F00E5C036 /* WireSystem.framework */; };
 		59EC74002C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC73FF2C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */; };
+		59F83E782C53FB8900AE09E4 /* WireSystemObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59F83E772C53FB8900AE09E4 /* WireSystemObjC.framework */; };
 		63128BB3247C014300673D18 /* MockTransportSession+OTR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */; };
 		6348BCBA247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6348BCB9247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift */; };
 		7C52BFF72033225500297DDA /* MockReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C52BFF52033225500297DDA /* MockReachability.h */; };
@@ -234,6 +235,7 @@
 		59EC73FA2C20B82F00E5C036 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59EC73FE2C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+executeFetchRequestOrAssert.h"; sourceTree = "<group>"; };
 		59EC73FF2C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+executeFetchRequestOrAssert.m"; sourceTree = "<group>"; };
+		59F83E772C53FB8900AE09E4 /* WireSystemObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+OTR.swift"; sourceTree = "<group>"; };
 		6348BCB9247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Broadcast.swift"; sourceTree = "<group>"; };
 		7C52BFF52033225500297DDA /* MockReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockReachability.h; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 				EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */,
 				EE974128295498E2000C9340 /* WireTransport.framework in Frameworks */,
 				5996E8C32C19FFDB007A52F0 /* OCMock.xcframework in Frameworks */,
+				59F83E782C53FB8900AE09E4 /* WireSystemObjC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,6 +589,7 @@
 		54C902651B753419007162A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59F83E772C53FB8900AE09E4 /* WireSystemObjC.framework */,
 				59EC73FA2C20B82F00E5C036 /* WireSystem.framework */,
 				5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */,
 				EE67F6FF296F09D8001D7C88 /* WireTesting.framework */,

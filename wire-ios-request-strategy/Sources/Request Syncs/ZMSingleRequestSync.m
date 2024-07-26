@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 @import WireTransport;
 
 #import "ZMSingleRequestSync.h"

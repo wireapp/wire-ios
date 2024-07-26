@@ -18,6 +18,7 @@
 
 @import CoreFoundation;
 @import WireSystem;
+@import WireSystemObjC;
 @import WireUtilities;
 @import WireTransport;
 

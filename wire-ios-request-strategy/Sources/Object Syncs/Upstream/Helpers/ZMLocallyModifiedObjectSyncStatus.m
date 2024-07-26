@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "ZMLocallyModifiedObjectSyncStatus.h"
 #import <WireDataModel/ZMManagedObject+Internal.h>

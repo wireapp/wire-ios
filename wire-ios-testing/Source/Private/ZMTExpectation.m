@@ -17,6 +17,8 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
+
 #import "ZMTExpectation.h"
 
 @implementation ZMTExpectation

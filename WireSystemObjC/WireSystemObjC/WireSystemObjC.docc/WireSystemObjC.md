@@ -1,3 +1,3 @@
 # ``WireSystemObjC``
 
-Contains just some left-over header files with macros.
+Contains just some header files with macros for legacy code.

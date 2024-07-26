@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 @import WireDataModel;
 
 #import <WireRequestStrategy/WireRequestStrategy-Swift.h>

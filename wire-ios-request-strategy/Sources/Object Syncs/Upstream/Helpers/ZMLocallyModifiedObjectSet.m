@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMLocallyModifiedObjectSyncStatus.h"
@@ -27,8 +28,6 @@
 + (instancetype)object:(ZMManagedObject *)object withKeys:(NSSet *)keys;
 
 @end
-
-
 
 @implementation ZMObjectWithKeys
 

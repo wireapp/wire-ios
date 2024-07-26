@@ -18,7 +18,7 @@
 
 import SwiftUI
 import WireRequestStrategySupport
-import WireTesting
+import WireTestingPkg
 import XCTest
 
 @testable import Wire

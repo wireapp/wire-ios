@@ -17,9 +17,9 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "XCTestCase+Helpers.h"
-
 
 @implementation XCTestCase (Helpers)
 
