@@ -16,22 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A struct representing information about the user's team.
+import WireAnalytics
 
-public struct TeamInfo {
+extension ConversationType {
 
-    /// The identifier for the team the user belongs to.
-    public let id: String
-
-    /// The role of the user within the team.
-    public let role: String
-
-    /// The size of the team the user belongs to.
-    public let size: UInt
-
-    public init(id: String, role: String, size: UInt) {
-        self.id = id
-        self.role = role
-        self.size = size
+    init(_ conversationType: ZMConversationType) {
+        switch conversationType {
+        case .group:
+            self = .group
+        case .oneOnOne:
+            self = .oneOnOne
+        default:
+            self = .unknown
+        }
     }
+
 }

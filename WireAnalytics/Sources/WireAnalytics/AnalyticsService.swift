@@ -19,12 +19,32 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol AnalyticsService: AnalyticsSessionProtocol {
-
+/// Protocol defining the requirements for an analytics service.
+protocol AnalyticsService {
+    /// Starts the analytics service with the given app key and host.
+    ///
+    /// - Parameters:
+    ///   - appKey: The key for the analytics application.
+    ///   - host: The URL of the analytics host.
     func start(appKey: String, host: URL)
+
+    /// Begins a new analytics session.
     func beginSession()
+
+    /// Ends the current analytics session.
     func endSession()
+
+    /// Changes the device ID used for analytics.
+    ///
+    /// - Parameter id: The new device ID.
     func changeDeviceID(_ id: String)
+
+    /// Sets a user value for a given key in the analytics service.
+    ///
+    /// - Parameters:
+    ///   - value: The value to set.
+    ///   - key: The key for the value.
     func setUserValue(_ value: String?, forKey key: String)
 
+    func trackEvent(name: String, segmentation: [String: String])
 }

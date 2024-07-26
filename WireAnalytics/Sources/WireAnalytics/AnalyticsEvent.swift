@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Protocol for managing and tracking analytics events within a session.
-public protocol AnalyticsSessionProtocol {
+/// Protocol defining the structure of an analytics event.
+public protocol AnalyticsEvent {
 
-    /// Tracks a specific analytics event.
-    /// - Parameter event: The `AnalyticEvent` to be tracked.
-    ///
-    /// This method logs the given event as part of the current analytics session.
-    func trackEvent(_ event: AnalyticEvent)
+    /// The name of the event.
+    var eventName: String { get }
+
+    /// Additional segmentation data for the event.
+    var segmentation: Set<SegmentationValue> { get }
 
 }

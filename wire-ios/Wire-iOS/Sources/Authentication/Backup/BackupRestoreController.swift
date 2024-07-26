@@ -25,11 +25,7 @@ protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
 }
 
-/**
- * An object that coordinates restoring a backup.
- */
-
-private let zmLog = ZMSLog(tag: "Backup")
+/// An object that coordinates restoring a backup.
 
 final class BackupRestoreController: NSObject {
 
@@ -45,7 +41,10 @@ final class BackupRestoreController: NSObject {
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
+    init(
+        target: SpinnerCapableViewController,
+        temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+    ) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
         super.init()
@@ -107,30 +106,24 @@ final class BackupRestoreController: NSObject {
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
                 return
             }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 self.showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
-
             case .failure(let error):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
-                BackupEvent.importFailed.track()
                 self.showRestoreError(error)
                 self.target.isLoadingViewVisible = false
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
-                BackupEvent.importSucceeded.track()
                 self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
@@ -170,7 +163,6 @@ extension BackupRestoreController: UIDocumentPickerDelegate {
         didPickDocumentAt url: URL
     ) {
         WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-        zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
         self.restore(with: url)
     }

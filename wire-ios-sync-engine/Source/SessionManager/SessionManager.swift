@@ -204,6 +204,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
     public weak var loginDelegate: LoginDelegate?
+    public var analyticsSessionConfiguration: AnalyticsSessionConfiguration?
 
     public internal(set) var activeUserSession: ZMUserSession? {
         willSet {
@@ -915,7 +916,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             teamInfo = TeamInfo(
                 id: teamID.uuidString,
                 role: selfUser.teamRole.analyticsValue,
-                size: team.members.count
+                size: UInt(team.members.count)
             )
         }
 

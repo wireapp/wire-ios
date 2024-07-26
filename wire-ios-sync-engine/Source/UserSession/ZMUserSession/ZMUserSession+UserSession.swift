@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
@@ -353,6 +354,23 @@ extension ZMUserSession: UserSession {
             lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
     }
+
+    public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
+        return AppendTextMessageUseCase(analyticsSession: analyticsSession)
+    }
+
+    public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
+        return AppendImageMessageUseCase(analyticsSession: analyticsSession)
+    }
+
+    public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
+        return AppendKnockMessageUseCase(analyticsSession: analyticsSession)
+    }
+
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+        return AppendLocationMessageUseCase(analyticsSession: analyticsSession)
+    }
+
 }
 
 extension UInt64 {

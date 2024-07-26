@@ -16,22 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A struct representing information about the user's team.
+extension Bool: AnalyticsValue {
 
-public struct TeamInfo {
-
-    /// The identifier for the team the user belongs to.
-    public let id: String
-
-    /// The role of the user within the team.
-    public let role: String
-
-    /// The size of the team the user belongs to.
-    public let size: UInt
-
-    public init(id: String, role: String, size: UInt) {
-        self.id = id
-        self.role = role
-        self.size = size
+    public var analyticsValue: String {
+        self ? "True" : "False"
     }
+
 }

@@ -17,7 +17,6 @@
 //
 
 /// A structure representing a user's profile for analytics purposes.
-
 public struct AnalyticsUserProfile {
 
     /// The unique identifier for the user's analytics profile.

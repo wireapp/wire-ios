@@ -16,22 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A struct representing information about the user's team.
+/// Struct representing an analytics event for a failed backup export.
+public struct BackupExportFailedAnalyticsEvent: AnalyticsEvent {
 
-public struct TeamInfo {
+    public init() {}
 
-    /// The identifier for the team the user belongs to.
-    public let id: String
+    /// The name of the event.
+    public var eventName: String {
+        "backup.export_failed"
+    }
 
-    /// The role of the user within the team.
-    public let role: String
-
-    /// The size of the team the user belongs to.
-    public let size: UInt
-
-    public init(id: String, role: String, size: UInt) {
-        self.id = id
-        self.role = role
-        self.size = size
+    /// Additional segmentation data for the event.
+    public var segmentation: Set<SegmentationValue> {
+        []
     }
 }

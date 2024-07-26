@@ -16,22 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Represents a key-value pair for analytics event segmentation.
+///
+/// This struct is used to provide additional, structured information about an analytics event.
+/// Each `SegmentationValue` consists of a key (identifying the type of information) and a value
+/// (the actual data point).
+///
+/// - Note: This struct conforms to `Hashable`, allowing it to be used in sets and as dictionary keys.
+public struct SegmentationValue: Hashable {
 
-enum BackupEvent: Event {
-    case importSucceeded
-    case importFailed
-    case exportFailed
+    let key: String
+    let value: String
 
-    var name: String {
-        switch self {
-        case .importSucceeded: return "history.restore_succeeded"
-        case .importFailed: return "history.restore_failed"
-        case .exportFailed: return "history.backup_failed"
-        }
-    }
-
-    var attributes: [AnyHashable: Any]? {
-        return nil
-    }
 }

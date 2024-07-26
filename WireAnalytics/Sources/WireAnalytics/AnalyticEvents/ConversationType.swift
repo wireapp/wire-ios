@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// All possible analytic events that can be tracked
+/// An enumeration representing the type of conversation.
+public enum ConversationType: String, AnalyticsValue {
+    case group
+    case oneOnOne = "one_on_one"
+    case unknown
 
-public enum AnalyticEvent: String {
-
-    case appOpen
-
+    /// A string representation of the conversation type suitable for analytics tracking.
+    public var analyticsValue: String {
+        rawValue
+    }
 }

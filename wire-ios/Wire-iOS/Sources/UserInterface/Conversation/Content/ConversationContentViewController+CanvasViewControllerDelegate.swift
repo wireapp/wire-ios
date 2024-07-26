@@ -26,7 +26,8 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
 
                 self.userSession.enqueue({
                     do {
-                        try self.conversation.appendImage(from: imageData)
+                        let useCase = self.userSession.makeAppendImageMessageUseCase()
+                        try useCase.invoke(withImageData: imageData, in: self.conversation)
                     } catch {
                         Logging.messageProcessing.warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
                     }

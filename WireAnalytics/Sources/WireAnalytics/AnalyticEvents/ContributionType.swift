@@ -16,22 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A struct representing information about the user's team.
+/// An enumeration representing the type of contribution.
+public enum ContributionType: String, AnalyticsValue {
+    case textMessage = "text_message"
+    case likeMessage = "like_message"
+    case pingMessage = "ping_message"
+    case fileMessage = "file_message"
+    case imageMessage = "image_message"
+    case locationMessage = "location_message"
+    case audioMessage = "audio_message"
+    case videoMessage = "video_message"
+    case audioCallMessage = "audio_call_message"
+    case videoCallMessage = "video_call_message"
 
-public struct TeamInfo {
-
-    /// The identifier for the team the user belongs to.
-    public let id: String
-
-    /// The role of the user within the team.
-    public let role: String
-
-    /// The size of the team the user belongs to.
-    public let size: UInt
-
-    public init(id: String, role: String, size: UInt) {
-        self.id = id
-        self.role = role
-        self.size = size
+    /// A string representation of the contribution type suitable for analytics tracking.
+    public var analyticsValue: String {
+        rawValue
     }
 }

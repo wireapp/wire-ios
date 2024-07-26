@@ -23,9 +23,7 @@ enum CallEvent {
     case initiated,
          received,
          answered,
-         established,
-         ended(reason: String),
-         screenSharing(duration: TimeInterval)
+         established
 }
 
 extension CallEvent {
@@ -36,8 +34,6 @@ extension CallEvent {
         case .received: return "calling.received_call"
         case .answered: return "calling.joined_call"
         case .established: return "calling.established_call"
-        case .ended: return "calling.ended_call"
-        case .screenSharing: return "calling.screen_share"
         }
     }
 
@@ -71,19 +67,6 @@ extension Analytics {
         attributes.merge(attributesForCallParticipants(with: callInfo)) { _, new in new }
         attributes.merge(attributesForVideo(with: callInfo)) { _, new in new }
         attributes.merge(attributesForDirection(with: callInfo)) { _, new in new }
-
-        switch event {
-        case .ended(reason: let reason):
-            attributes.merge(attributesForSetupTime(with: callInfo)) { _, new in new }
-            attributes.merge(attributesForCallDuration(with: callInfo)) { _, new in new }
-            attributes.merge(attributesForVideoToogle(with: callInfo)) { _, new in new }
-            attributes.merge(["reason": reason]) { _, new in new }
-        case .screenSharing(let duration):
-            attributes["screen_share_direction"] = "incoming"
-            attributes["screen_share_duration"] = Int(round(duration / 5)) * 5
-        default:
-            break
-        }
 
         return attributes
     }

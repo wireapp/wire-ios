@@ -17,12 +17,11 @@
 //
 
 import Foundation
+import WireAnalytics
 import WireCryptobox
 import WireDataModel
 import WireUtilities
 import ZipArchive
-
-private let zmLog = ZMSLog(tag: "SessionManager")
 
 extension SessionManager {
 
@@ -56,9 +55,16 @@ extension SessionManager {
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup,
             databaseKey: activeUserSession.managedObjectContext.databaseKey,
-            completion: { [dispatchGroup] in
+            completion: { [dispatchGroup] result in
+                switch result {
+                case .success:
+                    break
+                case .failure:
+                    activeUserSession.analyticsSession?.trackEvent(BackupExportFailedAnalyticsEvent())
+                }
+
                 SessionManager.handle(
-                    result: $0,
+                    result: result,
                     password: password,
                     accountId: userId,
                     dispatchGroup: dispatchGroup,
@@ -105,10 +111,18 @@ extension SessionManager {
     /// is called.
     public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
         func complete(_ result: Result<Void, Error>) {
-            DispatchQueue.main.async(group: dispatchGroup) {
-                completion(result)
+                DispatchQueue.main.async(group: dispatchGroup) {
+                    switch result {
+                    case .success:
+                        let restoreBackupSucceeded = RestoreBackupAnalyticsEvent(didSucceed: true)
+                        self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupSucceeded)
+                    case .failure:
+                        let restoreBackupFailed = RestoreBackupAnalyticsEvent(didSucceed: false)
+                        self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupFailed)
+                    }
+                    completion(result)
+                }
             }
-        }
 
         guard let userId = unauthenticatedSession?.authenticationStatus.authenticatedUserIdentifier else { return completion(.failure(BackupError.notAuthenticated)) }
 
@@ -123,7 +137,6 @@ extension SessionManager {
 
             let decryptedURL = SessionManager.temporaryURL(for: location)
 
-            zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"), level: .debug)
             WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
             do {
