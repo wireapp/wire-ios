@@ -24,12 +24,12 @@ public protocol PushChannelProtocol {
 
     /// Open the push channel and start receiving update events.
     ///
-    /// - Returns: A publisher of payloads.
+    /// - Returns: An async stream of live update event envelopes.
 
     func open() async throws -> AsyncStream<UpdateEventEnvelope>
 
     /// Close the push channel and stop receiving update events.
 
-    func close() async
+    func close()
 
 }
