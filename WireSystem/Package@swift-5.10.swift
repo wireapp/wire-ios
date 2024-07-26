@@ -13,10 +13,19 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", from: "3.8.5"),
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireSystemPackage", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
+        .target(
+            name: "WireSystemPackage",
+            dependencies: [
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                "ZipArchive"
+            ],
+            path: "./Sources/WireSystem",
+            swiftSettings: swiftSettings
+        ),
         .testTarget(name: "WireSystemPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/WireSystemTests"),
 
         .target(
@@ -27,7 +36,9 @@ let package = Package(
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
-        )
+        ),
+
+        .binaryTarget(name: "ZipArchive", path: "../Carthage/Build/ZipArchive.xcframework")
     ]
 )
 
