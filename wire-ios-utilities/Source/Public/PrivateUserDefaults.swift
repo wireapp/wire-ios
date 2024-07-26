@@ -109,6 +109,8 @@ extension Never: DefaultsKey {
 
 extension PrivateUserDefaults where Key == Never {
 
+    /// Removes all values for keys scoped to `userID` in `storage`.
+
     public static func removeAll(forUserID userID: UUID, in storage: UserDefaults) {
         let prefix = scopePrefix(userID: userID)
         let skopedKeys = storage.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }
