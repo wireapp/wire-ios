@@ -37,8 +37,12 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
 
     // MARK: - Methods
 
+    private static func scopePrefix(userID: UUID) -> String {
+        "\(userID.uuidString)_"
+    }
+
     private func scopeKey(_ key: Key) -> String {
-        return "\(userID.uuidString)_\(key.rawValue)"
+        return "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
     }
 }
 
@@ -96,3 +100,22 @@ public protocol DefaultsKey {
     var rawValue: String { get }
 
 }
+
+extension Never: DefaultsKey {
+
+    public var rawValue: String { fatalError() }
+
+}
+
+extension PrivateUserDefaults where Key == Never {
+
+    public static func removeAll(forUserID userID: UUID, in storage: UserDefaults) {
+        let prefix = scopePrefix(userID: userID)
+        let skopedKeys = storage.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }
+        for key in skopedKeys {
+            storage.removeObject(forKey: key)
+        }
+    }
+
+}
+
