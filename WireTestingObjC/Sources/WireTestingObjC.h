@@ -24,6 +24,5 @@ FOUNDATION_EXPORT double WireTestingObjCVersionNumber;
 //! Project version string for WireTestingObjC.
 FOUNDATION_EXPORT const unsigned char WireTestingObjCVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <WireTestingObjC/PublicHeader.h>
-
-
+#import <WireTestingObjC/ZMMockEntity.h>
+#import <WireTestingObjC/ZMMockEntity2.h>

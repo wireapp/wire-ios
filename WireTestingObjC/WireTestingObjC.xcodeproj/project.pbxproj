@@ -11,6 +11,12 @@
 		59C664162C54125500166C23 /* WireTestingObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C6640B2C54125500166C23 /* WireTestingObjC.framework */; };
 		59C6641B2C54125500166C23 /* WireTestingObjCTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C6641A2C54125500166C23 /* WireTestingObjCTests.m */; };
 		59C6641C2C54125500166C23 /* WireTestingObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C6640E2C54125500166C23 /* WireTestingObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59C6642E2C54139B00166C23 /* ZMMockEntity2.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C6642A2C54139B00166C23 /* ZMMockEntity2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59C6642F2C54139B00166C23 /* ZMMockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C6642B2C54139B00166C23 /* ZMMockEntity2.m */; };
+		59C664302C54139B00166C23 /* ZMMockEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C6642C2C54139B00166C23 /* ZMMockEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59C664312C54139B00166C23 /* ZMMockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C6642D2C54139B00166C23 /* ZMMockEntity.m */; };
+		59C664342C54143B00166C23 /* ZMMockManagedObjectContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C664322C54143B00166C23 /* ZMMockManagedObjectContextFactory.h */; };
+		59C664352C54143B00166C23 /* ZMMockManagedObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C664332C54143B00166C23 /* ZMMockManagedObjectContextFactory.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +35,14 @@
 		59C6640F2C54125500166C23 /* WireTestingObjC.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTestingObjC.docc; sourceTree = "<group>"; };
 		59C664152C54125500166C23 /* WireTestingObjCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireTestingObjCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		59C6641A2C54125500166C23 /* WireTestingObjCTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireTestingObjCTests.m; sourceTree = "<group>"; };
+		59C664252C5412FD00166C23 /* ZMTExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTExpectation.h; sourceTree = "<group>"; };
+		59C664262C5412FD00166C23 /* ZMTExpectation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTExpectation.m; sourceTree = "<group>"; };
+		59C6642A2C54139B00166C23 /* ZMMockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity2.h; sourceTree = "<group>"; };
+		59C6642B2C54139B00166C23 /* ZMMockEntity2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockEntity2.m; sourceTree = "<group>"; };
+		59C6642C2C54139B00166C23 /* ZMMockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity.h; sourceTree = "<group>"; };
+		59C6642D2C54139B00166C23 /* ZMMockEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockEntity.m; sourceTree = "<group>"; };
+		59C664322C54143B00166C23 /* ZMMockManagedObjectContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockManagedObjectContextFactory.h; sourceTree = "<group>"; };
+		59C664332C54143B00166C23 /* ZMMockManagedObjectContextFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockManagedObjectContextFactory.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +87,8 @@
 			children = (
 				59C6640E2C54125500166C23 /* WireTestingObjC.h */,
 				59C6640F2C54125500166C23 /* WireTestingObjC.docc */,
+				59C664272C5412FD00166C23 /* Private */,
+				59C664292C54134E00166C23 /* Public */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -85,6 +101,36 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		59C664272C5412FD00166C23 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				59C664252C5412FD00166C23 /* ZMTExpectation.h */,
+				59C664262C5412FD00166C23 /* ZMTExpectation.m */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		59C664282C54134E00166C23 /* MockDataModel */ = {
+			isa = PBXGroup;
+			children = (
+				59C6642C2C54139B00166C23 /* ZMMockEntity.h */,
+				59C6642D2C54139B00166C23 /* ZMMockEntity.m */,
+				59C6642A2C54139B00166C23 /* ZMMockEntity2.h */,
+				59C6642B2C54139B00166C23 /* ZMMockEntity2.m */,
+			);
+			path = MockDataModel;
+			sourceTree = "<group>";
+		};
+		59C664292C54134E00166C23 /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				59C664282C54134E00166C23 /* MockDataModel */,
+				59C664322C54143B00166C23 /* ZMMockManagedObjectContextFactory.h */,
+				59C664332C54143B00166C23 /* ZMMockManagedObjectContextFactory.m */,
+			);
+			path = Public;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -93,6 +139,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				59C6641C2C54125500166C23 /* WireTestingObjC.h in Headers */,
+				59C664302C54139B00166C23 /* ZMMockEntity.h in Headers */,
+				59C6642E2C54139B00166C23 /* ZMMockEntity2.h in Headers */,
+				59C664342C54143B00166C23 /* ZMMockManagedObjectContextFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +242,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59C664352C54143B00166C23 /* ZMMockManagedObjectContextFactory.m in Sources */,
+				59C6642F2C54139B00166C23 /* ZMMockEntity2.m in Sources */,
 				59C664102C54125500166C23 /* WireTestingObjC.docc in Sources */,
+				59C664312C54139B00166C23 /* ZMMockEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
