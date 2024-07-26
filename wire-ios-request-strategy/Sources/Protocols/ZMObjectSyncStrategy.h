@@ -18,7 +18,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WireDataModel/WireDataModel.h>
-#import <WireSystem/WireSystem.h>
+#import <WireSystemPackage/WireSystemPackage.h>
 
 #import <WireRequestStrategy/ZMRequestGenerator.h>
 #import <WireRequestStrategy/ZMContextChangeTracker.h>

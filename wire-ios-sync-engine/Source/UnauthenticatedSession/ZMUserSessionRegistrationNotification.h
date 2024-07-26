@@ -19,7 +19,7 @@
 @import WireSystemObjC;
 
 #import <Foundation/Foundation.h>
-#import <WireSystem/WireSystem.h>
+#import <WireSystemPackage/WireSystemPackage.h>
 
 @class ZMAuthenticationStatus;
 @class UnauthenticatedSession;

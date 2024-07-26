@@ -17,7 +17,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WireSystem/WireSystem.h>
+#import <WireSystemPackage/WireSystemPackage.h>
 #import <WireUtilities/WireUtilities.h>
 
 #import <WireTransport/ZMReachability.h>
