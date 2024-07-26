@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireSyncEngineSupport
+import XCTest
 
 @testable import Wire
 
@@ -85,7 +85,7 @@ final class ChangeEmailViewModelTests: XCTestCase {
             expectation.fulfill()
         }
 
-        //THEN
+        // THEN
         waitForExpectations(timeout: 1, handler: nil)
         XCTAssertEqual(mockUserProfile.requestEmailChangeEmail_Invocations, ["new@example.com"])
     }
