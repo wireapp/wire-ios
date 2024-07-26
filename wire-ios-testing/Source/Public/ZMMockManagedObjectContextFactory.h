@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-@import CoreData;
+#import <CoreData/CoreData.h>
 
 /**
  This class helps creating a basic NSManagedObjectContext with few entities, or let you reuse an existing PersistantStoreCoordiator. This get you started for NSManagedObjectContext tests.

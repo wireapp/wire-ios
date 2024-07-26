@@ -138,5 +138,3 @@
 #define ZM_ARG_CHECK_IF_EQUAL_OBJECTS(x) [OCMArg checkWithBlock:^BOOL(id obj) { \
     return obj == x || [obj isEqual:x]; \
 }]
-
-

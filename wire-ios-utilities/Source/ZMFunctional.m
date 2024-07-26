@@ -17,7 +17,6 @@
 //
 
 @import WireSystemPackage;
-@import WireSystemObjC;
 
 #import "ZMFunctional.h"
 

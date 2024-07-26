@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import XCTest;
-@import WireSystemPackage;
-@import WireSystemObjC;
-
+#import <XCTest/XCTest.h>
+#import <WireSystemObjC/WireSystemObjC.h>
 #import <WireTesting/ZMTFailureRecorder.h>
+
+@class ZMSDispatchGroup;
+@protocol ZMSGroupQueue;
 
 extern void PrintTimeoutWarning(XCTestCase *_Nonnull test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout);
 
