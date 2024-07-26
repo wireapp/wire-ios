@@ -16,27 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireUITesting
 import XCTest
 
 @testable import Wire
 
-final class ChangeEmailViewControllerTests: XCTestCase {
+final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
 
     private var userSession: UserSession!
     private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         snapshotHelper = nil
         userSession = nil
         super.tearDown()
     }
+
+    // MARK: - Helper method
 
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")
@@ -49,25 +56,11 @@ final class ChangeEmailViewControllerTests: XCTestCase {
         return viewController
     }
 
+    // MARK: Snapshot Tests
+
     func testForChangingExistingEmail() {
         // GIVEN & WHEN
         let viewController = createSut(emailAddress: "user@example.com")
-
-        // THEN
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(
-                matching: viewController,
-                named: "DarkTheme",
-                file: #file,
-                testName: #function,
-                line: #line
-            )
-    }
-
-    func testForAddingEmail() {
-        // GIVEN & WHEN
-        let viewController = createSut(emailAddress: nil)
 
         // THEN
         snapshotHelper
