@@ -8,8 +8,8 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireUtilitiesPackage", type: .dynamic, targets: ["WireUtilitiesPkg"]),
-        .library(name: "WireUtilitiesPackageSupport", type: .dynamic, targets: ["WireUtilitiesPkgSupport"])
+        .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPkg"]),
+        .library(name: "WireUtilitiesPackageSupport", targets: ["WireUtilitiesPkgSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
