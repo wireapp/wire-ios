@@ -23,10 +23,10 @@ import XCTest
 
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
-    var sut: ServiceDetailViewController!
-    var serviceUser: MockServiceUserType!
-    var groupConversation: ZMConversation!
-    var mockSelfUser: MockUserType!
+    private var sut: ServiceDetailViewController!
+    private var serviceUser: MockServiceUserType!
+    private var groupConversation: ZMConversation!
+    private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

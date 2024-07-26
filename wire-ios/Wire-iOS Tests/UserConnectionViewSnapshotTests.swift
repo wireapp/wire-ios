@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+import WireUITesting
 import XCTest
 
+@testable import Wire
+
+// MARK: - Helper
+
 extension UIView {
+
     func layoutForTest(in size: CGSize = CGSize(width: 320, height: 480)) {
         let fittingSize = self.systemLayoutSizeFitting(size)
         self.frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
@@ -31,9 +35,39 @@ extension UIView {
     }
 }
 
-final class UserConnectionViewTests: XCTestCase {
+// MARK: - UserConnectionViewSnapshotTests
 
-    func sutForUser(_ mockUser: MockUserType = SwiftMockLoader.mockUsers().first!, isFederated: Bool = false) -> UserConnectionView {
+final class UserConnectionViewSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockUser: MockUserType!
+    private var sut: UserConnectionView!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+        accentColor = .purple
+        mockUser = SwiftMockLoader.mockUsers().first!
+        sut = sutForUser(mockUser)
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        mockUser = nil
+        sut = nil
+
+        super.tearDown()
+    }
+
+    // MARK: - Helper Method
+
+    func sutForUser(_ mockUser: MockUserType, isFederated: Bool = false) -> UserConnectionView {
         mockUser.isPendingApprovalByOtherUser = true
         mockUser.isPendingApprovalBySelfUser = false
         mockUser.isConnected = false
@@ -46,29 +80,25 @@ final class UserConnectionViewTests: XCTestCase {
         return connectionView
     }
 
-    override func setUp() {
-        super.setUp()
-        accentColor = .purple
-    }
+    // MARK: - Snapshot Tests
 
     func testWithUserName() {
-        let sut = sutForUser()
         sut.layoutForTest()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testWithUserName_Federated() {
-        let sut = sutForUser(isFederated: true)
+        sut = sutForUser(mockUser, isFederated: true)
         sut.layoutForTest()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testWithoutUserName() {
         // The last mock user does not have a handle
-        let user = SwiftMockLoader.mockUsers().last!
-        let sut = sutForUser(user)
+        mockUser = SwiftMockLoader.mockUsers().last!
+        sut = sutForUser(mockUser)
         sut.layoutForTest()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }
