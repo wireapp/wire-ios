@@ -17,8 +17,6 @@
 //
 
 @import WireSystem;
-@import WireSystemPackage;
-
 #import "NSData+WireTesting.h"
 #import <zlib.h>
 

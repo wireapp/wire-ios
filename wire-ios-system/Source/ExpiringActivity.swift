@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireSystemPackage
 
 protocol ExpiringActivityInterface {
 

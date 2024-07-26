@@ -18,7 +18,6 @@
 
 import Foundation
 import os.log
-import WireSystemPackage
 import ZipArchive
 
 /// Represents an entry to be logged.

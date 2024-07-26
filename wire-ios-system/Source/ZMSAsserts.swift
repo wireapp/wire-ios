@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystemPackage
 import Foundation
 
 /// Reports an error and terminates the application

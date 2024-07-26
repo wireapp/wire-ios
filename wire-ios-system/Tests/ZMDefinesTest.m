@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <WireSystem/WireSystem-Swift.h>
-#import <WireSystem/ZMSAsserts.h>
-@import WireSystemPackage;
+@import WireSystem;
 @import XCTest;
 
 @interface ZMDefinesTest : XCTestCase

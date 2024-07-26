@@ -19,7 +19,6 @@
 @import CoreGraphics;
 @import ImageIO;
 @import WireSystem;
-@import WireSystemPackage;
 @import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE

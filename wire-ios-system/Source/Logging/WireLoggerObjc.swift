@@ -16,32 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import WireSystem
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+public final class WireLoggerObjc: NSObject {
 
-final class TimePointTests: XCTestCase {
-
-    func testThatATimePointDoesNotWarnTooEarly() {
-
-        // Given
-        let tp = TimePoint(interval: 1000)
-
-        // Then
-        XCTAssertFalse(tp.warnIfLongerThanInterval())
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
     }
 
-    func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
+    @objc(logReceivedUpdateEventWithId:)
+    static func logReceivedUpdateEvent(eventId: String) {
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
+    }
 
-        // Given
-        let tp = TimePoint(interval: 0.01)
-
-        // When
-        let waitExpectation = XCTestExpectation()
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: 0.1)
-
-        // Then
-        XCTAssertTrue(tp.warnIfLongerThanInterval())
+    @objc(logSaveCoreDataError:)
+    static func logSaveCoreData(error: Error) {
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
     }
 }

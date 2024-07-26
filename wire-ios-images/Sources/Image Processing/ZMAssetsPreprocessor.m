@@ -17,7 +17,6 @@
 //
 
 @import WireSystem;
-@import WireSystemPackage;
 
 #import "ZMAssetsPreprocessor.h"
 #import "ZMImageLoadOperation.h"

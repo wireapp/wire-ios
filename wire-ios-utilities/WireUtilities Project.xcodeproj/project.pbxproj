@@ -77,7 +77,6 @@
 		598E86CA2BF4D7AA00FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */; };
 		59E3C25C2BD8053000C95BD7 /* ZMAccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */; };
 		59E3C25E2BD8094900C95BD7 /* ZMAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59ED3ADB2C53BAFB0043ACC4 /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3ADA2C53BAFB0043ACC4 /* WireSystemPackage */; };
 		59F654252BF83DC500E521E0 /* MockUserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
 		5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */; };
@@ -215,16 +214,6 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		59C3F1602C516B8000D1DFED /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		59ED3AD92C53BAE90043ACC4 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -449,7 +438,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */,
-				59ED3ADB2C53BAFB0043ACC4 /* WireSystemPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -939,7 +927,6 @@
 			);
 			name = WireUtilities;
 			packageProductDependencies = (
-				59ED3ADA2C53BAFB0043ACC4 /* WireSystemPackage */,
 			);
 			productName = WireUtilities;
 			productReference = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */;
@@ -974,7 +961,6 @@
 				598E86AF2BF4D64000FC5438 /* Sources */,
 				598E86B02BF4D64000FC5438 /* Frameworks */,
 				598E86B12BF4D64000FC5438 /* Resources */,
-				59ED3AD92C53BAE90043ACC4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -982,8 +968,6 @@
 				598E86BD2BF4D6A900FC5438 /* PBXTargetDependency */,
 			);
 			name = WireUtilitiesSupport;
-			packageProductDependencies = (
-			);
 			productName = Support;
 			productReference = 598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1625,13 +1609,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		59ED3ADA2C53BAFB0043ACC4 /* WireSystemPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSystemPackage;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3E88BD2A1B1F3E8400232589 /* Project object */;
 }
