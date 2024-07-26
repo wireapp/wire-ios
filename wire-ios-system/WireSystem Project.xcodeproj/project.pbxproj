@@ -45,10 +45,6 @@
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
 		59C39F092C21E9480087300D /* TimePointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F082C21E9480087300D /* TimePointTests.swift */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
-		59ED3AC32C53B12C0043ACC4 /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */; };
-		59ED3AC42C53B12C0043ACC4 /* WireSystemPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		59ED3AC62C53B1360043ACC4 /* WireSystemPackageSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */; };
-		59ED3AC72C53B1360043ACC4 /* WireSystemPackageSupport in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
@@ -98,7 +94,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				59ED3AC42C53B12C0043ACC4 /* WireSystemPackage in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,7 +104,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				59ED3AC72C53B1360043ACC4 /* WireSystemPackageSupport in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,7 +182,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59ED3AC32C53B12C0043ACC4 /* WireSystemPackage in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
 				E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */,
 			);
@@ -198,7 +191,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59ED3AC62C53B1360043ACC4 /* WireSystemPackageSupport in Frameworks */,
 				598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */,
 				54A327321B99A3190004EB95 /* WireSystem.framework in Frameworks */,
 			);
@@ -452,7 +444,6 @@
 			name = WireSystem;
 			packageProductDependencies = (
 				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
-				59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -475,7 +466,6 @@
 			);
 			name = "WireSystem Tests";
 			packageProductDependencies = (
-				59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */,
 			);
 			productName = "ZMCSystem-ios Tests";
 			productReference = 54A3272C1B99A3190004EB95 /* WireSystem Tests.xctest */;
@@ -998,14 +988,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
-		};
-		59ED3AC22C53B12C0043ACC4 /* WireSystemPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSystemPackage;
-		};
-		59ED3AC52C53B1360043ACC4 /* WireSystemPackageSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSystemPackageSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
