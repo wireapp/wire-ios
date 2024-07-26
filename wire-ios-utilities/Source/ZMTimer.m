@@ -17,6 +17,8 @@
 //
 
 @import WireSystem;
+@import WireSystemPackage;
+
 #import "ZMTimer.h"
 
 

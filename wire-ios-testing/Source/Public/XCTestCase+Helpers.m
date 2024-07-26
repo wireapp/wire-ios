@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemPackage;
 
 #import "XCTestCase+Helpers.h"
 

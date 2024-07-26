@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemPackage;
 @import OCMock;
 
 #import "ZMTBaseTest.h"
