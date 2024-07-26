@@ -16,31 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
 import XCTest
 
-final class DispatchQueueHelperTests: XCTestCase {
+@testable import WireSystemPackage
 
-    func testThatItEntersAndLeavesADispatchGroup() async {
+final class TimePointTests: XCTestCase {
+
+    func testThatATimePointDoesNotWarnTooEarly() {
+
         // Given
-        let group = ZMSDispatchGroup(label: name)
-        let queue = DispatchQueue(label: name)
-        let groupExpectation = expectation(description: "It should leave the group")
-
-        final class Counter: @unchecked Sendable { var value = 0 }
-        let counter = Counter()
-
-        // When
-        queue.async(group: group) {
-            counter.value = 42
-        }
+        let tp = TimePoint(interval: 1000)
 
         // Then
-        group.notify(on: .main) {
-            XCTAssertEqual(counter.value, 42)
-            groupExpectation.fulfill()
-        }
+        XCTAssertFalse(tp.warnIfLongerThanInterval())
+    }
 
-        await fulfillment(of: [groupExpectation], timeout: 0.1)
+    func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
+
+        // Given
+        let tp = TimePoint(interval: 0.01)
+
+        // When
+        let waitExpectation = XCTestExpectation()
+        waitExpectation.isInverted = true
+        wait(for: [waitExpectation], timeout: 0.1)
+
+        // Then
+        XCTAssertTrue(tp.warnIfLongerThanInterval())
     }
 }

@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireSystem
+@testable import WireSystemPackage
 
 final class PopoverPresentationControllerConfigurationTests: XCTestCase {
 

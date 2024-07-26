@@ -20,7 +20,28 @@ import XCTest
 
 @testable import WireSystemPackage
 
-final class PlaceholderTests: XCTestCase {
+final class DispatchQueueHelperTests: XCTestCase {
 
-    func testNothing() {}
+    func testThatItEntersAndLeavesADispatchGroup() async {
+        // Given
+        let group = ZMSDispatchGroup(label: name)
+        let queue = DispatchQueue(label: name)
+        let groupExpectation = expectation(description: "It should leave the group")
+
+        final class Counter: @unchecked Sendable { var value = 0 }
+        let counter = Counter()
+
+        // When
+        queue.async(group: group) {
+            counter.value = 42
+        }
+
+        // Then
+        group.notify(on: .main) {
+            XCTAssertEqual(counter.value, 42)
+            groupExpectation.fulfill()
+        }
+
+        await fulfillment(of: [groupExpectation], timeout: 0.1)
+    }
 }

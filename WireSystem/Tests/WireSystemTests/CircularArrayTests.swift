@@ -18,30 +18,37 @@
 
 import XCTest
 
-@testable import WireSystem
+@testable import WireSystemPackage
 
-final class TimePointTests: XCTestCase {
+final class CircularArrayTests: XCTestCase {
 
-    func testThatATimePointDoesNotWarnTooEarly() {
+    func testThatItReturnsContentWhenNotWrapping() {
 
-        // Given
-        let tp = TimePoint(interval: 1000)
+        // GIVEN
+        var sut = CircularArray<String>(size: 5)
 
-        // Then
-        XCTAssertFalse(tp.warnIfLongerThanInterval())
+        // WHEN
+        sut.add("A")
+        sut.add("B")
+
+        // THEN
+        XCTAssertEqual(sut.content, ["A", "B"])
     }
 
-    func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
+    func testThatItReturnsContentWhenWrapping() {
 
-        // Given
-        let tp = TimePoint(interval: 0.01)
+        // GIVEN
+        var sut = CircularArray<Int>(size: 3)
 
-        // When
-        let waitExpectation = XCTestExpectation()
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: 0.1)
+        // WHEN
+        sut.add(1)
+        sut.add(2)
+        sut.add(3)
+        sut.add(4)
+        sut.add(5)
+        sut.add(6)
 
-        // Then
-        XCTAssertTrue(tp.warnIfLongerThanInterval())
+        // THEN
+        XCTAssertEqual(sut.content, [4, 5, 6])
     }
 }

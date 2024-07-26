@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSystem
 import XCTest
 
-class ZMLogTests: XCTestCase {
+@testable import WireSystemPackage
+
+final class ZMLogTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
