@@ -361,13 +361,23 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
+<<<<<<< HEAD
         await eventMOC.performGrouped {
             storedEvents.forEach { storedEvent in
                 self.eventMOC.delete(storedEvent)
                 WireLogger.eventProcessing.info("delete stored event", attributes: [.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"], .safePublic)
+=======
+        await eventMOC.perform { [eventMOC] in
+            storedEvents.forEach { storedEvent in
+                eventMOC.delete(storedEvent)
+                WireLogger.eventProcessing.info(
+                    "delete stored event",
+                    attributes: [LogAttributesKey.eventId.rawValue: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"]
+                )
+>>>>>>> 076feb5fde (fix: delete stored events using await - WPB-10177 (#1749))
             }
             do {
-                try self.eventMOC.save()
+                try eventMOC.save()
             } catch {
                 WireLogger.eventProcessing.critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
             }
