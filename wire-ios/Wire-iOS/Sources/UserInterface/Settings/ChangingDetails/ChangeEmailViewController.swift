@@ -22,20 +22,27 @@ import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
 
+    // MARK: - Types
+
     typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
 
+    // MARK: - Properties
+
+    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     private let viewModel: ChangeEmailViewModel
     private var observerToken: Any?
 
     private let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
 
-    let userSession: UserSession
+    private let userSession: UserSession
+
+    // MARK: - Init
 
     init(user: UserType, userSession: UserSession) {
         self.userSession = userSession
         self.viewModel = ChangeEmailViewModel(
             currentEmail: user.emailAddress,
-            userProfile: ZMUserSession.shared()?.userProfile
+            userProfile: userProfile
         )
         super.init(style: .grouped)
         setupViews()
@@ -45,6 +52,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Override methods
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -59,7 +68,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
 
-        observerToken = ZMUserSession.shared()?.userProfile.add(observer: self)
+        observerToken = userProfile?.add(observer: self)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -71,6 +80,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         super.viewWillDisappear(animated)
         observerToken = nil
     }
+
+    // MARK: - Setup Views
 
     private func setupViews() {
         view.backgroundColor = .clear
@@ -86,6 +97,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
         updateSaveButtonState()
     }
+
+    // MARK: - Actions
 
     func updateSaveButtonState() {
         navigationItem.rightBarButtonItem?.isEnabled = viewModel.state.isValid
@@ -117,6 +130,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         }
     }
 
+    // MARK: - SettingsBaseTableViewController
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -131,7 +146,10 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 }
 
+// MARK: - UserProfileUpdateObserver
+
 extension ChangeEmailViewController: UserProfileUpdateObserver {
+
     func emailUpdateDidFail(_ error: Error!) {
         navigationController?.isLoadingViewVisible = false
         updateSaveButtonState()
@@ -143,6 +161,8 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
     }
 }
 
+// MARK: - ConfirmEmailDelegate
+
 extension ChangeEmailViewController: ConfirmEmailDelegate {
     func didConfirmEmail(inController controller: ConfirmEmailViewController) {
         _ = navigationController?.popToPrevious(of: self)
@@ -152,6 +172,8 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
         requestEmailUpdate(showLoadingView: false)
     }
 }
+
+// MARK: - TextFieldValidationDelegate
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
     @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
