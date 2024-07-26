@@ -24,8 +24,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
 
-    private weak var userProfile = ZMUserSession.shared()?.userProfile
-    var state: ChangeEmailState
+    private let viewModel: ChangeEmailViewModel
     private var observerToken: Any?
 
     private let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
@@ -34,7 +33,10 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     init(user: UserType, userSession: UserSession) {
         self.userSession = userSession
-        self.state = ChangeEmailState(currentEmail: user.emailAddress)
+        self.viewModel = ChangeEmailViewModel(
+            currentEmail: user.emailAddress,
+            userProfile: ZMUserSession.shared()?.userProfile
+        )
         super.init(style: .grouped)
         setupViews()
     }
@@ -57,7 +59,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
 
-        observerToken = userProfile?.add(observer: self)
+        observerToken = ZMUserSession.shared()?.userProfile.add(observer: self)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -85,12 +87,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         updateSaveButtonState()
     }
 
-    func updateSaveButtonState(enabled: Bool? = nil) {
-        if let enabled {
-            navigationItem.rightBarButtonItem?.isEnabled = enabled
-        } else {
-            navigationItem.rightBarButtonItem?.isEnabled = state.isValid
-        }
+    func updateSaveButtonState() {
+        navigationItem.rightBarButtonItem?.isEnabled = viewModel.state.isValid
     }
 
     func saveButtonTapped() {
@@ -98,15 +96,24 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func requestEmailUpdate(showLoadingView: Bool) {
-        guard let email = state.validatedEmail else { return }
+        navigationController?.isLoadingViewVisible = showLoadingView
+        viewModel.requestEmailUpdate { [weak self] result in
+            guard let self = self else { return }
+            self.navigationController?.isLoadingViewVisible = false
+            switch result {
+            case .success:
+                self.handleEmailUpdateSuccess()
+            case .failure(let error):
+                self.showAlert(for: error)
+            }
+        }
+    }
 
-        do {
-            try userProfile?.requestEmailChange(email: email)
-            updateSaveButtonState(enabled: false)
-            navigationController?.isLoadingViewVisible = showLoadingView
-        } catch {
-            // Handle error
-            print("Failed to request email change: \(error)")
+    private func handleEmailUpdateSuccess() {
+        updateSaveButtonState()
+        if let newEmail = viewModel.state.newEmail {
+            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            navigationController?.pushViewController(confirmController, animated: true)
         }
     }
 
@@ -119,7 +126,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        emailCell.textField.text = state.visibleEmail
+        emailCell.textField.text = viewModel.state.visibleEmail
         return emailCell
     }
 }
@@ -132,12 +139,7 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
     }
 
     func didSendVerificationEmail() {
-        navigationController?.isLoadingViewVisible = false
-        updateSaveButtonState()
-        if let newEmail = state.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
-            navigationController?.pushViewController(confirmController, animated: true)
-        }
+        handleEmailUpdateSuccess()
     }
 }
 
@@ -153,12 +155,13 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
     @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
-        state.newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
+        viewModel.updateNewEmail(newEmail)
         sender.validateInput()
     }
 
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
-        state.emailValidationError = error
+        viewModel.updateEmailValidationError(error)
         updateSaveButtonState()
     }
 }

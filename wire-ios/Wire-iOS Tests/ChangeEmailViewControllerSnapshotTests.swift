@@ -25,7 +25,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var userSession: UserSession!
+    private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
@@ -51,7 +51,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
         mockUser.emailAddress = emailAddress
 
         let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
-        let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        let viewController = sut.wrapInNavigationController()
 
         return viewController
     }
