@@ -33,7 +33,6 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockConversation = MockGroupDetailsConversation()
