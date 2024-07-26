@@ -21,7 +21,6 @@ import WireUITesting
 import XCTest
 
 @testable import Wire
-import WireSyncEngineSupport
 
 final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
