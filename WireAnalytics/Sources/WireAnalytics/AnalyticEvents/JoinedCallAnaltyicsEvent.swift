@@ -21,7 +21,7 @@ public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
 
     /// The name of the event.
     public var eventName: String {
-        "callJoined"
+        "calling.joined_call"
     }
 
     /// Additional segmentation data for the event.
