@@ -3,11 +3,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "WireAPI",
+    name: "WireAPIPackage",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireAPI", targets: ["WireAPI"]),
-        .library(name: "WireAPISupport", targets: ["WireAPISupport"])
+        .library(name: "WireAPIPackage", type: .dynamic, targets: ["WireAPI"]),
+        .library(name: "WireAPISupportPackage", type: .dynamic, targets: ["WireAPISupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),

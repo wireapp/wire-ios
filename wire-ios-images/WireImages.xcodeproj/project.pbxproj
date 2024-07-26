@@ -431,6 +431,8 @@
 			dependencies = (
 			);
 			name = "WireImages-ios";
+			packageProductDependencies = (
+			);
 			productName = "zimages-ios";
 			productReference = 0969600C1B663E7B006DF53B /* WireImages.framework */;
 			productType = "com.apple.product-type.framework";
