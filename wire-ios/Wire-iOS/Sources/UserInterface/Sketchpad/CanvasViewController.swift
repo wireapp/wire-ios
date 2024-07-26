@@ -121,7 +121,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     func configureNavigationItems() {
         let undoImage = StyleKitIcon.undo.makeImage(size: .tiny, color: .black)
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.dismiss(animated: true, completion: nil)
         }, accessibilityLabel: L10n.Accessibility.Sketch.CloseButton.description)
 
