@@ -122,6 +122,12 @@
       location = "group:WireAPI">
    </FileRef>
    <FileRef
+      location = "group:WireMacros">
+   </FileRef>
+   <FileRef
       location = "group:SourceryPlugin">
+   </FileRef>
+   <FileRef
+      location = "group:WireMacros/Tests/WireMacrosTests/WireMacros.xctestplan">
    </FileRef>
 </Workspace>
