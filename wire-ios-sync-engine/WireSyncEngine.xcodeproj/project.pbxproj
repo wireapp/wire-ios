@@ -11,8 +11,6 @@
 		0145AE842B1154010097E3B8 /* WireSyncEngineSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0145AE8B2B1155690097E3B8 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549815931A43232400A7CE2E /* WireSyncEngine.framework */; };
 		0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
-		015519462C20D20800037358 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015519452C20D20800037358 /* WireDomain.framework */; };
-		0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0155194D2C20D29400037358 /* WireDomainSupport.framework */; };
 		017ABBB62995278C0004C243 /* SlowSyncTests+NotificationsV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */; };
 		018A3DBC2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */; };
 		018A3DBF2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */; };
@@ -383,11 +381,8 @@
 		59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */; };
 		59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE92B908E150019B726 /* SecurityClassification.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
-		598546DE2C53906300757CA6 /* WireAPIPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 598546DD2C53906300757CA6 /* WireAPIPackage */; };
-		598546E22C53907700757CA6 /* WireAPIPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 598546E12C53907700757CA6 /* WireAPIPackage */; };
-		598546E32C53907700757CA6 /* WireAPIPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 598546E12C53907700757CA6 /* WireAPIPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		598546E52C53907700757CA6 /* WireAPISupportPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 598546E42C53907700757CA6 /* WireAPISupportPackage */; };
-		598546E62C53907700757CA6 /* WireAPISupportPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 598546E42C53907700757CA6 /* WireAPISupportPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		598546F42C539CF900757CA6 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598546F32C539CF900757CA6 /* WireDomain.framework */; };
+		598546F82C539D1000757CA6 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598546F72C539D1000757CA6 /* WireDomainSupport.framework */; };
 		598E87022BF4DE9600FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */; };
 		598E87052BF4E01300FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */; };
 		5996E88F2C19CAF3007A52F0 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
@@ -400,6 +395,7 @@
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
 		59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */; };
 		59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9192B4EE62100DBCC6B /* RecurringAction+dummy.swift */; };
+		59ED3AB62C53A1CE0043ACC4 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AB52C53A1CE0043ACC4 /* WireAPI */; };
 		5E0EB1F421008C1900B5DC2B /* CompanyLoginRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EB1F321008C1900B5DC2B /* CompanyLoginRequester.swift */; };
 		5E0EB1F72100A14A00B5DC2B /* CompanyLoginRequesterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EB1F52100A13200B5DC2B /* CompanyLoginRequesterTests.swift */; };
 		5E0EB1F92100A46F00B5DC2B /* MockCompanyLoginRequesterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EB1F82100A46F00B5DC2B /* MockCompanyLoginRequesterDelegate.swift */; };
@@ -777,7 +773,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		598546E02C53906300757CA6 /* Embed Frameworks */ = {
+		598547012C539EC400757CA6 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -787,14 +783,12 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		598546E72C53907700757CA6 /* Embed Frameworks */ = {
+		59ED3AB82C53A1CE0043ACC4 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				598546E32C53907700757CA6 /* WireAPIPackage in Embed Frameworks */,
-				598546E62C53907700757CA6 /* WireAPISupportPackage in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -805,9 +799,6 @@
 		01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Proxy.swift"; sourceTree = "<group>"; };
 		0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSyncEngineSupport.h; sourceTree = "<group>"; };
-		015519452C20D20800037358 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		015519492C20D25300037358 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		0155194D2C20D29400037358 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SlowSyncTests+NotificationsV3.swift"; sourceTree = "<group>"; };
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1140,6 +1131,8 @@
 		59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassificationProviding.swift; sourceTree = "<group>"; };
 		59271BE92B908E150019B726 /* SecurityClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassification.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
+		598546F32C539CF900757CA6 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598546F72C539D1000757CA6 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5996E89B2C19CF54007A52F0 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -1609,11 +1602,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */,
+				598546F82C539D1000757CA6 /* WireDomainSupport.framework in Frameworks */,
 				5996E8922C19CB28007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */,
-				598546E22C53907700757CA6 /* WireAPIPackage in Frameworks */,
-				598546E52C53907700757CA6 /* WireAPISupportPackage in Frameworks */,
 				0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				54F4DC5A1A4438B300FDB6EA /* WireSyncEngine.framework in Frameworks */,
 				59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */,
@@ -1625,12 +1616,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59ED3AB62C53A1CE0043ACC4 /* WireAPI in Frameworks */,
 				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
-				015519462C20D20800037358 /* WireDomain.framework in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
+				598546F42C539CF900757CA6 /* WireDomain.framework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
-				598546DE2C53906300757CA6 /* WireAPIPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2012,9 +2003,8 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0155194D2C20D29400037358 /* WireDomainSupport.framework */,
-				015519492C20D25300037358 /* WireDomainSupport.framework */,
-				015519452C20D20800037358 /* WireDomain.framework */,
+				598546F72C539D1000757CA6 /* WireDomainSupport.framework */,
+				598546F32C539CF900757CA6 /* WireDomain.framework */,
 				59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */,
 				EE668BB92954AA9300D939E7 /* WireMockTransport.framework */,
 				EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */,
@@ -3136,7 +3126,7 @@
 				3E1860BF191A649D000FE027 /* Sources */,
 				3E1860C0191A649D000FE027 /* Frameworks */,
 				3E1860C1191A649D000FE027 /* Resources */,
-				598546E72C53907700757CA6 /* Embed Frameworks */,
+				598547012C539EC400757CA6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3148,8 +3138,6 @@
 			);
 			name = UnitTests;
 			packageProductDependencies = (
-				598546E12C53907700757CA6 /* WireAPIPackage */,
-				598546E42C53907700757CA6 /* WireAPISupportPackage */,
 			);
 			productName = "WireSyncEngine-iOS-Tests";
 			productReference = 3E1860C3191A649D000FE027 /* UnitTests.xctest */;
@@ -3163,7 +3151,7 @@
 				5498158E1A43232400A7CE2E /* Sources */,
 				5498158F1A43232400A7CE2E /* Frameworks */,
 				549815911A43232400A7CE2E /* Resources */,
-				598546E02C53906300757CA6 /* Embed Frameworks */,
+				59ED3AB82C53A1CE0043ACC4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3171,7 +3159,7 @@
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
-				598546DD2C53906300757CA6 /* WireAPIPackage */,
+				59ED3AB52C53A1CE0043ACC4 /* WireAPI */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -4576,17 +4564,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		598546DD2C53906300757CA6 /* WireAPIPackage */ = {
+		59ED3AB52C53A1CE0043ACC4 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireAPIPackage;
-		};
-		598546E12C53907700757CA6 /* WireAPIPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAPIPackage;
-		};
-		598546E42C53907700757CA6 /* WireAPISupportPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAPISupportPackage;
+			productName = WireAPI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

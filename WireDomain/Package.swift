@@ -14,10 +14,10 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
-        .package(name: "WireAPIPackage", path: "../WireAPI")
+        .package(name: "WireAPI", path: "../WireAPI")
     ],
     targets: [
-        .target(name: "WireDomainPkg", dependencies: ["WireAPIPackage"], path: "./Sources/Package", swiftSettings: swiftSettings),
+        .target(name: "WireDomainPkg", dependencies: ["WireAPI"], path: "./Sources/Package", swiftSettings: swiftSettings),
         .testTarget(name: "WireDomainPkgTests", dependencies: ["WireDomainPkg"], path: "./Tests/PackageTests"),
 
         .target(
