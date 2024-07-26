@@ -17,6 +17,8 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
+
 #import "NSData+ZMSCrypto.h"
 #import <CommonCrypto/CommonCrypto.h>
 

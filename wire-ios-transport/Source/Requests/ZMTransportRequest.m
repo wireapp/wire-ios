@@ -18,6 +18,7 @@
 
 @import WireUtilities;
 @import WireSystem;
+@import WireSystemObjC;
 @import ImageIO;
 @import MobileCoreServices;
 @import UniformTypeIdentifiers;

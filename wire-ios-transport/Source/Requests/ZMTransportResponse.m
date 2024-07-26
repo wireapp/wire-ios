@@ -19,10 +19,9 @@
 @import ImageIO;
 @import MobileCoreServices;
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "ZMTransportResponse.h"
-
-
 #import "ZMTransportData.h"
 #import "ZMTransportCodec.h"
 #import "ZMTransportSession.h"

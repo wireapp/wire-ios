@@ -17,9 +17,9 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "NSString+Normalization.h"
-
 
 @implementation NSString (Normalization)
 

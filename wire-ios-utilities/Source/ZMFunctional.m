@@ -17,6 +17,8 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
+
 #import "ZMFunctional.h"
 
 @implementation NSArray (ZMFunctional)

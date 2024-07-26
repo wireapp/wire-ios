@@ -17,7 +17,9 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 @import WireUtilities;
+
 #import "ZMWebSocket.h"
 #import "ZMWebSocketHandshake.h"
 #import "ZMWebSocketFrame.h"

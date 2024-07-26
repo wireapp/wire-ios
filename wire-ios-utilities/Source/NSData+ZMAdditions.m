@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
 @import CommonCrypto;
+@import WireSystem;
+@import WireSystemObjC;
 
 #import "NSData+ZMAdditions.h"
 #import <zlib.h>

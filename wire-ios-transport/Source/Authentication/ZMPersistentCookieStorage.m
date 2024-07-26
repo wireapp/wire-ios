@@ -18,6 +18,7 @@
 
 @import Security;
 @import WireSystem;
+@import WireSystemObjC;
 @import WireUtilities;
 @import UIKit;
 

@@ -19,6 +19,7 @@
 @import CoreGraphics;
 @import ImageIO;
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "ZMImageLoadOperation.h"
 

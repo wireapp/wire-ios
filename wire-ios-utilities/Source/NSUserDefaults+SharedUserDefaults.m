@@ -17,6 +17,7 @@
 //
 
 @import WireSystem;
+@import WireSystemObjC;
 
 #import "NSUserDefaults+SharedUserDefaults.h"
 #import <CommonCrypto/CommonCrypto.h>
