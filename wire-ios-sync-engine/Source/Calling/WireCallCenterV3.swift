@@ -533,7 +533,7 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
-            guard conversation.avsConversationType.isOne(of: .mlsConference, .oneToOne) else { return }
+            guard conversation.avsConversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -614,7 +614,7 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             break
         case .mls:
-            guard conversationType.isOne(of: .mlsConference, .oneToOne) else { return }
+            guard conversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -1035,13 +1035,13 @@ private extension ZMConversation {
     }
 
     private var avsConversationTypeForOneOnOne: AVSConversationType {
-        guard
-            let context = managedObjectContext,
-            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
-            featureConfig.useSFTForOneToOneCalls
-        else {
-            return .oneToOne
-        }
+//        guard
+//            let context = managedObjectContext,
+//            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
+//            featureConfig.useSFTForOneToOneCalls
+//        else {
+//            return .oneToOne
+//        }
 
         switch messageProtocol {
         case .mls:
