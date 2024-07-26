@@ -25,7 +25,3 @@ FOUNDATION_EXPORT double ZMSystemVersionNumber;
 FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <ZMSystem/PublicHeader.h>
-
-#import <WireSystem/ZMSAsserts.h>
-#import <WireSystem/ZMSDefines.h>
-#import <WireSystem/ZMSLogging.h>

@@ -24,4 +24,6 @@ FOUNDATION_EXPORT double WireSystemObjCVersionNumber;
 //! Project version string for WireSystemObjC.
 FOUNDATION_EXPORT const unsigned char WireSystemObjCVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <WireSystemObjC/PublicHeader.h>
+#import <WireSystemObjC/ZMSAsserts.h>
+#import <WireSystemObjC/ZMSDefines.h>
+#import <WireSystemObjC/ZMSLogging.h>

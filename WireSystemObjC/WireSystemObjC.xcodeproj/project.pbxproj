@@ -11,6 +11,9 @@
 		59F83E452C53EBF600AE09E4 /* WireSystemObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F83E422C53EBF600AE09E4 /* WireSystemObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59F83E512C53ECA600AE09E4 /* WireSystemObjCPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F83E4F2C53ECA600AE09E4 /* WireSystemObjCPlaceholder.h */; };
 		59F83E522C53ECA600AE09E4 /* WireSystemObjCPlaceholder.m in Sources */ = {isa = PBXBuildFile; fileRef = 59F83E502C53ECA600AE09E4 /* WireSystemObjCPlaceholder.m */; };
+		59F83E562C53EDFA00AE09E4 /* ZMSDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F83E532C53EDFA00AE09E4 /* ZMSDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59F83E572C53EDFA00AE09E4 /* ZMSAsserts.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F83E542C53EDFA00AE09E4 /* ZMSAsserts.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59F83E582C53EDFA00AE09E4 /* ZMSLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F83E552C53EDFA00AE09E4 /* ZMSLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +22,9 @@
 		59F83E432C53EBF600AE09E4 /* WireSystemObjC.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireSystemObjC.docc; sourceTree = "<group>"; };
 		59F83E4F2C53ECA600AE09E4 /* WireSystemObjCPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSystemObjCPlaceholder.h; sourceTree = "<group>"; };
 		59F83E502C53ECA600AE09E4 /* WireSystemObjCPlaceholder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireSystemObjCPlaceholder.m; sourceTree = "<group>"; };
+		59F83E532C53EDFA00AE09E4 /* ZMSDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSDefines.h; sourceTree = "<group>"; };
+		59F83E542C53EDFA00AE09E4 /* ZMSAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAsserts.h; sourceTree = "<group>"; };
+		59F83E552C53EDFA00AE09E4 /* ZMSLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSLogging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +61,9 @@
 				59F83E432C53EBF600AE09E4 /* WireSystemObjC.docc */,
 				59F83E4F2C53ECA600AE09E4 /* WireSystemObjCPlaceholder.h */,
 				59F83E502C53ECA600AE09E4 /* WireSystemObjCPlaceholder.m */,
+				59F83E542C53EDFA00AE09E4 /* ZMSAsserts.h */,
+				59F83E532C53EDFA00AE09E4 /* ZMSDefines.h */,
+				59F83E552C53EDFA00AE09E4 /* ZMSLogging.h */,
 			);
 			path = WireSystemObjC;
 			sourceTree = "<group>";
@@ -67,7 +76,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				59F83E452C53EBF600AE09E4 /* WireSystemObjC.h in Headers */,
+				59F83E572C53EDFA00AE09E4 /* ZMSAsserts.h in Headers */,
 				59F83E512C53ECA600AE09E4 /* WireSystemObjCPlaceholder.h in Headers */,
+				59F83E582C53EDFA00AE09E4 /* ZMSLogging.h in Headers */,
+				59F83E562C53EDFA00AE09E4 /* ZMSDefines.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

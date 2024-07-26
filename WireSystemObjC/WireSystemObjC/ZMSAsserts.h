@@ -16,34 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
 #import <AssertMacros.h>
-
-#import <WireSystem/ZMSDefines.h>
-
-/**
- 
- Asserts and checks.
- 
- 
- There are 3 kinds: Require, Verify, and Check. Require is a _hard_ check that will cause the app to stop / crash if it fails. Verify is graceful by either causing an action or logging a string. Check has no other side effects and are pulled out in production.
- 
- Any check that fails will funnel through ZMLogDebugger(). Setting a symbolic breakpoint on that function will cause the debugger to stop on any check failing.
- 
- Require(assertion)
- RequireString(assertion, frmt, ...)
- 
- VerifyAction(assertion, action)
- VerifyReturn(assertion)
- VerifyReturnValue(assertion, value)
- VerifyReturnNil(assertion)
- VerifyString(assertion, frmt, ...)
- 
- Check(assertion)
- CheckString(assertion, frmt, ...)
- 
- */
-
+#import <WireSystemObjC/ZMSDefines.h>
 
 #define Require(assertion) do { \
     if ( __builtin_expect(!(assertion), 0) ) { \
