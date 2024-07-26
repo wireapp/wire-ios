@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireSystemPackage
 
 @testable import WireSystem
 
