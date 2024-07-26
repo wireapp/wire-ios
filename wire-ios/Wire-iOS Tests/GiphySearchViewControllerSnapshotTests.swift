@@ -17,7 +17,7 @@
 //
 
 import WireDesign
-import WireTestingPkg
+import WireUITesting
 import XCTest
 import Ziphy
 

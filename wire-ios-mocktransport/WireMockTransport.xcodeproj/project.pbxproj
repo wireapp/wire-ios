@@ -826,8 +826,6 @@
 			dependencies = (
 			);
 			name = WireMockTransport;
-			packageProductDependencies = (
-			);
 			productName = WireMockTransport;
 			productReference = 54C902331B7532DD007162A8 /* WireMockTransport.framework */;
 			productType = "com.apple.product-type.framework";

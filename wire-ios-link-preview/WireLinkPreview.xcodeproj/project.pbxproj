@@ -416,8 +416,6 @@
 			dependencies = (
 			);
 			name = WireLinkPreview;
-			packageProductDependencies = (
-			);
 			productName = WireLinkPreview;
 			productReference = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */;
 			productType = "com.apple.product-type.framework";

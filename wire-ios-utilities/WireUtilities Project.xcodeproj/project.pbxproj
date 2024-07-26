@@ -213,16 +213,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		59C3F1602C516B8000D1DFED /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F1D567B4207BA4E800CCDD77 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -919,15 +909,12 @@
 				3E88BD331B1F3EA300232589 /* Sources */,
 				3E88BD341B1F3EA300232589 /* Frameworks */,
 				3E88BD361B1F3EA300232589 /* Resources */,
-				59C3F1602C516B8000D1DFED /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = WireUtilities;
-			packageProductDependencies = (
-			);
 			productName = WireUtilities;
 			productReference = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */;
 			productType = "com.apple.product-type.framework";

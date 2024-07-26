@@ -577,8 +577,6 @@
 			dependencies = (
 			);
 			name = WireCryptobox;
-			packageProductDependencies = (
-			);
 			productName = "Cryptobox-ios";
 			productReference = 0928E2341BA0777A0057232E /* WireCryptobox.framework */;
 			productType = "com.apple.product-type.framework";

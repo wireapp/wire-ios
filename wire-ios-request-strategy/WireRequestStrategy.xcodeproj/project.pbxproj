@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -192,8 +192,8 @@
 		597B70C92B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */; };
 		597B70CC2B03CC83006C2121 /* UpdateConversationProtocolActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */; };
 		598E870D2BF4E08100FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */; };
+		598E870E2BF4E08100FC5438 /* WireUtilitiesSupport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59D1C3122B1DF3AD0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3112B1DF3AD0016F6B2 /* WireDataModelSupport.framework */; };
-		59ED3AB32C53A1BE0043ACC4 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59ED3AB22C53A1BE0043ACC4 /* WireAPI */; };
 		5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68F22622452CDC00298376 /* LinkPreprocessor.swift */; };
 		5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4DD2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift */; };
 		5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4DF2243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift */; };
@@ -302,6 +302,7 @@
 		EE0CEB462893E9390055ECE5 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */; };
 		EE0DE5062A24D4F70029746C /* DeleteSubgroupActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE5052A24D4F70029746C /* DeleteSubgroupActionHandler.swift */; };
 		EE0DE5082A24D9C20029746C /* DeleteSubgroupActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE5072A24D9C20029746C /* DeleteSubgroupActionHandlerTests.swift */; };
+		EE13BD862BC93A19006561F8 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE13BD852BC93A19006561F8 /* WireAPI */; };
 		EE19CE212AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE19CE202AEBE52F00CB8641 /* SyncMLSOneToOneConversationActionHandler.swift */; };
 		EE19CE232AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE19CE222AEBE56F00CB8641 /* SyncMLSOneToOneConversationActionHandlerTests.swift */; };
 		EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */; };
@@ -451,22 +452,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		598546DC2C53904800757CA6 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BF7D9BD21D8C312F00949267 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				598E870E2BF4E08100FC5438 /* WireUtilitiesSupport.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -963,7 +955,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59ED3AB32C53A1BE0043ACC4 /* WireAPI in Frameworks */,
+				EE13BD862BC93A19006561F8 /* WireAPI in Frameworks */,
 				EE668BB22954A7C700D939E7 /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2191,7 +2183,6 @@
 				166901651D707509000FE4AF /* Sources */,
 				166901661D707509000FE4AF /* Frameworks */,
 				166901681D707509000FE4AF /* Resources */,
-				598546DC2C53904800757CA6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2199,7 +2190,7 @@
 			);
 			name = WireRequestStrategy;
 			packageProductDependencies = (
-				59ED3AB22C53A1BE0043ACC4 /* WireAPI */,
+				EE13BD852BC93A19006561F8 /* WireAPI */,
 			);
 			productName = WireRequestStrategy;
 			productReference = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */;
@@ -2221,8 +2212,6 @@
 				F154EDD71F447BB600CB8184 /* PBXTargetDependency */,
 			);
 			name = WireRequestStrategyTests;
-			packageProductDependencies = (
-			);
 			productName = WireRequestStrategyTests;
 			productReference = 166901741D707509000FE4AF /* WireRequestStrategyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -2270,9 +2259,8 @@
 		166901611D707509000FE4AF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = "Wire GmbH";
 				TargetAttributes = {
 					166901691D707509000FE4AF = {
@@ -2325,6 +2313,7 @@
 			);
 			mainGroup = 166901601D707509000FE4AF;
 			packageReferences = (
+				EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */,
 			);
 			productRefGroup = 1669016B1D707509000FE4AF /* Products */;
 			projectDirPath = "";
@@ -2878,12 +2867,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E47FED207E0B72008D4299 /* project-debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				ENABLE_MODULE_VERIFIER = YES;
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 			};
 			name = Debug;
 		};
@@ -2891,12 +2876,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E47FE9207E0B72008D4299 /* project.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				ENABLE_MODULE_VERIFIER = YES;
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 			};
 			name = Release;
 		};
@@ -2908,7 +2889,6 @@
 					x86_64,
 					arm64,
 				);
-				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = Resources/Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
@@ -2920,7 +2900,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = Resources/Info.plist;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
@@ -2991,7 +2970,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -3081,7 +3059,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -3209,8 +3186,15 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../WireAPI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		59ED3AB22C53A1BE0043ACC4 /* WireAPI */ = {
+		EE13BD852BC93A19006561F8 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
 		};
