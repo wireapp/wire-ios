@@ -78,7 +78,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         snapshotHelper = SnapshotHelper()
         BackendInfo.storage = .temporary()
         mockConversation = MockConversation()
