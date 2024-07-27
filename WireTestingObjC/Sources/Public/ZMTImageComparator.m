@@ -22,7 +22,6 @@
 @import ImageIO;
 
 
-
 struct pixel_s {
     uint8_t red;
     uint8_t green;

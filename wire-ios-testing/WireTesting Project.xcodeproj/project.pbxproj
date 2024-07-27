@@ -7,24 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		091799581B7DFBD100E60DD9 /* NSUUID+WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 091799561B7DFBD100E60DD9 /* NSUUID+WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		091799591B7DFBD100E60DD9 /* NSUUID+WireTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 091799571B7DFBD100E60DD9 /* NSUUID+WireTesting.m */; };
 		096AD7EA1B68D6D300E007A8 /* WireTestingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 096AD7E51B68D6BD00E007A8 /* WireTestingTests.m */; };
 		098CFBC11B7BA68C000B02B1 /* NSObject+WireTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098CFBC01B7BA68C000B02B1 /* NSObject+WireTesting.swift */; };
-		098CFBC41B7BAA2D000B02B1 /* XCTestCase+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */; };
-		09A217F61B78DFAF0076547A /* ZMTImageComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217E71B78DFAF0076547A /* ZMTImageComparator.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A217F71B78DFAF0076547A /* ZMTImageComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217E81B78DFAF0076547A /* ZMTImageComparator.m */; };
-		09A217F81B78DFAF0076547A /* NSData+WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217E91B78DFAF0076547A /* NSData+WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217EA1B78DFAF0076547A /* NSData+WireTesting.m */; };
-		09A217FA1B78DFAF0076547A /* NSOperationQueue+WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217EB1B78DFAF0076547A /* NSOperationQueue+WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A217FB1B78DFAF0076547A /* NSOperationQueue+WireTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217EC1B78DFAF0076547A /* NSOperationQueue+WireTesting.m */; };
-		09A217FC1B78DFAF0076547A /* ZMTAsserts.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217ED1B78DFAF0076547A /* ZMTAsserts.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A217FD1B78DFAF0076547A /* ZMTBaseTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217EE1B78DFAF0076547A /* ZMTBaseTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A217FE1B78DFAF0076547A /* ZMTBaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217EF1B78DFAF0076547A /* ZMTBaseTest.m */; };
 		09A217FF1B78DFAF0076547A /* WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217F01B78DFAF0076547A /* WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A218001B78DFAF0076547A /* ZMTFailureRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217F11B78DFAF0076547A /* ZMTFailureRecorder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217F21B78DFAF0076547A /* ZMTFailureRecorder.m */; };
 		09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */; };
 		09A218041B78E01A0076547A /* FakeGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A218031B78E01A0076547A /* FakeGroupContext.swift */; };
 		166264A7216BB64100300F45 /* large.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166264A6216BB64000300F45 /* large.jpg */; };
@@ -63,28 +48,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		091799561B7DFBD100E60DD9 /* NSUUID+WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUUID+WireTesting.h"; sourceTree = "<group>"; };
-		091799571B7DFBD100E60DD9 /* NSUUID+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+WireTesting.m"; sourceTree = "<group>"; };
 		096AD7BB1B68D41D00E007A8 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD7C61B68D41D00E007A8 /* WireTesting-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTesting-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD7DC1B68D6BD00E007A8 /* WireTesting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WireTesting.plist; sourceTree = "<group>"; };
 		096AD7E51B68D6BD00E007A8 /* WireTestingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireTestingTests.m; sourceTree = "<group>"; };
 		096AD7EB1B68D6E700E007A8 /* WireTesting-test-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTesting-test-iOS.plist"; sourceTree = "<group>"; };
 		098CFBC01B7BA68C000B02B1 /* NSObject+WireTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+WireTesting.swift"; sourceTree = "<group>"; };
-		098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+Helpers.h"; sourceTree = "<group>"; };
-		098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+Helpers.m"; sourceTree = "<group>"; };
-		09A217E71B78DFAF0076547A /* ZMTImageComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTImageComparator.h; sourceTree = "<group>"; };
-		09A217E81B78DFAF0076547A /* ZMTImageComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTImageComparator.m; sourceTree = "<group>"; };
-		09A217E91B78DFAF0076547A /* NSData+WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+WireTesting.h"; sourceTree = "<group>"; };
-		09A217EA1B78DFAF0076547A /* NSData+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+WireTesting.m"; sourceTree = "<group>"; };
-		09A217EB1B78DFAF0076547A /* NSOperationQueue+WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+WireTesting.h"; sourceTree = "<group>"; };
-		09A217EC1B78DFAF0076547A /* NSOperationQueue+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+WireTesting.m"; sourceTree = "<group>"; };
-		09A217ED1B78DFAF0076547A /* ZMTAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTAsserts.h; sourceTree = "<group>"; };
-		09A217EE1B78DFAF0076547A /* ZMTBaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTBaseTest.h; sourceTree = "<group>"; };
-		09A217EF1B78DFAF0076547A /* ZMTBaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTBaseTest.m; sourceTree = "<group>"; };
 		09A217F01B78DFAF0076547A /* WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireTesting.h; sourceTree = "<group>"; };
-		09A217F11B78DFAF0076547A /* ZMTFailureRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTFailureRecorder.h; sourceTree = "<group>"; };
-		09A217F21B78DFAF0076547A /* ZMTFailureRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTFailureRecorder.m; sourceTree = "<group>"; };
 		09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTSwiftHelpers.swift; sourceTree = "<group>"; };
 		09A218031B78E01A0076547A /* FakeGroupContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeGroupContext.swift; sourceTree = "<group>"; };
 		09F1863A1B6903A4007A3DA6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -226,22 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				09A217F01B78DFAF0076547A /* WireTesting.h */,
-				09A217E71B78DFAF0076547A /* ZMTImageComparator.h */,
-				09A217E81B78DFAF0076547A /* ZMTImageComparator.m */,
-				09A217E91B78DFAF0076547A /* NSData+WireTesting.h */,
-				09A217EA1B78DFAF0076547A /* NSData+WireTesting.m */,
-				09A217EB1B78DFAF0076547A /* NSOperationQueue+WireTesting.h */,
-				09A217EC1B78DFAF0076547A /* NSOperationQueue+WireTesting.m */,
-				09A217ED1B78DFAF0076547A /* ZMTAsserts.h */,
-				09A217EE1B78DFAF0076547A /* ZMTBaseTest.h */,
-				09A217EF1B78DFAF0076547A /* ZMTBaseTest.m */,
-				098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */,
-				098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */,
 				16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */,
-				09A217F11B78DFAF0076547A /* ZMTFailureRecorder.h */,
-				09A217F21B78DFAF0076547A /* ZMTFailureRecorder.m */,
-				091799561B7DFBD100E60DD9 /* NSUUID+WireTesting.h */,
-				091799571B7DFBD100E60DD9 /* NSUUID+WireTesting.m */,
 				F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */,
 				09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */,
 				09A218031B78E01A0076547A /* FakeGroupContext.swift */,
@@ -284,15 +239,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				091799581B7DFBD100E60DD9 /* NSUUID+WireTesting.h in Headers */,
-				09A217FC1B78DFAF0076547A /* ZMTAsserts.h in Headers */,
-				09A217F61B78DFAF0076547A /* ZMTImageComparator.h in Headers */,
-				098CFBC41B7BAA2D000B02B1 /* XCTestCase+Helpers.h in Headers */,
-				09A217FA1B78DFAF0076547A /* NSOperationQueue+WireTesting.h in Headers */,
-				09A218001B78DFAF0076547A /* ZMTFailureRecorder.h in Headers */,
-				09A217F81B78DFAF0076547A /* NSData+WireTesting.h in Headers */,
 				09A217FF1B78DFAF0076547A /* WireTesting.h in Headers */,
-				09A217FD1B78DFAF0076547A /* ZMTBaseTest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,15 +362,8 @@
 				595D4B1B2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift in Sources */,
 				09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */,
 				634CCB112BAC54FF00A11AB3 /* GenericArrayActor.swift in Sources */,
-				09A217FE1B78DFAF0076547A /* ZMTBaseTest.m in Sources */,
 				09A218041B78E01A0076547A /* FakeGroupContext.swift in Sources */,
-				091799591B7DFBD100E60DD9 /* NSUUID+WireTesting.m in Sources */,
-				09A217F71B78DFAF0076547A /* ZMTImageComparator.m in Sources */,
-				09A217FB1B78DFAF0076547A /* NSOperationQueue+WireTesting.m in Sources */,
-				098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */,
-				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
 				16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */,
-				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */,
 				F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */,
 				16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */,
