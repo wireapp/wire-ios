@@ -18,7 +18,7 @@
 
 #import <XCTest/XCTest.h>
 #import <WireSystemObjC/WireSystemObjC.h>
-#import <WireTesting/ZMTFailureRecorder.h>
+#import <WireTestingObjC/ZMTFailureRecorder.h>
 
 @class ZMSDispatchGroup;
 @protocol ZMSGroupQueue;

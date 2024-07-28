@@ -24,14 +24,14 @@ FOUNDATION_EXPORT double WireTestingObjCVersionNumber;
 //! Project version string for WireTestingObjC.
 FOUNDATION_EXPORT const unsigned char WireTestingObjCVersionString[];
 
-#import <WireTesting/ZMTBaseTest.h>
-#import <WireTesting/XCTestCase+Helpers.h>
-#import <WireTesting/ZMTFailureRecorder.h>
-#import <WireTesting/ZMTAsserts.h>
-#import <WireTesting/NSData+WireTesting.h>
-#import <WireTesting/NSOperationQueue+WireTesting.h>
-#import <WireTesting/ZMTImageComparator.h>
-#import <WireTesting/NSUUID+WireTesting.h>
-#import <WireTesting/ZMMockManagedObjectContextFactory.h>
-#import <WireTesting/ZMMockEntity.h>
-#import <WireTesting/ZMMockEntity2.h>
+#import <WireTestingObjC/NSData+WireTesting.h>
+#import <WireTestingObjC/NSOperationQueue+WireTesting.h>
+#import <WireTestingObjC/NSUUID+WireTesting.h>
+//#import <WireTestingObjC/XCTestCase+Helpers.h>
+#import <WireTestingObjC/ZMMockEntity.h>
+#import <WireTestingObjC/ZMMockEntity2.h>
+#import <WireTestingObjC/ZMMockManagedObjectContextFactory.h>
+#import <WireTestingObjC/ZMTAsserts.h>
+#import <WireTestingObjC/ZMTBaseTest.h>
+#import <WireTestingObjC/ZMTFailureRecorder.h>
+#import <WireTestingObjC/ZMTImageComparator.h>
