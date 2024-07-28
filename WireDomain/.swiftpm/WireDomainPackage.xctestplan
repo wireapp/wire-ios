@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "9847EFE7-0EA9-4F10-ADDE-417328B9D738",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireDomainPkgTests",
+        "name" : "WireDomainPkgTests"
+      }
+    }
+  ],
+  "version" : 1
+}
