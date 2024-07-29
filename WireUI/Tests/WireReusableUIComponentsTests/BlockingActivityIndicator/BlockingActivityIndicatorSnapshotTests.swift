@@ -18,6 +18,7 @@
 
 import WireUITesting
 import XCTest
+import SnapshotTesting
 
 @testable import WireReusableUIComponents
 
@@ -59,7 +60,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         sut.start()
 
         // Then
-        verifyInAllDeviceSizes(matching: viewController)
+        snapshotHelper.verify(matching: viewController)
     }
 
     @MainActor
@@ -82,49 +83,6 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         sut.start(text: "RESTORING…")
 
         // Then
-        verifyInAllDeviceSizes(matching: viewController)
-    }
-}
-
-// TODO: [WPB-10368] remove this temporary extension once XCTestCase+SnapshotTesting and XCTestCase+waitForPredicate.swift has been moved to a Swift package and is accessible from WireUI
-
-private extension XCTestCase {
-
-    func verifyInAllDeviceSizes(
-        matching value: UIViewController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        fatalError("TODO")
-        /*
-        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
-
-        for (config, name) in allDevices {
-            if let deviceMockable = value as? DeviceMockable {
-                (deviceMockable.device as? MockDevice)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
-            }
-
-            verify(
-                matching: value,
-                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                named: name,
-                file: file,
-                testName: testName,
-                line: line
-            )
-        }
-         */
-    }
-
-    func wait(
-        forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
-        timeout seconds: TimeInterval
-    ) {
-        let expectation = XCTNSPredicateExpectation(
-            predicate: .init { _, _ in predicate() },
-            object: .none
-        )
-        wait(for: [expectation], timeout: seconds)
+        snapshotHelper.verify(matching: viewController)
     }
 }
