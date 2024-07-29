@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -35,11 +36,7 @@ final class SettingsClientViewController: UIViewController,
                                           UITableViewDelegate,
                                           UITableViewDataSource,
                                           UserClientObserver,
-                                          ClientColorVariantProtocol,
-                                          SpinnerCapable {
-
-    // MARK: SpinnerCapable
-    var dismissSpinner: (() -> Void)?
+                                          ClientColorVariantProtocol {
 
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
@@ -60,6 +57,8 @@ final class SettingsClientViewController: UIViewController,
     var fromConversation: Bool = false
 
     var removalObserver: ClientRemovalObserver?
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     convenience init(userClient: UserClient,
                      userSession: UserSession,
@@ -280,8 +279,8 @@ final class SettingsClientViewController: UIViewController,
 
         switch clientSection {
         case .resetSession:
-            self.userClient.resetSession()
-            isLoadingViewVisible = true
+            userClient.resetSession()
+            activityIndicator.start()
 
         case .removeDevice:
             removalObserver = nil
@@ -292,10 +291,12 @@ final class SettingsClientViewController: UIViewController,
                 }
             }
 
-            removalObserver = ClientRemovalObserver(userClientToDelete: userClient,
-                                                    delegate: self,
-                                                    credentials: credentials,
-                                                    completion: completion)
+            removalObserver = ClientRemovalObserver(
+                userClientToDelete: userClient,
+                delegate: self,
+                credentials: credentials,
+                completion: completion
+            )
 
             removalObserver?.startRemoval()
 
@@ -369,7 +370,7 @@ final class SettingsClientViewController: UIViewController,
         }
 
         if changeInfo.sessionHasBeenReset {
-            isLoadingViewVisible = false
+            activityIndicator.stop()
             let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
             let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { [unowned alert] _ in
                 alert.dismiss(animated: true, completion: .none)
@@ -384,7 +385,7 @@ final class SettingsClientViewController: UIViewController,
 
 extension SettingsClientViewController: ClientRemovalObserverDelegate {
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {
-        isLoadingViewVisible = isVisible
+        isVisible ? activityIndicator.start() : activityIndicator.stop()
     }
 
     func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {
