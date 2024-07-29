@@ -23,4 +23,11 @@ import UIKit
 public protocol DeviceAbstraction {
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }
     var orientation: UIDeviceOrientation { get }
+
+    var type: ZMDeviceType { get }
+}
+
+@available(*, deprecated, message: "Try to use existing types from the SDK instead.")
+public enum ZMDeviceType {
+    case iPhone, iPod, iPad, unspecified
 }

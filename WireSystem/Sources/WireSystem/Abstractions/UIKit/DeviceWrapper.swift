@@ -37,4 +37,11 @@ extension DeviceWrapper: DeviceAbstraction {
     public var orientation: UIDeviceOrientation {
         device.orientation
     }
+
+    public var type: ZMDeviceType {
+        if device.model.contains("iPod") { return .iPod }
+        if device.userInterfaceIdiom == .phone { return .iPhone }
+        if device.userInterfaceIdiom == .pad { return .iPad }
+        return .unspecified
+    }
 }

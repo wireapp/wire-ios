@@ -17,9 +17,11 @@
 //
 
 import UIKit
+import WireSystemPackage
 
+// TODO: remove
 protocol DeviceMockable {
-    var device: DeviceProtocol { get set }
+    var device: DeviceAbstraction { get set }
 }
 
 protocol DeviceProtocol {
