@@ -337,7 +337,7 @@
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		595D304B2BF923B30064A018 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; };
 		5965B4752C57BC8C000DBF91 /* WireAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		5965B4772C57BE9F000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4762C57BE9F000DBF91 /* WireAnalytics */; };
+		5965B4792C57BF59000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4782C57BF59000DBF91 /* WireAnalytics */; };
 		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
 		5966D82C2BD6995100305BBC /* MockViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */; };
 		5966D8442BD7F05E00305BBC /* AccentColor+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */; };
@@ -1323,7 +1323,6 @@
 		E666EDDA2B73E9C400C03E2B /* BackupStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */; };
 		E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */; };
 		E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D42C13375700F82F88 /* WireAnalytics.swift */; };
-		E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E66C51D62C13395400F82F88 /* WireAnalytics */; };
 		E66C51D92C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C51D82C13434B00F82F88 /* WireDatadog+LoggerProtocol.swift */; };
 		E66D4E822BE525DF00C7F374 /* AVSVideoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
@@ -4018,7 +4017,6 @@
 				595D304B2BF923B30064A018 /* WireAPI in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
-				5965B4772C57BE9F000DBF91 /* WireAnalytics in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */,
@@ -4070,7 +4068,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E66C51D72C13395400F82F88 /* WireAnalytics in Frameworks */,
+				5965B4792C57BF59000DBF91 /* WireAnalytics in Frameworks */,
 				EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8706,7 +8704,6 @@
 				592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */,
 				59CD83E42C22CE9800186022 /* WireDesign */,
 				E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */,
-				5965B4762C57BE9F000DBF91 /* WireAnalytics */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -8769,7 +8766,7 @@
 			);
 			name = WireCommonComponents;
 			packageProductDependencies = (
-				E66C51D62C13395400F82F88 /* WireAnalytics */,
+				5965B4782C57BF59000DBF91 /* WireAnalytics */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -11795,7 +11792,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
 		};
-		5965B4762C57BE9F000DBF91 /* WireAnalytics */ = {
+		5965B4782C57BF59000DBF91 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalytics;
 		};
@@ -11810,10 +11807,6 @@
 		59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireReusableUIComponents;
-		};
-		E66C51D62C13395400F82F88 /* WireAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAnalytics;
 		};
 		E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */ = {
 			isa = XCSwiftPackageProductDependency;
