@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let legalHoldURL: URL = .wr_legalHoldLearnMore
+    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
     var conversation: ZMConversation?
 
     struct Configuration {

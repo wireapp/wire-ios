@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireDataModel
 
 /**
@@ -67,7 +68,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
 
     private func handleMissingMarketingConsent(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
         // Alert Actions
-        let privacyPolicyAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title, coordinatorActions: [.openURL(URL.wr_privacyPolicy.appendingLocaleParameter)])
+        let privacyPolicyAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title, coordinatorActions: [.openURL(WireURLs.shared.privacyPolicy)])
         let declineAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.decline, coordinatorActions: [.setMarketingConsent(false)])
         let acceptAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.accept, coordinatorActions: [.setMarketingConsent(true)])
 

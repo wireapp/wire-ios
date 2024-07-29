@@ -172,7 +172,7 @@ final class ParticipantsStringFormatter {
 
             let learnMore = NSAttributedString(string: L10n.Localizable.Content.System.MessageLegalHold.learnMore.uppercased(),
                                                attributes: [.font: font,
-                                                            .link: URL.wr_legalHoldLearnMore.absoluteString as AnyObject,
+                                                            .link: WireURLs.shared.legalHoldInfo.absoluteString as AnyObject,
                                                             .foregroundColor: SemanticColors.Label.textDefault])
             return result += " " + learnMore
 
