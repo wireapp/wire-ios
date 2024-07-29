@@ -20,6 +20,7 @@ import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
 import WireSyncEngine
+import WireReusableUIComponents
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
@@ -39,15 +40,18 @@ final class BackupRestoreController: NSObject {
 
     static let WireBackupUTIs = ["com.wire.backup-ios-underscore", "com.wire.backup-ios-hyphen"]
 
-    let target: UIViewController & SpinnerCapable
     weak var delegate: BackupRestoreControllerDelegate?
-    var temporaryFilesService: TemporaryFileServiceInterface
+
+    private let target: UIViewController
+    private let activityIndicator: BlockingActivityIndicator
+    private var temporaryFilesService: TemporaryFileServiceInterface
 
     // MARK: - Initialization
 
-    init(target: UIViewController & SpinnerCapable, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
+    init(target: UIViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
+        activityIndicator = .init(view: target.view)
         super.init()
     }
 
@@ -102,7 +106,7 @@ final class BackupRestoreController: NSObject {
               let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
             return
         }
-        target.isLoadingViewVisible = true
+        Task { @MainActor in activityIndicator.start() }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
@@ -115,7 +119,7 @@ final class BackupRestoreController: NSObject {
             case .failure(SessionManager.BackupError.decryptionError):
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
-                self.target.isLoadingViewVisible = false
+                Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 self.showWrongPasswordAlert { _ in
                     self.restore(with: url)
@@ -126,7 +130,7 @@ final class BackupRestoreController: NSObject {
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
-                self.target.isLoadingViewVisible = false
+                Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
