@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 enum E2EIChangeAction: CaseIterable {
     case getCertificate, remindLater, learnMore

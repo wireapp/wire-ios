@@ -17,9 +17,9 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 import WireSystem
-import WireCommonComponents
 
 final class StartUIView: UIView { }
 
