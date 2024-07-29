@@ -27,6 +27,7 @@ struct WireDatadogBuilder {
     private enum Constants {
         static let keyAppId = "DatadogAppId"
         static let keyBundleVersion = "CFBundleVersion"
+        static let keyBundleShortVersion = "CFBundleShortVersionString"
         static let keyClientToken = "DatadogClientToken"
     }
 
@@ -40,14 +41,16 @@ struct WireDatadogBuilder {
     func build() -> WireDatadog {
         guard
             let applicationID = bundle.infoForKey(Constants.keyAppId),
-            let buildNumber = mainBundle.infoForKey(Constants.keyBundleVersion) as? String,
+            let buildNumber = mainBundle.infoForKey(Constants.keyBundleVersion),
+            let buildVersion = mainBundle.infoForKey(Constants.keyBundleShortVersion),
             let clientToken = bundle.infoForKey(Constants.keyClientToken)
         else {
             preconditionFailure("Datadog is enabled, but the bundle misses required input.")
         }
-
+        
         return WireDatadog(
             applicationID: applicationID,
+            buildVersion: buildVersion,
             buildNumber: buildNumber,
             clientToken: clientToken,
             identifierForVendor: device.identifierForVendor,

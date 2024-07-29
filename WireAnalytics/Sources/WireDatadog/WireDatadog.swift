@@ -27,6 +27,7 @@ import UIKit
 public final class WireDatadog {
 
     private let applicationID: String
+    private let buildVersion: String
     private let buildNumber: String
     private let logLevel: LogLevel = .debug
 
@@ -35,12 +36,14 @@ public final class WireDatadog {
 
     public init(
         applicationID: String,
+        buildVersion: String,
         buildNumber: String,
         clientToken: String,
         identifierForVendor: UUID?,
         environmentName: String
     ) {
         self.applicationID = applicationID
+        self.buildVersion = buildVersion
         self.buildNumber = buildNumber
 
         if let identifierForVendor {
@@ -91,7 +94,7 @@ public final class WireDatadog {
         RUM.enable(with: rumConfiguration)
 
         Datadog.setUserInfo(id: userIdentifier)
-
+        
         logger?.log(
             level: logLevel,
             message: "Datadog startMonitoring for device: \(userIdentifier)",
@@ -108,6 +111,7 @@ public final class WireDatadog {
     ) {
         var finalAttributes = attributes
         finalAttributes["build_number"] = buildNumber
+        finalAttributes["version"] = buildVersion
 
         logger?.log(
             level: level,
