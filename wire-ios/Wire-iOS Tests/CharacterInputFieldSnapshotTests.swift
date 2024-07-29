@@ -17,13 +17,18 @@
 //
 
 import XCTest
+import WireUITesting
+
 @testable import Wire
 
 final class CharacterInputFieldSnapshotTests: XCTestCase {
-    var sut: CharacterInputField! = nil
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CharacterInputField! = nil
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         let size = CGSize(width: 375, height: 56)
         sut = CharacterInputField(maxLength: 8, characterSet: CharacterSet.decimalDigits, size: size)
 
@@ -31,6 +36,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut.removeFromSuperview()
         sut = nil
         super.tearDown()
@@ -38,7 +44,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testDefaultState() {
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testFocusedState() {
@@ -49,7 +55,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
         sut.becomeFirstResponder()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testFocusedDeFocusedState() {
@@ -61,7 +67,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
         sut.resignFirstResponder()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testOneCharacterState() {
@@ -69,7 +75,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
         sut.insertText("1")
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testAllCharactersEnteredState() {
@@ -77,6 +83,6 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
         sut.insertText("12345678")
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
