@@ -32,7 +32,7 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
     }
 
     func controller(_ controller: CompanyLoginController, showLoadingView: Bool) {
-        presenter?.isLoadingViewVisible = showLoadingView
+        showLoadingView ? startActivityIndicator() : stopActivityIndicator()
     }
 
     func controllerDidStartBackendSwitch(_ controller: CompanyLoginController, toURL url: URL) {
