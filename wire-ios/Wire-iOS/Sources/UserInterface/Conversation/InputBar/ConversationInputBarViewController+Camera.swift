@@ -20,6 +20,7 @@ import FLAnimatedImage
 import MobileCoreServices
 import Photos
 import WireCommonComponents
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -230,10 +231,11 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
     func videoEditorController(_ editor: UIVideoEditorController, didSaveEditedVideoToPath editedVideoPath: String) {
         editor.dismiss(animated: true, completion: .none)
 
-        (editor as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = true
+        let activityIndicator = BlockingActivityIndicator(view: editor.view)
+        activityIndicator.start()
 
         self.convertVideoAtPath(editedVideoPath) { success, resultPath, _ in
-            (editor as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = false
+            activityIndicator.stop()
 
             guard let path = resultPath, success else {
                 return
