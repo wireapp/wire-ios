@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 extension ConversationLike where Self: SwiftConversationLike {
     var canAddGuest: Bool {
@@ -91,7 +92,7 @@ extension AddParticipantsViewController.Context {
     }
 }
 
-final class AddParticipantsViewController: UIViewController, SpinnerCapable {
+final class AddParticipantsViewController: UIViewController {
 
     enum CreateAction {
         case updatedUsers(UserSet)
@@ -121,13 +122,13 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     weak var conversationCreationDelegate: AddParticipantsConversationCreationDelegate?
 
+    private var activityIndicator: BlockingActivityIndicator!
+
     private var viewModel: AddParticipantsViewModel {
         didSet {
             updateValues()
         }
     }
-
-    var dismissSpinner: (() -> Void)?
 
     deinit {
         userSelection.remove(observer: self)
@@ -146,6 +147,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             context: .add(conversation),
             userSession: userSession
         )
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -376,7 +383,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     private func rightNavigationItemTapped() -> UIAction {
-        return UIAction { [weak self] _ in
+        UIAction { [weak self] _ in
             guard let self else { return }
 
             switch self.viewModel.context {
@@ -388,7 +395,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         }
     }
     func setLoadingView(isVisible: Bool) {
-        isLoadingViewVisible = isVisible
+        isVisible ? activityIndicator.start() : activityIndicator.stop()
         navigationItem.rightBarButtonItem?.isEnabled = !isVisible
     }
 
