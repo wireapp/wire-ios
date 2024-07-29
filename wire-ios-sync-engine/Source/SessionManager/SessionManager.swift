@@ -802,11 +802,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
-
-            if deleteAccount {
-                activeUserSession.lastEventIDRepository.storeLastEventID(nil)
-            }
-
             let group = self?.dispatchGroup
             group?.enter()
 
