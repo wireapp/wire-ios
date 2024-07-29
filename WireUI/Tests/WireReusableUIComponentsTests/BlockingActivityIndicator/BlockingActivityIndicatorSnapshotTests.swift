@@ -86,7 +86,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
     }
 }
 
-// TODO: [WPB-10368] remove this temporary extension once XCTestCase+SnapshotTesting has been moved to a Swift package and is accessible from WireUI
+// TODO: [WPB-10368] remove this temporary extension once XCTestCase+SnapshotTesting and XCTestCase+waitForPredicate.swift has been moved to a Swift package and is accessible from WireUI
 
 private extension XCTestCase {
 
@@ -96,6 +96,8 @@ private extension XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
+        fatalError("TODO")
+        /*
         let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
 
         for (config, name) in allDevices {
@@ -112,5 +114,17 @@ private extension XCTestCase {
                 line: line
             )
         }
+         */
+    }
+
+    func wait(
+        forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
+        timeout seconds: TimeInterval
+    ) {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: .init { _, _ in predicate() },
+            object: .none
+        )
+        wait(for: [expectation], timeout: seconds)
     }
 }

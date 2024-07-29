@@ -185,3 +185,19 @@ final class BlockingActivityIndicatorTests: XCTestCase {
         wait(forConditionToBeTrue: targetView.subviews.isEmpty, timeout: 5)
     }
 }
+
+// TODO: [WPB-10368] remove this temporary extension once XCTestCase+waitForPredicate.swift has been moved to a Swift package and is accessible from WireUI
+
+private extension XCTestCase {
+
+    func wait(
+        forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
+        timeout seconds: TimeInterval
+    ) {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: .init { _, _ in predicate() },
+            object: .none
+        )
+        wait(for: [expectation], timeout: seconds)
+    }
+}
