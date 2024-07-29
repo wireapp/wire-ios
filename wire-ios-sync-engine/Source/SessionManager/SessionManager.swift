@@ -805,7 +805,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             let group = self?.dispatchGroup
             group?.enter()
 
-            activeUserSession.e2eiActivationDateRepository.removeE2EIActivationDate()
             activeUserSession.close(deleteCookie: true) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
