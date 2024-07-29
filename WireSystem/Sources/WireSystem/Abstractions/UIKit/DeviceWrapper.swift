@@ -45,3 +45,10 @@ extension DeviceWrapper: DeviceAbstraction {
         return .unspecified
     }
 }
+
+extension DeviceAbstraction where Self == DeviceWrapper {
+
+    public static var current: Self {
+        .init(device: .current)
+    }
+}

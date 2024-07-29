@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSystemPackage
 import WireSyncEngine
 
 typealias NetworkStatusBarDelegate = NetworkStatusViewControllerDelegate & NetworkStatusViewDelegate
@@ -46,14 +47,17 @@ final class NetworkStatusViewController: UIViewController {
     private var state: NetworkStatusViewState = .online
     private var finishedViewWillAppear: Bool = false
 
-    private var device: DeviceProtocol = UIDevice.current
-    private var application: ApplicationProtocol = UIApplication.shared
+    private var device: DeviceAbstraction
+    private var application: ApplicationProtocol
 
     /// default init method with a parameter for injecting mock device and mock application
     ///
     /// - Parameter device: Provide this param for testing only
     /// - Parameter application: Provide this param for testing only
-    convenience init(device: DeviceProtocol = UIDevice.current, application: ApplicationProtocol = UIApplication.shared) {
+    convenience init(
+        device: DeviceAbstraction/* = .current*/,
+        application: ApplicationProtocol/* = UIApplication.shared*/
+    ) {
         self.init(nibName: nil, bundle: nil)
 
         self.device = device
@@ -61,6 +65,8 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.device = .current
+        self.application = UIApplication.shared
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(updateStateForIPad), name: UIDevice.orientationDidChangeNotification, object: .none)

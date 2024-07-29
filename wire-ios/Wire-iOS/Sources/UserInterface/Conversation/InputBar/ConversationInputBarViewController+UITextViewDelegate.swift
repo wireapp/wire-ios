@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSystemPackage
 
 // MARK: SplitViewController reveal
 
@@ -27,7 +28,8 @@ extension CharacterSet {
 
 extension ConversationInputBarViewController {
     func hideLeftView() {
-        guard self.isIPadRegularPortrait(device: UIDevice.current, application: UIApplication.shared) else { return }
+        let currentDevice = DeviceWrapper(device: .current)
+        guard self.isIPadRegularPortrait(device: currentDevice, application: UIApplication.shared) else { return }
         guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
 
         splitViewController.setLeftViewControllerRevealed(false, animated: true)
@@ -64,8 +66,9 @@ extension ConversationInputBarViewController: UITextViewDelegate {
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // send only if send key pressed
+        let currentDevice = DeviceWrapper(device: .current)
         if textView.returnKeyType == .send && (text == "\n") {
-            if UIDevice.current.type == .iPad,
+            if currentDevice.type == .iPad,
                 canInsertMention {
                 insertBestMatchMention()
             } else {
@@ -79,7 +82,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         if text.count == 1,
             text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
             canInsertMention,
-            UIDevice.current.type == .iPad || isMentionsViewKeyboardCollapsed {
+           currentDevice.type == .iPad || isMentionsViewKeyboardCollapsed {
 
             insertBestMatchMention()
             return false

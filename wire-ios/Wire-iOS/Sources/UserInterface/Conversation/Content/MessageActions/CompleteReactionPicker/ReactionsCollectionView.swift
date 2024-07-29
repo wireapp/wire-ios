@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireSystemPackage
 
 final class ReactionsCollectionView: UICollectionView {
 
@@ -43,10 +44,11 @@ final class ReactionsCollectionView: UICollectionView {
 private extension ReactionsCollectionView {
 
     func setupLayout() {
+        let currentDevice = DeviceWrapper(device: .current)
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = UIDevice.current.type == .iPad ? 7 : 7
-        layout.minimumInteritemSpacing = UIDevice.current.type == .iPad ? 12 : 7
-        let itemSize = UIDevice.current.type == .iPad ? 51 : 41
+        layout.minimumLineSpacing = currentDevice.type == .iPad ? 7 : 7
+        layout.minimumInteritemSpacing = currentDevice.type == .iPad ? 12 : 7
+        let itemSize = currentDevice.type == .iPad ? 51 : 41
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
     }
 

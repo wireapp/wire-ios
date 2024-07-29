@@ -1295,7 +1295,6 @@
 		E6579E652AFFA024004E7FD8 /* MockConversationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF16FC4D1DAFCE9300FF4325 /* MockConversationFactory.swift */; };
 		E6579E662AFFA024004E7FD8 /* MockUserRight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97192B2221302DD00E72AD1 /* MockUserRight.swift */; };
 		E6579E672AFFA024004E7FD8 /* MockUser+MockUserArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1D80DC22275F8F00BCA8D3 /* MockUser+MockUserArray.swift */; };
-		E6579E692AFFA024004E7FD8 /* MockDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF106E84204D8B4200B9F0F6 /* MockDevice.swift */; };
 		E6579E6A2AFFA024004E7FD8 /* MockConverationDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160DF02E234DCE0400978FCF /* MockConverationDirectory.swift */; };
 		E6579E6B2AFFA024004E7FD8 /* MockUser+Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2A8DE8214A8B38002C9058 /* MockUser+Service.swift */; };
 		E6579E6C2AFFA029004E7FD8 /* MockUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 87BEB0DB1C734D710094BFE9 /* MockUser.m */; };
@@ -1604,8 +1603,6 @@
 		EF066E1621EF938C00D56CAD /* MessageActionResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF066E1521EF938C00D56CAD /* MessageActionResponder.swift */; };
 		EF066E1821EF997D00D56CAD /* ConversationContentViewController+ConversationMessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF066E1721EF997D00D56CAD /* ConversationContentViewController+ConversationMessageCellDelegate.swift */; };
 		EF0D9972205BC74F002D488E /* NetworkStatusViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0D9971205BC74F002D488E /* NetworkStatusViewControllerSnapshotTests.swift */; };
-		EF106E83204D869B00B9F0F6 /* DeviceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF106E82204D869B00B9F0F6 /* DeviceProtocol.swift */; };
-		EF106E86204D8BDF00B9F0F6 /* MockDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF106E84204D8B4200B9F0F6 /* MockDevice.swift */; };
 		EF10CB20215105A400AEA8EA /* UITableViewCell+Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF10CB1E2151057D00AEA8EA /* UITableViewCell+Snapshot.swift */; };
 		EF159F381FD59607006E0A9C /* TextFieldValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF159F361FD59556006E0A9C /* TextFieldValidatorTests.swift */; };
 		EF15A7B020BC08C000A045C7 /* ConversationContentViewController+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF15A7AF20BC08C000A045C7 /* ConversationContentViewController+SaveImage.swift */; };
@@ -3666,8 +3663,6 @@
 		EF066E1521EF938C00D56CAD /* MessageActionResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionResponder.swift; sourceTree = "<group>"; };
 		EF066E1721EF997D00D56CAD /* ConversationContentViewController+ConversationMessageCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationContentViewController+ConversationMessageCellDelegate.swift"; sourceTree = "<group>"; };
 		EF0D9971205BC74F002D488E /* NetworkStatusViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkStatusViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
-		EF106E82204D869B00B9F0F6 /* DeviceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProtocol.swift; sourceTree = "<group>"; };
-		EF106E84204D8B4200B9F0F6 /* MockDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDevice.swift; sourceTree = "<group>"; };
 		EF10CB1E2151057D00AEA8EA /* UITableViewCell+Snapshot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Snapshot.swift"; sourceTree = "<group>"; };
 		EF159F361FD59556006E0A9C /* TextFieldValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldValidatorTests.swift; sourceTree = "<group>"; };
 		EF15A7AF20BC08C000A045C7 /* ConversationContentViewController+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationContentViewController+SaveImage.swift"; sourceTree = "<group>"; };
@@ -5825,7 +5820,6 @@
 				E9E6F09C2861E549004A4BD6 /* Styles */,
 				A90E4ABE2381CD0200468F31 /* AccentColorChangeHandler.swift */,
 				871BC31D1D34F94200DF0793 /* AudioPlayer */,
-				EF106E82204D869B00B9F0F6 /* DeviceProtocol.swift */,
 				EF4018BD205975C100CFBCB0 /* ApplicationProtocol.swift */,
 				EF23740D230D37EE006F53F3 /* NetworkInfo.swift */,
 				E6E557972BBD49A60033E62B /* NetworkQualityType.swift */,
@@ -6068,7 +6062,6 @@
 				EF6E3C7D208A0355003F6752 /* MockConversation+factory.swift */,
 				EF8D7D4720D8FC7100F98666 /* MockConversation+TimedMessage.swift */,
 				BF16FC4D1DAFCE9300FF4325 /* MockConversationFactory.swift */,
-				EF106E84204D8B4200B9F0F6 /* MockDevice.swift */,
 				87BEB0E11C734DB60094BFE9 /* MockMessage.swift */,
 				EF8DD910211E02BE00E970F1 /* MockMessage+Creation.swift */,
 				6357B41526121D55008F1761 /* MockPanGestureRecognizer.swift */,
@@ -9559,7 +9552,6 @@
 				5E1314C122097BEF000FAFC5 /* AuthenticationStartCompanyLoginLinkEventHandler.swift in Sources */,
 				59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */,
 				BF7ED2D81DF1A30C003A4397 /* IncomingConnectionView.swift in Sources */,
-				EF106E83204D869B00B9F0F6 /* DeviceProtocol.swift in Sources */,
 				8784D4571E81832F007A6867 /* ConversationListViewController+NetworkStatusBarDelegate.swift in Sources */,
 				CE2402811E0A992200665A91 /* AnalyticsConsoleProvider.swift in Sources */,
 				A9A6506224D1857D00B6A68D /* TransparentNavigationBar.swift in Sources */,
@@ -10734,7 +10726,6 @@
 				D35EEDBC28C2004000949F02 /* AccessAPIClient.swift in Sources */,
 				5966D82C2BD6995100305BBC /* MockViewControllerBuilder.swift in Sources */,
 				1659FCCD234E415200D06C1F /* MockLabel.swift in Sources */,
-				EF106E86204D8BDF00B9F0F6 /* MockDevice.swift in Sources */,
 				63654F8025B8CD260015344C /* RoundedSegmentedViewTests.swift in Sources */,
 				EFD4B9C822F08297008CA042 /* UIImage+DownsizeTests.swift in Sources */,
 				EF207B3B2208438700738E84 /* MockZMUserSession.swift in Sources */,
@@ -10829,7 +10820,6 @@
 				E6C25FF62B03550A00406A1C /* AppLockModulePresenterTests.swift in Sources */,
 				E6C25FD52AFFAE1200406A1C /* ZMConversation+Mock.swift in Sources */,
 				E6579E642AFFA024004E7FD8 /* MockZMUserSession.swift in Sources */,
-				E6579E692AFFA024004E7FD8 /* MockDevice.swift in Sources */,
 				E6579E612AFFA024004E7FD8 /* MockConversation.swift in Sources */,
 				E6579E762AFFA36D004E7FD8 /* AppLockModule.MockRouter.swift in Sources */,
 				59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */,

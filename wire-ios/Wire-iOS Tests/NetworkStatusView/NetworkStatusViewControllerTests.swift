@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+import WireSystemPackageSupport
+
+@testable import Wire
 
 final class MockConversationRootViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
@@ -47,14 +49,15 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     var sutRoot: NetworkStatusViewController!
     var sutList: NetworkStatusViewController!
 
-    var mockDevice: MockDevice!
+    var mockDevice: MockDeviceAbstraction!
     var mockApplication: MockApplication!
     var mockConversationRoot: MockConversationRootViewController!
     var mockConversationList: MockConversationListViewController!
 
     override func setUp() {
         super.setUp()
-        mockDevice = MockDevice()
+
+        mockDevice = .init()
         mockApplication = MockApplication()
 
         mockConversationList = MockConversationListViewController()

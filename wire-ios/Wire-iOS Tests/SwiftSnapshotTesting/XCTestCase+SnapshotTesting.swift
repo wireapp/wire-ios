@@ -74,24 +74,23 @@ extension XCTestCase {
         }
     }
 
-    func verifyInAllDeviceSizes(matching value: UIViewController,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-
+    func verifyInAllDeviceSizes(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
+        for (config, name) in allDevices {
 
-        for(config, name) in allDevices {
-            if let deviceMockable = value as? DeviceMockable {
-                (deviceMockable.device as? MockDevice)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
-            }
-
-            verify(matching: value,
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            verify(
+                matching: value,
+                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
