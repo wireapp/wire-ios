@@ -36,23 +36,6 @@ enum TeamSource: Int {
     }
 }
 
-struct WireURL: Codable {
-    let wireAppOnItunes: URL
-    let support: URL
-
-    static var shared: WireURL! = {
-        WireURL(filePath: Bundle.fileURL(for: "url", with: "json")!)
-    }()
-
-    private init?(filePath: URL) {
-        do {
-            self = try filePath.decode(WireURL.self)
-        } catch {
-            return nil
-        }
-    }
-}
-
 extension URL {
 
     var appendingLocaleParameter: URL {
@@ -87,116 +70,8 @@ extension URL {
 
 extension URL {
 
-    static var wr_wireAppOnItunes: URL {
-        WireURL.shared.wireAppOnItunes
-    }
-
-    static var wr_emailAlreadyInUseLearnMore: URL {
-        wr_support.appendingPathComponent("hc/en-us/articles/115004082129-My-email-address-is-already-in-use-and-I-cannot-create-an-account-What-can-I-do-")
-    }
-
-    static var wr_support: URL {
-        WireURL.shared.support
-    }
-
-    static var wr_usernameLearnMore: URL {
-        BackendEnvironment.websiteLink(path: "support/username")
-    }
-
-    static var wr_fingerprintLearnMore: URL {
-        wr_support.appendingPathComponent("hc/articles/207859815-Why-should-I-verify-my-conversations")
-    }
-
-    static var wr_fingerprintHowToVerify: URL {
-        wr_support.appendingPathComponent("hc/articles/207692235-How-can-I-compare-key-fingerprints-")
-    }
-
-    static var wr_privacyPolicy: URL {
-        BackendEnvironment.localizedWebsiteLink(forPage: .privacyPolicy)
-    }
-
-    static var wr_legal: URL {
-        BackendEnvironment.localizedWebsiteLink(forPage: .legal)
-    }
-
-    static var wr_licenseInformation: URL {
-        BackendEnvironment.websiteLink(path: "legal/licenses/embed")
-    }
-
-    static var wr_website: URL {
-        BackendEnvironment.shared.websiteURL
-    }
-
-    static var wr_passwordReset: URL {
-        BackendEnvironment.accountsLink(path: "forgot")
-    }
-
-    static var wr_askSupport: URL {
-        wr_support.appendingPathComponent("hc/requests/new")
-    }
-
-    static var wr_reportAbuse: URL {
-        wr_support.appendingPathComponent("hc/requests/new")
-    }
-
-    static var wr_cannotDecryptHelp: URL {
-        BackendEnvironment.websiteLink(path: "privacy/error-1")
-    }
-
-    static var wr_cannotDecryptNewRemoteIDHelp: URL {
-        BackendEnvironment.websiteLink(path: "privacy/error-2")
-    }
-
-    static var wr_createTeamFeatures: URL {
-        BackendEnvironment.websiteLink(path: "teams/learnmore")
-    }
-
-    static var wr_emailInUseLearnMore: URL {
-        BackendEnvironment.websiteLink(path: "support/email-in-use")
-    }
-
-    static var wr_searchSupport: URL {
-        BackendEnvironment.websiteLink(path: "support/username") // TODO jacob update URL when new support page for search exists
-    }
-
-    static var wr_termsOfServicesURL: URL {
-        BackendEnvironment.localizedWebsiteLink(forPage: .termsOfServices)
-    }
-
-    static var wr_legalHoldLearnMore: URL {
-        wr_support.appendingPathComponent("hc/articles/360002018278-What-is-legal-hold-")
-    }
-
-    static var wr_wirePricingLearnMore: URL {
-        BackendEnvironment.websiteLink(path: "pricing")
-    }
-
-    static var wr_wireEnterpriseLearnMore: URL {
-        BackendEnvironment.websiteLink(path: "pricing")
-    }
-
-    static var wr_guestLinksLearnMore: URL {
-        wr_support.appendingPathComponent("hc/articles/360000574069-Share-a-link-with-a-person-without-a-Wire-account-to-join-a-guest-room-conversation-in-my-team")
-    }
-
-    static var wr_unreachableBackendLearnMore: URL {
-        wr_support.appendingPathComponent("hc/articles/9357718008093-Backend")
-    }
-
-    static var wr_FederationLearnMore: URL {
-        wr_support.appendingPathComponent("hc/categories/4719917054365-Federation")
-    }
-
-    static var wr_mlsLearnMore: URL {
-        wr_support.appendingPathComponent("hc/articles/12434725011485-Messaging-Layer-Security-MLS-")
-    }
-
     static var selfUserProfileLink: URL? {
         BackendEnvironment.selfUserProfileLink
-    }
-
-    static var wr_e2eiLearnMore: URL {
-        return wr_support.appendingPathComponent("hc/articles/9211300150685-End-to-end-identity")
     }
 
 }
@@ -206,21 +81,6 @@ extension URL {
 private extension BackendEnvironment {
     static func websiteLink(path: String) -> URL {
         shared.websiteURL.appendingPathComponent(path)
-    }
-
-    static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
-        let languageCode = Locale.autoupdatingCurrent.languageCode
-        let baseURL = shared.websiteURL
-
-        switch page {
-        case .termsOfServices, .privacyPolicy:
-            let pathComponent = (languageCode == "de") ? "datenschutz" : "legal"
-            return baseURL.appendingPathComponent(pathComponent)
-
-        case .legal:
-            let pathComponent = (languageCode == "de") ? "de/nutzungsbedingungen" : "legal"
-            return baseURL.appendingPathComponent(pathComponent)
-        }
     }
 
     static func accountsLink(path: String) -> URL {

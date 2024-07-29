@@ -19,11 +19,6 @@
 import UIKit
 import WireSystemPackage
 
-// TODO: remove
-protocol DeviceMockable {
-    var device: DeviceAbstraction { get set }
-}
-
 protocol DeviceProtocol {
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }
     var orientation: UIDeviceOrientation { get }

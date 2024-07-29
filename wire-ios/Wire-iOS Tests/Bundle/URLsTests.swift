@@ -17,28 +17,20 @@
 //
 
 @testable import Wire
-import WireTransport
+import WireCommonComponents
 import XCTest
 
-final class URL_WireTests: XCTestCase {
+final class URLsTests: XCTestCase {
 
-    var be: BackendEnvironment!
+    func testUrlFileContainsAllKeys() throws {
+        // Given
+        guard let fileURL = Bundle.fileURL(for: "url", with: "json") else {
+            XCTFail("Failed to load url.json file")
+            return
+        }
 
-    override func setUp() {
-        super.setUp()
-        let bundle = Bundle.backendBundle
-        let defaults = UserDefaults(suiteName: "URLWireTests")!
-        EnvironmentType.production.save(in: defaults)
-        be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
+        // When / Then
+        XCTAssertNoThrow(try fileURL.decode(WireURLs.self))
     }
 
-    override func tearDown() {
-        be = nil
-        super.tearDown()
-    }
-
-    func testThatAccountURLsAreLoadedCorrectly() {
-        let accountsURL = URL(string: "https://account.wire.com")!
-        XCTAssertEqual(be.accountsURL, accountsURL)
-    }
 }
