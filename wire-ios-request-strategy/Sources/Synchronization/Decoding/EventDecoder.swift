@@ -32,7 +32,7 @@ private let zmLog = ZMSLog(tag: "EventDecoder")
         if let testingBatchSize = testingBatchSize {
             return testingBatchSize
         }
-        return 500
+        return 20
     }
 
     /// Set this for testing purposes only
