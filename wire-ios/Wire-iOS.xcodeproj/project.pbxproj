@@ -336,9 +336,8 @@
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		595D304B2BF923B30064A018 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; };
-		5965B4732C57BC85000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4722C57BC85000DBF91 /* WireAnalytics */; };
-		5965B4742C57BC85000DBF91 /* WireAnalytics in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4722C57BC85000DBF91 /* WireAnalytics */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5965B4752C57BC8C000DBF91 /* WireAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5965B4772C57BE9F000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4762C57BE9F000DBF91 /* WireAnalytics */; };
 		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
 		5966D82C2BD6995100305BBC /* MockViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */; };
 		5966D8442BD7F05E00305BBC /* AccentColor+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */; };
@@ -2042,7 +2041,6 @@
 				A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
 				016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */,
 				5996E8A32C19D066007A52F0 /* WireNotificationEngine.framework in Embed Frameworks */,
-				5965B4742C57BC85000DBF91 /* WireAnalytics in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
 				5965B4752C57BC8C000DBF91 /* WireAPI in Embed Frameworks */,
 				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
@@ -4020,7 +4018,7 @@
 				595D304B2BF923B30064A018 /* WireAPI in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
-				5965B4732C57BC85000DBF91 /* WireAnalytics in Frameworks */,
+				5965B4772C57BE9F000DBF91 /* WireAnalytics in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */,
@@ -8708,7 +8706,7 @@
 				592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */,
 				59CD83E42C22CE9800186022 /* WireDesign */,
 				E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */,
-				5965B4722C57BC85000DBF91 /* WireAnalytics */,
+				5965B4762C57BE9F000DBF91 /* WireAnalytics */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11797,7 +11795,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
 		};
-		5965B4722C57BC85000DBF91 /* WireAnalytics */ = {
+		5965B4762C57BE9F000DBF91 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalytics;
 		};
