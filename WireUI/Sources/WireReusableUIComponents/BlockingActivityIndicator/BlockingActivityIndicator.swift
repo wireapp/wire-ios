@@ -20,7 +20,6 @@ import WireSystemPackage
 import SwiftUI
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
-@MainActor
 public final class BlockingActivityIndicator {
 
     // MARK: - Properties
@@ -44,10 +43,12 @@ public final class BlockingActivityIndicator {
 
     // MARK: - Methods
 
+    @MainActor
     public func start(text: String = "") {
         view?.blockAndStartAnimating(blockingActivityIndicator: self, text: text)
     }
 
+    @MainActor
     public func stop() {
         view?.unblockAndStopAnimatingIfNeeded(blockingActivityIndicator: self)
     }

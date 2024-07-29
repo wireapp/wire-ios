@@ -331,7 +331,7 @@ extension AppRootRouter {
             return
         }
 
-        let navigationController = SpinnerCapableNavigationController(
+        let navigationController = UINavigationController(
             navigationBarClass: AuthenticationNavigationBar.self,
             toolbarClass: nil
         )
@@ -339,7 +339,7 @@ extension AppRootRouter {
         authenticationCoordinator?.tearDown()
 
         authenticationCoordinator = AuthenticationCoordinator(
-            presenter: navigationController,
+            presenter: navigationController as! (UINavigationController & SpinnerCapable),
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
             statusProvider: AuthenticationStatusProvider()

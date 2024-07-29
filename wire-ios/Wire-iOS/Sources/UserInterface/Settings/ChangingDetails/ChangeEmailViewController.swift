@@ -194,7 +194,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         do {
             try updateBlock()
             updateSaveButtonState(enabled: false)
-            navigationController?.isLoadingViewVisible = showLoadingView
+            (navigationController as! (UINavigationController & SpinnerCapable)?)?.isLoadingViewVisible = showLoadingView
         } catch { }
     }
 
@@ -232,13 +232,13 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 extension ChangeEmailViewController: UserProfileUpdateObserver {
 
     func emailUpdateDidFail(_ error: Error!) {
-        navigationController?.isLoadingViewVisible = false
+        (navigationController as! (UINavigationController & SpinnerCapable)?)?.isLoadingViewVisible = false
         updateSaveButtonState()
         showAlert(for: error)
     }
 
     func didSendVerificationEmail() {
-        navigationController?.isLoadingViewVisible = false
+        (navigationController as! (UINavigationController & SpinnerCapable)?)?.isLoadingViewVisible = false
         updateSaveButtonState()
         if let newEmail = state.newEmail {
             let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)

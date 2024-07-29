@@ -223,6 +223,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 }
 
 extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
+
     func videoEditorControllerDidCancel(_ editor: UIVideoEditorController) {
         editor.dismiss(animated: true, completion: .none)
     }
@@ -230,10 +231,10 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
     func videoEditorController(_ editor: UIVideoEditorController, didSaveEditedVideoToPath editedVideoPath: String) {
         editor.dismiss(animated: true, completion: .none)
 
-        editor.isLoadingViewVisible = true
+        (editor as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = true
 
         self.convertVideoAtPath(editedVideoPath) { success, resultPath, _ in
-            editor.isLoadingViewVisible = false
+            (editor as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = false
 
             guard let path = resultPath, success else {
                 return

@@ -17,21 +17,20 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 protocol SpinnerCapable: AnyObject {
     var dismissSpinner: (() -> Void)? { get set }
 }
 
 extension SpinnerCapable where Self: UIViewController {
+
     func showLoadingView(title: String) {
         dismissSpinner = presentSpinner(title: title)
     }
 
     var isLoadingViewVisible: Bool {
-        get {
-            return dismissSpinner != nil
-        }
-
+        get { dismissSpinner != nil }
         set {
             if newValue {
                 // do not show double spinners
@@ -45,87 +44,17 @@ extension SpinnerCapable where Self: UIViewController {
         }
     }
 
-    private func presentSpinner(title: String? = nil) -> Completion {
-        // Starts animating when it appears, stops when it disappears
-        let spinnerView = createSpinner(title: title)
-        spinnerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(spinnerView)
+    private func presentSpinner(title: String? = nil) -> (() -> Void) {
 
-        NSLayoutConstraint.activate([
-            spinnerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            spinnerView.topAnchor.constraint(equalTo: view.topAnchor),
-            spinnerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            spinnerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
-
+        let activityIndicator = BlockingActivityIndicator(view: view)
         UIAccessibility.post(notification: .announcement, argument: L10n.Localizable.General.loading)
-        spinnerView.spinnerSubtitleView.spinner.startAnimation()
+        Task { @MainActor in
+            activityIndicator.start(text: title ?? "")
+        }
 
         return {
-            spinnerView.removeFromSuperview()
-        }
-    }
-
-    fileprivate func createSpinner(title: String? = nil) -> LoadingSpinnerView {
-        let loadingSpinnerView = LoadingSpinnerView()
-        loadingSpinnerView.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        loadingSpinnerView.spinnerSubtitleView.subtitle = title
-
-        return loadingSpinnerView
-    }
-}
-
-// MARK: - LoadingSpinnerView
-
-final class LoadingSpinnerView: UIView {
-
-    let spinnerSubtitleView = SpinnerSubtitleView()
-
-    init() {
-        super.init(frame: .zero)
-        addSubview(spinnerSubtitleView)
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func createConstraints() {
-        spinnerSubtitleView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            spinnerSubtitleView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinnerSubtitleView.centerYAnchor.constraint(equalTo: centerYAnchor)])
-    }
-}
-
-// MARK: - SpinnerCapableNavigationController
-
-final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
-
-    // TODO: remove if possible
-    static var accessibilityAnnouncement = ""
-
-    var dismissSpinner: (() -> Void)?
-    // TODO: remove if possible
-    var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
-
-    override var childForStatusBarStyle: UIViewController? {
-        topViewController
-    }
-
-}
-
-extension UINavigationController {
-    var isLoadingViewVisible: Bool? {
-        get {
-            return (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible
-        }
-
-        set {
-            if let newValue {
-                (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = newValue
+            Task { @MainActor in
+                activityIndicator.stop()
             }
         }
     }
