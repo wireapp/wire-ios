@@ -17,7 +17,8 @@
 //
 
 @import Security;
-@import WireSystem;
+@import WireSystemPackage;
+@import WireSystemObjC;
 @import WireUtilities;
 
 #import "ZMKeychain.h"

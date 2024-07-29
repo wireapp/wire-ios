@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystem
+import WireSystemPackage
 
 protocol CollectionViewSectionController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 

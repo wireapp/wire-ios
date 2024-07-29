@@ -18,7 +18,7 @@
 
 @import WireTransport;
 @import WireUtilities;
-@import WireSystem;
+@import WireSystemPackage;
 
 #import "MockEvent.h"
 #import "MockConversation.h"

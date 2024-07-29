@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystem
+import WireSystemPackage
 
 struct EdgeInsets {
     let top, leading, bottom, trailing: CGFloat

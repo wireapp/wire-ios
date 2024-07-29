@@ -16,22 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPkg
 import XCTest
+
+@testable import Wire
 
 final class ConversationAvatarViewTests: XCTestCase {
 
-    var sut: ConversationAvatarView!
+    // MARK: - Properties
+
+    private var sut: ConversationAvatarView!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = ConversationAvatarView()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersNoUserImages() {
         // GIVEN
@@ -41,7 +55,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersSomeAndThenNoUserImages() {
@@ -61,7 +75,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersSingleUserImage() {
@@ -76,7 +90,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: otherUserConversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersPendingConnection() {
@@ -93,7 +107,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .connect(users: [otherUser]))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersASingleServiceUser() {
@@ -114,7 +128,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: otherUserConversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersTwoUserImages() {
@@ -129,7 +143,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersManyUsers() {
@@ -146,9 +160,11 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 }
+
+// MARK: - Helper method
 
 fileprivate extension UIView {
 

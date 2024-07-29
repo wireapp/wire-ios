@@ -17,8 +17,8 @@
 //
 
 #import <Foundation/Foundation.h>
-@import WireSystem;
-@import WireUtilities;
+#import <WireSystemPackage/WireSystemPackage.h>
+#import <WireUtilities/WireUtilities.h>
 
 
 

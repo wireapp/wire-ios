@@ -24,15 +24,21 @@ import XCTest
 
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
-    var sut: MockCallQualityController!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
-    var router: MockCallQualityRouterProtocol!
-    var conversation: ZMConversation!
-    var callConversationProvider: MockCallConversationProvider!
-    var callQualityViewController: CallQualityViewController!
+    private var router: MockCallQualityRouterProtocol!
+    private var conversation: ZMConversation!
+    private var callConversationProvider: MockCallConversationProvider!
+    private var callQualityViewController: CallQualityViewController!
+
+    // MARK: - setUp
 
     override func setUp() {
-
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
         router = .init()
         coreDataFixture = CoreDataFixture()
         conversation = ZMConversation.createOtherUserConversation(
@@ -48,13 +54,12 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
 
-        Analytics.shared = Analytics(optedOut: true)
-
-        super.setUp()
     }
 
-    override func tearDown() {
+    // MARK: - teardown
 
+    override func tearDown() {
+        snapshotHelper = nil
         coreDataFixture = nil
         sut = nil
         router = nil
@@ -66,6 +71,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - SurveyRequestValidation Tests
+
     func testSurveyRequestValidation() {
         sut.usesCallSurveyBudget = true
 
@@ -87,9 +93,10 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - SnapshotTests
+
     func testSurveyInterface() {
         CallQualityController.resetSurveyMuteFilter()
-        SnapshotHelper().verify(matching: callQualityViewController.view)
+        snapshotHelper.verify(matching: callQualityViewController.view)
     }
 
     // MARK: - CallQualitySurvey Presentation Tests

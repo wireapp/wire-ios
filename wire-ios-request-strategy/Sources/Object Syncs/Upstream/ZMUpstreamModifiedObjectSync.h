@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireTransport;
-
+#import <WireTransport/WireTransport.h>
 #import <WireRequestStrategy/ZMContextChangeTracker.h>
 #import <WireRequestStrategy/ZMOutstandingItems.h>
 #import <WireRequestStrategy/ZMRequestGenerator.h>

@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSystem
+import WireSystemPackage
 
 /**
  * A footer view to use to display a bar of actions to perform for a conversation.

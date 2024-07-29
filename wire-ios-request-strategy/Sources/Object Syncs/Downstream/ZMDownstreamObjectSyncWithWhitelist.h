@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import  CoreData;
-
+#import <CoreData/CoreData.h>
 #import <WireRequestStrategy/ZMObjectSync.h>
 
 @protocol ZMDownstreamTranscoder;

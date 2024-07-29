@@ -23,6 +23,7 @@
 @import WireCryptobox;
 @import MobileCoreServices;
 @import WireImages;
+@import WireSystemObjC;
 
 #import "ZMManagedObject+Internal.h"
 #import "ZMConversation+Internal.h"

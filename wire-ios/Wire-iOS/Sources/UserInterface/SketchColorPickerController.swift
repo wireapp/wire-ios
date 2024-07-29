@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireSystem
+import WireSystemPackage
 
 protocol SketchColorPickerControllerDelegate: AnyObject {
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor)

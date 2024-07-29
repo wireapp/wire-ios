@@ -193,15 +193,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		09F027F31B721FE100BADDB6 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		EE7F3DED29548F89000D247D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -954,7 +945,6 @@
 				3E88BCAE1B1F35DF00232589 /* Sources */,
 				3E88BCAF1B1F35DF00232589 /* Frameworks */,
 				3E88BCB01B1F35DF00232589 /* Resources */,
-				09F027F31B721FE100BADDB6 /* CopyFiles */,
 			);
 			buildRules = (
 			);

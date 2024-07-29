@@ -42,7 +42,6 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue

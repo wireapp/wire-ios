@@ -1,5 +1,5 @@
 sources:
-- ${PACKAGE_ROOT_DIR}/Sources/WireSystemPackage
+- ${PACKAGE_ROOT_DIR}/Sources/WireSystem
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:

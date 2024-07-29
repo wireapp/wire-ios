@@ -16,18 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
 import WireCommonComponents
+import WireTestingPkg
 import XCTest
 
+@testable import Wire
+
 final class MessageActionTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+
+        super.tearDown()
+    }
 
     func testForSystemIcons() {
         MessageAction.allCases.forEach { action in
             if let image = action.systemIcon() {
                 let imageView = UIImageView(image: image)
-                verify(matching: imageView, named: "\(action)")
+                snapshotHelper.verify(matching: imageView, named: "\(action)")
             }
         }
     }

@@ -17,20 +17,25 @@
 //
 
 import SnapshotTesting
+import WireTestingPkg
 import XCTest
 
 @testable import Wire
 
 final class AccountViewSnapshotTests: XCTestCase {
-    var imageData: Data!
+
+    private var imageData: Data!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .purple
         imageData = UIImage(inTestBundleNamed: "unsplash_matterhorn.jpg", for: AccountViewSnapshotTests.self)!.jpegData(compressionQuality: 0.9)
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         imageData = nil
         super.tearDown()
     }
@@ -39,9 +44,9 @@ final class AccountViewSnapshotTests: XCTestCase {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
         let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        sut.overrideUserInterfaceStyle = .light
+
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountSelected_Personal() {
@@ -51,16 +56,18 @@ final class AccountViewSnapshotTests: XCTestCase {
         sut.overrideUserInterfaceStyle = .light
         // WHEN 
         sut.selected = true
+
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountWithPicture_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
         let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountWithPictureSelected_Personal() {
@@ -70,7 +77,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         // WHEN 
         sut.selected = true
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccount_Team() throws {
@@ -78,7 +85,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
         let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountSelected_Team() throws {
@@ -88,7 +95,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         // WHEN
         sut.selected = true
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountWithPicture_Team() throws {
@@ -96,7 +103,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
         let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountWithPictureSelected_Team() throws {
@@ -106,7 +113,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         // WHEN
         sut.selected = true
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - unread dot
@@ -117,13 +124,12 @@ final class AccountViewSnapshotTests: XCTestCase {
         account.unreadConversationCount = 100
         let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         sut.unreadCountStyle = .current
-        sut.overrideUserInterfaceStyle = .light
 
         // WHEN
         sut.selected = true
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountWithPictureSelected_Personal_withUnreadDot() {
@@ -137,7 +143,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         sut.selected = true
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountSelected_Personal_withUnreadDot() {
@@ -151,7 +157,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         sut.selected = true
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsBasicAccountSelected_Team_withUnreadDot() throws {
@@ -163,7 +169,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         sut.selected = true
 
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - smaller icon for conversation list
@@ -172,6 +178,6 @@ final class AccountViewSnapshotTests: XCTestCase {
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
         let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .conversationListHeader))
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

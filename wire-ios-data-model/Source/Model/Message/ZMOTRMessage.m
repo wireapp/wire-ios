@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@import WireSystemObjC;
+
 #import "ZMOTRMessage.h"
 #import "ZMConversation+Internal.h"
 #import <WireDataModel/WireDataModel-Swift.h>

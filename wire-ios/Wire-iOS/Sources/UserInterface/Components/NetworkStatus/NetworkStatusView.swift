@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireSystem
+import WireSystemPackage
 
 enum NetworkStatusViewState {
     case online

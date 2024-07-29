@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 class _CBox: PointerWrapper {}
 

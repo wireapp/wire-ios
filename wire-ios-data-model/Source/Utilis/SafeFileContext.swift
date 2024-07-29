@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 private let zmLog = ZMSLog(tag: "safeFileContext")
 

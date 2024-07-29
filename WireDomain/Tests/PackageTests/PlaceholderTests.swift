@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireDomainPackage
+@testable import WireDomainPkg
 
 final class PlaceholderTests: XCTestCase {
 

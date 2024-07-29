@@ -8,26 +8,37 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireSystemPackage", type: .dynamic, targets: ["WireSystemPkg"]),
-        .library(name: "WireSystemPackageSupport", type: .dynamic, targets: ["WireSystemPkgSupport"])
+        .library(name: "WireSystemPackage", type: .dynamic, targets: ["WireSystemPackage"]),
+        .library(name: "WireSystemPackageSupport", type: .dynamic, targets: ["WireSystemPackageSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", from: "3.8.5"),
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireSystemPkg", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
-        .testTarget(name: "WireSystemPkgTests", dependencies: ["WireSystemPkg"], path: "./Tests/WireSystemTests"),
+        .target(
+            name: "WireSystemPackage",
+            dependencies: [
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                "ZipArchive"
+            ],
+            path: "./Sources/WireSystem",
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(name: "WireSystemPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/WireSystemTests"),
 
         .target(
-            name: "WireSystemPkgSupport",
-            dependencies: ["WireSystemPkg"],
+            name: "WireSystemPackageSupport",
+            dependencies: ["WireSystemPackage"],
             path: "./Sources/WireSystemSupport",
             swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
-        )
+        ),
+
+        .binaryTarget(name: "ZipArchive", path: "../Carthage/Build/ZipArchive.xcframework")
     ]
 )
 

@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
+@import WireSystemPackage;
+@import WireSystemObjC;
 
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMLocallyModifiedObjectSyncStatus.h"
@@ -27,8 +28,6 @@
 + (instancetype)object:(ZMManagedObject *)object withKeys:(NSSet *)keys;
 
 @end
-
-
 
 @implementation ZMObjectWithKeys
 
