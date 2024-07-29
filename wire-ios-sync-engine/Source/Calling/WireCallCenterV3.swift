@@ -433,6 +433,12 @@ extension WireCallCenterV3 {
     /// Call this method when the callParticipants changed and avs calls the handler `wcall_participant_changed_h`
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
         guard isEnabled else { return }
+
+        guard !shouldEndCall(conversationId: conversationId, participants: participants) else {
+            endAllCalls()
+            return
+        }
+
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
         if let participants = callSnapshots[conversationId]?.callParticipants.participants {
@@ -443,6 +449,28 @@ extension WireCallCenterV3 {
                 )
             )
         }
+    }
+
+    /// This is a temporary solution for 1:1 mls calls via SFT.
+    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
+    /// If the other user hangs up, we should end the call for the self user.
+    /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
+    private func shouldEndCall(conversationId: AVSIdentifier, participants: [AVSCallMember]) -> Bool {
+        /// TODO: check the conferenceCalling feature config
+        guard let context = uiMOC,
+              let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: context),
+              conversation.messageProtocol == .mls,
+              conversation.conversationType == .oneOnOne,
+              participants.first(where: { $0.audioState == .connecting }) != nil,
+              callSnapshots[conversationId]?.callState == .established
+        else {
+            return false
+        }
+
+        return true
     }
 
     /// Call this method when the network quality of a participant changes and avs calls the `wcall_network_quality_h`.

@@ -121,7 +121,7 @@ struct FeatureConfigsPayloadProcessor {
         switch featureName {
         case .conferenceCalling:
             let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            repository.storeConferenceCalling(.init(status: response.status))
+            repository.storeConferenceCalling(.init(status: response.status)) // add config
 
         case .fileSharing:
             let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
