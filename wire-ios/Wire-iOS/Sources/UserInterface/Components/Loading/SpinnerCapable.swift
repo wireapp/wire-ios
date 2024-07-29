@@ -25,10 +25,6 @@ protocol SpinnerCapable: AnyObject {
 
 extension SpinnerCapable where Self: UIViewController {
 
-    func showLoadingView(title: String) {
-        dismissSpinner = presentSpinner(title: title)
-    }
-
     var isLoadingViewVisible: Bool {
         get { dismissSpinner != nil }
         set {

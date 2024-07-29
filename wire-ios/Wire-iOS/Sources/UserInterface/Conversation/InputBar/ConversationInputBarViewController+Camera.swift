@@ -217,8 +217,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 return
             }
             completion(true, resultURL.path, CMTimeGetSeconds((videoAsset?.duration)!))
-
-            }
+        }
     }
 }
 

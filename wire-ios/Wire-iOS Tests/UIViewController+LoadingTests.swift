@@ -74,13 +74,4 @@ final class LoadingViewControllerTests: XCTestCase {
         XCTAssertFalse(sut.isLoadingViewVisible)
         snapshotHelper.verify(matching: sut)
     }
-
-    func testThatItShowsLoadingIndicatorWithSubtitle() {
-        // GIVEN && WHEN
-        sut.showLoadingView(title: "RESTORING…")
-
-        // THEN
-        verifyInAllDeviceSizes(matching: sut)
-    }
-
 }
