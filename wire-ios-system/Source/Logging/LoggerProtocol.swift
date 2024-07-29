@@ -33,8 +33,8 @@ public protocol LoggerProtocol {
 
 extension LoggerProtocol {
 
-    func attributesDescription(from attributes: [LogAttributes]) -> String {
-        var logAttributes = flattenArray(attributes)
+    func attributesDescription(from attributes: LogAttributes) -> String {
+        var logAttributes = attributes
 
         // drop attributes used for visibility and category
         logAttributes.removeValue(forKey: LogAttributesKey.public)

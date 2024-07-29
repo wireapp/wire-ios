@@ -74,7 +74,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             return
         }*/
 
-        var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: attributes))"
+        var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
         if let tag = mergedAttributes[.tag] as? String {
             entry = "[\(tag)] - \(entry)"
