@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPkg
+import WireUITesting
 import XCTest
 
 @testable import WireReusableUIComponents
@@ -83,5 +83,34 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
         // Then
         verifyInAllDeviceSizes(matching: viewController)
+    }
+}
+
+// TODO: [WPB-10368] remove this temporary extension once XCTestCase+SnapshotTesting has been moved to a Swift package and is accessible from WireUI
+
+private extension XCTestCase {
+
+    func verifyInAllDeviceSizes(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
+
+        for (config, name) in allDevices {
+            if let deviceMockable = value as? DeviceMockable {
+                (deviceMockable.device as? MockDevice)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
+            }
+
+            verify(
+                matching: value,
+                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
+        }
     }
 }
