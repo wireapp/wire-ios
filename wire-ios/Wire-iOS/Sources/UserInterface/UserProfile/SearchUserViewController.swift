@@ -20,12 +20,11 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
-final class SearchUserViewController: UIViewController, SpinnerCapable {
+final class SearchUserViewController: UIViewController {
 
     // MARK: - Properties
-
-    var dismissSpinner: (() -> Void)?
 
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
@@ -33,6 +32,8 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
     private let mainCoordinator: MainCoordinating
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
@@ -73,12 +74,13 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        isLoadingViewVisible = true
+        // TODO: where/when is it stopped?
+        activityIndicator.start()
 
         if let task = searchDirectory?.lookup(userId: userId) {
-            task.addResultHandler({ [weak self] in
+            task.addResultHandler { [weak self] in
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            })
+            }
             task.start()
 
             pendingSearchTask = task
