@@ -474,6 +474,47 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertTrue(expirationDatesRepository.fetchAllCRLExpirationDates().isEmpty)
     }
 
+    func testThatDeleteAccountWhenSingleUserClearsLastEventID() throws {
+        // GIVEN
+        XCTAssertTrue(login())
+        let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
+
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: account.userIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
+        lastEventIDRepository.storeLastEventID(UUID())
+
+        // WHEN
+        sessionManager?.delete(account: account)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertNil(lastEventIDRepository.fetchLastEventID())
+    }
+
+    func testThatDeleteAccountWhenMultipleUsersClearsLastEventID() throws {
+        // GIVEN
+        XCTAssertTrue(login())
+
+        let sut = try XCTUnwrap(sessionManager)
+        let account2 = Account(userName: "Account 2", userIdentifier: UUID.create())
+        sut.accountManager.addAndSelect(account2)
+
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: account2.userIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
+        lastEventIDRepository.storeLastEventID(UUID())
+
+        // WHEN
+        sessionManager?.delete(account: account2)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertNil(lastEventIDRepository.fetchLastEventID())
+    }
+
     // FIXME: [WPB-5638] this test will hang - [jacob]
     //
     // Since markAllConversationsAsRead() will schedule read up update message
