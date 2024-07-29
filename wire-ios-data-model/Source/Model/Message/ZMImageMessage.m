@@ -19,6 +19,7 @@
 @import CoreGraphics;
 @import MobileCoreServices;
 @import ImageIO;
+@import WireSystemObjC;
 @import WireUtilities;
 @import WireTransport;
 

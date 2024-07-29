@@ -18,6 +18,7 @@
 
 @import WireUtilities;
 @import WireDataModel;
+@import WireSystemObjC;
 
 #import "ZMChangeTrackerBootstrap+Testing.h"
 #import "ZMContextChangeTracker.h"

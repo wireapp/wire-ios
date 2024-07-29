@@ -18,7 +18,7 @@
 
 import Foundation
 import MobileCoreServices
-import WireSystem
+import WireSystemPackage
 import WireUtilities
 
 private let zmLog = ZMSLog(tag: "ZMFileMetadata")

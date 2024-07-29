@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireSystem
+import WireSystemPackage
 
 struct MainCoordinator: MainCoordinating {
 

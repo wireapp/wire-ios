@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystem
+import WireSystemPackage
 
 /**
  * An object that tracks performance issues in the application for debugging purposes.

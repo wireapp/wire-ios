@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
-import WireSystem
+import WireSystemPackage
 import WireTransport
 
 protocol LandingViewControllerDelegate: AnyObject {

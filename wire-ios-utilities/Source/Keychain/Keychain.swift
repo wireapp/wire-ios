@@ -19,6 +19,7 @@
 import Foundation
 import LocalAuthentication
 import Security
+import WireSystemPackage
 
 public protocol KeychainItem {
     associatedtype Value

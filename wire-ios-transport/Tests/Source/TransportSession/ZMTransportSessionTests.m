@@ -17,7 +17,7 @@
 //
 
 @import XCTest;
-@import WireSystem;
+@import WireSystemPackage;
 @import OCMock;
 @import WireTesting;
 @import WireTransport;

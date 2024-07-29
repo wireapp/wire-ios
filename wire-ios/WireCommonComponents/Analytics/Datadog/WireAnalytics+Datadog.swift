@@ -17,7 +17,7 @@
 //
 
 import WireAnalytics
-import WireSystem
+import WireSystemPackage
 
 #if canImport(WireDatadog)
 import WireDatadog

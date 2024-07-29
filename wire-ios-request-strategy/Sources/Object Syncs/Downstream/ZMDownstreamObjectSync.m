@@ -19,6 +19,7 @@
 @import CoreData;
 @import WireTransport;
 @import WireDataModel;
+@import WireSystemObjC;
 
 #import "ZMDownstreamObjectSync.h"
 #import "ZMSyncOperationSet.h"

@@ -19,7 +19,7 @@
 import avs
 import Foundation
 import WireSyncEngine
-import WireSystem
+import WireSystemPackage
 
 private let zmLog = ZMSLog(tag: "MediaPlaybackManager")
 

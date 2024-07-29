@@ -17,6 +17,6 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 let zmLog = ZMSLog(tag: "cryptobox")

@@ -21,7 +21,7 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
-import WireSystem
+import WireSystemPackage
 
 final class ConversationListViewModel: NSObject {
 

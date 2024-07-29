@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
+@import WireSystemPackage;
+@import WireSystemObjC;
+
 #import "ZMTimer.h"
 
 

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 import XCTest
 
 @testable import WireRequestStrategy

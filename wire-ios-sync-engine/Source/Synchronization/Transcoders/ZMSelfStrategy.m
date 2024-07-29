@@ -17,7 +17,7 @@
 //
 
 @import WireImages;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireTransport;
 
 #import "ZMSelfStrategy+Internal.h"

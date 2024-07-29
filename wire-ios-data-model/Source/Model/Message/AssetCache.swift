@@ -18,7 +18,7 @@
 
 import Foundation
 import WireImages
-import WireSystem
+import WireSystemPackage
 
 protocol Cache {
 

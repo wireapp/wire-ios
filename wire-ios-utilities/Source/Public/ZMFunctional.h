@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <WireSystem/WireSystem.h>
+@import Foundation;
 
 NS_ASSUME_NONNULL_BEGIN
 

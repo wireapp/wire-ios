@@ -17,7 +17,7 @@
 //
 
 @import CoreData;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireUtilities;
 
 @class NSOperationQueue;

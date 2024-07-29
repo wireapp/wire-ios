@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 protocol ObjectInSnapshot {
     static var observableKeys: Set<String> { get }

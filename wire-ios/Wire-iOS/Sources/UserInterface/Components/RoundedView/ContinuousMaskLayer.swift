@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystem
+import WireSystemPackage
 
 /// The dimension to use when calculating relative radii.
 enum MaskDimension: Int {

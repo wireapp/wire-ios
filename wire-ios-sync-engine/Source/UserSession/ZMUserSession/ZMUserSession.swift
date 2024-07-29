@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import WireDataModel
 import WireRequestStrategy
-import WireSystem
+import WireSystemPackage
 
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate

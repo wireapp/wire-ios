@@ -20,7 +20,7 @@ import AVFoundation
 import Photos
 import SnapshotTesting
 import WireDesign
-import WireUITesting
+import WireTestingPkg
 import XCTest
 
 @testable import Wire

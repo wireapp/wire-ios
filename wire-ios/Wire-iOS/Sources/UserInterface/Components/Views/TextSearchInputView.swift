@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
-import WireSystem
+import WireSystemPackage
 
 protocol TextSearchInputViewDelegate: AnyObject {
     func searchView(_ searchView: TextSearchInputView, didChangeQueryTo: String)

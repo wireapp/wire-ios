@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 // sourcery: AutoMockable
 public protocol CryptoboxMigrationManagerInterface {

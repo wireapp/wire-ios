@@ -17,7 +17,7 @@
 //
 
 @import ObjectiveC;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireTesting;
 @import WireUtilities;
 @import XCTest;

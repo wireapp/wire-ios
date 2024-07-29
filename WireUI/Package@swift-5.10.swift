@@ -9,12 +9,13 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireDesign", targets: ["WireDesign"]),
-        .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUITesting", targets: ["WireUITesting"])
+        .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0")
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(name: "WireSystemPackage", path: "../WireSystem"),
+        .package(name: "WireTestingPackage", path: "../WireTesting")
     ],
     targets: [
         .target(
@@ -33,7 +34,8 @@ let package = Package(
         .target(
             name: "WireReusableUIComponents",
             dependencies: [
-                "WireDesign"
+                "WireDesign",
+                "WireSystemPackage"
             ],
             swiftSettings: swiftSettings
         ),
@@ -42,19 +44,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
-                "WireUITesting"
-            ],
-            swiftSettings: swiftSettings
-        ),
-
-        // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
-        .target(
-            name: "WireUITesting",
-            dependencies: [
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
+                "WireTestingPackage"
             ],
             swiftSettings: swiftSettings
         )

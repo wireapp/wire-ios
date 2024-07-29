@@ -19,7 +19,7 @@
 import AppAuth
 import Foundation
 import WireRequestStrategy
-import WireSystem
+import WireSystemPackage
 import WireUtilities
 
 protocol OAuthUseCaseInterface {

@@ -18,7 +18,7 @@
 
 import Photos
 import UIKit
-import WireSystem
+import WireSystemPackage
 import WireUtilities
 
 protocol PhotoLibraryProtocol {

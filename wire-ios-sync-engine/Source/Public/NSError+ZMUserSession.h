@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 typedef NS_CLOSED_ENUM(NSInteger, ZMUserSessionErrorCode) {
     ZMUserSessionErrorCodeNoError = 0,

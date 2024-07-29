@@ -18,7 +18,7 @@
 
 @import CoreGraphics;
 @import MobileCoreServices;
-@import WireSystem;
+@import WireSystemPackage;
 @import WireMockTransport;
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";

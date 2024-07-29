@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@import WireSystemObjC;
+
 #import "MockReachability.h"
 
 NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChangedNotification";

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireSystemPackage
 
 struct DidPresentNotificationPermissionHintUseCase<DateProvider>: DidPresentNotificationPermissionHintUseCaseProtocol
 where DateProvider: CurrentDateProviding {

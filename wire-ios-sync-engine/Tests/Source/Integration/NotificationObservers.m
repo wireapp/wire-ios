@@ -17,6 +17,7 @@
 //
 
 @import WireDataModel;
+@import WireSystemObjC;
 
 #import "NotificationObservers.h"
 

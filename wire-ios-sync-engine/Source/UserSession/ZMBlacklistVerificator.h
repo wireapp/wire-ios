@@ -20,7 +20,7 @@
 
 @protocol ZMApplication;
 @protocol BackendEnvironmentProvider;
-@import WireUtilities;
+#import <WireUtilities/WireUtilities.h>
 
 @interface ZMBlacklistVerificator : NSObject <TearDownCapable>
 

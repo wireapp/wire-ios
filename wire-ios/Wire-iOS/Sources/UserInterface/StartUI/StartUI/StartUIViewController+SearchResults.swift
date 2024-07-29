@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
-import WireSystem
+import WireSystemPackage
 
 final class StartUIView: UIView { }
 

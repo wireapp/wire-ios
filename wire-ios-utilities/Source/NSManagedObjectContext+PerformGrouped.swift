@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireSystemPackage
 
 extension NSManagedObjectContext {
 

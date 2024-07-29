@@ -17,9 +17,10 @@
 //
 
 @import WireUtilities;
+@import WireSystemObjC;
+
 #import <WireDataModel/ZMManagedObject.h>
 #import "ZMLocallyInsertedObjectSet.h"
-
 
 @interface ZMLocallyInsertedObjectSet ()
 
@@ -27,8 +28,6 @@
 @property (nonatomic, readonly) NSMutableSet *currentlySynchronizedObjects;
 
 @end
-
-
 
 @implementation ZMLocallyInsertedObjectSet
 

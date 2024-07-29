@@ -122,10 +122,13 @@
       location = "group:WireTesting">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-system/WireSystem Project.xcodeproj">
+      location = "group:WireTestingObjC/WireTestingObjC.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireSystem">
+   </FileRef>
+   <FileRef
+      location = "group:WireSystemObjC/WireSystemObjC.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireAnalytics">

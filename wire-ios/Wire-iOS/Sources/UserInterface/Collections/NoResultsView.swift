@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSystem
+import WireSystemPackage
 
 final class NoResultsView: UIView {
     let label = DynamicFontLabel(fontSpec: .body,
