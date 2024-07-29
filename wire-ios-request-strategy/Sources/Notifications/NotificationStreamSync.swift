@@ -128,8 +128,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: self.listPaginator.hasMoreToFetch)
         latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
-        //        ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
-
         tp.warnIfLongerThanInterval()
         return latestEventId
     }

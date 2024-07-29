@@ -320,11 +320,11 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
-            WireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
+            WireLogger.updateEvent.debug("EventDecoder: process events finished, batch: \(batchId)", attributes: .safePublic)
             return
         }
 
-        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events", attributes: .safePublic)
+        WireLogger.updateEvent.debug("EventDecoder: process batch of eventsToDelete: \(events.storedEvents.count) , eventsToProcess: \(events.updateEvents.count)", attributes: .safePublic)
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)

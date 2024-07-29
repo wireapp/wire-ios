@@ -72,6 +72,7 @@ actor EventProcessor: UpdateEventProcessor {
         let processEventsId = UUID()
         let attributes: LogAttributes = [LogAttributesKey.processEventsId.rawValue: processEventsId.uuidString]
         WireLogger.eventProcessing.debug("🕵🏽 processEvents start", attributes: attributes)
+
         try await enqueueTask {
             WireLogger.eventProcessing.debug("🕵🏽 enqueueTask start", attributes: attributes)
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
