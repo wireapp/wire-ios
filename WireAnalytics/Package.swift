@@ -1,23 +1,14 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 
 import Foundation
 import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(
-            name: "WireAnalytics",
-            targets: ["WireAnalytics"]
-        ),
-        .library(
-            name: "WireDatadog",
-            targets: ["WireDatadog"]
-        )
+        .library(name: "WireAnalytics", type: .dynamic, targets: ["WireAnalytics"]),
+        .library(name: "WireDatadog", type: .dynamic, targets: ["WireDatadog"])
     ],
     dependencies: [
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0")
@@ -60,6 +51,5 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
 }
 
 let swiftSettings: [SwiftSetting] = [
-    .enableExperimentalFeature("StrictConcurrency"),
-    .enableUpcomingFeature("GlobalConcurrency")
+    .enableUpcomingFeature("ExistentialAny")
 ]
