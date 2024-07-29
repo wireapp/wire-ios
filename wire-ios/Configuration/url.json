@@ -1,8 +1,4 @@
 {
-<<<<<<< HEAD
-    "wireAppOnItunes": "https://geo.itunes.apple.com/us/app/wire/id930944768?mt=8",
-    "support": "https://support.wire.com"
-=======
     "appOnItunes": "https://geo.itunes.apple.com/us/app/wire/id930944768?mt=8",
     "support": "https://support.wire.com",
     "searchSupport": "https://support.wire.com/hc",
@@ -23,5 +19,4 @@
     "federationInfo": "https://support.wire.com/hc/categories/4719917054365-Federation",
     "mlsInfo": "https://support.wire.com/hc/articles/12434725011485-Messaging-Layer-Security-MLS-",
     "endToEndIdentityInfo": "https://support.wire.com/hc/articles/9211300150685-End-to-end-identity"
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 }

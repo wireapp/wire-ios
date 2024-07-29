@@ -20,11 +20,6 @@ import avs
 import Foundation
 import SafariServices
 import WireSyncEngine
-<<<<<<< HEAD
-=======
-import avs
-import WireCommonComponents
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 struct SettingsCellDescriptorFactory {
 
@@ -221,24 +216,15 @@ struct SettingsCellDescriptorFactory {
 
     func aboutSection() -> SettingsCellDescriptorType {
 
-<<<<<<< HEAD
         let legalButton = SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.About.Legal.title,
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: URL.wr_legal.appendingLocaleParameter)
+                BrowserViewController(url: WireURLs.shared.legal)
             },
             previewGenerator: .none
         )
-=======
-        let legalButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Legal.title,
-                                                               isDestructive: false,
-                                                               presentationStyle: .modal,
-                                                               presentationAction: {
-            return BrowserViewController(url: WireURLs.shared.legal)
-        }, previewGenerator: .none)
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
         let buildNumber = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
@@ -272,45 +258,4 @@ struct SettingsCellDescriptorFactory {
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description
         )
     }
-<<<<<<< HEAD
-=======
-
-    func licensesSection() -> SettingsCellDescriptorType {
-        guard let licenses = LicensesLoader.shared.loadLicenses() else {
-            return webLicensesSection()
-        }
-
-        let childItems: [SettingsGroupCellDescriptor] = licenses.map { item in
-            let projectCell = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.License.openProjectButton, isDestructive: false, presentationStyle: .modal, presentationAction: {
-                return BrowserViewController(url: item.projectURL)
-            }, previewGenerator: .none)
-            let detailsSection = SettingsSectionDescriptor(cellDescriptors: [projectCell], header: L10n.Localizable.About.License.projectHeader, footer: nil)
-
-            let licenseCell = SettingsStaticTextCellDescriptor(text: item.licenseText)
-            let licenseSection = SettingsSectionDescriptor(cellDescriptors: [licenseCell], header: L10n.Localizable.About.License.licenseHeader, footer: nil)
-
-            return SettingsGroupCellDescriptor(items: [detailsSection, licenseSection],
-                                               title: item.name,
-                                               style: .grouped,
-                                               accessibilityBackButtonText: L10n.Accessibility.LicenseDetailsSettings.BackButton.description)
-        }
-
-        let licensesSection = SettingsSectionDescriptor(cellDescriptors: childItems)
-        return SettingsGroupCellDescriptor(items: [licensesSection],
-                                           title: L10n.Localizable.About.License.title,
-                                           style: .plain,
-                                           accessibilityBackButtonText: L10n.Accessibility.LicenseInformationSettings.BackButton.description)
-
-    }
-
-    func webLicensesSection() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.License.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: .modal,
-                                                    presentationAction: {
-            return BrowserViewController(url: WireURLs.shared.licenseInformation)
-        },
-                                                    previewGenerator: .none)
-    }
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 }

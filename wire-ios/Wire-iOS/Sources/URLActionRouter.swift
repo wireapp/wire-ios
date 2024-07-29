@@ -153,7 +153,7 @@ extension URLActionRouter: PresentationDelegate {
             completion(password)
         }
 
-        let helpLinkURL = URL.wr_guestLinksLearnMore
+        let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }

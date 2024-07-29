@@ -17,11 +17,7 @@
 //
 
 import UIKit
-<<<<<<< HEAD
 import WireDesign
-=======
-import WireCommonComponents
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
 protocol ParticipantDeviceHeaderViewDelegate: AnyObject {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView)

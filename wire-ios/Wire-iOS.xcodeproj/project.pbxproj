@@ -68,12 +68,8 @@
 		0665DF7328F01D3B0094482B /* ProfileImagePickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0665DF7228F01D3B0094482B /* ProfileImagePickerManager.swift */; };
 		0667FE312384237E00F75F93 /* UICollectionView+SetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667FE302384237E00F75F93 /* UICollectionView+SetMessage.swift */; };
 		06717E5C2865183600AF442C /* Stylable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E5B2865183600AF442C /* Stylable.swift */; };
-<<<<<<< HEAD
-=======
-		06717E5E2865188000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
 		0679DEDE2C47C48400044FC7 /* Bundle+WireURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DED92C46951B00044FC7 /* Bundle+WireURLs.swift */; };
 		0679DEE12C49729500044FC7 /* URLsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DEE02C49729500044FC7 /* URLsTests.swift */; };
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
@@ -6458,11 +6454,8 @@
 		8FC85126199245760008B66B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
 				596841C72BD14D000009C6B8 /* ImageTransformer */,
-=======
 				0679DEDB2C46954F00044FC7 /* Bundle */,
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 				40C69D6E2A8627A700376B1C /* TmpFiles */,
 				06B3091126AEDC830057AF9E /* UIAlertController */,
 				064AD4C225DD313C00143D74 /* UIApplication */,

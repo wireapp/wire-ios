@@ -29,8 +29,7 @@ extension ZClientViewController {
         let learnMore = ConferenceCallingAlert.Message.learnMore
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-<<<<<<< HEAD
-        alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wireEnterpriseLearnMore, presenter: self))
+        alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .default,
@@ -38,12 +37,6 @@ extension ZClientViewController {
                 self?.confirmChanges()
             }
         ))
-=======
-         alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
-        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] (_) in
-            self?.confirmChanges()
-        }))
->>>>>>> 174fe5b822 (feat: Update/move URLs for C1 and C3 WPB-9748 (#1718))
 
         present(alert, animated: true)
     }
