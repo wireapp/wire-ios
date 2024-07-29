@@ -18,15 +18,18 @@
 
 import WireCommonComponents
 import XCTest
+import WireUITesting
 
 @testable import Wire
 
 final class IconLabelButtonTests: XCTestCase {
 
     private var button: IconLabelButton!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         button = IconLabelButton.camera()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setNeedsLayout()
@@ -34,6 +37,7 @@ final class IconLabelButtonTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         button = nil
         super.tearDown()
     }
@@ -50,7 +54,7 @@ final class IconLabelButtonTests: XCTestCase {
         button.isSelected = appearance.isSelected
 
         let name = "testIconLabelButton_\(appearance.description)"
-        verify(matching: button, file: file, testName: name, line: line)
+        snapshotHelper.verify(matching: button, file: file, testName: name, line: line)
     }
 
 }
