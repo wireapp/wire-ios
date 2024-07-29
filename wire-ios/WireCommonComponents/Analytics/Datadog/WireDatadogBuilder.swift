@@ -33,15 +33,14 @@ struct WireDatadogBuilder {
     private let device: UIDevice = .current
     private let environment: BackendEnvironment = .shared
     private let bundle: Bundle = .wireCommonComponents
-    private let mainBundle: Bundle = .main
+    private let mainBundle: Bundle = .appMainBundle
 
     // MARK: - Build
 
     func build() -> WireDatadog {
         guard
             let applicationID = bundle.infoForKey(Constants.keyAppId),
-            // can buildNumber be also be refactored to use `infoForKey`?
-            let buildNumber = mainBundle.object(forInfoDictionaryKey: Constants.keyBundleVersion) as? String,
+            let buildNumber = mainBundle.infoForKey(Constants.keyBundleVersion) as? String,
             let clientToken = bundle.infoForKey(Constants.keyClientToken)
         else {
             preconditionFailure("Datadog is enabled, but the bundle misses required input.")

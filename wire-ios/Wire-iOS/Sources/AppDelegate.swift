@@ -107,15 +107,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-<<<<<<< HEAD
         // Set up Datadog as logger
         WireAnalytics.Datadog.enable()
-=======
-        WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))")
->>>>>>> ec4d466b52 (fix: diverse logs - WPB-9939 (#1693))
-
         WireLogger.appDelegate.info(
-            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))"
+            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
         )
 
         // Initial log line to indicate the client version and build

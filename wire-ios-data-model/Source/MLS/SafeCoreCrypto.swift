@@ -62,11 +62,6 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-<<<<<<< HEAD
-        WireLogger.coreCrypto.debug("acquiring directory lock")
-=======
-        var result: T
->>>>>>> ec4d466b52 (fix: diverse logs - WPB-9939 (#1693))
         safeContext.acquireDirectoryLock()
         await restoreFromDisk()
 

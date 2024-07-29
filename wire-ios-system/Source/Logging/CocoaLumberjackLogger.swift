@@ -59,25 +59,22 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         log(message, attributes: attributes, level: .error)
     }
 
-<<<<<<< HEAD
+
     private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
+
         var mergedAttributes: LogAttributes = [:]
         attributes.forEach {
             mergedAttributes.merge($0) { _, new in new }
         }
 
-        var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"
-=======
-    private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
         // TODO: [WPB-6432] enable when ZMSLog is cleaned up
-        /*let isSafe = attributes?["public"] as? Bool == true
+        /* let isSafe = mergedAttributes[.public] as? Bool == true
         guard isDebug || isSafe else {
             // skips logs in production builds with non redacted info
             return
         }*/
 
         var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: attributes))"
->>>>>>> ec4d466b52 (fix: diverse logs - WPB-9939 (#1693))
 
         if let tag = mergedAttributes[.tag] as? String {
             entry = "[\(tag)] - \(entry)"

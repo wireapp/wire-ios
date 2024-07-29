@@ -120,7 +120,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
 
-        WireLogger.assets.debug("sending request for asset", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+        WireLogger.assets.debug("sending request for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
         var request: ZMTransportRequest?
 
         if shouldUseBackgroundSession {
@@ -171,7 +171,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
-        WireLogger.assets.debug("processing response for asset", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+        WireLogger.assets.debug("processing response for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
         guard
             let payload = response.payload?.asDictionary(),
             let assetId = payload["key"] as? String
@@ -188,17 +188,17 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             domain: domain
         )
 
-        WireLogger.assets.debug("processed response for asset", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+        WireLogger.assets.debug("processed response for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
 
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
 
         if message.processingState == .done {
             message.updateTransferState(.uploaded, synchronize: false)
-            WireLogger.assets.debug("message with asset uploaded", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+            WireLogger.assets.debug("message with asset uploaded", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
             return false
         } else {
             // There are more assets to upload
-            WireLogger.assets.debug("more assets to upload", attributes: [LogAttributesKey.nonce.rawValue: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+            WireLogger.assets.debug("more assets to upload", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
 
             return true
         }

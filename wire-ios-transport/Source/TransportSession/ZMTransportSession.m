@@ -412,11 +412,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
-<<<<<<< HEAD
     [WireLoggerObjc logRequest:URLRequest];
-=======
-    [self.remoteMonitoring logWithRequest:URLRequest];
->>>>>>> ec4d466b52 (fix: diverse logs - WPB-9939 (#1693))
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
