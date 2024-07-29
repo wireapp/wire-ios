@@ -7,8 +7,8 @@ let package = Package(
     name: "WireAnalytics",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireAnalytics", type: .dynamic, targets: ["WireAnalytics"]),
-        .library(name: "WireDatadog", type: .dynamic, targets: ["WireDatadog"])
+        .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
+        .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0")
