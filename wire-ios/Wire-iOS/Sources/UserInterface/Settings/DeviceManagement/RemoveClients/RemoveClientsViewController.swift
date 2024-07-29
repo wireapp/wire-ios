@@ -34,7 +34,8 @@ final class RemoveClientsViewController: UIViewController,
 
     // MARK: - Properties
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
+
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
 
     private var requestPasswordController: RequestPasswordController?

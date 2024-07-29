@@ -25,7 +25,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Properties
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?

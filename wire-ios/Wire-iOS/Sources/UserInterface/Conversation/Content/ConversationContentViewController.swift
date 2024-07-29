@@ -29,7 +29,7 @@ private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 /// The main conversation view controller
 final class ConversationContentViewController: UIViewController, SpinnerCapable {
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation

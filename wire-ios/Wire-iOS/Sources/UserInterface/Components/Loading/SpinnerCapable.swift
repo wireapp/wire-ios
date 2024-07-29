@@ -17,13 +17,9 @@
 //
 
 import UIKit
-import WireReusableUIComponents
-
-typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
-typealias SpinnerCompletion = Completion
 
 protocol SpinnerCapable: AnyObject {
-    var dismissSpinner: SpinnerCompletion? { get set }
+    var dismissSpinner: (() -> Void)? { get set }
 }
 
 extension SpinnerCapable where Self: UIViewController {
@@ -76,11 +72,12 @@ extension SpinnerCapable where Self: UIViewController {
 
         return loadingSpinnerView
     }
-
 }
 
 // MARK: - LoadingSpinnerView
+
 final class LoadingSpinnerView: UIView {
+
     let spinnerSubtitleView = SpinnerSubtitleView()
 
     init() {
@@ -104,11 +101,18 @@ final class LoadingSpinnerView: UIView {
 }
 
 // MARK: - SpinnerCapableNavigationController
+
 final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+
+    // TODO: remove if possible
+    static var accessibilityAnnouncement = ""
+
+    var dismissSpinner: (() -> Void)?
+    // TODO: remove if possible
+    var accessibilityAnnouncement: String { Self.accessibilityAnnouncement }
 
     override var childForStatusBarStyle: UIViewController? {
-        return topViewController
+        topViewController
     }
 
 }
@@ -116,12 +120,12 @@ final class SpinnerCapableNavigationController: UINavigationController, SpinnerC
 extension UINavigationController {
     var isLoadingViewVisible: Bool? {
         get {
-            return (self as? SpinnerCapableViewController)?.isLoadingViewVisible
+            return (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible
         }
 
         set {
             if let newValue {
-                (self as? SpinnerCapableViewController)?.isLoadingViewVisible = newValue
+                (self as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = newValue
             }
         }
     }

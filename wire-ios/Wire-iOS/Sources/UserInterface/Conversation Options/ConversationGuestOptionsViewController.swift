@@ -37,7 +37,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private var viewModel: ConversationGuestOptionsViewModel
     private var guestLinkObserver: NSObjectProtocol?
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
@@ -140,7 +140,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     ) {
         tableView.reloadData()
 
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
+        (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = state.isLoading
 
     }
 

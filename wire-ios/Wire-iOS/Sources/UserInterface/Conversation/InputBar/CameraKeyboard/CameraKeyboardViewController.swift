@@ -44,7 +44,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Properties
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     private var permissions: PhotoPermissionsController!
     private var lastLayoutSize = CGSize.zero

@@ -30,7 +30,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
@@ -97,7 +97,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
         didUpdateState state: ConversationServicesOptionsViewModel.State
     ) {
         tableView.reloadData()
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
+        (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = state.isLoading
     }
 
     func conversationServicesOptionsViewModel(

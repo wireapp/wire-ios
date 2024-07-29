@@ -21,7 +21,7 @@ import UIKit
 final class RotationAwareNavigationController: UINavigationController, SpinnerCapable {
 
     // MARK: SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     override var shouldAutorotate: Bool {
         if let topController = self.viewControllers.last {

@@ -39,7 +39,7 @@ final class SettingsClientViewController: UIViewController,
                                           SpinnerCapable {
 
     // MARK: SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"

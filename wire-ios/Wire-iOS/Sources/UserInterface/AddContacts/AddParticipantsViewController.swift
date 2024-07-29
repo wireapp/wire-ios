@@ -127,7 +127,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     deinit {
         userSelection.remove(observer: self)

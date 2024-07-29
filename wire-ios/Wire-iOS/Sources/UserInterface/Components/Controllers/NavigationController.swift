@@ -21,7 +21,8 @@ import WireDesign
 import WireUtilities
 
 final class NavigationController: UINavigationController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+
+    var dismissSpinner: (() -> Void)?
 
     private lazy var pushTransition = NavigationTransition(operation: .push)
     private lazy var popTransition = NavigationTransition(operation: .pop)

@@ -27,7 +27,7 @@ protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
 }
 
-final class CallGridViewController: SpinnerCapableViewController {
+final class CallGridViewController: UIViewController, SpinnerCapable {
     // MARK: - Statics
 
     static let isCoveredKey = "isCovered"
@@ -98,7 +98,7 @@ final class CallGridViewController: SpinnerCapableViewController {
         }
     }
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     weak var delegate: CallGridViewControllerDelegate?
 

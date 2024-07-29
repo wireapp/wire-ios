@@ -48,15 +48,15 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-        topMostViewController?.isLoadingViewVisible = true
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as! (UIViewController & SpinnerCapable)
+        topMostViewController.isLoadingViewVisible = true
 
         Task.detached(priority: .userInitiated) { [topMostViewController] in
             await mailComposeViewController.attachLogs()
 
             await self.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
-                topMostViewController?.isLoadingViewVisible = false
+                topMostViewController.isLoadingViewVisible = false
             }
         }
     }

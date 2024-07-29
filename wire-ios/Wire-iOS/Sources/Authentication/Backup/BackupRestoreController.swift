@@ -39,13 +39,13 @@ final class BackupRestoreController: NSObject {
 
     static let WireBackupUTIs = ["com.wire.backup-ios-underscore", "com.wire.backup-ios-hyphen"]
 
-    let target: SpinnerCapableViewController
+    let target: UIViewController & SpinnerCapable
     weak var delegate: BackupRestoreControllerDelegate?
     var temporaryFilesService: TemporaryFileServiceInterface
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
+    init(target: UIViewController & SpinnerCapable, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
         super.init()

@@ -21,7 +21,7 @@ import UIKit
 class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
 
     // MARK: SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     let viewController: UIViewController
     var disabledWhenInsidePopover = false
