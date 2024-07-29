@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59C6640A2C54125500166C23"
+               BlueprintIdentifier = "59110C5A2C561AFB00C94694"
                BuildableName = "WireTestingObjC.framework"
                BlueprintName = "WireTestingObjC"
                ReferencedContainer = "container:WireTestingObjC.xcodeproj">
@@ -35,7 +35,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59C664142C54125500166C23"
+               BlueprintIdentifier = "59110C642C561AFB00C94694"
                BuildableName = "WireTestingObjCTests.xctest"
                BlueprintName = "WireTestingObjCTests"
                ReferencedContainer = "container:WireTestingObjC.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59C6640A2C54125500166C23"
+            BlueprintIdentifier = "59110C5A2C561AFB00C94694"
             BuildableName = "WireTestingObjC.framework"
             BlueprintName = "WireTestingObjC"
             ReferencedContainer = "container:WireTestingObjC.xcodeproj">
