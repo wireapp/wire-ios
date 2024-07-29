@@ -153,7 +153,7 @@ extension URLActionRouter: PresentationDelegate {
             completion(password)
         }
 
-        let helpLinkURL = URL.wr_guestLinksLearnMore
+        let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
@@ -374,7 +374,7 @@ private extension URLActionRouter {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: URL.wr_guestLinksLearnMore.appendingLocaleParameter)
+                let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
                 topmostViewController?.present(browserViewController, animated: true)
             }
             alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
