@@ -27,6 +27,7 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
     }
 
     // Note: add new versions here in first position!
+    case v06 = "ZMEventModel6.0"
     case v05 = "ZMEventModel5.0"
     case v04 = "ZMEventModel4.0"
     case v03 = "ZMEventModel3.0"
@@ -35,9 +36,10 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
 
     var nextVersion: Self? {
         switch self {
-
-        case .v05:
+        case .v06:
             return nil
+        case .v05:
+            return .v06
         case .v04:
             return .v05
         case .v01, .v02, .v03:
@@ -45,7 +47,7 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
         }
     }
 
-    /// Returns the version used in `.xcdatamodel`, like "2.3" for data model "ZEventModel2.0".
+    /// Returns the version used in `.xcdatamodel`, like "2.3" for data model "ZMEventModel2.0".
     var dataModelVersion: String {
         rawValue.replacingOccurrences(of: Constant.dataModelPrefix, with: "")
     }
