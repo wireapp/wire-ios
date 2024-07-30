@@ -77,15 +77,9 @@ public final class StoredUpdateEvent: NSManagedObject {
         index: Int64,
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
-<<<<<<< HEAD
-        guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
-            WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
-=======
-
         guard let eventId = event.uuid?.transportString(),
               let eventHash = EventHasher.hash(eventId: eventId, payload: event.payload) else {
             assertionFailure("trying to check storedEvent without id")
->>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725))
             return nil
         }
 
@@ -99,7 +93,7 @@ public final class StoredUpdateEvent: NSManagedObject {
                                                          eventHash: eventHash,
                                                          index: index,
                                                          context: context) else {
-            WireLogger.updateEvent.error("could not store event", attributes: [LogAttributesKey.eventId.rawValue: event.safeUUID])
+            WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
             return nil
         }
 
