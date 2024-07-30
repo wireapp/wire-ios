@@ -133,9 +133,9 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         searchBar.searchInput.text = searchTerm
         searchBar.placeholderString = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
         searchBar.delegate = self
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: .black)
-        let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(onDismiss))
-        closeItem.accessibilityLabel = L10n.Localizable.General.close
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.navigationController?.dismiss(animated: true, completion: nil)
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
         navigationItem.rightBarButtonItem = closeItem
     }
@@ -175,10 +175,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         let navigationController = self.wrapInNavigationController()
 
         return navigationController
-    }
-
-    @objc func onDismiss() {
-        navigationController?.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Collection View

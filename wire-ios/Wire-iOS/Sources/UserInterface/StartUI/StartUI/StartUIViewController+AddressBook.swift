@@ -41,8 +41,21 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
     }
 
     func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {
+        guard let tabBarController = presentingViewController as? UITabBarController else {
+            return assertionFailure("wrong assumption!")
+        }
         dismiss(animated: true) {
-            UIApplication.shared.topmostViewController()?.presentInviteActivityViewController(with: self.quickActionsBar)
+            // point to the contacts tab item
+            // TODO: actually it should point to the right top corner, where the new conversation button is
+            var tabItemFrame = tabBarController.tabBar.bounds
+            tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
+            tabItemFrame.origin.x = CGFloat(MainTabBarControllerTab.conversations.rawValue) * tabItemFrame.size.width
+            tabBarController.presentInviteActivityViewController(
+                popoverPresentationConfiguration: .sourceView(
+                    sourceView: tabBarController.tabBar,
+                    sourceRect: tabItemFrame
+                )
+            )
         }
     }
 }

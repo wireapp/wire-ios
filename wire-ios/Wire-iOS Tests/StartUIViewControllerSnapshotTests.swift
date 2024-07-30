@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -51,17 +52,18 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
+    private var snapshotHelper: SnapshotHelper!
     private var mockMainCoordinator: MockMainCoordinator!
-    var sut: StartUIViewController!
-    var mockAddressBookHelper: MockAddressBookHelper!
-    var userSession: UserSessionMock!
+    private var sut: StartUIViewController!
+    private var mockAddressBookHelper: MockAddressBookHelper!
+    private var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
         mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock(
@@ -74,6 +76,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockAddressBookHelper = nil
         SelfUser.provider = nil
@@ -92,7 +95,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             mainCoordinator: mockMainCoordinator
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
-        sut.overrideUserInterfaceStyle = .dark
 
         // Set the size for the SUT to match iPhone 14 dimensions
         let screenSize = CGSize(width: 390, height: 844)
@@ -112,24 +114,27 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     func testStartUIViewControllerWrappedInNavigationController() {
         nonTeamTest {
             let navigationController = setupNavigationController()
-
-            verify(matching: navigationController.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
 
     func testStartUIViewControllerNoContact() {
         nonTeamTest {
             let navigationController = setupNavigationController()
-
-            verify(matching: navigationController.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
 
     func testStartUIViewControllerNoContactWhenSelfIsTeamMember() {
         teamTest {
             let navigationController = setupNavigationController()
-
-            verify(matching: navigationController.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
 
@@ -137,8 +142,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         teamTest {
             selfUser.membership?.setTeamRole(.partner)
             let navigationController = setupNavigationController()
-
-            verify(matching: navigationController.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
 }

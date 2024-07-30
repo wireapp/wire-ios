@@ -275,17 +275,19 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func setupNavigationBar() {
-        setupNavigationBarTitle(HandleChange.title.capitalized)
-        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(saveButtonTapped))
+        setupNavigationBarTitle(HandleChange.title)
+        let saveButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: HandleChange.save,
+            action: UIAction { [weak self] _ in
+                self?.saveButtonTapped()
+            })
+
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
 
     }
 
-    @objc func saveButtonTapped(sender: UIBarButtonItem) {
+    func saveButtonTapped() {
         guard let handleToSet = state.newHandle else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
         isLoadingViewVisible = true

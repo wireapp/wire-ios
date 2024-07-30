@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
 
 final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreenCellDescriptorType {
 
@@ -46,7 +46,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
         self.targetTab = targetTab
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
 
         // dismiss the profile and switch to the settings tab
 

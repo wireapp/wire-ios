@@ -322,21 +322,33 @@ extension WireCallCenterV3 {
         }
     }
 
-    /// Handles network quality change
-    func handleNetworkQualityChange(conversationId: AVSIdentifier, userId: String, clientId: String, quality: NetworkQuality) {
+    /// This handler is called for 1:1 and conference calls.
+    /// 
+    /// In 1:1 calls, `userId` and `clientId` are the ids of the remote user
+    /// In conference calls, since there is multiple remote users, the ids will be "SFT" and should be ignored
+    /// 
+    /// - Parameters:
+    ///   - conversationId: the AVSIdentifier of the conversation
+    ///   - userId: the remote user's ID for 1:1 calls, defaults to "SFT" for conference calls
+    ///   - clientId: the remote user's client ID for 1:1 calls, defaults to "SFT" for conference calls
+    ///   - quality: the network quality
+    ///
+    func handleNetworkQualityChange(
+        conversationId: AVSIdentifier,
+        userId: String,
+        clientId: String,
+        quality: NetworkQuality
+    ) {
         handleEventInContext("network-quality-change") {
-            if let identifier = AVSIdentifier(string: userId) {
-                self.callParticipantNetworkQualityChanged(
-                    conversationId: conversationId,
-                    client: AVSClient(userId: identifier, clientId: clientId),
-                    quality: quality
-                )
-            }
 
-            if let call = self.callSnapshots[conversationId] {
+            // We ignore the `usedId` and `clientID` because we only need to know the network quality
+
+            if let call = self.callSnapshots[conversationId], call.networkQuality != quality {
                 self.callSnapshots[conversationId] = call.updateNetworkQuality(quality)
-                let notification = WireCallCenterNetworkQualityNotification(conversationId: conversationId,
-                                                                            networkQuality: quality)
+                let notification = WireCallCenterNetworkQualityNotification(
+                    conversationId: conversationId,
+                    networkQuality: quality
+                )
                 notification.post(in: $0.notificationContext)
             }
         }

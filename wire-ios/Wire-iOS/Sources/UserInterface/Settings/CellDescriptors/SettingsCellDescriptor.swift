@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -43,7 +44,7 @@ protocol SettingsCellDescriptorType: AnyObject {
     var group: SettingsGroupCellDescriptorType? {get}
     var copiableText: String? { get }
 
-    func select(_: SettingsPropertyValue?)
+    func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)
 }
 
@@ -195,7 +196,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
             controllerToPush.hidesBottomBarWhenPushed = true
@@ -204,7 +205,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func generateViewController() -> UIViewController? {
-        return SettingsTableViewController(group: self)
+        SettingsTableViewController(group: self)
     }
 }
 
