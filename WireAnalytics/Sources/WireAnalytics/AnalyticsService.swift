@@ -46,5 +46,13 @@ public protocol AnalyticsService {
     ///   - key: The key for the value.
     func setUserValue(_ value: String?, forKey key: String)
 
+    /// Tracks an event with the specified name and segmentation data.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the event to track.
+    ///   - segmentation: A dictionary containing key-value pairs that provide additional information about the event.
+    ///                   This can include any relevant details that should be associated with the event,
+    ///                   such as user properties, context information, or specific attributes.
+    ///
     func trackEvent(name: String, segmentation: [String: String])
 }
