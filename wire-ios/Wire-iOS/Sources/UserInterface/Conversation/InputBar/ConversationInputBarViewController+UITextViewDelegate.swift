@@ -69,7 +69,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         let currentDevice = DeviceWrapper(device: .current)
         if textView.returnKeyType == .send && (text == "\n") {
             if currentDevice.userInterfaceIdiom == .pad,
-                canInsertMention {
+               canInsertMention {
                 insertBestMatchMention()
             } else {
                 inputBar.textView.autocorrectLastWord()
@@ -80,8 +80,8 @@ extension ConversationInputBarViewController: UITextViewDelegate {
 
         // insert mention if return or tab key is pressed and mention view is visible
         if text.count == 1,
-            text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
-            canInsertMention,
+           text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
+           canInsertMention,
            currentDevice.userInterfaceIdiom == .pad || isMentionsViewKeyboardCollapsed {
 
             insertBestMatchMention()
