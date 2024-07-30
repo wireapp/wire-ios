@@ -153,6 +153,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        updateTitle()
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
@@ -322,7 +328,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             confirmButton.isHidden = true
         }
         updateTitle()
-        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(target: self, action: #selector(rightNavigationItemTapped))
+        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(action: rightNavigationItemTapped())
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings.CloseButton.description
     }
 
@@ -369,13 +375,18 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     }
 
-    @objc private func rightNavigationItemTapped(_ sender: Any!) {
-        switch viewModel.context {
-        case .add: navigationController?.dismiss(animated: true, completion: nil)
-        case .create: conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
+    private func rightNavigationItemTapped() -> UIAction {
+        return UIAction { [weak self] _ in
+            guard let self else { return }
+
+            switch self.viewModel.context {
+            case .add:
+                self.navigationController?.dismiss(animated: true, completion: nil)
+            case .create:
+                self.conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
+            }
         }
     }
-
     func setLoadingView(isVisible: Bool) {
         isLoadingViewVisible = isVisible
         navigationItem.rightBarButtonItem?.isEnabled = !isVisible
@@ -518,7 +529,7 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URL.wr_searchSupport.open()
+            WireURLs.shared.searchSupport.open()
         }
     }
 }
