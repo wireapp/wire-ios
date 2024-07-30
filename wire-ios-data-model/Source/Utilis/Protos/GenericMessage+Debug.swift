@@ -77,6 +77,8 @@ extension GenericMessage: CustomStringConvertible {
         default:
             break
         }
+        message.messageID = messageID.redactedAndTruncated()
+        message.reaction.emoji = reaction.emoji.redacted
         return message.debugDescription
     }
 

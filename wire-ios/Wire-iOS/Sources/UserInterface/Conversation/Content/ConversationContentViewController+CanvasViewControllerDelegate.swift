@@ -28,7 +28,7 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
                     do {
                         try self.conversation.appendImage(from: imageData)
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing.warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
                     }
                 }, completionHandler: {
                     Analytics.shared.tagMediaActionCompleted(.photo, inConversation: self.conversation)

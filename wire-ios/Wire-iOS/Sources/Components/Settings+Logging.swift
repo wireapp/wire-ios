@@ -145,7 +145,6 @@ extension Settings {
             "UserImageCache",
             "FileLocation",
             "local-storage",
-            "safeFileContext",
             "UpdateEvents",
             "Push channel",
             "SafeTypes"

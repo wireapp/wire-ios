@@ -67,7 +67,7 @@ extension String {
 extension ZMTransportRequest: SafeForLoggingStringConvertible {
     @objc public var safeForLoggingDescription: String {
         let identifier = "\(Unmanaged.passUnretained(self).toOpaque())".readableHash
-        return "<\(identifier)> \(ZMTransportRequest.string(for: self.method)) \(self.path.removingSensitiveInfo)"
+        return "<\(identifier)> \(ZMTransportRequest.string(for: self.method)) \(URL(string: self.path, relativeTo: nil)?.endpointRemoteLogDescription ?? "<nil>")"
     }
 }
 

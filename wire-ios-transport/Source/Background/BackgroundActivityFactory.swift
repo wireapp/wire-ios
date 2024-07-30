@@ -156,7 +156,7 @@ import WireUtilities
             let count = SafeValueForLogging(activities.count)
             if activities.remove(activity) != nil {
                 WireLogger.backgroundActivity.info(
-                    "End background activity: removed \(activity), \(count) others left.",
+                    "End background activity: removed \(activity), \(count.safeForLoggingDescription) others left.",
                     attributes: .safePublic
                 )
             } else {
@@ -217,7 +217,7 @@ import WireUtilities
                 }
                 let value = SafeValueForLogging(task.rawValue)
                 WireLogger.backgroundActivity.info(
-                    "Start activity <\(activityName)>: started new background task: \(value)",
+                    "Start activity <\(activityName)>: started new background task: \(value.safeForLoggingDescription)",
                     attributes: .safePublic
                 )
                 currentBackgroundTask = task
@@ -251,7 +251,7 @@ import WireUtilities
 
         let value = SafeValueForLogging(activityManager.stateDescription)
         WireLogger.backgroundActivity.info(
-            "Handle expiration: \(value)",
+            "Handle expiration: \(value.safeForLoggingDescription)",
             attributes: .safePublic
         )
         let activities = isolationQueue.sync {
@@ -286,7 +286,7 @@ import WireUtilities
             if let activityManager {
                 let value = SafeValueForLogging(currentBackgroundTask.rawValue)
                 WireLogger.backgroundActivity.info(
-                    "Finishing background task: \(value)",
+                    "Finishing background task: \(value.safeForLoggingDescription)",
                     attributes: .safePublic
                 )
                 // We might get killed pretty soon, let's flush the logs
