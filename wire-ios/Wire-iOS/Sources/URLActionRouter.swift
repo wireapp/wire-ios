@@ -33,6 +33,7 @@ protocol URLActionRouterDelegate: AnyObject {
 }
 
 // MARK: - URLActionRouterProtocol
+
 protocol URLActionRouterProtocol {
     func open(url: URL) -> Bool
 }
@@ -49,16 +50,16 @@ class URLActionRouter: URLActionRouterProtocol {
     weak var authenticatedRouter: AuthenticatedRouterProtocol?
 
     // MARK: - Private Property
-    private let rootViewController: RootViewController
+    private let rootViewController: UIViewController
     private var pendingDestination: NavigationDestination?
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
     init(
-        viewController: RootViewController,
+        rootViewController: UIViewController,
         sessionManager: SessionManager? = nil
     ) {
-        self.rootViewController = viewController
+        self.rootViewController = rootViewController
         self.sessionManager = sessionManager
     }
 
