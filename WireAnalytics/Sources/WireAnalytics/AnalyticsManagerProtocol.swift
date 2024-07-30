@@ -23,4 +23,6 @@ public protocol AnalyticsManagerProtocol {
     /// - Returns: A new analytics session for the switched user.
     func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
+    func disable()
+
 }
