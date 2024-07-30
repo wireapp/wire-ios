@@ -20,18 +20,18 @@ import Countly
 
 extension Countly: AnalyticsService {
 
-    func start(appKey: String, host: URL) {
+   public func start(appKey: String, host: URL) {
         let config = CountlyConfig()
         config.appKey = appKey
         config.host = host.absoluteString
         start(with: config)
     }
 
-    func changeDeviceID(_ id: String) {
+    public func changeDeviceID(_ id: String) {
         changeDeviceID(withMerge: id)
     }
 
-    func setUserValue(_ value: String?, forKey key: String) {
+    public func setUserValue(_ value: String?, forKey key: String) {
         if let value {
             Countly.user().set(key, value: value)
         } else {
@@ -39,7 +39,7 @@ extension Countly: AnalyticsService {
         }
     }
 
-    func trackEvent(
+    public func trackEvent(
         name: String,
         segmentation: [String: String]
     ) {
