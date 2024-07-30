@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {
@@ -29,18 +30,18 @@ protocol RemoveClientsViewControllerDelegate: AnyObject {
 final class RemoveClientsViewController: UIViewController,
                                 UITableViewDelegate,
                                 UITableViewDataSource,
-                                ClientColorVariantProtocol,
-                                SpinnerCapable {
+                                ClientColorVariantProtocol {
 
     // MARK: - Properties
 
-    var dismissSpinner: SpinnerCompletion?
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
 
     private var requestPasswordController: RequestPasswordController?
 
     weak var delegate: RemoveClientsViewControllerDelegate?
     private var viewModel: RemoveClientsViewController.ViewModel
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     // MARK: - Life cycle
 
@@ -130,14 +131,14 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     private func removeUserClient(_ userClient: UserClient, password: String) async {
-        isLoadingViewVisible = true
+        activityIndicator.start()
         do {
             try await viewModel.removeUserClient(userClient, password: password)
             delegate?.finishedDeleting(self)
         } catch {
             delegate?.failedToDeleteClients(error)
         }
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
