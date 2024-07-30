@@ -58,6 +58,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         super.setUp()
 
         mockDevice = .init()
+        mockDevice.userInterfaceIdiom = .pad
         mockApplication = MockApplication()
 
         mockConversationList = MockConversationListViewController()
@@ -84,11 +85,13 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    private func setUpSut(userInterfaceIdiom: UIUserInterfaceIdiom,
-                          horizontalSizeClass: UIUserInterfaceSizeClass,
-                          orientation: UIInterfaceOrientation,
-                          listState: NetworkStatusViewState = .offlineExpanded,
-                          rootState: NetworkStatusViewState = .offlineExpanded) {
+    private func setUpSut(
+        userInterfaceIdiom: UIUserInterfaceIdiom,
+        horizontalSizeClass: UIUserInterfaceSizeClass,
+        orientation: UIInterfaceOrientation,
+        listState: NetworkStatusViewState = .offlineExpanded,
+        rootState: NetworkStatusViewState = .offlineExpanded
+    ) {
         sutList.update(state: listState)
         sutRoot.update(state: rootState)
 
@@ -168,28 +171,26 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     }
 
     func testThatIPadRespondsToScreenSizeChanging() {
-        // GIVEN
-        let userInterfaceIdiom: UIUserInterfaceIdiom = .pad
-        let horizontalSizeClass: UIUserInterfaceSizeClass = .regular
 
-        setUpSut(userInterfaceIdiom: userInterfaceIdiom, horizontalSizeClass: horizontalSizeClass, orientation: .portrait)
+        // Given
+        setUpSut(userInterfaceIdiom: .pad, horizontalSizeClass: .regular, orientation: .portrait)
         checkResult(listState: .online, rootState: .offlineExpanded)
 
         // Portrait
 
-        // WHEN
+        // When
         NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
 
-        // THEN
+        // Then
         checkResult(listState: .online, rootState: .offlineExpanded)
 
         // Landscape
         mockApplication.statusBarOrientation = .landscapeLeft
 
-        // WHEN
+        // When
         NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
 
-        // THEN
+        // Then
         checkResult(listState: .online, rootState: .offlineExpanded)
     }
 }
