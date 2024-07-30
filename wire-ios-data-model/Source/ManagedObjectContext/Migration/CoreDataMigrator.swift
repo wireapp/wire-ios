@@ -108,13 +108,8 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
                     type: persistentStoreType
                 )
                 WireLogger.localStorage.info("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
-<<<<<<< HEAD:wire-ios-data-model/Source/ManagedObjectContext/Migration/CoreDataMessagingMigrator.swift
-            } catch {
-                throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
-=======
             } catch let error {
                 throw CoreDataMigratorError.migrateStoreFailed(error: error)
->>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725)):wire-ios-data-model/Source/ManagedObjectContext/Migration/CoreDataMigrator.swift
             }
 
             if currentURL != storeURL {

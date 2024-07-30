@@ -256,7 +256,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             }
 
             if self.needsEventStoreMigration() {
-                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
+                let tp = TimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.info("[setup] start migration of core data event store!", attributes: .safePublic)
 
                 do {
