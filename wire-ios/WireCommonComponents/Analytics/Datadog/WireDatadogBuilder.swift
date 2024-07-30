@@ -47,7 +47,7 @@ struct WireDatadogBuilder {
         else {
             preconditionFailure("Datadog is enabled, but the bundle misses required input.")
         }
-        
+
         return WireDatadog(
             applicationID: applicationID,
             buildVersion: buildVersion,

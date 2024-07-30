@@ -59,7 +59,6 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         log(message, attributes: attributes, level: .error)
     }
 
-
     private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
 
         var mergedAttributes: LogAttributes = [:]

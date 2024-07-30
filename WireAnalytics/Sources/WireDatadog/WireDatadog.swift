@@ -94,7 +94,7 @@ public final class WireDatadog {
         RUM.enable(with: rumConfiguration)
 
         Datadog.setUserInfo(id: userIdentifier)
-        
+
         logger?.log(
             level: logLevel,
             message: "Datadog startMonitoring for device: \(userIdentifier)",
