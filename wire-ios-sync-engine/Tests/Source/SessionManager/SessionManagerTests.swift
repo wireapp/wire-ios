@@ -414,20 +414,25 @@ final class SessionManagerTests: IntegrationTest {
         // GIVEN
         XCTAssertTrue(login())
         let sessionManager = try XCTUnwrap(sessionManager)
+        let account = try XCTUnwrap(sessionManager.accountManager.selectedAccount)
         let observer = MockSessionManagerObserver()
         let token = sessionManager.addSessionManagerDestroyedSessionObserver(observer)
-        let tempUrl = self.cachesDirectoryPath.appendingPathComponent("testFile.txt")
+        
+        let cachesDirectory = cachesDirectoryPath
+        try FileManager.default.createDirectory(at: cachesDirectory, withIntermediateDirectories: true)
+        let tempURL = cachesDirectory.appendingPathComponent("testFile.txt")
         let testData = "Test Message"
-        try? testData.write(to: tempUrl, atomically: true, encoding: .utf8)
-        XCTAssertFalse(tempUrl.path.isEmpty)
+        try testData.write(to: tempURL, atomically: true, encoding: .utf8)
+        XCTAssertFalse(tempURL.path.isEmpty)
 
         // WHEN
         withExtendedLifetime(token) {
-            sessionManager.logoutCurrentSession()
+            sessionManager.delete(account: account)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(FileManager.default.fileExists(atPath: self.cachesDirectoryPath.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: tempURL.path))
     }
 
     func testThatItDestroyedTmpDirectoryAfterLoggedOut() throws {
