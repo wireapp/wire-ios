@@ -371,6 +371,10 @@ extension ZMUserSession: UserSession {
         return AppendLocationMessageUseCase(analyticsSession: analyticsSession)
     }
 
+    public func makeDisableAnalyticsSharingUseCase() -> DisableAnalyticsSharingUseCaseProtocol {
+        return DisableAnalyticsSharingUseCase(analyticsManager: analyticsManager)
+    }
+
 }
 
 extension UInt64 {
