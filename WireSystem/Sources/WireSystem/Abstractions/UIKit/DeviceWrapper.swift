@@ -43,9 +43,9 @@ extension DeviceWrapper: DeviceAbstraction {
     }
 }
 
-extension DeviceAbstraction where Self == DeviceWrapper {
+public extension DeviceAbstraction where Self == DeviceWrapper {
 
-    public static var current: Self {
+    static var current: Self {
         .init(device: .current)
     }
 }
