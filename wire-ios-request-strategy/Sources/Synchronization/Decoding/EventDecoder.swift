@@ -366,7 +366,7 @@ extension EventDecoder {
                 eventMOC.delete(storedEvent)
                 WireLogger.eventProcessing.info(
                     "delete stored event",
-                    attributes: [LogAttributesKey.eventId.rawValue: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"]
+                    attributes: [LogAttributesKey.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"]
                 )
             }
             do {
