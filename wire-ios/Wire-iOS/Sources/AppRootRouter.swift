@@ -333,7 +333,7 @@ extension AppRootRouter {
             return
         }
 
-        let navigationController = SpinnerCapableNavigationController(
+        let navigationController = UINavigationController(
             navigationBarClass: AuthenticationNavigationBar.self,
             toolbarClass: nil
         )

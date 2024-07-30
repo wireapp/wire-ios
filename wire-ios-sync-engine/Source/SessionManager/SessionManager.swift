@@ -102,9 +102,6 @@ public protocol SessionManagerType: AnyObject {
     /// ask UI to open the profile of a user
     func showUserProfile(user: UserType)
 
-    /// ask UI to open the connection request screen
-    func showConnectionRequest(userId: UUID)
-
     /// Needs to be called before we try to register another device because API requires password
     func update(credentials: UserCredentials) -> Bool
 
