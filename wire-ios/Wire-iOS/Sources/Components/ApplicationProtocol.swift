@@ -24,3 +24,18 @@ protocol ApplicationProtocol {
 
     static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
 }
+
+extension UIApplication.State: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .active:
+            "active"
+        case .background:
+            "background"
+        case .inactive:
+            "inactive"
+        @unknown default:
+            "unknown"
+        }
+    }
+}

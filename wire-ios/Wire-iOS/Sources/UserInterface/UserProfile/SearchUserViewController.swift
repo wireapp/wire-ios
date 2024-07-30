@@ -19,13 +19,12 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
-final class SearchUserViewController: UIViewController, SpinnerCapable {
+final class SearchUserViewController: UIViewController {
 
     // MARK: - Properties
-
-    var dismissSpinner: SpinnerCompletion?
 
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
@@ -33,6 +32,8 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
     private let mainCoordinator: MainCoordinating
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
@@ -73,22 +74,28 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let cancelItem = UIBarButtonItem(icon: .cross, target: self, action: #selector(cancelButtonTapped))
-        cancelItem.accessibilityIdentifier = "CancelButton"
-        cancelItem.accessibilityLabel = L10n.Localizable.General.cancel
-        navigationItem.rightBarButtonItem = cancelItem
-
-        isLoadingViewVisible = true
+        activityIndicator.start()
 
         if let task = searchDirectory?.lookup(userId: userId) {
-            task.addResultHandler({ [weak self] in
+            task.addResultHandler { [weak self] in
+                self?.activityIndicator.stop()
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            })
+            }
             task.start()
 
             pendingSearchTask = task
         }
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.pendingSearchTask?.cancel()
+            self?.pendingSearchTask = nil
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.cancel)
+
+        navigationItem.rightBarButtonItem = closeItem
     }
 
     // MARK: - Methods
@@ -137,14 +144,5 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
             present(alert, animated: true)
         }
-    }
-
-    // MARK: - Actions
-
-    @objc private func cancelButtonTapped(sender: AnyObject?) {
-        pendingSearchTask?.cancel()
-        pendingSearchTask = nil
-
-        dismiss(animated: true)
     }
 }

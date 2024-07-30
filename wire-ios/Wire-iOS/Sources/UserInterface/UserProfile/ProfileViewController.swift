@@ -103,8 +103,6 @@ final class ProfileViewController: UIViewController {
             mainCoordinator: mainCoordinator
         )
 
-        setupKeyboardFrameNotification()
-
         self.viewControllerDismisser = viewControllerDismisser
     }
 
@@ -194,22 +192,6 @@ final class ProfileViewController: UIViewController {
         setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
-    }
-
-    // MARK: - Keyboard frame observer
-
-    private func setupKeyboardFrameNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardFrameDidChange(notification:)),
-            name: UIResponder.keyboardDidChangeFrameNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    private func keyboardFrameDidChange(notification: Notification) {
-        updatePopoverFrame()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -392,7 +374,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
         if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
+            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
         } else {
             leftViewControllerRevealed = true
         }
@@ -574,12 +556,13 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.rightBarButtonItem = navigationController?.closeItem()
+            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
             navigationItem.leftBarButtonItem = legalHoldItem
         } else {
             navigationItem.rightBarButtonItem = legalHoldItem
         }
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.DeviceDetails.BackButton.description
     }
 

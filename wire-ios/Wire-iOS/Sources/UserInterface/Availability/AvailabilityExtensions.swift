@@ -19,6 +19,7 @@
 import Foundation
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum AvailabilityLabelStyle: Int {
     case list, participants

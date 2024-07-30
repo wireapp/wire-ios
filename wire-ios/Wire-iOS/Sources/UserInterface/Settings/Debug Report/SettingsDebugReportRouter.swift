@@ -18,6 +18,7 @@
 
 import MessageUI
 import WireDataModel
+import WireReusableUIComponents
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
@@ -28,7 +29,7 @@ protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the fallback alert
 
-    func presentFallbackAlert()
+    func presentFallbackAlert(sender: UIView)
 
     /// Presents the share view controller
     /// 
@@ -40,16 +41,20 @@ protocol SettingsDebugReportRouterProtocol {
         destinations: [ZMConversation],
         debugReport: ShareableDebugReport
     )
-
 }
 
-class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
+final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
 
     // MARK: - Properties
 
     weak var viewController: UIViewController?
 
     private let mailRecipient = WireEmail.shared.callingSupportEmail
+
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        return BlockingActivityIndicator(view: topMostViewController!.view)
+    }()
 
     // MARK: - Interface
 
@@ -80,30 +85,28 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-        topMostViewController?.isLoadingViewVisible = true
-
-        Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+        activityIndicator.stop()
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        Task.detached(priority: .userInitiated) { [activityIndicator] in
             await mailComposeViewController.attachLogs()
 
             await self.viewController?.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
-                topMostViewController?.isLoadingViewVisible = false
+                activityIndicator.stop()
             }
-        })
+        }
     }
 
-    func presentFallbackAlert() {
+    @MainActor
+    func presentFallbackAlert(sender: UIView) {
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
-            logPaths: DebugLogSender.existingDebugLogs,
             email: mailRecipient,
             from: viewController,
-            sourceView: nil
+            popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
     }
-
 }
 
 extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
@@ -115,5 +118,4 @@ extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
     ) {
         controller.dismiss(animated: true)
     }
-
 }
