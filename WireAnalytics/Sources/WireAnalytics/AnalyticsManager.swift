@@ -20,6 +20,7 @@ import Countly
 
 /// Struct responsible for managing analytics operations.
 public struct AnalyticsManager: AnalyticsManagerProtocol {
+
     /// The underlying analytics service.
     private let analyticsService: any AnalyticsService
 
@@ -64,4 +65,12 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
             service: analyticsService
         )
     }
+
+    public func disable() {
+        analyticsService.setUserValue(nil, forKey: "team_team_id")
+        analyticsService.setUserValue(nil, forKey: "team_user_type")
+        analyticsService.setUserValue(nil, forKey: "team_team_size")
+        analyticsService.endSession()
+    }
+
 }
