@@ -385,7 +385,11 @@ final class SettingsClientViewController: UIViewController,
 
 extension SettingsClientViewController: ClientRemovalObserverDelegate {
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {
-        isVisible ? activityIndicator.start() : activityIndicator.stop()
+        if isVisible {
+            activityIndicator.start()
+        } else {
+            activityIndicator.stop()
+        }
     }
 
     func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {

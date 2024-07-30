@@ -395,7 +395,11 @@ final class AddParticipantsViewController: UIViewController {
         }
     }
     func setLoadingView(isVisible: Bool) {
-        isVisible ? activityIndicator.start() : activityIndicator.stop()
+        if isVisible {
+            activityIndicator.start()
+        } else {
+            activityIndicator.stop()
+        }
         navigationItem.rightBarButtonItem?.isEnabled = !isVisible
     }
 

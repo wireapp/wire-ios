@@ -97,8 +97,13 @@ final class ConversationServicesOptionsViewController: UIViewController,
         _ viewModel: ConversationServicesOptionsViewModel,
         didUpdateState state: ConversationServicesOptionsViewModel.State
     ) {
+        if state.isLoading {
+            activityIndicator.start()
+        } else {
+            activityIndicator.stop()
+        }
+
         tableView.reloadData()
-        state.isLoading ? activityIndicator.start() : activityIndicator.stop()
     }
 
     func conversationServicesOptionsViewModel(

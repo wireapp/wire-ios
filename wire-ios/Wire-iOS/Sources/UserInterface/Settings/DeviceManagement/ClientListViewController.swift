@@ -593,7 +593,11 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
             return
         }
 
-        isVisible ? activityIndicator.start() : activityIndicator.stop()
+        if isVisible {
+            activityIndicator.start()
+        } else {
+            activityIndicator.stop()
+        }
     }
 
     func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {

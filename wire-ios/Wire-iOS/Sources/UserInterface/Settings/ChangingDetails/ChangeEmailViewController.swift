@@ -198,7 +198,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         do {
             try updateBlock()
             updateSaveButtonState(enabled: false)
-            showLoadingView ? activityIndicator.start() : activityIndicator.stop()
+            if showLoadingView {
+                activityIndicator.start()
+            } else {
+                activityIndicator.stop()
+            }
         } catch {}
     }
 
