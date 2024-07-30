@@ -27,7 +27,7 @@ public protocol DeviceAbstraction {
     var type: ZMDeviceType { get }
 }
 
-@available(*, deprecated, message: "Try to use existing types from the SDK instead.")
+@available(*, deprecated, message: "Once we drop iOS 15 support, no iPod touch will be supported.")
 public enum ZMDeviceType {
     case iPhone, iPod, iPad, unspecified
 }
