@@ -83,12 +83,7 @@ extension ZMConversation {
                 }
 
                 Task {
-<<<<<<< HEAD
-                    // swiftlint:disable:next todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
-=======
                     // FIXME: [WPB-10283] [jacob] replace with ConversationEventProcessor
->>>>>>> 06e1b84c57 (fix: duplicate messages - WPB-10251 (#1725))
                     try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),
