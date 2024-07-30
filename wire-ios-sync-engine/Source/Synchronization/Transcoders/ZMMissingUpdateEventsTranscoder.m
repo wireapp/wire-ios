@@ -31,7 +31,7 @@ static NSString * const NotificationsKey = @"notifications";
 static NSString * const NotificationsPath = @"/notifications";
 static NSString * const StartKey = @"since";
 
-NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
+NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 20;
 
 @interface ZMMissingUpdateEventsTranscoder ()
 
