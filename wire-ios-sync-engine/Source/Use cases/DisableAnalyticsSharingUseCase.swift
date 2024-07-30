@@ -34,7 +34,6 @@ public struct DisableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProt
     }
 
     public func invoke() {
-        analyticsManager?.clearUser()
-        analyticsManager?.endSession()
+        analyticsManager?.disable()
     }
 }
