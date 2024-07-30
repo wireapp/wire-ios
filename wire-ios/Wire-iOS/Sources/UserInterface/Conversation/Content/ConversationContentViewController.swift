@@ -27,9 +27,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
-final class ConversationContentViewController: UIViewController, SpinnerCapable {
-
-    var dismissSpinner: (() -> Void)?
+final class ConversationContentViewController: UIViewController {
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation
@@ -109,6 +107,8 @@ final class ConversationContentViewController: UIViewController, SpinnerCapable 
     private var onScreen = false
     private weak var messageVisibleOnLoad: ZMConversationMessage?
     private var token: NSObjectProtocol?
+
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     init(
         conversation: ZMConversation,

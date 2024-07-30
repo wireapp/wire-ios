@@ -18,6 +18,7 @@
 
 import AVFoundation
 import Photos
+import WireReusableUIComponents
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -81,6 +82,8 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     let splitLayoutObservable: SplitLayoutObservable
     weak var delegate: CameraKeyboardViewControllerDelegate?
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     // MARK: - Init
 
@@ -324,14 +327,14 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                     completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                 } else {
                     options.isSynchronous = true
-                    DispatchQueue.main.async(execute: {
-                        self.isLoadingViewVisible = true
-                    })
+                    DispatchQueue.main.async {
+                        self.activityIndicator.start()
+                    }
 
                     self.imageManagerType.defaultInstance.requestImage(for: asset, targetSize: CGSize(width: limit, height: limit), contentMode: .aspectFit, options: options, resultHandler: { image, info in
-                        DispatchQueue.main.async(execute: {
-                            self.isLoadingViewVisible = false
-                        })
+                        DispatchQueue.main.async {
+                            self.activityIndicator.stop()
+                        }
 
                         if let image {
                             let data = image.jpegData(compressionQuality: 0.9)
@@ -349,56 +352,56 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
             options.isNetworkAccessAllowed = false
             options.isSynchronous = false
 
-            self.imageManagerType.defaultInstance.requestImageData(for: asset, options: options, resultHandler: { data, uti, _, _ in
+            self.imageManagerType.defaultInstance.requestImageData(for: asset, options: options) { data, uti, _, _ in
 
                 guard let data else {
                     options.isNetworkAccessAllowed = true
-                    DispatchQueue.main.async(execute: {
-                        self.isLoadingViewVisible = true
-                    })
+                    DispatchQueue.main.async {
+                        self.activityIndicator.start()
+                    }
 
-                    self.imageManagerType.defaultInstance.requestImageData(for: asset, options: options, resultHandler: { data, uti, _, _ in
-                        DispatchQueue.main.async(execute: {
-                            self.isLoadingViewVisible = false
-                        })
+                    self.imageManagerType.defaultInstance.requestImageData(for: asset, options: options) { data, uti, _, _ in
+                        DispatchQueue.main.async {
+                            self.activityIndicator.stop()
+                        }
                         guard let data else {
                             zmLog.error("Failure: cannot fetch image")
                             return
                         }
 
                         completeBlock(data, uti)
-                    })
+                    }
 
                     return
                 }
 
                 completeBlock(data, uti)
-            })
+            }
         }
     }
 
     private func forwardSelectedVideoAsset(_ asset: PHAsset) {
-        isLoadingViewVisible = true
+        activityIndicator.start()
         guard let fileLengthLimit: UInt64 = ZMUserSession.shared()?.maxUploadFileSize else { return }
 
         asset.getVideoURL { url in
-            DispatchQueue.main.async(execute: {
-                self.isLoadingViewVisible = false
-            })
+            DispatchQueue.main.async {
+                self.activityIndicator.stop()
+            }
 
             guard let url else { return }
 
-            DispatchQueue.main.async(execute: {
-                self.isLoadingViewVisible = true
-            })
+            DispatchQueue.main.async {
+                self.activityIndicator.start()
+            }
 
             AVURLAsset.convertVideoToUploadFormat(
                 at: url,
                 fileLengthLimit: Int64(fileLengthLimit)
             ) { resultURL, asset, error in
-                DispatchQueue.main.async(execute: {
-                    self.isLoadingViewVisible = false
-                })
+                DispatchQueue.main.async {
+                    self.activityIndicator.stop()
+                }
 
                 guard error == nil,
                       let resultURL,

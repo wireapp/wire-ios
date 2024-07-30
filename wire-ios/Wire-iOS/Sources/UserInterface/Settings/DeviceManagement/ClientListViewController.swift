@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -27,12 +28,9 @@ final class ClientListViewController: UIViewController,
                                 UITableViewDelegate,
                                 UITableViewDataSource,
                                 ClientUpdateObserver,
-                                ClientColorVariantProtocol,
-                                SpinnerCapable {
+                                ClientColorVariantProtocol {
 
     // MARK: SpinnerCapable
-
-    var dismissSpinner: (() -> Void)?
 
     var removalObserver: ClientRemovalObserver?
 
@@ -83,6 +81,8 @@ final class ClientListViewController: UIViewController,
     private var clientsObserverToken: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+
     required init(
         clientsList: [UserClient]?,
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
@@ -118,7 +118,7 @@ final class ClientListViewController: UIViewController,
 
         if clientsList == nil {
             if clients.isEmpty {
-                (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = true
+                activityIndicator.start()
             }
             userSession?.fetchAllClients()
         }
@@ -171,8 +171,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func dismissLoadingView() {
-        (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = false
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     func openDetailsOfClient(_ client: UserClient) {
@@ -594,7 +593,7 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
             return
         }
 
-        isLoadingViewVisible = isVisible
+        isVisible ? activityIndicator.start() : activityIndicator.stop()
     }
 
     func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {

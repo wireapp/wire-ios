@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 enum ConversationGuestLink {
     static let didCreateSecureGuestLinkNotification = Notification.Name(
@@ -30,14 +31,13 @@ enum ConversationGuestLink {
 final class ConversationGuestOptionsViewController: UIViewController,
                                                     UITableViewDelegate,
                                                     UITableViewDataSource,
-                                                    SpinnerCapable,
                                                     ConversationGuestOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
     private var guestLinkObserver: NSObjectProtocol?
 
-    var dismissSpinner: (() -> Void)?
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
@@ -139,9 +139,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
         didUpdateState state: ConversationGuestOptionsViewModel.State
     ) {
         tableView.reloadData()
-
-        (navigationController as! (UIViewController & SpinnerCapable)).isLoadingViewVisible = state.isLoading
-
+        state.isLoading ? activityIndicator.start() : activityIndicator.stop()
     }
 
     func conversationGuestOptionsViewModel(

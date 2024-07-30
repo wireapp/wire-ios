@@ -258,11 +258,11 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
 
-            self.dismiss(animated: true, completion: {
+            self.dismiss(animated: true) {
                 if let imageData = image.pngData() {
                     self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
                 }
-            })
+            }
         }
     }
 
@@ -273,7 +273,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
-        UIApplication.wr_requestVideoAccess({ _ in
+        UIApplication.wr_requestVideoAccess { _ in
             if SecurityFlags.cameraRoll.isEnabled,
                MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
                 self.executeWithCameraRollPermission { _ in
@@ -284,7 +284,7 @@ extension ConversationInputBarViewController {
                 self.mode = .camera
                 self.inputBar.textView.becomeFirstResponder()
             }
-        })
+        }
     }
 
     @objc
