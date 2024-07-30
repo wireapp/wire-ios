@@ -282,3 +282,21 @@
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Отключить клавиатуру смайликов";
 "reactionPicker.searchFieldPlaceholder.description" = "Поиск смайликов";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Аннулировать защищенную гостевую ссылку";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Сгенерировать пароль";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Нажмите, чтобы сгенерировать случайный пароль";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Пароль гостевой ссылки";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Введите новый пароль для защищенной гостевой ссылки";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Ошибка проверки пароля. Убедитесь, что пароль соответствует требованиям.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Подтвердите пароль гостевой ссылки";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Повторите пароль для подтверждения";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Ошибка проверки пароля. Убедитесь, что пароль соответствует указанному выше";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Создать гостевую ссылку";
+"createSecureGuestLink.CreateLinkButton.hint" = "Нажмите для создания защищенной гостевой ссылки";

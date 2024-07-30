@@ -141,12 +141,6 @@
 "conversation_list.bottom_bar.folders.title" = "Mappar";
 "conversation_list.bottom_bar.archived.title" = "Arkiv";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Hjälp oss att göra Wire bättre";
-"conversation_list.data_usage_permission_alert.message" = "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.";
-"conversation_list.data_usage_permission_alert.disagree" = "Nej";
-"conversation_list.data_usage_permission_alert.agree" = "Acceptera";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "i kontakter";
 
@@ -401,6 +395,9 @@
 "location.unauthorized_alert.cancel" = "Avbryt";
 "location.unauthorized_alert.settings" = "Inställningar";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ på Twitter";
 
@@ -624,7 +621,6 @@
 
 "content.message.like" = "Gilla";
 "content.message.unlike" = "Sluta gilla";
-"content.message.forward" = "Dela";
 "content.message.go_to_conversation" = "Avslöja";
 "content.message.forward.to" = "Sök…";
 "content.message.open" = "Öppna";
@@ -1013,6 +1009,20 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Gruppmedlemmar";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Skapa lösenordsskyddad länk";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generera lösenord";
+"secured_guest_link_with_password.textfield.header" = "Ange lösenord";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Ange lösenord";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Bekräfta lösenord";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Bekräfta ditt lösenord";
+"secured_guest_link_with_password.createLinkButton.title" = "Skapa länk";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1056,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Användarvillkor";
 "about.privacy.title" = "Integritetspolicy";
-"about.license.title" = "Licensinformation";
 "about.website.title" = "Wire Hemsida";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Detaljer";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Ditt konto har använts på:";
@@ -1148,9 +1152,6 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Användning och felrapporter";
 
-// Crash
-"self.settings.privacy_crash.title" = "Skicka anonym kraschdata";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Skicka anonyma användningsdata";
@@ -1296,16 +1297,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Om du upplever problem med push notiser, kan Support Wire be dig att återställa denna token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push-token har återställts";
 "self.settings.advanced.reset_push_token_alert.message" = "Notiser kommer att återställas om några sekunder.";
-"self.settings.advanced.version_technical_details.title" = "Version tekniska detaljer";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Teknisk rapport";
-"self.settings.technical_report.send_report" = "Skicka rapporten till Wire";
+"self.settings.technical_report_section.title" = "Debug Report";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire Debug Report";
 "self.settings.technical_report.include_log" = "Inkludera detaljerad logg";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Detaljerade loggar kan innehålla personuppgifter";
 "self.settings.technical_report.no_mail_alert" = "No mail client detected. Tap \"OK\" and send logs manually to: ";
 
@@ -1420,6 +1422,12 @@
 
 "guest_room.link.button.title" = "Skapa länk";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Skapa lösenordsskyddad länk";
+"guest_room.create.link_without_password.action" = "Skapa länk utan lösenord";
+
 "guest_room.actions.copy_link" = "Kopiera länk";
 "guest_room.actions.copied_link" = "Link Copied!";
 "guest_room.actions.share_link" = "Dela länk";
@@ -1429,6 +1437,13 @@
 
 "guest_room.expiration.hours_left" = "%@h left";
 "guest_room.expiration.less_than_minutes_left" = "Less than %@m left";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Ange lösenord";
+"join.group.conversation.alert.message" = "Denna konversation är lösenordsskyddad";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Läs mer om gästlänkar";
 
 // Services Options
 
@@ -1892,6 +1907,8 @@
 "url_action.join_conversation.error.alert.converation_is_full.message" = "Konversationen är fylld.";
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "Länken till konversationen är ogiltig.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Läs mer om gästlänkar";
+
+"url_action.join_conversation.error.alert.invalid_password.message" = "Lösenord är felaktigt, försök igen.";
 
 // Deep Link
 "url_action.invalid_user.title" = "Wire can't find this person.";
