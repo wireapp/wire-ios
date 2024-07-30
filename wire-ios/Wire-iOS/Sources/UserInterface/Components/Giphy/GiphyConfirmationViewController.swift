@@ -59,7 +59,7 @@ final class GiphyConfirmationViewController: UIViewController {
             imagePreview.animatedImage = previewImage
         }
 
-        let closeItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true, completion: nil)
         }, accessibilityLabel: L10n.Localizable.General.close)
 
