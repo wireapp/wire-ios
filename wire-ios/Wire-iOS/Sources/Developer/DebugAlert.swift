@@ -39,13 +39,27 @@ final class DebugAlert {
     }
 
     /// Presents an alert to send logs, if in developer mode, otherwise do nothing
-    static func showSendLogsMessage(message: String) {
+    static func showSendLogsMessage(
+        message: String,
+        presentingViewController: UIViewController,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
+    ) {
         let action1 = Action(text: "Send to Devs", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(message: message)
+            DebugLogSender.sendLogsByEmail(
+                message: message,
+                shareWithAVS: false,
+                presentingViewController: presentingViewController,
+                fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
+            )
         }
 
         let action2 = Action(text: "Send to Devs & AVS", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(message: message, shareWithAVS: true)
+            DebugLogSender.sendLogsByEmail(
+                message: message,
+                shareWithAVS: true,
+                presentingViewController: presentingViewController,
+                fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
+            )
         }
 
         self.show(
@@ -62,7 +76,7 @@ final class DebugAlert {
         actions: [Action] = [Action(text: "OK", type: .default, action: nil)],
         title: String = "DEBUG MESSAGE",
         cancelText: String? = "Cancel"
-        ) {
+    ) {
 
         guard Bundle.developerModeEnabled else { return }
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false), !isShown else { return }
@@ -92,7 +106,7 @@ final class DebugAlert {
     static func displayFallbackActivityController(
         email: String,
         from controller: UIViewController,
-        sourceView: UIView? = nil
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
     ) {
         let alert = UIAlertController(
             title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
@@ -100,13 +114,13 @@ final class DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(makeFallbackAlertAction(from: controller, sourceView: sourceView))
+        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentationConfiguration: popoverPresentationConfiguration))
         controller.present(alert, animated: true, completion: nil)
     }
 
     private static func makeFallbackAlertAction(
         from controller: UIViewController,
-        sourceView: UIView?
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
     ) -> UIAlertAction {
         UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
             let logFilesProvider = LogFilesProvider()
@@ -118,9 +132,9 @@ final class DebugAlert {
                 return
             }
 
-            let activity = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
-            activity.configPopover(pointToView: sourceView ?? controller.view)
-            activity.completionWithItemsHandler = { _, _, _, _ in
+            let activityViewController = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
+            activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
+            activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {
                     try logFilesProvider.clearLogsDirectory()
                 } catch {
@@ -128,10 +142,9 @@ final class DebugAlert {
                 }
             }
 
-            controller.present(activity, animated: true, completion: nil)
+            controller.present(activityViewController, animated: true, completion: nil)
         }
     }
-
 }
 
 /// Sends debug logs by email
@@ -141,8 +154,12 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     static private var senderInstance: DebugLogSender?
 
     /// Sends recorded logs by email
-    static func sendLogsByEmail(message: String, shareWithAVS: Bool = false) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+    static func sendLogsByEmail(
+        message: String,
+        shareWithAVS: Bool,
+        presentingViewController: UIViewController,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
+    ) {
         guard self.senderInstance == nil else { return }
 
         // Prepare subject & body
@@ -153,12 +170,14 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(email: mail, from: controller)
-            return
+            return DebugAlert.displayFallbackActivityController(
+                email: mail,
+                from: presentingViewController,
+                popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
+            )
         }
 
         // compose
-
         let alert = DebugLogSender()
 
         let mailVC = MFMailComposeViewController()
@@ -175,7 +194,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         Task {
             await mailVC.attachLogs()
             // as UIViewController is marked @MainActor, this will be executed on mainThread automatically
-            await controller.present(mailVC, animated: true, completion: nil)
+            await presentingViewController.present(mailVC, animated: true, completion: nil)
         }
     }
 

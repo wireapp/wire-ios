@@ -83,25 +83,6 @@ final class ClientListViewController: UIViewController,
     private var clientsObserverToken: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
-    private var leftBarButtonItem: UIBarButtonItem? {
-        if self.isIPadRegular() {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(ClientListViewController.backPressed(_:)))
-        }
-
-        if let rootViewController = self.navigationController?.viewControllers.first,
-            self.isEqual(rootViewController) {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(ClientListViewController.backPressed(_:)))
-        }
-
-        return nil
-    }
-
     required init(
         clientsList: [UserClient]?,
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
@@ -169,7 +150,6 @@ final class ClientListViewController: UIViewController,
         self.view.addSubview(self.topSeparator)
         self.createConstraints()
 
-        self.navigationItem.leftBarButtonItem = leftBarButtonItem
         self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton.description
         setColor()
     }
@@ -178,7 +158,7 @@ final class ClientListViewController: UIViewController,
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-        setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title)
         updateAllClients()
     }
 
@@ -295,16 +275,6 @@ final class ClientListViewController: UIViewController,
         } else {
             return section + 1
         }
-    }
-
-    // MARK: - Actions
-
-    @objc func startEditing(_ sender: AnyObject!) {
-        self.editingList = true
-    }
-
-    @objc private func endEditing(_ sender: AnyObject!) {
-        self.editingList = false
     }
 
     @objc func backPressed(_ sender: AnyObject!) {
@@ -511,20 +481,20 @@ final class ClientListViewController: UIViewController,
 
     func createRightBarButtonItem() {
         if self.editingList {
-            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.done.capitalized,
-                                                                                      systemImage: false,
-                                                                                      target: self,
-                                                                                      action: #selector(ClientListViewController.endEditing(_:)))
+            let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.done,
+                action: UIAction { [weak self] _ in
+                    self?.editingList = false
+                })
             self.navigationItem.rightBarButtonItem = doneButtonItem
-
-            self.navigationItem.setLeftBarButton(nil, animated: true)
         } else {
-            let editButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.edit.capitalized,
-                                                                                      systemImage: false,
-                                                                                      target: self,
-                                                                                      action: #selector(ClientListViewController.startEditing(_:)))
+            let editButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.edit,
+                action: UIAction { [weak self] _ in
+                    self?.editingList = true
+                })
+
             self.navigationItem.rightBarButtonItem = editButtonItem
-            self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
         }
     }
 
@@ -601,6 +571,19 @@ final class ClientListViewController: UIViewController,
 
         return clients.first { $0.clientId == selectedUserClient.clientId }
     }
+}
+
+extension ClientListViewController: EditingStateControllable {
+
+    /// Sets the editing state of the ClientListViewController.
+    /// This method is primarily used for testing purposes to directly
+    /// control the editing state without user interaction.
+    ///
+    /// - Parameter isEditing: A boolean indicating whether to enter (true) or exit (false) editing mode.
+    func setEditingState(_ isEditing: Bool) {
+        editingList = isEditing
+    }
+
 }
 
 // MARK: - ClientRemovalObserverDelegate
