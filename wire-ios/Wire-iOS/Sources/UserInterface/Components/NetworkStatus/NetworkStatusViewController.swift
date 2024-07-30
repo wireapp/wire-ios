@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSystemPackage
 import WireSyncEngine
+import WireSystemPackage
 
 typealias NetworkStatusBarDelegate = NetworkStatusViewControllerDelegate & NetworkStatusViewDelegate
 

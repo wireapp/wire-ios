@@ -28,7 +28,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testBlockingSubviewIsAddedOnStart() throws {
-
         // Given
         let targetView = UIView(frame: .init(x: 100, y: 200, width: 300, height: 400))
         sut = .init(view: targetView)
@@ -49,7 +48,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testOnlyOneBlockingSubviewIsAdded() {
-
         // Given
         let targetView = UIView()
         sut = .init(view: targetView)
@@ -65,7 +63,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testBlockingSubviewIsRemovedOnStop() {
-
         // Given
         let targetView = UIView()
         sut = .init(view: targetView)
@@ -80,7 +77,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testSubsequentStopsAreIgnored() {
-
         // Given
         let targetView = UIView()
         sut = .init(view: targetView)
@@ -96,7 +92,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testStopWithoutStart() {
-
         // Given
         let targetView = UIView()
         sut = .init(view: targetView)
@@ -110,7 +105,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testTargetViewCanBeDealocated() {
-
         // Given
         weak var weakTargetView: UIView?
         var targetView = UIView()
@@ -130,7 +124,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testViewIsNotCleanedUpAfterFirstIndicatorStop() {
-
         // Given
         let targetView = UIView()
         let indicators = [SUT(view: targetView), SUT(view: targetView)]
@@ -145,7 +138,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testViewIsCleanedUpOnSingleIndicatorDealocation() {
-
         // Given
         let targetView = UIView()
 
@@ -158,7 +150,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testViewIsNotCleanedUpAfterFirstIndicatorDealocation() {
-
         // Given
         let targetView = UIView()
         var indicators = [SUT(view: targetView), SUT(view: targetView)]
@@ -173,7 +164,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
     @MainActor
     func testViewIsCleanedUpAfterLastIndicatorDealocation() {
-
         // Given
         let targetView = UIView()
         var indicators = [SUT(view: targetView), SUT(view: targetView)]

@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 enum ChangeEmailFlowType {
     case changeExistingEmail

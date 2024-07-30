@@ -190,7 +190,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
     ) {
-        guard let presenter = presenter, newState.needsInterface else {
+        guard let presenter, newState.needsInterface else {
             return
         }
 

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystemPackage
 import SwiftUI
+import WireSystemPackage
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
@@ -71,13 +71,12 @@ private struct BlockingActivityIndicatorState {
 
 // MARK: - UIView + BlockingActivityIndicators
 
-extension UIView {
+private extension UIView {
 
-    fileprivate func blockAndStartAnimating(
+    func blockAndStartAnimating(
         blockingActivityIndicator reference: BlockingActivityIndicator,
         text: String
     ) {
-
         var state: BlockingActivityIndicatorState! = blockingActivityIndicatorState
 
         // set up subviews
@@ -99,7 +98,6 @@ extension UIView {
             blockingView.addSubview(state.activityIndicatorView)
 
             NSLayoutConstraint.activate([
-
                 blockingView.leadingAnchor.constraint(equalTo: leadingAnchor),
                 blockingView.topAnchor.constraint(equalTo: topAnchor),
                 trailingAnchor.constraint(equalTo: blockingView.trailingAnchor),
@@ -115,13 +113,11 @@ extension UIView {
         blockingActivityIndicatorState = state
     }
 
-    fileprivate func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
-
+    func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
         guard var state = blockingActivityIndicatorState else { return }
 
         state.weakReferences = state.weakReferences.filter { $0.reference != nil && $0.reference !== reference }
         if state.weakReferences.isEmpty {
-
             state.activityIndicatorView.superview!.removeFromSuperview()
             blockingActivityIndicatorState = nil
         }
@@ -150,7 +146,7 @@ private var stateKey = 0
             targetView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             targetView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentView.trailingAnchor.constraint(equalTo: targetView.trailingAnchor),
-            targetView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 2/3)
+            targetView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 2 / 3)
         ])
 
         let testButtonAction = UIAction(title: "Tap here!") {

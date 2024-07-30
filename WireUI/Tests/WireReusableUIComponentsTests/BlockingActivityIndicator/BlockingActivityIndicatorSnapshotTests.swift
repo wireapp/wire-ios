@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import WireUITesting
 import XCTest
-import SnapshotTesting
 
 @testable import WireReusableUIComponents
 
@@ -34,7 +34,6 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
     override func setUp() async throws {
         await MainActor.run {
-
             viewController = UIViewController()
             viewController.view.backgroundColor = .white
 
@@ -55,7 +54,6 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatItShowsLoadingIndicator() {
-
         // When
         sut.start()
 
@@ -65,7 +63,6 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatItDismissesLoadingIndicator() {
-
         // Given
         sut.start()
 
@@ -78,7 +75,6 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatItShowsLoadingIndicatorWithSubtitle() {
-
         // When
         sut.start(text: "RESTORING…")
 

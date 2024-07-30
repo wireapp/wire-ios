@@ -19,8 +19,8 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)

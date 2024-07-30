@@ -19,8 +19,8 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 final class SearchUserViewController: UIViewController {
 

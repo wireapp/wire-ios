@@ -18,7 +18,6 @@
 
 import AVFoundation
 import Photos
-import WireReusableUIComponents
 import UIKit
 import WireCommonComponents
 import WireDesign

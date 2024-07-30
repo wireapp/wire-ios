@@ -64,7 +64,7 @@ public final class ProgressSpinner: UIView {
         spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
-    public override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
@@ -75,7 +75,6 @@ public final class ProgressSpinner: UIView {
     }
 
     private func setup() {
-
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 20

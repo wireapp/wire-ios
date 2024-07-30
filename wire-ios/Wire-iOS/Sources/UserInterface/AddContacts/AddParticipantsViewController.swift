@@ -20,8 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
     var canAddGuest: Bool {
