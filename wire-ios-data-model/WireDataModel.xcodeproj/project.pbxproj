@@ -5190,7 +5190,7 @@
 				01BDA30F2C591DA000675DCB /* ZMEventModel3.0.xcdatamodel */,
 				01BDA3102C591DA000675DCB /* ZMEventModel4.0.xcdatamodel */,
 			);
-			currentVersion = 01BDA3102C591DA000675DCB /* ZMEventModel4.0.xcdatamodel */;
+			currentVersion = 01BDA30C2C591DA000675DCB /* ZMEventModel6.0.xcdatamodel */;
 			name = ZMEventModel.xcdatamodeld;
 			path = "/Users/netbe/Developer/wire-ios/wire-ios-data-model/Resources/ZMEventModel.xcdatamodeld";
 			sourceTree = "<group>";
