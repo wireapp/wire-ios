@@ -91,7 +91,7 @@ private extension BasicReactionPicker {
         var constraints = [NSLayoutConstraint]()
         emojis.forEach { emoji in
             let button = UIButton()
-            button.titleLabel?.font = UIFont.systemFont(ofSize: currentDevice.type == .iPad ? 24 : 32)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: currentDevice.userInterfaceIdiom == .pad ? 24 : 32)
             button.setTitle(emoji.value, for: .normal)
             if selectedReactions.contains(emoji.value) {
                 button.layer.cornerRadius = 12.0

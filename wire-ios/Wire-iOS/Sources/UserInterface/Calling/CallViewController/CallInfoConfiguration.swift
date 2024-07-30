@@ -69,7 +69,7 @@ extension VoiceChannel {
 
     func mediaState(with permissions: CallPermissionsConfiguration) -> MediaState {
         let device = DeviceWrapper(device: .current)
-        let isPadOrPod = [ZMDeviceType.iPad, .iPod].contains(device.type)
+        let isPadOrPod = device.userInterfaceIdiom == .pad || device.model.contains("iPod")
         let speakerEnabled = AVSMediaManager.sharedInstance().isSpeakerEnabled
         let speakerState = MediaState.SpeakerState(
             isEnabled: speakerEnabled || isPadOrPod,

@@ -23,11 +23,5 @@ import UIKit
 public protocol DeviceAbstraction {
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }
     var orientation: UIDeviceOrientation { get }
-
-    var type: ZMDeviceType { get }
-}
-
-@available(*, deprecated, message: "Once we drop iOS 15 support, no iPod touch will be supported.")
-public enum ZMDeviceType {
-    case iPhone, iPod, iPad, unspecified
+    var model: String { get }
 }

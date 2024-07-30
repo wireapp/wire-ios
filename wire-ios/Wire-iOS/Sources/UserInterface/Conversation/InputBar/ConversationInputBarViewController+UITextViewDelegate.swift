@@ -68,7 +68,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         // send only if send key pressed
         let currentDevice = DeviceWrapper(device: .current)
         if textView.returnKeyType == .send && (text == "\n") {
-            if currentDevice.type == .iPad,
+            if currentDevice.userInterfaceIdiom == .pad,
                 canInsertMention {
                 insertBestMatchMention()
             } else {
@@ -82,7 +82,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         if text.count == 1,
             text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
             canInsertMention,
-           currentDevice.type == .iPad || isMentionsViewKeyboardCollapsed {
+           currentDevice.userInterfaceIdiom == .pad || isMentionsViewKeyboardCollapsed {
 
             insertBestMatchMention()
             return false

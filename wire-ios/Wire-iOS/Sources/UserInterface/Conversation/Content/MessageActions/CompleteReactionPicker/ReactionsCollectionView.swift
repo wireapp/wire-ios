@@ -46,9 +46,9 @@ private extension ReactionsCollectionView {
     func setupLayout() {
         let currentDevice = DeviceWrapper(device: .current)
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = currentDevice.type == .iPad ? 7 : 7
-        layout.minimumInteritemSpacing = currentDevice.type == .iPad ? 12 : 7
-        let itemSize = currentDevice.type == .iPad ? 51 : 41
+        layout.minimumLineSpacing = currentDevice.userInterfaceIdiom == .pad ? 7 : 7
+        layout.minimumInteritemSpacing = currentDevice.userInterfaceIdiom == .pad ? 12 : 7
+        let itemSize = currentDevice.userInterfaceIdiom == .pad ? 51 : 41
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
     }
 
