@@ -25,11 +25,16 @@ public final class BlockingActivityIndicator {
     // MARK: - Properties
 
     private weak var view: UIView?
+    private let accessibilityAnnouncement: String?
 
     // MARK: - Life Cycle
 
-    public init(view: UIView) {
+    public init(
+        view: UIView,
+        accessibilityAnnouncement: String?
+    ) {
         self.view = view
+        self.accessibilityAnnouncement = accessibilityAnnouncement
     }
 
     deinit {
@@ -45,6 +50,9 @@ public final class BlockingActivityIndicator {
 
     @MainActor
     public func start(text: String = "") {
+        if let accessibilityAnnouncement {
+            UIAccessibility.post(notification: .announcement, argument: accessibilityAnnouncement)
+        }
         view?.blockAndStartAnimating(blockingActivityIndicator: self, text: text)
     }
 
@@ -157,7 +165,7 @@ private var stateKey = 0
         testButton.centerXAnchor.constraint(equalTo: targetView.centerXAnchor).isActive = true
         testButton.centerYAnchor.constraint(equalTo: targetView.centerYAnchor, constant: 100).isActive = true
 
-        let blockingActivityIndicator = BlockingActivityIndicator(view: targetView)
+        let blockingActivityIndicator = BlockingActivityIndicator(view: targetView, accessibilityAnnouncement: .none)
 
         let controlsView = UIStackView(
             arrangedSubviews: [

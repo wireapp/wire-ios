@@ -19,9 +19,7 @@
 import UIKit
 import WireReusableUIComponents
 
-final class BackupViewController: UIViewController, SpinnerCapable {
-
-    var dismissSpinner: (() -> Void)?
+final class BackupViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []

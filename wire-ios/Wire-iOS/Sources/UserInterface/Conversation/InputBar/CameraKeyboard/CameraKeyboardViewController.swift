@@ -41,11 +41,9 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
 
 // MARK: - CameraKeyboardViewController
 
-class CameraKeyboardViewController: UIViewController, SpinnerCapable {
+class CameraKeyboardViewController: UIViewController {
 
     // MARK: - Properties
-
-    var dismissSpinner: (() -> Void)?
 
     private var permissions: PhotoPermissionsController!
     private var lastLayoutSize = CGSize.zero

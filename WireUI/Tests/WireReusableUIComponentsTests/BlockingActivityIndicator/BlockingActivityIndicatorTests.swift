@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import XCTest
 
 @testable import WireReusableUIComponents
@@ -183,6 +184,16 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 
         // Then
         wait(forConditionToBeTrue: targetView.subviews.isEmpty, timeout: 5)
+    }
+}
+
+private extension BlockingActivityIndicator {
+
+    convenience init(view: UIView) {
+        self.init(
+            view: view,
+            accessibilityAnnouncement: .none
+        )
     }
 }
 

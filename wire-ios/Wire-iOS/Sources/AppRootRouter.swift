@@ -339,7 +339,7 @@ extension AppRootRouter {
         authenticationCoordinator?.tearDown()
 
         authenticationCoordinator = AuthenticationCoordinator(
-            presenter: navigationController as! (UINavigationController & SpinnerCapable),
+            presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
             statusProvider: AuthenticationStatusProvider()

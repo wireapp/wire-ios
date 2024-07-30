@@ -106,7 +106,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var postLoginObservers: [Any] = []
     private var pendingAlert: AuthenticationCoordinatorAlert?
     private var registrationStatus: RegistrationStatus {
-        return unauthenticatedSession.registrationStatus
+        unauthenticatedSession.registrationStatus
     }
 
     private var isTornDown = false
@@ -115,16 +115,18 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     /// The user session to use before authentication has finished.
     var unauthenticatedSession: UnauthenticatedSession {
-        return sessionManager.activeUnauthenticatedSession
+        sessionManager.activeUnauthenticatedSession
     }
 
     // MARK: - Initialization
 
     /// Creates a new authentication coordinator with the required supporting objects.
-    init(presenter: UINavigationController & SpinnerCapable,
-         sessionManager: ObservableSessionManager,
-         featureProvider: AuthenticationFeatureProvider,
-         statusProvider: AuthenticationStatusProvider) {
+    init(
+        presenter: UINavigationController,
+        sessionManager: ObservableSessionManager,
+        featureProvider: AuthenticationFeatureProvider,
+        statusProvider: AuthenticationStatusProvider
+    ) {
         self.presenter = presenter
         self.sessionManager = sessionManager
         self.statusProvider = statusProvider
