@@ -417,7 +417,7 @@ final class SessionManagerTests: IntegrationTest {
         let account = try XCTUnwrap(sessionManager.accountManager.selectedAccount)
         let observer = MockSessionManagerObserver()
         let token = sessionManager.addSessionManagerDestroyedSessionObserver(observer)
-        
+
         let cachesDirectory = cachesDirectoryPath
         try FileManager.default.createDirectory(at: cachesDirectory, withIntermediateDirectories: true)
         let tempURL = cachesDirectory.appendingPathComponent("testFile.txt")
