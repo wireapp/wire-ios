@@ -581,6 +581,7 @@
 		E9A71BD72C33F4850027EC01 /* AppendKnockMessagekUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD62C33F4850027EC01 /* AppendKnockMessagekUseCase.swift */; };
 		E9A96E7E2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */; };
 		E9AD0A362C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD0A352C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift */; };
+		E9C0B1E82C58E34000D242D6 /* DisableAnalyticsSharingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B1E72C58E34000D242D6 /* DisableAnalyticsSharingUseCase.swift */; };
 		E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E9C60E912C259F3C004E5F13 /* WireAnalytics */; };
 		E9E4D4712C2AD61500364352 /* TeamRole+AnalyticsValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */; };
 		E9EAEAA72BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */; };
@@ -1419,6 +1420,7 @@
 		E9A71BD62C33F4850027EC01 /* AppendKnockMessagekUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessagekUseCase.swift; sourceTree = "<group>"; };
 		E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCase.swift; sourceTree = "<group>"; };
 		E9AD0A352C2AF9B300CA88DF /* AnalyticsSessionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsSessionConfiguration.swift; sourceTree = "<group>"; };
+		E9C0B1E72C58E34000D242D6 /* DisableAnalyticsSharingUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisableAnalyticsSharingUseCase.swift; sourceTree = "<group>"; };
 		E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TeamRole+AnalyticsValue.swift"; sourceTree = "<group>"; };
 		E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCase.swift; sourceTree = "<group>"; };
 		E9F627B22BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCaseTests.swift; sourceTree = "<group>"; };
@@ -2929,6 +2931,7 @@
 				63C4B3C12C35B07A00C09A93 /* FetchShareableConversationUseCase.swift */,
 				63C4B3C52C35B56A00C09A93 /* ShareFileUseCase.swift */,
 				E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */,
+				E9C0B1E72C58E34000D242D6 /* DisableAnalyticsSharingUseCase.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3790,6 +3793,7 @@
 				06025664248E5BC700E060E1 /* (null) in Sources */,
 				EE5FEF0521E8948F00E24F7F /* ZMUserSession+DarwinNotificationCenter.swift in Sources */,
 				549815DC1A432BC700A7CE2E /* NSError+ZMUserSession.m in Sources */,
+				E9C0B1E82C58E34000D242D6 /* DisableAnalyticsSharingUseCase.swift in Sources */,
 				1662B0F723D9B29C00B8C7C5 /* UnauthenticatedSession+DomainLookup.swift in Sources */,
 				E6F31B502C19B42E005DFA0C /* ZMUserSession+Notifications.swift in Sources */,
 				63C5322027FDB4C4009DFFF4 /* BuildType.swift in Sources */,
