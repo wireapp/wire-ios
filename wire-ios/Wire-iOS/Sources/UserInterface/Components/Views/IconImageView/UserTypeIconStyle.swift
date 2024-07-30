@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum UserTypeIconStyle: String, IconImageStyle {
     case guest

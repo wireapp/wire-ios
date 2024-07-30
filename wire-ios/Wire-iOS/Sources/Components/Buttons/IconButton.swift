@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
 
 // This is temporary until we finish with the accessibility project
 // This is named NonLegacyIconButton for the simple reason to keep

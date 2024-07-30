@@ -185,7 +185,6 @@ extension UnlockViewController {
         unlockButton.isEnabled = false
         passcodeTextField.becomeFirstResponder()
     }
-
 }
 
 // MARK: - Actions
@@ -211,7 +210,6 @@ extension UnlockViewController {
         errorLabel.attributedText = .init(attributedString)
         unlockButton.isEnabled = false
     }
-
 }
 
 // MARK: - PasscodeTextFieldDelegate
@@ -226,5 +224,4 @@ extension UnlockViewController: PasscodeTextFieldDelegate {
             unlockButton.isEnabled = false
         }
     }
-
 }
