@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
@@ -98,5 +99,4 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
     func testOnlineSynchronizing() {
         verify(for: .onlineSynchronizing)
     }
-
 }

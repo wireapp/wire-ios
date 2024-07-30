@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireSystemPackageSupport
 import XCTest
+
+@testable import Wire
 
 final class MockConversationRootViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
@@ -47,14 +49,16 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     var sutRoot: NetworkStatusViewController!
     var sutList: NetworkStatusViewController!
 
-    var mockDevice: MockDevice!
+    var mockDevice: MockDeviceAbstraction!
     var mockApplication: MockApplication!
     var mockConversationRoot: MockConversationRootViewController!
     var mockConversationList: MockConversationListViewController!
 
     override func setUp() {
         super.setUp()
-        mockDevice = MockDevice()
+
+        mockDevice = .init()
+        mockDevice.userInterfaceIdiom = .pad
         mockApplication = MockApplication()
 
         mockConversationList = MockConversationListViewController()
@@ -81,11 +85,13 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    private func setUpSut(userInterfaceIdiom: UIUserInterfaceIdiom,
-                          horizontalSizeClass: UIUserInterfaceSizeClass,
-                          orientation: UIInterfaceOrientation,
-                          listState: NetworkStatusViewState = .offlineExpanded,
-                          rootState: NetworkStatusViewState = .offlineExpanded) {
+    private func setUpSut(
+        userInterfaceIdiom: UIUserInterfaceIdiom,
+        horizontalSizeClass: UIUserInterfaceSizeClass,
+        orientation: UIInterfaceOrientation,
+        listState: NetworkStatusViewState = .offlineExpanded,
+        rootState: NetworkStatusViewState = .offlineExpanded
+    ) {
         sutList.update(state: listState)
         sutRoot.update(state: rootState)
 
@@ -165,28 +171,26 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     }
 
     func testThatIPadRespondsToScreenSizeChanging() {
-        // GIVEN
-        let userInterfaceIdiom: UIUserInterfaceIdiom = .pad
-        let horizontalSizeClass: UIUserInterfaceSizeClass = .regular
 
-        setUpSut(userInterfaceIdiom: userInterfaceIdiom, horizontalSizeClass: horizontalSizeClass, orientation: .portrait)
+        // Given
+        setUpSut(userInterfaceIdiom: .pad, horizontalSizeClass: .regular, orientation: .portrait)
         checkResult(listState: .online, rootState: .offlineExpanded)
 
         // Portrait
 
-        // WHEN
+        // When
         NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
 
-        // THEN
+        // Then
         checkResult(listState: .online, rootState: .offlineExpanded)
 
         // Landscape
         mockApplication.statusBarOrientation = .landscapeLeft
 
-        // WHEN
+        // When
         NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
 
-        // THEN
+        // Then
         checkResult(listState: .online, rootState: .offlineExpanded)
     }
 }

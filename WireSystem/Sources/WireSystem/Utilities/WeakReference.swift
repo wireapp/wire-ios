@@ -16,10 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+/// A wrapper around a `weak` object reference.
+/// An example use case would be to have a non-retaining array of references.
+public struct WeakReference<T: AnyObject> {
 
-final class MockDevice: DeviceProtocol {
-    var orientation: UIDeviceOrientation = .unknown
-    var userInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
+    public weak var reference: T?
+
+    public init(reference: T) {
+        self.reference = reference
+    }
+
+    public init(_ reference: T) {
+        self.init(reference: reference)
+    }
 }

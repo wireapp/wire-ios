@@ -17,22 +17,14 @@
 //
 
 import UIKit
-import WireSystemPackage
+import WireReusableUIComponents
 
-extension UITraitEnvironment {
+extension BlockingActivityIndicator {
 
-    var isHorizontalSizeClassRegular: Bool {
-        return traitCollection.horizontalSizeClass == .regular
-    }
-
-    func isIPadRegular(device: DeviceAbstraction = DeviceWrapper(device: .current)) -> Bool {
-        return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
-    }
-
-    func isIPadRegularPortrait(
-        device: DeviceAbstraction = DeviceWrapper(device: .current),
-        application: ApplicationProtocol = UIApplication.shared
-    ) -> Bool {
-        return isIPadRegular(device: device) && application.statusBarOrientation.isPortrait
+    convenience init(view: UIView) {
+        self.init(
+            view: view,
+            accessibilityAnnouncement: L10n.Localizable.General.loading
+        )
     }
 }

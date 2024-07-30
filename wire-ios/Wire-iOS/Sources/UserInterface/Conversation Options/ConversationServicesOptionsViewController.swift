@@ -19,18 +19,18 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 final class ConversationServicesOptionsViewController: UIViewController,
                                                        UITableViewDelegate,
                                                        UITableViewDataSource,
-                                                       SpinnerCapable,
                                                        ConversationServicesOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
 
-    var dismissSpinner: SpinnerCompletion?
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
@@ -56,6 +56,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         setupNavigationBarTitle(L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
@@ -96,8 +97,8 @@ final class ConversationServicesOptionsViewController: UIViewController,
         _ viewModel: ConversationServicesOptionsViewModel,
         didUpdateState state: ConversationServicesOptionsViewModel.State
     ) {
+        activityIndicator.setIsActive(state.isLoading)
         tableView.reloadData()
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
     }
 
     func conversationServicesOptionsViewModel(

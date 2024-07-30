@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 
+// MARK: Constants
+
 private let availableColor = ColorTheme.Base.positive
 private let awayColor = ColorTheme.Base.error
 private let busyColor = ColorTheme.Base.warning
@@ -29,7 +31,11 @@ private let awayRelativeBorderSize = 2.0 / 4.375
 private let busyMaskRelativeRectangleWidth = 5.25 / 8.75
 private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 
+// MARK: -
+
 final class AvailabilityIndicatorView: UIView {
+
+    // MARK: - Properties
 
     var availability: Availability? {
         didSet { setNeedsLayout() }

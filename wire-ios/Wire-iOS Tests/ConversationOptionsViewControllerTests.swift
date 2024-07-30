@@ -381,15 +381,18 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     }
 
     func testThatItRendersLoading() {
-        // GIVEN
+
+        // Given
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
-        // WHEN
+
+        // When
         viewModel.setAllowGuests(true, view: .init())
-        // THEN
+
+        // Then
         snapshotHelper.verify(matching: navigationController)
     }
 

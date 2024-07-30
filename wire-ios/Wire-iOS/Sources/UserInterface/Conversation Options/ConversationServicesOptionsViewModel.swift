@@ -63,11 +63,7 @@ final class ConversationServicesOptionsViewModel {
         }
     }
 
-    weak var delegate: ConversationServicesOptionsViewModelDelegate? {
-        didSet {
-            delegate?.conversationServicesOptionsViewModel(self, didUpdateState: state)
-        }
-    }
+    weak var delegate: ConversationServicesOptionsViewModelDelegate?
 
     private let configuration: ConversationServicesOptionsViewModelConfiguration
 

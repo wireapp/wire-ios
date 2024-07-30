@@ -114,11 +114,7 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
-    weak var delegate: ConversationGuestOptionsViewModelDelegate? {
-        didSet {
-            delegate?.conversationGuestOptionsViewModel(self, didUpdateState: state)
-        }
-    }
+    weak var delegate: ConversationGuestOptionsViewModelDelegate?
 
     private var isGuestLinkWithPasswordAvailable: Bool {
         guard let apiVersion = BackendInfo.apiVersion else { return false }

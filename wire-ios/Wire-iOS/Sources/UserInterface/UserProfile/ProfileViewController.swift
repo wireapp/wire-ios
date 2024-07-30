@@ -374,7 +374,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
         if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
+            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
         } else {
             leftViewControllerRevealed = true
         }

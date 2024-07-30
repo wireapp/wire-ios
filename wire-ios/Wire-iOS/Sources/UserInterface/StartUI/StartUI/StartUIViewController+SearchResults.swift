@@ -21,8 +21,6 @@ import WireCommonComponents
 import WireSyncEngine
 import WireSystem
 
-final class StartUIView: UIView { }
-
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
                                               at indexPath: IndexPath?) {
@@ -134,7 +132,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             return WireLogger.conversation.error("failed to create guest room: no user session")
         }
 
-        isLoadingViewVisible = true
+        activityIndicator.start()
 
         let service = ConversationService(context: userSession.viewContext)
         service.createGroupConversation(

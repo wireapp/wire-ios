@@ -17,22 +17,35 @@
 //
 
 import UIKit
-import WireSystemPackage
 
-extension UITraitEnvironment {
+/// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
+public struct DeviceWrapper {
 
-    var isHorizontalSizeClassRegular: Bool {
-        return traitCollection.horizontalSizeClass == .regular
+    var device: UIDevice
+
+    public init(device: UIDevice) {
+        self.device = device
+    }
+}
+
+extension DeviceWrapper: DeviceAbstraction {
+
+    public var userInterfaceIdiom: UIUserInterfaceIdiom {
+        device.userInterfaceIdiom
     }
 
-    func isIPadRegular(device: DeviceAbstraction = DeviceWrapper(device: .current)) -> Bool {
-        return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
+    public var orientation: UIDeviceOrientation {
+        device.orientation
     }
 
-    func isIPadRegularPortrait(
-        device: DeviceAbstraction = DeviceWrapper(device: .current),
-        application: ApplicationProtocol = UIApplication.shared
-    ) -> Bool {
-        return isIPadRegular(device: device) && application.statusBarOrientation.isPortrait
+    public var model: String {
+        device.model
+    }
+}
+
+public extension DeviceAbstraction where Self == DeviceWrapper {
+
+    static var current: Self {
+        .init(device: .current)
     }
 }

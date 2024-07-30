@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 
+// MARK: Constants
+
 private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 private let availabilityIndicatorBackgroundColor = UIColor {
     $0.userInterfaceStyle == .dark
@@ -32,6 +34,8 @@ private let availabilityIndicatorRadius: CGFloat = 8.75 / 2
 private let availabilityIndicatorBorderWidth: CGFloat = 2
 private let availabilityIndicatorCenterOffset = accountImageBorderWidth * 2 + accountImageHeight - availabilityIndicatorRadius
 private let teamAccountImageCornerRadius: CGFloat = 6
+
+// MARK: -
 
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
