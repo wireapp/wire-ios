@@ -62,6 +62,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        accentColor = .default
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()

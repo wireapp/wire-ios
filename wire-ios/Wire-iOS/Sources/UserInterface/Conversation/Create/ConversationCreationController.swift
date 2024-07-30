@@ -211,7 +211,7 @@ final class ConversationCreationController: UIViewController {
     private func setupNavigationBar() {
 
         setupNavigationBarTitle(CreateGroupName.title)
-// TODO: verify these changes
+// TODO: verify if the merge conflict has been resolved properly for the following two lines
         navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.tintColor = UIColor.accent()
 
