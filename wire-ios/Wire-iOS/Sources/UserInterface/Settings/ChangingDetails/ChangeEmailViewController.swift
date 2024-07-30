@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ChangeEmailFlowType {
@@ -100,6 +101,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     let userSession: UserSession
 
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+
     init(
         user: UserType,
         userSession: UserSession,
@@ -123,7 +126,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
             title: EmailAccountSection.Change.save,
             action: UIAction { [weak self] _ in
                 self?.saveButtonTapped()
-            })
+            }
+        )
 
         saveButtonItem.tintColor = UIColor.accent()
         navigationItem.rightBarButtonItem = saveButtonItem
@@ -198,8 +202,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         do {
             try updateBlock()
             updateSaveButtonState(enabled: false)
-            navigationController?.isLoadingViewVisible = showLoadingView
-        } catch { }
+            activityIndicator.setIsActive(showLoadingView)
+        } catch {}
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -236,13 +240,13 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 extension ChangeEmailViewController: UserProfileUpdateObserver {
 
     func emailUpdateDidFail(_ error: Error!) {
-        navigationController?.isLoadingViewVisible = false
+        activityIndicator.stop()
         updateSaveButtonState()
         showAlert(for: error)
     }
 
     func didSendVerificationEmail() {
-        navigationController?.isLoadingViewVisible = false
+        activityIndicator.stop()
         updateSaveButtonState()
         if let newEmail = state.newEmail {
             let confirmController = ConfirmEmailViewController(

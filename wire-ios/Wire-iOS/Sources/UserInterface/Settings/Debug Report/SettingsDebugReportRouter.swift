@@ -18,6 +18,7 @@
 
 import MessageUI
 import WireDataModel
+import WireReusableUIComponents
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
@@ -42,13 +43,18 @@ protocol SettingsDebugReportRouterProtocol {
     )
 }
 
-class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
+final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
 
     // MARK: - Properties
 
     weak var viewController: UIViewController?
 
     private let mailRecipient = WireEmail.shared.callingSupportEmail
+
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        return BlockingActivityIndicator(view: topMostViewController!.view)
+    }()
 
     // MARK: - Interface
 
@@ -79,17 +85,16 @@ class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-        topMostViewController?.isLoadingViewVisible = true
-
-        Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+        activityIndicator.stop()
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        Task.detached(priority: .userInitiated) { [activityIndicator] in
             await mailComposeViewController.attachLogs()
 
             await self.viewController?.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
-                topMostViewController?.isLoadingViewVisible = false
+                activityIndicator.stop()
             }
-        })
+        }
     }
 
     @MainActor

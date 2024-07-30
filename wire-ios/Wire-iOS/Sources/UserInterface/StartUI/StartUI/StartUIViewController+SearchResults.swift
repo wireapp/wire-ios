@@ -21,8 +21,6 @@ import WireCommonComponents
 import WireSyncEngine
 import WireSystem
 
-final class StartUIView: UIView { }
-
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
                                               at indexPath: IndexPath?) {
@@ -104,11 +102,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
-        if self.traitCollection.horizontalSizeClass == .compact {
-            self.navigationController?.pushViewController(controller, animated: true)
-        } else {
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 

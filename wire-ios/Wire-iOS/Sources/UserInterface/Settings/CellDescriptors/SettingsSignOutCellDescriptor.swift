@@ -18,45 +18,51 @@
 
 import avs
 import Foundation
+import WireReusableUIComponents
 import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
     var requestPasswordController: RequestPasswordController?
 
-    init() {
-        super.init(title: L10n.Localizable.Self.signOut,
-                   isDestructive: true,
-                   presentationStyle: .modal,
-                   identifier: nil,
-                   presentationAction: { return nil },
-                   previewGenerator: nil,
-                   icon: nil,
-                   accessoryViewMode: .default,
-                   copiableText: nil)
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!
+        return BlockingActivityIndicator(view: topMostViewController.view)
+    }()
 
+    init() {
+        super.init(
+            title: L10n.Localizable.Self.signOut,
+            isDestructive: true,
+            presentationStyle: .modal,
+            identifier: nil,
+            presentationAction: { return nil },
+            previewGenerator: nil,
+            icon: nil,
+            accessoryViewMode: .default,
+            copiableText: nil
+        )
     }
 
     private func logout(password: String? = nil) {
         guard let selfUser = ZMUser.selfUser() else { return }
 
         if selfUser.usesCompanyLogin || password != nil {
-            weak var topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-            topMostViewController?.isLoadingViewVisible = true
+            Task { @MainActor in activityIndicator.start() }
+            let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { result in
-                topMostViewController?.isLoadingViewVisible = false
+            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? "")) { [weak topMostViewController] result in
+                Task { @MainActor in self.activityIndicator.stop() }
                 TrackingManager.shared.disableAnalyticsSharing = false
                 if case .failure(let error) = result {
                     topMostViewController?.showAlert(for: error)
                 }
-            })
+            }
         } else {
             guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
             SessionManager.shared?.delete(account: account)
         }
-
     }
 
     override func generateViewController() -> UIViewController? {
