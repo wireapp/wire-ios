@@ -74,11 +74,11 @@ final class SearchUserViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // TODO: where/when is it stopped?
         activityIndicator.start()
 
         if let task = searchDirectory?.lookup(userId: userId) {
             task.addResultHandler { [weak self] in
+                self?.activityIndicator.stop()
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
             }
             task.start()
