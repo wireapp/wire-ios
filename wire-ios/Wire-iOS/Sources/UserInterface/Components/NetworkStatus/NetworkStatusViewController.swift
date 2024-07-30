@@ -55,8 +55,8 @@ final class NetworkStatusViewController: UIViewController {
     /// - Parameter device: Provide this param for testing only
     /// - Parameter application: Provide this param for testing only
     convenience init(
-        device: DeviceAbstraction/* = .current*/,
-        application: ApplicationProtocol/* = UIApplication.shared*/
+        device: DeviceAbstraction,
+        application: ApplicationProtocol
     ) {
         self.init(nibName: nil, bundle: nil)
 

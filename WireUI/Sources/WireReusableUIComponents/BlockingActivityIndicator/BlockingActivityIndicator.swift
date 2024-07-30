@@ -22,7 +22,7 @@ import WireSystemPackage
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
 
-    // MARK: - Properties
+    // MARK: - Private Properties
 
     private weak var view: UIView?
     private let accessibilityAnnouncement: String?
@@ -47,6 +47,15 @@ public final class BlockingActivityIndicator {
     }
 
     // MARK: - Methods
+
+    @MainActor
+    public func setIsActive(_ isActive: Bool) {
+        if isActive {
+            start()
+        } else {
+            stop()
+        }
+    }
 
     @MainActor
     public func start(text: String = "") {

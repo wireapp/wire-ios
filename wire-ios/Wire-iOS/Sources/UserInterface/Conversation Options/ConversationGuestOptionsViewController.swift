@@ -138,12 +138,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
         _ viewModel: ConversationGuestOptionsViewModel,
         didUpdateState state: ConversationGuestOptionsViewModel.State
     ) {
-        if state.isLoading {
-            activityIndicator.start()
-        } else {
-            activityIndicator.stop()
-        }
-
+        activityIndicator.setIsActive(state.isLoading)
         tableView.reloadData()
     }
 

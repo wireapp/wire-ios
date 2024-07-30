@@ -295,14 +295,10 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         for action in actions {
             switch action {
             case .showLoadingView:
-                Task { @MainActor in
-                    activityIndicator?.start()
-                }
+                startActivityIndicator()
 
             case .hideLoadingView:
-                Task { @MainActor in
-                    activityIndicator?.stop()
-                }
+                stopActivityIndicator()
 
             case .completeBackupStep:
                 unauthenticatedSession.continueAfterBackupImportStep()
