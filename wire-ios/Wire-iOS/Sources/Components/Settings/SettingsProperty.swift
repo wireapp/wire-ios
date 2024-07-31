@@ -174,11 +174,6 @@ final class SettingsBlockProperty: SettingsProperty {
     func set(newValue: SettingsPropertyValue) throws {
         try setAction(self, newValue)
         NotificationCenter.default.post(name: Notification.Name(rawValue: propertyName.changeNotificationName), object: self)
-        trackNewValue()
-    }
-
-    func trackNewValue() {
-        Analytics.shared.tagSettingsChanged(for: self.propertyName, to: self.value())
     }
 
     private let getAction: GetAction

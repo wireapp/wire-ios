@@ -315,6 +315,10 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private var analyticsManager: (any AnalyticsManagerProtocol)?
 
+    public lazy var disableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProtocol = {
+        DisableAnalyticsSharingUseCase(analyticsManager: analyticsManager)
+    }()
+
     public override init() {
         fatal("init() not implemented")
     }

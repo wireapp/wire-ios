@@ -274,7 +274,6 @@ extension AppRootRouter {
     // MARK: - Navigation Helpers
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            Analytics.shared.tagEvent("app.open")
             self?.sessionManager.start(launchOptions: launchOptions)
         }
     }
@@ -425,7 +424,6 @@ extension AppRootRouter {
         }
 
         trackingManager.disableAnalyticsSharing = false
-        Analytics.shared.provider?.selfUser = selfUser
     }
 
     @MainActor
