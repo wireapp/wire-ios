@@ -635,7 +635,6 @@
 		EE8584DD2B6BD33B0045EAD4 /* ZMUserSession+OneOnOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8584DC2B6BD33B0045EAD4 /* ZMUserSession+OneOnOne.swift */; };
 		EE88B0252BF4D8060013F0BD /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE88B0242BF4D8060013F0BD /* WireAPI */; };
 		EE88B0272BF4D8060013F0BD /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = EE88B0262BF4D8060013F0BD /* WireAPISupport */; };
-		EE88B0292BF4D84F0013F0BD /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EE88B0282BF4D84F0013F0BD /* WireAPI */; };
 		EE88B04F2BF62B140013F0BD /* SelfSupportedProtocolsRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88B04E2BF62B140013F0BD /* SelfSupportedProtocolsRequestStrategy.swift */; };
 		EE88B0512BF62B3F0013F0BD /* SupportedProtocolsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88B0502BF62B3F0013F0BD /* SupportedProtocolsService.swift */; };
 		EE8B934E2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8B934D2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift */; };
@@ -1655,7 +1654,6 @@
 			files = (
 				0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */,
 				5996E8922C19CB28007A52F0 /* WireSystemSupport.framework in Frameworks */,
-				EE88B0292BF4D84F0013F0BD /* WireAPI in Frameworks */,
 				5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */,
 				E9EB58202C357FDE00A2325E /* WireAnalyticsSupport in Frameworks */,
 				0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
@@ -4670,10 +4668,6 @@
 		EE88B0262BF4D8060013F0BD /* WireAPISupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
-		};
-		EE88B0282BF4D84F0013F0BD /* WireAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAPI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
