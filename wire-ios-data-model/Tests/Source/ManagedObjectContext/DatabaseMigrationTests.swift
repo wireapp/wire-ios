@@ -34,6 +34,45 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         "handle"
     ]
 
+    func testEventsLatestModelHasMigrationVersion() throws {
+        // given
+        let latestMigrationVersion = CoreDataEventsMigrationVersion.allCases.first
+        let dataModelVersion = CoreDataStack.loadEventsModel().version
+
+        // when
+        // then
+        XCTAssertEqual(
+            latestMigrationVersion?.dataModelVersion,
+            dataModelVersion,
+            "Current model version '\(dataModelVersion)' does not exist as core data migration version! " +
+            "Please add a new case for the version, so that the migration to that version is ensured!"
+        )
+    }
+
+    func testEventsDatabase_v04_to_current_PrefillsStoredUpdateEventsWithEventHashs() async throws {
+        // GIVEN
+        let accountIdentifier = UUID()
+
+        // this fixture has already 1 event
+        try helper.createFixtureDatabase(
+            applicationContainer: DatabaseBaseTest.applicationContainer,
+            accountIdentifier: accountIdentifier,
+            versionName: "4.0",
+            database: .event
+        )
+
+        // WHEN / THEN
+        let directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+        await directory.eventContext.perform {
+            let events = directory.eventContext.fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
+            XCTAssertEqual(events.count, 23)
+            for event in events {
+                let eventHash = event.value(forKey: "eventHash") as? Int
+                XCTAssertEqual(eventHash, 0)
+            }
+        }
+    }
+
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
         let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
@@ -54,7 +93,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
 
         let modelVersion = CoreDataStack.loadMessagingModel().version
-        let fixtureVersion = String(helper.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
+        let fixtureVersion = String(Database.messaging.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
         let accountIdentifier = UUID()
 
         // Check that we have current version fixture file

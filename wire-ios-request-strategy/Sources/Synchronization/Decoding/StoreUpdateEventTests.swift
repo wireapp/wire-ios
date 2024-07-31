@@ -80,14 +80,14 @@ final class StoreUpdateEventTests: MessagingTestBase {
         return conversation
     }
 
-    private func createNewConversationEvent(for conversation: ZMConversation) -> ZMUpdateEvent {
+    private func createNewConversationEvent(for conversation: ZMConversation, uuid: UUID = .create()) -> ZMUpdateEvent {
         let payload = payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
+        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)!
         event.appendDebugInformation("Highly informative description")
         return event
     }
 
-    private func createNewCallEvent(for conversation: ZMConversation) throws -> ZMUpdateEvent {
+    private func createNewCallEvent(for conversation: ZMConversation, uuid: UUID = .create()) throws -> ZMUpdateEvent {
         let callEventContent = CallEventContent(
             type: "CONFSTART",
             properties: nil,
@@ -108,7 +108,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
 
         let event = ZMUpdateEvent(
             fromEventStreamPayload: payload,
-            uuid: .create()
+            uuid: uuid
         )!
 
         event.appendDebugInformation("Highly informative description")
@@ -229,6 +229,100 @@ final class StoreUpdateEventTests: MessagingTestBase {
 
     // MARK: - Encrypt and create
 
+    func test_EncryptAndCreate_DoesNotStoreDuplicateEvents() throws {
+        eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+
+            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
+
+            let duplicateStoredEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            )
+
+            // Then first event is encrypted
+            assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+            XCTAssertEqual(storedEvent1.sortIndex, 2)
+            XCTAssertNotNil(storedEvent1.payload)
+            XCTAssertFalse(storedEvent1.isCallEvent)
+            XCTAssertFalse(storedEvent1.isEncrypted)
+
+            XCTAssertNil(duplicateStoredEvent1)
+        }
+    }
+
+    func test_EncryptAndCreate_DoesNotStoreEventIfHashDoesNotExistButSameEventId() throws {
+        try eventMOC.performAndWait {
+            // GIVEN
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+
+            _ = StoredUpdateEvent.create(from: event1,
+                                                                  eventId: try XCTUnwrap(event1.uuid?.uuidString.lowercased()),
+                                                                  eventHash: 0,
+                                                                  index: 1,
+                                                                  context: eventMOC)
+            // WHEN
+            let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 1,
+                publicKeys: nil
+            )
+
+            XCTAssertNil(storedEvent1, "it should drop the event")
+        }
+    }
+
+    func test_EncryptAndCreate_StoresDuplicateEventsWithSameEventId() throws {
+        try eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+            let event2 = try self.createNewCallEvent(for: conversation, uuid: try XCTUnwrap(event1.uuid))
+
+            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 1,
+                publicKeys: nil
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
+
+            let storedEvent2 = try XCTUnwrap(StoredUpdateEvent.encryptAndCreate(
+                event2,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            ))
+
+            assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+            XCTAssertEqual(storedEvent1.sortIndex, 1)
+            XCTAssertNotNil(storedEvent1.payload)
+            XCTAssertFalse(storedEvent1.isCallEvent)
+            XCTAssertFalse(storedEvent1.isEncrypted)
+
+            assertStoredEventProperties(storedEvent: storedEvent2, event: event2)
+            XCTAssertEqual(storedEvent2.sortIndex, 2)
+            XCTAssertNotNil(storedEvent2.payload)
+            XCTAssertTrue(storedEvent2.isCallEvent)
+            XCTAssertFalse(storedEvent2.isEncrypted)
+
+        }
+    }
+
     func test_EncryptAndCreate_Unencrypted() throws {
         try eventMOC.performAndWait {
             // Given some events.
@@ -269,6 +363,66 @@ final class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertFalse(storedEvent2.isEncrypted)
             XCTAssertEqual(storedEvent2.payload, event2.payload as NSDictionary)
         }
+    }
+
+    func test_EncryptAndCreate_DoesNotStoreDuplicateEvents_Encrypted() throws {
+        eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+
+            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: self.publicKeys
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
+
+            let duplicateStoredEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: self.publicKeys
+            )
+
+            // Then first event is encrypted
+            assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+            XCTAssertEqual(storedEvent1.sortIndex, 2)
+            XCTAssertNotNil(storedEvent1.payload)
+            XCTAssertFalse(storedEvent1.isCallEvent)
+            XCTAssertTrue(storedEvent1.isEncrypted)
+
+            XCTAssertNil(duplicateStoredEvent1)
+        }
+
+    }
+
+    func test_EncryptAndCreate_CanStoreEventsWithSameIdButDifferentPayloads() throws {
+        try eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+
+            let event1 = self.createNewConversationEvent(for: conversation)
+            let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            )
+            XCTAssertNotNil(storedEvent1)
+
+            let event2 = try createNewCallEvent(for: conversation, uuid: event1.uuid!)
+            let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+                event2,
+                context: self.eventMOC,
+                index: 1,
+                publicKeys: nil
+            )
+            XCTAssertNotNil(storedEvent2)
+        }
+
     }
 
     func test_EncryptAndCreate_Encrypted() throws {
@@ -486,5 +640,4 @@ final class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertTrue(convertedEvents.eventsToDelete.isEmpty)
         }
     }
-
 }

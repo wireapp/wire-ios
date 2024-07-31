@@ -18,10 +18,10 @@
 
 import CoreData
 
-struct CoreDataMessagingMigrationStep {
+struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
 
-    let sourceVersion: CoreDataMessagingMigrationVersion
-    let destinationVersion: CoreDataMessagingMigrationVersion
+    let sourceVersion: Version
+    let destinationVersion: Version
 
     let sourceModel: NSManagedObjectModel
     let destinationModel: NSManagedObjectModel
@@ -30,8 +30,8 @@ struct CoreDataMessagingMigrationStep {
     // MARK: Init
 
     init(
-        sourceVersion: CoreDataMessagingMigrationVersion,
-        destinationVersion: CoreDataMessagingMigrationVersion
+        sourceVersion: Version,
+        destinationVersion: Version
     ) throws {
         guard
             let sourceURL = sourceVersion.managedObjectModelURL(),
@@ -41,7 +41,7 @@ struct CoreDataMessagingMigrationStep {
             let mappingModel = try? Self.mappingModel(fromSourceModel: sourceModel, toDestinationModel: destinationModel)
         else {
             let message = "can not initialize migration step from source: \(sourceVersion) to destination: \(destinationVersion)!"
-            throw CoreDataMessagingMigratorError.missingFiles(message: message)
+            throw CoreDataMigratorError.missingFiles(message: message)
         }
 
         self.sourceVersion = sourceVersion
