@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private enum Item {
@@ -44,8 +45,7 @@ extension ZMConversation {
     }
 }
 
-final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+final class ConversationTimeoutOptionsViewController: UIViewController {
 
     private let conversation: ZMConversation
     private var items: [Item] = []
@@ -56,9 +56,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
-    }()
+    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
 
     // MARK: - Initialization
 
@@ -167,8 +165,9 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     private func updateTimeout(_ timeout: MessageDestructionTimeoutValue) {
-        let item = CancelableItem(delay: 0.4) { [weak self] in
-            self?.isLoadingViewVisible = true
+        let activityIndicator = BlockingActivityIndicator(view: view)
+        let item = CancelableItem(delay: 0.4) {
+            activityIndicator.start()
         }
 
         self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
@@ -177,7 +176,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             }
 
             item.cancel()
-            self.isLoadingViewVisible = false
+            activityIndicator.stop()
 
             if case .failure(let error) = result {
                 self.handle(error: error)

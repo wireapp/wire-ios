@@ -16,20 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
+/// A wrapper around a `weak` object reference.
+/// An example use case would be to have a non-retaining array of references.
+public struct WeakReference<T: AnyObject> {
 
-private var previousApiVersion: APIVersion?
+    public weak var reference: T?
 
-extension XCTestCase {
-
-    func setCurrentAPIVersion(_ version: APIVersion?) {
-        previousApiVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = version
-        XCTAssertEqual(BackendInfo.apiVersion, version)
+    public init(reference: T) {
+        self.reference = reference
     }
 
-    func resetCurrentAPIVersion() {
-        BackendInfo.apiVersion = previousApiVersion
+    public init(_ reference: T) {
+        self.init(reference: reference)
     }
 }
