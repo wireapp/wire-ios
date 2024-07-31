@@ -109,15 +109,14 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     func requestEmailUpdate(showLoadingView: Bool) {
         navigationController?.isLoadingViewVisible = showLoadingView
-        viewModel.requestEmailUpdate { [weak self] result in
-            guard let self else { return }
-            self.navigationController?.isLoadingViewVisible = false
-            switch result {
-            case .success:
-                self.handleEmailUpdateSuccess()
-            case .failure(let error):
-                self.showAlert(for: error)
-            }
+
+        do {
+            try viewModel.requestEmailUpdate()
+            navigationController?.isLoadingViewVisible = false
+            handleEmailUpdateSuccess()
+        } catch {
+            navigationController?.isLoadingViewVisible = false
+            showAlert(for: error)
         }
     }
 

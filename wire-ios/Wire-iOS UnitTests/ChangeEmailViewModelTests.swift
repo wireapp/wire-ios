@@ -47,72 +47,33 @@ final class ChangeEmailViewModelTests: XCTestCase {
     // MARK: - Unit Tests
 
     func testRequestEmailUpdateWithInvalidEmail() {
-        // GIVEN
-        let expectation = self.expectation(description: "Email update completion")
-
-        // WHEN && THEN
-        sut.requestEmailUpdate { result in
-            switch result {
-            case .failure(let error):
-                XCTAssertEqual(error as? ChangeEmailError, ChangeEmailError.invalidEmail)
-            case .success:
-                XCTFail("Expected failure, but got success")
-            }
-            expectation.fulfill()
+        XCTAssertThrowsError(try sut.requestEmailUpdate()) { error in
+            XCTAssertEqual(error as? ChangeEmailError, ChangeEmailError.invalidEmail)
         }
-
-        waitForExpectations(timeout: 1, handler: nil)
     }
 
     func testRequestEmailUpdateSuccess() {
         // GIVEN
         sut.updateNewEmail("new@example.com")
-
         mockUserProfile.requestEmailChangeEmail_MockMethod = { email in
             XCTAssertEqual(email, "new@example.com")
         }
 
-        let expectation = self.expectation(description: "Email update completion")
-
-        // WHEN
-        sut.requestEmailUpdate { result in
-            switch result {
-            case .success:
-                XCTAssertTrue(true)
-            case .failure:
-                XCTFail("Expected success, but got failure")
-            }
-            expectation.fulfill()
-        }
-
-        // THEN
-        waitForExpectations(timeout: 1, handler: nil)
+        // WHEN & THEN
+        XCTAssertNoThrow(try sut.requestEmailUpdate())
         XCTAssertEqual(mockUserProfile.requestEmailChangeEmail_Invocations, ["new@example.com"])
     }
 
     func testRequestEmailUpdateFailure() {
         // GIVEN
         sut.updateNewEmail("new@example.com")
-
-        // Setup the mock to throw any error
         struct AnyError: Error {}
         mockUserProfile.requestEmailChangeEmail_MockError = AnyError()
 
-        let expectation = self.expectation(description: "Email update completion")
-        // WHEN
-        sut.requestEmailUpdate { result in
-            switch result {
-            case .success:
-                XCTFail("Expected failure, but got success")
-            case .failure:
-                // We're just checking that an error was propagated, not its specific type
-                XCTAssertTrue(true, "Received expected error")
-            }
-            expectation.fulfill()
+        // WHEN & THEN
+        XCTAssertThrowsError(try sut.requestEmailUpdate()) { error in
+            XCTAssertTrue(error is AnyError)
         }
-
-        // THEN
-        waitForExpectations(timeout: 1, handler: nil)
         XCTAssertEqual(mockUserProfile.requestEmailChangeEmail_Invocations, ["new@example.com"])
     }
 }

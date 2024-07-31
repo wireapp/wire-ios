@@ -36,17 +36,12 @@ final class ChangeEmailViewModel {
         state.emailValidationError = error
     }
 
-    func requestEmailUpdate(completion: @escaping (Result<Void, Error>) -> Void) {
+    func requestEmailUpdate() throws {
         guard let email = state.validatedEmail else {
-            completion(.failure(ChangeEmailError.invalidEmail))
-            return
+            throw ChangeEmailError.invalidEmail
         }
 
-        do {
-            try userProfile?.requestEmailChange(email: email)
-            completion(.success(()))
-        } catch {
-            completion(.failure(error))
-        }
+        try userProfile?.requestEmailChange(email: email)
     }
+
 }
