@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
     let label: UILabel = {

@@ -243,6 +243,10 @@ public enum SemanticColors {
 
         // Scroll To Bottom Button
         public static let backgroundScrollToBottonEnabled = UIColor(light: .gray70, dark: .gray60)
+
+        public static let popUpIconShadowSelected = UIColor { traits in
+                   traits.userInterfaceStyle == .dark ? UIColor.black : UIColor.black.withAlphaComponent(24)
+               }
     }
 
     public enum DrawingColors {

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
@@ -60,6 +61,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         }
     }
 
+    // Update the design for the button 
     private func updateUI() {
         guard let config else {
             return
@@ -69,12 +71,12 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
         switch config.state {
         case .unselected:
-            button.legacyStyle = .empty
+           // button.legacyStyle = .empty
             button.isLoading = false
             button.isEnabled = true
             button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.unselected
         case .selected:
-            button.legacyStyle = .empty
+           // button.legacyStyle = .empty
             button.isLoading = true
             button.isEnabled = false
             button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.selected

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 class RoundedBadge: UIButton {
     let containedView: UIView
