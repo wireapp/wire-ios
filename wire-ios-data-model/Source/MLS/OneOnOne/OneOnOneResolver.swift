@@ -76,14 +76,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        let mlsEnabled = DeveloperFlag.enableMLSSupport.isOn
+
         switch messageProtocol {
-        case .none:
+        case .none where mlsEnabled:
             return await resolveCommonUserProtocolNone(with: userID, in: context)
-        case .mls:
+        case .mls where mlsEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
             return await resolveCommonUserProtocolProteus(with: userID, in: context)
-        case .mixed:
+        default:
             // This should never happen:
             // Users can only support proteus and mls protocols.
             // Mixed protocol is used by conversations to represent
@@ -124,23 +126,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         otherUser: ZMUser,
         conversation: ZMConversation
     ) {
-        if conversation.isForcedReadOnly { 
+        if conversation.isForcedReadOnly { return }
 
-            if !DeveloperFlag.enableMLSSupport.isOn &&
-                selfUser.supportedProtocols.contains(.proteus) &&
-                otherUser.supportedProtocols.contains(.proteus) {
-                // revert forcedReadOnly
-                conversation.isForcedReadOnly = false
-            }
-            return
-        }
-
-        if DeveloperFlag.enableMLSSupport.isOn {
-            if !selfUser.supportedProtocols.contains(.mls) {
-                conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
-            } else if !otherUser.supportedProtocols.contains(.mls) {
-                conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
-            }
+        if !selfUser.supportedProtocols.contains(.mls) {
+            conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
+        } else if !otherUser.supportedProtocols.contains(.mls) {
+            conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
         }
 
         conversation.isForcedReadOnly = true
