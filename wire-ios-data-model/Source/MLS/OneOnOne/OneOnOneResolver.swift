@@ -72,6 +72,9 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
+        guard DeveloperFlag.enableMLSSupport.isOn else {
+            return .noAction
+        }
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
