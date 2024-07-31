@@ -23,9 +23,13 @@ import WireUITesting
 
 final class ConversationTitleViewTests: XCTestCase {
 
+    // MARK: - Properties
+
     private var sut: ConversationTitleView!
     private var conversation: MockGroupDetailsConversation!
     private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -36,12 +40,16 @@ final class ConversationTitleViewTests: XCTestCase {
         snapshotHelper = .init()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         conversation = nil
         snapshotHelper = nil
         super.tearDown()
     }
+
+    // MARK: - Helper method
 
     private func createSut(conversation: MockGroupDetailsConversation) -> ConversationTitleView {
         let view = ConversationTitleView(conversation: conversation, interactive: true)
@@ -50,16 +58,18 @@ final class ConversationTitleViewTests: XCTestCase {
         return view
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItRendersTheConversationDisplayNameCorrectly() {
-        // given
+        // GIVEN && WHEN
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheFederatedConversationDisplayNameCorrectly() {
-        // given
+        // GIVEN && WHEN
         let user = MockUserType.createUser(name: "Alan Turing")
         user.isFederated = true
         user.domain = "wire.com"
@@ -68,60 +78,62 @@ final class ConversationTitleViewTests: XCTestCase {
         conversation.conversationType = .oneOnOne
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersTheVerifiedShieldCorrectly() {
-        // when
+        // GIVEN && WHEN
         conversation.securityLevel = .secure
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersValidCertificate() {
-        // when
+        // GIVEN && WHEN
         conversation.messageProtocol = .mls
         conversation.isE2EIEnabled = true
         conversation.mlsVerificationStatus = .verified
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersLegalHoldCorrectly() {
-        // when
+        // GIVEN && WHEN
         conversation.isUnderLegalHold = true
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersLegalHoldAndVerifiedShieldCorrectly() {
-        // when
+        // GIVEN && WHEN
         conversation.securityLevel = .secure
         conversation.isUnderLegalHold = true
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItDoesNotRenderTheDownArrowForOutgoingConnections() {
-        // when
+        // GIVEN && WHEN
         conversation.relatedConnectionState = .sent
         sut = createSut(conversation: conversation)
 
-        // then
+        // THEN
         snapshotHelper.verify(matching: sut)
     }
 
+    // MARK: - Unit Test
+
     func testThatItExecutesTheTapHandlerOnTitleTap() {
-        // given
+        // GIVEN
         sut = ConversationTitleView(conversation: conversation, interactive: true)
 
         var callCount: Int = 0
@@ -131,10 +143,10 @@ final class ConversationTitleViewTests: XCTestCase {
 
         XCTAssertEqual(callCount, 0)
 
-        // when
+        // WHEN
         sut.titleButton.sendActions(for: .touchUpInside)
 
-        // then
+        // THEN
         XCTAssertEqual(callCount, 1)
     }
 }
