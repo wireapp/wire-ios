@@ -842,9 +842,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.commitPendingProposalsIfNeeded()
+        if DeveloperFlag.enableMLSSupport.isOn {
+            mlsService.commitPendingProposalsIfNeeded()
+        }
 
         WaitingGroupTask(context: syncContext) { [self] in
+<<<<<<< HEAD
             do {
                 var getFeatureConfigAction = GetFeatureConfigsAction()
                 let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
@@ -854,6 +857,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
             }
+=======
+            await fetchAndStoreFeatureConfig()
+            await resolveOneOnOneConversationsIfNeeded()
+>>>>>>> cb9831dd44 (fix: 1-1 conversations locked - WPB-10416 (#1755))
         }
 
         recurringActionService.performActionsIfNeeded()
@@ -862,6 +869,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         checkE2EICertificateExpiryStatus()
     }
 
+<<<<<<< HEAD
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
         let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
@@ -871,6 +879,39 @@ extension ZMUserSession: ZMSyncStateDelegate {
             supportedProtocolService: supportedProtocolService,
             resolver: resolver
         )
+=======
+        performPostQuickSyncE2EIActions()
+    }
+
+    private func resolveOneOnOneConversationsIfNeeded() async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        do {
+            try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+        } catch {
+            WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+        }
+    }
+
+    private func performPostQuickSyncE2EIActions() {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                checkE2EICertificateExpiryStatus()
+                await cRLsChecker.checkExpiredCRLs()
+            }
+        }
+>>>>>>> cb9831dd44 (fix: 1-1 conversations locked - WPB-10416 (#1755))
+    }
+
+    private func fetchAndStoreFeatureConfig() async {
+        do {
+            var getFeatureConfigAction = GetFeatureConfigsAction()
+            try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+        } catch {
+            WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+        }
     }
 
     func processEvents() {
