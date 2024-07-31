@@ -68,9 +68,6 @@ class ZMButton: LegacyButton {
 enum LegacyButtonStyle: Int {
     // background color: accent, text color: white
     case full
-    case empty
-    case fullMonochrome
-    case emptyMonochrome
 }
 
 class LegacyButton: ButtonWithLargerHitArea {
@@ -135,18 +132,6 @@ class LegacyButton: ButtonWithLargerHitArea {
         switch style {
         case .full:
             updateFullStyle()
-        case .fullMonochrome:
-            setBackgroundImageColor(UIColor.white, for: .normal)
-            setTitleColor(UIColor.from(scheme: .textForeground, variant: .light), for: .normal)
-            setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
-        case .empty:
-            updateEmptyStyle()
-        case .emptyMonochrome:
-            setBackgroundImageColor(UIColor.clear, for: .normal)
-            setTitleColor(UIColor.white, for: .normal)
-            setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
-            setBorderColor(UIColor(white: 1.0, alpha: 0.32), for: .normal)
-            setBorderColor(UIColor(white: 1.0, alpha: 0.16), for: .highlighted)
         }
     }
 
@@ -154,17 +139,6 @@ class LegacyButton: ButtonWithLargerHitArea {
         setBackgroundImageColor(.accent(), for: .normal)
         setTitleColor(UIColor.white, for: .normal)
         setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
-    }
-
-    func updateEmptyStyle() {
-        setBackgroundImageColor(nil, for: .normal)
-        layer.borderWidth = 1
-        setTitleColor(UIColor.buttonEmptyText(variant: variant), for: .normal)
-        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
-        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
-        setBorderColor(UIColor.accent(), for: .normal)
-        setBorderColor(UIColor.accentDarken, for: .highlighted)
-        setBorderColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
     }
 
     @available(*, unavailable)
