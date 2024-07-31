@@ -87,7 +87,7 @@ final class SpinnerButton: ZMButton {
     }
 
     /// custom empty style with accent color for disabled state.
-    override func updateEmptyStyle() {
+    func updateEmptyStyle() {
         // remember reset background image colors when style is switch
         setBackgroundImageColor(.clear, for: .disabled)
         setBackgroundImageColor(.clear, for: .normal)
