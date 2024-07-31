@@ -266,7 +266,7 @@ private actor ProcessedEventList {
 
     private var hashes = Set<Int64>()
 
-    // A full list would coontain approx 80kB.
+    // A full list would contain approx 80kB.
     private let capacity = 10_000
 
     func addEvent(_ event: ZMUpdateEvent) {
