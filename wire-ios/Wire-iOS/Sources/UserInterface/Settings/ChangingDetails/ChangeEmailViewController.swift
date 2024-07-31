@@ -100,7 +100,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     // MARK: - Actions
 
     func updateSaveButtonState() {
-        navigationItem.rightBarButtonItem?.isEnabled = viewModel.state.isValid
+        navigationItem.rightBarButtonItem?.isEnabled = viewModel.isValid
     }
 
     func saveButtonTapped() {
@@ -122,7 +122,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     private func handleEmailUpdateSuccess() {
         updateSaveButtonState()
-        if let newEmail = viewModel.state.newEmail {
+        if let newEmail = viewModel.newEmail {
             let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
             navigationController?.pushViewController(confirmController, animated: true)
         }
@@ -139,7 +139,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        emailCell.textField.text = viewModel.state.visibleEmail
+        emailCell.textField.text = viewModel.visibleEmail
         return emailCell
     }
 }

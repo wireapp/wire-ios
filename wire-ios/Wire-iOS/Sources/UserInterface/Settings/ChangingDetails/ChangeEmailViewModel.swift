@@ -18,30 +18,57 @@
 
 import WireSyncEngine
 
+import Foundation
+import WireSyncEngine
+
 final class ChangeEmailViewModel {
 
-    private(set) var state: ChangeEmailState
+    // MARK: - Properties
+    
     private weak var userProfile: UserProfile?
 
-    init(currentEmail: String?, userProfile: UserProfile?) {
-        self.state = ChangeEmailState(currentEmail: currentEmail ?? "")
-        self.userProfile = userProfile
+    let currentEmail: String?
+    var newEmail: String?
+    var emailValidationError: TextFieldValidator.ValidationError?
+
+    // MARK: - Computed Properties
+    var visibleEmail: String? {
+        return newEmail ?? currentEmail
     }
 
+    var validatedEmail: String? {
+        guard let newEmail = self.newEmail else { return nil }
+        guard case .none = emailValidationError else {
+            return nil
+        }
+        return newEmail
+    }
+
+    var isValid: Bool {
+        return validatedEmail != nil
+    }
+
+    // MARK: - Initialization
+    init(currentEmail: String?, userProfile: UserProfile?) {
+        self.currentEmail = currentEmail
+        self.userProfile = userProfile
+        self.emailValidationError = nil
+    }
+
+    // MARK: - Methods
     func updateNewEmail(_ newEmail: String) {
-        state.newEmail = newEmail
+        self.newEmail = newEmail
     }
 
     func updateEmailValidationError(_ error: TextFieldValidator.ValidationError?) {
-        state.emailValidationError = error
+        emailValidationError = error
     }
 
     func requestEmailUpdate() throws {
-        guard let email = state.validatedEmail else {
+        guard let email = validatedEmail else {
             throw ChangeEmailError.invalidEmail
         }
 
         try userProfile?.requestEmailChange(email: email)
     }
-
 }
