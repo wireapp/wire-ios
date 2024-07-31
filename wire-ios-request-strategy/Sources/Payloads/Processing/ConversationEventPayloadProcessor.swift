@@ -178,7 +178,7 @@ struct ConversationEventPayloadProcessor {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
             }
         }
-        
+
         await context.perform {
             if payload.data.reason == .userDeleted {
                 // delete the users locally and/or logout if the self user is affected

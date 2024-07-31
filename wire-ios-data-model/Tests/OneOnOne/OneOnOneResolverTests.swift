@@ -34,10 +34,10 @@ final class OneOnOneResolverTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        
+
         oldDeveloperFlagStorage = DeveloperFlag.storage
         DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
-        
+
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
 
