@@ -383,7 +383,7 @@ final class ConversationViewController: UIViewController {
         else {
             return
         }
-        
+
         guard
             let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
             let otherUserID = otherUser.qualifiedID,
