@@ -20,10 +20,6 @@ import UIKit
 
 final class RootViewController: UIViewController {
 
-    // MARK: - SpinnerCapable
-
-    var dismissSpinner: SpinnerCompletion?
-
     // MARK: - Private Property
 
     private var childViewController: UIViewController?
@@ -166,5 +162,3 @@ extension RootViewController {
         }
     }
 }
-
-extension RootViewController: SpinnerCapable {}

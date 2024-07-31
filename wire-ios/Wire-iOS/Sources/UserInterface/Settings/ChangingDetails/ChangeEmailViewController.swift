@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
@@ -36,6 +37,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     private let userSession: UserSession
 
     // MARK: - Init
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     init(user: UserType, userSession: UserSession) {
         self.userSession = userSession
@@ -61,7 +64,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
             title: EmailAccountSection.Change.save,
             action: UIAction { [weak self] _ in
                 self?.saveButtonTapped()
-            })
+            }
+        )
 
         saveButtonItem.tintColor = UIColor.accent()
         navigationItem.rightBarButtonItem = saveButtonItem
@@ -108,25 +112,25 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func requestEmailUpdate(showLoadingView: Bool) {
-        navigationController?.isLoadingViewVisible = showLoadingView
-
-        do {
-            try viewModel.requestEmailUpdate()
-            navigationController?.isLoadingViewVisible = false
-            handleEmailUpdateSuccess()
-        } catch {
-            navigationController?.isLoadingViewVisible = false
-            showAlert(for: error)
-        }
+    activityIndicator.setIsActive(showLoadingView)
+    
+    do {
+        try viewModel.requestEmailUpdate()
+        activityIndicator.setIsActive(false)
+        handleEmailUpdateSuccess()
+    } catch {
+        activityIndicator.setIsActive(false)
+        showAlert(for: error)
     }
+}
 
-    private func handleEmailUpdateSuccess() {
-        updateSaveButtonState()
-        if let newEmail = viewModel.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
-            navigationController?.pushViewController(confirmController, animated: true)
-        }
+private func handleEmailUpdateSuccess() {
+    updateSaveButtonState()
+    if let newEmail = viewModel.newEmail {
+        let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+        navigationController?.pushViewController(confirmController, animated: true)
     }
+}
 
     // MARK: - SettingsBaseTableViewController
 
@@ -149,13 +153,14 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 extension ChangeEmailViewController: UserProfileUpdateObserver {
 
     func emailUpdateDidFail(_ error: Error!) {
-        navigationController?.isLoadingViewVisible = false
+        activityIndicator.stop()
         updateSaveButtonState()
         showAlert(for: error)
     }
 
     func didSendVerificationEmail() {
         handleEmailUpdateSuccess()
+        activityIndicator.stop()
     }
 }
 
