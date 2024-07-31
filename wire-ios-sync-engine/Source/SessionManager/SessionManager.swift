@@ -788,7 +788,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
     }
 
-    
     /// Logs out current session optionally deleting account data
     ///
     /// - Note: `deleteCookie == false` is only used for testing. It is not a valid production value and should be
