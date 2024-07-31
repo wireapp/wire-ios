@@ -5198,9 +5198,8 @@
 				0158DF1F2C594B1600C7BFFD /* ZMEventModel3.0.xcdatamodel */,
 				0158DF202C594B1600C7BFFD /* ZMEventModel4.0.xcdatamodel */,
 			);
-			currentVersion = 0158DF202C594B1600C7BFFD /* ZMEventModel4.0.xcdatamodel */;
-			name = ZMEventModel.xcdatamodeld;
-			path = "ZMEventModel.xcdatamodeld";
+			currentVersion = 0158DF1C2C594B1600C7BFFD /* ZMEventModel6.0.xcdatamodel */;
+			path = ZMEventModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
