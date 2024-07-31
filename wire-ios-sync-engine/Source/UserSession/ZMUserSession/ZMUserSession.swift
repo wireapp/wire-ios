@@ -945,16 +945,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         if DeveloperFlag.enableMLSSupport.isOn {
             mlsService.commitPendingProposalsIfNeeded()
+        }
 
-            WaitingGroupTask(context: syncContext) { [self] in
-                do {
-                    var getFeatureConfigAction = GetFeatureConfigsAction()
-                    try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                    try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
-                } catch {
-                    WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
-                }
-            }
+        WaitingGroupTask(context: syncContext) { [self] in
+            await fetchAndStoreFeatureConfig()
+            await resolveOneOnOneConversationsIfNeeded()
         }
 
         recurringActionService.performActionsIfNeeded()
@@ -963,14 +958,36 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.notifyThirdPartyServices()
         }
 
-        if DeveloperFlag.enableMLSSupport.isOn {
-            Task {
-                let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-                if isE2EIFeatureEnabled {
-                    checkE2EICertificateExpiryStatus()
-                    await cRLsChecker.checkExpiredCRLs()
-                }
+        performPostQuickSyncE2EIActions()
+    }
+
+    private func resolveOneOnOneConversationsIfNeeded() async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        do {
+            try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+        } catch {
+            WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+        }
+    }
+
+    private func performPostQuickSyncE2EIActions() {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                checkE2EICertificateExpiryStatus()
+                await cRLsChecker.checkExpiredCRLs()
             }
+        }
+    }
+
+    private func fetchAndStoreFeatureConfig() async {
+        do {
+            var getFeatureConfigAction = GetFeatureConfigsAction()
+            try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+        } catch {
+            WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
     }
 
