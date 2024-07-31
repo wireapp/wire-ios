@@ -379,6 +379,7 @@ final class ConversationViewController: UIViewController {
 
     private func resolveConversationIfOneOnOne() {
         guard
+            DeveloperFlag.enableMLSSupport.isOn,
             conversation.conversationType == .oneOnOne,
             conversation.messageProtocol == .proteus
         else {
