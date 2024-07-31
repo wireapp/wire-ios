@@ -72,17 +72,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        guard DeveloperFlag.enableMLSSupport.isOn else {
-            return .noAction
-        }
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        let mlsEnabled = DeveloperFlag.enableMLSSupport.isOn
+
         switch messageProtocol {
-        case .none:
+        case .none where mlsEnabled:
             return await resolveCommonUserProtocolNone(with: userID, in: context)
-        case .mls:
+        case .mls where mlsEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
             return await resolveCommonUserProtocolProteus(with: userID, in: context)
@@ -92,6 +91,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             // Mixed protocol is used by conversations to represent
             // the migration state when migrating from proteus to mls.
             assertionFailure("users should not have mixed protocol")
+            return .noAction
+        default:
+            // if mls not enabled, there is nothing to take action
+            // fixes locked conversations
             return .noAction
         }
     }
