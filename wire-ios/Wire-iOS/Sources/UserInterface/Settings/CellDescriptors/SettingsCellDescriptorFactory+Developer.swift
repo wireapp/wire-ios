@@ -98,7 +98,7 @@ extension SettingsCellDescriptorFactory {
                            presentationAction: { DatabaseStatisticsController() })
         )
 
-        if !Analytics.shared.isOptedOut && !TrackingManager.shared.disableAnalyticsSharing {
+        if !Analytics.shared.isOptedOut && !trackingManager.disableAnalyticsSharing {
             developerCellDescriptors.append(
                 Button(title: "Reset call quality survey",
                        isDestructive: false,

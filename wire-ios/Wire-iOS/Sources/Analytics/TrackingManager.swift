@@ -24,15 +24,13 @@ import WireSyncEngine
 final class TrackingManager: NSObject, TrackingInterface {
     private let flowManagerObserver: NSObjectProtocol
 
-    private override init() {
+    override init() {
         AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
 
         flowManagerObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: OperationQueue.main, using: { _ in
             AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
         })
     }
-
-    static let shared = TrackingManager()
 
     var disableAnalyticsSharing: Bool {
         get { ExtensionSettings.shared.disableAnalyticsSharing }

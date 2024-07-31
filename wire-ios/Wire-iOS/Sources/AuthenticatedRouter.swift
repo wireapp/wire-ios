@@ -60,6 +60,7 @@ final class AuthenticatedRouter {
         rootViewController: RootViewController,
         account: Account,
         userSession: UserSession,
+        trackingManager: TrackingManager,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -73,7 +74,8 @@ final class AuthenticatedRouter {
 
         builder = AuthenticatedWireFrame(
             account: account,
-            userSession: userSession
+            userSession: userSession,
+            trackingManager: trackingManager
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
@@ -167,17 +169,20 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 struct AuthenticatedWireFrame {
     private var account: Account
     private var userSession: UserSession
+    private var trackingManager: TrackingManager
 
     init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        trackingManager: TrackingManager
     ) {
         self.account = account
         self.userSession = userSession
+        self.trackingManager = trackingManager
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+        let viewController = ZClientViewController(account: account, userSession: userSession, trackingManager: trackingManager)
         viewController.router = router
         return viewController
     }

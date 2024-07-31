@@ -290,7 +290,7 @@ private extension AppDelegate {
         appRootRouter = AppRootRouter(
             viewController: viewController,
             sessionManager: sessionManager,
-            appStateCalculator: appStateCalculator
+            appStateCalculator: appStateCalculator, trackingManager: TrackingManager()
         )
     }
 

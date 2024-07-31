@@ -23,8 +23,10 @@ import WireSyncEngine
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
     var requestPasswordController: RequestPasswordController?
+    private let trackingManager: TrackingManager
 
-    init() {
+    init(trackingManager: TrackingManager) {
+        self.trackingManager = trackingManager
         super.init(title: L10n.Localizable.Self.signOut,
                    isDestructive: true,
                    presentationStyle: .modal,
@@ -34,7 +36,6 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
                    icon: nil,
                    accessoryViewMode: .default,
                    copiableText: nil)
-
     }
 
     private func logout(password: String? = nil) {
@@ -47,7 +48,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
             ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { result in
                 topMostViewController?.isLoadingViewVisible = false
-                TrackingManager.shared.disableAnalyticsSharing = false
+                self.trackingManager.disableAnalyticsSharing = false
                 if case .failure(let error) = result {
                     topMostViewController?.showAlert(for: error)
                 }

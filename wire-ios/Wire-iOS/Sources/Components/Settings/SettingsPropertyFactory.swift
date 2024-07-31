@@ -71,10 +71,14 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate
     ]
 
-    convenience init(userSession: UserSession?, selfUser: SettingsSelfUser?) {
+    convenience init(
+        userSession: UserSession?,
+        trackingManager: TrackingManager?,
+        selfUser: SettingsSelfUser?
+    ) {
         self.init(
             userDefaults: UserDefaults.standard,
-            tracking: TrackingManager.shared,
+            tracking: trackingManager,
             mediaManager: AVSMediaManager.sharedInstance(),
             userSession: userSession,
             selfUser: selfUser

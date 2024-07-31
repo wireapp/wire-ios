@@ -34,7 +34,7 @@ final class AppRootRouter: NSObject {
 
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
-
+    private let trackingManager: TrackingManager
     private var authenticationCoordinator: AuthenticationCoordinator?
     private var switchingAccountRouter: SwitchingAccountRouter
     private var sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
@@ -65,7 +65,8 @@ final class AppRootRouter: NSObject {
     init(
         viewController: RootViewController,
         sessionManager: SessionManager,
-        appStateCalculator: AppStateCalculator
+        appStateCalculator: AppStateCalculator,
+        trackingManager: TrackingManager
     ) {
         self.rootViewController = viewController
         self.sessionManager = sessionManager
@@ -75,6 +76,7 @@ final class AppRootRouter: NSObject {
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
+        self.trackingManager = trackingManager
 
         urlActionRouter.sessionManager = sessionManager
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
@@ -371,7 +373,8 @@ extension AppRootRouter {
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
             let authenticatedRouter = buildAuthenticatedRouter(
                 account: selectedAccount,
-                userSession: userSession
+                userSession: userSession,
+                trackingManager: trackingManager
             )
         else {
             completion()
@@ -421,14 +424,15 @@ extension AppRootRouter {
             return
         }
 
-        TrackingManager.shared.disableAnalyticsSharing = false
+        trackingManager.disableAnalyticsSharing = false
         Analytics.shared.provider?.selfUser = selfUser
     }
 
     @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
@@ -436,6 +440,7 @@ extension AppRootRouter {
             rootViewController: rootViewController,
             account: account,
             userSession: userSession,
+            trackingManager: trackingManager,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
