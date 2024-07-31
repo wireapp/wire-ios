@@ -113,7 +113,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     func requestEmailUpdate(showLoadingView: Bool) {
     activityIndicator.setIsActive(showLoadingView)
-    
+
     do {
         try viewModel.requestEmailUpdate()
         activityIndicator.setIsActive(false)
