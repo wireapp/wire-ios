@@ -272,8 +272,6 @@ public protocol UserSession: AnyObject {
 
     func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
 
-    func makeDisableAnalyticsSharingUseCase() -> DisableAnalyticsSharingUseCaseProtocol
-
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
