@@ -16,27 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
+import WireUITesting
 
 @testable import Wire
 
 final class ConversationTitleViewTests: XCTestCase {
 
-    var sut: ConversationTitleView!
-    var conversation: MockGroupDetailsConversation!
+    private var sut: ConversationTitleView!
+    private var conversation: MockGroupDetailsConversation!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
         conversation = MockGroupDetailsConversation()
         conversation.relatedConnectionState = .accepted
         conversation.displayName = "Alan Turing"
+
+        snapshotHelper = .init()
     }
 
     override func tearDown() {
         sut = nil
         conversation = nil
-
+        snapshotHelper = nil
         super.tearDown()
     }
 
@@ -52,7 +55,7 @@ final class ConversationTitleViewTests: XCTestCase {
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheFederatedConversationDisplayNameCorrectly() {
@@ -66,7 +69,7 @@ final class ConversationTitleViewTests: XCTestCase {
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersTheVerifiedShieldCorrectly() {
@@ -75,17 +78,18 @@ final class ConversationTitleViewTests: XCTestCase {
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersValidCertificate() {
         // when
         conversation.messageProtocol = .mls
+        conversation.isE2EIEnabled = true
         conversation.mlsVerificationStatus = .verified
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersLegalHoldCorrectly() {
@@ -94,7 +98,7 @@ final class ConversationTitleViewTests: XCTestCase {
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesTheTitleViewAndRendersLegalHoldAndVerifiedShieldCorrectly() {
@@ -104,7 +108,7 @@ final class ConversationTitleViewTests: XCTestCase {
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItDoesNotRenderTheDownArrowForOutgoingConnections() {
@@ -113,7 +117,7 @@ final class ConversationTitleViewTests: XCTestCase {
         sut = createSut(conversation: conversation)
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItExecutesTheTapHandlerOnTitleTap() {
