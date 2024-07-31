@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 struct AccentColorPicker: View {
@@ -38,10 +39,8 @@ struct AccentColorPicker: View {
                 cell(for: color)
                     .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
                     .onTapGesture {
-                        withAnimation {
-                            self.selectedColor = color
-                            onColorSelect?(color)
-                        }
+                        self.selectedColor = color
+                        onColorSelect?(color)
                     }
             }
             .listStyle(.plain)

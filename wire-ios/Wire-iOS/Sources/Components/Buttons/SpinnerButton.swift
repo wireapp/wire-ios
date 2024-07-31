@@ -17,12 +17,13 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
 
 /// A button with spinner at the trailing side. Title text is non truncated.
 final class SpinnerButton: ZMButton {
 
-    private lazy var spinner: Spinner = {
+    private lazy var spinner = {
         let spinner = Spinner()
 
         // the spinner covers the text with alpha BG

@@ -82,7 +82,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = "valid-cookue".data(using: .utf8)
+        validCookie = Data("valid-cookue".utf8)
     }
 
     override func tearDown() {
@@ -117,9 +117,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
-        let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
-        mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
-
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = { }
 
@@ -138,7 +135,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             flowManager: flowManagerMock,
             mediaManager: mediaManager,
             mlsService: mockMLSService,
-            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
@@ -152,7 +148,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
 
         return userSession

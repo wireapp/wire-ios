@@ -75,23 +75,45 @@ final class BlockerViewController: LaunchImageViewController {
     private func showBackendNotSupportedMessage() {
         typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
 
-        presentAlertWithOKButton(
+        presentOKAlert(
             title: BackendNotSupported.title,
             message: BackendNotSupported.message
         )
     }
 
     private func showBlacklistMessage() {
-
-        presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
-                                 message: L10n.Localizable.Force.Update.message) { _ in
-            UIApplication.shared.open(URL.wr_wireAppOnItunes)
+        presentOKAlert(
+            title: L10n.Localizable.Force.Update.title,
+            message: L10n.Localizable.Force.Update.message
+        ) { _ in
+            UIApplication.shared.open(WireURLs.shared.appOnItunes)
         }
     }
 
     private func showJailbrokenMessage() {
-        presentAlertWithOKButton(title: L10n.Localizable.Jailbrokendevice.Alert.title,
-                                 message: L10n.Localizable.Jailbrokendevice.Alert.message)
+        presentOKAlert(
+            title: L10n.Localizable.Jailbrokendevice.Alert.title,
+            message: L10n.Localizable.Jailbrokendevice.Alert.message
+        )
+    }
+
+    private func presentOKAlert(
+        title: String,
+        message: String,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel,
+            handler: handler
+        ))
+
+        present(alert, animated: true)
     }
 
     private func showGetCertificateMessage() {
@@ -107,7 +129,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
-                UIApplication.shared.open(URL.wr_e2eiLearnMore)
+                UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
             }
         )
 
@@ -137,33 +159,35 @@ final class BlockerViewController: LaunchImageViewController {
 
         let reportError = UIAlertAction(
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
-            style: .default,
-            handler: { [weak self] _ in
-                self?.presentMailComposer(withLogs: true)
-            }
-        )
+            style: .default
+        ) { [weak self] _ in
+            guard let self else { return }
+            let fallbackActivityPopoverConfiguration = PopoverPresentationControllerConfiguration.sourceView(
+                sourceView: view,
+                sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)
+            )
+            presentMailComposer(fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration)
+        }
 
         databaseFailureAlert.addAction(reportError)
 
         let retryAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
-            style: .default,
-            handler: { [weak self] _ in
-                self?.sessionManager?.retryStart()
-            }
-        )
+            style: .default
+        ) { [weak self] _ in
+            self?.sessionManager?.retryStart()
+        }
 
         databaseFailureAlert.addAction(retryAction)
 
         let deleteDatabaseAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
-            style: .destructive,
-            handler: { [weak self] _ in
-                self?.dismiss(animated: true, completion: {
-                    self?.showConfirmationDatabaseDeletionAlert()
-                })
+            style: .destructive
+        ) { [weak self] _ in
+            self?.dismiss(animated: true) {
+                self?.showConfirmationDatabaseDeletionAlert()
             }
-        )
+        }
 
         databaseFailureAlert.addAction(deleteDatabaseAction)
         present(databaseFailureAlert, animated: true)

@@ -22,10 +22,8 @@
 #import "ZMUser.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMConversationList+Internal.h"
 #import "ZMConnection+Internal.h"
 #import "ZMConversation+Internal.h"
-#import "ZMConversationList+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 #import "WireDataModelTests-Swift.h"
 
@@ -410,7 +408,7 @@
     invalidConversation.conversationType = ZMConversationTypeInvalid;
     
     // when
-    NSArray *conversationsInContext = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *conversationsInContext = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     
     // then
     XCTAssertEqualObjects(conversationsInContext, @[oneToOneConversation]);
@@ -610,7 +608,7 @@
 }
 
 
-- (void)testThatItSetsTheExpirationDateOnATextMessage
+- (void)testThatItSetsShouldExpireOnATextMessage
 {
     // given
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -628,9 +626,7 @@
     ZMMessage *message = (id)[sut appendMessageWithText:@"Quux"];
 
     // then
-    XCTAssertNotNil(message.expirationDate);
-    NSDate *expectedDate = [NSDate dateWithTimeIntervalSinceNow:[ZMMessage defaultExpirationTime]];
-    XCTAssertLessThan(fabs([message.expirationDate timeIntervalSinceDate:expectedDate]), 1);
+    XCTAssertTrue(message.shouldExpire);
 }
 
 

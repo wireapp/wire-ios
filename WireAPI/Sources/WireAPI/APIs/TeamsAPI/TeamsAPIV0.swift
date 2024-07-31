@@ -18,17 +18,20 @@
 
 import Foundation
 
-class TeamsAPIV0: TeamsAPI {
+class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     let httpClient: HTTPClient
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
     }
 
+    var apiVersion: APIVersion {
+        .v0
+    }
+
     func basePath(for teamID: Team.ID) -> String {
-        "/teams/\(teamID.transportString())"
+        "\(pathPrefix)/teams/\(teamID.transportString())"
     }
 
     // MARK: - Get team
@@ -200,23 +203,23 @@ enum ConversationActionResponseV0: String, Decodable {
     func toAPIModel() -> ConversationAction {
         switch self {
         case .addConversationMember:
-            return .addConversationMember
+            .addConversationMember
         case .removeConversationMember:
-            return .removeConversationMember
+            .removeConversationMember
         case .modifyConversationName:
-            return .modifyConversationName
+            .modifyConversationName
         case .modifyConversationMessageTimer:
-            return .modifyConversationMessageTimer
+            .modifyConversationMessageTimer
         case .modifyConversationReceiptMode:
-            return .modifyConversationReceiptMode
+            .modifyConversationReceiptMode
         case .modifyConversationAccess:
-            return .modifyConversationAccess
+            .modifyConversationAccess
         case .modifyOtherConversationMember:
-            return .modifyOtherConversationMember
+            .modifyOtherConversationMember
         case .leaveConversation:
-            return .leaveConversation
+            .leaveConversation
         case .deleteConversation:
-            return .deleteConversation
+            .deleteConversation
         }
     }
 
@@ -228,7 +231,7 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
     let members: [TeamMemberResponseV0]
 
     func toAPIModel() -> [TeamMember] {
-        return members.map {
+        members.map {
             $0.toAPIModel()
         }
     }
@@ -240,7 +243,7 @@ struct TeamMemberResponseV0: Decodable {
     let user: UUID
     let permissions: PermissionsResponseV0?
     let createdBy: UUID?
-    let createdAt: Date?
+    let createdAt: UTCTimeMillis?
     let legalholdStatus: LegalholdStatusV0?
 
     enum CodingKeys: String, CodingKey {
@@ -256,7 +259,7 @@ struct TeamMemberResponseV0: Decodable {
     func toAPIModel() -> TeamMember {
         TeamMember(
             userID: user,
-            creationDate: createdAt,
+            creationDate: createdAt?.date,
             creatorID: createdBy,
             legalholdStatus: legalholdStatus?.toAPIModel(),
             permissions: permissions?.toAPIModel()
@@ -289,13 +292,13 @@ enum LegalholdStatusV0: String, Decodable {
     func toAPIModel() -> LegalholdStatus {
         switch self {
         case .enabled:
-            return .enabled
+            .enabled
         case .pending:
-            return .pending
+            .pending
         case .disabled:
-            return .disabled
+            .disabled
         case .noConsent:
-            return .noConsent
+            .noConsent
         }
     }
 
@@ -306,7 +309,7 @@ struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
     let status: LegalholdStatusV0
 
     func toAPIModel() -> LegalholdStatus {
-        return status.toAPIModel()
+        status.toAPIModel()
     }
 
 }

@@ -21,14 +21,14 @@ import XCTest
 
 final class ClientMessageTests: BaseZMClientMessageTests {
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
-    override class func tearDown() {
+    override static func tearDown() {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
@@ -257,7 +257,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
     }
 
     func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID.create()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
@@ -790,7 +790,7 @@ extension ClientMessageTests {
 
     func testThatItDecryptsMessageWithExternalBlobCorrectly() {
         // given
-        self.syncMOC.performGroupedAndWait {_ in
+        self.syncMOC.performGroupedAndWait {
             self.createSelfClient(onMOC: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()

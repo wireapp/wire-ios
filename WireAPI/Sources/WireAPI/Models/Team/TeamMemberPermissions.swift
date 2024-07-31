@@ -33,4 +33,17 @@ public struct TeamMemberPermissions: Equatable {
 
     public let selfPermissions: Int64
 
+    /// Create a new `TeamMemberPermissions`.
+    ///
+    /// - Parameters:
+    ///   - selfPermissions: The permissions of the member.
+
+    public init(
+        copyPermissions: Int64,
+        selfPermissions: Int64
+    ) {
+        self.copyPermissions = copyPermissions
+        self.selfPermissions = selfPermissions
+    }
+
 }

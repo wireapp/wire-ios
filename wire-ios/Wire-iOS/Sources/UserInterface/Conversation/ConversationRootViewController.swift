@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - ConversationRootViewController
@@ -44,15 +46,22 @@ final class ConversationRootViewController: UIViewController {
 
     // MARK: - Init
 
-    init(conversation: ZMConversation,
-         message: ZMConversationMessage?,
-         clientViewController: ZClientViewController,
-         userSession: UserSession) {
-
-        let conversationController = ConversationViewController(conversation: conversation,
-                                                                visibleMessage: message as? ZMMessage,
-                                                                zClientViewController: clientViewController,
-                                                                userSession: userSession)
+    init(
+        conversation: ZMConversation,
+        message: ZMConversationMessage?,
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating,
+        mediaPlaybackManager: MediaPlaybackManager?
+    ) {
+        let conversationController = ConversationViewController(
+            conversation: conversation,
+            visibleMessage: message as? ZMMessage,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            mediaPlaybackManager: mediaPlaybackManager,
+            classificationProvider: ZMUserSession.shared(),
+            networkStatusObservable: NetworkStatus.shared
+        )
 
         conversationViewController = conversationController
 
@@ -81,7 +90,7 @@ final class ConversationRootViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     // MARK: - Override methods

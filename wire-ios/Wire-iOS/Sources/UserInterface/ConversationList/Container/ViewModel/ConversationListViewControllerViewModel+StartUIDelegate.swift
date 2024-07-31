@@ -21,6 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
+
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
         guard let userID = user.qualifiedID else { return }
 
@@ -66,9 +67,10 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     func openUserProfile(_ user: UserType) {
         let profileViewController = ProfileViewController(
             user: user,
-            viewer: selfUser,
+            viewer: selfUserLegalHoldSubject,
             context: .profileViewer,
-            userSession: userSession
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
         profileViewController.delegate = self
 
@@ -77,5 +79,4 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }
-
 }

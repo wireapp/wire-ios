@@ -19,9 +19,10 @@
 import MapKit
 import UIKit
 import WireDataModel
+import WireDesign
 
 /// Displays the preview of a location message.
-final class LocationPreviewController: TintColorCorrectedViewController {
+final class LocationPreviewController: UIViewController {
 
     let message: ZMConversationMessage
     private var actionController: ConversationMessageActionController!

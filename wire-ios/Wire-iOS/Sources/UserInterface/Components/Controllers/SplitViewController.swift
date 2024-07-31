@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 extension Notification.Name {
     static let SplitLayoutObservableDidChangeToLayoutSize = Notification.Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
@@ -239,6 +240,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             completion?()
             return
         }
+
+        // without this line on iPad the text is displayed next to the tab item icon
+        newLeftViewController.map { setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: $0) }
 
         let animator: UIViewControllerAnimatedTransitioning
 

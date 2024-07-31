@@ -20,8 +20,8 @@ import Foundation
 
 class TeamsAPIV5: TeamsAPIV4 {
 
-    override func basePath(for teamID: Team.ID) -> String {
-        "/v5/teams/\(teamID.transportString())"
+    override var apiVersion: APIVersion {
+        .v5
     }
 
     // MARK: - Get team

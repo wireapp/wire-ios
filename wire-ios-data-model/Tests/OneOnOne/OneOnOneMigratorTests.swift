@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTesting
+import XCTest
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class OneOnOneMigratorTests: XCTestCase {
 
@@ -212,7 +214,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // required to add be able to add images
         let cacheLocation = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         await syncContext.perform {
@@ -241,7 +243,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await syncContext.perform {
-            let mlsMessages = mlsConversation.allMessages.sorted { $0.serverTimestamp < $1.serverTimestamp }
+            let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             XCTAssertEqual(mlsMessages.count, 3)
             XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
             XCTAssertTrue(mlsMessages[1].isKnock)

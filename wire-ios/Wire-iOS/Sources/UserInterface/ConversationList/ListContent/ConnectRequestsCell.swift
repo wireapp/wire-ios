@@ -28,7 +28,7 @@ extension SectionListCellType {
 
     var identifier: String {
         return [obfuscatedSectionName ?? sectionName, cellIdentifier]
-            .compactMap(\.self)
+            .compactMap { $0 }
             .joined(separator: " - ")
     }
 }
@@ -60,7 +60,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         updateAppearance()
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
 
         setNeedsUpdateConstraints()
@@ -110,27 +110,14 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     func updateAppearance() {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let connectionRequests = ZMConversationList.pendingConnectionConversations(inUserSession: userSession)
-
-        let newCount: Int = connectionRequests.count
-
-        if newCount != currentConnectionRequestsCount {
-            let connectionUsers = connectionRequests.map { conversation in
-                if let conversation = conversation as? ZMConversation {
-                    return conversation.oneOnOneUser
-                } else {
-                    return nil
-                }
-            }
-
-            if let users = connectionUsers as? [ZMUser] {
-                currentConnectionRequestsCount = newCount
-                let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(newCount)
-                itemView.configure(with: NSAttributedString(string: title), subtitle: NSAttributedString(), users: users)
-            }
+        let connectionRequests: ConversationList = .pendingConnectionConversations(inUserSession: userSession)
+        let users = connectionRequests.items.compactMap(\.oneOnOneUser)
+        if users.count != currentConnectionRequestsCount {
+            currentConnectionRequestsCount = users.count
+            let title = L10n.Localizable.List.ConnectRequest.peopleWaiting(users.count)
+            itemView.configure(with: NSAttributedString(string: title), subtitle: NSAttributedString(), users: users)
         }
     }
-
 }
 
 extension ConnectRequestsCell: ZMConversationListObserver {

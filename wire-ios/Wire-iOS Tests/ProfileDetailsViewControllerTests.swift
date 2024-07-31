@@ -17,19 +17,22 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class ProfileDetailsViewControllerTests: XCTestCase {
 
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
     var defaultRichProfile: [UserRichProfileField]!
     var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         selfUserTeam = UUID()
         selfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: selfUserTeam)
 
@@ -42,6 +45,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         selfUser = nil
         selfUserTeam = nil
         defaultRichProfile = nil
@@ -1142,7 +1146,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
                                                    conversation: conversation?.convertToRegularConversation(),
                                                    context: context, userSession: userSession)
 
-        verify(matching: details,
+        snapshotHelper.verify(matching: details,
                file: file,
                testName: testName,
                line: line)

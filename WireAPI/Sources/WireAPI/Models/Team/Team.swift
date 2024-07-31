@@ -46,4 +46,30 @@ public struct Team: Identifiable, Equatable {
 
     public let splashScreenID: String?
 
+    /// Create a new `Team`.
+    ///
+    /// - Parameters:
+    ///   - id: The unique id of the team.
+    ///   - name: The team name.
+    ///   - creatorID: The user id of the team's creator.
+    ///   - logoID: The asset id of the team logo.
+    ///   - logoKey: The asset decryption key of the team logo.
+    ///   - splashScreenID: The assit id of the team's splash screen.
+
+    public init(
+        id: UUID,
+        name: String,
+        creatorID: UUID,
+        logoID: String,
+        logoKey: String? = nil,
+        splashScreenID: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.creatorID = creatorID
+        self.logoID = logoID
+        self.logoKey = logoKey
+        self.splashScreenID = splashScreenID
+    }
+
 }

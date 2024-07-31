@@ -28,7 +28,7 @@ extension ZMUserSession {
     }
 
     @objc(setEmailCredentials:)
-    func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
+    func setEmailCredentials(_ emailCredentials: UserEmailCredentials?) {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
@@ -88,7 +88,7 @@ extension ZMUserSession {
         }
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
@@ -122,7 +122,7 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: ZMUserSessionErrorCode
+        var errorCode: UserSessionErrorCode
         switch response.result {
         case .permanentError:
                 switch response.payload?.asDictionary()?["label"] as? String {
@@ -146,7 +146,7 @@ extension ZMUserSession {
             userInfo = [NSUnderlyingErrorKey: transportSessionError]
         }
 
-        return NSError(code: errorCode, userInfo: userInfo)
+        return NSError(userSessionErrorCode: errorCode, userInfo: userInfo)
     }
 
 }

@@ -16,20 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class TypingIndicatorViewSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class TypingIndicatorViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: TypingIndicatorView!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TypingIndicatorView!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = TypingIndicatorView()
         sut.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -37,6 +40,7 @@ final class TypingIndicatorViewSnapshotTests: BaseSnapshotTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -45,12 +49,12 @@ final class TypingIndicatorViewSnapshotTests: BaseSnapshotTestCase {
 
     func testOneTypingUser() {
         sut.typingUsers = Array(SwiftMockLoader.mockUsers().prefix(1))
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testTwoTypingUsers() {
         sut.typingUsers = Array(SwiftMockLoader.mockUsers().prefix(2))
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testManyTypingUsers() {
@@ -58,7 +62,7 @@ final class TypingIndicatorViewSnapshotTests: BaseSnapshotTestCase {
         sut.widthAnchor.constraint(equalToConstant: 320).isActive = true
 
         sut.typingUsers = Array(SwiftMockLoader.mockUsers().prefix(5))
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Unit Tests

@@ -18,67 +18,88 @@
 
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
-// MARK: - MockConversationList
-
-final class MockConversationList: ConversationListHelperType {
-    static var hasArchivedConversations: Bool = false
-}
-
 // MARK: - ConversationListViewControllerTests
 
-final class ConversationListViewControllerTests: BaseSnapshotTestCase {
+final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationListViewController!
-    var navigationController: UINavigationController!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: ConversationListViewController!
+    private var window: UIWindow!
+    private var tabBarController: UITabBarController!
+    private var userSession: UserSessionMock!
+    private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
 
-        userSession = UserSessionMock()
+        coreDataFixture = .init()
+
+        userSession = .init()
+        userSession.coreDataStack = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
-            conversationListType: MockConversationList.self,
+            selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
         sut = ConversationListViewController(
             viewModel: viewModel,
+            isFolderStatePersistenceEnabled: false,
+            zClientViewController: .init(account: account, userSession: userSession),
+            mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )
-        viewModel.viewController = sut
-        sut.onboardingHint.arrowPointToView = sut.tabBar
-        sut.overrideUserInterfaceStyle = .dark
-        sut.view.backgroundColor = .black
-        navigationController = .init(rootViewController: sut)
+        tabBarController = MainTabBarController(
+            contacts: .init(),
+            conversations: UINavigationController(rootViewController: sut),
+            folders: .init(),
+            archive: .init()
+        )
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
+
+        UIView.setAnimationsEnabled(false)
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
-        navigationController = nil
+        snapshotHelper = nil
+        window.isHidden = true
+        window.rootViewController = nil
+        window = nil
+        tabBarController = nil
         sut = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
+        coreDataFixture = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -86,21 +107,26 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     // MARK: - View controller
 
     func testForNoConversations() {
-        verify(matching: navigationController)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForEverythingArchived() {
-        MockConversationList.hasArchivedConversations = true
+        let modelHelper = ModelHelper()
+        let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
+        conversation.isArchived = true
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
-
-        verify(matching: navigationController)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: tabBarController)
     }
 
-    // MARK: - PermissionDeniedViewController
+    // MARK: - Helpers
 
-    func testForPremissionDeniedViewController() {
-        sut.showPermissionDeniedViewController()
-
-        verify(matching: navigationController)
+    private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
+        let predicate = NSPredicate { _, _ in
+            viewController.viewIfLoaded != nil
+        }
+        return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
 }

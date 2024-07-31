@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 01BBCFD72BF559AA001D9397 /* Starscream */; };
 		01C83762292CC75F009BB0BF /* ProxyCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83761292CC75F009BB0BF /* ProxyCredentials.swift */; };
 		01C83764292CC8DA009BB0BF /* ProxyCredentialsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */; };
 		01D97AE5294CA6B9001A04BD /* RequestLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */; };
 		01D97B13294CBAC0001A04BD /* RequestLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97B0F294CB921001A04BD /* RequestLog.swift */; };
 		01D97B14294CBAC0001A04BD /* ResponseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97B11294CB98F001A04BD /* ResponseLog.swift */; };
-		01E1B793294B260100CEA021 /* RemoteLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E1B792294B260000CEA021 /* RemoteLogger.swift */; };
 		0928E2051BA023A30057232E /* NSData_MultipartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0928E2041BA023A30057232E /* NSData_MultipartTests.m */; };
 		095840201B9591F1004555F9 /* NSData+Multipart.m in Sources */ = {isa = PBXBuildFile; fileRef = 0958401E1B9591F1004555F9 /* NSData+Multipart.m */; };
 		095840221B959200004555F9 /* NSData+Multipart.h in Headers */ = {isa = PBXBuildFile; fileRef = 095840211B959200004555F9 /* NSData+Multipart.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -136,15 +136,13 @@
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
+		E60957882C3E739D0022E41D /* BackendInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60957872C3E739D0022E41D /* BackendInfoTests.swift */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
 		EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */; };
-		EE67F6B5296F0591001D7C88 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B4296F0591001D7C88 /* Starscream.xcframework */; };
 		EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
-		EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; };
-		EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */; };
 		EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */; };
 		EEAD28FD2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */; };
@@ -212,7 +210,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */,
-				EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,7 +222,6 @@
 		01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLogTests.swift; sourceTree = "<group>"; };
 		01D97B0F294CB921001A04BD /* RequestLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLog.swift; sourceTree = "<group>"; };
 		01D97B11294CB98F001A04BD /* ResponseLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseLog.swift; sourceTree = "<group>"; };
-		01E1B792294B260000CEA021 /* RemoteLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RemoteLogger.swift; path = Source/Public/RemoteLogger.swift; sourceTree = SOURCE_ROOT; };
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
@@ -278,7 +274,6 @@
 		547712111B751F7900223568 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		547712121B751F7900223568 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		547712161B751F7900223568 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		547712171B751F7900223568 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		547712181B751F7900223568 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5499FF721B31C66C00835C8B /* ZMPushChannelConnection+WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMPushChannelConnection+WebSocket.h"; sourceTree = "<group>"; };
 		5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPushChannelConnection.h; sourceTree = "<group>"; };
@@ -368,13 +363,12 @@
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
+		E60957872C3E739D0022E41D /* BackendInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfoTests.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfo.swift; sourceTree = "<group>"; };
 		EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccessTokenHandler.swift; sourceTree = "<group>"; };
-		EE67F6B4296F0591001D7C88 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = ../Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		EE67F6ED296F074C001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F0296F079E001D7C88 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE7F3DEA29548F88000D247D /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSVersion.swift; sourceTree = "<group>"; };
 		EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTransport.docc; sourceTree = "<group>"; };
 		EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+SafeForLogging.swift"; sourceTree = "<group>"; };
@@ -407,7 +401,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */,
 				EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */,
 				BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */,
 			);
@@ -418,7 +411,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */,
-				EE67F6B5296F0591001D7C88 /* Starscream.xcframework in Frameworks */,
+				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,8 +503,6 @@
 			children = (
 				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
 				EE67F6ED296F074C001D7C88 /* WireTesting.framework */,
-				EE67F6B4296F0591001D7C88 /* Starscream.xcframework */,
-				EE7F3DEA29548F88000D247D /* WireUtilities.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -639,7 +630,6 @@
 				547712111B751F7900223568 /* project-debug.xcconfig */,
 				547712121B751F7900223568 /* project.xcconfig */,
 				547712161B751F7900223568 /* tests.xcconfig */,
-				547712171B751F7900223568 /* warnings-debug.xcconfig */,
 				547712181B751F7900223568 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -760,7 +750,6 @@
 				F1D1281F21C2665E0090045E /* BackendEndpoints.swift */,
 				F1D1281621C1556D0090045E /* BackendEnvironmentProvider.swift */,
 				F1D1281721C1556E0090045E /* TrustData.swift */,
-				01E1B792294B260000CEA021 /* RemoteLogger.swift */,
 				22D0F91B29027191004E2882 /* ProxySettings.swift */,
 				01C83761292CC75F009BB0BF /* ProxyCredentials.swift */,
 			);
@@ -828,6 +817,7 @@
 		596090D32B14C9050007583F /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				E60957872C3E739D0022E41D /* BackendInfoTests.swift */,
 				596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */,
 			);
 			path = Public;
@@ -946,7 +936,6 @@
 				3E88BCA41B1F35DF00232589 /* Headers */,
 				3E88BCA21B1F35DF00232589 /* Sources */,
 				3E88BCA31B1F35DF00232589 /* Frameworks */,
-				AD4812A82AB98FF100ED208C /* Run Swiftlint */,
 				3E88BCA51B1F35DF00232589 /* Resources */,
 			);
 			buildRules = (
@@ -954,6 +943,9 @@
 			dependencies = (
 			);
 			name = "WireTransport-ios";
+			packageProductDependencies = (
+				01BBCFD72BF559AA001D9397 /* Starscream */,
+			);
 			productName = Transport;
 			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1011,6 +1003,9 @@
 				Base,
 			);
 			mainGroup = 3E88BC9D1B1F35DF00232589;
+			packageReferences = (
+				01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */,
+			);
 			productRefGroup = 3E88BCA81B1F35DF00232589 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1050,29 +1045,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		AD4812A82AB98FF100ED208C /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		09A218621B790D330076547A /* Sources */ = {
@@ -1128,7 +1100,6 @@
 				54CA15C31B32F2C1008D3787 /* ZMTransportData.m in Sources */,
 				54CA15C51B32F2C1008D3787 /* NSError+ZMTransportSession.m in Sources */,
 				7038D63E27D0D286004BE280 /* APIVersion.swift in Sources */,
-				01E1B793294B260100CEA021 /* RemoteLogger.swift in Sources */,
 				166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */,
 				87B2B79B20BC476E00799AB9 /* ZMTransportRequest.swift in Sources */,
 				54CA15C11B32F2C1008D3787 /* ZMTransportCodec.m in Sources */,
@@ -1169,6 +1140,7 @@
 				F9C4317E1CD7ADF300A8542F /* ZMKeychainTests.m in Sources */,
 				596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */,
 				546E89FF1B33015000DD1042 /* ZMTransportCodecTests.m in Sources */,
+				E60957882C3E739D0022E41D /* BackendInfoTests.swift in Sources */,
 				AF9D8F9E1F20D9B700ABF225 /* TestTrustVerificator.swift in Sources */,
 				BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */,
 				546E89F11B33015000DD1042 /* ZMWebSocketHandshakeTests.m in Sources */,
@@ -1382,6 +1354,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/starscream";
+			requirement = {
+				kind = exactVersion;
+				version = 4.0.8;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		01BBCFD72BF559AA001D9397 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
+			productName = Starscream;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3E88BC9E1B1F35DF00232589 /* Project object */;
 }

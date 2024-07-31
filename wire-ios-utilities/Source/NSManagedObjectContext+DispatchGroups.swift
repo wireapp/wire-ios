@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 
 public extension NSManagedObjectContext {
 
@@ -26,8 +26,7 @@ public extension NSManagedObjectContext {
     /// otherwise  delayed saves could be blocked.
     @objc
     func enterAllGroupsExceptSecondary() -> [ZMSDispatchGroup] {
-        let secondaryGroup = dispatchGroupContext.groups[1]
-        return dispatchGroupContext.enterAll(except: secondaryGroup)
+        let secondaryGroup = dispatchGroupContext?.groups[1]
+        return dispatchGroupContext?.enterAll(except: secondaryGroup) ?? []
     }
-
 }

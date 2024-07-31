@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireSyncEngine
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
@@ -214,15 +215,15 @@ struct SuccessfulCertificateEnrollmentViewController_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: true)
+            SuccessfulCertificateEnrollmentViewControllerWrapper(isUpdateMode: true)
                 .previewDisplayName("Update Mode: true")
-            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: false)
+            SuccessfulCertificateEnrollmentViewControllerWrapper(isUpdateMode: false)
                 .previewDisplayName("Update Mode: false")
         }
     }
 }
 
-private struct SuccessfulCertificateEnrollmentViewControllerrWrapper: UIViewControllerRepresentable {
+private struct SuccessfulCertificateEnrollmentViewControllerWrapper: UIViewControllerRepresentable {
 
     @State private(set) var isUpdateMode = false
 

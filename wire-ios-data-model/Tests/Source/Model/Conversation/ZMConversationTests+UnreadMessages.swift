@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
 
-class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
+@testable import WireDataModel
+
+final class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
 
     func testThatItCalculatesLastUnreadMessages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group

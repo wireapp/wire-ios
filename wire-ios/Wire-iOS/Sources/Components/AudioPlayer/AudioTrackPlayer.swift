@@ -188,7 +188,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     private func playRateChanged() {
-        state = avPlayer?.rate > 0 ? .playing : .paused
+        if let avPlayer, avPlayer.rate > 0 {
+            state = .playing
+        } else {
+            state = .paused
+        }
 
         updateNowPlayingState()
     }
@@ -235,7 +239,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         }
 
         pauseHandler = commandCenter.pauseCommand.addTarget(handler: { [weak self] _ in
-            if self?.avPlayer?.rate > 0 {
+            if let avPlayer = self?.avPlayer, avPlayer.rate > 0 {
                 self?.pause()
                 return .success
             } else {
@@ -258,7 +262,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var isPlaying: Bool {
-        return avPlayer?.rate > 0 && avPlayer?.error == nil
+        if let avPlayer, avPlayer.rate > 0, avPlayer.error == nil {
+            return true
+        }
+
+        return false
     }
 
     func stop() {

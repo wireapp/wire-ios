@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
@@ -33,19 +34,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     // MARK: - Initialization
 
-    init(clients: [UserClient],
-         credentials: ZMCredentials?) {
-        let emailCredentials: ZMEmailCredentials? = credentials.flatMap {
-            guard let email = $0.email, let password = $0.password else {
-                return nil
-            }
-
-            return ZMEmailCredentials(email: email, password: password)
-        }
-
-        clientListController = RemoveClientsViewController(
-            clientsList: clients,
-            credentials: emailCredentials)
+    init(clients: [UserClient]) {
+        clientListController = RemoveClientsViewController(clientsList: clients)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -59,10 +49,14 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
         configureSubviews()
         configureConstraints()
         updateBackButton()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
     }
 
     private func configureSubviews() {
@@ -92,7 +86,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Back Button
 
     private func updateBackButton() {
-        guard navigationController?.viewControllers.count > 1 else {
+        guard let count = navigationController?.viewControllers.count, count > 1 else {
             return
         }
 

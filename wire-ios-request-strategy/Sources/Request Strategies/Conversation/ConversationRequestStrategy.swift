@@ -145,7 +145,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 context: managedObjectContext,
                 removeLocalConversationUseCase: removeLocalConversation
             ),
-            UpdateConversationProtocolActionHandler(context: managedObjectContext)
+            UpdateConversationProtocolActionHandler(context: managedObjectContext),
+            CreateConversationGuestLinkActionHandler(context: managedObjectContext),
+            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext)
         ])
 
         super.init(
@@ -379,14 +381,13 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
-
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),
             let payload = response.payload
         else {
             return false
         }
-
+        // TODO: [WPB-10283] [F] check if we need to wait for the processPayload
         conversationEventProcessor.processPayload(payload)
 
         return false

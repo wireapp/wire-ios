@@ -20,9 +20,6 @@ import Foundation
 import UserNotifications
 import WireCommonComponents
 import WireUtilities
-#if DATADOG_IMPORT
-import Datadog
-#endif
 
 final class NotificationService: UNNotificationServiceExtension {
 
@@ -37,7 +34,8 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        DatadogWrapper.shared?.startMonitoring()
+        WireAnalytics.Datadog.enable()
+
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if DeveloperFlag.nseV2.isOn {
@@ -60,5 +58,4 @@ final class NotificationService: UNNotificationServiceExtension {
             legacyService.serviceExtensionTimeWillExpire()
         }
     }
-
 }

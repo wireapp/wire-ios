@@ -17,13 +17,14 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import WireDataModel
 import XCTest
 
+@testable import Wire
+
 // MARK: - CollectionsViewControllerTests
 
-final class CollectionsViewControllerTests: BaseSnapshotTestCase {
+final class CollectionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -107,12 +108,22 @@ final class CollectionsViewControllerTests: BaseSnapshotTestCase {
     // MARK: - Snapshot Tests
 
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true, userSession: userSession)
+        let controller = CollectionsViewController(
+            collection: emptyCollection,
+            fetchingDone: true,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
         verifyAllIPhoneSizes(matching: controller)
     }
 
     func testThatLoadingIsShownWhenFetching() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false, userSession: userSession)
+        let controller = CollectionsViewController(
+            collection: emptyCollection,
+            fetchingDone: false,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         verifyAllIPhoneSizes(matching: controller)
     }
@@ -208,7 +219,11 @@ extension CollectionsViewControllerTests {
         let delegate = AssetCollectionMulticastDelegate()
         let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
 
-        let controller = CollectionsViewController(collection: collection, userSession: userSession)
+        let controller = CollectionsViewController(
+            collection: collection,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
         _ = controller.view
         delegate.assetCollectionDidFetch(collection: assetCollection, messages: assetCollection.messages, hasMore: false)
         delegate.assetCollectionDidFinishFetching(collection: assetCollection, result: .success)

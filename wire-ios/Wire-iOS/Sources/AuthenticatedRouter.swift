@@ -32,13 +32,13 @@ protocol AuthenticatedRouterProtocol: AnyObject {
     func navigate(to destination: NavigationDestination)
 }
 
-final class AuthenticatedRouter: NSObject {
+final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
     private let builder: AuthenticatedWireFrame
     private let rootViewController: RootViewController
-    private let activeCallRouter: ActiveCallRouter
+    private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
@@ -60,26 +60,25 @@ final class AuthenticatedRouter: NSObject {
         rootViewController: RootViewController,
         account: Account,
         userSession: UserSession,
-        needToShowDataUsagePermissionDialog: Bool,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
         self.rootViewController = rootViewController
-        activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
+        activeCallRouter = ActiveCallRouter(
+            rootviewController: rootViewController,
+            userSession: userSession,
+            topOverlayPresenter: .init(rootViewController: rootViewController)
+        )
 
         builder = AuthenticatedWireFrame(
             account: account,
-            userSession: userSession,
-            isComingFromRegistration: needToShowDataUsagePermissionDialog,
-            needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog
+            userSession: userSession
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
-
-        super.init()
 
         featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
@@ -168,25 +167,17 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 struct AuthenticatedWireFrame {
     private var account: Account
     private var userSession: UserSession
-    private var isComingFromRegistration: Bool
-    private var needToShowDataUsagePermissionDialog: Bool
 
     init(
         account: Account,
-        userSession: UserSession,
-        isComingFromRegistration: Bool,
-        needToShowDataUsagePermissionDialog: Bool
+        userSession: UserSession
     ) {
         self.account = account
         self.userSession = userSession
-        self.isComingFromRegistration = isComingFromRegistration
-        self.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(account: account, userSession: userSession)
-        viewController.isComingFromRegistration = isComingFromRegistration
-        viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router
         return viewController
     }

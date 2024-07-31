@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+
+@testable import WireDataModel
 
 final class MessageDependencyResolverTests: MessagingTestBase {
 
-    func testThatGivenMessageWithoutDependencies_thenDontWait() throws {
+    func testThatGivenMessageWithoutDependencies_thenDontWait() async throws {
         // given
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -32,16 +33,39 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
-            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-        }
+        let before = Date.now
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "duration > 500ms")
     }
 
-    func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() throws {
+    func testThatGivenMessageIsInvisibleAndConversationIsDegraded_thenDontThrow() async throws {
         // given
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
+            groupConversation.messageProtocol = .mls
+            groupConversation.mlsVerificationStatus = .degraded
+        }
+
+        let uuid = UUID.create()
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Confirmation(messageId: uuid)),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+        message.shouldIgnoreTheSecurityLevelCheck = true
+        let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
+            .arrange()
+
+        // then test completes
+        let before = Date.now
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "duration > 500ms")
+    }
+
+    func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() async throws {
+        // given
+        await syncMOC.perform {
             // make conversatio sync a dependency
-            groupConversation.needsToBeUpdatedFromBackend = true
+            self.groupConversation.needsToBeUpdatedFromBackend = true
         }
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -51,21 +75,19 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
 
-        Task {
-            // Sleeping in order to hit the code path where we start observing RequestAvailable
-            try await Task.sleep(nanoseconds: 250_000_000)
+        // Sleeping in order to hit the code path where we start observing RequestAvailable
+        try await Task.sleep(nanoseconds: 250_000_000)
 
-            await syncMOC.perform {
-                self.groupConversation.needsToBeUpdatedFromBackend = false
-            }
-
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        await syncMOC.perform {
+            self.groupConversation.needsToBeUpdatedFromBackend = false
         }
+
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
 
         // then test completes
-        wait(timeout: 0.5) {
-            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-        }
+        let before = Date.now
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "duration > 500ms")
     }
 
     func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() async throws {
@@ -85,15 +107,13 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
-            do {
-                try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-                XCTFail()
-            } catch MessageDependencyResolverError.legalHoldPendingApproval {
-                // should pass here
-            } catch {
-                XCTFail()
-            }
+        do {
+            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            XCTFail("unexpected success")
+        } catch MessageDependencyResolverError.legalHoldPendingApproval {
+            // should pass here
+        } catch {
+            XCTFail(String(reflecting: error))
         }
     }
 
@@ -108,11 +128,10 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         let coreDataStack: CoreDataStack
 
         func arrange() -> (Arrangement, MessageDependencyResolver) {
-            return (self, MessageDependencyResolver(
-                context: coreDataStack.syncContext
-                )
+            (
+                self,
+                MessageDependencyResolver(context: coreDataStack.syncContext)
             )
         }
     }
-
 }

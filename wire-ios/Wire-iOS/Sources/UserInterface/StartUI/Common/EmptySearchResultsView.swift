@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 // MARK: - EmptySearchResultsViewState
 
@@ -61,7 +62,7 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Computed Properties
 
-    private var state: EmptySearchResultsViewState = .initialSearch {
+    fileprivate var state: EmptySearchResultsViewState = .initialSearch {
         didSet {
             updateUIForCurrentEmptySearchResultState()
         }
@@ -201,24 +202,20 @@ final class EmptySearchResultsView: UIView {
         NSLayoutConstraint.activate([
             // scroll view with empty search results view
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            // stack view within scroll view
-            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
-            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
+            // Center the stackView within the scrollView
+            stackView.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerYAnchor)
         ])
     }
 
     private func setUpStackView() {
-        stackView.alignment = .center
-        stackView.spacing = 16
         stackView.axis = .vertical
         stackView.alignment = .center
+        stackView.spacing = 16
     }
 
     private func setupStatusLabel() {
@@ -239,4 +236,17 @@ final class EmptySearchResultsView: UIView {
             actionButton.isHidden = true
         }
     }
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    let view = EmptySearchResultsView(
+        isSelfUserAdmin: true,
+        isFederationEnabled: false
+    )
+
+    view.state = .noServicesEnabled
+    return view
 }

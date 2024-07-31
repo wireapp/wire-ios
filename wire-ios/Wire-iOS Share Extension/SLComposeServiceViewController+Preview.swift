@@ -20,7 +20,7 @@ import MobileCoreServices
 import Social
 import UIKit
 import UniformTypeIdentifiers
-import WireCommonComponents
+import WireDesign
 
 /**
  * The description of the preview that can be displayed for an attachment.
@@ -180,4 +180,32 @@ extension PreviewDisplayMode {
         guard case .mixed(let count, _) = defaultDisplayMode else { return defaultDisplayMode }
         return .mixed(count, preferredDisplayMode)
     }
+}
+
+// MARK: - Attachment Main
+
+private extension Dictionary where Key == AttachmentType, Value == [NSItemProvider] {
+
+    /**
+     * Determines the main preview item for the post.
+     *
+     * We determine this using the following rules:
+     * - media = video AND/OR photo
+     * - passes OR media OR file
+     * - passes OR media OR file > URL
+     * - video > photo
+     */
+
+    var main: (AttachmentType, NSItemProvider)? {
+        let sortedAttachments = self
+
+        for attachmentType in AttachmentType.allCases {
+            if let item = sortedAttachments[attachmentType]?.first {
+                return (attachmentType, item)
+            }
+        }
+
+        return nil
+    }
+
 }

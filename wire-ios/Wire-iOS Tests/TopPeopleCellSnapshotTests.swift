@@ -16,27 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDesign
+import WireUITesting
 import XCTest
 
-final class TopPeopleCellSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
 
-    var sut: TopPeopleCell!
+final class TopPeopleCellSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TopPeopleCell!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
         sut.user = MockUserType.createDefaultOtherUser()
-        sut.overrideUserInterfaceStyle = .light
         sut.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
+    // MARK: - Snapshot Test
+
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

@@ -18,10 +18,12 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
+    private let mainCoordinator: MainCoordinating
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
     let viewModel: GroupParticipantsDetailViewModel
@@ -42,8 +44,10 @@ final class GroupParticipantsDetailViewController: UIViewController {
     init(
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating
     ) {
+        self.mainCoordinator = mainCoordinator
 
         viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
@@ -83,6 +87,12 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Participants.All.title)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
+
         collectionViewController.collectionView?.reloadData()
     }
 
@@ -105,9 +115,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
         collectionView.accessibilityIdentifier = "group_details.full_list"
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Participants.All.title.capitalized)
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
     }
 
     private func createConstraints() {
@@ -189,7 +197,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             conversation: conversation,
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
         )
         if !user.isSelfUser {
             navigationController?.pushViewController(viewController, animated: true)
@@ -201,10 +210,12 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
+
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
             conversation: viewModel.conversation,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
         )
 
         detailsViewController.delegate = self
@@ -218,14 +229,13 @@ extension GroupParticipantsDetailViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true, completion: completion)
     }
-
 }
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
+            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

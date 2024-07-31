@@ -134,6 +134,46 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 extension URLActionRouter: PresentationDelegate {
 
+    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+        typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
+
+        let alertController = UIAlertController(
+            title: ConversationAlert.title(conversationName),
+            message: ConversationAlert.message,
+            preferredStyle: .alert
+        )
+
+        alertController.addTextField { textField in
+            textField.placeholder = ConversationAlert.Textfield.placeholder
+            textField.isSecureTextEntry = true
+        }
+
+        let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
+            let password = alertController.textFields?.first?.text
+            completion(password)
+        }
+
+        let helpLinkURL = WireURLs.shared.guestLinksInfo
+        let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
+            UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
+        }
+
+        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
+            completion(nil)
+        }
+
+        alertController.addAction(joinAction)
+        alertController.addAction(learnMoreAction)
+        alertController.addAction(cancelAction)
+
+        // Use the rootViewController to present the alert
+        if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
+            rootViewController.present(alertController, animated: true)
+        } else {
+            pendingAlert = alertController
+        }
+    }
+
     // MARK: - Public Implementation
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
@@ -268,6 +308,10 @@ private extension URLActionRouter {
 
         case conversationLinkIsDisabled
 
+        // The password for the secure guest link is wrong
+
+        case invalidConversationPassword
+
         /// A generic error case.
 
         case unknown
@@ -282,6 +326,9 @@ private extension URLActionRouter {
 
             case ConversationJoinError.guestLinksDisabled, ConversationFetchError.guestLinksDisabled:
                 self = .conversationLinkIsDisabled
+
+            case ConversationJoinError.invalidConversationPassword:
+                self = .invalidConversationPassword
 
             default:
                 self = .unknown
@@ -300,6 +347,9 @@ private extension URLActionRouter {
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
                 return AlertStrings.LinkIsInvalid.message
 
+            case .invalidConversationPassword:
+                return AlertStrings.InvalidPassword.message
+
             case .unknown:
                 return L10n.Localizable.Error.User.unkownError
             }
@@ -315,13 +365,16 @@ private extension URLActionRouter {
         let title = error.errorDescription
         let message = error.failureReason ?? L10n.Localizable.Error.User.unkownError
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(.ok(style: .cancel))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         switch error {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: URL.wr_guestLinksLearnMore.appendingLocaleParameter)
+                let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
                 topmostViewController?.present(browserViewController, animated: true)
             }
             alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,

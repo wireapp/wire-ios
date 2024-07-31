@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
@@ -42,7 +43,7 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     let accessibilityLabel: String?
 
     init() {
-        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
+        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(WireURLs.shared.endToEndIdentityInfo), style: .systemMessage)
 
         configuration = View.Configuration(
             icon: .init(resource: .certificateValid),

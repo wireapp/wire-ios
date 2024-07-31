@@ -32,7 +32,13 @@ open class ZMFileMetadata: NSObject {
 
     required public init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = thumbnail?.count > 0 ? thumbnail : nil
+        self.thumbnail = {
+            if let thumbnail, !thumbnail.isEmpty {
+                return thumbnail
+            } else {
+                return nil
+            }
+        }()
         let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
 
         self.filename = endName.removingExtremeCombiningCharacters
@@ -97,7 +103,7 @@ open class ZMVideoMetadata: ZMFileMetadata {
 
 }
 
-extension ZMFileMetadata {
+public extension ZMFileMetadata {
 
     var mimeType: String {
         return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"

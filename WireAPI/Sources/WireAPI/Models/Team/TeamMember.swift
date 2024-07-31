@@ -42,4 +42,27 @@ public struct TeamMember: Equatable {
 
     public let permissions: TeamMemberPermissions?
 
+    /// Create a new `TeamMember`.
+    ///
+    /// - Parameters:
+    ///   - userID: The id of the member.
+    ///   - creationDate: When the member was created.
+    ///   - creatorID: The id of the user who created this member.
+    ///   - legalholdStatus: The legalhold status of the member.
+    ///   - permissions: The member's permissions.
+
+    public init(
+        userID: UUID,
+        creationDate: Date? = nil,
+        creatorID: UUID? = nil,
+        legalholdStatus: LegalholdStatus? = nil,
+        permissions: TeamMemberPermissions? = nil
+    ) {
+        self.userID = userID
+        self.creationDate = creationDate
+        self.creatorID = creatorID
+        self.legalholdStatus = legalholdStatus
+        self.permissions = permissions
+    }
+
 }

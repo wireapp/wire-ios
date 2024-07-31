@@ -19,6 +19,7 @@
 import avs
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 import WireSystem
 

@@ -21,17 +21,6 @@ import Foundation
 // sourcery: AutoMockable
 @objc public protocol UserProfile {
 
-    /// Requests phone number verification. Once this is called,
-    /// the user is expected to receive a PIN code on her phone
-    /// and call `requestPhoneNumberChange` with that PIN
-    func requestPhoneVerificationCode(phoneNumber: String)
-
-    /// Requests phone number change, with a PIN received earlier
-    func requestPhoneNumberChange(credentials: ZMPhoneCredentials)
-
-    /// Requests phone number removal. Must still have an email set.
-    func requestPhoneNumberRemoval()
-
     /// Requests email change
     /// The email will need to be verified externally
     /// - throws: if the email is not already set, or if empty email is passed
@@ -40,7 +29,7 @@ import Foundation
     /// Requests to set an email and password, for a user that does not have either.
     /// Once this is called, we expect the user to eventually verify the email externally.
     /// - throws: if the email was already set, or if empty credentials are passed
-    func requestSettingEmailAndPassword(credentials: ZMEmailCredentials) throws
+    func requestSettingEmailAndPassword(credentials: UserEmailCredentials) throws
 
     /// Cancel setting email and password
     func cancelSettingEmailAndPassword()

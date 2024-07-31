@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 protocol FolderPickerViewControllerDelegate: AnyObject {
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation)
@@ -73,7 +74,10 @@ final class FolderPickerViewController: UIViewController {
         newFolderItem.accessibilityIdentifier = "button.newfolder.create"
 
         navigationItem.titleView = navigationTitleLabel
-        navigationItem.leftBarButtonItem = navigationController?.closeItem()
+        navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
+
         navigationItem.rightBarButtonItem = newFolderItem
     }
 

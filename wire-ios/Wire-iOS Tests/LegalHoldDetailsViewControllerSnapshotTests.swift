@@ -17,21 +17,25 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: LegalHoldDetailsViewController!
-    var selfUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var sut: LegalHoldDetailsViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
@@ -41,6 +45,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         SelfUser.provider = nil
         userSession = nil
@@ -52,7 +57,11 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            self.sut = LegalHoldDetailsViewController(
+                conversation: conversation,
+                userSession: self.userSession,
+                mainCoordinator: .mock
+            )
             return self.sut.wrapInNavigationController()
         }
 
@@ -71,7 +80,25 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
-        verifyInAllColorSchemes(createSut: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut(),
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut(),
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testOtherUserUnderLegalHold() {
@@ -82,12 +109,36 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         conversation.sortedActiveParticipantsUserTypes = [otherUser]
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            self.sut = LegalHoldDetailsViewController(
+                conversation: conversation,
+                userSession: self.userSession,
+                mainCoordinator: .mock
+            )
             return self.sut.wrapInNavigationController()
         }
 
+        let sut = createSut()
+
         // THEN
-        verifyInAllColorSchemes(createSut: createSut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
 }

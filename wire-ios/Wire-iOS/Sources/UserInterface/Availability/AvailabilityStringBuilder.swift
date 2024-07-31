@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum AvailabilityStringBuilder {
 
@@ -71,7 +72,7 @@ enum AvailabilityStringBuilder {
         guard let textColor = color, let iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         var attributedText = IconStringsBuilder.iconString(
-            leadingIcons: [icon].compactMap(\.self),
+            leadingIcons: [icon].compactMap { $0 },
             title: title,
             trailingIcons: [
                 isE2EICertified ? e2eiCertifiedShield : nil,

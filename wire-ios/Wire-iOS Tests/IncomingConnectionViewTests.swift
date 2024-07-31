@@ -16,22 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDesign
+import WireSyncEngineSupport
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 // MARK: - IncomingConnectionViewTests
 
-final class IncomingConnectionViewTests: BaseSnapshotTestCase {
+final class IncomingConnectionViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -41,7 +54,7 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithUnconnectedUser() {
@@ -50,7 +63,7 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = .white
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithUserName_NoHandle() {
@@ -58,48 +71,48 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithSecurityClassification_whenClassified() {
         let user = SwiftMockLoader.mockUsers().first!
-        let mockClassificationProvider = MockClassificationProvider()
-        mockClassificationProvider.returnClassification = .classified
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .classified
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithSecurityClassification_whenNotClassified() {
         let user = SwiftMockLoader.mockUsers().first!
-        let mockClassificationProvider = MockClassificationProvider()
-        mockClassificationProvider.returnClassification = .notClassified
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithFederatedUser() {
         let user = SwiftMockLoader.mockUsers().first!
-        let mockClassificationProvider = MockClassificationProvider()
-        mockClassificationProvider.returnClassification = .notClassified
+        let mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
         user.isFederated = true
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
 }
 
 // MARK: - UIView extension
 
-fileprivate extension UIView {
+private extension UIView {
 
     func layoutForTest(in size: CGSize = .init(width: 375, height: 667)) -> UIView {
         let fittingSize = systemLayoutSizeFitting(size)

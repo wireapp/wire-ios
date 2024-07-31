@@ -16,26 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class DecodeImageOperationTests: BaseSnapshotTestCase {
+@testable import Wire
 
-    var operationQueue: OperationQueue!
-    var sut: UIImageView!
+final class DecodeImageOperationTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var operationQueue: OperationQueue!
+    private var sut: UIImageView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         operationQueue = OperationQueue()
         sut = UIImageView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
         sut.contentMode = .scaleAspectFit
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         operationQueue = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Test
 
     func testThatItDecodedValidImageData() {
         // GIVEN
@@ -56,8 +69,10 @@ final class DecodeImageOperationTests: BaseSnapshotTestCase {
 
         // THEN
         sut.image = image
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: - Unit Test
 
     func testThatItDoesNotDecodeInvalidImageData() {
         // GIVEN

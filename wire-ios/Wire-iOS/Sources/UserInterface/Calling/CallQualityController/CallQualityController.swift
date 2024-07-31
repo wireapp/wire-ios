@@ -31,7 +31,10 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    override init() {
+    private let rootViewController: UIViewController
+
+    init(rootViewController: UIViewController) {
+        self.rootViewController = rootViewController
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -42,7 +45,7 @@ class CallQualityController: NSObject {
     // MARK: - Configuration
 
     /// Whether we use a maxmimum budget for call surveying per user.
-    var usesCallSurveyBudget: Bool = false
+    var usesCallSurveyBudget: Bool = true
 
     /// The range of scores where we consider the call quality is not satisfying.
     let callQualityRejectionRange = 1 ... 2
@@ -60,8 +63,7 @@ class CallQualityController: NSObject {
         #if DISABLE_CALL_QUALITY_SURVEY
         return false
         #else
-        return Bundle.developerModeEnabled
-            && !AutomationHelper.sharedHelper.disableCallQualitySurvey
+        return !AutomationHelper.sharedHelper.disableCallQualitySurvey
             && AppDelegate.shared.launchType != .unknown
         #endif
     }
@@ -100,7 +102,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure()
+            handleCallFailure(presentingViewController: rootViewController)
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -126,13 +128,13 @@ class CallQualityController: NSObject {
     }
 
     /// Presents the debug log prompt after a call failure.
-    private func handleCallFailure() {
-        router?.presentCallFailureDebugAlert()
+    private func handleCallFailure(presentingViewController: UIViewController) {
+        router?.presentCallFailureDebugAlert(presentingViewController: presentingViewController)
     }
 
     /// Presents the debug log prompt after a user quality rejection.
-    private func handleCallQualityRejection() {
-        router?.presentCallQualityRejection()
+    private func handleCallQualityRejection(presentingViewController: UIViewController) {
+        router?.presentCallQualityRejection(presentingViewController: presentingViewController)
     }
 
 }
@@ -164,10 +166,14 @@ extension CallQualityController: WireCallCenterCallStateObserver {
 extension CallQualityController: CallQualityViewControllerDelegate {
 
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {
-        router?.dismissCallQualitySurvey(completion: { [weak self] in
-            guard self?.callQualityRejectionRange.contains(score) ?? false else { return }
-            self?.handleCallQualityRejection()
-        })
+        router?.dismissCallQualitySurvey { [weak self] in
+            guard
+                self?.callQualityRejectionRange.contains(score) ?? false,
+                let presentingViewController = self?.rootViewController
+            else { return }
+
+            self?.handleCallQualityRejection(presentingViewController: presentingViewController)
+        }
 
         CallQualityController.updateLastSurveyDate(Date())
         Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))

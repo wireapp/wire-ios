@@ -178,11 +178,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    weak var restorationDelegate: ConversationListViewModelRestorationDelegate? {
-        didSet {
-            restorationDelegate?.listViewModel(self, didRestoreFolderEnabled: folderEnabled)
-        }
-    }
     weak var delegate: ConversationListViewModelDelegate? {
         didSet {
             delegateFolderEnableState(newState: state)
@@ -235,6 +230,8 @@ final class ConversationListViewModel: NSObject {
 
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
+        guard isFolderStatePersistenceEnabled else { return .init() }
+
         guard let persistentPath = ConversationListViewModel.persistentURL,
             let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
@@ -269,8 +266,12 @@ final class ConversationListViewModel: NSObject {
 
     private let userSession: UserSession?
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        isFolderStatePersistenceEnabled: Bool
+    ) {
         self.userSession = userSession
+        self.isFolderStatePersistenceEnabled = isFolderStatePersistenceEnabled
 
         super.init()
 
@@ -549,8 +550,8 @@ final class ConversationListViewModel: NSObject {
            let sectionNumber = sectionNumber(for: kind) {
             delegate?.listViewModel(self, didUpdateSection: sectionNumber)
         } else {
-            sections.enumerated().forEach {
-                delegate?.listViewModel(self, didUpdateSection: $0.offset)
+            sections.indices.forEach {
+                delegate?.listViewModel(self, didUpdateSection: $0)
             }
         }
     }
@@ -648,6 +649,9 @@ final class ConversationListViewModel: NSObject {
 
     // MARK: - state presistent
 
+    let isFolderStatePersistenceEnabled: Bool
+
+    // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
         var folderEnabled: Bool
@@ -663,7 +667,7 @@ final class ConversationListViewModel: NSObject {
             guard let jsonData = try? encoder.encode(self) else {
                 return nil }
 
-            return String(data: jsonData, encoding: .utf8)
+            return String(decoding: jsonData, as: UTF8.self)
         }
     }
 
@@ -673,7 +677,8 @@ final class ConversationListViewModel: NSObject {
 
     private func saveState(state: State) {
 
-        guard let jsonString = state.jsonString,
+        guard isFolderStatePersistenceEnabled,
+              let jsonString = state.jsonString,
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 

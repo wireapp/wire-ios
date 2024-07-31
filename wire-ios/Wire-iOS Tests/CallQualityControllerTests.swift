@@ -16,45 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireCommonComponents
+import WireUITesting
 import XCTest
 
-final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+@testable import Wire
 
-    var sut: MockCallQualityController!
+final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
-    var router: CallQualityRouterProtocolMock!
-    var conversation: ZMConversation!
-    var callConversationProvider: MockCallConversationProvider!
-    var callQualityViewController: CallQualityViewController!
+    private var router: MockCallQualityRouterProtocol!
+    private var conversation: ZMConversation!
+    private var callConversationProvider: MockCallConversationProvider!
+    private var callQualityViewController: CallQualityViewController!
+
+    // MARK: - setUp
 
     override func setUp() {
-        router = CallQualityRouterProtocolMock()
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+        router = .init()
         coreDataFixture = CoreDataFixture()
-        conversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC,
-                                                                  otherUser: otherUser)
+        conversation = ZMConversation.createOtherUserConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser
+        )
         callConversationProvider = MockCallConversationProvider()
-        sut = MockCallQualityController()
+        sut = MockCallQualityController(rootViewController: .init())
         sut.router = router
+        sut.usesCallSurveyBudget = false
 
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
 
-        super.setUp()
     }
 
+    // MARK: - teardown
+
     override func tearDown() {
+        snapshotHelper = nil
         coreDataFixture = nil
         sut = nil
         router = nil
         conversation = nil
         callConversationProvider = nil
         callQualityViewController = nil
+
         super.tearDown()
     }
 
     // MARK: - SurveyRequestValidation Tests
+
     func testSurveyRequestValidation() {
         sut.usesCallSurveyBudget = true
 
@@ -76,42 +93,45 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
     }
 
     // MARK: - SnapshotTests
+
     func testSurveyInterface() {
         CallQualityController.resetSurveyMuteFilter()
-        verifyInAllDeviceSizes(view: callQualityViewController.view, configuration: configure)
+        snapshotHelper.verify(matching: callQualityViewController.view)
     }
 
     // MARK: - CallQualitySurvey Presentation Tests
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
+
         // GIVEN
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .normal)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
-
         callQualityController_callCenterDidChange(callState: establishedCallState, conversation: conversation)
+        router.presentCallQualitySurveyWith_MockMethod = { _ in }
 
         // WHEN
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertTrue(router.presentCallQualitySurveyIsCalled)
+        XCTAssertFalse(router.presentCallQualitySurveyWith_Invocations.isEmpty)
     }
 
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsStillOngoing() {
+
         // GIVEN
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .stillOngoing)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
-
         callQualityController_callCenterDidChange(callState: establishedCallState, conversation: conversation)
+        router.presentCallQualitySurveyWith_MockMethod = { _ in }
 
         // WHEN
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertTrue(router.presentCallQualitySurveyIsCalled)
+        XCTAssertFalse(router.presentCallQualitySurveyWith_Invocations.isEmpty)
     }
 
     func testThatCallQualitySurveyIsNotPresented_WhenCallStateIsTerminating_AndReasonIsNotNormanlOrStillOngoing() {
@@ -120,6 +140,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         let terminatingCallState: CallState = .terminating(reason: .timeout)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
+        router.presentCallFailureDebugAlertPresentingViewController_MockMethod = { _ in }
 
         callQualityController_callCenterDidChange(callState: establishedCallState, conversation: conversation)
 
@@ -127,24 +148,30 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertFalse(router.presentCallQualitySurveyIsCalled)
+        XCTAssertTrue(router.presentCallQualitySurveyWith_Invocations.isEmpty)
     }
 
     func testThatCallQualitySurveyIsDismissed() {
+
+        // Given
+        router.dismissCallQualitySurveyCompletion_MockMethod = { _ in }
+
         // WHEN
         callQualityViewController.delegate?.callQualityControllerDidFinishWithoutScore(callQualityViewController)
 
         // THEN
-        XCTAssertTrue(router.dismissCallQualitySurveyIsCalled)
+        XCTAssertFalse(router.dismissCallQualitySurveyCompletion_Invocations.isEmpty)
     }
 
     // MARK: - CallFailureDebugAlert Presentation Tests
+
     func testThatCallFailureDebugAlertIsPresented_WhenCallIsTerminated() {
         // GIVEN
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .internalError)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
+        router.presentCallFailureDebugAlertPresentingViewController_MockMethod = { _ in }
 
         callQualityController_callCenterDidChange(callState: establishedCallState, conversation: conversation)
 
@@ -152,7 +179,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertTrue(router.presentCallFailureDebugAlertIsCalled)
+        XCTAssertFalse(router.presentCallFailureDebugAlertPresentingViewController_Invocations.isEmpty)
     }
 
     func testThatCallFailureDebugAlertIsNotPresented_WhenCallIsTerminated() {
@@ -168,7 +195,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertFalse(router.presentCallFailureDebugAlertIsCalled)
+        XCTAssertTrue(router.presentCallFailureDebugAlertPresentingViewController_Invocations.isEmpty)
     }
 
 }
@@ -187,27 +214,6 @@ extension CallQualityControllerTests {
                                 timestamp: nil,
                                 previousCallState: nil)
     }
-}
-
-// MARK: - ActiveCallRouterMock
-final class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
-
-    var presentCallQualitySurveyIsCalled: Bool = false
-    func presentCallQualitySurvey(with callDuration: TimeInterval) {
-        presentCallQualitySurveyIsCalled = true
-    }
-
-    var dismissCallQualitySurveyIsCalled: Bool = false
-    func dismissCallQualitySurvey(completion: Completion?) {
-        dismissCallQualitySurveyIsCalled = true
-    }
-
-    var presentCallFailureDebugAlertIsCalled: Bool = false
-    func presentCallFailureDebugAlert() {
-        presentCallFailureDebugAlertIsCalled = true
-    }
-
-    func presentCallQualityRejection() { }
 }
 
 // MARK: - ActiveCallRouterMock

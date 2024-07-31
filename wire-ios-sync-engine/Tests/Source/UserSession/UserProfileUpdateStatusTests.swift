@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireUtilities
 import XCTest
 
-class UserProfileUpdateStatusTests: MessagingTest {
+@testable import WireSyncEngine
+
+final class UserProfileUpdateStatusTests: MessagingTest {
 
     var observerToken: Any?
 
@@ -54,9 +55,7 @@ class UserProfileUpdateStatusTests: MessagingTest {
         self.sut = nil
         super.tearDown()
     }
-}
 
-extension UserProfileUpdateStatusTests {
     func testThatItDoesNotRetainObserver() {
         // GIVEN
         var observer: TestUserProfileUpdateObserver? = TestUserProfileUpdateObserver()
@@ -73,10 +72,8 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertNil(weakObserver)
     }
-}
 
-// MARK: - Changing email
-extension UserProfileUpdateStatusTests {
+    // MARK: - Changing email
 
     func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() throws {
 
@@ -116,10 +113,7 @@ extension UserProfileUpdateStatusTests {
         XCTAssertEqual(self.newRequestCallbackCount, 1)
     }
 
-}
-
-// MARK: - Set email and password
-extension UserProfileUpdateStatusTests {
+    // MARK: - Set email and password
 
     func testThatItIsNotUpdatingEmail() {
         XCTAssertFalse(sut.currentlySettingEmail)
@@ -132,7 +126,7 @@ extension UserProfileUpdateStatusTests {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         XCTAssertNil(selfUser.emailAddress)
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
         try sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -150,7 +144,7 @@ extension UserProfileUpdateStatusTests {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
         try sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -170,7 +164,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItCanCancelSettingEmailAndPassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -187,7 +181,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItNeedsToSetEmailAfterSuccessfullySettingPassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -204,7 +198,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItCompletesAfterSuccessfullySettingPasswordAndEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -221,7 +215,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItNotifiesAfterSuccessfullySettingEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -243,7 +237,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItIsNotSettingEmailAnymoreAsSoonAsTheSelfUserHasEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -259,7 +253,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItIsNotSettingPasswordAnymoreAsSoonAsTheSelfUserHasEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.sut.didUpdatePasswordSuccessfully()
@@ -276,7 +270,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItIsNotSettingEmailAndPasswordAnymoreIfItFailsToUpdatePassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -292,7 +286,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItNotifiesIfItFailsToUpdatePassword() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -313,7 +307,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItIsNotSettingEmailAnymoreIfItFailsToUpdateEmail() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
@@ -332,7 +326,7 @@ extension UserProfileUpdateStatusTests {
 
         // GIVEN
         let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -350,15 +344,13 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Credentials provider
-extension UserProfileUpdateStatusTests {
+    // MARK: - Credentials provider
 
     func testThatItDoesNotReturnCredentialsIfOnlyPasswordIsVerified() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -372,7 +364,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItDoesNotReturnCredentialsIfOnlyEmailIsVerified() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -386,7 +378,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItReturnsCredentialsIfEmailAndPasswordAreVerified() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -401,7 +393,7 @@ extension UserProfileUpdateStatusTests {
     func testThatItDeletesCredentials() {
 
         // GIVEN
-        let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
+        let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         self.sut.didUpdatePasswordSuccessfully()
@@ -413,188 +405,8 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertNil(self.sut.emailCredentials())
     }
-}
 
-// MARK: - Phone number code request
-extension UserProfileUpdateStatusTests {
-
-    func testThatItIsNotRequestingPhoneVerificationAtStart() {
-        XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
-    }
-
-    func testThatItPreparesForRequestingPhoneVerificationCodeForRegistration() {
-
-        // GIVEN
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // THEN
-        XCTAssertTrue(self.sut.currentlyRequestingPhoneVerificationCode)
-        XCTAssertEqual(self.sut.phoneNumberForWhichCodeIsRequested, phoneNumber)
-        XCTAssertEqual(self.newRequestCallbackCount, 1)
-
-    }
-
-    func testThatItCompletesRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didRequestPhoneVerificationCodeSuccessfully()
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
-        XCTAssertNil(self.sut.phoneNumberForWhichCodeIsRequested)
-
-    }
-
-    func testThatItFailsRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailPhoneVerificationCodeRequest(error: error)
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
-        XCTAssertNil(self.sut.phoneNumberForWhichCodeIsRequested)
-
-    }
-
-    func testThatItNotifiesAfterCompletingRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didRequestPhoneVerificationCodeSuccessfully()
-
-        // THEN
-        XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
-        guard let first = self.observer.invokedCallbacks.first else { return }
-        switch first {
-        case .phoneNumberVerificationCodeRequestDidSucceed:
-            break
-        default:
-            XCTFail()
-        }
-    }
-
-    func testThatItNotifiesAfterFailureInRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailPhoneVerificationCodeRequest(error: error)
-
-        // THEN
-        XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
-        guard let first = self.observer.invokedCallbacks.first else { return }
-        switch first {
-        case .phoneNumberVerificationCodeRequestDidFail(let _error):
-            XCTAssertEqual(error, _error as NSError)
-        default:
-            XCTFail()
-        }
-    }
-}
-
-// MARK: - Phone number verification
-extension UserProfileUpdateStatusTests {
-
-    func testThatItIsNotUpdatingPhoneNumberAtStart() {
-        XCTAssertFalse(self.sut.currentlySettingPhone)
-    }
-
-    func testThatItPreparesForPhoneChangeWithCredentials() {
-
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // THEN
-        XCTAssertTrue(self.sut.currentlySettingPhone)
-        XCTAssertEqual(self.sut.phoneNumberToSet, credentials)
-        XCTAssertEqual(self.newRequestCallbackCount, 1)
-
-    }
-
-    func testThatItCompletesUpdatingPhoneNumber() {
-
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didChangePhoneSuccesfully()
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlySettingPhone)
-        XCTAssertNil(self.sut.phoneNumberToSet)
-    }
-
-    func testThatItFailsUpdatingPhoneNumber() {
-
-        // GIVEN
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailChangingPhone(error: error)
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlySettingPhone)
-        XCTAssertNil(self.sut.phoneNumberToSet)
-
-    }
-
-    func testThatItNotifiesAfterFailureInUpdatingPhoneNumber() {
-
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailChangingPhone(error: error)
-
-        // THEN
-        XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
-        guard let first = self.observer.invokedCallbacks.first else { return }
-        switch first {
-        case .phoneNumberChangeDidFail(let _error):
-            XCTAssertEqual(error, _error as NSError)
-        default:
-            XCTFail()
-        }
-    }
-}
-
-// MARK: - Check handle availability
-extension UserProfileUpdateStatusTests {
+    // MARK: - Check handle availability
 
     func testThatItIsNotCheckingAvailabilityAtCreation() {
         XCTAssertFalse(self.sut.currentlyCheckingHandleAvailability)
@@ -767,10 +579,6 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
-
-// MARK: - Set handle
-extension UserProfileUpdateStatusTests {
 
     func testThatItIsNotSettingHandleyAtCreation() {
         XCTAssertFalse(self.sut.currentlySettingHandle)
@@ -938,10 +746,8 @@ extension UserProfileUpdateStatusTests {
             XCTFail()
         }
     }
-}
 
-// MARK: - Find handle suggestions
-extension UserProfileUpdateStatusTests {
+    // MARK: - Find handle suggestions
 
     func testThatItIsNotGeneratingHandleSuggestionsAtCreation() {
         XCTAssertFalse(self.sut.currentlyGeneratingHandleSuggestion)

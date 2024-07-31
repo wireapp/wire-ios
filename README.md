@@ -26,71 +26,72 @@ The sync engine itself is built on top of a few third-party frameworks, and uses
 
 ![Mobile app architecture](https://github.com/wireapp/wire/blob/master/assets/mobile-architecture.png?raw=true)
 
-### Documentation
-Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
-## How to build the open source client
+## How to Build the Open Source Client
 
-### What is included in the open source client
+### What's Included in the Open Source Client
 
-The project in this repository contains the Wire iOS client project. You can build the project yourself. However, there are some differences with the binary Wire iOS client available on the App Store.
-These differences are:
-- the open source project does not include the API keys of Vimeo, Localytics, HockeyApp and other 3rd party services.
-- the open source project links against the open source Wire audio-video-signaling (AVS) library. The binary App Store client links against an AVS version that contains proprietary improvements for the call quality.
+This repository contains the Wire iOS client project. You can build the project yourself, but note the following differences compared to the binary Wire iOS client available on the App Store:
+- The open source project does not include API keys for third-party services.
+- The open source project links against the open source Wire audio-video-signaling (AVS) library. The binary App Store client links against an AVS version that includes proprietary improvements for call quality.
 
 ### Prerequisites
-In order to build Wire for iOS locally, it is necessary to install and setup the following tools on the local machine:
 
-- [Xcode 15.3](https://xcodereleases.com)
-- Carthage 0.38 or newer (https://github.com/Carthage/Carthage)
-- `gem` must be setup to use ruby without admin permissions. One way to achieve this is to use [rbenv](https://github.com/rbenv/rbenv), install the latest ruby version and set it as global version.
-- SSH key for git. [Generate a new key, add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+To build Wire for iOS locally, ensure the following tools are installed and set up on your machine:
 
-The setup script will automatically check for you that you satisfy these requirements.  
+- Xcode version specified in [`.xcode-version`](.xcode-version).
+- [Carthage 0.39.1 or newer](https://github.com/Carthage/Carthage)
+- Ruby environment without admin permissions, which can be set up using [rbenv](https://github.com/rbenv/rbenv). Install the Ruby version specific in the [`Gemfile`](Gemfile) and set it as the global version.
+- SSH key for Git. Follow these guides to [generate a new SSH key and add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
-### How to build locally
-1. Check out the wire-ios-mono repository.
-2. From the checkout folder, run `./setup.sh`. This will pull in all the necessary dependencies with Carthage and verify that you have the right version of the tools installed.
-3. Open the project `wire-ios-mono.xcworkspace` in Xcode
-4. Make sure the `Wire-iOS` app scheme is selected.
-4. Click the "Run" button in Xcode
+The setup script will automatically verify that these requirements are met.
 
-These steps allow you to build only the Wire umbrella project, pulling in all other Wire frameworks with Carthage. If you want to modify the source/debug other Wire frameworks, you can open the `Carthage/Checkouts` subfolder and open the individual projects for each dependency there.
+### How to Build Locally
 
-You can then use `carthage bootstrap --platform ios --use-xcframeworks` to rebuild the dependency and use it in the umbrella project.
+1. Clone the `wire-ios-mono` repository.
+2. From the cloned directory, run `./setup.sh`. This script will pull in all necessary dependencies with Carthage and verify the tool versions.
+3. Open the project `wire-ios-mono.xcworkspace` in Xcode.
+4. Ensure the `Wire-iOS` app scheme is selected.
+5. Click the "Run" button in Xcode.
 
-### Known limitations
+These steps build the Wire umbrella project, pulling in all other Wire frameworks with Carthage. To modify or debug other Wire frameworks, navigate to the `Carthage/Checkouts` subfolder and open the individual projects for each dependency.
 
-Notifications send through Apple Push Notification service can only be received by the App Store Wire client, which is code signed with Wire's own certificate. This is a security feature enforced by Apple, as documented in Apple's [Local and Remote Notification Programming Guide](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/). Any client build from source will not be able to receive notifications.
+To rebuild a dependency and use it in the umbrella project, run:
+
+```sh
+carthage bootstrap --platform ios --use-xcframeworks
+```
+
+### Known Limitations
+
+Notifications sent through the Apple Push Notification service can only be received by the App Store Wire client, which is code-signed with Wire's own certificate. This is a security feature enforced by Apple, as documented in Apple's [Local and Remote Notification Programming Guide](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/). Any client built from source will not be able to receive notifications.
 
 ### Translations
 
-All Wire translations are crowdsourced via CrowdIn: https://crowdin.com/projects/wire
+All Wire translations are crowdsourced via CrowdIn. You can contribute to the translations at [CrowdIn](https://crowdin.com/projects/wire).
 
-### Running security tests
+### Running Security Tests
 
-To run all the security tests, you will first need to be able to build the app locally. To do this, see the "How to build locally" section above. 
-Then, from the command line, you can run the security tests with the following commands:
+To run all security tests, you first need to be able to build the app locally. Refer to the "How to Build Locally" section above. Once the app is built, you can run the security tests from the command line with the following commands:
 
-```
+```sh
 xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme Wire-iOS \
   -testPlan SecurityTests \
   -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'
 
-  xcodebuild test \
+xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireSyncEngine \
   -testPlan SecurityTests \
   -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'
 
-  xcodebuild test \
+xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireDataModel \
   -testPlan SecurityTests \
   -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'
 ```
 
-`xcodebuild` will print the test results to the console. It will also log the location of the test result (in `.xcresult` format), which you can open
-with Xcode to see the test results in a more friendly format.
+`xcodebuild` will print the test results to the console. It will also log the location of the test results (in `.xcresult` format), which you can open with Xcode to see the test results in a more user-friendly format.

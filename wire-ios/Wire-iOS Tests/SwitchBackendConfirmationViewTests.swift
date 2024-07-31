@@ -16,13 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class SwitchBackendConfirmationViewTests: XCTestCase {
 
-    let helper = SnapshotHelper()
-        .withLayout(.device(config: .iPhone13))
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper().withLayout(.device(config: .iPhone13))
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
 
     private func createSUT() -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(viewModel: SwitchBackendConfirmationViewModel(
@@ -38,13 +49,13 @@ final class SwitchBackendConfirmationViewTests: XCTestCase {
     }
 
     func testLightUI() {
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: createSUT)
     }
 
     func testDarkUI() {
-        helper
+        snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: createSUT)
     }

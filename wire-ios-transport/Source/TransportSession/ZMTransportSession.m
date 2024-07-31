@@ -21,6 +21,7 @@
 @import UIKit;
 
 #import <WireTransport/WireTransport-Swift.h>
+#import <libkern/OSAtomic.h>
 
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
@@ -33,7 +34,6 @@
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMURLSession.h"
-#import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 #import "NSData+Multipart.h"
 #import "ZMTaskIdentifier.h"
@@ -46,7 +46,6 @@ NSString * const ZMTransportSessionReachabilityIsEnabled = @"ZMTransportSessionR
 static NSString * const TaskTimerKey = @"task";
 static NSString * const SessionTimerKey = @"session";
 static NSInteger const DefaultMaximumRequests = 6;
-
 
 @interface ZMTransportSession () <ZMAccessTokenHandlerDelegate, ZMTimerClient>
 
@@ -78,11 +77,10 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic, weak) id<ZMNetworkStateDelegate> weakNetworkStateDelegate;
 @property (nonatomic) NSMutableDictionary <NSString *, dispatch_block_t> *completionHandlerBySessionID;
 
-@property (nonatomic) id<RequestRecorder> requestLoopDetection;
+@property (nonatomic) RequestLoopDetection *requestLoopDetection;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
-@property (nonatomic, strong) RemoteMonitoring* remoteMonitoring;
 
 @property (nonatomic) NSString *minTLSVersion;
 
@@ -119,7 +117,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
+    ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
 
     NSDictionary* proxyDictionary = [environment.proxy socks5SettingsWithProxyUsername:proxyUsername proxyPassword:proxyPassword];
 
@@ -129,7 +127,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     NSURLSessionConfiguration *foregroundConfiguration = [[self class] foregroundSessionConfigurationWithMinTLSVersion:minTLSVersion];
     foregroundConfiguration.connectionProxyDictionary = proxyDictionary;
-
     ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:foregroundConfiguration
                                                                     trustProvider:environment
                                                                          delegate:self
@@ -237,14 +234,11 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                         backoff:nil
                                                              initialAccessToken:initialAccessToken];
 
-        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel:LevelInfo];
-
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
             ZM_STRONG(self);
 
-            [self.remoteMonitoring log:[NSString stringWithFormat:@"Request loop detected for %@", path]
-                                 error:nil];
+            [WireLoggerObjc logRequestLoopAtPath:path];
             if(self.requestLoopDetectionCallback != nil) {
                 self.requestLoopDetectionCallback(path);
             }
@@ -396,7 +390,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     [request markStartOfUploadTimestamp];
     [task resume];
-    [self.requestLoopDetection recordRequestWithPath:request.path contentHash:request.contentDebugInformationHash date:nil];
+
+    [self.requestLoopDetection recordRequestWithPath:request.path
+                                         contentHint:request.contentHintForRequestLoop
+                                                date:nil];
 }
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
@@ -415,8 +412,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
-    [self.remoteMonitoring logWithRequest:URLRequest];
-    ZMLogPublic(@"Request: %@", request.safeForLoggingDescription);
+    [WireLoggerObjc logRequest:URLRequest];
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
@@ -473,7 +469,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired payloadLabel:label];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
-    [self.remoteMonitoring logWithResponse:httpResponse];
+    [WireLoggerObjc logHTTPResponse:httpResponse];
 
     ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
     if (response.result == ZMTransportResponseStatusExpired) {
@@ -693,7 +689,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)URLSession:(ZMURLSession *)URLSession taskDidComplete:(NSURLSessionTask *)task transportRequest:(ZMTransportRequest *)request responseData:(NSData *)data;
 {
     NSTimeInterval timeDiff = -[request.startOfUploadTimestamp timeIntervalSinceNow];
-    ZMLogDebug(@"(Almost) bare network time for request %p %@ %@: %@s", request, request.methodAsString, request.path, @(timeDiff));
+    ZMLogDebug(@"(Almost) bare network time for request %@: %@s", [request safeForLoggingDescription], @(timeDiff));
     NSError *error = task.error;
     NSHTTPURLResponse *HTTPResponse = (id)task.response;
     [self processCookieResponse:HTTPResponse];

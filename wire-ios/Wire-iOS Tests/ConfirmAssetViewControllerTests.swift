@@ -17,17 +17,34 @@
 //
 
 import FLAnimatedImage
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
+@testable import Wire
 
-    var sut: ConfirmAssetViewController!
+final class ConfirmAssetViewControllerTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var sut: ConfirmAssetViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
         sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))))
@@ -35,7 +52,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
         accentColor = .green
         sut.previewTitle = "Matterhorn"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
@@ -44,7 +61,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
         accentColor = .red
         sut.previewTitle = "Burger & Beer"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
@@ -53,7 +70,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
         accentColor = .red
         sut.previewTitle = "Sea Food"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - GIF, Unit Tests

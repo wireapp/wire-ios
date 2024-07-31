@@ -18,51 +18,60 @@
 
 import Foundation
 import WireCommonComponents
+import WireDesign
 import XCTest
 
 final class FontSchemeTests: XCTestCase {
 
     private func insertFontSizeItems(_ points: [FontSize: CGFloat], _ multiplier: CGFloat, _ fixedFontNames: inout [FontSpec: String], _ fontTextStyle: FontTextStyle) {
-        let allFontSizeTuples: [(fontSize: FontSize, point: CGFloat)] = [(fontSize: .large, point: round(points[FontSize.large]! * multiplier)),
-                                                                         (fontSize: .normal, point: round(points[FontSize.normal]! * multiplier)),
-                                                                         (fontSize: .medium, point: round(points[FontSize.medium]! * multiplier)),
-                                                                         (fontSize: .small, point: round(points[FontSize.small]! * multiplier))]
+        let allFontSizeTuples: [(fontSize: FontSize, point: CGFloat)] = [
+            (fontSize: .large, point: round(points[FontSize.large]! * multiplier)),
+            (fontSize: .normal, point: round(points[FontSize.normal]! * multiplier)),
+            (fontSize: .medium, point: round(points[FontSize.medium]! * multiplier)),
+            (fontSize: .small, point: round(points[FontSize.small]! * multiplier))
+        ]
 
-        let allFontWeightTuples: [(fontWeight: FontWeight?, name: String)] = [(fontWeight: .ultraLight, name: "Ultralight"),
-                                                                              (fontWeight: .thin, name: "Thin"),
-                                                                              (fontWeight: .light, name: "Light"),
-                                                                              (fontWeight: .regular, name: "Regular"),
-                                                                              (fontWeight: .medium, name: "Medium"),
-                                                                              (fontWeight: .semibold, name: "Semibold"),
-                                                                              (fontWeight: .bold, name: "Bold"),
-                                                                              (fontWeight: .heavy, name: "Heavy"),
-                                                                              (fontWeight: .black, name: "Black"),
-                                                                              (fontWeight: .none, name: "Light")
-                                                                              ]
+        let allFontWeightTuples: [(fontWeight: FontWeight?, name: String)] = [
+            (fontWeight: .ultraLight, name: "Ultralight"),
+            (fontWeight: .thin, name: "Thin"),
+            (fontWeight: .light, name: "Light"),
+            (fontWeight: .regular, name: "Regular"),
+            (fontWeight: .medium, name: "Medium"),
+            (fontWeight: .semibold, name: "Semibold"),
+            (fontWeight: .bold, name: "Bold"),
+            (fontWeight: .heavy, name: "Heavy"),
+            (fontWeight: .black, name: "Black"),
+            (fontWeight: .none, name: "Light")
+        ]
 
         for fontWeightTuple in allFontWeightTuples {
             for fontSizeTuple in allFontSizeTuples {
-                fixedFontNames[FontSpec(fontSizeTuple.fontSize, fontWeightTuple.fontWeight, fontTextStyle)] = "System-\(fontWeightTuple.name) \(fontSizeTuple.point)"
+                let fontSpec = FontSpec(fontSizeTuple.fontSize, fontWeightTuple.fontWeight, fontTextStyle)
+                fixedFontNames[fontSpec] = "System-\(fontWeightTuple.name) \(fontSizeTuple.point)"
             }
         }
     }
 
     private func insertInputTextFontSizeItems(multiplier: CGFloat, fixedFontNames: inout [FontSpec: String]) {
         let fontTextStyle: FontTextStyle = .inputText
-        let points: [FontSize: CGFloat] = [FontSize.large: 21,
-                                            FontSize.normal: 14,
-                                            FontSize.medium: 11,
-                                            FontSize.small: 10]
+        let points: [FontSize: CGFloat] = [
+            FontSize.large: 21,
+            FontSize.normal: 14,
+            FontSize.medium: 11,
+            FontSize.small: 10
+        ]
 
         insertFontSizeItems(points, multiplier, &fixedFontNames, fontTextStyle)
     }
 
     private func insertLargeTitleFontSizeItems(multiplier: CGFloat, fixedFontNames: inout [FontSpec: String]) {
         let fontTextStyle: FontTextStyle = .largeTitle
-        let points: [FontSize: CGFloat] = [FontSize.large: 40,
-                                            FontSize.normal: 26,
-                                            FontSize.medium: 20,
-                                            FontSize.small: 18]
+        let points: [FontSize: CGFloat] = [
+            FontSize.large: 40,
+            FontSize.normal: 26,
+            FontSize.medium: 20,
+            FontSize.small: 18
+        ]
 
         insertFontSizeItems(points, multiplier, &fixedFontNames, fontTextStyle)
     }

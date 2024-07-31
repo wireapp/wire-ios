@@ -16,34 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 
+@testable import Wire
+
 final class SettingsTests: XCTestCase {
-    class override func tearDown() {
+
+    static override func tearDown() {
         Settings.shared.reset()
-    }
-
-    func testThatDateIsNilWhenInit() {
-        // GIVEN
-        Settings.shared.reset()
-
-        // WHEN
-        let lastPushAlertDate: Date? = Settings.shared[.lastPushAlertDate]
-
-        // THEN
-        XCTAssertNil(lastPushAlertDate)
-    }
-
-    func testThatDateCanBeWritten() {
-        // GIVEN
-        let date = Date()
-
-        // WHEN
-        Settings.shared[.lastPushAlertDate] = date
-
-        // THEN
-        XCTAssertEqual(date, Settings.shared[.lastPushAlertDate])
     }
 
     func testThatEnumCanBeWrittenAndReturnAnEnum() {

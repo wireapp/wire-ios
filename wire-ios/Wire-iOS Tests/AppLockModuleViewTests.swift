@@ -17,17 +17,20 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
-final class AppLockModuleViewTests: BaseSnapshotTestCase {
+final class AppLockModuleViewTests: XCTestCase {
 
     private var sut: AppLockModule.View!
     private var presenter: AppLockModule.MockPresenter!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = .init()
         presenter = .init()
 
@@ -35,6 +38,7 @@ final class AppLockModuleViewTests: BaseSnapshotTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         presenter = nil
         super.tearDown()
@@ -118,7 +122,7 @@ final class AppLockModuleViewTests: BaseSnapshotTestCase {
             sut.refresh(withModel: .locked(type))
 
             // Then
-            verify(matching: sut)
+            snapshotHelper.verify(matching: sut)
         }
     }
 
@@ -127,7 +131,7 @@ final class AppLockModuleViewTests: BaseSnapshotTestCase {
         sut.refresh(withModel: .authenticating)
 
         // Then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Nib Loading

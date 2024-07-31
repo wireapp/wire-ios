@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireDesign
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
 
@@ -47,41 +50,66 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
-    var sut: StartUIViewController!
-    var mockAddressBookHelper: MockAddressBookHelper!
-    var userSession: UserSessionMock!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: StartUIViewController!
+    private var mockAddressBookHelper: MockAddressBookHelper!
+    private var userSession: UserSessionMock!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockAddressBookHelper = nil
         SelfUser.provider = nil
         userSession = nil
+        mockMainCoordinator = nil
+
         super.tearDown()
     }
 
+    // MARK: - Helper Method
+
     func setupSut() {
-        sut = StartUIViewController(addressBookHelperType: MockAddressBookHelper.self, userSession: userSession)
-        sut.view.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
+        sut = StartUIViewController(
+            addressBookHelperType: MockAddressBookHelper.self,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator
+        )
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        // Set the size for the SUT to match iPhone 14 dimensions
+        let screenSize = CGSize(width: 390, height: 844)
+        sut.view.frame = CGRect(origin: .zero, size: screenSize)
     }
+
+    // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationViewController() {
         nonTeamTest {
             setupSut()
 
             let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
-            navigationController.overrideUserInterfaceStyle = .dark
 
             navigationController.pushViewController(sut, animated: false)
 
-            verifyInAllIPhoneSizes(view: navigationController.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: sut.view)
         }
     }
 
@@ -89,7 +117,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         nonTeamTest {
             setupSut()
 
-            verifyInAllIPhoneSizes(view: sut.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: sut.view)
         }
     }
 
@@ -98,7 +128,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         teamTest {
             setupSut()
 
-            verifyInAllIPhoneSizes(view: sut.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: sut.view)
         }
     }
 
@@ -109,7 +141,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
             setupSut()
 
-            verifyInIPhoneSize(view: sut.view)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: sut.view)
         }
     }
 }

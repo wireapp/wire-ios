@@ -18,10 +18,12 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
-    unowned let zClientViewController: ZClientViewController
+
+    let mainCoordinator: MainCoordinating
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -81,6 +83,7 @@ final class ConversationViewController: UIViewController {
     private var voiceChannelStateObserverToken: Any?
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
+    var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
 
@@ -91,6 +94,7 @@ final class ConversationViewController: UIViewController {
             viewController = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,
+                mainCoordinator: mainCoordinator,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
@@ -104,22 +108,35 @@ final class ConversationViewController: UIViewController {
         return viewController?.wrapInNavigationController()
     }
 
-    required init(conversation: ZMConversation,
-                  visibleMessage: ZMMessage?,
-                  zClientViewController: ZClientViewController,
-                  userSession: UserSession) {
+    required init(
+        conversation: ZMConversation,
+        visibleMessage: ZMMessage?,
+        userSession: UserSession,
+        mainCoordinator: MainCoordinating,
+        mediaPlaybackManager: MediaPlaybackManager?,
+        classificationProvider: (any SecurityClassificationProviding)?,
+        networkStatusObservable: any NetworkStatusObservable
+    ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
-        self.zClientViewController = zClientViewController
         self.userSession = userSession
-        contentViewController = ConversationContentViewController(conversation: conversation,
-                                                                  message: visibleMessage,
-                                                                  mediaPlaybackManager: zClientViewController.mediaPlaybackManager,
-                                                                  userSession: userSession)
+        self.mainCoordinator = mainCoordinator
+        contentViewController = ConversationContentViewController(
+            conversation: conversation,
+            message: visibleMessage,
+            mediaPlaybackManager: mediaPlaybackManager,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
 
-        inputBarController = ConversationInputBarViewController(conversation: conversation, userSession: userSession)
+        inputBarController = ConversationInputBarViewController(
+            conversation: conversation,
+            userSession: userSession,
+            classificationProvider: classificationProvider,
+            networkStatusObservable: networkStatusObservable
+        )
 
-        mediaBarViewController = MediaBarViewController(mediaPlaybackManager: zClientViewController.mediaPlaybackManager)
+        mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
 
         titleView = ConversationTitleView(conversation: conversation, interactive: true)
 
@@ -427,7 +444,7 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        zClientViewController.showConversation(mlsConversation, at: nil)
+        mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
     }
 
     // MARK: - ParticipantsPopover
@@ -456,14 +473,8 @@ final class ConversationViewController: UIViewController {
         }
 
         Task {
-            do {
-                try await userSession.updateMLSGroupVerificationStatus.invoke(
-                    for: conversation,
-                    groupID: mlsGroupID)
-                setupNavigatiomItem()
-            } catch {
-                WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
-            }
+            await userSession.mlsGroupVerification?.updateConversation(conversation, with: mlsGroupID)
+            setupNavigatiomItem()
         }
     }
 }
@@ -552,7 +563,7 @@ extension ConversationViewController: ZMConversationListObserver {
         }
     }
 
-    func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
+    func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
         updateLeftNavigationBarItems()
     }
 }
@@ -644,7 +655,11 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     private func onCollectionButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {
-            let collections = CollectionsViewController(conversation: conversation, userSession: userSession)
+            let collections = CollectionsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in

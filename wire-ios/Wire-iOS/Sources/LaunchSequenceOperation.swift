@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - LaunchSequenceOperation
@@ -120,7 +121,7 @@ final class BackendInfoOperation: LaunchSequenceOperation {
 final class FontSchemeOperation: LaunchSequenceOperation {
 
     func execute() {
-        FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
+        FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
     }
 }
 

@@ -16,26 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class E2eIdentityCertificateViewTests: XCTestCase {
 
     // MARK: - Properties
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
+    private var snapshotHelper: SnapshotHelper!
 
     lazy var kCertificate: String = {
         return .mockCertificate
     }()
 
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
     // MARK: - Helper Method
 
     func setupSut(
         certificateDetails: String,
-        mode: UIUserInterfaceStyle,
         isDownloadAndCopyEnabled: Bool,
         isMenuPresented: Bool
     ) {
@@ -46,7 +57,6 @@ final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
         )
         sut = UIHostingController(rootView: certificateView)
         sut.view.frame = UIScreen.main.bounds
-        sut.overrideUserInterfaceStyle = mode
     }
 
     // MARK: - Light Mode
@@ -54,21 +64,21 @@ final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
     func testGivenCopyIsDisabledWhenCertificateIsAvailableThenRightViewIsShown() {
         setupSut(
             certificateDetails: kCertificate,
-            mode: .light,
             isDownloadAndCopyEnabled: false,
             isMenuPresented: false
         )
-        verify(matching: sut)
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testGivenCopyIsEnabledAndCertificateIsAvailableWhenMenuIsPresentedThenRightViewIsShown() {
         setupSut(
             certificateDetails: kCertificate,
-            mode: .light,
             isDownloadAndCopyEnabled: true,
             isMenuPresented: true
         )
-        verify(matching: sut)
+
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: Dark Mode
@@ -76,21 +86,25 @@ final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
     func testGivenCopyIsDisabledWhenCertificateIsAvailableThenRightViewIsShownInDarkMode() {
         setupSut(
             certificateDetails: kCertificate,
-            mode: .dark,
             isDownloadAndCopyEnabled: false,
             isMenuPresented: false
         )
-        verify(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testGivenCopyIsEnabledAndCertificateIsAvailableWhenMenuIsPresentedThenRightViewIsShownInDarkMode() {
         setupSut(
             certificateDetails: kCertificate,
-            mode: .dark,
             isDownloadAndCopyEnabled: true,
             isMenuPresented: true
         )
-        verify(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
 }

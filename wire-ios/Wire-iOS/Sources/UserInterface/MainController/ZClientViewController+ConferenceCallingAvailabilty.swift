@@ -17,21 +17,26 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireSyncEngine
 
 extension ZClientViewController {
 
-     func presentConferenceCallingAvailableAlert() {
+    func presentConferenceCallingAvailableAlert() {
         typealias ConferenceCallingAlert = L10n.Localizable.FeatureConfig.Update.ConferenceCalling.Alert
         let title = ConferenceCallingAlert.title
         let message = ConferenceCallingAlert.message
         let learnMore = ConferenceCallingAlert.Message.learnMore
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wireEnterpriseLearnMore, presenter: self))
-        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] _ in
-            self?.confirmChanges()
-        }))
+        alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.confirmChanges()
+            }
+        ))
 
         present(alert, animated: true)
     }
@@ -44,7 +49,7 @@ extension ZClientViewController {
         let upgradeActionTitle = ConferenceCallingAlert.Action.upgrade
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wirePricingLearnMore, presenter: self))
+        alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(.cancel())
         alert.addAction(UIAlertAction.link(title: upgradeActionTitle, url: URL.manageTeam(source: .settings), presenter: self))
 
@@ -56,7 +61,15 @@ extension ZClientViewController {
         let title = ConferenceCallingAlert.title
         let message = ConferenceCallingAlert.message
 
-        let alert = UIAlertController.alertWithOKButton(title: title, message: message)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         present(alert, animated: true)
     }
 
@@ -65,7 +78,15 @@ extension ZClientViewController {
         let title = ConferenceCallingAlert.title
         let message = ConferenceCallingAlert.message
 
-        let alert = UIAlertController.alertWithOKButton(title: title, message: message)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
         present(alert, animated: true)
     }
 

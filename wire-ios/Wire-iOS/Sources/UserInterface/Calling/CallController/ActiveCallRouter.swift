@@ -38,18 +38,21 @@ protocol ActiveCallRouterProtocol: AnyObject {
 }
 
 // MARK: - CallQualityRouterProtocol
+
+// sourcery: AutoMockable
 protocol CallQualityRouterProtocol: AnyObject {
     func presentCallQualitySurvey(with callDuration: TimeInterval)
     func dismissCallQualitySurvey(completion: Completion?)
-    func presentCallFailureDebugAlert()
-    func presentCallQualityRejection()
+    func presentCallFailureDebugAlert(presentingViewController: UIViewController)
+    func presentCallQualityRejection(presentingViewController: UIViewController)
 }
 
 typealias PostCallAction = ((@escaping Completion) -> Void)
 
 // MARK: - ActiveCallRouter
 
-final class ActiveCallRouter: NSObject {
+final class ActiveCallRouter<TopOverlayPresenter>
+where TopOverlayPresenter: TopOverlayPresenting {
 
     // MARK: - Public Property
     var isActiveCallShown = false {
@@ -62,8 +65,11 @@ final class ActiveCallRouter: NSObject {
 
     var isPresentingActiveCall = false
 
-    // MARK: - Private Property
-    private let rootViewController: RootViewController
+    // MARK: - Private Properties
+
+    private let userSession: UserSession
+    private let topOverlayPresenter: TopOverlayPresenter
+    private let rootViewController: UIViewController
     private let callController: CallController
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
@@ -73,21 +79,19 @@ final class ActiveCallRouter: NSObject {
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
 
-    private var zClientViewController: ZClientViewController? {
-        return rootViewController.firstChild(ofType: ZClientViewController.self)
-    }
-
-    private let userSession: UserSession
-
-    init(rootviewController: RootViewController, userSession: UserSession) {
+    init(
+        rootviewController: UIViewController,
+        userSession: UserSession,
+        topOverlayPresenter: TopOverlayPresenter
+    ) {
         self.rootViewController = rootviewController
         self.userSession = userSession
+        self.topOverlayPresenter = topOverlayPresenter
+
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
-        callQualityController = CallQualityController()
+        callQualityController = CallQualityController(rootViewController: rootViewController)
         transitioningDelegate = CallQualityAnimator()
-
-        super.init()
 
         callController.router = self
         callQualityController.router = self
@@ -121,7 +125,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
         let modalVC = ModalPresentationViewController(viewController: activeCallViewController, enableDismissOnPan: !CallingConfiguration.config.paginationEnabled)
 
-        if rootViewController.isPresenting {
+        if rootViewController.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
             presentActiveCall(modalViewController: modalVC, animated: animated)
@@ -133,7 +137,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             completion?()
             return
         }
-        rootViewController.dismiss(animated: animated, completion: { [weak self] in
+        rootViewController.dismiss(animated: animated) { [weak self] in
             self?.isActiveCallShown = false
             if let action = self?.scheduledPostCallAction {
                 action {
@@ -143,7 +147,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                 completion?()
             }
             self?.scheduledPostCallAction = nil
-        })
+        }
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
@@ -159,12 +163,12 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         guard !isCallTopOverlayShown else { return }
         let callTopOverlayController = CallTopOverlayController(conversation: conversation)
         callTopOverlayController.delegate = self
-        zClientViewController?.setTopOverlay(to: callTopOverlayController)
+        topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
         isCallTopOverlayShown = true
     }
 
     func hideCallTopOverlay() {
-        zClientViewController?.setTopOverlay(to: nil)
+        topOverlayPresenter.dismissTopOverlay(animated: true)
         isCallTopOverlayShown = false
     }
 
@@ -277,6 +281,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
 // MARK: - CallQualityRouterProtocol
 extension ActiveCallRouter: CallQualityRouterProtocol {
+
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
         let qualityController = buildCallQualitySurvey(with: callDuration)
 
@@ -296,18 +301,42 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
         })
     }
 
-    func presentCallFailureDebugAlert() {
+    func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
+
         let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
+        let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
+            sourceView: presentingViewController.view,
+            sourceRect: .init(
+                origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
+                size: .zero
+            )
+        )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage)
+            DebugAlert.showSendLogsMessage(
+                message: logsMessage,
+                presentingViewController: presentingViewController,
+                fallbackActivityPopoverConfiguration: popoverPresentationConfiguration
+            )
             completion()
         }
     }
 
-    func presentCallQualityRejection() {
+    func presentCallQualityRejection(presentingViewController: UIViewController) {
+
         let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
+        let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
+            sourceView: presentingViewController.view,
+            sourceRect: .init(
+                origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
+                size: .zero
+            )
+        )
         executeOrSchedulePostCallAction { completion in
-            DebugAlert.showSendLogsMessage(message: logsMessage)
+            DebugAlert.showSendLogsMessage(
+                message: logsMessage,
+                presentingViewController: presentingViewController,
+                fallbackActivityPopoverConfiguration: popoverPresentationConfiguration
+            )
             completion()
         }
     }

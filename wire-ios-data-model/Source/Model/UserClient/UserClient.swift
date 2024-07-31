@@ -265,7 +265,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     private func deleteClient() {
-        assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
+        guard let managedObjectContext else { return }
+
+        assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
         let user = self.user
@@ -292,7 +294,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
 
         // delete the object
-        managedObjectContext?.delete(self)
+        managedObjectContext.delete(self)
     }
 
     /// Checks if there is an existing session with the self client.
@@ -681,16 +683,20 @@ public extension UserClient {
     }
 
     /// Use this method only for the selfClient
-    @objc func decrementNumberOfRemainingKeys() {
-        guard isSelfClient() else { fatal("`decrementNumberOfRemainingKeys` should only be called on the self client") }
+    @objc func decrementNumberOfRemainingProteusKeys() {
+        guard isSelfClient() else {
+            fatal("`decrementNumberOfRemainingProteusKeys` should only be called on the self client")
+        }
 
         if numberOfKeysRemaining > 0 {
             numberOfKeysRemaining -= 1
         }
-        if numberOfKeysRemaining < 0 { // this will recover from the fact that the number might already be < 0
-            // from a previous run
+
+        // this will recover from the fact that the number might already be < 0 from a previous run
+        if numberOfKeysRemaining < 0 {
             numberOfKeysRemaining = 0
         }
+
         if numberOfKeysRemaining == 0 {
             self.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
         }

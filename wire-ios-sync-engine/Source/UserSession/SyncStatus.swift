@@ -20,7 +20,9 @@ private let zmLog = ZMSLog(tag: "SyncStatus")
 
 extension Notification.Name {
 
+    public static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
     public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
+
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
 
 }
@@ -246,7 +248,7 @@ extension SyncStatus {
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
             // If the push channel disconnected in between we'll fetch the stream again
-            if pushChannelEstablishedDate > fetchBeganAt {
+            if let pushChannelEstablishedDate, let fetchBeganAt, pushChannelEstablishedDate > fetchBeganAt {
                 needsToRestartQuickSync = true
             }
 
@@ -289,12 +291,12 @@ extension SyncStatus {
                                  message: message)
         do {
             let data = try JSONEncoder().encode(info)
-            let jsonString = String(data: data, encoding: .utf8)
-            let message = "SYNC_STATUS: \(jsonString ?? self.description)"
-            WireLogger.sync.info(message)
+            let jsonString = String(decoding: data, as: UTF8.self)
+            let message = "SYNC_STATUS: \(jsonString)"
+            WireLogger.sync.info(message, attributes: .safePublic)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"
-            WireLogger.sync.error(message)
+            WireLogger.sync.error(message, attributes: .safePublic)
         }
     }
 }

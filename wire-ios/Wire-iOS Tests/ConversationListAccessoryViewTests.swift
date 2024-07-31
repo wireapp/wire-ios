@@ -16,27 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+import WireUITesting
 import XCTest
 
-final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
+@testable import Wire
 
-    var sut: ConversationListAccessoryView!
-    var userSession: UserSessionMock!
+final class ConversationListAccessoryViewTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationListAccessoryView!
+    private var userSession: UserSessionMock!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
         accentColor = .purple
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItIsEmptyForNoStatus() {
         // WHEN
@@ -51,70 +63,70 @@ final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
         // WHEN
         sut.icon = ConversationStatusIcon.unreadMessages(count: 3)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsALotOfUnreadMessages() {
         // WHEN
         sut.icon = ConversationStatusIcon.unreadMessages(count: 500)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsJoinButton() {
         // WHEN
         sut.icon = ConversationStatusIcon.activeCall(showJoin: true)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsOngoingCallIndicator() {
         // WHEN
         sut.icon = ConversationStatusIcon.activeCall(showJoin: false)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsMissedCall() {
         // WHEN
         sut.icon = ConversationStatusIcon.missedCall
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsMissedPing() {
         // WHEN
         sut.icon = ConversationStatusIcon.unreadPing
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsTyping() {
         // WHEN
         sut.icon = ConversationStatusIcon.typing
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsSilenced() {
         // WHEN
         sut.icon = ConversationStatusIcon.silenced
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsPlayingMedia() {
         // WHEN
         sut.icon = ConversationStatusIcon.playingMedia
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsPendingConnection() {
         // WHEN
         sut.icon = ConversationStatusIcon.pendingConnection
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRecoversFromPreviousState() {
@@ -123,20 +135,20 @@ final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
         sut.icon = ConversationStatusIcon.typing
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsMention() {
         // WHEN
         sut.icon = ConversationStatusIcon.mention
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsReply() {
         // WHEN
         sut.icon = ConversationStatusIcon.reply
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

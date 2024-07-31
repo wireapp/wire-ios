@@ -30,8 +30,9 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
     private let crlAPI: CertificateRevocationListAPIProtocol
-    private let mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating
+    private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
+    private let fetchE2EIFeatureConfig: (() -> Feature.E2EI.Config?)
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -47,16 +48,18 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     public convenience init(
         userID: UUID,
         crlAPI: CertificateRevocationListAPIProtocol,
-        mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
+        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
         self.init(
             crlAPI: crlAPI,
             crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
-            mlsConversationsVerificationUpdater: mlsConversationsVerificationUpdater,
+            mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            fetchE2EIFeatureConfig: fetchE2EIFeatureConfig,
             coreCryptoProvider: coreCryptoProvider,
             context: context
         )
@@ -65,15 +68,17 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     init(
         crlAPI: CertificateRevocationListAPIProtocol,
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
-        mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
+        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
         self.crlAPI = crlAPI
         self.crlExpirationDatesRepository = crlExpirationDatesRepository
-        self.mlsConversationsVerificationUpdater = mlsConversationsVerificationUpdater
+        self.mlsGroupVerification = mlsGroupVerification
         self.selfClientCertificateProvider = selfClientCertificateProvider
+        self.fetchE2EIFeatureConfig = fetchE2EIFeatureConfig
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
     }
@@ -108,12 +113,19 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
+        let e2eiFeatureConfig = await context.perform {
+            self.fetchE2EIFeatureConfig()
+        }
+        let crlURLBuilder = CRLURLBuilder(
+            shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
+            proxyURLString: e2eiFeatureConfig?.crlProxy)
 
         var shouldNotifyAboutRevokedCertificate = false
+
         for distributionPoint in distributionPoints {
             do {
-                // fetch the CRL from the distribution point
-                let crlData = try await crlAPI.getRevocationList(from: distributionPoint)
+                let crlURL = crlURLBuilder.getURL(from: distributionPoint)
+                let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
                 let registration = try await coreCrypto.perform {
@@ -129,7 +141,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 // check if certificate is "dirty"
                 if registration.dirty {
                     // update verification state for conversations
-                    await mlsConversationsVerificationUpdater.updateAllStatuses()
+                    await mlsGroupVerification.updateAllConversations()
 
                     shouldNotifyAboutRevokedCertificate = true
 

@@ -17,10 +17,10 @@ jobs:
 
     steps:      
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Crowdin action
-        uses: crowdin/github-action@1.4.8
+        uses: crowdin/github-action@v2
         with:
           # For more info: https://github.com/crowdin/github-action/blob/master/action.yml
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}          
@@ -34,9 +34,10 @@ jobs:
           create_pull_request: true
           localization_branch_name: chore/update-localization
           commit_message: "chore: Update localization"
-          pull_request_title: "chore: Update localization SQPIT-786"
+          pull_request_title: "chore: Update localization - no ticket"
           pull_request_body: "This PR pulls in the latest localization translations from Crowdin."
           github_user_name: "zenkins"
           github_user_email: "iosx@wire.com"
+          pull_request_team_reviewers: "wireapp/ios"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

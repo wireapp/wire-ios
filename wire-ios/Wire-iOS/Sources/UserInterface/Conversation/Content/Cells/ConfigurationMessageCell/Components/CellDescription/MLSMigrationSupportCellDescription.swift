@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDataModel
+import WireDesign
 
 final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
 
@@ -65,7 +66,7 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
 
         let text = NSMutableAttributedString.markdown(
-            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, URL.wr_wireAppOnItunes.absoluteString),
+            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, WireURLs.shared.appOnItunes.absoluteString),
             style: .systemMessage
         )
 

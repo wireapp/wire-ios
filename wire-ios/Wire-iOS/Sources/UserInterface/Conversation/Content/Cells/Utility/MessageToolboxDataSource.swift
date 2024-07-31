@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {
@@ -120,7 +121,7 @@ final class MessageToolboxDataSource {
                 detailsString = FailedToSendMessage.generalReason
             case .federationRemoteError:
                 detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                                URL.wr_unreachableBackendLearnMore.absoluteString)
+                                                                                WireURLs.shared.unreachableBackendInfo.absoluteString)
             }
 
             content = .sendFailure(detailsString && attributes)
@@ -146,11 +147,10 @@ final class MessageToolboxDataSource {
     private func makeCallList() -> NSAttributedString {
         if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty, let timestamp = timestampString(message) {
 
-            let childrenTimestamps = childMessages.compactMap {
-                $0 as? ZMConversationMessage
-            }.sorted { left, right in
-                left.serverTimestamp < right.serverTimestamp
-            }.compactMap(timestampString)
+            let childrenTimestamps = childMessages
+                .compactMap { $0 as? ZMConversationMessage }
+                .sortedAscendingPrependingNil(by: \.serverTimestamp)
+                .compactMap(timestampString)
 
             let finalText = childrenTimestamps.reduce(timestamp) { text, current in
                 return "\(text)\n\(current)"
@@ -270,11 +270,9 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if
-            let dateTimeString = message.formattedReceivedDate(),
+        } else if let dateTimeString = message.formattedReceivedDate(),
             let systemMessage = message as? ZMSystemMessage,
-            systemMessage.systemMessageType == .messageDeletedForEveryone
-        {
+            systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 

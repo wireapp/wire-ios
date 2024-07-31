@@ -17,18 +17,20 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
 
-final class RemoveClientStepViewControllerSnapshotTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
 
     var coreDataFixture: CoreDataFixture!
     var sut: RemoveClientStepViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
         sut = RemoveClientStepViewController(
             clients: [
@@ -37,12 +39,12 @@ final class RemoveClientStepViewControllerSnapshotTests: BaseSnapshotTestCase, C
                 mockUserClient(),
                 mockUserClient(),
                 mockUserClient()
-            ],
-            credentials: ZMCredentials()
+            ]
         )
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
 
@@ -51,10 +53,13 @@ final class RemoveClientStepViewControllerSnapshotTests: BaseSnapshotTestCase, C
 
     func testForWrappedInNavigationController() {
         // GIVEN & WHEN
-        let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+        let navigationController = UINavigationController(
+            navigationBarClass: AuthenticationNavigationBar.self,
+            toolbarClass: nil
+        )
         navigationController.viewControllers = [UIViewController(), sut]
 
         // THEN
-        verify(matching: navigationController)
+        snapshotHelper.verify(matching: navigationController)
     }
 }
