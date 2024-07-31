@@ -85,12 +85,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
             return await resolveCommonUserProtocolProteus(with: userID, in: context)
-        default:
+        case .mixed:
             // This should never happen:
             // Users can only support proteus and mls protocols.
             // Mixed protocol is used by conversations to represent
             // the migration state when migrating from proteus to mls.
             assertionFailure("users should not have mixed protocol")
+            return .noAction
+        default:
+            // if mls not enabled, there is nothing to take action
+            // fixes locked conversations
             return .noAction
         }
     }
