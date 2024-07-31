@@ -378,14 +378,12 @@ final class ConversationViewController: UIViewController {
     // MARK: Resolve 1-1 conversations
 
     private func resolveConversationIfOneOnOne() {
-        guard
-            DeveloperFlag.enableMLSSupport.isOn,
-            conversation.conversationType == .oneOnOne,
-            conversation.messageProtocol == .proteus
+        guard conversation.conversationType == .oneOnOne,
+              conversation.messageProtocol == .proteus
         else {
             return
         }
-
+        
         guard
             let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
             let otherUserID = otherUser.qualifiedID,

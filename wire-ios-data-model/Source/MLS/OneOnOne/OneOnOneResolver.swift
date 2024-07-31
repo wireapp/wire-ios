@@ -72,9 +72,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        guard DeveloperFlag.enableMLSSupport.isOn else {
-            return .noAction
-        }
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
@@ -127,12 +124,23 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         otherUser: ZMUser,
         conversation: ZMConversation
     ) {
-        if conversation.isForcedReadOnly { return }
+        if conversation.isForcedReadOnly { 
 
-        if !selfUser.supportedProtocols.contains(.mls) {
-            conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
-        } else if !otherUser.supportedProtocols.contains(.mls) {
-            conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
+            if !DeveloperFlag.enableMLSSupport.isOn &&
+                selfUser.supportedProtocols.contains(.proteus) &&
+                otherUser.supportedProtocols.contains(.proteus) {
+                // revert forcedReadOnly
+                conversation.isForcedReadOnly = false
+            }
+            return
+        }
+
+        if DeveloperFlag.enableMLSSupport.isOn {
+            if !selfUser.supportedProtocols.contains(.mls) {
+                conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
+            } else if !otherUser.supportedProtocols.contains(.mls) {
+                conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
+            }
         }
 
         conversation.isForcedReadOnly = true
