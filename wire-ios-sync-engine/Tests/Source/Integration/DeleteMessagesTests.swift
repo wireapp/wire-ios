@@ -21,7 +21,7 @@ import XCTest
 
 class DeleteMessagesTests: ConversationTestsBase {
 
-    func testThatItCreatesARequestToSendADeletedMessageAndDeletesItLocallencrypty() {
+    func testThatItCreatesARequestToSendADeletedMessageAndDeletesItLocally() {
         // given
         XCTAssertTrue(login())
         var message: ZMConversationMessage! = nil

@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+
 @testable import WireSyncEngine
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {
@@ -28,21 +29,23 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
+
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         mockUpdateEventProcessor = MockUpdateEventProcessor()
         presentationDelegate = MockPresentationDelegate()
+
         sut = WireSyncEngine.DeepLinkURLActionProcessor(contextProvider: coreDataStack!,
                                                         transportSession: mockTransportSession,
                                                         eventProcessor: mockUpdateEventProcessor)
-        setCurrentAPIVersion(.v0)
     }
 
     override func tearDown() {
-        presentationDelegate = nil
         sut = nil
+
+        presentationDelegate = nil
         mockTransportSession = nil
         mockUpdateEventProcessor = nil
-        resetCurrentAPIVersion()
+
         super.tearDown()
     }
 

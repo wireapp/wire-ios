@@ -25,11 +25,9 @@ class ConnectionTests_Swift: IntegrationTest {
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()
-        setCurrentAPIVersion(.v0)
     }
 
     override func tearDown() {
-        resetCurrentAPIVersion()
         listObserver = nil
         tokens = .init()
         super.tearDown()

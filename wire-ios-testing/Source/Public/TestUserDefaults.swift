@@ -17,19 +17,24 @@
 //
 
 import Foundation
-import XCTest
 
-private var previousApiVersion: APIVersion?
+public class TestUserDefaults: UserDefaults {
+    private let suiteName: String
 
-extension XCTestCase {
+    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
 
-    func setCurrentAPIVersion(_ version: APIVersion?) {
-        previousApiVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = version
-        XCTAssertEqual(BackendInfo.apiVersion, version)
+    public override init?(suiteName suitename: String?) {
+        self.suiteName = suitename ?? ""
+        super.init(suiteName: suitename)
     }
 
-    func resetCurrentAPIVersion() {
-        BackendInfo.apiVersion = previousApiVersion
+    public override func set(_ value: Any?, forKey defaultName: String) {
+        if shouldSet(value, defaultName) {
+            super.set(value, forKey: defaultName)
+        }
+    }
+
+    public func reset() {
+        removePersistentDomain(forName: suiteName)
     }
 }

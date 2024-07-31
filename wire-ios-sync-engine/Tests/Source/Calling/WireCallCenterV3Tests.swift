@@ -70,9 +70,6 @@ final class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.storage = .temporary()
-        BackendInfo.domain = "wire.com"
-
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
         selfUser.domain = BackendInfo.domain
@@ -125,7 +122,6 @@ final class WireCallCenterV3Tests: MessagingTest {
         mockTransport = nil
         mockAVSWrapper = nil
         conferenceCalling = nil
-        BackendInfo.storage = .standard
 
         super.tearDown()
     }
