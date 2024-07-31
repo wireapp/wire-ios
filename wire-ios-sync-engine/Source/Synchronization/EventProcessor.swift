@@ -51,7 +51,7 @@ actor EventProcessor: UpdateEventProcessor {
             syncMOC: storeProvider.syncContext,
             lastEventIDRepository: lastEventIDRepository
         )
-        
+
         self.init(
             storeProvider: storeProvider,
             eventDecoder: eventDecoder,
@@ -285,7 +285,7 @@ private actor ProcessedEventList {
         guard let hash = event.contentHash else {
             return false
         }
-        
+
         return hashes.contains(hash)
     }
 

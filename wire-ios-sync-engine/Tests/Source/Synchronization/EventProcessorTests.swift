@@ -75,7 +75,7 @@ final class EventProcessorTests: MessagingTest {
             "type": "conversation.member-join",
             "conversation": conversationID
         ]
-        
+
         let payload2: [String: Any] = [
             "type": "conversation.message-add",
             "data": [
