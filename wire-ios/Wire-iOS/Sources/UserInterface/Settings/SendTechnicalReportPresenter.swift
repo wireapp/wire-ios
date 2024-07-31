@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireReusableUIComponents
 import WireSystem
 
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
@@ -48,15 +49,16 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-        topMostViewController?.isLoadingViewVisible = true
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        let activityIndicator = BlockingActivityIndicator(view: topMostViewController!.view)
+        activityIndicator.start()
 
-        Task.detached(priority: .userInitiated) { [topMostViewController] in
+        Task.detached(priority: .userInitiated) {
             await mailComposeViewController.attachLogs()
 
             await self.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
-                topMostViewController?.isLoadingViewVisible = false
+                activityIndicator.stop()
             }
         }
     }

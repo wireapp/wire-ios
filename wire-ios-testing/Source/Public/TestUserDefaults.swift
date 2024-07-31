@@ -16,28 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-protocol DeviceMockable {
-    var device: DeviceProtocol { get set }
-}
+public class TestUserDefaults: UserDefaults {
+    private let suiteName: String
 
-protocol DeviceProtocol {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
-    var orientation: UIDeviceOrientation { get }
-}
+    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
 
-extension UIDevice: DeviceProtocol {}
-
-extension UIDevice {
-    enum `Type` {
-        case iPhone, iPod, iPad, unspecified
+    public override init?(suiteName suitename: String?) {
+        self.suiteName = suitename ?? ""
+        super.init(suiteName: suitename)
     }
 
-    var type: `Type` {
-        if model.contains("iPod") { return .iPod }
-        if userInterfaceIdiom == .phone { return .iPhone }
-        if userInterfaceIdiom == .pad { return .iPad }
-        return .unspecified
+    public override func set(_ value: Any?, forKey defaultName: String) {
+        if shouldSet(value, defaultName) {
+            super.set(value, forKey: defaultName)
+        }
+    }
+
+    public func reset() {
+        removePersistentDomain(forName: suiteName)
     }
 }
