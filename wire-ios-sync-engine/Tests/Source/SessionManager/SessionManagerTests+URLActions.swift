@@ -84,19 +84,13 @@ class SessionManagerURLActionsTests: IntegrationTest {
 
     func testThatItDelaysURLActionProcessing_UntilUserSessionBecomesAvailable() throws {
         // given: user session is not availablle but we are still authenticated
-        let sut = try XCTUnwrap(sessionManager)
-
         XCTAssertTrue(login())
-        let userID = try XCTUnwrap(sut.accountManager.selectedAccount?.userIdentifier)
-        sut.createUnauthenticatedSession(accountId: userID)
-        sut.tearDownBackgroundSession(for: userID)
-        sut.activeUserSession = nil
+        sessionManager?.logoutCurrentSessionWithoutDeletingCookie()
         presentationDelegate?.isPerformingActions = false
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let url = URL(string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b")!
-        let canOpenURL = try sut.openURL(url)
+        let canOpenURL = try sessionManager?.openURL(url)
         XCTAssertEqual(canOpenURL, true)
 
         // then: action should get postponed

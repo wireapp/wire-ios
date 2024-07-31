@@ -741,7 +741,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.tearDownSessionAndDelete(account: account)
         } else {
             // Deleted the last account so we need to return to the logged out area
-            logoutCurrentSession(deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
+            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
         }
     }
 
@@ -757,7 +757,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if let session = backgroundUserSessions[account.userIdentifier] {
             if session == activeUserSession {
-                logoutCurrentSession(deleteAccount: false, error: error)
+                logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
                 tearDownBackgroundSession(for: account.userIdentifier)
             }
@@ -765,8 +765,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func logoutCurrentSession() {
-        logoutCurrentSession(deleteAccount: false, error: nil)
+        logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: nil)
     }
+
+    #if DEBUG
+    /// This method is only used in tests and should be deleted. See [WPB-10404].
+    func logoutCurrentSessionWithoutDeletingCookie() {
+        logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
+    }
+    #endif
 
     fileprivate func deleteTemporaryData() {
         // swiftlint:disable todo_requires_jira_link
@@ -781,7 +788,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
     }
 
-    fileprivate func logoutCurrentSession(deleteAccount: Bool, error: Error?) {
+    
+    /// Logs out current session optionally deleting account data
+    ///
+    /// - Note: `deleteCookie == false` is only used for testing. It is not a valid production value and should be
+    /// removed. See [WPB-10404].
+    fileprivate func logoutCurrentSession(deleteCookie: Bool, deleteAccount: Bool, error: Error?) {
         guard let account = accountManager.selectedAccount else {
             return
         }
@@ -805,7 +817,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             let group = self?.dispatchGroup
             group?.enter()
 
-            activeUserSession.close(deleteCookie: true) {
+            activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
                 }
@@ -1205,7 +1217,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func performPostRebootLogout() {
         let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
-        logoutCurrentSession(deleteAccount: false, error: error)
+        logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
 
