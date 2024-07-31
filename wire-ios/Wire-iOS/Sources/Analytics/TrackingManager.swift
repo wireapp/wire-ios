@@ -23,21 +23,38 @@ import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
     private let flowManagerObserver: NSObjectProtocol
+    private let sessionManager: SessionManager
 
-    override init() {
+    init(sessionManager: SessionManager) {
+        self.sessionManager = sessionManager
+
         AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
 
-        flowManagerObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: OperationQueue.main, using: { _ in
-            AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
-        })
+        flowManagerObserver = NotificationCenter.default.addObserver(
+            forName: FlowManager.AVSFlowManagerCreatedNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { _ in
+                AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
+            }
+        )
+
+        super.init()
     }
 
     var disableAnalyticsSharing: Bool {
         get { ExtensionSettings.shared.disableAnalyticsSharing }
         set {
-            Analytics.shared?.isOptedOut = newValue
-            AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
             ExtensionSettings.shared.disableAnalyticsSharing = newValue
+            AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
+
+            if newValue {
+                // User is disabling analytics sharing
+                let disableUseCase = sessionManager.disableAnalyticsSharingUseCase
+                disableUseCase.invoke()
+            } else {
+                // TBD
+            }
         }
     }
 }

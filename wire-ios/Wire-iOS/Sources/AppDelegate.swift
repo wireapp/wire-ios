@@ -50,7 +50,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
 
     private let pushTokenService = PushTokenService()
-
     private var launchOperations: [LaunchSequenceOperation] = [
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
@@ -290,7 +289,8 @@ private extension AppDelegate {
         appRootRouter = AppRootRouter(
             viewController: viewController,
             sessionManager: sessionManager,
-            appStateCalculator: appStateCalculator, trackingManager: TrackingManager()
+            appStateCalculator: appStateCalculator,
+            trackingManager: TrackingManager(sessionManager: sessionManager)
         )
     }
 
