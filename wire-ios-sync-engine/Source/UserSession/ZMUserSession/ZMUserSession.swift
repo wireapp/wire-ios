@@ -943,15 +943,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.commitPendingProposalsIfNeeded()
+        if DeveloperFlag.enableMLSSupport.isOn {
+            mlsService.commitPendingProposalsIfNeeded()
 
-        WaitingGroupTask(context: syncContext) { [self] in
-            do {
-                var getFeatureConfigAction = GetFeatureConfigsAction()
-                try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
-            } catch {
-                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+            WaitingGroupTask(context: syncContext) { [self] in
+                do {
+                    var getFeatureConfigAction = GetFeatureConfigsAction()
+                    try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+                    try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+                } catch {
+                    WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+                }
             }
         }
 
@@ -961,11 +963,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.notifyThirdPartyServices()
         }
 
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                checkE2EICertificateExpiryStatus()
-                await cRLsChecker.checkExpiredCRLs()
+        if DeveloperFlag.enableMLSSupport.isOn {
+            Task {
+                let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+                if isE2EIFeatureEnabled {
+                    checkE2EICertificateExpiryStatus()
+                    await cRLsChecker.checkExpiredCRLs()
+                }
             }
         }
     }
