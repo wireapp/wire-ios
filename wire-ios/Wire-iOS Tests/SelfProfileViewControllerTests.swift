@@ -18,8 +18,8 @@
 
 import WireDataModelSupport
 import WireDesign
-import XCTest
 import WireUITesting
+import XCTest
 
 @testable import Wire
 

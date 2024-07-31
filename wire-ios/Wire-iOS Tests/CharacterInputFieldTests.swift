@@ -198,4 +198,3 @@ final class CharacterInputFieldTests: XCTestCase {
         XCTAssertEqual(delegate.didFillInput, 0)
     }
 }
-
