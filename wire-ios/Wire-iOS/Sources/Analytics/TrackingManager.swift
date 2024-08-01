@@ -49,11 +49,10 @@ final class TrackingManager: NSObject, TrackingInterface {
             AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
 
             if newValue {
-                // User is disabling analytics sharing
                 let disableUseCase = sessionManager.disableAnalyticsSharingUseCase
                 disableUseCase.invoke()
             } else {
-                // TBD
+
             }
         }
     }

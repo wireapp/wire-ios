@@ -1,0 +1,69 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireAnalytics
+import Countly
+
+// MARK: - EnableAnalyticsSharingUseCaseProtocol
+
+/// Protocol defining the interface for enabling analytics sharing.
+public protocol EnableAnalyticsSharingUseCaseProtocol {
+
+    /// Invokes the use case to enable analytics sharing.
+    func invoke()
+}
+
+// MARK: - EnableAnalyticsSharingUseCase
+
+/// Concrete implementation of the EnableAnalyticsSharingUseCaseProtocol.
+/// This struct is responsible for enabling analytics sharing for a specific user profile.
+public struct EnableAnalyticsSharingUseCase: EnableAnalyticsSharingUseCaseProtocol {
+
+    // MARK: - Properties
+
+    /// The analytics manager responsible for handling tracking operations.
+    private let analyticsManager: AnalyticsManagerProtocol?
+
+    /// The user profile for which analytics sharing will be enabled.
+    private let analyticsUserProfile: AnalyticsUserProfile
+
+    // MARK: - Initialization
+
+    /// Initializes a new instance of EnableAnalyticsSharingUseCase.
+    ///
+    /// - Parameters:
+    ///   - analyticsManager: The analytics manager to use for enabling tracking.
+    ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
+    public init(
+        analyticsManager: AnalyticsManagerProtocol?,
+        analyticsUserProfile: AnalyticsUserProfile
+    ) {
+        self.analyticsManager = analyticsManager
+        self.analyticsUserProfile = analyticsUserProfile
+    }
+
+    // MARK: - Public methods
+
+    /// Invokes the use case to enable analytics sharing for the specified user profile.
+    ///
+    /// This method calls the `enableTracking` method on the analytics manager
+    /// with the provided user profile. The return value is discarded.
+    public func invoke() {
+        let _ = analyticsManager?.enableTracking(analyticsUserProfile)
+    }
+}

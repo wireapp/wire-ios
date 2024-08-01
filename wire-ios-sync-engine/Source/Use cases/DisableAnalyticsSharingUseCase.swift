@@ -19,19 +19,32 @@
 import WireAnalytics
 import Countly
 
+/// Protocol defining the interface for disabling analytics sharing.
 public protocol DisableAnalyticsSharingUseCaseProtocol {
 
+    /// Invokes the use case to disable analytics sharing.
     func invoke()
 }
 
+/// Concrete implementation of the DisableAnalyticsSharingUseCaseProtocol.
+/// This struct is responsible for disabling analytics sharing.
 public struct DisableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProtocol {
 
+    /// The analytics manager responsible for handling tracking operations.
     private let analyticsManager: AnalyticsManagerProtocol?
 
+    /// Initializes a new instance of DisableAnalyticsSharingUseCase.
+    ///
+    /// - Parameter analyticsManager: The analytics manager to use for disabling tracking.
+    ///   This can be nil if analytics are not available or not configured.
     public init(analyticsManager: AnalyticsManagerProtocol?) {
         self.analyticsManager = analyticsManager
     }
 
+    /// Invokes the use case to disable analytics sharing.
+    ///
+    /// This method calls the `disableTracking` method on the analytics manager if it exists.
+    /// If the analytics manager is nil, this method will have no effect.
     public func invoke() {
         analyticsManager?.disableTracking()
     }
