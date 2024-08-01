@@ -108,15 +108,14 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func saveButtonTapped() {
-        requestEmailUpdate(showLoadingView: true)
+        requestEmailUpdate()
     }
 
-    func requestEmailUpdate(showLoadingView: Bool) {
-    activityIndicator.setIsActive(showLoadingView)
+    func requestEmailUpdate() {
+    activityIndicator.setIsActive(true)
 
     do {
         try viewModel.requestEmailUpdate()
-        activityIndicator.setIsActive(false)
         handleEmailUpdateSuccess()
     } catch {
         activityIndicator.setIsActive(false)
@@ -125,6 +124,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 }
 
 private func handleEmailUpdateSuccess() {
+    activityIndicator.setIsActive(false)
     updateSaveButtonState()
     if let newEmail = viewModel.newEmail {
         let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
@@ -172,7 +172,7 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
     }
 
     func resendVerification(inController controller: ConfirmEmailViewController) {
-        requestEmailUpdate(showLoadingView: false)
+        requestEmailUpdate()
     }
 }
 
