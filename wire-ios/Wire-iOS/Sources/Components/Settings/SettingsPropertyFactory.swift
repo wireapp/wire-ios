@@ -232,16 +232,41 @@ final class SettingsPropertyFactory {
             }
 
             let setAction: SetAction = { [unowned self] _, value in
-                if var tracking = self.tracking {
-                    switch value {
-                    case .number(let number):
-                        tracking.disableAnalyticsSharing = number.boolValue
-                    default:
-                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                guard var tracking = self.tracking else { return }
+
+                switch value {
+                case .number(let number):
+                    let newValue = number.boolValue
+
+                    // If newValue is false, it means the user wants to enable analytics sharing
+                    if newValue == false {
+                        let alert = UIAlertController(
+                            title: "Confirmation",
+                            message: "Are you sure you want to enable analytics sharing?",
+                            preferredStyle: .alert
+                        )
+
+                        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                            tracking.disableAnalyticsSharing = newValue
+                            AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
+                        }))
+
+                        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+
+                        controller.present(alert, animated: true)
+                    } else {
+                        tracking.disableAnalyticsSharing = newValue
+                        AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
                     }
+
+                default:
+                    throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
+
+
 
         case .receiveNewsAndOffers:
 
