@@ -18,6 +18,8 @@
 
 import Foundation
 
+@testable import WireAPI
+
 extension URLRequest {
 
     func mockResponse(
