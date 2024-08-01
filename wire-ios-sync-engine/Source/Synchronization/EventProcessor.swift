@@ -271,6 +271,7 @@ private actor ProcessedEventList {
 
     func addEvent(_ event: ZMUpdateEvent) {
         guard let hash = event.contentHash else {
+            assertionFailure("events for processing should have a content hash")
             return
         }
 
@@ -283,6 +284,7 @@ private actor ProcessedEventList {
 
     func containsEvent(_ event: ZMUpdateEvent) -> Bool {
         guard let hash = event.contentHash else {
+            assertionFailure("events for processing should have a content hash")
             return false
         }
 
