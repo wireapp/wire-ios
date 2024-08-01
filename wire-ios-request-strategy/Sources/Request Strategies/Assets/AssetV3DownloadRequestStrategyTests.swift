@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
@@ -45,13 +47,14 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
 
+        BackendInfo.enableMocking()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         sut = AssetV3DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
@@ -69,7 +72,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         sut = nil
         user = nil
         conversation = nil
-        apiVersion = nil
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
