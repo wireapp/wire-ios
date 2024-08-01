@@ -21,48 +21,68 @@ import XCTest
 
 @testable import Wire
 
-class CallParticipantDetailsViewTests: XCTestCase {
+final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: CallParticipantDetailsView!
+    private var sut: CharacterInputField! = nil
 
     override func setUp() {
         super.setUp()
         snapshotHelper = .init()
-        sut = CallParticipantDetailsView()
-        sut.name = "John Doe"
-        sut.frame = CGRect(x: 0, y: 0, width: 95, height: 24)
-        sut.backgroundColor = .black
+        let size = CGSize(width: 375, height: 56)
+        sut = CharacterInputField(maxLength: 8, characterSet: CharacterSet.decimalDigits, size: size)
+
+        sut.frame = CGRect(origin: .zero, size: size)
     }
 
     override func tearDown() {
         snapshotHelper = nil
+        sut.removeFromSuperview()
         sut = nil
         super.tearDown()
     }
 
-    func testUnmutedState() {
-        sut.microphoneIconStyle = MicrophoneIconStyle(state: .unmuted, shouldPulse: false)
-
+    func testDefaultState() {
+        // then
         snapshotHelper.verify(matching: sut)
     }
 
-    func testMutedState() {
-        sut.microphoneIconStyle = MicrophoneIconStyle(state: .muted, shouldPulse: false)
+    func testFocusedState() {
+        // given
+        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
 
+        // when
+        sut.becomeFirstResponder()
+
+        // then
         snapshotHelper.verify(matching: sut)
     }
 
-    func testPulsingState() {
-        sut.microphoneIconStyle = MicrophoneIconStyle(state: .unmuted, shouldPulse: true)
+    func testFocusedDeFocusedState() {
+        // given
+        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
 
+        // when
+        sut.becomeFirstResponder()
+        sut.resignFirstResponder()
+
+        // then
         snapshotHelper.verify(matching: sut)
     }
 
-    func testConnectionIssue() {
-        sut.callState = .unconnectedButMayConnect
-        sut.name = "John Doe The Second"
-        sut.frame = CGRect(x: 0, y: 0, width: 195, height: 24)
+    func testOneCharacterState() {
+        // when
+        sut.insertText("1")
+
+        // then
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testAllCharactersEnteredState() {
+        // when
+        sut.insertText("12345678")
+
+        // then
         snapshotHelper.verify(matching: sut)
     }
 }
