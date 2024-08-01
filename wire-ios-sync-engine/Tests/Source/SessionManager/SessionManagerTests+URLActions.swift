@@ -85,7 +85,7 @@ class SessionManagerURLActionsTests: IntegrationTest {
     func testThatItDelaysURLActionProcessing_UntilUserSessionBecomesAvailable() throws {
         // given: user session is not availablle but we are still authenticated
         XCTAssertTrue(login())
-        sessionManager?.logoutCurrentSession(deleteCookie: false)
+        sessionManager?.logoutCurrentSessionWithoutDeletingCookie()
         presentationDelegate?.isPerformingActions = false
 
         // when
@@ -100,8 +100,10 @@ class SessionManagerURLActionsTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // then: action should get resumed
-        let expectedUserData = ServiceUserData(provider: UUID(uuidString: "3879b1ec-4a12-11e8-842f-0ed5f89f718b")!,
-                                               service: UUID(uuidString: "2e1863a6-4a12-11e8-842f-0ed5f89f718b")!)
+        let expectedUserData = ServiceUserData(
+            provider: UUID(uuidString: "3879b1ec-4a12-11e8-842f-0ed5f89f718b")!,
+            service: UUID(uuidString: "2e1863a6-4a12-11e8-842f-0ed5f89f718b")!
+        )
         XCTAssertEqual(presentationDelegate.shouldPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.shouldPerformActionCalls.first, .connectBot(serviceUser: expectedUserData))
     }

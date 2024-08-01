@@ -153,8 +153,6 @@ class Settings {
     // Persist all the settings
     private func synchronize() {
         storeCurrentIntensityLevelAsLastUsed()
-
-        defaults.synchronize()
     }
 
     @objc

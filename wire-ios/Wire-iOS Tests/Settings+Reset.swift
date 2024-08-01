@@ -24,6 +24,5 @@ extension Settings {
         for key in SettingKey.allCases {
             defaults.removeObject(forKey: key.rawValue)
         }
-        UserDefaults.standard.synchronize()
     }
 }

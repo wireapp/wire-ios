@@ -82,6 +82,7 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
         performIgnoringZMLogError {
             sessionManager.delete(account: account)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertNil(repository.fetchLastEventID())

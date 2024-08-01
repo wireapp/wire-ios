@@ -64,9 +64,6 @@ public final class ExtensionSettings: NSObject {
         ExtensionSettingsKey.allCases.forEach {
             defaults.removeObject(forKey: $0.rawValue)
         }
-
-        // As we purposely crash afterwards we manually call synchronize.
-        defaults.synchronize()
     }
 
     public var disableAnalyticsSharing: Bool {
