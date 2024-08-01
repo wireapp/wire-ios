@@ -18,12 +18,21 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// Execute url requests to a specific backend.
 ///
-/// The `APIService` connects API clients to a target backend, providing
+/// An `APIService` connects API clients to a target backend, providing
 /// additional services such as attaching an access token if needed.
+public protocol APIServiceProtocol {
 
-public final class APIService {
+    func executeRequest(
+        _ request: URLRequest,
+        requiringAccessToken: Bool
+    ) async throws -> (Data, HTTPURLResponse)
+
+}
+
+public final class APIService: APIServiceProtocol {
 
     private let backendURL: URL
     private let backendWebSocketURL: URL
@@ -50,7 +59,7 @@ public final class APIService {
         self.minTLSVersion = minTLSVersion
     }
 
-    func executeRequest(
+    public func executeRequest(
         _ request: URLRequest,
         requiringAccessToken: Bool
     ) async throws -> (Data, HTTPURLResponse) {
@@ -84,7 +93,7 @@ public final class APIService {
         return (data, httpURLResponse)
     }
 
-    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol{
+    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
         guard let url = request.url else {
             throw APIServiceError.invalidRequest
         }

@@ -69,6 +69,13 @@ struct ResponseParser<Success> {
             throw ResponseParserError.missingPayload
         }
 
+        return try parse(
+            code: code,
+            data: data
+        )
+    }
+
+    func parse(code: Int, data: Data) throws -> Success {
         for matcher in parseBlocks {
             if let success = try matcher(code, data) {
                 return success

@@ -18,26 +18,29 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+extension URLRequest {
 
-public struct BackendInfoAPIBuilder {
+    func mockResponse(
+        statusCode: Int,
+        jsonResourceName: String
+    ) throws -> (Data, HTTPURLResponse) {
+        guard let url else {
+            throw "Unable to create mock response, request is missing url"
+        }
 
-    let apiService: any APIServiceProtocol
+        guard let response = HTTPURLResponse(
+            url: url,
+            statusCode: statusCode,
+            httpVersion: nil,
+            headerFields: ["Content-Type": HTTPContentType.json.rawValue]
+        ) else {
+            throw "Unable to create mock response"
+        }
 
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
+        let jsonPayload = HTTPClientMock.PredefinedResponse(resourceName: jsonResourceName)
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+        return (try jsonPayload.data(), response)
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
-
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
     }
 
 }

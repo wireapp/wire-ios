@@ -49,6 +49,7 @@ let package = Package(
             name: "WireAPITests",
             dependencies: [
                 "WireAPI",
+                "WireAPISupport",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
