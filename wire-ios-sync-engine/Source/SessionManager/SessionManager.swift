@@ -313,11 +313,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    private var analyticsManager: (any AnalyticsManagerProtocol)?
-
-    public lazy var disableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProtocol = {
-        DisableAnalyticsSharingUseCase(analyticsManager: analyticsManager)
-    }()
+    var analyticsManager: (any AnalyticsManagerProtocol)?
 
     public override init() {
         fatal("init() not implemented")
@@ -898,11 +894,24 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func switchAnalyticsUser() {
         guard
             let analyticsManager,
-            let activeUserSession
+            let activeUserSession,
+            let userProfile = getUserAnalyticsProfileForActiveUserSession()
         else {
             return
         }
 
+        let analyticsSession = analyticsManager.switchUser(userProfile)
+
+        activeUserSession.analyticsSession = analyticsSession
+    }
+
+    func getUserAnalyticsProfileForActiveUserSession() -> AnalyticsUserProfile? {
+        guard
+            let analyticsManager,
+            let activeUserSession
+        else {
+            return nil
+        }
         let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
 
         // Set the analytics identifier if it's not present
@@ -912,7 +921,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         guard let analyticsID = selfUser.analyticsIdentifier else {
-            return
+            return nil
         }
 
         var teamInfo: TeamInfo?
@@ -924,14 +933,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        let analyticsSession = analyticsManager.switchUser(
-            AnalyticsUserProfile(
-                analyticsIdentifier: analyticsID,
-                teamInfo: teamInfo
-            )
-        )
-
-        activeUserSession.analyticsSession = analyticsSession
+        return AnalyticsUserProfile(analyticsIdentifier: analyticsID, teamInfo: teamInfo)
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {

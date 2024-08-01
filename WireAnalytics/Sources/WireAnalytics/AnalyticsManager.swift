@@ -56,15 +56,20 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     /// - Parameter userProfile: The profile of the user to switch to.
     /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
     public func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
-        endCurrentSession()
+        analyticsService.endSession()
         updateUserProfile(userProfile)
-        return startNewSession(for: userProfile)
+        analyticsService.beginSession()
+
+        return AnalyticsSession(
+            isSelfTeamMember: userProfile.teamInfo != nil,
+            service: analyticsService
+        )
     }
 
     /// Disables tracking by ending the current session and clearing user data.
     public func disableTracking() {
         clearUserData()
-        endCurrentSession()
+        analyticsService.endSession()
     }
 
     /// Enables tracking for a given user profile.
@@ -72,22 +77,13 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     /// - Parameter userProfile: The profile of the user to enable tracking for.
     /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
     public func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
-        updateUserProfile(userProfile)
-        return startNewSession(for: userProfile)
+        switchUser(userProfile)
     }
 
     // MARK: - Private Helper Methods
 
-    private func endCurrentSession() {
-        analyticsService.endSession()
-    }
-
     private func updateUserProfile(_ userProfile: AnalyticsUserProfile) {
         analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
-        setUserValues(for: userProfile)
-    }
-
-    private func setUserValues(for userProfile: AnalyticsUserProfile) {
         analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: "team_team_id")
         analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: "team_user_type")
         analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: "team_team_size")
@@ -99,11 +95,4 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
         }
     }
 
-    private func startNewSession(for userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
-        analyticsService.beginSession()
-        return AnalyticsSession(
-            isSelfTeamMember: userProfile.teamInfo != nil,
-            service: analyticsService
-        )
-    }
 }

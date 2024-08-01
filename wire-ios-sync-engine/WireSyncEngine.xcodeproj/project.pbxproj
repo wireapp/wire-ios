@@ -587,6 +587,7 @@
 		E9EAEAA72BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */; };
 		E9EB58202C357FDE00A2325E /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */; };
 		E9F403152C5B96CD00F81366 /* EnableAnalyticsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F403142C5B96CD00F81366 /* EnableAnalyticsUseCase.swift */; };
+		E9F403172C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F403162C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift */; };
 		E9F627B32BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F627B22BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift */; };
 		E9F7FE292BE0C61900699356 /* SetAllowGuestsAndServicesUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FE282BE0C61900699356 /* SetAllowGuestsAndServicesUseCaseTests.swift */; };
 		EE01E0371F90DD67001AA33C /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EE01E0361F90DABC001AA33C /* audio.m4a */; };
@@ -1424,6 +1425,7 @@
 		E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TeamRole+AnalyticsValue.swift"; sourceTree = "<group>"; };
 		E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCase.swift; sourceTree = "<group>"; };
 		E9F403142C5B96CD00F81366 /* EnableAnalyticsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableAnalyticsUseCase.swift; sourceTree = "<group>"; };
+		E9F403162C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+AnalyticsUseCases.swift"; sourceTree = "<group>"; };
 		E9F627B22BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCaseTests.swift; sourceTree = "<group>"; };
 		E9F7FE282BE0C61900699356 /* SetAllowGuestsAndServicesUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetAllowGuestsAndServicesUseCaseTests.swift; sourceTree = "<group>"; };
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
@@ -3030,6 +3032,7 @@
 				8737D553209217BD00E5A4AF /* URLActions.swift */,
 				5458273D2541C3A9002B8F83 /* PresentationDelegate.swift */,
 				EECE27C329435FFE00419A8B /* PushTokenService.swift */,
+				E9F403162C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift */,
 			);
 			path = SessionManager;
 			sourceTree = "<group>";
@@ -3854,6 +3857,7 @@
 				7C5B94F622DC6BC500A6F8BB /* JailbreakDetector.swift in Sources */,
 				1693151125836E5800709F15 /* EventProcessor.swift in Sources */,
 				EF2CB12722D5E58B00350B0A /* TeamImageAssetUpdateStrategy.swift in Sources */,
+				E9F403172C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift in Sources */,
 				BF2ADA021F41A450000980E8 /* BackendEnvironmentProvider+Cookie.swift in Sources */,
 				EE1108B723D1B367005DC663 /* TypingUsers.swift in Sources */,
 				06B99C7B242B51A300FEAFDE /* SignatureRequestStrategy.swift in Sources */,

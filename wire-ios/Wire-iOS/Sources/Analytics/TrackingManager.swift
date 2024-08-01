@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
+    
     private let flowManagerObserver: NSObjectProtocol
     private let sessionManager: SessionManager
 
@@ -43,17 +44,25 @@ final class TrackingManager: NSObject, TrackingInterface {
     }
 
     var disableAnalyticsSharing: Bool {
-        get { ExtensionSettings.shared.disableAnalyticsSharing }
+        get {
+            ExtensionSettings.shared.disableAnalyticsSharing
+        }
         set {
             ExtensionSettings.shared.disableAnalyticsSharing = newValue
             AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
 
-            if newValue {
-                let disableUseCase = sessionManager.disableAnalyticsSharingUseCase
-                disableUseCase.invoke()
-            } else {
-
+            do {
+                if newValue {
+                    let disableUseCase = try sessionManager.makeDisableAnalyticsSharingUseCase()
+                    disableUseCase.invoke()
+                } else {
+                    let enableUseCase = try sessionManager.makeEnableAnalyticsSharingUseCase()
+                    enableUseCase.invoke()
+                }
+            } catch {
+                print("Failed to toggle analytics sharing: \(error)")
             }
         }
     }
+
 }
